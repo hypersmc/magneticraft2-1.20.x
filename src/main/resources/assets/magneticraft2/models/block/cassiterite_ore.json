@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:cassiterite_ore",
+    "up": "magneticraft2:cassiterite_ore",
+    "north": "magneticraft2:cassiterite_ore",
+    "south": "magneticraft2:cassiterite_ore",
+    "east": "magneticraft2:cassiterite_ore",
+    "west": "magneticraft2:cassiterite_ore",
+    "particle": "magneticraft2:cassiterite_ore"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "model": "magneticraft2:block/graphite_ore.json",
+  "variants": {
+    "":    { "model": "magneticraft2:block/graphite_ore" }
+  }
+}

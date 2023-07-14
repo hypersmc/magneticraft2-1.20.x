@@ -1,0 +1,6 @@
+{
+  "model": "magneticraft2:block/sulfur_ore.json",
+  "variants": {
+    "":    { "model": "magneticraft2:block/sulfur_ore" }
+  }
+}

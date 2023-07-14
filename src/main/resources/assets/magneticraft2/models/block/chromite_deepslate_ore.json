@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:deepslate_chromite_ore",
+    "up": "magneticraft2:deepslate_chromite_ore",
+    "north": "magneticraft2:deepslate_chromite_ore",
+    "south": "magneticraft2:deepslate_chromite_ore",
+    "east": "magneticraft2:deepslate_chromite_ore",
+    "west": "magneticraft2:deepslate_chromite_ore",
+    "particle": "magneticraft2:deepslate_chromite_ore"
+  }
+}

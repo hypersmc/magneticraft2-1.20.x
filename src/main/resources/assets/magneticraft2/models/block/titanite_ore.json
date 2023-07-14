@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:titanite_ore",
+    "up": "magneticraft2:titanite_ore",
+    "north": "magneticraft2:titanite_ore",
+    "south": "magneticraft2:titanite_ore",
+    "east": "magneticraft2:titanite_ore",
+    "west": "magneticraft2:titanite_ore",
+    "particle": "magneticraft2:titanite_ore"
+  }
+}

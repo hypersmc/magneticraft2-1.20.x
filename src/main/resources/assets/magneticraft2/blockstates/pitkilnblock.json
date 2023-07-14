@@ -1,0 +1,47 @@
+{
+  "variants":{
+
+    "log_count=0,wheat_count=0,activated=false":{
+      "model":"magneticraft2:block/invis"
+    },
+    "log_count=0,wheat_count=1,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_straw_1"
+    },
+    "log_count=0,wheat_count=2,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_straw_2"
+    },
+    "log_count=0,wheat_count=3,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_straw_3"
+    },
+    "log_count=0,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_straw_4"
+    },
+    "log_count=1,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_1"
+    },
+    "log_count=2,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_2"
+    },
+    "log_count=3,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_3"
+    },
+    "log_count=4,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_4"
+    },
+    "log_count=5,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_5"
+    },
+    "log_count=6,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_6"
+    },
+    "log_count=7,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_7"
+    },
+    "log_count=8,wheat_count=4,activated=false":{
+      "model":"magneticraft2:block/fire_kiln_log_8"
+    },
+    "log_count=0,wheat_count=0,activated=true":{
+      "model":"magneticraft2:block/fire_kiln_log_8"
+    }
+  }
+}

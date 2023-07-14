@@ -1,0 +1,14 @@
+{
+  "name": "Iron Age",
+  "description": "",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:iron_gear",
+  "pages": [
+    {
+      "type": "text",
+      "text": "We are already in the Iron Age? Well before we think we might soon already be in the Nuclear Age!"
+    }
+  ],
+  "sortnum": 4,
+  "read_by_defaylt": true
+}

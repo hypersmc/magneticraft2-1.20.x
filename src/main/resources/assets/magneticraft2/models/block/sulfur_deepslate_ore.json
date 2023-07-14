@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:deepslate_sulfur_ore",
+    "up": "magneticraft2:deepslate_sulfur_ore",
+    "north": "magneticraft2:deepslate_sulfur_ore",
+    "south": "magneticraft2:deepslate_sulfur_ore",
+    "east": "magneticraft2:deepslate_sulfur_ore",
+    "west": "magneticraft2:deepslate_sulfur_ore",
+    "particle": "magneticraft2:deepslate_sulfur_ore"
+  }
+}

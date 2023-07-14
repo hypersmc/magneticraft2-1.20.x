@@ -1,0 +1,6 @@
+{
+  "model": "magneticraft2:block/galena_ore.json",
+  "variants": {
+    "":    { "model": "magneticraft2:block/galena_ore" }
+  }
+}

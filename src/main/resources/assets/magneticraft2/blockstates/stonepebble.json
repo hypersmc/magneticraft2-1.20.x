@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "type=0": {
+      "model": "magneticraft2:block/invis"
+    },
+    "type=1": {
+      "model": "magneticraft2:block/tiny_pebble"
+    },
+    "type=2": {
+      "model": "magneticraft2:block/small_pebble"
+    },
+    "type=3": {
+      "model": "magneticraft2:block/medium_pebble"
+    },
+    "type=4": {
+      "model": "magneticraft2:block/big_pebble"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "top=true,open=true": {
+      "model": "magneticraft2:block/air_lock_up"
+    },
+    "top=false,open=true":{
+      "model":"magneticraft2:block/air_lock_down"
+    },
+    "top=true,open=false":{
+      "model":"magneticraft2:block/air_lock_bottom_closed"
+    },
+    "top=false,open=false":{
+      "model":"magneticraft2:block/air_lock_top_closed"
+    }
+  }
+}

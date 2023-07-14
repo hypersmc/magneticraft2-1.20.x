@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:wolframite_ore",
+    "up": "magneticraft2:wolframite_ore",
+    "north": "magneticraft2:wolframite_ore",
+    "south": "magneticraft2:wolframite_ore",
+    "east": "magneticraft2:wolframite_ore",
+    "west": "magneticraft2:wolframite_ore",
+    "particle": "magneticraft2:wolframite_ore"
+  }
+}

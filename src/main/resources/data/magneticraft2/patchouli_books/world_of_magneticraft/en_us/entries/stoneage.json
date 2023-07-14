@@ -1,0 +1,14 @@
+{
+  "name": "Stone Age",
+  "description": "",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:stone_gear",
+  "pages": [
+    {
+      "type": "text",
+      "text": "The Stone Age is the first age in Magneticraft. It is unlocked by crafting a Stone Age Workbench. The Stone Age Workbench is crafted with 4 Stone Bricks and 1 Wooden Plank. The Stone Age Workbench is used to craft all the items in the Stone Age."
+    }
+  ],
+  "sortnum": 1,
+  "read_by_defaylt": true
+}

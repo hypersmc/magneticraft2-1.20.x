@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:silver_ore",
+    "up": "magneticraft2:silver_ore",
+    "north": "magneticraft2:silver_ore",
+    "south": "magneticraft2:silver_ore",
+    "east": "magneticraft2:silver_ore",
+    "west": "magneticraft2:silver_ore",
+    "particle": "magneticraft2:silver_ore"
+  }
+}

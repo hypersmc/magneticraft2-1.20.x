@@ -1,0 +1,38 @@
+{
+  "itemGroup.Magneticraft2.Blocks": "Magneticraft2 Blocks",
+  "itemGroup.Magneticraft2.Machines": "Magneticraft2 Machines",
+  "itemGroup.Magneticraft2.Plants": "Magneticraft2 Plants & Foods",
+  "itemGroup.Magneticraft2.Items": "Magneticraft2 Items",
+  "itemGroup.Magneticraft2.Ores": "Magneticraft2 Ores",
+  "tooltip.magneticraft2.how": "This block is unobtainable in survival so how did you get it?",
+  "tooltip.magneticraft2.press_shift": "§7Press §eSHIFT§r §7for more Information!",
+  "tooltip.mgc2.multiblock.tooltip.shift1": "§7Multiblock: %s",
+  "tooltip.mgc2.multiblock.tooltip.shift2": "§7Size: %s",
+  "tooltip.mgc2.multiblock.tooltip.shift3": "§7Place block to build!",
+  "tooltip.magneticraft2.copper_ingot_low": "§7Grade: §eLow",
+
+  "message.magneticraft2.notdirect": "There is blocks: %s between %s, %s, %s and %s, %s, %s",
+  "message.magneticraft2.multiblock.Debug": "Multiblock debug info: isformed %s,  ",
+  "message.magneticraft2.connecteddistance": "Connected distance: %s",
+  "message.magneticraf2.toofar": "Far away from each other, Distance: %s",
+  "message.magneticraft2.connection_in_use": "Connection already in use",
+  "message.magneticraft2.connection_start": "Connection start",
+  "message.magneticraft2.cannot_connect": "Cannot connect",
+  "message.magneticraft2.distance": "Current Wire Distance is:  %s",
+  "message.magneticraft2.connection_start_coords": "Connection start at: %s, %s, %s",
+  "message.magneticraft2.feature_not_ready_yet": "Multiblock GUI interaction feature not ready yet",
+
+
+  "container.magneticraft2.primitive_furnace": "Primitive Furnace",
+  "container.magneticraft2.inventory": "Inventory",
+
+
+  "block.magneticraft2.cruciblemb": "§7Crucible",
+  "block.magneticraft2.hvconnector_base": "HV Connector",
+  "block.magneticraft2.multiblock_filler": "Multiblock Filler",
+
+  "item.magneticraft2.wirecoil": "Wire Coil",
+  "item.magneticraft2.rice_seed": "Rice Seed",
+  "item.magneticraft2.rice": "Rice",
+  "item.magneticraft2.copper_ingot_low": "Copper Ingot"
+}

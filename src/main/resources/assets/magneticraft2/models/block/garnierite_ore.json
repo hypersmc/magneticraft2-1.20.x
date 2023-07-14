@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:garnierite_ore",
+    "up": "magneticraft2:garnierite_ore",
+    "north": "magneticraft2:garnierite_ore",
+    "south": "magneticraft2:garnierite_ore",
+    "east": "magneticraft2:garnierite_ore",
+    "west": "magneticraft2:garnierite_ore",
+    "particle": "magneticraft2:garnierite_ore"
+  }
+}

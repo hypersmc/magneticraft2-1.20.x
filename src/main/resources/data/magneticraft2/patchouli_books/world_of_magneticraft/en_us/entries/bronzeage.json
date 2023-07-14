@@ -1,0 +1,14 @@
+{
+  "name": "Bronze Age",
+  "description": "",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:bronze_gear",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Got the feeling of the mod? There is so much more to do! Let's get started with the Bronze Age!"
+    }
+  ],
+  "sortnum": 3,
+  "read_by_defaylt": true
+}

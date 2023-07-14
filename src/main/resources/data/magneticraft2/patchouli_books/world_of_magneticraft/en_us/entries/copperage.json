@@ -1,0 +1,14 @@
+{
+  "name": "Copper Age",
+  "description": "",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:copper_gear",
+  "pages": [
+    {
+      "type": "text",
+      "text": "Congratulations! Stone age went away so fast right? You have made it to the Copper Age! You have a lot of new things to learn, but don't worry, I'll be here to help you along the way."
+    }
+  ],
+  "sortnum": 2,
+  "read_by_defaylt": true
+}

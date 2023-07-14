@@ -1,0 +1,22 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "magneticraft2:block/pit_kiln",
+		"particle": "magneticraft2:block/pit_kiln"
+	},
+	"elements": [
+		{
+			"name": "straw",
+			"from": [0, 0, 0],
+			"to": [16, 6, 16],
+			"faces": {
+				"north": {"uv": [0, 0.5, 8, 4.5], "texture": "#0"},
+				"east": {"uv": [0, 1.5, 8, 5.5], "texture": "#0"},
+				"south": {"uv": [0, 4, 8, 8], "texture": "#0"},
+				"west": {"uv": [0, 3, 8, 7], "texture": "#0"},
+				"up": {"uv": [0, 0, 8, 8], "texture": "#0"},
+				"down": {"uv": [0, 0, 8, 8], "texture": "#0"}
+			}
+		}
+	]
+}

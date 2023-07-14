@@ -1,0 +1,28 @@
+{
+  "variants":{
+
+    "end=false,full=false,isformed=false,on=false,pot=false":{
+      "model":"magneticraft2:block/invis"
+    },
+    "end=false,full=false,isformed=true,on=false,pot=false":{
+      "model":"magneticraft2:block/primitive_furnace_formed"
+    },
+    "end=true,full=false,isformed=true,on=false,pot=false":{
+      "model":"magneticraft2:block/primitive_furnace_end"
+
+    },
+    "end=false,full=true,isformed=true,on=false,pot=false":{
+      "model":"magneticraft2:block/primitive_furnace_full"
+
+    },
+    "end=false,full=false,isformed=true,on=true,pot=false":{
+      "model":"magneticraft2:block/primitive_furnace_on"
+
+    },
+    "end=false,full=false,isformed=true,on=false,pot=true":{
+      "model":"magneticraft2:block/primitive_furnace_pot"
+
+    }
+
+  }
+}

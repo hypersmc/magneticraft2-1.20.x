@@ -1,0 +1,6 @@
+{
+  "name": "Multiblocks",
+  "description": "Multiblocks are structures that are made up of multiple blocks. They are used to create machines and other structures.",
+  "icon": "magneticraft2:heat_generator",
+  "sortnum": 1
+}

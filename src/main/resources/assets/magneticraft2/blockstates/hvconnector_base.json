@@ -1,0 +1,30 @@
+
+{
+  "variants": {
+    "facing=down": {
+      "model": "magneticraft2:block/wirecon"
+    },
+    "facing=up": {
+      "model": "magneticraft2:block/wirecon",
+      "x": -180
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/wirecon",
+      "x": -90
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/wirecon",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/wirecon",
+      "x": -90,
+      "y": 90
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/wirecon",
+      "x": -90,
+      "y": -90
+    }
+  }
+}
