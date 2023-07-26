@@ -33,6 +33,7 @@ public class FinalRegistry {
         ItemRegistry.init(bus);
         BlockEntityRegistry.init(bus);
         EntitiesRegistry.init(bus);
+        BiomeModifier.init(bus);
 //        STRUCTURES.register(bus);
 //        RecipeRegistry.registerRecipes(bus);
         ContainerAndScreenRegistry.init(bus);

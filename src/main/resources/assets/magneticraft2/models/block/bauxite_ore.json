@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:bauxite_ore",
-    "up": "magneticraft2:bauxite_ore",
-    "north": "magneticraft2:bauxite_ore",
-    "south": "magneticraft2:bauxite_ore",
-    "east": "magneticraft2:bauxite_ore",
-    "west": "magneticraft2:bauxite_ore",
-    "particle": "magneticraft2:bauxite_ore"
+    "down": "magneticraft2:block/ores/bauxite_ore",
+    "up": "magneticraft2:block/ores/bauxite_ore",
+    "north": "magneticraft2:block/ores/bauxite_ore",
+    "south": "magneticraft2:block/ores/bauxite_ore",
+    "east": "magneticraft2:block/ores/bauxite_ore",
+    "west": "magneticraft2:block/ores/bauxite_ore",
+    "particle": "magneticraft2:block/ores/bauxite_ore"
   }
 }

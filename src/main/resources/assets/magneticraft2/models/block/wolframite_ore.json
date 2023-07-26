@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:wolframite_ore",
-    "up": "magneticraft2:wolframite_ore",
-    "north": "magneticraft2:wolframite_ore",
-    "south": "magneticraft2:wolframite_ore",
-    "east": "magneticraft2:wolframite_ore",
-    "west": "magneticraft2:wolframite_ore",
-    "particle": "magneticraft2:wolframite_ore"
+    "down": "magneticraft2:block/ores/wolframite_ore",
+    "up": "magneticraft2:block/ores/wolframite_ore",
+    "north": "magneticraft2:block/ores/wolframite_ore",
+    "south": "magneticraft2:block/ores/wolframite_ore",
+    "east": "magneticraft2:block/ores/wolframite_ore",
+    "west": "magneticraft2:block/ores/wolframite_ore",
+    "particle": "magneticraft2:block/ores/wolframite_ore"
   }
 }

@@ -26,9 +26,9 @@ public class Magneticraft2ConfigCommon {
                     .translation("magneticraft2.wirelenght.config")
                     .defineInRange("Wire Length", 64, 0, Integer.MAX_VALUE);
             PitKilnTime = builder
-                    .comment("The Cooldown before Stable Ender Pearl can be used again (In ticks). Default value is 240000.")
-                    .translation("cuprum.endercooldown.config")
-                    .defineInRange("Ender Cooldown", 240000, 0, Integer.MAX_VALUE);
+                    .comment("Burntime for the pitklin (In ticks). Default value is 2400.")
+                    .translation("magneticraft2.pitklinburntime.config")
+                    .defineInRange("Ender Cooldown", 2400, 0, Integer.MAX_VALUE);
 //            EnderDamage = builder
 //                    .comment("The damage the player takes when landing. Default value is 0.5.")
 //                    .translation("cuprum.enderdamage.config")

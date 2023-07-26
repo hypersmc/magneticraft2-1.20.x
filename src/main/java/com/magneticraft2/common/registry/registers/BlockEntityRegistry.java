@@ -1,7 +1,9 @@
 package com.magneticraft2.common.registry.registers;
 
+import com.magneticraft2.common.blockentity.general.stonepebbleBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.magneticraft2;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -28,5 +30,6 @@ public class BlockEntityRegistry {
     }
     //Block Entities after this line
     public static final RegistryObject<BlockEntityType<PitKilnBlockEntity>> PitKilnblockEntity = BLOCK_ENTITIES.register("pitkilnblockentity", () -> BlockEntityType.Builder.of(PitKilnBlockEntity::new, BlockRegistry.PitKilnblock.get()).build(null));
+    public static final RegistryObject<BlockEntityType<stonepebbleBlockEntity>> stonepebbleBlockEntity = BLOCK_ENTITIES.register("stonepebbleblockentity", () -> BlockEntityType.Builder.of(stonepebbleBlockEntity::new, BlockRegistry.stonepebble.get()).build(null));
 
 }

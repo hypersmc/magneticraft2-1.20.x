@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:osmiridium_ore",
-    "up": "magneticraft2:osmiridium_ore",
-    "north": "magneticraft2:osmiridium_ore",
-    "south": "magneticraft2:osmiridium_ore",
-    "east": "magneticraft2:osmiridium_ore",
-    "west": "magneticraft2:osmiridium_ore",
-    "particle": "magneticraft2:osmiridium_ore"
+    "down": "magneticraft2:block/ores/osmiridium_ore",
+    "up": "magneticraft2:block/ores/osmiridium_ore",
+    "north": "magneticraft2:block/ores/osmiridium_ore",
+    "south": "magneticraft2:block/ores/osmiridium_ore",
+    "east": "magneticraft2:block/ores/osmiridium_ore",
+    "west": "magneticraft2:block/ores/osmiridium_ore",
+    "particle": "magneticraft2:block/ores/osmiridium_ore"
   }
 }

@@ -1,0 +1,5 @@
+{
+  "type": "magneticraft2:magnetite_ore",
+  "biomes": "#is_overworld",
+  "feature": "magneticraft2:magnetite_ore"
+}

@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:chromite_ore",
-    "up": "magneticraft2:chromite_ore",
-    "north": "magneticraft2:chromite_ore",
-    "south": "magneticraft2:chromite_ore",
-    "east": "magneticraft2:chromite_ore",
-    "west": "magneticraft2:chromite_ore",
-    "particle": "magneticraft2:chromite_ore"
+    "down": "magneticraft2:block/ores/chromite_ore",
+    "up": "magneticraft2:block/ores/chromite_ore",
+    "north": "magneticraft2:block/ores/chromite_ore",
+    "south": "magneticraft2:block/ores/chromite_ore",
+    "east": "magneticraft2:block/ores/chromite_ore",
+    "west": "magneticraft2:block/ores/chromite_ore",
+    "particle": "magneticraft2:block/ores/chromite_ore"
   }
 }

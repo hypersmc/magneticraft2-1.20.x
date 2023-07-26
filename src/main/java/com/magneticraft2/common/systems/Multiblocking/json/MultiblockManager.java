@@ -28,64 +28,63 @@ public class MultiblockManager {
     public static void loadMultiblocks(String modid, ResourceManager resourceManager) {
         LOGGER.info("Started to register multiblocks for mod " + modid);
 
-//        for (ResourceLocation resourceLocation : resourceManager.listResources("multiblocks", file -> file.endsWith(".json"))) {
-//            final String folderName = "multiblocks";
-//            final String namespace = resourceLocation.getNamespace();
-//            final String filePath = resourceLocation.getPath();
-//            final String dataPath = filePath.substring(folderName.length() + 1, filePath.length() - ".json".length());
-//            final ResourceLocation jsonIdentifier = new ResourceLocation(namespace, dataPath);
-//
-//            try (InputStream inputStream = resourceManager.getResource(resourceLocation).getInputStream()) {
-//                LOGGER.info("Trying to build: " + jsonIdentifier);
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//                // Parse JSON into JsonElement
-//                JsonElement jsonElement = JsonParser.parseReader(reader);
-//
-//                // Check if the parsed JSON is an object
-//                if (jsonElement.isJsonObject()) {
-//                    try {
-//                        // Create custom Gson instance with the custom Codec
-//                        Gson gson = MultiblockDataCodec.createGson();
-//
-//                        // Decode the JsonElement into MultiblockData using the custom Codec
-//                        MultiblockData multiblockData = gson.fromJson(jsonElement, MultiblockData.class);
-//                        if (multiblockData.getBlocks() == null)
-//                            LOGGER.info("blocks empty");
-//                        // Register the blocks used in the multiblock
-//                        Map<String, Block> blocks = new HashMap<>();
-//                        for (Map.Entry<String, Block> entry : multiblockData.getBlocks().entrySet()) {
-//                            LOGGER.info("key: " + entry.getKey() + " and value: " + entry.getValue());
-//                            blocks.put(entry.getKey(), entry.getValue());
-//                        }
-//
-//                        LOGGER.info("Creating Multiblock Object for: " + jsonIdentifier);
-//
-//                        // Create the multiblock object
-//                        try {
-//                            Multiblock multiblock = new Multiblock(
-//                                    multiblockData.getName(),
-//                                    multiblockData.getStructure(),
-//                                    blocks,
-//                                    multiblockData.getSettings()
-//                            );
-//                            // Register the multiblock
-//                            MultiblockRegistry.registerMultiblock(modid, multiblock);
-//                            LOGGER.info("Multiblocks found: " + MultiblockRegistry.getRegisteredMultiblockNames());
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//
-//                    } catch (JsonSyntaxException e) {
-//                        LOGGER.info("Could not load: " + jsonIdentifier);
-//                        e.printStackTrace();
-//                    }
-//                } else {
-//                    LOGGER.info("Invalid JSON structure. Expected an object.");
-//                }
-//            } catch (IOException e) {
-//                throw new RuntimeException("Failed to read multiblock data from " + jsonIdentifier, e);
-//            }
-//        }
+        for (ResourceLocation resourceLocation : resourceManager.listResources("multiblocks", file -> file.toString().endsWith(".json")).keySet()) {
+            final String folderName = "multiblocks";
+            final String namespace = resourceLocation.getNamespace();
+            final String filePath = resourceLocation.getPath();
+            final String dataPath = filePath.substring(folderName.length() + 1, filePath.length() - ".json".length());
+            final ResourceLocation jsonIdentifier = new ResourceLocation(namespace, dataPath);
+
+            try (InputStream inputStream = resourceManager.getResource(resourceLocation).get().open()) {
+                LOGGER.info("Trying to build: " + jsonIdentifier);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                // Parse JSON into JsonElement
+                JsonElement jsonElement = JsonParser.parseReader(reader);
+
+                // Check if the parsed JSON is an object
+                if (jsonElement.isJsonObject()) {
+                    try {
+                        // Create custom Gson instance with the custom Codec
+                        Gson gson = MultiblockDataCodec.createGson();
+
+                        // Decode the JsonElement into MultiblockData using the custom Codec
+                        MultiblockData multiblockData = gson.fromJson(jsonElement, MultiblockData.class);
+                        if (multiblockData.getBlocks() == null)
+                            LOGGER.info("blocks empty");
+                        // Register the blocks used in the multiblock
+                        Map<String, Block> blocks = new HashMap<>();
+                        for (Map.Entry<String, Block> entry : multiblockData.getBlocks().entrySet()) {
+                            LOGGER.info("key: " + entry.getKey() + " and value: " + entry.getValue());
+                            blocks.put(entry.getKey(), entry.getValue());
+                        }
+
+                        LOGGER.info("Creating Multiblock Object for: " + jsonIdentifier);
+
+                        // Create the multiblock object
+                        try {
+                            Multiblock multiblock = new Multiblock(
+                                    multiblockData.getName(),
+                                    multiblockData.getStructure(),
+                                    blocks,
+                                    multiblockData.getSettings()
+                            );
+                            // Register the multiblock
+                            MultiblockRegistry.registerMultiblock(modid, multiblock);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    } catch (JsonSyntaxException e) {
+                        LOGGER.info("Could not load: " + jsonIdentifier);
+                        e.printStackTrace();
+                    }
+                } else {
+                    LOGGER.info("Invalid JSON structure. Expected an object.");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read multiblock data from " + jsonIdentifier, e);
+            }
+        }
     }
 }

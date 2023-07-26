@@ -25,7 +25,7 @@
     },
     "blocks": {
       "P": "minecraft:stone",
-      "I": "minecraft:glowstone"
+      "I": "dwasdw:asdwa"
     },
     "settings": {
       "replacewhenformed": "mymod:testmodel",

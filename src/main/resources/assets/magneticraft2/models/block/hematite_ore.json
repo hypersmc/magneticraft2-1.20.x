@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:hematite_ore",
-    "up": "magneticraft2:hematite_ore",
-    "north": "magneticraft2:hematite_ore",
-    "south": "magneticraft2:hematite_ore",
-    "east": "magneticraft2:hematite_ore",
-    "west": "magneticraft2:hematite_ore",
-    "particle": "magneticraft2:hematite_ore"
+    "down": "magneticraft2:block/ores/hematite_ore",
+    "up": "magneticraft2:block/ores/hematite_ore",
+    "north": "magneticraft2:block/ores/hematite_ore",
+    "south": "magneticraft2:block/ores/hematite_ore",
+    "east": "magneticraft2:block/ores/hematite_ore",
+    "west": "magneticraft2:block/ores/hematite_ore",
+    "particle": "magneticraft2:block/ores/hematite_ore"
   }
 }

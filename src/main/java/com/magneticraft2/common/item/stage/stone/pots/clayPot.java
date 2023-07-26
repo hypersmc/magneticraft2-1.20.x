@@ -1,4 +1,4 @@
-package com.magneticraft2.common.item.stage.stone;
+package com.magneticraft2.common.item.stage.stone.pots;
 
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;

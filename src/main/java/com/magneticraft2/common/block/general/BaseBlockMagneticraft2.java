@@ -1,5 +1,6 @@
 package com.magneticraft2.common.block.general;
 
+import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
@@ -40,18 +41,17 @@ public abstract class BaseBlockMagneticraft2 extends BaseEntityBlock implements 
     @Override
     public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level world, BlockState blockState, IProbeHitData data) {
         BlockEntity te = world.getBlockEntity(data.getPos());
-        //TODO Fix TileEntityMagneticraft2 and rename it to BaseBlockEntityMagneticraft2
-//        if (te instanceof TileEntityMagneticraft2){
-//            te.getCapability(CapabilityHeat.HEAT).ifPresent(h -> {
-//                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getHeatStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" HEAT").borderColor(0xFF555555));
-//            });
-//            te.getCapability(CapabilityWatt.WATT).ifPresent(h -> {
-//                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getWattStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" WATT").borderColor(0xFF555555));
-//            });
-//            te.getCapability(CapabilityPressure.PRESSURE).ifPresent(h -> {
-//                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getPressureStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" PSI").borderColor(0xFF555555));
-//            });
-//        }
+        if (te instanceof BaseBlockEntityMagneticraft2){
+            te.getCapability(CapabilityHeat.HEAT).ifPresent(h -> {
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getHeatStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" HEAT").borderColor(0xFF555555));
+            });
+            te.getCapability(CapabilityWatt.WATT).ifPresent(h -> {
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getWattStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" WATT").borderColor(0xFF555555));
+            });
+            te.getCapability(CapabilityPressure.PRESSURE).ifPresent(h -> {
+                probeInfo.horizontal(probeInfo.defaultLayoutStyle()).progress(h.getPressureStored() + 0 % 100, 100, probeInfo.defaultProgressStyle().suffix(" PSI").borderColor(0xFF555555));
+            });
+        }
     }
 
     @Override

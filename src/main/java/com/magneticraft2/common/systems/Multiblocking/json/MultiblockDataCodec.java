@@ -68,12 +68,11 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
     private Block validateAndGetBlock(String blockIdentifier) {
         ResourceLocation blockId = new ResourceLocation(blockIdentifier);
         Block block = ForgeRegistries.BLOCKS.getValue(blockId);
-        if (block != null) {
+        if (block != null && blockId != null) {
             return block;
+        }else {
+            throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
         }
-
-        // If the block identifier is not found, you can throw an exception or handle it according to your requirements
-        throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
     }
 
     private static class MultiblockInputAdapter implements JsonSerializer<MultiblockInput>, JsonDeserializer<MultiblockInput> {
@@ -221,10 +220,8 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                     for (Map.Entry<String, JsonElement> entry : blocksObject.entrySet()) {
                         String key = entry.getKey();
                         String blockIdentifier = entry.getValue().getAsString();
-
                         // Perform validation to ensure blockIdentifier is a valid block
                         Block value = validateAndGetBlock(blockIdentifier);
-                        LOGGER.info(key + " " + value + " This may not work");
                         blocks.put(key, value);
                     }
                 } catch (JsonParseException e) {
@@ -241,12 +238,12 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
         private Block validateAndGetBlock(String blockIdentifier) {
             ResourceLocation blockId = new ResourceLocation(blockIdentifier);
             Block block = ForgeRegistries.BLOCKS.getValue(blockId);
+
             if (block != null) {
                 return block;
             }
-
-            // If the block identifier is not found, you can throw an exception or handle it according to your requirements
             throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
+
         }
 
 

@@ -134,16 +134,17 @@ public class PitKilnBlockEntity extends BlockEntity {
             if (self.isBurning) {
                 // Decrease the burn time and increase the total time
                 if (self.burnTime > 0) {
-//                    LOGGER.info(self.burnTime);
+                    LOGGER.info(self.burnTime);
                     self.burnTime--;
                 }
                 self.totalTime++;
-//                LOGGER.info(self.totalTime);
+                LOGGER.info(self.totalTime);
 
                 // Update the fire and smoke based on the burn time
-                if (self.burnTime == 0 && self.totalTime <= Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get() + 2) {
+                if (self.burnTime >= 0 && self.totalTime <= Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get() + 2) {
                     BlockPos upPos = pos.above();
                     BlockState upState = level.getBlockState(upPos);
+
                     if (upState.getBlock() == Blocks.FIRE) {
                         level.setBlockAndUpdate(upPos, Blocks.FIRE.defaultBlockState());
                     }
@@ -159,7 +160,7 @@ public class PitKilnBlockEntity extends BlockEntity {
                 }
 
                 // Check if the firing process is complete
-                if (self.totalTime >= 202) {
+                if (self.totalTime >= Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get() + 2) {
 //                    LOGGER.info("finished2");
 
                     BlockPos upPos = pos.above();

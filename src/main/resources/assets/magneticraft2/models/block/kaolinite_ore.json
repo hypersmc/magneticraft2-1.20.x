@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:kaolinite_ore",
-    "up": "magneticraft2:kaolinite_ore",
-    "north": "magneticraft2:kaolinite_ore",
-    "south": "magneticraft2:kaolinite_ore",
-    "east": "magneticraft2:kaolinite_ore",
-    "west": "magneticraft2:kaolinite_ore",
-    "particle": "magneticraft2:kaolinite_ore"
+    "down": "magneticraft2:block/ores/kaolinite_ore",
+    "up": "magneticraft2:block/ores/kaolinite_ore",
+    "north": "magneticraft2:block/ores/kaolinite_ore",
+    "south": "magneticraft2:block/ores/kaolinite_ore",
+    "east": "magneticraft2:block/ores/kaolinite_ore",
+    "west": "magneticraft2:block/ores/kaolinite_ore",
+    "particle": "magneticraft2:block/ores/kaolinite_ore"
   }
 }

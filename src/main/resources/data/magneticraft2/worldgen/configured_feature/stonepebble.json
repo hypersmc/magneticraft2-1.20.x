@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:random_patch",
+  "config": {
+    "tries": 5,
+    "xz_spread": 12,
+    "y_spread": 0,
+    "feature": {
+      "feature": {
+        "type": "minecraft:simple_block",
+        "config": {
+          "to_place": {
+            "type": "minecraft:simple_state_provider",
+            "state": {
+              "Name": "magneticraft2:stonepebble"
+            }
+          }
+        }
+      },
+      "placement": [
+        {
+          "type": "minecraft:block_predicate_filter",
+          "predicate": {
+            "type": "minecraft:would_survive",
+            "offset": [ 0, 0, 0 ],
+            "state": {
+              "Name": "magneticraft2:stonepebble"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:kimberlite_ore",
-    "up": "magneticraft2:kimberlite_ore",
-    "north": "magneticraft2:kimberlite_ore",
-    "south": "magneticraft2:kimberlite_ore",
-    "east": "magneticraft2:kimberlite_ore",
-    "west": "magneticraft2:kimberlite_ore",
-    "particle": "magneticraft2:kimberlite_ore"
+    "down": "magneticraft2:block/ores/kimberlite_ore",
+    "up": "magneticraft2:block/ores/kimberlite_ore",
+    "north": "magneticraft2:block/ores/kimberlite_ore",
+    "south": "magneticraft2:block/ores/kimberlite_ore",
+    "east": "magneticraft2:block/ores/kimberlite_ore",
+    "west": "magneticraft2:block/ores/kimberlite_ore",
+    "particle": "magneticraft2:block/ores/kimberlite_ore"
   }
 }

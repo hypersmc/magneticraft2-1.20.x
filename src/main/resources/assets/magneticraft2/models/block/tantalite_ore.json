@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:tantalite_ore",
-    "up": "magneticraft2:tantalite_ore",
-    "north": "magneticraft2:tantalite_ore",
-    "south": "magneticraft2:tantalite_ore",
-    "east": "magneticraft2:tantalite_ore",
-    "west": "magneticraft2:tantalite_ore",
-    "particle": "magneticraft2:tantalite_ore"
+    "down": "magneticraft2:block/ores/tantalite_ore",
+    "up": "magneticraft2:block/ores/tantalite_ore",
+    "north": "magneticraft2:block/ores/tantalite_ore",
+    "south": "magneticraft2:block/ores/tantalite_ore",
+    "east": "magneticraft2:block/ores/tantalite_ore",
+    "west": "magneticraft2:block/ores/tantalite_ore",
+    "particle": "magneticraft2:block/ores/tantalite_ore"
   }
 }

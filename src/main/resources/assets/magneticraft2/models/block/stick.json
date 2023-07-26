@@ -1,8 +1,8 @@
 {
 	"credit": "Made by Koynax",
 	"textures": {
-		"0": "magneticraft2:items/stick_block",
-		"particle": "magneticraft2:items/stick_block"
+		"0": "magneticraft2:item/stick_block",
+		"particle": "magneticraft2:item/stick_block"
 	},
 	"elements": [
 		{

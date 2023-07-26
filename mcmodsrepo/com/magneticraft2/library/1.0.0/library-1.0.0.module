@@ -1,0 +1,93 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.magneticraft2",
+    "module": "library",
+    "version": "1.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.1.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "library-1.0.0.jar",
+          "url": "library-1.0.0.jar",
+          "size": 627337,
+          "sha512": "675dc888b65e8ebe0e7439815d3a1100ebed658e9e70de5bd06e5c36c97d84d16fe3c47c34e86c3fc0be5fed366a7fc667a5b31e9822d7d6c36ff461cab15bef",
+          "sha256": "f71146ce818c01ecc0313a9e33e40263d392248bf937909832aa5e54d4dc7bf6",
+          "sha1": "2aaf6a339766a23d8e905bf8d66eeb479ed2c9ce",
+          "md5": "ec1c298c6a0207fdf26c2836d1ff563e"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "software.bernie.geckolib",
+          "module": "geckolib-forge-1.20",
+          "version": {
+            "strictly": "4.2_mapped_official_1.20.1",
+            "requires": "4.2_mapped_official_1.20.1"
+          }
+        },
+        {
+          "group": "curse.maven",
+          "module": "the-one-probe-245211",
+          "version": {
+            "strictly": "4613250_mapped_official_1.20.1",
+            "requires": "4613250_mapped_official_1.20.1"
+          }
+        },
+        {
+          "group": "curse.maven",
+          "module": "jei-238222",
+          "version": {
+            "strictly": "4609866_mapped_official_1.20.1",
+            "requires": "4609866_mapped_official_1.20.1"
+          }
+        },
+        {
+          "group": "net.minecraftforge",
+          "module": "forge",
+          "version": {
+            "requires": "1.20.1-47.0.35_mapped_official_1.20.1_at_735619d6b4bfa4448caa4899f133fe12c628e01c"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "library-1.0.0.jar",
+          "url": "library-1.0.0.jar",
+          "size": 627337,
+          "sha512": "675dc888b65e8ebe0e7439815d3a1100ebed658e9e70de5bd06e5c36c97d84d16fe3c47c34e86c3fc0be5fed366a7fc667a5b31e9822d7d6c36ff461cab15bef",
+          "sha256": "f71146ce818c01ecc0313a9e33e40263d392248bf937909832aa5e54d4dc7bf6",
+          "sha1": "2aaf6a339766a23d8e905bf8d66eeb479ed2c9ce",
+          "md5": "ec1c298c6a0207fdf26c2836d1ff563e"
+        }
+      ]
+    }
+  ]
+}

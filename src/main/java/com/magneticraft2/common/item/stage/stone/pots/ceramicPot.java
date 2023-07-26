@@ -1,4 +1,4 @@
-package com.magneticraft2.common.item.stage.stone;
+package com.magneticraft2.common.item.stage.stone.pots;
 
 import net.minecraft.world.item.Item;
 

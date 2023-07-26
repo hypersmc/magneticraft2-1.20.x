@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:deepslate_cinnabar_ore",
-    "up": "magneticraft2:deepslate_cinnabar_ore",
-    "north": "magneticraft2:deepslate_cinnabar_ore",
-    "south": "magneticraft2:deepslate_cinnabar_ore",
-    "east": "magneticraft2:deepslate_cinnabar_ore",
-    "west": "magneticraft2:deepslate_cinnabar_ore",
-    "particle": "magneticraft2:deepslate_cinnabar_ore"
+    "down": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "up": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "north": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "south": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "east": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "west": "magneticraft2:block/ores/deepslate_cinnabar_ore",
+    "particle": "magneticraft2:block/ores/deepslate_cinnabar_ore"
   }
 }

@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:silicium_ore",
-    "up": "magneticraft2:silicium_ore",
-    "north": "magneticraft2:silicium_ore",
-    "south": "magneticraft2:silicium_ore",
-    "east": "magneticraft2:silicium_ore",
-    "west": "magneticraft2:silicium_ore",
-    "particle": "magneticraft2:silicium_ore"
+    "down": "magneticraft2:block/ores/silicium_ore",
+    "up": "magneticraft2:block/ores/silicium_ore",
+    "north": "magneticraft2:block/ores/silicium_ore",
+    "south": "magneticraft2:block/ores/silicium_ore",
+    "east": "magneticraft2:block/ores/silicium_ore",
+    "west": "magneticraft2:block/ores/silicium_ore",
+    "particle": "magneticraft2:block/ores/silicium_ore"
   }
 }
