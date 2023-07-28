@@ -17,6 +17,5 @@ public class mgc2Network {
             version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION)
     );
     public static void init(){
-
     }
 }

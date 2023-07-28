@@ -36,14 +36,9 @@ public class magneticraft2 {
     public static final Logger LOGGER = LogManager.getLogger("Magneticraft2");
     public static final Logger UELOGGER = LogManager.getLogger("UnknownEntity");
     public static final Logger MCLOGGER = LogManager.getLogger("MagnetiCore");
-    public static final boolean devmode = true;
     public static final String MOD_ID = "magneticraft2";
 
     public magneticraft2(){
-        if (devmode){
-            LOGGER.warn("WARNING DEV MODE ACTIVATED");
-            LOGGER.info("Please report as it could break stuff!");
-        }
         //this is just for fun and giggles :)
         LOGGER.info("Do we have any core mod?");
         UELOGGER.error("Ȗᾗᾄвłἔ ҭὄ ἷḋἔᾗҭἷғẏ ṩἔłғ");

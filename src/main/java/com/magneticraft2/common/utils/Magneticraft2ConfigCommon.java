@@ -16,9 +16,9 @@ public class Magneticraft2ConfigCommon {
 
 
     public static class General {
-        public  final ForgeConfigSpec.ConfigValue<Integer> MaxWireLenght;
-        public  final ForgeConfigSpec.ConfigValue<Integer> PitKilnTime;
-        //        public  final ForgeConfigSpec.ConfigValue<Double> EnderDamage;
+        public final ForgeConfigSpec.ConfigValue<Integer> MaxWireLenght;
+        public final ForgeConfigSpec.ConfigValue<Integer> PitKilnTime;
+        public final ForgeConfigSpec.ConfigValue<Boolean> DevMode;
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -28,11 +28,11 @@ public class Magneticraft2ConfigCommon {
             PitKilnTime = builder
                     .comment("Burntime for the pitklin (In ticks). Default value is 2400.")
                     .translation("magneticraft2.pitklinburntime.config")
-                    .defineInRange("Ender Cooldown", 2400, 0, Integer.MAX_VALUE);
-//            EnderDamage = builder
-//                    .comment("The damage the player takes when landing. Default value is 0.5.")
-//                    .translation("cuprum.enderdamage.config")
-//                    .defineInRange("Ender Damage", 0.5, 0.0, 20.0);
+                    .defineInRange("pitklin burntime", 2400, 0, Integer.MAX_VALUE);
+            DevMode = builder
+                    .comment("Dev mode for the mod. This enables functions that are not intended for the normal end user like debug output from most things in the mod.")
+                    .translation("magneticraft2.devmode.config")
+                    .define("Dev mode", false);
             builder.pop();
         }
 

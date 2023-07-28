@@ -1,4 +1,4 @@
-package com.magneticraft2.common.world.modiifiers;
+package com.magneticraft2.common.world.modifiers;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -10,11 +10,11 @@ import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo;
 
 /**
- * @author JumpWatch on 26-07-2023
+ * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
  * v1.0.0
  */
-public record magnetite_oreModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
+public record platinium_oreModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
         if (phase == Phase.ADD && this.biome.contains(biome)){
@@ -24,6 +24,6 @@ public record magnetite_oreModifier(HolderSet<Biome> biome, Holder<PlacedFeature
 
     @Override
     public Codec<? extends BiomeModifier> codec() {
-        return com.magneticraft2.common.registry.registers.BiomeModifier.magnetite_ore.get();
+        return com.magneticraft2.common.registry.registers.BiomeModifier.platinium_ore.get();
     }
 }

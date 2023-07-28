@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
@@ -26,8 +27,9 @@ public class MultiblockManager {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Multiblock handler");
 
     public static void loadMultiblocks(String modid, ResourceManager resourceManager) {
-        LOGGER.info("Started to register multiblocks for mod " + modid);
-
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Started to register multiblocks for mod " + modid);
+        }
         for (ResourceLocation resourceLocation : resourceManager.listResources("multiblocks", file -> file.toString().endsWith(".json")).keySet()) {
             final String folderName = "multiblocks";
             final String namespace = resourceLocation.getNamespace();
@@ -36,7 +38,9 @@ public class MultiblockManager {
             final ResourceLocation jsonIdentifier = new ResourceLocation(namespace, dataPath);
 
             try (InputStream inputStream = resourceManager.getResource(resourceLocation).get().open()) {
-                LOGGER.info("Trying to build: " + jsonIdentifier);
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Trying to build: " + jsonIdentifier);
+                }
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
                 // Parse JSON into JsonElement
@@ -55,12 +59,14 @@ public class MultiblockManager {
                         // Register the blocks used in the multiblock
                         Map<String, Block> blocks = new HashMap<>();
                         for (Map.Entry<String, Block> entry : multiblockData.getBlocks().entrySet()) {
-                            LOGGER.info("key: " + entry.getKey() + " and value: " + entry.getValue());
+                            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                                LOGGER.info("key: " + entry.getKey() + " and value: " + entry.getValue());
+                            }
                             blocks.put(entry.getKey(), entry.getValue());
                         }
-
-                        LOGGER.info("Creating Multiblock Object for: " + jsonIdentifier);
-
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            LOGGER.info("Creating Multiblock Object for: " + jsonIdentifier);
+                        }
                         // Create the multiblock object
                         try {
                             Multiblock multiblock = new Multiblock(

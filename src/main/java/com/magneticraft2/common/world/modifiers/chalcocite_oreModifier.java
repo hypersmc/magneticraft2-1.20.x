@@ -1,4 +1,4 @@
-package com.magneticraft2.common.world.modiifiers;
+package com.magneticraft2.common.world.modifiers;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
@@ -10,20 +10,20 @@ import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.common.world.ModifiableBiomeInfo;
 
 /**
- * @author JumpWatch on 26-07-2023
+ * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
  * v1.0.0
  */
-public record stonepebbleModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
+public record chalcocite_oreModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
     @Override
     public void modify(Holder<Biome> biome, Phase phase, ModifiableBiomeInfo.BiomeInfo.Builder builder) {
-        if (phase == Phase.ADD && this.biome.contains(biome) ){
-            builder.getGenerationSettings().addFeature(GenerationStep.Decoration.RAW_GENERATION, this.feature);
+        if (phase == Phase.ADD && this.biome.contains(biome)){
+            builder.getGenerationSettings().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, this.feature);
         }
     }
 
     @Override
     public Codec<? extends BiomeModifier> codec() {
-        return com.magneticraft2.common.registry.registers.BiomeModifier.stonepebblemodifier.get();
+        return com.magneticraft2.common.registry.registers.BiomeModifier.chalcocite_ore.get();
     }
 }

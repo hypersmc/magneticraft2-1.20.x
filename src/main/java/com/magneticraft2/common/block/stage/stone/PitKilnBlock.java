@@ -184,20 +184,4 @@ public class PitKilnBlock  extends BaseEntityBlock {
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
     }
-    //    @Override
-//    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-//        if (state.getBlock() != newState.getBlock()) {
-//            BlockEntity blockEntity = world.getBlockEntity(pos);
-//            if (blockEntity instanceof Inventory) {
-//                // Drop the kiln's inventory items as items in the world
-//                ItemScatterer.spawn(world, pos, (Inventory)blockEntity);
-//            }
-//            super.onStateReplaced(state, world, pos, newState, moved);
-//        }
-//    }
-//
-//    @Override
-//    public void onPlace(BlockState pState, Level pLevel, BlockPos pPos, BlockState pOldState, boolean pIsMoving) {
-//        super.onPlace(pState, pLevel, pPos, pOldState, pIsMoving);
-//    }
 }

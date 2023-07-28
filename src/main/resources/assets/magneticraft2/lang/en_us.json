@@ -10,6 +10,8 @@
   "tooltip.mgc2.multiblock.tooltip.shift2": "§7Size: %s",
   "tooltip.mgc2.multiblock.tooltip.shift3": "§7Place block to build!",
   "tooltip.magneticraft2.copper_ingot_low": "§7Grade: §eLow",
+  "tooltip.magneticraft2.copper_ingot_medium": "§7Grade: §eMedium",
+  "tooltip.magneticraft2.copper_ingot_high": "§7Grade: §eHigh",
 
   "message.magneticraft2.notdirect": "There is blocks: %s between %s, %s, %s and %s, %s, %s",
   "message.magneticraft2.multiblock.Debug": "Multiblock debug info: isformed %s,  ",

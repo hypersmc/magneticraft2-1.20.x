@@ -2,6 +2,7 @@ package com.magneticraft2.common.item.stage.stone.pots;
 
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -43,15 +44,19 @@ public class clayPot extends Item {
 
             // get pos of the looked block
             BlockPos pos =  new BlockPos((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
-            LOGGER.info(pos);
-            LOGGER.info(isAdjacentSolid(world, pos));
-            LOGGER.info(world.getBlockState(pos.below()).getBlock());
-            LOGGER.info(world.getBlockState(pos.below()).getBlock() != Blocks.AIR);
-            LOGGER.info(world.isEmptyBlock(pos));
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info(pos);
+                LOGGER.info(isAdjacentSolid(world, pos));
+                LOGGER.info(world.getBlockState(pos.below()).getBlock());
+                LOGGER.info(world.getBlockState(pos.below()).getBlock() != Blocks.AIR);
+                LOGGER.info(world.isEmptyBlock(pos));
+            }
             //check if the block is a solid and the block above is air
             if (world.isEmptyBlock(pos) && world.getBlockState(pos.below()).getBlock() != Blocks.AIR && isAdjacentSolid(world, pos)){
                 //place the block
-                LOGGER.info("should be able to set.");
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("should be able to set.");
+                }
                 world.setBlockAndUpdate(pos, BlockRegistry.PitKilnblock.get().defaultBlockState());
                 // Get the block entity and item handler for the pit kiln
                 BlockEntity blockEntity = world.getBlockEntity(pos);

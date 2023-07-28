@@ -312,7 +312,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             try {
                 tag.put("inv", itemHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         if (energycape()) {
@@ -320,7 +320,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             try {
                 tag.put("energy", energyHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         if (heatcape()) {
@@ -328,7 +328,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             try {
                 tag.put("heat", heatHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         if (wattcape()) {
@@ -336,7 +336,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             try {
                 tag.put("watt", wattHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         if (pressurecape()) {
@@ -344,7 +344,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             try {
                 tag.put("pressure", pressureHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         if (fluidcape()) {
@@ -354,7 +354,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
                 tag.put("fluidamount", fluidHandler.serializeNBT());
                 tag.put("fluidtype", fluidHandler.serializeNBT());
             }catch (Exception e) {
-                if (magneticraft2.devmode)e.printStackTrace();
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
         tag.putBoolean("IsController", isController);

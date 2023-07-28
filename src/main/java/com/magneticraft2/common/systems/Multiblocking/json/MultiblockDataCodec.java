@@ -68,10 +68,15 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
     private Block validateAndGetBlock(String blockIdentifier) {
         ResourceLocation blockId = new ResourceLocation(blockIdentifier);
         Block block = ForgeRegistries.BLOCKS.getValue(blockId);
+        String namespace = blockId.toString();
+        String bl = block.toString();
+        if (!blockIdentifier.equals(bl.replace("Block{", "").replace("}", ""))){
+            throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
+        }
         if (block != null && blockId != null) {
             return block;
-        }else {
-            throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
+        }else{
+            throw new IllegalArgumentException("An unknown error has occurred!");
         }
     }
 
@@ -238,12 +243,16 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
         private Block validateAndGetBlock(String blockIdentifier) {
             ResourceLocation blockId = new ResourceLocation(blockIdentifier);
             Block block = ForgeRegistries.BLOCKS.getValue(blockId);
-
-            if (block != null) {
-                return block;
+            String namespace = blockId.toString();
+            String bl = block.toString();
+            if (!blockIdentifier.equals(bl.replace("Block{", "").replace("}", ""))){
+                throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
             }
-            throw new IllegalArgumentException("Block not found for identifier: " + blockIdentifier);
-
+            if (block != null && blockId != null) {
+                return block;
+            }else{
+                throw new IllegalArgumentException("An unknown error has occurred!");
+            }
         }
 
 

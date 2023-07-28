@@ -25,7 +25,7 @@
     },
     "blocks": {
       "P": "minecraft:stone",
-      "I": "dwasdw:asdwa"
+      "I": "magneticraft2:stick"
     },
     "settings": {
       "replacewhenformed": "mymod:testmodel",
