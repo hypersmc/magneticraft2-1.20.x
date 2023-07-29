@@ -18,10 +18,8 @@ import java.util.Random;
  * v1.0.0
  */
 public class stonepebbleBlockEntity extends BlockEntity {
-    private static stonepebbleBlockEntity self;
     public stonepebbleBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.stonepebbleBlockEntity.get(), pos, state);
-        self = this;
     }
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {
         if (!level.isClientSide()){

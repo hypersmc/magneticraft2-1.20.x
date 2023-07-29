@@ -2,6 +2,7 @@ package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
+import com.magneticraft2.common.block.general.projectortest;
 import com.magneticraft2.common.block.general.stick;
 import com.magneticraft2.common.block.general.stonepebble;
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
@@ -43,7 +44,7 @@ public class BlockRegistry {
     public static final RegistryObject<Block> rice_plant = registerBlockWithoutBlockItem("rice_plant", () -> new RicePlantBlock(BlockBehaviour.Properties.of().noOcclusion()));
     public static final RegistryObject<stick> stickblock = BLOCKS.register("stick", stick::new);
     public static final RegistryObject<stonepebble> stonepebble = BLOCKS.register("stonepebble", stonepebble::new);
-
+    public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
 
 
 

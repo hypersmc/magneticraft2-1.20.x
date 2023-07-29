@@ -1,0 +1,31 @@
+{
+  "name": "test",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [" ", " ", " "],
+        [" ", "P", " "],
+        [" ", " ", " "]
+      ],
+      "layer2": [
+        ["I", "I", "I"],
+        ["I", " ", "I"],
+        ["I", "I", "I"]
+      ],
+      "layer3": [
+        [" ", " ", " "],
+        [" ", "P", " "],
+        [" ", " ", " "]
+      ]
+    },
+    "blocks": {
+      "P": "minecraft:stone",
+      "I": "magneticraft2:stick"
+    }
+  }
+}
