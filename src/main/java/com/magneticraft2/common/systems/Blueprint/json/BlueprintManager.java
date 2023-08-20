@@ -23,7 +23,7 @@ import java.util.Map;
 public class BlueprintManager {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Blueprint handler");
 
-    public static void loadBlueprint(String modid, ResourceManager resourceManager){
+    public static void loadBlueprints(String modid, ResourceManager resourceManager){
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
             LOGGER.info("Started to register blueprints for mod " + modid);
         }

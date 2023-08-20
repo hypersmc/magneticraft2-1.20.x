@@ -40,6 +40,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     public static final Logger LOGGER = LogManager.getLogger("BaseBlockEntityMagneticraft2");
     public MenuProvider menuProvider;
     private boolean isController;
+    
 
     //Biomes
     /* Energy */

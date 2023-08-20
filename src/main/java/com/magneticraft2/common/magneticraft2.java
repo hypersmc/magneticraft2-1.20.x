@@ -67,7 +67,7 @@ public class magneticraft2 {
     public void preinit(final FMLCommonSetupEvent event){
         mgc2Network.init();
         MultiblockManager.loadMultiblocks(MOD_ID, Minecraft.getInstance().getResourceManager());
-        BlueprintManager.loadBlueprint(MOD_ID, Minecraft.getInstance().getResourceManager());
+        BlueprintManager.loadBlueprints(MOD_ID, Minecraft.getInstance().getResourceManager());
         if (ModList.get().isLoaded("theoneprobe")){
             TOPCompatibility.register();
             LOGGER.info("The one probe compatibility done!");

@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "test4",
   "structure": {
     "dimensions": [
       3,
@@ -8,9 +8,9 @@
     ],
     "layout": {
       "layer1": [
-        ["P", " ", " "],
+        [" ", " ", " "],
         [" ", "P", " "],
-        [" ", " ", "P"]
+        [" ", " ", " "]
       ],
       "layer2": [
         ["I", "I", "I"],
@@ -18,13 +18,13 @@
         ["I", "I", "I"]
       ],
       "layer3": [
-        [" ", " ", "P"],
+        [" ", " ", " "],
         [" ", "P", " "],
-        ["P", " ", " "]
+        [" ", " ", " "]
       ]
     },
     "blocks": {
-      "P": "minecraft:stone",
+      "P": "geckolib:fertilizer",
       "I": "magneticraft2:stick"
     }
   }

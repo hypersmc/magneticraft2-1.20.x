@@ -1,6 +1,7 @@
 package com.magneticraft2.client;
 
 import com.magneticraft2.client.render.blocks.PitKilnBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.ProjectorBlockEntityRenderer;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -29,6 +30,7 @@ public class Clientsetup {
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
         LOGGER.info("Renders are being registered!");
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
 
     }
     @SubscribeEvent

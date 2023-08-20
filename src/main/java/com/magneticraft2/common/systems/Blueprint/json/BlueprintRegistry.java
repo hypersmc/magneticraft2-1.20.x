@@ -27,7 +27,7 @@ public class BlueprintRegistry {
     public static Map<String, Blueprint> getRegisteredBlueprints() {
         return registeredBlueprints;
     }
-    public static int getRegisteredBlueprintByNumber(){
+    public static int getRegisteredBlueprintInNumber(){
         return registeredBlueprints.size();
     }
     public static List<String> getRegisteredBlueprintNames() {
@@ -38,7 +38,7 @@ public class BlueprintRegistry {
         }
         return blueprintNames;
     }
-    public static String getRegisteredBlueprintByName(int index) {
+    public static String getRegisteredBlueprintByNumber(int index) {
         List<String> blueprintNames = getRegisteredBlueprintNames();
 
         if (index >= 0 && index <= blueprintNames.size()) {

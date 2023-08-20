@@ -1,10 +1,16 @@
 package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.client.gui.container.projector.Projector_container;
+import com.magneticraft2.common.block.general.projectortest;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -21,12 +28,33 @@ import org.jetbrains.annotations.Nullable;
  * v1.0.0
  */
 public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
+    private String blueprint;
+    private boolean invalidblueprint = false;
     public projectortestBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.projectortestBlockEntity.get(), pos, state);
         menuProvider = this;
     }
+    public Direction getProjectionDirection() {
+        return this.getBlockState().getValue(projectortest.FACING);
+    }
 
-
+    @Override
+    public AABB getRenderBoundingBox() {
+    return new AABB(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),5.0,5.0,5.0);
+    }
+    public void setBlueprint(String val) {
+        LOGGER.info("blueprint is now: " + val);
+        blueprint = val;
+    }
+    public String getBlueprint(){
+        return blueprint;
+    }
+    public void setInvalidBlueprint(boolean val){
+        invalidblueprint = val;
+    }
+    public boolean getInvalidBlueprint(){
+        return invalidblueprint;
+    }
     @Override
     public Component getDisplayName() {
         return Component.translatable("screen.magneticraft2.projector");
@@ -36,6 +64,47 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     @Override
     public AbstractContainerMenu createMenu(int i, Inventory playerinv, Player player) {
         return new Projector_container(i,level,getBlockPos(),playerinv,player);
+    }
+
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket()
+    {
+        return ClientboundBlockEntityDataPacket.create( this );
+    }
+
+    @Override
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
+        handleUpdateTag( pkt.getTag() );
+    }
+
+    @Override
+    public CompoundTag getUpdateTag()
+    {
+        CompoundTag nbtTagCompound = new CompoundTag();
+        saveAdditional(nbtTagCompound);
+        return nbtTagCompound;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag parentNBTTagCompound)
+    {
+        load(parentNBTTagCompound);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        if (blueprint != null) {
+            tag.putString("Blueprint", blueprint);
+        }
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        if (tag.getString("Blueprint") != null){
+            blueprint = tag.getString("Blueprint");
+        }
     }
 
     @Override

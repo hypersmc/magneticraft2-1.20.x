@@ -41,6 +41,7 @@ import javax.annotation.Nonnull;
  * v1.0.0
  */
 public class PitKilnBlockEntity extends BlockEntity {
+
     private boolean isBurning = false;
     private int burnTime = 0;
     private static final Logger LOGGER = LogManager.getLogger("Pitkiln");
