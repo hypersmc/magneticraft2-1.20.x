@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/projector",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/projector",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/projector",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/projector",
+      "y": -90
+    }
+  }
+}
