@@ -43,7 +43,6 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     return new AABB(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),5.0,5.0,5.0);
     }
     public void setBlueprint(String val) {
-        LOGGER.info("blueprint is now: " + val);
         blueprint = val;
     }
     public String getBlueprint(){

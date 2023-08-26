@@ -53,11 +53,12 @@ public class ItemRegistry {
     public static final RegistryObject<FireStarter> item_fire_starter = ITEMS.register("firestarter", FireStarter::new);
     public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
-    public static final RegistryObject<Blueprintmarker> item_blueprintmaker = ITEMS.register("blueprint", Blueprintmarker::new);
+    public static final RegistryObject<Blueprintmarker> item_blueprintmarker = ITEMS.register("blueprint", Blueprintmarker::new);
 
     //Blocks to items
     public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
+    public static final RegistryObject<Item> item_blueprintmaker = fromBlock(blueprintmaker);
 
 
     //ores

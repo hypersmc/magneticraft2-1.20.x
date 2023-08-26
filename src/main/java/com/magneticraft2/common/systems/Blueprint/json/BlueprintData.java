@@ -11,9 +11,9 @@ import java.util.Map;
  */
 
 public class BlueprintData {
-    private final String name;
-    private final BlueprintStructure structure;
-    private final Map<String, Block> blocks;
+    public final String name;
+    public final BlueprintStructure structure;
+    public final Map<String, Block> blocks;
 
     public BlueprintData(String name, BlueprintStructure structure, Map<String, Block> blocks){
         this.name = name;

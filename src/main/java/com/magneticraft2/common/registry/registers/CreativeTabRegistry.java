@@ -47,6 +47,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_fire_starter.get());
                         entries.accept(ItemRegistry.item_stone_knife.get());
                         entries.accept(ItemRegistry.item_pebble.get());
+                        entries.accept(ItemRegistry.item_blueprintmarker.get());
                         entries.accept(ItemRegistry.item_blueprintmaker.get());
 //                        entries.accept(ItemRegistry.);
                     })

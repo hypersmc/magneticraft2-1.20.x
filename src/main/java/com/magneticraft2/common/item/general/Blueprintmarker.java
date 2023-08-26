@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author JumpWatch on 20-08-2023
@@ -41,9 +42,10 @@ public class Blueprintmarker extends Item {
             itemStack.setTag(tag);
             Player player = pContext.getPlayer();
             if (player.isShiftKeyDown()){
-                tag.putString("pos1", blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ());
+                tag.putLong("pos1", blockPos.asLong());
             }else {
-                tag.putString("pos2", blockPos.getX() + " " + blockPos.getY() + " " + blockPos.getZ());
+                tag.putLong("pos2", blockPos.asLong());
+
             }
 
         }
@@ -53,14 +55,13 @@ public class Blueprintmarker extends Item {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         if (pStack.getTag() != null) {
-            String pos1 = pStack.getTag().getString("pos1");
-            String pos2 = pStack.getTag().getString("pos2");
-            if (!pos1.isEmpty() && !pos2.isEmpty()) {
-                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos1andpos2", pStack.getTag().getString("pos1"), pStack.getTag().getString("pos2")));
-            } else if (!pos1.isEmpty()) {
-                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos1", pStack.getTag().getString("pos1")));
-            } else if (!pos2.isEmpty()) {
-                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos2", pStack.getTag().getString("pos2")));
+
+            if (pStack.getTag().contains("pos1") && pStack.getTag().contains("pos2")) {
+                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos1andpos2", BlockPos.of(pStack.getTag().getLong("pos1")).toString(), BlockPos.of(pStack.getTag().getLong("pos2"))));
+            } else if (pStack.getTag().contains("pos1")) {
+                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos1", BlockPos.of(pStack.getTag().getLong("pos1"))));
+            } else if (pStack.getTag().contains("pos2")) {
+                pTooltipComponents.add(Component.translatable("tooltip.magneticraft2.blueprint.pos2", BlockPos.of(pStack.getTag().getLong("pos2"))));
             }
         }
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);

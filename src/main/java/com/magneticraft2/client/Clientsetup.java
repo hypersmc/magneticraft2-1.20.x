@@ -1,5 +1,6 @@
 package com.magneticraft2.client;
 
+import com.magneticraft2.client.render.blocks.BlueprintMakerBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.PitKilnBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.ProjectorBlockEntityRenderer;
 import com.magneticraft2.common.magneticraft2;
@@ -31,7 +32,7 @@ public class Clientsetup {
         LOGGER.info("Renders are being registered!");
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
-
+        event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmakerBlockEntity.get(), BlueprintMakerBlockEntityRenderer::new);
     }
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {

@@ -16,6 +16,9 @@
   "tooltip.magneticraft2.blueprint.pos1": "Pos1: %s",
   "tooltip.magneticraft2.blueprint.pos2": "Pos2: %s",
 
+  "gui.blueprintname": "Name",
+  "gui.savebutton": "Save",
+
   "message.magneticraft2.notdirect": "There is blocks: %s between %s, %s, %s and %s, %s, %s",
   "message.magneticraft2.multiblock.Debug": "Multiblock debug info: isformed %s,  ",
   "message.magneticraft2.connecteddistance": "Connected distance: %s",

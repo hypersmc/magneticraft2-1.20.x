@@ -17,8 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.Nullable;
@@ -60,7 +58,7 @@ public class projectortest extends BaseBlockMagneticraft2{
     public InteractionResult use(BlockState p_60503_, Level p_60504_, BlockPos p_60505_, Player p_60506_, InteractionHand p_60507_, BlockHitResult p_60508_) {
         if (!p_60504_.isClientSide) {
             BlockEntity blockEntity = p_60504_.getBlockEntity(p_60505_);
-            if (blockEntity instanceof projectortestBlockEntity projector) {
+            if (blockEntity instanceof BaseBlockEntityMagneticraft2 projector) {
                 NetworkHooks.openScreen((ServerPlayer) p_60506_, (projector).menuProvider, blockEntity.getBlockPos());
             }
         }

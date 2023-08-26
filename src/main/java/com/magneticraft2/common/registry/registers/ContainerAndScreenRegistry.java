@@ -1,6 +1,8 @@
 package com.magneticraft2.common.registry.registers;
 
+import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_container;
 import com.magneticraft2.client.gui.container.projector.Projector_container;
+import com.magneticraft2.client.gui.screen.blueprintmaker.blueprintmaker_screen;
 import com.magneticraft2.client.gui.screen.projector.Projector_screen;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -39,9 +41,15 @@ public class ContainerAndScreenRegistry {
         Level world = inv.player.getCommandSenderWorld();
         return new Projector_container(windowId, world, pos, inv,inv.player);
     }))));
+    public static final RegistryObject<MenuType<blueprintmaker_container>> Blueprintmaker_container = CONTAINERS.register("blueprintmaker", () -> IForgeMenuType.create(((((windowId, inv, data) -> {
+        BlockPos pos = data.readBlockPos();
+        Level world = inv.player.getCommandSenderWorld();
+        return new blueprintmaker_container(windowId, world, pos, inv,inv.player);
+    })))));
 
 
     public static void Screen(final FMLClientSetupEvent event) {
         MenuScreens.register(Projector_container.get(), Projector_screen::new);
+        MenuScreens.register(Blueprintmaker_container.get(), blueprintmaker_screen::new);
     }
 }
