@@ -18,6 +18,8 @@
 
   "gui.blueprintname": "Name",
   "gui.savebutton": "Save",
+  "gui.outline": "Outline",
+  "gui.project": "Project",
 
   "message.magneticraft2.notdirect": "There is blocks: %s between %s, %s, %s and %s, %s, %s",
   "message.magneticraft2.multiblock.Debug": "Multiblock debug info: isformed %s,  ",

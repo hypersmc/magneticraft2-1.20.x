@@ -59,7 +59,6 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         blueprintNameField.setHint(Component.translatable("gui.blueprintname"));
         blueprintNameField.setCanLoseFocus(true);
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton"), this::onSaveButtonClick).bounds(centerX+55,centerY+30, 40, 20).build());
-
         this.addRenderableWidget(blueprintNameField);
         this.addWidget(saveButton);
     }
@@ -67,7 +66,6 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         if (blueprintNameField.getValue().isEmpty()){
             triedsavingwithnoname = true;
         }else {
-            LOGGER.info("te");
             blueprintmakerBlockEntity block = menu.getBlueprintmaker();
             block.setBlueprintname(blueprintNameField.getValue());
             block.saveBlueprint();
@@ -153,13 +151,13 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
 
         if (blocksToDisplay > maxVisibleBlocks) {
             // Calculate scrollbar position based on user interaction
-            int scrollbarHeight = 120; // Adjust height based on your layout
+            int scrollbarHeight = 92; // Adjust height based on your layout
             int maxScroll = blocksToDisplay - maxVisibleBlocks;
             scrollbarPosition = Math.max(0, Math.min(scrollbarPosition, maxScroll));
 
             // Render scrollbar (a basic example)
             int scrollbarX = x + 240; // Adjust X position based on your layout
-            int scrollbarY = y + 10; // Adjust Y position based on your layout
+            int scrollbarY = y + 6; // Adjust Y position based on your layout
 
             int scrollbarThumbY = scrollbarY + (scrollbarHeight * scrollbarPosition / maxScroll);
             guiGraphics.fill(scrollbarX, scrollbarY, scrollbarX + 10, scrollbarY + scrollbarHeight, 0xFFCCCCCC); // Scrollbar background
@@ -177,6 +175,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
             yOffset += 12;
         }
     }
+
 
     private void rendernoName(GuiGraphics guiGraphics, int x, int y){
         if (triedsavingwithnoname) {

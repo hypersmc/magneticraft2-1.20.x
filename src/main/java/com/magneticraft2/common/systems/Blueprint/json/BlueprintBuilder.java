@@ -4,10 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author JumpWatch on 25-08-2023
@@ -30,7 +27,7 @@ public class BlueprintBuilder {
         int[] dimensions = new int[]{width, height, depth};
 
         // Build the layout based on the blocks between the corners
-        Map<String, List<List<String>>> layout = new HashMap<>();
+        Map<String, List<List<String>>> layout = new LinkedHashMap<>(); // Use a LinkedHashMap to maintain insertion order
         Map<String, Block> blocks = new HashMap<>();
 
         for (int y = minY; y <= maxY; y++) {
@@ -49,10 +46,6 @@ public class BlueprintBuilder {
         }
 
         // Adjust the layout to match the example JSON layout
-        int halfWidth = width / 2;
-        int halfDepth = depth / 2;
-        adjustLayout(layout, halfWidth, halfDepth);
-
         return new Blueprint(
                 blueprintName,
                 new BlueprintStructure(dimensions, layout, blocks),
@@ -84,7 +77,5 @@ public class BlueprintBuilder {
         }
         return null;
     }
-    private static void adjustLayout(Map<String, List<List<String>>> layout, int halfWidth, int halfDepth) {
 
-    }
 }

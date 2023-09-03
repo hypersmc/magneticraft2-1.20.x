@@ -16,7 +16,7 @@ public class BlueprintRegistry {
         String blueprintName = blueprint.getName();
         String key = modid + ":" + blueprintName;
         if (registeredBlueprints.containsKey(key)){
-            throw new IllegalArgumentException("Blueprint already registered: " + key);
+            return;
         }
         registeredBlueprints.put(key, blueprint);
     }

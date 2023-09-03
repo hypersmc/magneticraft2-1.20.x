@@ -35,6 +35,8 @@ public class CreativeTabRegistry {
                     .icon(() -> new ItemStack(ItemRegistry.item_pitkiln.get()))
                     .displayItems((enabledFeatures, entries) -> {
                         entries.accept(ItemRegistry.item_pitkiln.get());
+                        entries.accept(ItemRegistry.item_projector.get());
+                        entries.accept(ItemRegistry.item_blueprintmaker.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->
@@ -48,7 +50,6 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_stone_knife.get());
                         entries.accept(ItemRegistry.item_pebble.get());
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
-                        entries.accept(ItemRegistry.item_blueprintmaker.get());
 //                        entries.accept(ItemRegistry.);
                     })
                     .build());

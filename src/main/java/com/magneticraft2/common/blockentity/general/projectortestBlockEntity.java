@@ -30,6 +30,8 @@ import org.jetbrains.annotations.Nullable;
 public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     private String blueprint;
     private boolean invalidblueprint = false;
+    private boolean renderingoutline = false;
+    private boolean shouldrenderblueprint = false;
     public projectortestBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.projectortestBlockEntity.get(), pos, state);
         menuProvider = this;
@@ -53,6 +55,18 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     }
     public boolean getInvalidBlueprint(){
         return invalidblueprint;
+    }
+    public void setRenderingoutline(boolean val) {
+        renderingoutline = val;
+    }
+    public boolean getRenderingoutline(){
+        return renderingoutline;
+    }
+    public void setShouldrenderblueprint(boolean val){
+        shouldrenderblueprint = val;
+    }
+    public boolean getShouldrenderblueprint(){
+        return shouldrenderblueprint;
     }
     @Override
     public Component getDisplayName() {

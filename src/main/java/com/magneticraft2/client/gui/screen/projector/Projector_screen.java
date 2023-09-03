@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -30,9 +31,9 @@ import java.util.*;
 public class Projector_screen extends AbstractContainerScreen<Projector_container> {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Projector_screen");
     private List<ClickableArea> clickableAreas = new ArrayList<>();
-
+    private Button outline;
+    private Button project;
     private ResourceLocation GUI = new ResourceLocation(magneticraft2.MOD_ID + ":textures/gui/projector_gui.png");
-    private int mouseClickY = -1;
     private float scrollOffs;
     private boolean scrolling;
     private boolean displayprints;
@@ -40,6 +41,37 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
     public Projector_screen(Projector_container container, Inventory inv, Component name) {
         super(container, inv, name);
 
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        int centerX = leftPos + imageWidth / 2;
+        int centerY = topPos + imageHeight / 2;
+        this.outline = this.addRenderableWidget(Button.builder(Component.translatable("gui.outline"), this::setOutline).bounds(centerX-64,centerY+50, 48, 20).build());
+        this.project = this.addRenderableWidget(Button.builder(Component.translatable("gui.project"), this::setProject).bounds(centerX+63,centerY+50, 48, 20).build());
+        this.addRenderableWidget(outline);
+        this.addRenderableWidget(project);
+    }
+    private void setOutline(Button button){
+        projectortestBlockEntity block = menu.getprojector();
+        if (block.getRenderingoutline()){
+            block.setRenderingoutline(false);
+        }
+        if (!block.getRenderingoutline()){
+            block.setRenderingoutline(false);
+            block.setShouldrenderblueprint(true);
+        }
+    }
+    private void setProject(Button button){
+        projectortestBlockEntity block = menu.getprojector();
+        if (block.getShouldrenderblueprint()){
+            block.setShouldrenderblueprint(false);
+        }
+        if (!block.getShouldrenderblueprint()){
+            block.setRenderingoutline(true);
+            block.setShouldrenderblueprint(false);
+        }
     }
 
     @Override
@@ -53,31 +85,6 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
     @Override
     public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
 
-        this.scrolling = false;
-        if (this.displayprints) {
-            int i = this.leftPos + 52;
-            int j = this.topPos + 14;
-            int k = this.startIndex + 9;
-
-            for(int l = this.startIndex; l < k; ++l) {
-                int i1 = l - this.startIndex;
-                double d0 = pMouseX - (double)(i + i1 % 4 * 16);
-                double d1 = pMouseY - (double)(j + i1 / 4 * 18);
-                if (d0 >= 0.0D && d1 >= 0.0D && d0 < 16.0D && d1 < 18.0D && this.menu.clickMenuButton(this.minecraft.player, l)) {
-                    Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-                    this.minecraft.gameMode.handleInventoryButtonClick((this.menu).containerId, l);
-                    return true;
-                }
-            }
-
-
-            i = this.leftPos + 119;
-            j = this.topPos + 9;
-            if (pMouseX >= (double)i && pMouseX < (double)(i + 12) && pMouseY >= (double)j && pMouseY < (double)(j + 54)) {
-                this.scrolling = true;
-            }
-
-        }
         for (ClickableArea area : clickableAreas) {
             if (area.isMouseOver((int) pMouseX, (int) pMouseY)) {
                 String clickedText = area.getText();
@@ -95,26 +102,24 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
         int j = this.topPos;
         int k = (int)(41.0F * this.scrollOffs);
         guiGraphics.setColor(1f, 1f, 1f, 1f);
-        guiGraphics.blit(GUI, leftPos, topPos, 0,0, imageWidth-17, imageHeight);
-        guiGraphics.blit(GUI, i + 107, j + 27 + k, 176-5, 0, 12, 15);
+        guiGraphics.blit(GUI, leftPos, topPos, 0,0, imageWidth+69, imageHeight);
 
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
         int l = this.leftPos + 35;
 
         int i1 = this.topPos + 27;
         int j1 = this.startIndex + 7;
-        this.renderBar(guiGraphics, mouseX, mouseY, l, i1, j1);
-        this.renderBlueprints(guiGraphics,j1, l+2, i1, mouseX, mouseY);
+        this.renderBlueprints(guiGraphics,j1, l-16, i1+1, mouseX, mouseY);
         this.renderIfInvalidOrNotText(guiGraphics, l, i1);
     }
     private void renderIfInvalidOrNotText(GuiGraphics pGuiGraphics, int pX, int pY) {
 
         if (menu.getprojector().getInvalidBlueprint()){
-            pGuiGraphics.drawString(font, "Invalid blueprint: ", pX-25, pY+110, 4210752, false );
-            pGuiGraphics.drawString(font, menu.getprojector().getInvalidBlueprint() + "", pX + 62, pY+110, 4210752, false );
+            pGuiGraphics.drawString(font, "Invalid blueprint: ", pX+90, pY-17, 4210752, false );
+            pGuiGraphics.drawString(font, menu.getprojector().getInvalidBlueprint() + "", pX + 178, pY-17, 4210752, false );
         }else {
-            pGuiGraphics.drawString(font, "Current blueprint: ", pX-25, pY+110, 4210752, false );
-            pGuiGraphics.drawString(font, menu.getprojector().getBlueprint() + "", pX + 67, pY+110, 4210752, false );
+            pGuiGraphics.drawString(font, "Current blueprint: ", pX+90, pY-22, 4210752, false );
+            pGuiGraphics.drawString(font, menu.getprojector().getBlueprint() + "", pX + 90, pY-12, 4210752, false );
         }
     }
     private void renderBlueprints(GuiGraphics pGuiGraphics, int pStartIndex, int pX, int pY, int mouseX, int mouseY) {
@@ -164,16 +169,7 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
 
     @Override
     public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
-        if (this.scrolling && this.isScrollBarActive()) {
-            int i = this.topPos + 14;
-            int j = i + 54;
-            this.scrollOffs = ((float)pMouseY - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
-            this.scrollOffs = Mth.clamp(this.scrollOffs, 0.0F, 1.0F);
-            this.startIndex = (int)((double)(this.scrollOffs * (float)this.getOffscreenRows()) + 0.5D) * 4;
-            return true;
-        } else {
-            return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
-        }
+        return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 
     private void renderBar(GuiGraphics p_282733_, int p_282136_, int p_282147_, int p_281987_, int p_281276_, int p_282688_) {
@@ -184,12 +180,6 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
 
     @Override
     public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_) {
-        if (this.isScrollBarActive()) {
-            int i = this.getOffscreenRows();
-            float f = (float)p_94688_ / (float)i;
-            this.scrollOffs = Mth.clamp(this.scrollOffs - f, 0.0F, 1.0F);
-            this.startIndex = (int)((double)(this.scrollOffs * (float)i) + 0.5D) * 4;
-        }
         return super.mouseScrolled(p_94686_, p_94687_, p_94688_);
     }
     private boolean isScrollBarActive() {
