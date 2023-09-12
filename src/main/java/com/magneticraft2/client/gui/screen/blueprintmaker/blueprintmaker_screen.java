@@ -48,6 +48,14 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     }
 
     @Override
+    public boolean keyPressed(int pKeyCode, int pScanCode, int pModifiers) {
+        if (pKeyCode == 256){
+            this.minecraft.player.closeContainer();
+        }
+        return !this.blueprintNameField.keyPressed(pKeyCode,pScanCode,pModifiers) && !this.blueprintNameField.canConsumeInput() ? super.keyPressed(pKeyCode,pScanCode,pModifiers) : true;
+    }
+
+    @Override
     protected void init() {
         super.init();
         int centerX = leftPos + imageWidth / 2;
@@ -57,7 +65,6 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         blueprintNameField = new EditBox(font, centerX -20 , centerY+31 , 68,  18, Component.translatable("gui.blueprintname"));
         blueprintNameField.setValue(""); // Set initial value
         blueprintNameField.setHint(Component.translatable("gui.blueprintname"));
-        blueprintNameField.setCanLoseFocus(true);
         this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton"), this::onSaveButtonClick).bounds(centerX+55,centerY+30, 40, 20).build());
         this.addRenderableWidget(blueprintNameField);
         this.addWidget(saveButton);
@@ -193,6 +200,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         pGuiGraphics.drawString(font, "Blueprint maker", 10, 10, 4210752, false);
 
     }
+
 
     ///scrolll
 

@@ -4,9 +4,11 @@ import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_cont
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
-import com.magneticraft2.common.systems.Blueprint.json.BlueprintBuilder;
+import com.magneticraft2.common.systems.Blueprint.core.BlueprintBuilder;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
-import com.magneticraft2.common.systems.Blueprint.json.BlueprintSaver;
+import com.magneticraft2.common.systems.Blueprint.core.BlueprintSaver;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -29,7 +31,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Objects;
 
 import static com.magneticraft2.common.magneticraft2.MOD_ID;
 
@@ -178,7 +179,15 @@ public class blueprintmakerBlockEntity extends BaseBlockEntityMagneticraft2{
 
     }
 
+    @Override
+    protected MultiblockController createMultiblockController() {
+        return null;
+    }
 
+    @Override
+    protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
+        return null;
+    }
 
     @Override
     public int capacityE() {

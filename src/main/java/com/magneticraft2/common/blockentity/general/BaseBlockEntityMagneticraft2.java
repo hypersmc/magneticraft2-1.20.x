@@ -4,6 +4,8 @@ import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.HEAT.IHeatStorage;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.IPressureStorage;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
@@ -39,8 +41,11 @@ import javax.annotation.Nonnull;
 public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implements MenuProvider, ISync {
     public static final Logger LOGGER = LogManager.getLogger("BaseBlockEntityMagneticraft2");
     public MenuProvider menuProvider;
-    private boolean isController;
-    
+    private MultiblockController multiblockController;
+
+
+    protected abstract MultiblockController createMultiblockController();
+    protected abstract MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos);
 
     //Biomes
     /* Energy */
@@ -102,17 +107,21 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
     public BaseBlockEntityMagneticraft2(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
         super(pType, pWorldPosition, pBlockState);
-        this.isController = false;
+    }
+    protected void setMultiblockController(MultiblockController multiblockController) {
+        this.multiblockController = multiblockController;
     }
 
-    public boolean isController() {
-        return isController;
+    protected MultiblockController getMultiblockController() {
+        return this.multiblockController;
     }
-
-    public void setController(boolean isController) {
-        this.isController = isController;
+    public void onRightClick() {
+        if (this.multiblockController != null) {
+            this.multiblockController.createStructure(level,getBlockPos());
+        }else{
+            createMultiblockController();
+        }
     }
-
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction dir) {
@@ -358,7 +367,6 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
                 if (Magneticraft2ConfigCommon.GENERAL.DevMode.get())e.printStackTrace();
             }
         }
-        tag.putBoolean("IsController", isController);
         super.saveAdditional(tag);
     }
 
@@ -402,7 +410,6 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             fluidHandler.deserializeNBT(tag.getCompound("fluidamount"));
             fluidHandler.deserializeNBT(tag.getCompound("fluidtype"));
         }
-        isController = tag.getBoolean("IsController");
         super.load(tag);
     }
 

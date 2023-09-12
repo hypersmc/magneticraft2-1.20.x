@@ -59,6 +59,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
     public static final RegistryObject<Item> item_blueprintmaker = fromBlock(blueprintmaker);
+    public static final RegistryObject<Item> item_testmultiblockblock = fromBlock(testmultiblockblock);
 
 
     //ores

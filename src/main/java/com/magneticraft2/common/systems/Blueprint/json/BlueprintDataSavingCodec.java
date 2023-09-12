@@ -23,8 +23,8 @@ public class BlueprintDataSavingCodec implements JsonSerializer<BlueprintData> {
         JsonObject structureObject = new JsonObject();
         structureObject.add("dimensions", context.serialize(src.getStructure().getDimensions()));
         structureObject.add("layout", context.serialize(src.getStructure().getLayout()));
-        jsonObject.add("structure", structureObject);
 
+        // Move the blocks serialization into the structureObject
         JsonObject blocksObject = new JsonObject();
         for (Map.Entry<String, Block> entry : src.getBlocks().entrySet()) {
             String blockKey = entry.getKey();
@@ -32,7 +32,9 @@ public class BlueprintDataSavingCodec implements JsonSerializer<BlueprintData> {
             String blockName = validateAndGetBlockName(new ResourceLocation(blockIdentifier.replace("Block{", "").replace("}", "")));
             blocksObject.addProperty(blockKey, blockName);
         }
-        jsonObject.add("blocks", blocksObject);
+        structureObject.add("blocks", blocksObject);
+
+        jsonObject.add("structure", structureObject);
 
         return jsonObject;
     }

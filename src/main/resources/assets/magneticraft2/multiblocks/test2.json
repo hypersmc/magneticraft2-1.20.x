@@ -1,5 +1,5 @@
 {
-  "name": "test",
+  "name": "test2",
   "structure": {
     "dimensions": [
       3,
@@ -19,12 +19,13 @@
       ],
       "layer3": [
         [" ", " ", " "],
-        [" ", "P", " "],
+        [" ", "S", " "],
         [" ", " ", " "]
       ]
     },
     "blocks": {
       "P": "minecraft:stone",
+      "S": "minecraft:sandstone",
       "I": "magneticraft2:testmultiblock"
     },
     "settings": {

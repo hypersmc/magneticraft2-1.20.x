@@ -37,6 +37,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_pitkiln.get());
                         entries.accept(ItemRegistry.item_projector.get());
                         entries.accept(ItemRegistry.item_blueprintmaker.get());
+                        entries.accept(ItemRegistry.item_testmultiblockblock.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->

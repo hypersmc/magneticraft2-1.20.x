@@ -1,11 +1,8 @@
 package com.magneticraft2.common.registry.registers;
 
-import com.magneticraft2.common.block.general.blueprintmaker;
+import com.magneticraft2.common.block.general.*;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
-import com.magneticraft2.common.block.general.projectortest;
-import com.magneticraft2.common.block.general.stick;
-import com.magneticraft2.common.block.general.stonepebble;
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
@@ -48,6 +45,7 @@ public class BlockRegistry {
     public static final RegistryObject<stonepebble> stonepebble = BLOCKS.register("stonepebble", stonepebble::new);
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
     public static final RegistryObject<blueprintmaker> blueprintmaker = BLOCKS.register("blueprintmaker", blueprintmaker::new);
+    public static final RegistryObject<testmultiblockblock> testmultiblockblock = BLOCKS.register("testmultiblock", testmultiblockblock::new);
 
 
 

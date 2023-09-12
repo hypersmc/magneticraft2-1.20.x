@@ -1,5 +1,8 @@
-package com.magneticraft2.common.systems.Blueprint.json;
+package com.magneticraft2.common.systems.Blueprint.core;
 import com.google.gson.Gson;
+import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
+import com.magneticraft2.common.systems.Blueprint.json.BlueprintData;
+import com.magneticraft2.common.systems.Blueprint.json.BlueprintDataSavingCodec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

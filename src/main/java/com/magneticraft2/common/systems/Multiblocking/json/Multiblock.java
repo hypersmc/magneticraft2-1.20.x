@@ -1,7 +1,9 @@
 package com.magneticraft2.common.systems.Multiblocking.json;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**

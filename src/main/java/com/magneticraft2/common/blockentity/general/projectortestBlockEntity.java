@@ -3,6 +3,8 @@ package com.magneticraft2.common.blockentity.general;
 import com.magneticraft2.client.gui.container.projector.Projector_container;
 import com.magneticraft2.common.block.general.projectortest;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -42,7 +44,7 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
 
     @Override
     public AABB getRenderBoundingBox() {
-    return new AABB(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),5.0,5.0,5.0);
+    return new AABB(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),worldPosition.getX()+10,worldPosition.getY()+10,worldPosition.getZ()+10);
     }
     public void setBlueprint(String val) {
         blueprint = val;
@@ -118,6 +120,16 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
         if (tag.getString("Blueprint") != null){
             blueprint = tag.getString("Blueprint");
         }
+    }
+
+    @Override
+    protected MultiblockController createMultiblockController() {
+        return null;
+    }
+
+    @Override
+    protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
+        return null;
     }
 
     @Override

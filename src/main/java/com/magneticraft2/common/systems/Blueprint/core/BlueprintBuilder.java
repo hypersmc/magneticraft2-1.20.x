@@ -1,5 +1,7 @@
-package com.magneticraft2.common.systems.Blueprint.json;
+package com.magneticraft2.common.systems.Blueprint.core;
 
+import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
+import com.magneticraft2.common.systems.Blueprint.json.BlueprintStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;

@@ -94,14 +94,6 @@ public class BlueprintMakerBlockEntityRenderer implements BlockEntityRenderer<bl
                                 );
                             }
 
-                            // Add particle effects along the animation path
-                            if (animationProgress > 0.0 && animationProgress < 1.0) {
-                                double particleX = x + (destX - x) * animationProgress + 0.5;
-                                double particleY = y + (destY - y) * animationProgress + 0.5;
-                                double particleZ = z + (destZ - z) * animationProgress + 0.5;
-                                pBlockEntity.getLevel().addParticle(ParticleTypes.DRAGON_BREATH, particleX, particleY, particleZ, 0, 0, 0);
-                            }
-
 
 
                             // Pop the matrix stack

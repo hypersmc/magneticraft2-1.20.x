@@ -3,7 +3,7 @@ package com.magneticraft2.common;
 import com.magneticraft2.client.Clientsetup;
 import com.magneticraft2.common.registry.registers.ContainerAndScreenRegistry;
 import com.magneticraft2.common.registry.FinalRegistry;
-import com.magneticraft2.common.systems.Blueprint.json.BlueprintManager;
+import com.magneticraft2.common.systems.Blueprint.core.BlueprintManager;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockManager;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
