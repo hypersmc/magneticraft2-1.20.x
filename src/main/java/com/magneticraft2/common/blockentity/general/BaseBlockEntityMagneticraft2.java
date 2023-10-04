@@ -5,6 +5,7 @@ import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.HEAT.IHeatStorage;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.IPressureStorage;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,6 +34,9 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author JumpWatch on 01-07-2023
@@ -42,7 +47,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     public static final Logger LOGGER = LogManager.getLogger("BaseBlockEntityMagneticraft2");
     public MenuProvider menuProvider;
     private MultiblockController multiblockController;
-
+    private Multiblock multiblock;
 
     protected abstract MultiblockController createMultiblockController();
     protected abstract MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos);
@@ -111,6 +116,9 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     protected void setMultiblockController(MultiblockController multiblockController) {
         this.multiblockController = multiblockController;
     }
+    protected void setMultiblock(Multiblock multiblock){
+        this.multiblock = multiblock;
+    }
 
     protected MultiblockController getMultiblockController() {
         return this.multiblockController;
@@ -122,6 +130,81 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             createMultiblockController();
         }
     }
+    public void onDestry(){
+        this.multiblockController.destroyStructure(level);
+    }
+    public boolean matchesStructure(Level world, BlockPos pos, @NotNull MultiblockStructure structure, Multiblock multiblock) {
+        Map<String, List<List<String>>> layout = structure.getLayout();
+        Map<String, Block> blocks = structure.getBlocks();
+        int[] dimensions = structure.getDimensions();
+
+        // Get the block instance from the registry or wherever you have stored it
+        Block controllerBlock = level.getBlockState(pos).getBlock();
+        LOGGER.info("Controller Block: " + controllerBlock);
+
+        // Calculate the offset of the controller block dynamically
+        BlockPos controllerOffset = findControllerOffset(structure, controllerBlock);
+        LOGGER.info("Controller Offset: " + controllerOffset);
+
+        // Adjust the starting position by the offset
+        BlockPos adjustedPos = pos.offset(-controllerOffset.getX(), -controllerOffset.getY(), -controllerOffset.getZ());
+        LOGGER.info("Adjusted Position: " + adjustedPos);
+
+        for (int y = 0; y < dimensions[1]; y++) {
+            LOGGER.info("Checking Layer y: " + (y+1));
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            if (layer == null) {
+                LOGGER.warn("Layer " + (y+1) + " is not defined in the layout");
+                return false;
+            }
+            for (int z = 0; z < dimensions[2]; z++) {
+                LOGGER.info("Checking Layer z: " + (z+1));
+                for (int x = 0; x < dimensions[0]; x++) {
+                    LOGGER.info("Checking Layer x: " + (x+1));
+                    String blockKey = layer.get(z).get(x);
+                    if (!blockKey.equals(" ")) {
+                        Block expectedBlock = blocks.get(blockKey);
+                        if (expectedBlock == null) {
+                            LOGGER.warn("Block key " + blockKey + " is not defined in the blocks map");
+                            return false;
+                        }
+                        BlockState stateInWorld = world.getBlockState(adjustedPos.offset(x, y, z));
+                        LOGGER.info("Checking Position: " + adjustedPos.offset(x, y, z));
+                        LOGGER.info("Expected Block: " + expectedBlock);
+                        LOGGER.info("Block in World: " + stateInWorld.getBlock());
+                        if (!stateInWorld.is(expectedBlock)) {
+                            LOGGER.warn("Mismatch found at position: " + adjustedPos.offset(x, y, z) + " Expected: " + expectedBlock + " Found: " + stateInWorld.getBlock());
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        this.setMultiblock(multiblock);
+        LOGGER.info("Structure matched successfully.");
+        return true;
+    }
+
+    public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) {
+        Map<String, List<List<String>>> layout = structure.getLayout();
+        int[] dimensions = structure.getDimensions();
+        Map<String, Block> blocks = structure.getBlocks();
+
+        for (int y = 0; y < dimensions[1]; y++) {
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            for (int z = 0; z < dimensions[2]; z++) {
+                for (int x = 0; x < dimensions[0]; x++) {
+                    String blockKey = layer.get(z).get(x);
+                    if (blocks.get(blockKey) == controllerBlock) {
+                        // Calculate the offset based on the relative position of the controller block in the structure
+                        return new BlockPos(x - dimensions[0] / 2 +1, y - dimensions[1] / 2+1, z - dimensions[2] / 2+1);
+                    }
+                }
+            }
+        }
+        return BlockPos.ZERO; // Default offset (0, 0, 0) if the controller block is not found in the structure
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction dir) {

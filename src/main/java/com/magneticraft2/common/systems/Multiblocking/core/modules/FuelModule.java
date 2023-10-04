@@ -3,6 +3,8 @@ package com.magneticraft2.common.systems.Multiblocking.core.modules;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author JumpWatch on 14-05-2023
@@ -10,7 +12,7 @@ import net.minecraft.world.level.Level;
  * v1.0.0
  */
 public class FuelModule implements IMultiblockModule {
-
+    public static final Logger LOGGER = LogManager.getLogger("FuelModule");
     private static final int MAX_FUEL_AMOUNT = 10000;
     private static final int FUEL_CONSUME_RATE = 1;
     private static final boolean status = false;

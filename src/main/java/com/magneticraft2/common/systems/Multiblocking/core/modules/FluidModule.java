@@ -7,6 +7,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author JumpWatch on 14-05-2023
@@ -14,7 +16,7 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
  * v1.0.0
  */
 public class FluidModule implements IMultiblockModule, IFluidHandler {
-
+    public static final Logger LOGGER = LogManager.getLogger("FluidModule");
     private static final int CAPACITY = 1000; // The fluid capacity of the module
 
     private final FluidTank fluidTank; // The fluid tank for this module

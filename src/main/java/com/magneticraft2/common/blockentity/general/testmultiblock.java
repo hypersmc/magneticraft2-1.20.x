@@ -1,7 +1,9 @@
 package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.core.modules.EnergyModule;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
@@ -26,6 +28,7 @@ import java.util.Map;
  * v1.0.0
  */
 public class testmultiblock extends BaseBlockEntityMagneticraft2{
+
     public testmultiblock(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.testmultiblock.get(), pos, state);
     }
@@ -35,6 +38,8 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
         MultiblockStructure structure = identifyMultiblockStructure(level, worldPosition);
         if (structure != null) {
             LOGGER.info("structure found!");
+            new MultiblockController(structure).identifyAndAddModules(level,worldPosition,structure);
+            new MultiblockController(structure).createStructure(level,worldPosition);
             return new MultiblockController(structure);
         } else {
             LOGGER.info("structure NOT found!");
@@ -47,7 +52,7 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
     protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
         for (Multiblock multiblock : MultiblockRegistry.getRegisteredMultiblocks().values()) {
             MultiblockStructure structure = multiblock.getStructure();
-            if (matchesStructure(world, pos, structure)) {
+            if (matchesStructure(world, pos, structure, multiblock)) {
                 LOGGER.info("Found multiblock: "+ multiblock.getName());
                 return structure;
             }
@@ -56,32 +61,7 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
     }
 
 
-    private boolean matchesStructure(Level world, BlockPos pos, MultiblockStructure structure) {
-        Map<String, List<List<String>>> layout = structure.getLayout();
-        Map<String, Block> blocks = structure.getBlocks();
-        int[] dimensions = structure.getDimensions();
 
-        for (int y = 0; y < dimensions[1]; y++) {
-            List<List<String>> layer = layout.get("layer" + (y + 1));
-            for (int z = 0; z < dimensions[2]; z++) {
-                for (int x = 0; x < dimensions[0]; x++) {
-                    String blockKey = layer.get(z).get(x);
-                    if (!blockKey.equals(" ")) {
-                        Block expectedBlock = blocks.get(blockKey);
-                        LOGGER.info("uhhhh: " + pos.offset(x, y, z));
-                        BlockState stateInWorld = world.getBlockState(pos.offset(x, y, z));
-                        LOGGER.info("Coordinates X: " + x + " Y: " + y + " Z: " + z );
-                        LOGGER.info("expectedBlock: " + expectedBlock);
-                        LOGGER.info("block in world: " + stateInWorld);
-                        if (!stateInWorld.is(expectedBlock)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
 
     @Override
     public int capacityE() {

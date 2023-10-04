@@ -46,7 +46,8 @@ public class BlockRegistry {
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
     public static final RegistryObject<blueprintmaker> blueprintmaker = BLOCKS.register("blueprintmaker", blueprintmaker::new);
     public static final RegistryObject<testmultiblockblock> testmultiblockblock = BLOCKS.register("testmultiblock", testmultiblockblock::new);
-
+    public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
+    public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
 
 
     //ores

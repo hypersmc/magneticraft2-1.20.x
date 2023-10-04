@@ -1,9 +1,6 @@
 package com.magneticraft2.common.registry.registers;
 
-import com.magneticraft2.common.blockentity.general.blueprintmakerBlockEntity;
-import com.magneticraft2.common.blockentity.general.projectortestBlockEntity;
-import com.magneticraft2.common.blockentity.general.stonepebbleBlockEntity;
-import com.magneticraft2.common.blockentity.general.testmultiblock;
+import com.magneticraft2.common.blockentity.general.*;
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,4 +34,6 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<projectortestBlockEntity>> projectortestBlockEntity = BLOCK_ENTITIES.register("projectortestblockentity", () -> BlockEntityType.Builder.of(projectortestBlockEntity::new, BlockRegistry.protectortest.get()).build(null));
     public static final RegistryObject<BlockEntityType<blueprintmakerBlockEntity>> blueprintmakerBlockEntity = BLOCK_ENTITIES.register("blueprintmakerblockentity", () -> BlockEntityType.Builder.of(blueprintmakerBlockEntity::new, BlockRegistry.blueprintmaker.get()).build(null));
     public static final RegistryObject<BlockEntityType<testmultiblock>> testmultiblock = BLOCK_ENTITIES.register("testmultiblock", () -> BlockEntityType.Builder.of(testmultiblock::new, BlockRegistry.testmultiblockblock.get()).build(null));
+    public static final RegistryObject<BlockEntityType<testpowermodule>> testpowermodule = BLOCK_ENTITIES.register("testpowermodule", () -> BlockEntityType.Builder.of(testpowermodule::new, BlockRegistry.testpowermoduleblock.get()).build(null));
+    public static final RegistryObject<BlockEntityType<testpollutionblockentity>> testpollutionblock = BLOCK_ENTITIES.register("testpollutionblock", () -> BlockEntityType.Builder.of(testpollutionblockentity::new, BlockRegistry.testpollutionblock.get()).build(null));
 }

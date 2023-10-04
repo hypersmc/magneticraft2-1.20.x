@@ -7,6 +7,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
  * v1.0.0
  */
 public class ItemsModule implements IMultiblockModule {
-
+    public static final Logger LOGGER = LogManager.getLogger("ItemsModule");
     public final ItemStackHandler itemHandler; //Item
     public final LazyOptional<IItemHandler> item;
     public ItemsModule() {

@@ -24,7 +24,7 @@
       ]
     },
     "blocks": {
-      "P": "minecraft:stone",
+      "P": "magneticraft2:testpowermodule",
       "S": "minecraft:sandstone",
       "I": "magneticraft2:testmultiblock"
     },

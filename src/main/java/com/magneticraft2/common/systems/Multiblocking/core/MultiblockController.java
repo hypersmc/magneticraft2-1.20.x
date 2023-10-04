@@ -1,13 +1,20 @@
 package com.magneticraft2.common.systems.Multiblocking.core;
 
+import com.magneticraft2.common.block.general.testmultiblockblock;
+import com.magneticraft2.common.block.general.testpowermoduleblock;
+import com.magneticraft2.common.blockentity.general.testpowermodule;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +32,7 @@ public class MultiblockController {
     private final MultiblockStructure structure;
     private final Map<BlockPos, BlockState> blockMap;
     private BlockPos masterPos;
-    private final Map<String, IMultiblockModule> modules;
+    private final Map<String, MultiblockModule> modules;
 
     public MultiblockController(MultiblockStructure structure) {
         this.structure = structure;
@@ -35,51 +42,20 @@ public class MultiblockController {
     }
 
     public boolean isValidStructure(Level world, BlockPos pos) {
-        // Check if the structure is valid at the given position
-        Map<BlockPos, BlockState> tempMap = new HashMap<>();
-
-        for (String layer : structure.getLayout().keySet()) {
-            int layerIndex = Integer.parseInt(layer) - 1;
-            List<List<String>> rowList = structure.getLayout().get(layer);
-
-            for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
-                String row = rowList.get(rowIndex).toString();
-
-                for (int columnIndex = 0; columnIndex < row.length(); columnIndex++) {
-                    String blockId = row.substring(columnIndex, columnIndex + 1);
-
-                    if (blockId.equals(" ")) {
-                        continue;
-                    }
-
-                    BlockPos offsetPos = new BlockPos(columnIndex, layerIndex, rowIndex);
-                    BlockPos checkPos = pos.offset(offsetPos);
-                    BlockState checkState = world.getBlockState(checkPos);
-
-                    if (checkState.isAir()) {
-                        return false;
-                    }
-
-                    if (!structure.getBlocks().get(blockId).equals(checkState.getBlock())) {
-                        return false;
-                    }
-
-                    tempMap.put(offsetPos, checkState);
-                }
-            }
-        }
-
-        blockMap.clear();
-        blockMap.putAll(tempMap);
         masterPos = pos;
 
         // Initialize modules
         modules.clear();
         for (IMultiblockModule module : structure.getModules()) {
             String moduleKey = module.getModuleKey();
-            BlockPos modulePos = pos.offset(module.getModuleOffset());
+            BlockPos modulePos = module.getModuleOffset();
             if (module.isValid(world, modulePos)) {
-                modules.put(moduleKey, (IMultiblockModule) module.createModule(world, modulePos));
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("module pos: " + modulePos);
+                    LOGGER.info("structure: " + structure);
+                    LOGGER.info("module key: " + moduleKey);
+                }
+                modules.put(moduleKey, new MultiblockModule(structure, moduleKey, modulePos));
             } else {
                 return false;
             }
@@ -101,11 +77,65 @@ public class MultiblockController {
 
         // Enable modules
         for (IMultiblockModule module : modules.values()) {
-            module.onActivate(world, masterPos);
+            BlockPos modulePos = module.getModuleOffset();
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("activating: " + module.getModuleKey());
+                LOGGER.info("Module pos" + modulePos);
+                LOGGER.info("Modules: " + modules.values());
+                LOGGER.info("Module instance: " + module); // Log the module instance
+                LOGGER.info("Entering the loop to activate modules"); // Log the entry to the loop
+                LOGGER.info("Module class: " + module.getClass().getName());
+            }
+            module.onActivate(world, modulePos);
         }
 
         LOGGER.info("Multiblock system got this far!");
         return true;
+    }
+    public boolean identifyAndAddModules(Level world, BlockPos pos, @NotNull MultiblockStructure structure) {
+        int[] dimensions = structure.getDimensions();
+        Block controllerBlock = world.getBlockState(pos).getBlock();
+        BlockPos controllerOffset = findControllerOffset(structure, controllerBlock);
+        BlockPos adjustedPos = pos.offset(-controllerOffset.getX(), -controllerOffset.getY(), -controllerOffset.getZ());
+
+        for (int y = 0; y < dimensions[1]; y++) {
+            for (int z = 0; z < dimensions[2]; z++) {
+                for (int x = 0; x < dimensions[0]; x++) {
+                    BlockPos currentPos = adjustedPos.offset(x, y, z);
+                    BlockEntity blockEntity = world.getBlockEntity(currentPos);
+
+                    if (blockEntity instanceof IMultiblockModule) {
+                        LOGGER.info("Module at: " + currentPos);
+                        IMultiblockModule module = (IMultiblockModule) blockEntity;
+                        String moduleKey = module.getModuleKey();
+                        // Assuming MultiblockModule is the correct type to add to the modules map
+                        structure.addModule(moduleKey, new MultiblockModule(structure, moduleKey, currentPos));
+                    }
+                }
+            }
+        }
+
+        return true; // Return true if modules are identified and added successfully, false otherwise
+    }
+
+    public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) {
+        Map<String, List<List<String>>> layout = structure.getLayout();
+        int[] dimensions = structure.getDimensions();
+        Map<String, Block> blocks = structure.getBlocks();
+
+        for (int y = 0; y < dimensions[1]; y++) {
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            for (int z = 0; z < dimensions[2]; z++) {
+                for (int x = 0; x < dimensions[0]; x++) {
+                    String blockKey = layer.get(z).get(x);
+                    if (blocks.get(blockKey) == controllerBlock) {
+                        // Calculate the offset based on the relative position of the controller block in the structure
+                        return new BlockPos(x - dimensions[0] / 2 +1, y - dimensions[1] / 2+1, z - dimensions[2] / 2+1);
+                    }
+                }
+            }
+        }
+        return BlockPos.ZERO; // Default offset (0, 0, 0) if the controller block is not found in the structure
     }
 
     public boolean destroyStructure(Level world) {

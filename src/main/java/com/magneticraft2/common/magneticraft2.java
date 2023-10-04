@@ -61,7 +61,6 @@ public class magneticraft2 {
         MinecraftForge.EVENT_BUS.register(this);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modEventBus.addListener(Clientsetup::init));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Magneticraft2ConfigCommon.SPEC, "magneticraft2-common.toml");
-        //modEventBus.addListener(FinalRegistry::gatherData);
     }
 
     public void preinit(final FMLCommonSetupEvent event){
@@ -72,11 +71,6 @@ public class magneticraft2 {
             TOPCompatibility.register();
             LOGGER.info("The one probe compatibility done!");
         }
-        event.enqueueWork(() ->
-        {
-//            ConfiguredFeatureMGC2.registerConfiguredFeatures();
-//            WorldGen.registerPlacedFeatures();
-        });
     }
     public void registerCapabilities(RegisterCapabilitiesEvent event){
         CapabilityHeat.register(event);

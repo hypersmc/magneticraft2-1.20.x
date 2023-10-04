@@ -1,8 +1,11 @@
 package com.magneticraft2.common.systems;
 
 import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.systems.networking.PollutionPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 /**
@@ -17,5 +20,11 @@ public class mgc2Network {
             version -> version.equals(NETWORK_VERSION), version -> version.equals(NETWORK_VERSION)
     );
     public static void init(){
+        CHANNEL.messageBuilder(PollutionPacket.class, 0, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(PollutionPacket::encode)
+                .decoder(PollutionPacket::decode)
+                .consumerMainThread(PollutionPacket::handle)
+                .add();
+
     }
 }

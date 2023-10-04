@@ -3,7 +3,10 @@ package com.magneticraft2.common.systems.Multiblocking.core;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +19,7 @@ import java.util.Map;
  * v1.0.0
  */
 public class MultiblockModule implements IMultiblockModule {
+    public static final Logger LOGGER = LogManager.getLogger("MGCMultiblockModule");
     private final MultiblockStructure structure;
     private final Map<BlockPos, BlockState> blockMap;
     private final List<BlockPos> modulePositions;
@@ -35,39 +39,51 @@ public class MultiblockModule implements IMultiblockModule {
         Map<BlockPos, BlockState> tempMap = new HashMap<>();
         List<BlockPos> tempPositions = new ArrayList<>();
 
-        for (String layer : structure.getLayout().keySet()) {
-            int layerIndex = Integer.parseInt(layer) - 1;
-            List<List<String>> rowList = structure.getLayout().get(layer);
+        for (String layerKey : structure.getLayout().keySet()) {
+            // Extract numeric part from the layer string
+            String numericPart = layerKey.replaceAll("[^0-9]", "");
 
-            for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
-                String row = rowList.get(rowIndex).toString();
+            // Validate the numeric part
+            if (numericPart.isEmpty()) {
+                LOGGER.error("Invalid layer format: " + layerKey + ". Skipping...");
+                continue; // Skip to the next iteration
+            }
 
-                for (int columnIndex = 0; columnIndex < row.length(); columnIndex++) {
-                    String blockId = row.substring(columnIndex, columnIndex + 1);
+            // Safely parse the layer index
+            try {
+                int layerIndex = Integer.parseInt(numericPart) - 1;
+                List<List<String>> rowList = structure.getLayout().get(layerKey);
 
-                    if (blockId.equals(" ")) {
-                        continue;
+                // Validate each block in the layer
+                for (int rowIndex = 0; rowIndex < rowList.size(); rowIndex++) {
+                    List<String> row = rowList.get(rowIndex);
+
+                    for (int columnIndex = 0; columnIndex < row.size(); columnIndex++) {
+                        String blockId = row.get(columnIndex);
+
+                        if (blockId.equals(" ")) continue;
+
+                        // Check if the blockId corresponds to a module
+                        if (!structure.getModules().contains(blockId)) continue;
+
+                        BlockPos offsetPos = new BlockPos(columnIndex, layerIndex, rowIndex);
+                        BlockPos checkPos = pos.offset(offsetPos);
+                        BlockState checkState = world.getBlockState(checkPos);
+
+                        if (checkState.isAir()) {
+                            return false;
+                        }
+
+                        if (!structure.getBlocks().get(blockId).equals(checkState.getBlock())) {
+                            return false;
+                        }
+
+                        tempMap.put(offsetPos, checkState);
+                        tempPositions.add(offsetPos);
                     }
-
-                    if (!structure.getModules().contains(blockId)) {
-                        continue;
-                    }
-
-                    BlockPos offsetPos = new BlockPos(columnIndex, layerIndex, rowIndex);
-                    BlockPos checkPos = pos.offset(offsetPos);
-                    BlockState checkState = world.getBlockState(checkPos);
-
-                    if (checkState.isAir()) {
-                        return false;
-                    }
-
-                    if (!structure.getBlocks().get(blockId).equals(checkState.getBlock())) {
-                        return false;
-                    }
-
-                    tempMap.put(offsetPos, checkState);
-                    tempPositions.add(offsetPos);
                 }
+            } catch (NumberFormatException e) {
+                LOGGER.error("Invalid layer index: " + numericPart + " in layer: " + layerKey + ". Skipping...", e);
             }
         }
 
@@ -79,14 +95,21 @@ public class MultiblockModule implements IMultiblockModule {
         return true;
     }
 
+
     public void onActivate(Level world, BlockPos pos) {
-        // Activate the module at the given position
-        // TODO: Implement module activation logic
+        BlockEntity block = world.getBlockEntity(pos);
+        if (block instanceof IMultiblockModule){
+            ((IMultiblockModule) block).onActivate(world,pos);
+        }
     }
 
     public void onDeactivate(Level world, BlockPos pos) {
-        // Deactivate the module at the given position
-        // TODO: Implement module deactivation logic
+        BlockEntity block = world.getBlockEntity(pos);
+        if (block instanceof IMultiblockModule){
+            ((IMultiblockModule) block).onDeactivate(world,pos);
+        }else{
+            LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
+        }
     }
 
     @Override

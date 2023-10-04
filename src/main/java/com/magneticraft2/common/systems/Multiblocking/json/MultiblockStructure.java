@@ -26,6 +26,9 @@ public class MultiblockStructure {
         this.blocks = blocks;
         this.modules = new HashMap<>();
     }
+    public void addModule(String key, MultiblockModule module) {
+        this.modules.put(key, module);
+    }
 
 
     public int[] getDimensions() {
