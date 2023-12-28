@@ -27,7 +27,6 @@ public class ClientPollutionData {
 
     // Get the pollution level for a specific chunk.
     public static int getPollutionLevel(ChunkPos pos) {
-
         return pollutionData.getOrDefault(pos, 0);
     }
 

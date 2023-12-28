@@ -41,7 +41,6 @@ public record PollutionPacket(ChunkPos pos, int pollutionLevel) {
         ctx.get().enqueueWork(() -> {
             // Handle the packet on the client side
             // For example, update a client-side data structure with the received pollution data'
-            LOGGER.info("stuff");
             DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> ClientPollutionData.handlePollutionPacket(this));
         });
         ctx.get().setPacketHandled(true);

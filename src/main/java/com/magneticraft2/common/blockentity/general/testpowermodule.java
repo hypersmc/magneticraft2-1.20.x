@@ -56,6 +56,10 @@ public class testpowermodule extends BlockEntity implements IMultiblockModule {
             watt.ifPresent(handler -> handler.setReceive(true));
             watt.ifPresent(handler -> handler.setSend(true));
             LOGGER.info("Activated: " + getModuleKey());
+            LOGGER.info("Stored wattage: " + wattHandler.getWattStored());
+            wattHandler.addWatt(1000);
+            LOGGER.info("Stored wattage: " + wattHandler.getWattStored());
+
         }
 
     }

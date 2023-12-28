@@ -89,7 +89,7 @@ public class MultiblockController {
             module.onActivate(world, modulePos);
         }
 
-        LOGGER.info("Multiblock system got this far!");
+        LOGGER.info("Multiblock system got this far!"); // At this point we have identified the structure, found modules and activated them
         return true;
     }
     public boolean identifyAndAddModules(Level world, BlockPos pos, @NotNull MultiblockStructure structure) {

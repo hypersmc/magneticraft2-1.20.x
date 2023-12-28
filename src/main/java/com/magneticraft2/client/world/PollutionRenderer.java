@@ -1,10 +1,11 @@
 package com.magneticraft2.client.world;
 
-import com.magneticraft2.common.world.pollution.PollutionData;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,6 +25,8 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
 public class PollutionRenderer {
     public static final Logger LOGGER = LogManager.getLogger("MGC2PollutionRenderer");
+    private static final ResourceLocation POLLUTION_TEXTURE = new ResourceLocation(MOD_ID, "textures/pollution.png");
+    private static final int MAX_POLLUTION_LEVEL = 100;
     @SubscribeEvent
     public static void onRenderLevelLast(RenderLevelStageEvent event){
         Minecraft mc = Minecraft.getInstance();
@@ -31,36 +34,42 @@ public class PollutionRenderer {
 
         if (player == null) return;
 
-        ChunkPos chunkPos = new ChunkPos((int) player.getX(), (int) player.getY());
+        ChunkPos chunkPos = new ChunkPos((int) player.getX(), (int) player.getZ());
         int pollutionLevel = ClientPollutionData.getPollutionLevel(chunkPos);
-        LOGGER.info("pollution: " + pollutionLevel);
-//        renderPollutionEffect(event.getPoseStack(), pollutionLevel);
+//        LOGGER.info("pollution: " + pollutionLevel);
+        renderPollutionEffect(event.getPoseStack(), mc.level, pollutionLevel, mc.gameRenderer.getMainCamera().getEntity(), chunkPos);
 
     }
-    private static void renderPollutionEffect(PoseStack matrixStack, int pollutionLevel) {
-        Minecraft mc = Minecraft.getInstance();
-        int screenWidth = mc.getWindow().getScreenWidth();
-        int screenHeight = mc.getWindow().getScreenHeight();
+    private static void renderPollutionEffect(PoseStack matrixStack, ClientLevel world, int pollutionLevel, Entity cameraEntity, ChunkPos chunkPos) {
+        int normalizedLevel = Math.min(pollutionLevel, MAX_POLLUTION_LEVEL);
+        if (normalizedLevel <= 0) return;
 
-        // Calculate color and alpha based on pollution level
-        int maxPollutionLevel = 100; // Define a maximum pollution level for scaling
-        float normalizedPollution = Math.min(pollutionLevel, maxPollutionLevel) / (float) maxPollutionLevel;
+        matrixStack.pushPose();
+        matrixStack.translate(-chunkPos.x, -cameraEntity.getY(), -chunkPos.z);
 
-        int alpha = (int) (normalizedPollution * 255); // Scale alpha with pollution level
-        int color = 0x00FF00 + (alpha << 24); // Green color with variable alpha
+        Minecraft.getInstance().getTextureManager().bindForSetup(POLLUTION_TEXTURE);
+        RenderSystem.setShaderTexture(0, POLLUTION_TEXTURE);
 
-        // Render a quad covering the entire screen
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
+        // Adjust these coordinates to position the pollution effect in the sky
+        double skyTop = 255; // Adjust this to the sky height
+        double skySize = 512; // Adjust this to cover the sky
+        double minX = -skySize / 2;
+        double maxX = skySize / 2;
+        double minZ = -skySize / 2;
+        double maxZ = skySize / 2;
 
-        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        bufferBuilder.vertex(matrixStack.last().pose(), 0, screenHeight, 0).color(0, 255, 0, alpha).endVertex();
-        bufferBuilder.vertex(matrixStack.last().pose(), screenWidth, screenHeight, 0).color(0, 255, 0, alpha).endVertex();
-        bufferBuilder.vertex(matrixStack.last().pose(), screenWidth, 0, 0).color(0, 255, 0, alpha).endVertex();
-        bufferBuilder.vertex(matrixStack.last().pose(), 0, 0, 0).color(0, 255, 0, alpha).endVertex();
-        bufferBuilder.end();
+        Tesselator tessellator = Tesselator.getInstance();
+        BufferBuilder buffer = tessellator.getBuilder();
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
+        buffer.vertex(minX, skyTop, minZ).uv(0, 0).endVertex();
+        buffer.vertex(maxX, skyTop, minZ).uv(1, 0).endVertex();
+        buffer.vertex(maxX, skyTop, maxZ).uv(1, 1).endVertex();
+        buffer.vertex(minX, skyTop, maxZ).uv(0, 1).endVertex();
+
+        tessellator.end();
+
+        matrixStack.popPose();
     }
 
 }
