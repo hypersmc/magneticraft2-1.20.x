@@ -40,6 +40,9 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
             LOGGER.info("structure found!");
             new MultiblockController(structure).identifyAndAddModules(level,worldPosition,structure);
             new MultiblockController(structure).createStructure(level,worldPosition);
+            LOGGER.info("Multiblock system got this far!"); // At this point we have identified the structure, found modules and activated them
+            LOGGER.info("Controller made and the multiblock should be formed: " + new MultiblockController(structure).getFormed());
+
             return new MultiblockController(structure);
         } else {
             LOGGER.info("structure NOT found!");

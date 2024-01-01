@@ -30,6 +30,7 @@ public class testmultiblockblock extends BaseBlockMagneticraft2 {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof BaseBlockEntityMagneticraft2 testmultiblock){
                 testmultiblock.onRightClick();
+
             }
         }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);

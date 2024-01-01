@@ -100,6 +100,8 @@ public class MultiblockModule implements IMultiblockModule {
         BlockEntity block = world.getBlockEntity(pos);
         if (block instanceof IMultiblockModule){
             ((IMultiblockModule) block).onActivate(world,pos);
+        }else{
+            LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
         }
     }
 

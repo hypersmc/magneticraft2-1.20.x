@@ -24,7 +24,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
  */
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PollutionHandler {
-    private static final int SPREAD_THRESHOLD = 100; // Example threshold value
+    private static final int SPREAD_THRESHOLD = 100;
     public static final Logger LOGGER = LogManager.getLogger("MGC2PollutionHandler");
     @SubscribeEvent
     public static void onWorldTick(TickEvent.LevelTickEvent event){

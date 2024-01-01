@@ -1,5 +1,6 @@
 package com.magneticraft2.client.world;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL11;
 
 import static com.magneticraft2.common.magneticraft2.MOD_ID;
 
@@ -37,21 +39,17 @@ public class PollutionRenderer {
         ChunkPos chunkPos = new ChunkPos((int) player.getX(), (int) player.getZ());
         int pollutionLevel = ClientPollutionData.getPollutionLevel(chunkPos);
 //        LOGGER.info("pollution: " + pollutionLevel);
-        renderPollutionEffect(event.getPoseStack(), mc.level, pollutionLevel, mc.gameRenderer.getMainCamera().getEntity(), chunkPos);
+        renderPollutionEffect(event.getPoseStack(), mc.level, pollutionLevel, chunkPos);
 
     }
-    private static void renderPollutionEffect(PoseStack matrixStack, ClientLevel world, int pollutionLevel, Entity cameraEntity, ChunkPos chunkPos) {
+    private static void renderPollutionEffect(PoseStack matrixStack, ClientLevel world, int pollutionLevel, ChunkPos chunkPos) {
         int normalizedLevel = Math.min(pollutionLevel, MAX_POLLUTION_LEVEL);
         if (normalizedLevel <= 0) return;
 
-        matrixStack.pushPose();
-        matrixStack.translate(-chunkPos.x, -cameraEntity.getY(), -chunkPos.z);
+        double posX = chunkPos.x; // Set to the desired X coordinate
+        double posY = 200;  // Set to the desired Y coordinate (sky height)
+        double posZ = chunkPos.z; // Set to the desired Z coordinate
 
-        Minecraft.getInstance().getTextureManager().bindForSetup(POLLUTION_TEXTURE);
-        RenderSystem.setShaderTexture(0, POLLUTION_TEXTURE);
-
-        // Adjust these coordinates to position the pollution effect in the sky
-        double skyTop = 255; // Adjust this to the sky height
         double skySize = 512; // Adjust this to cover the sky
         double minX = -skySize / 2;
         double maxX = skySize / 2;
@@ -60,16 +58,30 @@ public class PollutionRenderer {
 
         Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-        buffer.vertex(minX, skyTop, minZ).uv(0, 0).endVertex();
-        buffer.vertex(maxX, skyTop, minZ).uv(1, 0).endVertex();
-        buffer.vertex(maxX, skyTop, maxZ).uv(1, 1).endVertex();
-        buffer.vertex(minX, skyTop, maxZ).uv(0, 1).endVertex();
+        buffer.vertex(minX + posX, posY, minZ + posZ).uv(0, 0).color(1.0F, 1.0F, 0.1F, 1.0F).endVertex();
+        buffer.vertex(maxX + posX, posY, minZ + posZ).uv(1,0).color(1.0F, 1.0F, 0.1F, 1.0F).endVertex();
+        buffer.vertex(maxX + posX, posY, maxZ + posZ).uv(1,1).color(1.0F, 1.0F, 0.1F, 1.0F).endVertex();
+        buffer.vertex(minX + posX, posY, maxZ + posZ).uv(0,1).color(1.0F, 1.0F, 0.1F, 1.0F).endVertex();
+
+        Minecraft.getInstance().getTextureManager().bindForSetup(POLLUTION_TEXTURE);
+        RenderSystem.setShaderTexture(0, POLLUTION_TEXTURE);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+
+        RenderSystem.depthMask(false);
+
+        RenderSystem.enableDepthTest();
+
+        RenderSystem.depthFunc(GL11.GL_LEQUAL);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         tessellator.end();
 
-        matrixStack.popPose();
+        RenderSystem.disableBlend();
+        RenderSystem.depthMask(true);
+        RenderSystem.depthFunc(GL11.GL_EQUAL);
     }
 
 }

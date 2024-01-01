@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 public class MultiblockController {
     public static final Logger LOGGER = LogManager.getLogger("MGCMultiblockController");
-
+    private boolean isFormed = false;
     private final MultiblockStructure structure;
     private final Map<BlockPos, BlockState> blockMap;
     private BlockPos masterPos;
@@ -40,7 +40,12 @@ public class MultiblockController {
         this.masterPos = null;
         this.modules = new HashMap<>();
     }
-
+    public void setFormed(boolean val){
+        isFormed = val;
+    }
+    public boolean getFormed(){
+        return isFormed;
+    }
     public boolean isValidStructure(Level world, BlockPos pos) {
         masterPos = pos;
 
@@ -88,8 +93,7 @@ public class MultiblockController {
             }
             module.onActivate(world, modulePos);
         }
-
-        LOGGER.info("Multiblock system got this far!"); // At this point we have identified the structure, found modules and activated them
+        isFormed = true;
         return true;
     }
     public boolean identifyAndAddModules(Level world, BlockPos pos, @NotNull MultiblockStructure structure) {
