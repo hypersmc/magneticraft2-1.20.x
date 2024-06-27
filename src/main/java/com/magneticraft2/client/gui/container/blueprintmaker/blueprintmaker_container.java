@@ -24,7 +24,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
  */
 public class blueprintmaker_container extends AbstractContainerMenu {
     public BlockEntity blockEntity;
-    private Player player;
+    public static Player player;
     private IItemHandler itemHandler;
     public blueprintmaker_container(int windowid, Level world, BlockPos pos, Inventory playerInventory, Player player) {
         super(ContainerAndScreenRegistry.Blueprintmaker_container.get(), windowid);
@@ -43,6 +43,9 @@ public class blueprintmaker_container extends AbstractContainerMenu {
     public blueprintmakerBlockEntity getBlueprintmaker(){
         blueprintmakerBlockEntity entity = (blueprintmakerBlockEntity) blockEntity;
         return entity;
+    }
+    public String getPlayerName(){
+        return player.getName().getString();
     }
     public long gettest(){
         BlockPos pos = blockEntity.getBlockPos();

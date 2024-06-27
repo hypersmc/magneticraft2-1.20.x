@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class BlueprintBuilder {
     private static final String BLOCK_KEY_PREFIX = "BlockKey"; // Use your preferred prefix
-    public static Blueprint buildBlueprint(String blueprintName, Level world, BlockPos corner1, BlockPos corner2) {
+    public static Blueprint buildBlueprint(String blueprintName, String owner, Level world, BlockPos corner1, BlockPos corner2) {
         // Determine dimensions based on the two corners
         int minX = Math.min(corner1.getX(), corner2.getX());
         int minY = Math.min(corner1.getY(), corner2.getY());
@@ -50,6 +50,7 @@ public class BlueprintBuilder {
         // Adjust the layout to match the example JSON layout
         return new Blueprint(
                 blueprintName,
+                owner,
                 new BlueprintStructure(dimensions, layout, blocks),
                 blocks
         );

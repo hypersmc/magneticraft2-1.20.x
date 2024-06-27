@@ -12,12 +12,14 @@
   "tooltip.magneticraft2.copper_ingot_low": "§7Grade: §eLow",
   "tooltip.magneticraft2.copper_ingot_medium": "§7Grade: §eMedium",
   "tooltip.magneticraft2.copper_ingot_high": "§7Grade: §eHigh",
-  "tooltip.magneticraft2.blueprint.pos1andpos2": "Pos1: %s, Pos2: %s",
+  "tooltip.magneticraft2.blueprint.pos1andpos21": "Pos1: %s,",
+  "tooltip.magneticraft2.blueprint.pos1andpos22": "Pos2: %s",
   "tooltip.magneticraft2.blueprint.pos1": "Pos1: %s",
   "tooltip.magneticraft2.blueprint.pos2": "Pos2: %s",
 
   "gui.blueprintname": "Name",
-  "gui.savebutton": "Save",
+  "gui.savebutton.client": "Save on Client",
+  "gui.savebutton.server": "Save on Server",
   "gui.outline": "Outline",
   "gui.project": "Project",
 
@@ -31,7 +33,10 @@
   "message.magneticraft2.distance": "Current Wire Distance is:  %s",
   "message.magneticraft2.connection_start_coords": "Connection start at: %s, %s, %s",
   "message.magneticraft2.feature_not_ready_yet": "Multiblock GUI interaction feature not ready yet",
-
+  "message.magneticraft2.blueprintpos1": "Position 1 at: %s, %s, %s",
+  "message.magneticraft2.blueprintpos2": "Position 2 at: %s, %s, %s",
+  "message.magneticraft2.beltconnected": "Connected to belt!",
+  "message.magneticraft2.beltconnectionremoved": "Belt connection removed!",
 
   "container.magneticraft2.primitive_furnace": "Primitive Furnace",
   "container.magneticraft2.inventory": "Inventory",
@@ -44,5 +49,7 @@
   "item.magneticraft2.wirecoil": "Wire Coil",
   "item.magneticraft2.rice_seed": "Rice Seed",
   "item.magneticraft2.rice": "Rice",
-  "item.magneticraft2.copper_ingot_low": "Copper Ingot"
+  "item.magneticraft2.copper_ingot_low": "Copper Ingot",
+
+  "item.magneticraft2.blueprint": "Blueprint"
 }

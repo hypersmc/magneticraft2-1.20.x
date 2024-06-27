@@ -48,7 +48,7 @@ public class BlockRegistry {
     public static final RegistryObject<testmultiblockblock> testmultiblockblock = BLOCKS.register("testmultiblock", testmultiblockblock::new);
     public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
     public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
-
+    public static final RegistryObject<BeltBlock> beltblock = BLOCKS.register("beltblock", BeltBlock::new);
 
     //ores
     public static final RegistryObject<Bauxite> BAUXITE_ORE = BLOCKS.register("bauxite_ore", Bauxite::new);

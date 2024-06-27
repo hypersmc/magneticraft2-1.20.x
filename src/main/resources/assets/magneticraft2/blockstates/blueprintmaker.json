@@ -1,0 +1,6 @@
+{
+  "model": "magneticraft2:block/blueprintmaker.json",
+  "variants": {
+    "":    { "model": "magneticraft2:block/blueprintmaker" }
+  }
+}

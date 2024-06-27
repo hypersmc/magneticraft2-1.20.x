@@ -1,5 +1,6 @@
 package com.magneticraft2.common.registry.registers;
 
+import com.magneticraft2.common.blockitems.beltblockitem;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
@@ -54,6 +55,7 @@ public class ItemRegistry {
     public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
     public static final RegistryObject<Blueprintmarker> item_blueprintmarker = ITEMS.register("blueprint", Blueprintmarker::new);
+    public static final RegistryObject<BlockItem> item_beltblock = ITEMS.register("beltblock", () -> new beltblockitem(beltblock.get(), new Item.Properties()));
 
     //Blocks to items
     public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
@@ -62,6 +64,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> item_testmultiblockblock = fromBlock(testmultiblockblock);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
+
 
 
     //ores

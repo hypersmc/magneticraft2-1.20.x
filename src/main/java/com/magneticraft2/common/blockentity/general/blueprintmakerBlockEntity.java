@@ -390,15 +390,29 @@ public class blueprintmakerBlockEntity extends BaseBlockEntityMagneticraft2{
 
         }
     }
-    public void saveBlueprint(){
+    public void saveBlueprintClient(String owner){
         File savedir = new File("blueprints");
-        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname, level, pos1, pos2);
+        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname, owner, level, pos1, pos2);
+        LOGGER.info(newBlueprint.getName());
+        LOGGER.info(newBlueprint.getOwner());
+        LOGGER.info(newBlueprint.getStructure().getBlocks());
+        LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
+        LOGGER.info(newBlueprint.getStructure().getLayout());
+        BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
+        BlueprintSaver.saveBlueprintClient(newBlueprint, savedir);
+        setBlueprintname(null);
+        setShouldsave(false);
+    }
+    public void saveBlueprintServer(String owner){
+        File savedir = new File("blueprints");
+        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname, owner, level, pos1, pos2);
         LOGGER.info(newBlueprint.getName());
         LOGGER.info(newBlueprint.getStructure().getBlocks());
         LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
         LOGGER.info(newBlueprint.getStructure().getLayout());
-        BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint);
-        BlueprintSaver.saveBlueprint(newBlueprint, savedir);
+        BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
+        BlueprintSaver.saveBlueprintServer(newBlueprint, savedir);
+
         setBlueprintname(null);
         setShouldsave(false);
     }

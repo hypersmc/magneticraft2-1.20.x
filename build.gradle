@@ -232,9 +232,9 @@ publishing {
 
 }
 dependencies {
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.20:4.2')
-    implementation fg.deobf("curse.maven:the-one-probe-245211:4613250")
-    implementation fg.deobf("curse.maven:jei-238222:4609866")
+    implementation('software.bernie.geckolib:geckolib-forge-1.20:4.2')
+    implementation("curse.maven:the-one-probe-245211:4613250")
+    implementation("curse.maven:jei-238222:4609866")
 
 }
 

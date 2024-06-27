@@ -67,11 +67,12 @@ public class BlueprintManager {
                         try {
                             Blueprint blueprint = new Blueprint(
                                     blueprintData.getName(),
+                                    blueprintData.getOwner(),
                                     blueprintData.getStructure(),
                                     blocks
                             );
                             // Register the blueprint
-                            BlueprintRegistry.registerBlueprint(modid, blueprint);
+                            BlueprintRegistry.registerBlueprint(modid, blueprint, blueprint.getOwner());
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
@@ -129,11 +130,12 @@ public class BlueprintManager {
                                     try {
                                         Blueprint blueprint = new Blueprint(
                                                 blueprintData.getName(),
+                                                blueprintData.getOwner(),
                                                 blueprintData.getStructure(),
                                                 blocks
                                         );
                                         // Register the blueprint
-                                        BlueprintRegistry.registerBlueprint(magneticraft2.MOD_ID, blueprint);
+                                        BlueprintRegistry.registerBlueprint(magneticraft2.MOD_ID, blueprint, blueprint.getOwner());
                                     } catch (Exception e) {
                                         throw new RuntimeException(e);
                                     }

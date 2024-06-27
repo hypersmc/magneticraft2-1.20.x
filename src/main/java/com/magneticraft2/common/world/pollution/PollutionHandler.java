@@ -44,7 +44,7 @@ public class PollutionHandler {
         }
     }
     private static void spreadPollution(ChunkPos pos, int pollutionLevel, PollutionData pollutionData, ServerLevel serverLevel) {
-        int spreadAmount = calculateSpreadAmount(pollutionLevel); // Define how you want to calculate the amount of pollution to spread
+        int spreadAmount = calculateSpreadAmount(pollutionLevel);
 
         // List of neighboring chunk positions
         List<ChunkPos> neighbors = Arrays.asList(

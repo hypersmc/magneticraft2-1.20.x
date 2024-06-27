@@ -1,5 +1,9 @@
 {
   "name": "test2",
+  "owner": "everyone",
+  "sharedto": [
+    ""
+  ],
   "structure": {
     "dimensions": [
       3,

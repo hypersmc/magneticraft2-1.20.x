@@ -25,6 +25,7 @@ public class BlueprintDataCodec implements JsonSerializer<BlueprintData>, JsonDe
     public JsonElement serialize(BlueprintData src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", src.getName());
+        jsonObject.addProperty("owner", src.getOwner());
         jsonObject.add("structure", context.serialize(src.getStructure()));
         jsonObject.add("blocks", context.serialize(src.getBlocks()));
         return jsonObject;
@@ -35,6 +36,7 @@ public class BlueprintDataCodec implements JsonSerializer<BlueprintData>, JsonDe
         try {
             JsonObject jsonObject = json.getAsJsonObject();
             String name = jsonObject.get("name").getAsString();
+            String owner = jsonObject.get("owner").getAsString();
             JsonObject structureObject = jsonObject.getAsJsonObject("structure");
             BlueprintStructure structure = context.deserialize(structureObject, BlueprintStructure.class);
 
@@ -56,7 +58,7 @@ public class BlueprintDataCodec implements JsonSerializer<BlueprintData>, JsonDe
                 LOGGER.info("Error during blocks deserialization: " + e.getMessage());
                 throw e;
             }
-            return new BlueprintData(name, structure, blocks);
+            return new BlueprintData(name, owner, structure, blocks);
         } catch (JsonParseException e) {
             LOGGER.info("Error during BlueprintData deserialize: " + e.getMessage());
             throw e;

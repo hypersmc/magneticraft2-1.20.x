@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "magneticraft2:block/blueprintblock/down",
+    "up": "magneticraft2:block/blueprintblock/top",
+    "north": "magneticraft2:block/blueprintblock/north",
+    "south": "magneticraft2:block/blueprintblock/south",
+    "east": "magneticraft2:block/blueprintblock/east",
+    "west": "magneticraft2:block/blueprintblock/west",
+    "particle": "magneticraft2:block/blueprintblock/particle"
+  }
+}

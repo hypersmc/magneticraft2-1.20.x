@@ -4,12 +4,17 @@ import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_cont
 import com.magneticraft2.common.blockentity.general.blueprintmakerBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,8 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author JumpWatch on 20-08-2023
@@ -32,7 +36,9 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     private ResourceLocation GUI = new ResourceLocation(magneticraft2.MOD_ID + ":textures/gui/blueprintmaker_gui.png");
     private static final Logger LOGGER = LogManager.getLogger("MGC2-stuff");
     private EditBox blueprintNameField;
-    private Button saveButton;
+    private Button saveButtonClient;
+    private Button saveButtonServer;
+    private Button saveButtonShare;
     private int yOffset = 0;
     private int blocksToDisplay;
     private int maxVisibleBlocks;
@@ -44,7 +50,6 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     private boolean triedsavingwithnoname = false;
     public blueprintmaker_screen(blueprintmaker_container container, Inventory inv, Component name) {
         super(container, inv, name);
-
     }
 
     @Override
@@ -65,18 +70,28 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         blueprintNameField = new EditBox(font, centerX -20 , centerY+31 , 68,  18, Component.translatable("gui.blueprintname"));
         blueprintNameField.setValue(""); // Set initial value
         blueprintNameField.setHint(Component.translatable("gui.blueprintname"));
-        this.saveButton = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton"), this::onSaveButtonClick).bounds(centerX+55,centerY+30, 40, 20).build());
+        this.saveButtonClient = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.client"), this::onSaveButtonClickClient).bounds(centerX+55,centerY+30, 40, 20).build());
+        //this.saveButtonServer = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.server"), this::onSaveButtonClickServer).bounds(centerX+55,centerY+30, 40, 20).build());
         this.addRenderableWidget(blueprintNameField);
-        this.addWidget(saveButton);
+        this.addWidget(saveButtonClient);
     }
-    private void onSaveButtonClick(Button button) {
+    private void onSaveButtonClickClient(Button button) {
         if (blueprintNameField.getValue().isEmpty()){
             triedsavingwithnoname = true;
         }else {
             blueprintmakerBlockEntity block = menu.getBlueprintmaker();
             block.setBlueprintname(blueprintNameField.getValue());
-            block.saveBlueprint();
+            block.saveBlueprintClient(menu.getPlayerName());
 
+        }
+    }
+    private void onSaveButtonClickServer(Button button){
+        if (blueprintNameField.getValue().isEmpty()){
+            triedsavingwithnoname = true;
+        }else {
+            blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+            block.setBlueprintname(blueprintNameField.getValue());
+            block.saveBlueprintServer(menu.getPlayerName());
         }
     }
 
@@ -100,6 +115,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         this.rendercoordinates(pGuiGraphics, i, j);
         this.rendernoName(pGuiGraphics,i,j);
         this.renderBlockItemList(pGuiGraphics,i,j);
+        this.renderBlocksInSpace(pGuiGraphics,i,j);
     }
 
     private void rendercoordinates(GuiGraphics guiGraphics, int x, int y) {
@@ -120,41 +136,47 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
             guiGraphics.drawString(font, "Z: " + pos2xyz.getZ(), x + 43, y+103, 4210752, false );
         }
     }
+
     private void renderBlockItemList(GuiGraphics guiGraphics, int x, int y) {
         blueprintmakerBlockEntity block = menu.getBlueprintmaker();
         BlockPos pos1xyz = block.getPos1BlockPos();
         BlockPos pos2xyz = block.getPos2BlockPos();
-        this.x = x;
-        this.y = y;
+
         if (pos1xyz.getX() == -65 && pos1xyz.getY() == -65 && pos1xyz.getZ() == -65 &&
                 pos2xyz.getX() == -65 && pos2xyz.getY() == -65 && pos2xyz.getZ() == -65) {
             return; // Don't render anything if both positions are (-65, -65, -65)
         }
 
-        int blocksToDisplay = 0;
-        List<String> blockNames = new ArrayList<>();
-        yOffset = 0; // Reset yOffset
+        Map<String, Double> blockCountMap = new HashMap<>();
 
-        for (int xIndex = Math.min(pos1xyz.getX(), pos2xyz.getX()); xIndex <= Math.max(pos1xyz.getX(), pos2xyz.getX()); xIndex++) {
-            for (int yIndex = Math.min(pos1xyz.getY(), pos2xyz.getY()); yIndex <= Math.max(pos1xyz.getY(), pos2xyz.getY()); yIndex++) {
-                for (int zIndex = Math.min(pos1xyz.getZ(), pos2xyz.getZ()); zIndex <= Math.max(pos1xyz.getZ(), pos2xyz.getZ()); zIndex++) {
-                    BlockPos currentPos = new BlockPos(xIndex, yIndex, zIndex);
-                    BlockState state = block.getLevel().getBlockState(currentPos);
+        // Count the occurrence of each block name
+        for (BlockPos currentPos : BlockPos.betweenClosed(pos1xyz, pos2xyz)) {
+            BlockState state = block.getLevel().getBlockState(currentPos);
 
-                    if (!state.isAir()) { // Skip air blocks
+            if (!state.isAir()) {
+                String blockName = state.getBlock().getName().getString();
+                if (isDoorBlock(blockName)) {
+                    if (!blockCountMap.containsKey(blockName)) {
+                        blockCountMap.put(blockName, 0.5);
                         blocksToDisplay++;
-                        this.blocksToDisplay = blocksToDisplay;
-                        blockNames.add(state.getBlock().getName().getString());
                     }
+                }else if (isBedBlock(blockName)){
+                    if (!blockCountMap.containsKey(blockName)){
+                        blockCountMap.put(blockName, 0.5);
+                        blocksToDisplay++;
+                    }
+                }else {
+                    blockCountMap.put(blockName, blockCountMap.getOrDefault(blockName, 0.0) + 1);
+                    blocksToDisplay++;
                 }
             }
         }
 
+        int yOffset = 0; // Reset yOffset
         int maxVisibleBlocks = 8;
+        int blocksToDisplay = blockCountMap.size(); // Total unique blocks to display
+        this.blocksToDisplay = blocksToDisplay;
         this.maxVisibleBlocks = maxVisibleBlocks;
-
-        // Calculate totalHeight based on blocksToDisplay and maxVisibleBlocks
-        int totalHeight = Math.min(blocksToDisplay, maxVisibleBlocks) * 12;
 
         if (blocksToDisplay > maxVisibleBlocks) {
             // Calculate scrollbar position based on user interaction
@@ -171,17 +193,90 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
             guiGraphics.fill(scrollbarX, scrollbarThumbY, scrollbarX + 10, scrollbarThumbY + 10, 0xFF888888); // Scrollbar thumb
         }
 
-        // Render the visible block names based on yOffset and scrollbar position
+        int renderedBlocks = 0;
         int blocksToRender = Math.min(maxVisibleBlocks, blocksToDisplay - scrollbarPosition);
-        for (int i = scrollbarPosition; i < scrollbarPosition + blocksToRender; i++) {
-            String blockName = blockNames.get(i);
+        Iterator<Map.Entry<String, Double>> iterator = blockCountMap.entrySet().iterator();
+        for (int i = 0; i < scrollbarPosition && iterator.hasNext(); i++) {
+            iterator.next(); // Skip entries before the scrollbar position
+        }
+        List<Map.Entry<String, Double>> entries = new ArrayList<>(blockCountMap.entrySet());
+
+        for (int i = scrollbarPosition; i < scrollbarPosition + blocksToRender && i < entries.size(); i++) {
+            Map.Entry<String, Double> entry = entries.get(i);
+            String blockName = entry.getKey();
+            Double count = entry.getValue();
+
+            if (count > 1) {
+                blockName = count.toString().replace(".0", "") + "x " + blockName;
+            }
+
             if (blockName.length() > 12) {
                 blockName = blockName.substring(0, 12) + "..."; // Truncate the text
             }
+
             guiGraphics.drawString(font, blockName, x + 160, y + 10 + yOffset, 16777215, false);
             yOffset += 12;
         }
     }
+
+
+
+    private void renderBlocksInSpace(GuiGraphics guiGraphics, int x, int y) {
+        blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+        BlockPos pos1xyz = block.getPos1BlockPos();
+        BlockPos pos2xyz = block.getPos2BlockPos();
+
+        if (pos1xyz.getX() == -65 && pos1xyz.getY() == -65 && pos1xyz.getZ() == -65 &&
+                pos2xyz.getX() == -65 && pos2xyz.getY() == -65 && pos2xyz.getZ() == -65) {
+            return; // Don't render anything if both positions are (-65, -65, -65)
+        }
+
+        int blockSize = 6; // Adjust the size of the block
+        int blockX = x + 95; // X coordinate relative to GUI position
+        int blockY = y + 40; // Y coordinate relative to GUI position
+
+        int yOffset = 0; // Reset yOffset
+        int maxVisibleBlocks = 800; // Maximum number of blocks to display
+        int blocksRendered = 0; // Counter to keep track of rendered blocks
+
+        // Iterate through the block positions between pos1 and pos2
+        for (BlockPos currentPos : BlockPos.betweenClosed(pos1xyz, pos2xyz)) {
+            BlockState state = block.getLevel().getBlockState(currentPos);
+
+            if (!state.isAir()) { // Skip air blocks
+                // Calculate the relative position of the block in the 3D grid
+                int posX = Math.max(pos1xyz.getX(), pos2xyz.getX()) - currentPos.getX();
+                int posY = Math.max(pos1xyz.getY(), pos2xyz.getY()) - currentPos.getY();
+                int posZ = Math.max(pos1xyz.getZ(), pos2xyz.getZ()) - currentPos.getZ();
+
+                // Calculate the 3D position for rendering
+                int renderX = blockX + (posX * blockSize);
+                int renderY = blockY + (posY * blockSize);
+                int renderZ = 100 + (posZ * blockSize); // Use different z-coordinates to create a 3D effect
+
+                PoseStack poseStack = new PoseStack(); // Create a matrix stack
+                poseStack.translate(renderX, renderY, renderZ); // Set the block's position in 3D space
+
+                // Apply a 45-degree rotation along the x-axis
+                poseStack.mulPose(Axis.XP.rotationDegrees(45));
+                poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+
+                poseStack.scale(blockSize, blockSize, blockSize); // Scale the block
+
+                // Render the block using Minecraft's block rendering
+                Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
+                        state, // The block state you want to render
+                        poseStack, guiGraphics.bufferSource(), 15 << 20, OverlayTexture.NO_OVERLAY // Set light and overlay
+                );
+
+                blocksRendered++;
+                if (blocksRendered >= maxVisibleBlocks) {
+                    break; // Stop rendering if the maximum visible blocks have been reached
+                }
+            }
+        }
+    }
+
 
 
     private void rendernoName(GuiGraphics guiGraphics, int x, int y){
@@ -211,9 +306,26 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         if (isScrollbarVisible()) {
             int maxScroll = blocksToDisplay - maxVisibleBlocks;
-            scrollbarPosition = Math.max(0, Math.min(scrollbarPosition + (int) delta, maxScroll));
+            scrollbarPosition = Math.max(0, Math.min(scrollbarPosition - (int) delta, maxScroll)); // Invert delta here
         }
         return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+    private boolean isDoorBlock(String blockName) {
+        return blockName.equalsIgnoreCase("Oak Door") || blockName.equalsIgnoreCase("Spruce Door") ||
+                blockName.equalsIgnoreCase("Birch Door") || blockName.equalsIgnoreCase("Jungle Door") ||
+                blockName.equalsIgnoreCase("Acacia Door") || blockName.equalsIgnoreCase("Dark Oak Door") ||
+                blockName.equalsIgnoreCase("Iron Door") || blockName.equalsIgnoreCase("Crimson Door") ||
+                blockName.equalsIgnoreCase("Warped Door");
+    }
+    private boolean isBedBlock(String blockName){
+        return blockName.equalsIgnoreCase("White Bed") || blockName.equalsIgnoreCase("Light Gray Bed") ||
+                blockName.equalsIgnoreCase("Gray Bed") || blockName.equalsIgnoreCase("Black Bed") ||
+                blockName.equalsIgnoreCase("Brown Bed") || blockName.equalsIgnoreCase("Red Bed") ||
+                blockName.equalsIgnoreCase("Orange Bed") || blockName.equalsIgnoreCase("Yellow Bed") ||
+                blockName.equalsIgnoreCase("Lime Bed") || blockName.equalsIgnoreCase("Green Bed") ||
+                blockName.equalsIgnoreCase("Cyan Bed") || blockName.equalsIgnoreCase("Light Blue Bed") ||
+                blockName.equalsIgnoreCase("Blue Bed") || blockName.equalsIgnoreCase(" Purple Bed") ||
+                blockName.equalsIgnoreCase("Magenta Bed") || blockName.equalsIgnoreCase("Pink Bed");
     }
 
 

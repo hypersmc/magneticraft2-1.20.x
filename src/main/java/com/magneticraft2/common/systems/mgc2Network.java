@@ -24,7 +24,7 @@ public class mgc2Network {
                 .encoder(PollutionPacket::encode)
                 .decoder(PollutionPacket::decode)
                 .consumerMainThread(PollutionPacket::handle)
-                .add();
+                .add(); //This channel is purely for pollution data send to the client's renderer.
 
     }
 }

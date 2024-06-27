@@ -1,0 +1,14 @@
+{
+  "model": "magneticraft2:block/belt-straight.json",
+  "variants": {
+    "is_45=false,is_90=false,is_straight=true":    {
+      "model": "magneticraft2:block/belt-straight"
+    },
+    "is_45=false,is_90=true,is_straight=false": {
+      "model": "magneticraft2:block/belt-90"
+    },
+    "is_45=true,is_90=false,is_straight=false": {
+      "model": "magneticraft2:block/belt-45"
+    }
+  }
+}

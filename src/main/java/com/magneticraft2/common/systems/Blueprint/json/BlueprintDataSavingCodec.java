@@ -19,7 +19,7 @@ public class BlueprintDataSavingCodec implements JsonSerializer<BlueprintData> {
     public JsonElement serialize(BlueprintData src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", src.getName());
-
+        jsonObject.addProperty("owner", src.getOwner());
         JsonObject structureObject = new JsonObject();
         structureObject.add("dimensions", context.serialize(src.getStructure().getDimensions()));
         structureObject.add("layout", context.serialize(src.getStructure().getLayout()));

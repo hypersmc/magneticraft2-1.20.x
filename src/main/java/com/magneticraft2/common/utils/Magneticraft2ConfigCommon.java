@@ -20,7 +20,7 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> PitKilnTime;
         public final ForgeConfigSpec.ConfigValue<Boolean> DevMode;
         General(ForgeConfigSpec.Builder builder) {
-            builder.push("Configuration for Magneticraft2");
+            builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
                     .comment("The max length Wires can go")
                     .translation("magneticraft2.wirelenght.config")

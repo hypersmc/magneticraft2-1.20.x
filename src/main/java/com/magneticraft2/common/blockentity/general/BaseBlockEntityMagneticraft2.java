@@ -493,7 +493,8 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
             fluidHandler.deserializeNBT(tag.getCompound("fluidamount"));
             fluidHandler.deserializeNBT(tag.getCompound("fluidtype"));
         }
-        super.load(tag);
+        if (tag != null)
+            super.load(tag);
     }
 
     /*

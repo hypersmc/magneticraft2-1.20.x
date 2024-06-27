@@ -12,16 +12,21 @@ import java.util.Map;
 
 public class Blueprint {
     private final String name;
+    private final String owner;
     private final BlueprintStructure structure;
     private final Map<String, Block> blocks;
 
-    public Blueprint(String name, BlueprintStructure structure, Map<String, Block> blocks){
+    public Blueprint(String name, String owner, BlueprintStructure structure, Map<String, Block> blocks){
         this.name = name;
+        this.owner = owner;
         this.structure = structure;
         this.blocks = blocks;
     }
     public String getName(){
         return name;
+    }
+    public String getOwner(){
+        return owner;
     }
     public BlueprintStructure getStructure() {
         return structure;
@@ -29,5 +34,7 @@ public class Blueprint {
     public Map<String, Block> getBlocks() {
         return blocks;
     }
+
+
 
 }

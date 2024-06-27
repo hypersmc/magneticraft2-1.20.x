@@ -27,7 +27,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
 public class PollutionRenderer {
     public static final Logger LOGGER = LogManager.getLogger("MGC2PollutionRenderer");
-    private static final ResourceLocation POLLUTION_TEXTURE = new ResourceLocation(MOD_ID, "textures/pollution.png");
+    public static final ResourceLocation POLLUTION_TEXTURE = new ResourceLocation(MOD_ID, "textures/pollution.png");
     private static final int MAX_POLLUTION_LEVEL = 100;
     @SubscribeEvent
     public static void onRenderLevelLast(RenderLevelStageEvent event){
@@ -70,7 +70,7 @@ public class PollutionRenderer {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
 
-        RenderSystem.depthMask(false);
+        RenderSystem.depthMask(true);
 
         RenderSystem.enableDepthTest();
 
