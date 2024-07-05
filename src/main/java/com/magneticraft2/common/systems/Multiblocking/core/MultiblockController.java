@@ -46,6 +46,16 @@ public class MultiblockController {
     public boolean getFormed(){
         return isFormed;
     }
+    public BlockPos getmodulePos(String moduleName){
+        for (IMultiblockModule module : modules.values()) {
+            if (module.getModuleKey() == moduleName){
+                BlockPos modulePos = module.getModuleOffset();
+                return modulePos;
+            }
+            return null;
+        }
+        return null;
+    }
     public boolean isValidStructure(Level world, BlockPos pos) {
         masterPos = pos;
 
@@ -85,7 +95,7 @@ public class MultiblockController {
             BlockPos modulePos = module.getModuleOffset();
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("activating: " + module.getModuleKey());
-                LOGGER.info("Module pos" + modulePos);
+                LOGGER.info("Module pos " + modulePos);
                 LOGGER.info("Modules: " + modules.values());
                 LOGGER.info("Module instance: " + module); // Log the module instance
                 LOGGER.info("Entering the loop to activate modules"); // Log the entry to the loop
@@ -149,7 +159,7 @@ public class MultiblockController {
 
         // Disable modules
         for (IMultiblockModule module : modules.values()) {
-            module.onDeactivate(world, masterPos);
+            module.onDeactivate(world, module.getModuleOffset());
         }
 
         // Destroy the structure

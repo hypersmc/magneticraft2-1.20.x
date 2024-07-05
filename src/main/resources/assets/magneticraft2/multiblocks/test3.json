@@ -6533,51 +6533,51 @@
       "BlockKey5": "minecraft:redstone_block",
       "BlockKey2": "minecraft:air",
       "BlockKey3": "minecraft:oak_wood"
-    },
-    "settings": {
-      "replacewhenformed": "mymod:testmodel",
-      "inventory": true,
-      "power": true,
-      "fuel": true,
-      "fluid": true,
-      "inputs": [
-        {
-          "slot": 1,
-          "type": "item",
-          "allowed_items": [
-            "minecraft:diamond",
-            "minecraft:iron_ingot"
-          ],
-          "size": 1
-        },
-        {
-          "slot": 2,
-          "type": "fluid",
-          "allowed_fluids": [
-            "minecraft:water",
-            "minecraft:lava"
-          ],
-          "size": 1000
-        }
-      ],
-      "outputs": [
-        {
-          "slot": 1,
-          "type": "item",
-          "allowed_items": [
-            "minecraft:diamond"
-          ],
-          "size": 1
-        },
-        {
-          "slot": 2,
-          "type": "fluid",
-          "allowed_fluids": [
-            "minecraft:water"
-          ],
-          "size": 1000
-        }
-      ]
     }
+  },
+  "settings": {
+    "replacewhenformed": "models/multiblock/primitive_furnace_formed",
+    "inventory": true,
+    "power": true,
+    "fuel": true,
+    "fluid": true,
+    "inputs": [
+      {
+        "slot": 1,
+        "type": "item",
+        "allowed_items": [
+          "minecraft:diamond",
+          "minecraft:iron_ingot"
+        ],
+        "size": 1
+      },
+      {
+        "slot": 2,
+        "type": "fluid",
+        "allowed_fluids": [
+          "minecraft:water",
+          "minecraft:lava"
+        ],
+        "size": 1000
+      }
+    ],
+    "outputs": [
+      {
+        "slot": 1,
+        "type": "item",
+        "allowed_items": [
+          "minecraft:diamond"
+        ],
+        "size": 1
+      },
+      {
+        "slot": 2,
+        "type": "fluid",
+        "allowed_fluids": [
+          "minecraft:water"
+        ],
+        "size": 1000
+      }
+    ]
   }
 }

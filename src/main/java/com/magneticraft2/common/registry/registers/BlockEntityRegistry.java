@@ -36,4 +36,5 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<testmultiblock>> testmultiblock = BLOCK_ENTITIES.register("testmultiblock", () -> BlockEntityType.Builder.of(testmultiblock::new, BlockRegistry.testmultiblockblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpowermodule>> testpowermodule = BLOCK_ENTITIES.register("testpowermodule", () -> BlockEntityType.Builder.of(testpowermodule::new, BlockRegistry.testpowermoduleblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpollutionblockentity>> testpollutionblock = BLOCK_ENTITIES.register("testpollutionblock", () -> BlockEntityType.Builder.of(testpollutionblockentity::new, BlockRegistry.testpollutionblock.get()).build(null));
+    public static final RegistryObject<BlockEntityType<Multiblockfiller_tile>> multiblockfillerBlockEntity = BLOCK_ENTITIES.register("multiblock_filler", () -> BlockEntityType.Builder.of(Multiblockfiller_tile::new, BlockRegistry.multiblockfiller.get()).build(null));
 }

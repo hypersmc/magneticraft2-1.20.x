@@ -1,14 +1,17 @@
 package com.magneticraft2.client;
 
+import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.render.blocks.BlueprintMakerBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.PitKilnBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.ProjectorBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.multiblockcontroller;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,6 +36,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmakerBlockEntity.get(), BlueprintMakerBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.testmultiblock.get(), multiblockcontroller::new); //testing
     }
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -48,5 +52,11 @@ public class Clientsetup {
 //            event.addSprite(TEXTURE);
 //        }
 
+    }
+    @SubscribeEvent
+    public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
+    {
+        LOGGER.info("Models are being registered!");
+        event.register("multiblock", new MultiBlockModelLoader());
     }
 }

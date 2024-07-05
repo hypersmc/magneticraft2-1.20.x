@@ -65,6 +65,10 @@ public class EnergyModule implements IMultiblockModule {
         if (!world.isClientSide){
             watt.ifPresent(handler -> handler.setReceive(false));
             watt.ifPresent(handler -> handler.setSend(false));
+            wattHandler.setReceive(false);
+            wattHandler.setSend(false);
+            wattHandler.setWatt(0);
+            LOGGER.info("Energy module deactivated!");
         }
     }
 

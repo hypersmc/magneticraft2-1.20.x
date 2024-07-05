@@ -8,6 +8,8 @@ import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.event.ModelEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +27,10 @@ import java.util.Map;
  */
 public class MultiblockManager {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Multiblock handler");
-
+    @SubscribeEvent
+    static void registerModels(ModelEvent.RegisterAdditional event) {
+//        event.register();
+    }
     public static void loadMultiblocks(String modid, ResourceManager resourceManager) {
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
             LOGGER.info("Started to register multiblocks for mod " + modid);

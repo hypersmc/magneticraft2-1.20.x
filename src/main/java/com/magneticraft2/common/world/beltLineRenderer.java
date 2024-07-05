@@ -1,14 +1,17 @@
 package com.magneticraft2.common.world;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -35,16 +38,51 @@ public class beltLineRenderer {
         if (stack != null && stack.getTag() != null) {
             if (stack.getTag().contains("connectedbelt")) {
                 long directconnect = stack.getTag().getLong("connectedbelt");
-                BlockPos blockPos = BlockPos.of(directconnect); //This is the blocks position
-                BlockPos playerpos = player.getOnPos();
+                BlockPos blockPos = BlockPos.of(directconnect); // This is the block's position
+                BlockPos playerPos = player.blockPosition();
 
-                Vec3 blockVec = new Vec3(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
-                Vec3 playerVec = new Vec3(player.getX(), player.getEyeY(), player.getZ());
-                // Render the line
-                renderLine(blockVec, playerVec);
+                // Calculate all positions between blockPos and playerPos
+                Iterable<BlockPos> positions = BlockPos.betweenClosed(blockPos, playerPos);
+
+                // Render stone blocks at each position
+                renderBlocks(event, positions);
             }
         }
     }
+    private static void renderBlocks(RenderLevelStageEvent event, Iterable<BlockPos> positions) {
+        Minecraft mc = Minecraft.getInstance();
+        PoseStack poseStack = event.getPoseStack();
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
+        BlockRenderDispatcher blockRenderDispatcher = mc.getBlockRenderer();
+        Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
+
+        for (BlockPos pos : positions) {
+            poseStack.pushPose();
+
+            // Calculate the translation relative to the camera position
+            Vec3 playerPos = mc.player.position();
+
+            double offsetX = cameraPos.x - playerPos.x;
+            double offsetY = cameraPos.y - playerPos.y;
+            double offsetZ = cameraPos.z - playerPos.z;
+
+            // Translate the position in world coordinates
+            poseStack.translate(offsetX, offsetY, offsetZ);
+
+            // Render the block at the current position
+            BlockState blockState = mc.level.getBlockState(pos);
+            blockRenderDispatcher.renderSingleBlock(blockState, poseStack, bufferSource, 15728880, OverlayTexture.NO_OVERLAY);
+
+            poseStack.popPose();
+        }
+
+        bufferSource.endBatch();
+    }
+
+
+
+
+
     private static void renderLine(Vec3 start, Vec3 end) {
         RenderSystem.enableDepthTest();
         RenderSystem.lineWidth(2.0F);

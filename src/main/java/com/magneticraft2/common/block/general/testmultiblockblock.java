@@ -28,7 +28,11 @@ public class testmultiblockblock extends BaseBlockMagneticraft2 {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide){
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+            testmultiblock testmultiblockentity = (testmultiblock) blockEntity;
             if (blockEntity instanceof BaseBlockEntityMagneticraft2 testmultiblock){
+                if (testmultiblockentity.isFormed()){
+                    return InteractionResult.PASS;
+                }
                 testmultiblock.onRightClick();
 
             }
@@ -41,7 +45,7 @@ public class testmultiblockblock extends BaseBlockMagneticraft2 {
         if (!level.isClientSide){
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof BaseBlockEntityMagneticraft2 testmultiblock){
-                testmultiblock.onDestry();
+                testmultiblock.onDestroy(level);
             }
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);

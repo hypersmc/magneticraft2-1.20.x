@@ -24,7 +24,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
  * @Project mgc2-1.20
  * v1.0.0
  */
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
+//@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
 public class PollutionRenderer {
     public static final Logger LOGGER = LogManager.getLogger("MGC2PollutionRenderer");
     public static final ResourceLocation POLLUTION_TEXTURE = new ResourceLocation(MOD_ID, "textures/pollution.png");

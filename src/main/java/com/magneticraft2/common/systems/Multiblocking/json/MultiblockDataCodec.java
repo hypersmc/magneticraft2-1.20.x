@@ -57,8 +57,10 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 LOGGER.info("Error during blocks deserialization: " + e.getMessage());
                 throw e;
             }
-
+            LOGGER.info("Starting to deserialize Settings");
+            LOGGER.info("Settings object: " + jsonObject.get("settings").toString());
             MultiblockSettings settings = context.deserialize(jsonObject.get("settings"), MultiblockSettings.class);
+            LOGGER.info("Finished deserializing Settings");
             return new MultiblockData(name, structure, blocks, settings);
         } catch (JsonParseException e) {
             LOGGER.info("Error during MultiblockData deserialize: " + e.getMessage());
@@ -140,12 +142,13 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
 
         @Override
         public JsonElement serialize(MultiblockSettings multiblockSettings, Type type, JsonSerializationContext context) {
+            LOGGER.info("MultiblockSettings started serialization");
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("replaceWhenFormed", multiblockSettings.getReplaceWhenFormed());
-            jsonObject.addProperty("hasInventory", multiblockSettings.hasInventory());
-            jsonObject.addProperty("hasPower", multiblockSettings.hasPower());
-            jsonObject.addProperty("hasFuel", multiblockSettings.hasFuel());
-            jsonObject.addProperty("hasFluid", multiblockSettings.hasFluid());
+            jsonObject.addProperty("replacewhenformed", multiblockSettings.getReplaceWhenFormed());
+            jsonObject.addProperty("inventory", multiblockSettings.hasInventory());
+            jsonObject.addProperty("power", multiblockSettings.hasPower());
+            jsonObject.addProperty("fuel", multiblockSettings.hasFuel());
+            jsonObject.addProperty("fluid", multiblockSettings.hasFluid());
             jsonObject.add("inputs", context.serialize(multiblockSettings.getInputs()));
             jsonObject.add("outputs", context.serialize(multiblockSettings.getOutputs()));
             return jsonObject;
@@ -153,13 +156,14 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
 
         @Override
         public MultiblockSettings deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+            LOGGER.info("MultiblockSettings started deserialization");
             try {
                 JsonObject jsonObject = json.getAsJsonObject();
-                String replaceWhenFormed = jsonObject.get("replaceWhenFormed").getAsString();
-                boolean hasInventory = jsonObject.get("hasInventory").getAsBoolean();
-                boolean hasPower = jsonObject.get("hasPower").getAsBoolean();
-                boolean hasFuel = jsonObject.get("hasFuel").getAsBoolean();
-                boolean hasFluid = jsonObject.get("hasFluid").getAsBoolean();
+                String replaceWhenFormed = jsonObject.get("replacewhenformed").getAsString();
+                boolean hasInventory = jsonObject.get("inventory").getAsBoolean();
+                boolean hasPower = jsonObject.get("power").getAsBoolean();
+                boolean hasFuel = jsonObject.get("fuel").getAsBoolean();
+                boolean hasFluid = jsonObject.get("fluid").getAsBoolean();
                 List<MultiblockInput> inputs = context.deserialize(jsonObject.get("inputs"), List.class);
                 List<MultiblockOutput> outputs = context.deserialize(jsonObject.get("outputs"), List.class);
                 return new MultiblockSettings(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid, inputs, outputs);
@@ -262,10 +266,15 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
     public static Gson createGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MultiblockData.class, new MultiblockDataCodec());
+        LOGGER.info("Registered adapter MultiblockData");
         gsonBuilder.registerTypeAdapter(MultiblockInput.class, new MultiblockInputAdapter());
+        LOGGER.info("Registered adapter MultiblockInput");
         gsonBuilder.registerTypeAdapter(MultiblockOutput.class, new MultiblockOutputAdapter());
+        LOGGER.info("Registered adapter MultiblockOutput");
         gsonBuilder.registerTypeAdapter(MultiblockSettings.class, new MultiblockSettingsAdapter());
+        LOGGER.info("Registered adapter MultiblockSettings");
         gsonBuilder.registerTypeAdapter(MultiblockStructure.class, new MultiblockStructureAdapter());
+        LOGGER.info("Registered adapter MultiblockStructure");
         return gsonBuilder.create();
     }
 }
