@@ -2,6 +2,7 @@
   "loader": "magneticraft2:multiblock",
   "baseModel": "magneticraft2:models/block/invis.json",
   "namedModels": {
-    "primitive": "magneticraft2:models/multiblock/primitive_furnace_formed.json"
+    "primitive": "magneticraft2:models/multiblock/primitive_furnace_formed.json",
+    "blueprintmb": "magneticraft2:models/multiblock/blueprint_multiblock.json"
   }
 }

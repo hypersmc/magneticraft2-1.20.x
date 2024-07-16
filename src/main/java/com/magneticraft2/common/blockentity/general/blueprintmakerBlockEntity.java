@@ -399,7 +399,7 @@ public class blueprintmakerBlockEntity extends BaseBlockEntityMagneticraft2{
         LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
         LOGGER.info(newBlueprint.getStructure().getLayout());
         BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
-        BlueprintSaver.saveBlueprintClient(newBlueprint, savedir);
+        BlueprintSaver.saveBlueprintClient(newBlueprint, savedir, owner);
         setBlueprintname(null);
         setShouldsave(false);
     }

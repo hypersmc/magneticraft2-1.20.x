@@ -57,6 +57,6 @@ public class Clientsetup {
     public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
     {
         LOGGER.info("Models are being registered!");
-        event.register("multiblock", new MultiBlockModelLoader());
+        event.register("multiblock", new MultiBlockModelLoader()); //this doesn't work yet and I haven't really looked much into it. all I know is that models still doesn't show.
     }
 }

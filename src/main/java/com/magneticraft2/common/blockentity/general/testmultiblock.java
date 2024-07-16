@@ -89,6 +89,7 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
     @Override
     protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
         for (Multiblock multiblock : MultiblockRegistry.getRegisteredMultiblocks().values()) {
+            LOGGER.info("Multiblock found: {}", multiblock.getName());
             MultiblockStructure structure = multiblock.getStructure();
             if (matchesStructure(world, pos, structure, multiblock)) {
                 LOGGER.info("Found multiblock: "+ multiblock.getName());

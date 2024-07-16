@@ -41,31 +41,31 @@ public class multiblockcontroller implements BlockEntityRenderer<testmultiblock>
     public void render(testmultiblock testmultiblock, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
         ModelData modelData = testmultiblock.getModelData();
         String modelName = modelData.get(MultiBlockProperties.MODEL_NAME);
-        if (modelName != null) {
-            ResourceLocation modelResource = new ResourceLocation("magneticraft2", "models/multiblock/primitive_furnace_formed");
-            BakedModel model = minecraft.getModelManager().getModel(modelResource);
-
-                    poseStack.pushPose();
-            poseStack.translate(0.5, 0, 0.5); // Adjust position if necessary
-
-            // Choose the correct render layer, typically RenderType.solid() for most block models
-            VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.solid());
-
-            // Render all quads. You might need to handle different sides if necessary.
-            RandomSource random = RandomSource.create();
-            for (Direction direction : Direction.values()) {
-                model.getQuads(null, direction, random).forEach(quad -> {
-                    vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
-                });
-            }
-
-            // Also render any non-culled faces (like translucent parts)
-            model.getQuads(null, null, random).forEach(quad -> {
-                vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
-            });
-
-            poseStack.popPose();
-        }
+//        if (modelName != null) {
+//            ResourceLocation modelResource = new ResourceLocation("magneticraft2", "models/multiblock/primitive_furnace_formed");
+//            BakedModel model = minecraft.getModelManager().getModel(modelResource);
+//
+//                    poseStack.pushPose();
+//            poseStack.translate(0.5, 0, 0.5); // Adjust position if necessary
+//
+//            // Choose the correct render layer, typically RenderType.solid() for most block models
+//            VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.solid());
+//
+//            // Render all quads. You might need to handle different sides if necessary.
+//            RandomSource random = RandomSource.create();
+//            for (Direction direction : Direction.values()) {
+//                model.getQuads(null, direction, random).forEach(quad -> {
+//                    vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
+//                });
+//            }
+//
+//            // Also render any non-culled faces (like translucent parts)
+//            model.getQuads(null, null, random).forEach(quad -> {
+//                vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
+//            });
+//
+//            poseStack.popPose();
+//        }
 
 
     }

@@ -18,10 +18,10 @@ public class BlueprintSaver {
     private static final Gson GSON = BlueprintDataSavingCodec.createGson();
     private static final Logger LOGGER = LogManager.getLogger("MGC2-blueprintsave");
 
-    public static void saveBlueprintClient(Blueprint blueprint, File saveDirectory) {
+    public static void saveBlueprintClient(Blueprint blueprint, File saveDirectory, String owner) {
         if (!saveDirectory.exists())
             saveDirectory.mkdirs();
-        String fileName = blueprint.getName() + ".json";
+        String fileName = blueprint.getName() + "-" + owner + ".json";
         File blueprintFile = new File(saveDirectory, fileName);
 
         try (FileWriter writer = new FileWriter(blueprintFile)) {

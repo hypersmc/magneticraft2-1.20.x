@@ -120,7 +120,7 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
                                     pPoseStack.pushPose(); // Push a new matrix to isolate scaling
                                     pPoseStack.translate(0.125f, 0.125f, 0.125f); // Center the block
                                     pPoseStack.scale(0.75f, 0.75f, 0.75f); // Scale the block down
-                                    blockRenderer.getModelRenderer().renderModel(pPoseStack.last(), pBuffer.getBuffer(RenderType.solid()), block.defaultBlockState(), blockRenderer.getBlockModel(block.getStateDefinition().any()), 1.0F, 1.0F, 1.0F, pPackedLight, OverlayTexture.NO_OVERLAY);
+                                    blockRenderer.getModelRenderer().renderModel(pPoseStack.last(), pBuffer.getBuffer(RenderType.cutout()), block.defaultBlockState(), blockRenderer.getBlockModel(block.getStateDefinition().any()), 1.0F, 1.0F, 1.0F, pPackedLight, OverlayTexture.NO_OVERLAY);
                                     pPoseStack.popPose(); // Pop the scaling matrix
                                 }
                                 pPoseStack.translate(1.0, 0.0, 0.0); // Move to the next position in the row
