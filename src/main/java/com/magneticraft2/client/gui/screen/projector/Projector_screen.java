@@ -127,7 +127,9 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
         List<String> blueprintNames = new ArrayList<>();
 
         for (int i = this.startIndex; i <= pStartIndex && i < BlueprintRegistry.getRegisteredBlueprintInNumber(); ++i) {
-            blueprintNames.add(BlueprintRegistry.getRegisteredBlueprintByNumberAndOwner(i, menu.getPlayer().getName().getString()));
+            String bl = BlueprintRegistry.getRegisteredBlueprintByNumberAndOwner(i, menu.getPlayer().getName().getString());
+            if (bl != null)
+                blueprintNames.add(bl);
         }
         Collections.sort(blueprintNames, new Comparator<String>() {
             @Override

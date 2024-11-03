@@ -57,7 +57,7 @@ public class BlueprintRegistry {
         List<BlueprintInfo> blueprintInfos = new ArrayList<>(registeredBlueprints.values());
 
         for (BlueprintInfo blueprintInfo : blueprintInfos) {
-            if (blueprintInfo.getOwner().equals("everyone") || blueprintInfo.getOwner().equals(owner)) {
+            if (blueprintInfo.getOwner().equalsIgnoreCase("everyone") || blueprintInfo.getOwner().equals(owner)) {
                 index--;
                 if (index < 0) {
                     return blueprintInfo.getName();
@@ -65,7 +65,7 @@ public class BlueprintRegistry {
             }
         }
 
-        return ""; // If no matching blueprint is found for the given owner and index
+        return null; // If no matching blueprint is found for the given owner and index
     }
     // Custom class to represent Blueprint information
     public static class BlueprintInfo {
