@@ -8,28 +8,29 @@
     ],
     "layout": {
       "layer1": [
-        [" ", " ", " "],
-        [" ", "P", " "],
-        [" ", " ", " "]
+        ["A", "A", "A"],
+        ["A", "P", "A"],
+        ["A", "A", "A"]
       ],
       "layer2": [
-        [" ", " ", " "],
-        [" ", "I", " "],
-        [" ", " ", " "]
+        ["A", "A", "A"],
+        ["A", "I", "A"],
+        ["A", "A", "A"]
       ],
       "layer3": [
-        [" ", " ", " "],
-        [" ", "P", " "],
-        [" ", " ", " "]
+        ["A", "A", "A"],
+        ["A", "P", "A"],
+        ["A", "A", "A"]
       ]
     },
     "blocks": {
       "P": "minecraft:stone",
-      "I": "magneticraft2:testmultiblock"
+      "I": "magneticraft2:testmultiblock",
+      "A": "minecraft:air"
     }
   },
   "settings": {
-    "replacewhenformed": "models/multiblock/primitive_furnace_formed",
+    "replacewhenformed": "multiblock/primitive_furnace_formed",
     "inventory": true,
     "power": true,
     "fuel": true,

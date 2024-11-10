@@ -31,7 +31,7 @@
     }
   },
   "settings": {
-    "replacewhenformed": "blueprintmb",
+    "replacewhenformed": "multiblock/blueprintmb",
     "inventory": true,
     "power": true,
     "fuel": true,

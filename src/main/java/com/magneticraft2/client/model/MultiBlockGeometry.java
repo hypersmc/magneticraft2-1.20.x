@@ -30,12 +30,7 @@ public class MultiBlockGeometry implements IUnbakedGeometry<MultiBlockGeometry> 
         this.namedModels = namedModels;
     }
     @Override
-    public BakedModel bake(IGeometryBakingContext ctx,
-                           ModelBaker baker,
-                           Function<Material, TextureAtlasSprite> spriteGetter,
-                           ModelState modelState,
-                           ItemOverrides overrides,
-                           ResourceLocation resourceLocation) {
+    public BakedModel bake(IGeometryBakingContext ctx, ModelBaker baker, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation resourceLocation) {
         Map<String, BakedModel> bakedModels = new HashMap<>();
         namedModels.forEach((name, blockModel) -> {
             ModelState rotState = new ModelState() {

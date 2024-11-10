@@ -50,19 +50,7 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
     }
     @Override
     public void render(projectortestBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
-        Direction blockFacing = pBlockEntity.getBlockState().getValue(FACING);
-        int offset = (int) (SQUARE_OFFSET + 1); // Offset by 1 block away
-        Vec3 projectionOffset = Vec3.ZERO;
 
-        if (blockFacing == Direction.EAST) {
-            projectionOffset = new Vec3(-offset , 0, -0.5);
-        } else if (blockFacing == Direction.NORTH) {
-            projectionOffset = new Vec3(-0.5, 0, -offset);
-        } else if (blockFacing == Direction.SOUTH) {
-            projectionOffset = new Vec3(-0.5, 0, offset - 1);
-        } else if (blockFacing == Direction.WEST) {
-            projectionOffset = new Vec3(offset -1, 0, -0.5);
-        }
 
         // Get the blueprint
         Blueprint blueprint = BlueprintRegistry.getRegisteredBlueprint("magneticraft2", pBlockEntity.getBlueprint());
@@ -72,6 +60,25 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
             BlueprintStructure structure = blueprint.getStructure();
             Map<String, List<List<String>>> layout = structure.getLayout();
             int[] dimensions = structure.getDimensions();
+            double halfWidth = dimensions[0] / 2.0;
+            double halfDepth = dimensions[2] / 2.0;
+
+// Centering offset: adjust based on blueprint size
+            Vec3 centeringOffset = new Vec3(-halfWidth + 0.5, 0, -halfDepth + 0.5);
+
+// Directional offset: place the projection in front of the projector
+            Direction blockFacing = pBlockEntity.getBlockState().getValue(FACING);
+            Vec3 facingOffset = Vec3.ZERO;
+
+            switch (blockFacing) {
+                case EAST -> facingOffset = new Vec3(1.5, 0, 0.5);    // Move 1 block east
+                case WEST -> facingOffset = new Vec3(-1.0, 0, 0);   // Move 1 block west
+                case NORTH -> facingOffset = new Vec3(0.5, 0, -1.0);  // Move 1 block north
+                case SOUTH -> facingOffset = new Vec3(0, 0, 1.0);   // Move 1 block south
+            }
+
+// Combine centering and directional offsets
+            Vec3 projectionOffset = centeringOffset.add(facingOffset);
 
             // Initialize the base translation position
             float baseX = (float) projectionOffset.x();
@@ -81,7 +88,7 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
                 renderOutline(pPoseStack, pBuffer, dimensions, projectionOffset);
             } else {
                 // Render the blueprint blocks
-                for (int layerIndex = 0; layerIndex < dimensions[2]; layerIndex++) {
+                for (int layerIndex = 0; layerIndex < dimensions[1]; layerIndex++) { // Changed dimensions[2] to dimensions[1] for correct layer depth
                     String layerName = "layer" + (layerIndex + 1);
                     if (layout.containsKey(layerName)) {
                         List<List<String>> layer = layout.get(layerName);
@@ -90,12 +97,12 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
                         int numRows = layer.size();
                         int numCols = numRows > 0 ? layer.get(0).size() : 0;
 
-                        // If dimensions don't match, adjust the layer layout to fit the dimensions
-                        if (numRows != dimensions[0] || numCols != dimensions[1]) {
+                        // Adjust the layer layout to fit the dimensions if necessary
+                        if (numRows != dimensions[2] || numCols != dimensions[0]) { // Corrected dimension check
                             List<List<String>> adjustedLayer = new ArrayList<>();
-                            for (int row = 0; row < dimensions[0]; row++) {
+                            for (int row = 0; row < dimensions[2]; row++) {
                                 List<String> newRow = new ArrayList<>();
-                                for (int col = 0; col < dimensions[1]; col++) {
+                                for (int col = 0; col < dimensions[0]; col++) {
                                     int adjustedRow = row % numRows;
                                     int adjustedCol = col % numCols;
                                     newRow.add(layer.get(adjustedRow).get(adjustedCol));
@@ -105,33 +112,42 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<project
                             layer = adjustedLayer;
                         }
 
-                        // Apply translation to the rendering position for the current layer
+                        // Apply translation for the current layer
                         pPoseStack.pushPose();
-                        pPoseStack.translate(baseX + projectionOffset.x(), baseY + projectionOffset.y(), baseZ + projectionOffset.z());
+                        pPoseStack.translate(baseX + projectionOffset.x(), baseY + layerIndex, baseZ + projectionOffset.z()); // Translate by layerIndex to stack layers vertically
 
                         // Render each block in the layer
-                        for (int row = 0; row < dimensions[0]; row++) {
-                            for (int col = 0; col < dimensions[1]; col++) {
+                        for (int row = 0; row < dimensions[2]; row++) { // Corrected row count based on dimensions[2] (depth)
+                            for (int col = 0; col < dimensions[0]; col++) { // Corrected column count based on dimensions[0] (width)
                                 String value = layer.get(row).get(col);
                                 Block block = structure.getBlocks().get(value);
+                                int color = Minecraft.getInstance().level.getBiome(pBlockEntity.getBlockPos()).get().getGrassColor(pBlockEntity.getBlockPos().getX(),pBlockEntity.getBlockPos().getZ());
                                 if (block != null) {
                                     // Render the block using Minecraft's block rendering
                                     BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-                                    pPoseStack.pushPose(); // Push a new matrix to isolate scaling
-                                    pPoseStack.translate(0.125f, 0.125f, 0.125f); // Center the block
-                                    pPoseStack.scale(0.75f, 0.75f, 0.75f); // Scale the block down
-                                    blockRenderer.getModelRenderer().renderModel(pPoseStack.last(), pBuffer.getBuffer(RenderType.cutout()), block.defaultBlockState(), blockRenderer.getBlockModel(block.getStateDefinition().any()), 1.0F, 1.0F, 1.0F, pPackedLight, OverlayTexture.NO_OVERLAY);
-                                    pPoseStack.popPose(); // Pop the scaling matrix
+                                    pPoseStack.pushPose(); // Isolate transformations for each block
+                                    pPoseStack.translate(0.5, 0.5, 0.5); // Center block within its grid cell
+                                    pPoseStack.scale(0.75f, 0.75f, 0.75f); // Scale down the block
+
+                                    blockRenderer.getModelRenderer().renderModel(
+                                            pPoseStack.last(),
+                                            pBuffer.getBuffer(RenderType.cutout()),
+                                            block.defaultBlockState(),
+                                            blockRenderer.getBlockModel(block.defaultBlockState()),
+                                            ((color >> 16) & 0xFF) / 255.0F, // Red component
+                                            ((color >> 8) & 0xFF) / 255.0F,  // Green component
+                                            (color & 0xFF) / 255.0F,         // Blue component
+                                            pPackedLight,
+                                            OverlayTexture.NO_OVERLAY
+                                    );
+                                    pPoseStack.popPose(); // Revert transformations for the next block
                                 }
-                                pPoseStack.translate(1.0, 0.0, 0.0); // Move to the next position in the row
+                                pPoseStack.translate(1.0, 0.0, 0.0); // Move to the next block in the row
                             }
-                            pPoseStack.translate(-dimensions[1], 0.0, 1.0); // Move to the next row, reset horizontal position
+                            pPoseStack.translate(-dimensions[0], 0.0, 1.0); // Reset horizontal position and move to the next row
                         }
 
-                        pPoseStack.popPose();
-
-                        // Move the base translation position upwards
-                        baseY += 1f; // Use the original layer offset to maintain spacing
+                        pPoseStack.popPose(); // Restore the original pose for the next layer
                     }
                 }
 

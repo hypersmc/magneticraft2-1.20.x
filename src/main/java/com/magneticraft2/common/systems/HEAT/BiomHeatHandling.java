@@ -10,6 +10,8 @@ import net.minecraft.world.level.Level;
  * v1.0.0
  */
 public class BiomHeatHandling {
+    // This code sucks, you know it, and I know it.
+    // Move on and call me an idiot later.
     public static int getHeatManagment(Level world, BlockPos pos, String purpose) {
         if (world.getBiomeManager().getBiome(pos).is(new ResourceLocation("desert"))){
             switch (purpose) {

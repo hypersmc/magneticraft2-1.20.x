@@ -73,7 +73,8 @@ public class PollutionRenderer {
     private static void renderPollutionEffect(PoseStack matrixStack, ClientLevel world, int pollutionLevel, Player player) {
         int normalizedLevel = Math.min(pollutionLevel, MAX_POLLUTION_LEVEL);
         if (normalizedLevel <= 0) return;
-
+        // When I wrote this, only God and I understood what I was doing
+        // Now, God only knows
 //        double playerX = player.getX();
 //        double playerY = player.getY() + player.getEyeHeight() - 1; // Adjusted height for better effect
 //        double playerZ = player.getZ();

@@ -3,6 +3,7 @@ package com.magneticraft2.common.blockentity.general;
 import com.google.gson.JsonParseException;
 import com.magneticraft2.client.model.MultiBlockModel;
 import com.magneticraft2.client.model.MultiBlockModelLoader;
+import com.magneticraft2.common.block.general.testmultiblockblock;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
@@ -67,13 +68,21 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
                 controller.setFormed(true);
                 setMultiblockController(controller);
                 formed = true;
-                LOGGER.info("Multiblock system got this far!"); // At this point we have identified the structure, found modules, and activated them
+
+                BlockState currentState = level.getBlockState(worldPosition);
+                BlockState newState = currentState.setValue(testmultiblockblock.IS_FORMED, true);
+                level.setBlock(worldPosition, newState, 3);
+
+                LOGGER.info("Multiblock system got this far!"); // At this point, we have identified the structure,
+                // found modules, and should have activated them
 
                 LOGGER.info("Controller made and the multiblock should be formed: {}", controller.getFormed());
                 LOGGER.info("Energy module location: {} ", controller.getmodulePos("energy_storage"));
                 BlockPos pos = controller.getmodulePos("energy_storage");
-                testpowermodule testpowermodule = (testpowermodule) level.getBlockEntity(pos);
-                LOGGER.info("Energy module power stored: {}", testpowermodule.getStored());
+                if (pos != null) {
+                    testpowermodule testpowermodule = (testpowermodule) level.getBlockEntity(pos);
+                    LOGGER.info("Energy module power stored: {}", testpowermodule.getStored());
+                }
                 requestModelDataUpdate();
                 return controller;
             }
@@ -89,7 +98,7 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
     @Override
     protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
         for (Multiblock multiblock : MultiblockRegistry.getRegisteredMultiblocks().values()) {
-            LOGGER.info("Multiblock found: {}", multiblock.getName());
+            LOGGER.info("Trying Multiblock: {}", multiblock.getName());
             MultiblockStructure structure = multiblock.getStructure();
             if (matchesStructure(world, pos, structure, multiblock)) {
                 LOGGER.info("Found multiblock: "+ multiblock.getName());
@@ -117,6 +126,7 @@ public class testmultiblock extends BaseBlockEntityMagneticraft2{
     {
         CompoundTag nbtTagCompound = new CompoundTag();
         saveAdditional(nbtTagCompound);
+        getModelData();
         return nbtTagCompound;
     }
     @Override

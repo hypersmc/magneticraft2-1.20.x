@@ -236,6 +236,7 @@ dependencies {
     implementation fg.deobf("curse.maven:the-one-probe-245211:4613250")
     implementation fg.deobf("curse.maven:mekanism-268560:5395221")
     implementation fg.deobf("curse.maven:jei-238222:4609866")
+    implementation fg.deobf("curse.maven:patchouli-306770:4966125")
 
 }
 

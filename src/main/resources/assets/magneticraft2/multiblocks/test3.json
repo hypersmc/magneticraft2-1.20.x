@@ -6536,7 +6536,7 @@
     }
   },
   "settings": {
-    "replacewhenformed": "models/multiblock/primitive_furnace_formed",
+    "replacewhenformed": "primitive_furnace_formed",
     "inventory": true,
     "power": true,
     "fuel": true,

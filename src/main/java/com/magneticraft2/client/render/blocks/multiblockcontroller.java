@@ -1,5 +1,6 @@
 package com.magneticraft2.client.render.blocks;
 
+import com.magneticraft2.client.model.MultiBlockModel;
 import com.magneticraft2.common.blockentity.general.testmultiblock;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,9 +18,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.Random;
@@ -38,36 +41,37 @@ public class multiblockcontroller implements BlockEntityRenderer<testmultiblock>
 
     public multiblockcontroller(BlockEntityRendererProvider.Context context) {}
     @Override
-    public void render(testmultiblock testmultiblock, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
+    public void render(testmultiblock testmultiblock, float v, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int overlay) {
+        // Define the model's resource location
         ModelData modelData = testmultiblock.getModelData();
         String modelName = modelData.get(MultiBlockProperties.MODEL_NAME);
-//        if (modelName != null) {
-//            ResourceLocation modelResource = new ResourceLocation("magneticraft2", "models/multiblock/primitive_furnace_formed");
-//            BakedModel model = minecraft.getModelManager().getModel(modelResource);
-//
-//                    poseStack.pushPose();
-//            poseStack.translate(0.5, 0, 0.5); // Adjust position if necessary
-//
-//            // Choose the correct render layer, typically RenderType.solid() for most block models
-//            VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.solid());
-//
-//            // Render all quads. You might need to handle different sides if necessary.
-//            RandomSource random = RandomSource.create();
-//            for (Direction direction : Direction.values()) {
-//                model.getQuads(null, direction, random).forEach(quad -> {
-//                    vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
-//                });
-//            }
-//
-//            // Also render any non-culled faces (like translucent parts)
-//            model.getQuads(null, null, random).forEach(quad -> {
-//                vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, i, i1);
-//            });
-//
-//            poseStack.popPose();
-//        }
 
+        if (!modelName.isEmpty()) {
+            ResourceLocation modelLocation = new ResourceLocation("magneticraft2", "multiblock/primitive_furnace_formed");
 
+            // Retrieve the model from ModelManager
+            BakedModel model = Minecraft.getInstance().getModelManager().getModel(modelLocation);
+            if (model == null) {
+                System.out.println("Custom model not found: " + modelLocation);
+                return;
+            }
+
+            // Prepare for rendering
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 0); // Adjust position if needed
+
+            // Get quads from the model and render them
+            RandomSource random = RandomSource.create();
+            List<BakedQuad> quads = model.getQuads((BlockState) null, (Direction) null, random);
+
+            // Render each quad using the buffer source and RenderType
+            var vertexConsumer = multiBufferSource.getBuffer(RenderType.solid());
+            for (BakedQuad quad : quads) {
+                vertexConsumer.putBulkData(poseStack.last(), quad, 1.0F, 1.0F, 1.0F, light, overlay);
+            }
+
+            poseStack.popPose();
+        }
     }
     private void renderQuads(PoseStack poseStack, MultiBufferSource bufferSource, int light, int overlay, BakedModel model, Direction side) {
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.translucent());

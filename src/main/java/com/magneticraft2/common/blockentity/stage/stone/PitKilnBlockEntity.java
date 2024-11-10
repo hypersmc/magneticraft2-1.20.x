@@ -106,8 +106,12 @@ public class PitKilnBlockEntity extends BlockEntity {
 
 
     public void activate(BlockState state, Level world, BlockPos pos) {
+        // Dear maintainer:
+        // Once you are done trying to 'optimize' this,
+        // and have realized what a terrible mistake that was,
+        // please increment the following counter as a warning to the next person:
+        // total_hours_wasted_here = 18
         this.level = world;
-
         // Check if there are enough items in the kiln's inventory to start the firing process
         PitKilnBlockEntity blockEntity = (PitKilnBlockEntity) world.getBlockEntity(pos);
         LazyOptional<IItemHandler> optionalHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);

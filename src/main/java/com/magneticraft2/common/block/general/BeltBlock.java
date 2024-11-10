@@ -48,7 +48,9 @@ public class BeltBlock extends Block {
         boolean is_straight = pState.getValue(IS_STRAIGHT);
         boolean is_45 = pState.getValue(IS_45);
         boolean is_90 = pState.getValue(IS_90);
-        //TODO should properly have a angle like from_straight_to_45 and from_straight_to_90
+        // TODO: Implement this function properly.
+        // I'm not even sure what it's supposed to do at this point.
+        // Should properly have a angle like from_straight_to_45 and from_straight_to_90
         return super.getShape(pState, pLevel, pPos, pContext);
     }
 

@@ -17,8 +17,8 @@
   "tooltip.magneticraft2.blueprint.pos1": "Pos1: %s",
   "tooltip.magneticraft2.blueprint.pos2": "Pos2: %s",
 
-  "gui.blueprintname": "Name",
-  "gui.savebutton.client": "Save on Client",
+  "gui.blueprintname": "Blueprint Name",
+  "gui.savebutton.client": "Save Blueprint",
   "gui.savebutton.server": "Save on Server",
   "gui.outline": "Outline",
   "gui.project": "Project",

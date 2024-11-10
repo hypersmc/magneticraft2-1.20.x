@@ -19,12 +19,14 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static com.magneticraft2.common.magneticraft2.MOD_ID;
+
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
  * v1.0.0
  */
-@Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Clientsetup {
     private static final Logger LOGGER = LogManager.getLogger("magneticraft2_clientsetup");
     public static void init(FMLClientSetupEvent e){
@@ -44,19 +46,15 @@ public class Clientsetup {
 
     }
     @SubscribeEvent
-    public static void TextureStrach(TextureStitchEvent event) {
-//        if (event.getAtlas().location().equals(TextureAtlas.LOCATION_BLOCKS))
-//            event.addSprite(new ResourceLocation("forge:white"));
-//        if (event.getAtlas().location().equals(BLOCK_ATLAS))
-//        {
-//            event.addSprite(TEXTURE);
-//        }
-
-    }
-    @SubscribeEvent
-    public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event)
-    {
+    public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         LOGGER.info("Models are being registered!");
-        event.register("multiblock", new MultiBlockModelLoader()); //this doesn't work yet and I haven't really looked much into it. all I know is that models still doesn't show.
+        event.register(new ResourceLocation(MOD_ID, "multiblock/primitive_furnace_formed"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/blueprint_multiblock"));
+    }
+
+    @SubscribeEvent
+    public static void onRegisterGeometryLoaders(ModelEvent.RegisterGeometryLoaders event) {
+        LOGGER.info("Registering custom geometry loaders!");
+        event.register("multiblock", new MultiBlockModelLoader());
     }
 }

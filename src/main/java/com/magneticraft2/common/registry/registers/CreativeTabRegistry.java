@@ -54,6 +54,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_stone_knife.get());
                         entries.accept(ItemRegistry.item_pebble.get());
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
+                        entries.accept(ItemRegistry.item_multiblock_filler.get());
 //                        entries.accept(ItemRegistry.);
                     })
                     .build());
@@ -76,7 +77,7 @@ public class CreativeTabRegistry {
                     })
                     .build());
 
-    public static final RegistryObject<CreativeModeTab> MGC2Ores = TABS.register("magneticraft2_ores", () ->
+    public static final RegistryObject<CreativeModeTab> MGC2Ores = TABS.register("magneticraft2_ores", () -> //Never doing this again...
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.Magneticraft2.Ores"))
                     .icon(() -> new ItemStack(ItemRegistry.MAGNETITE_ITEM.get()))

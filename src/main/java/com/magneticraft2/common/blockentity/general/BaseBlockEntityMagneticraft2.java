@@ -45,6 +45,8 @@ import java.util.Optional;
  * v1.0.0
  */
 public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implements MenuProvider, ISync {
+
+
     public static final Logger LOGGER = LogManager.getLogger("BaseBlockEntityMagneticraft2");
     public MenuProvider menuProvider;
     private MultiblockController multiblockController;
@@ -133,8 +135,8 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     }
     public void onDestroy(Level level) {
         if (this.multiblockController != null) {
-            LOGGER.info("onDestroy triggered");
             this.multiblockController.destroyStructure(level);
+            LOGGER.info("onDestroy triggered");
         }
     }
     public boolean matchesStructure(Level world, BlockPos pos, @NotNull MultiblockStructure structure, Multiblock multiblock) {
@@ -142,15 +144,19 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         Map<String, Block> blocks = structure.getBlocks();
         int[] dimensions = structure.getDimensions();
 
-        Block controllerBlock = level.getBlockState(pos).getBlock();
+        // Get the block at the clicked position to identify the controller
+        Block controllerBlock = world.getBlockState(pos).getBlock();
         LOGGER.info("Controller Block: " + controllerBlock);
 
+        // Find the offset based on the controller's position within the multiblock structure
         BlockPos controllerOffset = findControllerOffset(structure, controllerBlock);
         LOGGER.info("Controller Offset: " + controllerOffset);
 
+        // Adjust the starting position by subtracting the controller offset
         BlockPos adjustedPos = pos.offset(-controllerOffset.getX(), -controllerOffset.getY(), -controllerOffset.getZ());
         LOGGER.info("Adjusted Position: " + adjustedPos);
 
+        // Iterate over each block position in the structure's dimensions
         for (int y = 0; y < dimensions[1]; y++) {
             LOGGER.info("Checking Layer y: " + (y + 1));
             List<List<String>> layer = layout.get("layer" + (y + 1));
@@ -163,6 +169,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
                 for (int x = 0; x < dimensions[0]; x++) {
                     LOGGER.info("Checking Layer x: " + (x + 1));
                     if (!validateBlock(world, adjustedPos, x, y, z, blocks, layer)) {
+                        LOGGER.warn("Structure mismatch at x=" + x + ", y=" + y + ", z=" + z);
                         return false;
                     }
                 }
@@ -172,25 +179,20 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         LOGGER.info("Structure matched successfully.");
         return true;
     }
-    private boolean validateBlock(Level world, BlockPos adjustedPos, int x, int y, int z, Map<String, Block> blocks, List<List<String>> layer) {
+    private boolean validateBlock(Level world, BlockPos basePos, int x, int y, int z, Map<String, Block> blocks, List<List<String>> layer) {
         String blockKey = layer.get(z).get(x);
-        if (!blockKey.equals(" ")) {
-            Block expectedBlock = blocks.get(blockKey);
-            if (expectedBlock == null) {
-                LOGGER.warn("Block key {} is not defined in the blocks map", blockKey);
-                return false;
-            }
-            BlockState stateInWorld = world.getBlockState(adjustedPos.offset(x, y, z));
-            LOGGER.info("Checking Position: {}", adjustedPos.offset(x, y, z));
-            LOGGER.info("Expected Block: {}", expectedBlock);
-            LOGGER.info("Block in World: {}", stateInWorld.getBlock());
-            if (!stateInWorld.is(expectedBlock)) {
-                LOGGER.warn("Mismatch found at position: {} Expected: {} Found: {}", adjustedPos.offset(x, y, z), expectedBlock, stateInWorld.getBlock());
-                return false;
-            }
+        Block expectedBlock = blocks.get(blockKey);
+
+        // Calculate the absolute position in the world based on the adjusted position
+        BlockPos blockPosToCheck = basePos.offset(x, y, z);
+        Block actualBlock = world.getBlockState(blockPosToCheck).getBlock();
+        if (!actualBlock.equals(expectedBlock)) {
+            LOGGER.warn("Block mismatch at " + blockPosToCheck + ": expected " + expectedBlock + ", found " + actualBlock);
+            return false;
         }
         return true;
     }
+
     public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) {
         Map<String, List<List<String>>> layout = structure.getLayout();
         int[] dimensions = structure.getDimensions();
@@ -202,8 +204,8 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
                 for (int x = 0; x < dimensions[0]; x++) {
                     String blockKey = layer.get(z).get(x);
                     if (blocks.get(blockKey) == controllerBlock) {
-                        // Calculate the offset based on the relative position of the controller block in the structure
-                        return new BlockPos(x - dimensions[0] / 2 +1, y - dimensions[1] / 2+1, z - dimensions[2] / 2+1);
+                        // Return the exact offset based on the controller block's position in the structure layout
+                        return new BlockPos(x, y, z);
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.blockitems.beltblockitem;
+import com.magneticraft2.common.item.creativeitems.multiblock_filler_item;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
@@ -56,7 +57,7 @@ public class ItemRegistry {
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
     public static final RegistryObject<Blueprintmarker> item_blueprintmarker = ITEMS.register("blueprint", Blueprintmarker::new);
     public static final RegistryObject<BlockItem> item_beltblock = ITEMS.register("beltblock", () -> new beltblockitem(beltblock.get(), new Item.Properties()));
-
+    public static final RegistryObject<multiblock_filler_item> item_multiblock_filler = ITEMS.register("multiblock_filler_item", () -> new multiblock_filler_item(multiblockfiller.get(), new Item.Properties()));
     //Blocks to items
     public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
@@ -64,6 +65,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> item_testmultiblockblock = fromBlock(testmultiblockblock);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
+
 
 
 

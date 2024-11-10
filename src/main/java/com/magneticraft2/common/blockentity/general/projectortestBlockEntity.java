@@ -117,6 +117,7 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        if (tag == null) return;
         if (tag.getString("Blueprint") != null){
             blueprint = tag.getString("Blueprint");
         }

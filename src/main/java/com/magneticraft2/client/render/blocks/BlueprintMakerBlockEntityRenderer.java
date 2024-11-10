@@ -44,6 +44,7 @@ import java.util.Random;
 public class BlueprintMakerBlockEntityRenderer implements BlockEntityRenderer<blueprintmakerBlockEntity> {
     private static final Logger LOGGER = LogManager.getLogger("blueprintmaker");
     public BlueprintMakerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
+
     @Override
     public void render(blueprintmakerBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         // Get positions of the two posts

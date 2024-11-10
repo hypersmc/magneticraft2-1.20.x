@@ -67,10 +67,10 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         int centerY = topPos + imageHeight / 2;
 
 
-        blueprintNameField = new EditBox(font, centerX -20 , centerY+31 , 68,  18, Component.translatable("gui.blueprintname"));
+        blueprintNameField = new EditBox(font, centerX -32 , centerY+31 , 80,  18, Component.translatable("gui.blueprintname"));
         blueprintNameField.setValue(""); // Set initial value
         blueprintNameField.setHint(Component.translatable("gui.blueprintname"));
-        this.saveButtonClient = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.client"), this::onSaveButtonClickClient).bounds(centerX+55,centerY+30, 40, 20).build());
+        this.saveButtonClient = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.client"), this::onSaveButtonClickClient).bounds(centerX+55,centerY+30, 60, 20).build());
         //this.saveButtonServer = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.server"), this::onSaveButtonClickServer).bounds(centerX+55,centerY+30, 40, 20).build());
         this.addRenderableWidget(blueprintNameField);
         this.addWidget(saveButtonClient);

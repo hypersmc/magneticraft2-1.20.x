@@ -3,10 +3,14 @@ package com.magneticraft2.common.systems.Multiblocking.core;
 import com.magneticraft2.common.block.general.testmultiblockblock;
 import com.magneticraft2.common.block.general.testpowermoduleblock;
 import com.magneticraft2.common.blockentity.general.testpowermodule;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -58,7 +62,7 @@ public class MultiblockController {
     }
     public boolean isValidStructure(Level world, BlockPos pos) {
         masterPos = pos;
-
+        LOGGER.info("blocks:" + structure.getBlocks());
         // Initialize modules
         modules.clear();
         for (IMultiblockModule module : structure.getModules()) {
@@ -75,6 +79,64 @@ public class MultiblockController {
                 return false;
             }
         }
+        // Clear the blockMap to ensure it's empty before adding new entries
+        blockMap.clear();
+
+        // Get the dimensions, layout, and block definitions of the structure
+        int[] dimensions = structure.getDimensions();
+        Map<String, Block> blockDefinitions = structure.getBlocks();
+        Map<String, List<List<String>>> layout = structure.getLayout();
+
+        // Locate the controller block within the structure layout to determine the offset
+        Block controllerBlock = world.getBlockState(masterPos).getBlock();
+        BlockPos controllerOffset = FindControllerOffset(layout, blockDefinitions, controllerBlock);
+
+        if (controllerOffset == null) {
+            System.out.println("Controller block not found in the structure layout.");
+            return false;
+        }
+
+        // Adjust the starting point (origin) based on the controller's position in the layout
+        BlockPos origin = masterPos.subtract(controllerOffset);
+
+        // Iterate through the structure dimensions to validate each block
+        for (int y = 0; y < dimensions[1]; y++) {
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            if (layer == null) {
+                System.out.println("Layer " + (y + 1) + " is missing from the layout.");
+                return false;
+            }
+
+            for (int z = 0; z < dimensions[2]; z++) {
+                for (int x = 0; x < dimensions[0]; x++) {
+                    // Get the block key at the current position in the layer
+                    String blockKey = layer.get(z).get(x);
+
+                    // Get the expected Block based on the key from blockDefinitions
+                    Block expectedBlock = blockDefinitions.get(blockKey);
+                    if (expectedBlock == null) {
+                        System.out.println("No block definition found for key: " + blockKey);
+                        return false;
+                    }
+
+                    // Calculate the actual world position for the current block
+                    BlockPos currentPos = origin.offset(x, y, z);
+                    BlockState currentState = world.getBlockState(currentPos);
+
+                    // Check if the current block matches the expected block
+                    if (currentState.getBlock() != expectedBlock) {
+                        System.out.println("Block mismatch at " + currentPos + ": expected " + expectedBlock + ", found " + currentState.getBlock());
+                        return false;
+                    }
+
+                    // Add the position and block state to the map
+                    LOGGER.info("Block: " + expectedBlock + " at " + currentPos);
+                    blockMap.put(currentPos, currentState);
+                }
+            }
+        }
+
+
 
         return true;
     }
@@ -85,9 +147,26 @@ public class MultiblockController {
 
         // Create the structure at the given position
         for (Map.Entry<BlockPos, BlockState> entry : blockMap.entrySet()) {
-            BlockPos offsetPos = entry.getKey();
-            BlockPos placePos = pos.offset(offsetPos);
-            world.setBlock(placePos, entry.getValue(), 2);
+            BlockPos placePos = entry.getKey();
+            Block block = world.getBlockState(placePos).getBlock();
+            // Check if the current block is the controller block
+            if (!placePos.equals(pos)) {
+                if (!(block == Blocks.AIR)) {
+                    // Replace non-controller blocks with the specified replacement block
+                    world.setBlock(placePos, BlockRegistry.multiblockfiller.get().defaultBlockState(), 2);
+                    // Add NBT data to the block entity
+                    BlockEntity blockEntity = world.getBlockEntity(placePos);
+                    if (blockEntity != null) {
+                        CompoundTag tag = blockEntity.getUpdateTag();
+                        tag.putInt("controller_x", pos.getX());
+                        tag.putInt("controller_y", pos.getY());
+                        tag.putInt("controller_z", pos.getZ());
+                        blockEntity.setChanged(); // Mark the block entity as changed to save data
+                        LOGGER.info("FillerBlock updated");
+                    }
+                }
+
+            }
         }
 
         // Enable modules
@@ -131,6 +210,24 @@ public class MultiblockController {
 
         return true; // Return true if modules are identified and added successfully, false otherwise
     }
+    private BlockPos FindControllerOffset(Map<String, List<List<String>>> layout, Map<String, Block> blockDefinitions, Block controllerBlock) {
+        for (int y = 0; y < layout.size(); y++) {
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            for (int z = 0; z < layer.size(); z++) {
+                List<String> row = layer.get(z);
+                for (int x = 0; x < row.size(); x++) {
+                    String blockKey = row.get(x);
+                    Block expectedBlock = blockDefinitions.get(blockKey);
+
+                    // Check if this is the controller block
+                    if (expectedBlock == controllerBlock) {
+                        return new BlockPos(x, y, z);  // Return the offset position of the controller
+                    }
+                }
+            }
+        }
+        return null;  // Controller not found in layout
+    }
 
     public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) {
         Map<String, List<List<String>>> layout = structure.getLayout();
@@ -156,17 +253,20 @@ public class MultiblockController {
         if (masterPos == null) {
             return false;
         }
-
+        LOGGER.info("Disabling modules");
         // Disable modules
         for (IMultiblockModule module : modules.values()) {
             module.onDeactivate(world, module.getModuleOffset());
         }
-
+        LOGGER.info("Destrying structure");
+        LOGGER.info(blockMap.entrySet() + " Entrymap");
         // Destroy the structure
         for (Map.Entry<BlockPos, BlockState> entry : blockMap.entrySet()) {
             BlockPos offsetPos = entry.getKey();
-            BlockPos destroyPos = masterPos.offset(offsetPos);
-            world.setBlock(destroyPos, Blocks.AIR.defaultBlockState(), 2);
+            Block block = entry.getValue().getBlock();
+            LOGGER.info("destroying " + offsetPos + " is block: " + block);
+            world.addFreshEntity(new ItemEntity(world, offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), new ItemStack(block)));
+            world.setBlock(offsetPos, Blocks.AIR.defaultBlockState(), 2);
         }
 
         blockMap.clear();

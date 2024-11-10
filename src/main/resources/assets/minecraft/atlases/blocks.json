@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "type": "single",
+      "resource": "magneticraft2:multiblock/primitive_furnace"
+    },
+    {
+      "type": "single",
+      "resource": "magneticraft2:util/placeholder"
+    }
+  ]
+}
