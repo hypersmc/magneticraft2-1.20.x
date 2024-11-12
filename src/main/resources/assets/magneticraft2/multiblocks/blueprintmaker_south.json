@@ -1,37 +1,32 @@
 {
-  "name": "test2",
+  "name": "blueprintmaker_south",
   "structure": {
     "dimensions": [
       3,
-      3,
-      3
+      1,
+      2
     ],
     "layout": {
       "layer1": [
-        ["A", "A", "A"],
-        ["A", "P", "A"],
-        ["A", "A", "A"]
-      ],
-      "layer2": [
-        ["A", "A", "A"],
-        ["A", "I", "A"],
-        ["A", "A", "A"]
-      ],
-      "layer3": [
-        ["A", "A", "A"],
-        ["A", "S", "A"],
-        ["A", "A", "A"]
+        [
+          "BlockKey1",
+          "BlockKey2",
+          "BlockKey1"
+        ],
+        [
+          "BlockKey1",
+          "BlockKey1",
+          "BlockKey1"
+        ]
       ]
     },
     "blocks": {
-      "P": "magneticraft2:testpowermodule",
-      "S": "minecraft:sandstone",
-      "I": "magneticraft2:testmultiblock",
-      "A": "minecraft:air"
+      "BlockKey1": "minecraft:oak_log",
+      "BlockKey2": "magneticraft2:blueprint_multiblock"
     }
   },
   "settings": {
-    "replacewhenformed": "primitive",
+    "replacewhenformed": "multiblock/blueprint_maker_multiblock_south",
     "inventory": true,
     "power": true,
     "fuel": true,

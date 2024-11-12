@@ -61,10 +61,9 @@ public class ItemRegistry {
     //Blocks to items
     public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
-    public static final RegistryObject<Item> item_blueprintmaker = fromBlock(blueprintmaker);
-    public static final RegistryObject<Item> item_testmultiblockblock = fromBlock(testmultiblockblock);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
+    public static final RegistryObject<Item> item_blueprintmakermultiblock = fromBlock(blueprintmultiblock);
 
 
 

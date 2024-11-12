@@ -1,12 +1,12 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "down": "magneticraft2:block/blueprintblock/down",
+    "down": "magneticraft2:multiblock/blueprintmaker_back",
     "up": "magneticraft2:block/blueprintblock/top",
-    "north": "magneticraft2:block/blueprintblock/north",
-    "south": "magneticraft2:block/blueprintblock/south",
-    "east": "magneticraft2:block/blueprintblock/east",
-    "west": "magneticraft2:block/blueprintblock/west",
-    "particle": "magneticraft2:block/blueprintblock/particle"
+    "north": "minecraft:block/oak_log",
+    "south": "minecraft:block/oak_log",
+    "east": "minecraft:block/oak_log",
+    "west": "minecraft:block/oak_log",
+    "particle": "magneticraft2:block/blueprintblock/top"
   }
 }

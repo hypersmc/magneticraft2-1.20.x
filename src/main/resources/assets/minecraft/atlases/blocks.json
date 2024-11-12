@@ -6,6 +6,14 @@
     },
     {
       "type": "single",
+      "resource": "magneticraft2:multiblock/blueprintmaker_back"
+    },
+    {
+      "type": "single",
+      "resource": "magneticraft2:multiblock/blueprintmaker_top"
+    },
+    {
+      "type": "single",
       "resource": "magneticraft2:util/placeholder"
     }
   ]

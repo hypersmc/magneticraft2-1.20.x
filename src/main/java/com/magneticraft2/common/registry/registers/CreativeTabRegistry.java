@@ -36,11 +36,10 @@ public class CreativeTabRegistry {
                     .displayItems((enabledFeatures, entries) -> {
                         entries.accept(ItemRegistry.item_pitkiln.get());
                         entries.accept(ItemRegistry.item_projector.get());
-                        entries.accept(ItemRegistry.item_blueprintmaker.get());
-                        entries.accept(ItemRegistry.item_testmultiblockblock.get());
                         entries.accept(ItemRegistry.item_testpowermoduleblock.get());
                         entries.accept(ItemRegistry.item_testpollutionblock.get());
                         entries.accept(ItemRegistry.item_beltblock.get());
+                        entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->

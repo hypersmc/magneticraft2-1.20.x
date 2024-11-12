@@ -41,7 +41,7 @@ public class ContainerAndScreenRegistry {
         Level world = inv.player.getCommandSenderWorld();
         return new Projector_container(windowId, world, pos, inv,inv.player);
     }))));
-    public static final RegistryObject<MenuType<blueprintmaker_container>> Blueprintmaker_container = CONTAINERS.register("blueprintmaker", () -> IForgeMenuType.create(((((windowId, inv, data) -> {
+    public static final RegistryObject<MenuType<blueprintmaker_container>> Blueprintmaker_container = CONTAINERS.register("blueprint_multiblock", () -> IForgeMenuType.create(((((windowId, inv, data) -> {
         BlockPos pos = data.readBlockPos();
         Level world = inv.player.getCommandSenderWorld();
         return new blueprintmaker_container(windowId, world, pos, inv,inv.player);

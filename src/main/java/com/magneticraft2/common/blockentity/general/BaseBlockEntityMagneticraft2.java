@@ -127,14 +127,17 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     }
 
     public void onRightClick() {
+
         if (this.multiblockController != null) {
             this.multiblockController.createStructure(level, getBlockPos());
         } else {
             createMultiblockController();
+
         }
     }
     public void onDestroy(Level level) {
         if (this.multiblockController != null) {
+            this.multiblockController.setMasterPos(worldPosition );
             this.multiblockController.destroyStructure(level);
             LOGGER.info("onDestroy triggered");
         }

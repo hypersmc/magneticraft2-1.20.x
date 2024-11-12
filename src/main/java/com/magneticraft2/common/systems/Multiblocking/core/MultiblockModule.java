@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems.Multiblocking.core;
 
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,8 +24,8 @@ public class MultiblockModule implements IMultiblockModule {
     private final MultiblockStructure structure;
     private final Map<BlockPos, BlockState> blockMap;
     private final List<BlockPos> modulePositions;
-    private final String moduleKey;
-    private final BlockPos moduleOffset;
+    private String moduleKey;
+    private BlockPos moduleOffset;
 
     public MultiblockModule(MultiblockStructure structure, String moduleKey, BlockPos moduleOffset) {
         this.moduleKey = moduleKey;
@@ -145,5 +146,29 @@ public class MultiblockModule implements IMultiblockModule {
 
     public MultiblockStructure getStructure() {
         return structure;
+    }
+    public CompoundTag saveToNBT() {
+        CompoundTag tag = new CompoundTag();
+
+        // Save the module key and position
+        tag.putString("moduleKey", moduleKey);
+        if (moduleOffset != null) {
+            tag.putInt("modulePosX", moduleOffset.getX());
+            tag.putInt("modulePosY", moduleOffset.getY());
+            tag.putInt("modulePosZ", moduleOffset.getZ());
+        }
+
+        // Save any additional properties relevant to this module
+
+        return tag;
+    }
+
+    public void loadFromNBT(CompoundTag tag) {
+        this.moduleKey = tag.getString("moduleKey");
+        if (tag.contains("modulePosX") && tag.contains("modulePosY") && tag.contains("modulePosZ")) {
+            this.moduleOffset = new BlockPos(tag.getInt("modulePosX"), tag.getInt("modulePosY"), tag.getInt("modulePosZ"));
+        }
+
+        // Load any additional properties relevant to this module
     }
 }

@@ -1,6 +1,6 @@
 package com.magneticraft2.client.gui.container.blueprintmaker;
 
-import com.magneticraft2.common.blockentity.general.blueprintmakerBlockEntity;
+import com.magneticraft2.common.blockentity.general.BlueprintMultiblockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.registry.registers.ContainerAndScreenRegistry;
 import net.minecraft.core.BlockPos;
@@ -40,8 +40,8 @@ public class blueprintmaker_container extends AbstractContainerMenu {
     }
 
 
-    public blueprintmakerBlockEntity getBlueprintmaker(){
-        blueprintmakerBlockEntity entity = (blueprintmakerBlockEntity) blockEntity;
+    public BlueprintMultiblockEntity getBlueprintmaker(){
+        BlueprintMultiblockEntity entity = (BlueprintMultiblockEntity) blockEntity;
         return entity;
     }
     public String getPlayerName(){
@@ -50,12 +50,12 @@ public class blueprintmaker_container extends AbstractContainerMenu {
     public long gettest(){
         BlockPos pos = blockEntity.getBlockPos();
         BlockEntity entity = blockEntity.getLevel().getBlockEntity(pos);
-        blueprintmakerBlockEntity blockEntity2 = (blueprintmakerBlockEntity) entity;
+        BlueprintMultiblockEntity blockEntity2 = (BlueprintMultiblockEntity) entity;
         return blockEntity2.getPos2long();
     }
     @Override
     public boolean stillValid(Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), player, BlockRegistry.blueprintmaker.get());
+        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), player, BlockRegistry.blueprintmultiblock.get());
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {

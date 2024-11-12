@@ -4,7 +4,6 @@ import com.magneticraft2.common.block.general.*;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
-import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -44,12 +43,11 @@ public class BlockRegistry {
     public static final RegistryObject<stick> stickblock = BLOCKS.register("stick", stick::new);
     public static final RegistryObject<stonepebble> stonepebble = BLOCKS.register("stonepebble", stonepebble::new);
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
-    public static final RegistryObject<blueprintmaker> blueprintmaker = BLOCKS.register("blueprintmaker", blueprintmaker::new);
-    public static final RegistryObject<testmultiblockblock> testmultiblockblock = BLOCKS.register("testmultiblock", testmultiblockblock::new);
     public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
     public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
     public static final RegistryObject<BeltBlock> beltblock = BLOCKS.register("beltblock", BeltBlock::new);
     public static final RegistryObject<Multiblockfiller> multiblockfiller = BLOCKS.register("multiblock_filler", Multiblockfiller::new);
+    public static final RegistryObject<BlueprintMultiblock> blueprintmultiblock = BLOCKS.register("blueprint_multiblock", BlueprintMultiblock::new);
 
 
 

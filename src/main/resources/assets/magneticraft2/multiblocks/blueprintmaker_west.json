@@ -1,36 +1,34 @@
 {
-  "name": "test",
+  "name": "blueprintmaker_west",
   "structure": {
     "dimensions": [
-      3,
-      3,
+      2,
+      1,
       3
     ],
     "layout": {
       "layer1": [
-        ["A", "A", "A"],
-        ["A", "P", "A"],
-        ["A", "A", "A"]
-      ],
-      "layer2": [
-        ["A", "A", "A"],
-        ["A", "I", "A"],
-        ["A", "A", "A"]
-      ],
-      "layer3": [
-        ["A", "A", "A"],
-        ["A", "P", "A"],
-        ["A", "A", "A"]
+        [
+          "BlockKey1",
+          "BlockKey1"
+        ],
+        [
+          "BlockKey1",
+          "BlockKey2"
+        ],
+        [
+          "BlockKey1",
+          "BlockKey1"
+        ]
       ]
     },
     "blocks": {
-      "P": "minecraft:stone",
-      "I": "magneticraft2:testmultiblock",
-      "A": "minecraft:air"
+      "BlockKey1": "minecraft:oak_log",
+      "BlockKey2": "magneticraft2:blueprint_multiblock"
     }
   },
   "settings": {
-    "replacewhenformed": "multiblock/primitive_furnace_formed",
+    "replacewhenformed": "multiblock/blueprint_maker_multiblock_west",
     "inventory": true,
     "power": true,
     "fuel": true,

@@ -1,14 +1,12 @@
 package com.magneticraft2.common.systems.Multiblocking.core;
 
-import com.magneticraft2.common.block.general.testmultiblockblock;
-import com.magneticraft2.common.block.general.testpowermoduleblock;
-import com.magneticraft2.common.blockentity.general.testpowermodule;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
-import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -23,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @author JumpWatch on 11-09-2023
@@ -47,6 +44,7 @@ public class MultiblockController {
     public void setFormed(boolean val){
         isFormed = val;
     }
+
     public boolean getFormed(){
         return isFormed;
     }
@@ -59,6 +57,16 @@ public class MultiblockController {
             return null;
         }
         return null;
+    }
+    public boolean isMasterPosSet(){
+        if (this.masterPos != null){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public void setMasterPos(BlockPos masterPos) {
+        this.masterPos = masterPos;
     }
     public boolean isValidStructure(Level world, BlockPos pos) {
         masterPos = pos;
@@ -92,7 +100,6 @@ public class MultiblockController {
         BlockPos controllerOffset = FindControllerOffset(layout, blockDefinitions, controllerBlock);
 
         if (controllerOffset == null) {
-            System.out.println("Controller block not found in the structure layout.");
             return false;
         }
 
@@ -125,18 +132,15 @@ public class MultiblockController {
 
                     // Check if the current block matches the expected block
                     if (currentState.getBlock() != expectedBlock) {
-                        System.out.println("Block mismatch at " + currentPos + ": expected " + expectedBlock + ", found " + currentState.getBlock());
+                        LOGGER.info("Block mismatch at {}: expected {}, found {}", currentPos, expectedBlock, currentState.getBlock());
                         return false;
                     }
 
                     // Add the position and block state to the map
-                    LOGGER.info("Block: " + expectedBlock + " at " + currentPos);
                     blockMap.put(currentPos, currentState);
                 }
             }
         }
-
-
 
         return true;
     }
@@ -161,8 +165,8 @@ public class MultiblockController {
                         tag.putInt("controller_x", pos.getX());
                         tag.putInt("controller_y", pos.getY());
                         tag.putInt("controller_z", pos.getZ());
-                        blockEntity.setChanged(); // Mark the block entity as changed to save data
-                        LOGGER.info("FillerBlock updated");
+//                        blockEntity.setChanged(); // Mark the block entity as changed to save data
+                        blockEntity.handleUpdateTag(tag);
                     }
                 }
 
@@ -251,20 +255,21 @@ public class MultiblockController {
 
     public boolean destroyStructure(Level world) {
         if (masterPos == null) {
+            LOGGER.info("Master pos not found!");
             return false;
         }
-        LOGGER.info("Disabling modules");
+//        LOGGER.info("Disabling modules");
         // Disable modules
         for (IMultiblockModule module : modules.values()) {
             module.onDeactivate(world, module.getModuleOffset());
         }
-        LOGGER.info("Destrying structure");
-        LOGGER.info(blockMap.entrySet() + " Entrymap");
+//        LOGGER.info("Destrying structure");
+//        LOGGER.info(blockMap.entrySet() + " Entrymap");
         // Destroy the structure
         for (Map.Entry<BlockPos, BlockState> entry : blockMap.entrySet()) {
             BlockPos offsetPos = entry.getKey();
             Block block = entry.getValue().getBlock();
-            LOGGER.info("destroying " + offsetPos + " is block: " + block);
+//            LOGGER.info("destroying " + offsetPos + " is block: " + block);
             world.addFreshEntity(new ItemEntity(world, offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), new ItemStack(block)));
             world.setBlock(offsetPos, Blocks.AIR.defaultBlockState(), 2);
         }
@@ -285,5 +290,82 @@ public class MultiblockController {
 
     public BlockPos getMasterPos() {
         return masterPos;
+    }
+    public CompoundTag saveToNBT() {
+        CompoundTag tag = new CompoundTag();
+
+        // Save whether the multiblock is formed
+        tag.putBoolean("isFormed", isFormed);
+
+        // Save the structure (if needed) - this can vary based on your structure handling
+        if (structure != null) {
+            tag.put("structure", structure.saveToNBT());
+        }
+
+        // Save the block map
+        ListTag blockMapList = new ListTag();
+        for (Map.Entry<BlockPos, BlockState> entry : blockMap.entrySet()) {
+            CompoundTag entryTag = new CompoundTag();
+            BlockPos pos = entry.getKey();
+            entryTag.putInt("x", pos.getX());
+            entryTag.putInt("y", pos.getY());
+            entryTag.putInt("z", pos.getZ());
+
+            // Use BlockState's Codec to serialize
+            entryTag.put("blockState", BlockState.CODEC.encodeStart(NbtOps.INSTANCE, entry.getValue()).result().orElse(new CompoundTag()));
+
+            blockMapList.add(entryTag);
+        }
+        tag.put("blockMap", blockMapList);
+
+        // Save the modules map
+        CompoundTag modulesTag = new CompoundTag();
+        for (Map.Entry<String, MultiblockModule> entry : modules.entrySet()) {
+            modulesTag.put(entry.getKey(), ((MultiblockModule) entry.getValue()).saveToNBT());
+        }
+        tag.put("modules", modulesTag);
+
+        return tag;
+    }
+
+    public void loadFromNBT(CompoundTag tag) {
+        this.isFormed = tag.getBoolean("isFormed");
+
+        // Load structure if needed
+        if (tag.contains("structure") && this.structure != null) {
+            this.structure.loadFromNBT(tag.getCompound("structure"));
+        }
+
+        // Load the block map
+        this.blockMap.clear();
+        ListTag blockMapList = tag.getList("blockMap", CompoundTag.TAG_COMPOUND);
+        for (int i = 0; i < blockMapList.size(); i++) {
+            CompoundTag entryTag = blockMapList.getCompound(i);
+
+            BlockPos pos = new BlockPos(entryTag.getInt("x"), entryTag.getInt("y"), entryTag.getInt("z"));
+            BlockState state = BlockState.CODEC.parse(NbtOps.INSTANCE, entryTag.getCompound("blockState")).result().orElse(null);
+
+            if (state != null) {
+                blockMap.put(pos, state);
+            }
+        }
+
+        // Load the modules map
+        this.modules.clear();
+        CompoundTag modulesTag = tag.getCompound("modules");
+        for (String key : modulesTag.getAllKeys()) {
+            CompoundTag moduleTag = modulesTag.getCompound(key);
+
+            // Retrieve or construct the necessary parameters
+            MultiblockStructure structure = this.structure; // Assuming structure is already initialized
+            String moduleKey = moduleTag.getString("moduleKey");
+            BlockPos moduleOffset = new BlockPos(moduleTag.getInt("modulePosX"), moduleTag.getInt("modulePosY"), moduleTag.getInt("modulePosZ"));
+
+            // Create the module using the constructor with parameters
+            MultiblockModule module = new MultiblockModule(structure, moduleKey, moduleOffset);
+            module.loadFromNBT(moduleTag);
+
+            modules.put(key, module);
+        }
     }
 }

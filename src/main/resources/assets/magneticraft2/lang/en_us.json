@@ -45,11 +45,13 @@
   "block.magneticraft2.cruciblemb": "§7Crucible",
   "block.magneticraft2.hvconnector_base": "HV Connector",
   "block.magneticraft2.multiblock_filler": "Multiblock Filler",
+  "block.magneticraft2.blueprint_multiblock": "Blueprint maker",
+
 
   "item.magneticraft2.wirecoil": "Wire Coil",
   "item.magneticraft2.rice_seed": "Rice Seed",
   "item.magneticraft2.rice": "Rice",
   "item.magneticraft2.copper_ingot_low": "Copper Ingot",
 
-  "item.magneticraft2.blueprint": "Blueprint"
+  "item.magneticraft2.blueprint_multiblock": "Blueprint maker"
 }

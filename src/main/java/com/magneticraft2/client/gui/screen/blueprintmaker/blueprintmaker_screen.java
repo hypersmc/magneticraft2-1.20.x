@@ -1,7 +1,7 @@
 package com.magneticraft2.client.gui.screen.blueprintmaker;
 
 import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_container;
-import com.magneticraft2.common.blockentity.general.blueprintmakerBlockEntity;
+import com.magneticraft2.common.blockentity.general.BlueprintMultiblockEntity;
 import com.magneticraft2.common.magneticraft2;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -79,7 +79,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         if (blueprintNameField.getValue().isEmpty()){
             triedsavingwithnoname = true;
         }else {
-            blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+            BlueprintMultiblockEntity block = menu.getBlueprintmaker();
             block.setBlueprintname(blueprintNameField.getValue());
             block.saveBlueprintClient(menu.getPlayerName());
 
@@ -89,7 +89,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         if (blueprintNameField.getValue().isEmpty()){
             triedsavingwithnoname = true;
         }else {
-            blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+            BlueprintMultiblockEntity block = menu.getBlueprintmaker();
             block.setBlueprintname(blueprintNameField.getValue());
             block.saveBlueprintServer(menu.getPlayerName());
         }
@@ -119,7 +119,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     }
 
     private void rendercoordinates(GuiGraphics guiGraphics, int x, int y) {
-        blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+        BlueprintMultiblockEntity block = menu.getBlueprintmaker();
         BlockPos pos1xyz = block.getPos1BlockPos();
         BlockPos pos2xyz = block.getPos2BlockPos();
         if (pos1xyz.equals(BlockPos.of(block.getPos1long())) && !pos1xyz.equals(new BlockPos(0, 0, 0))) {
@@ -138,7 +138,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     }
 
     private void renderBlockItemList(GuiGraphics guiGraphics, int x, int y) {
-        blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+        BlueprintMultiblockEntity block = menu.getBlueprintmaker();
         BlockPos pos1xyz = block.getPos1BlockPos();
         BlockPos pos2xyz = block.getPos2BlockPos();
 
@@ -222,7 +222,7 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
 
 
     private void renderBlocksInSpace(GuiGraphics guiGraphics, int x, int y) {
-        blueprintmakerBlockEntity block = menu.getBlueprintmaker();
+        BlueprintMultiblockEntity block = menu.getBlueprintmaker();
         BlockPos pos1xyz = block.getPos1BlockPos();
         BlockPos pos2xyz = block.getPos2BlockPos();
 
