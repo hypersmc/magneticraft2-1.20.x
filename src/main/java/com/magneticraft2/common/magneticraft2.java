@@ -13,11 +13,16 @@ import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.Magneticraft2ConfigServer;
 import com.magneticraft2.compatibility.TOP.TOPCompatibility;
+import com.magneticraft2.server.MultiblockAndBlueprintReloadListener;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -28,6 +33,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLib;
 
 /**
@@ -68,9 +74,14 @@ public class magneticraft2 {
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Magneticraft2ConfigClient.SPEC, "magneticraft2-client.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Magneticraft2ConfigServer.SPEC, "magneticraft2-server.toml");
     }
+    @SubscribeEvent
     public void preClient(final FMLClientSetupEvent event){
         MultiblockManager.loadMultiblocks(MOD_ID, Minecraft.getInstance().getResourceManager());
         BlueprintManager.loadBlueprints(MOD_ID, Minecraft.getInstance().getResourceManager());
+    }
+    @SubscribeEvent
+    public void registerReloadListener(@NotNull AddReloadListenerEvent event){
+        event.addListener(new MultiblockAndBlueprintReloadListener());
     }
     public void preinit(final FMLCommonSetupEvent event){
         mgc2Network.init();

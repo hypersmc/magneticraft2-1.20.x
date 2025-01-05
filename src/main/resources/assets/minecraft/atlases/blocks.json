@@ -1,16 +1,9 @@
 {
   "sources": [
     {
-      "type": "single",
-      "resource": "magneticraft2:multiblock/primitive_furnace"
-    },
-    {
-      "type": "single",
-      "resource": "magneticraft2:multiblock/blueprintmaker_back"
-    },
-    {
-      "type": "single",
-      "resource": "magneticraft2:multiblock/blueprintmaker_top"
+      "type": "directory",
+      "prefix":"multiblock/",
+      "source": "multiblock"
     },
     {
       "type": "single",

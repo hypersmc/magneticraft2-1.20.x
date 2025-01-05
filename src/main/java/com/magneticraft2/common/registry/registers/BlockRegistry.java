@@ -3,7 +3,14 @@ package com.magneticraft2.common.registry.registers;
 import com.magneticraft2.common.block.general.*;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
+import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
+import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.SmallGearBlock_wood;
+import com.magneticraft2.common.block.stage.stone.BellowsMultiblockModule;
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
+import com.magneticraft2.common.block.stage.stone.PrimitiveFurnaceMultiblock;
+import com.magneticraft2.common.block.stage.stone.PrimitiveFurnaceMultiblock_nogui;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -29,7 +36,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BlockRegistry {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-BlockRegistry");
-    private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
+    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MOD_ID);
     public static void init(IEventBus eventBus){
         BLOCKS.register(eventBus);
     }
@@ -37,7 +44,7 @@ public class BlockRegistry {
         return BLOCKS.register(name, block);
     }
     //Blocks after this line
-
+    //Should sort this for each stage
     public static final RegistryObject<PitKilnBlock> PitKilnblock = BLOCKS.register("pitkilnblock", PitKilnBlock::new);
     public static final RegistryObject<Block> rice_plant = registerBlockWithoutBlockItem("rice_plant", () -> new RicePlantBlock(BlockBehaviour.Properties.of().noOcclusion()));
     public static final RegistryObject<stick> stickblock = BLOCKS.register("stick", stick::new);
@@ -48,10 +55,19 @@ public class BlockRegistry {
     public static final RegistryObject<BeltBlock> beltblock = BLOCKS.register("beltblock", BeltBlock::new);
     public static final RegistryObject<Multiblockfiller> multiblockfiller = BLOCKS.register("multiblock_filler", Multiblockfiller::new);
     public static final RegistryObject<BlueprintMultiblock> blueprintmultiblock = BLOCKS.register("blueprint_multiblock", BlueprintMultiblock::new);
+    public static final RegistryObject<PrimitiveFurnaceMultiblock> primitivefurnacemultiblock = BLOCKS.register("primitivefurnace_multiblock", PrimitiveFurnaceMultiblock::new);
+    public static final RegistryObject<PrimitiveFurnaceMultiblock_nogui> primitivefurnace_multiblock_nogui = BLOCKS.register("primitivefurnace_multiblock_nogui", PrimitiveFurnaceMultiblock_nogui::new);
+    public static final RegistryObject<BellowsMultiblockModule> bellowsmultiblockmodule = BLOCKS.register("bellows_multiblock_module", BellowsMultiblockModule::new);
+
+    //Stone
 
 
+    //Copper
 
-
+    public static final RegistryObject<SmallGearBlock_wood> GEAR_SMALL_WOOD = BLOCKS.register("gear_small_wood", SmallGearBlock_wood::new);
+    public static final RegistryObject<MediumGearBlock_wood> GEAR_MEDIUM_WOOD = BLOCKS.register("gear_medium_wood", MediumGearBlock_wood::new);
+    public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
+    public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);
 
 
 

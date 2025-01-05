@@ -67,4 +67,22 @@ public class PressureStorage implements IPressureStorage{
     public boolean canReceive() {
         return this.maxReceive > 0;
     }
+
+    @Override
+    public boolean setSend(boolean val) {
+        if (val){
+            return this.maxExtract > 0;
+        }else {
+            return this.maxExtract < 0;
+        }
+    }
+
+    @Override
+    public boolean setReceive(boolean val) {
+        if (val) {
+            return this.maxReceive > 0;
+        }else {
+            return this.maxReceive < 0;
+        }
+    }
 }

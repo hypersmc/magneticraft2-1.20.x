@@ -40,7 +40,6 @@ public class Multiblockfiller extends BaseEntityBlock {
             // Get the filler block's BlockEntity and read its NBT data
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
-
             if (tag != null && tag.contains("controller_x") && tag.contains("controller_y") && tag.contains("controller_z")) {
                 // Retrieve the controller position from the NBT data
                 BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
@@ -48,7 +47,12 @@ public class Multiblockfiller extends BaseEntityBlock {
 
                 // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
                 if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
-                    NetworkHooks.openScreen((ServerPlayer) pPlayer, (multiblockController).menuProvider, controllerPos);
+                    blockEntity.saveWithoutMetadata();
+                    if ((multiblockController).menuProvider != null) {
+                        NetworkHooks.openScreen((ServerPlayer) pPlayer, (multiblockController).menuProvider, controllerPos);
+                    }else{
+                        (multiblockController).interactable(pState,pLevel,pPos,pPlayer,pHand,pHit);
+                    }
                 }
             }
         }

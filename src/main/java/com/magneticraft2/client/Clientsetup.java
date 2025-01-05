@@ -2,8 +2,14 @@ package com.magneticraft2.client;
 
 import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.render.blocks.*;
+import com.magneticraft2.client.render.blocks.stage.copper.LargeGearWithHandleBlock_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PitKilnBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceNoGUIBlockEntityRenderer;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent;
@@ -32,6 +38,9 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity_nogui.get(), PrimitiveFurnaceNoGUIBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_WITH_HANDLE_BE_WOOD.get(), LargeGearWithHandleBlock_woodRenderer::new);
     }
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -41,11 +50,20 @@ public class Clientsetup {
     @SubscribeEvent
     public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event) {
         LOGGER.info("Models are being registered!");
-        event.register(new ResourceLocation(MOD_ID, "multiblock/primitive_furnace_formed"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/blueprint_maker_multiblock_west"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/blueprint_maker_multiblock_south"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/blueprint_maker_multiblock_north"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/blueprint_maker_multiblock_east"));
+
+        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+        String folderPath = "models/multiblock";
+
+        // Get all resources in the multiblock folder
+        for (ResourceLocation resourceLocation : resourceManager.listResources(folderPath, path -> path.toString().endsWith(".json")).keySet()) {
+            // Remove the "models/" prefix and ".json" suffix for registering the model
+            String modelPath = resourceLocation.getPath().substring("models/".length(), resourceLocation.getPath().length() - ".json".length());
+            ResourceLocation modelResourceLocation = new ResourceLocation(resourceLocation.getNamespace(), modelPath);
+
+            // Register the model
+            event.register(modelResourceLocation);
+            LOGGER.info("Registered model: " + modelResourceLocation);
+        }
     }
 
     @SubscribeEvent

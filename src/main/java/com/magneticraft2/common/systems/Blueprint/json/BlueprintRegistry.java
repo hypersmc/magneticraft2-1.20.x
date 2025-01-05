@@ -1,5 +1,8 @@
 package com.magneticraft2.common.systems.Blueprint.json;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.Map;
  */
 public class BlueprintRegistry {
     private static final Map<String, BlueprintInfo> registeredBlueprints = new HashMap<>();
+    private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Blueprint Registry");
 
     public static void registerBlueprint(String modid, Blueprint blueprint, String owner) {
         String blueprintName = blueprint.getName();
@@ -90,5 +94,9 @@ public class BlueprintRegistry {
         public String getOwner() {
             return owner;
         }
+    }
+    public static void ClearRegisteredBlueprints() {
+        registeredBlueprints.clear();
+        LOGGER.info("Blueprint registry cleared");
     }
 }

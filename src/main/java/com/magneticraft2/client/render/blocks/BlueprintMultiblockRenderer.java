@@ -2,6 +2,7 @@ package com.magneticraft2.client.render.blocks;
 
 import com.magneticraft2.common.blockentity.general.BlueprintMultiblockEntity;
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -42,7 +43,9 @@ public class BlueprintMultiblockRenderer implements BlockEntityRenderer<Blueprin
             // Retrieve the model from ModelManager
             BakedModel model = Minecraft.getInstance().getModelManager().getModel(modelLocation);
             if (model == null) {
-                System.out.println("Custom model not found: " + modelLocation);
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    System.out.println("Custom model not found: " + modelLocation);
+                }
                 return;
             }
 

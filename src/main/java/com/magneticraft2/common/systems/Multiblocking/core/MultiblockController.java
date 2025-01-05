@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author JumpWatch on 11-09-2023
@@ -50,7 +52,7 @@ public class MultiblockController {
     }
     public BlockPos getmodulePos(String moduleName){
         for (IMultiblockModule module : modules.values()) {
-            if (module.getModuleKey() == moduleName){
+            if (Objects.equals(module.getModuleKey(), moduleName)){
                 BlockPos modulePos = module.getModuleOffset();
                 return modulePos;
             }
@@ -110,7 +112,9 @@ public class MultiblockController {
         for (int y = 0; y < dimensions[1]; y++) {
             List<List<String>> layer = layout.get("layer" + (y + 1));
             if (layer == null) {
-                System.out.println("Layer " + (y + 1) + " is missing from the layout.");
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    System.out.println("Layer " + (y + 1) + " is missing from the layout.");
+                }
                 return false;
             }
 
@@ -122,7 +126,9 @@ public class MultiblockController {
                     // Get the expected Block based on the key from blockDefinitions
                     Block expectedBlock = blockDefinitions.get(blockKey);
                     if (expectedBlock == null) {
-                        System.out.println("No block definition found for key: " + blockKey);
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            System.out.println("No block definition found for key: " + blockKey);
+                        }
                         return false;
                     }
 
@@ -132,7 +138,9 @@ public class MultiblockController {
 
                     // Check if the current block matches the expected block
                     if (currentState.getBlock() != expectedBlock) {
-                        LOGGER.info("Block mismatch at {}: expected {}, found {}", currentPos, expectedBlock, currentState.getBlock());
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            LOGGER.info("Block mismatch at {}: expected {}, found {}", currentPos, expectedBlock, currentState.getBlock());
+                        }
                         return false;
                     }
 
@@ -153,26 +161,40 @@ public class MultiblockController {
         for (Map.Entry<BlockPos, BlockState> entry : blockMap.entrySet()) {
             BlockPos placePos = entry.getKey();
             Block block = world.getBlockState(placePos).getBlock();
+            BlockEntity blockEntitych = world.getBlockEntity(placePos);
             // Check if the current block is the controller block
             if (!placePos.equals(pos)) {
+                // Check if the block is not air and is not an instance of IMultiblockModule
                 if (!(block == Blocks.AIR)) {
-                    // Replace non-controller blocks with the specified replacement block
-                    world.setBlock(placePos, BlockRegistry.multiblockfiller.get().defaultBlockState(), 2);
-                    // Add NBT data to the block entity
-                    BlockEntity blockEntity = world.getBlockEntity(placePos);
-                    if (blockEntity != null) {
-                        CompoundTag tag = blockEntity.getUpdateTag();
-                        tag.putInt("controller_x", pos.getX());
-                        tag.putInt("controller_y", pos.getY());
-                        tag.putInt("controller_z", pos.getZ());
+                    if (!(blockEntitych instanceof IMultiblockModule)) {
+                        // Replace non-controller blocks with the specified replacement block
+                        world.setBlock(placePos, BlockRegistry.multiblockfiller.get().defaultBlockState(), 2);
+                        // Add NBT data to the block entity
+                        BlockEntity blockEntity = world.getBlockEntity(placePos);
+                        if (blockEntity != null) {
+                            CompoundTag tag = blockEntity.getUpdateTag();
+                            tag.putInt("controller_x", pos.getX());
+                            tag.putInt("controller_y", pos.getY());
+                            tag.putInt("controller_z", pos.getZ());
 //                        blockEntity.setChanged(); // Mark the block entity as changed to save data
-                        blockEntity.handleUpdateTag(tag);
+                            blockEntity.handleUpdateTag(tag);
+
+                        }
+
+                    }else {
+                        BlockEntity blockEntity = world.getBlockEntity(placePos);
+                        if (blockEntity instanceof IMultiblockModule module) {
+                            CompoundTag tag = blockEntity.getUpdateTag();
+                            tag.putInt("controller_x", pos.getX());
+                            tag.putInt("controller_y", pos.getY());
+                            tag.putInt("controller_z", pos.getZ());
+                            tag.putBoolean("isformed", true);
+                            blockEntity.handleUpdateTag(tag);
+                        }
                     }
                 }
-
             }
         }
-
         // Enable modules
         for (IMultiblockModule module : modules.values()) {
             BlockPos modulePos = module.getModuleOffset();
@@ -190,29 +212,58 @@ public class MultiblockController {
         return true;
     }
     public boolean identifyAndAddModules(Level world, BlockPos pos, @NotNull MultiblockStructure structure) {
+        masterPos = pos;
         int[] dimensions = structure.getDimensions();
-        Block controllerBlock = world.getBlockState(pos).getBlock();
-        BlockPos controllerOffset = findControllerOffset(structure, controllerBlock);
-        BlockPos adjustedPos = pos.offset(-controllerOffset.getX(), -controllerOffset.getY(), -controllerOffset.getZ());
+        Map<String, Block> blockDefinitions = structure.getBlocks();
+        Map<String, List<List<String>>> layout = structure.getLayout();
 
+        // Locate the controller block within the structure layout to determine the offset
+        Block controllerBlock = world.getBlockState(masterPos).getBlock();
+        BlockPos controllerOffset = FindControllerOffset(layout, blockDefinitions, controllerBlock);
+
+        if (controllerOffset == null) {
+            return false;
+        }
+
+        // Adjust the starting point (origin) based on the controller's position in the layout
+        BlockPos origin = masterPos.subtract(controllerOffset);
+
+        // Iterate through the structure dimensions to validate each block
         for (int y = 0; y < dimensions[1]; y++) {
+            List<List<String>> layer = layout.get("layer" + (y + 1));
+            if (layer == null) {
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    System.out.println("Layer " + (y + 1) + " is missing from the layout.");
+                }
+                return false;
+            }
+
             for (int z = 0; z < dimensions[2]; z++) {
                 for (int x = 0; x < dimensions[0]; x++) {
-                    BlockPos currentPos = adjustedPos.offset(x, y, z);
+                    BlockPos currentPos = origin.offset(x, y, z);
                     BlockEntity blockEntity = world.getBlockEntity(currentPos);
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.debug("Checking position for module: " + currentPos);
+                    }
 
+                    // Check if the BlockEntity at currentPos implements IMultiblockModule
                     if (blockEntity instanceof IMultiblockModule) {
-                        LOGGER.info("Module at: " + currentPos);
                         IMultiblockModule module = (IMultiblockModule) blockEntity;
                         String moduleKey = module.getModuleKey();
-                        // Assuming MultiblockModule is the correct type to add to the modules map
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            LOGGER.info("Module found at " + currentPos + " with key: " + moduleKey);
+                        }
+
+                        // Add the identified module to the structure
                         structure.addModule(moduleKey, new MultiblockModule(structure, moduleKey, currentPos));
                     }
                 }
             }
         }
-
-        return true; // Return true if modules are identified and added successfully, false otherwise
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Module identification completed.");
+        }
+        return true; // Indicate success if modules are identified and added successfully
     }
     private BlockPos FindControllerOffset(Map<String, List<List<String>>> layout, Map<String, Block> blockDefinitions, Block controllerBlock) {
         for (int y = 0; y < layout.size(); y++) {
@@ -230,10 +281,10 @@ public class MultiblockController {
                 }
             }
         }
-        return null;  // Controller not found in layout
+        return null;  // Controller isn't found in layout
     }
 
-    public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) {
+    public BlockPos findControllerOffset(MultiblockStructure structure, Block controllerBlock) { //there should be no reason to still have this one.
         Map<String, List<List<String>>> layout = structure.getLayout();
         int[] dimensions = structure.getDimensions();
         Map<String, Block> blocks = structure.getBlocks();
@@ -255,7 +306,9 @@ public class MultiblockController {
 
     public boolean destroyStructure(Level world) {
         if (masterPos == null) {
-            LOGGER.info("Master pos not found!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Master pos not found!");
+            }
             return false;
         }
 //        LOGGER.info("Disabling modules");
@@ -291,6 +344,57 @@ public class MultiblockController {
     public BlockPos getMasterPos() {
         return masterPos;
     }
+    public BlockPos getMasterBlockPos(Level level, BlockPos pos) {
+        // Get the block entity at the given position
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        // Ensure the block entity exists
+        if (blockEntity != null) {
+            CompoundTag tag = blockEntity.saveWithoutMetadata();
+
+            // Check if the "MultiblockController" tag exists
+            if (tag.contains("MultiblockController")) {
+                // Get the MultiblockController tag
+                CompoundTag controllerTag = tag.getCompound("MultiblockController");
+
+                // Check if it contains the "blockMap" list
+                if (controllerTag.contains("blockMap", Tag.TAG_LIST)) {
+                    ListTag blockMap = controllerTag.getList("blockMap", Tag.TAG_COMPOUND);
+
+                    // Iterate through the blockMap list
+                    for (int i = 0; i < blockMap.size(); i++) {
+                        CompoundTag blockData = blockMap.getCompound(i);
+
+                        // Extract block state information
+                        if (blockData.contains("blockState") && blockData.contains("x") && blockData.contains("y") && blockData.contains("z")) {
+                            CompoundTag blockState = blockData.getCompound("blockState");
+                            String blockName = blockState.getString("Name");
+
+                            // Extract coordinates from the NBT data
+                            int x = blockData.getInt("x");
+                            int y = blockData.getInt("y");
+                            int z = blockData.getInt("z");
+                            BlockPos nbtPos = new BlockPos(x, y, z);
+
+                            // Get the block at the position
+                            BlockState actualState = level.getBlockState(nbtPos);
+                            Block actualBlock = actualState.getBlock();
+                            String actualblockname = actualBlock.toString().replaceAll("Block", "").replaceAll("\\{", "").replaceAll("\\}", "");
+
+                            // Compare block names
+                            if (blockName.equalsIgnoreCase(actualblockname)) {
+                                return nbtPos; // Return the matching position
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Return null if no matching block is found
+        return null;
+    }
+
     public CompoundTag saveToNBT() {
         CompoundTag tag = new CompoundTag();
 
@@ -350,14 +454,14 @@ public class MultiblockController {
             }
         }
 
-        // Load the modules map
+        // Load the module map
         this.modules.clear();
         CompoundTag modulesTag = tag.getCompound("modules");
         for (String key : modulesTag.getAllKeys()) {
             CompoundTag moduleTag = modulesTag.getCompound(key);
 
             // Retrieve or construct the necessary parameters
-            MultiblockStructure structure = this.structure; // Assuming structure is already initialized
+            MultiblockStructure structure = this.structure; // Assuming the structure is already initialized
             String moduleKey = moduleTag.getString("moduleKey");
             BlockPos moduleOffset = new BlockPos(moduleTag.getInt("modulePosX"), moduleTag.getInt("modulePosY"), moduleTag.getInt("modulePosZ"));
 

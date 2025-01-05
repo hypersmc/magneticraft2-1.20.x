@@ -47,6 +47,7 @@ public class stonepebble extends BaseBlockMagneticraft2 {
         this.registerDefaultState(this.stateDefinition.any().setValue(TYPE, 0));
     }
 
+
     @Override
     public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
         return reader.getBlockState(pos.below()).isSolid();

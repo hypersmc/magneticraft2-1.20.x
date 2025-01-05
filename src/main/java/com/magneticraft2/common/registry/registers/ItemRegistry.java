@@ -1,11 +1,14 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.blockitems.beltblockitem;
+import com.magneticraft2.common.item.creativeitems.MBdebugger;
 import com.magneticraft2.common.item.creativeitems.multiblock_filler_item;
+import com.magneticraft2.common.item.creativeitems.pitkiln_item;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
+import com.magneticraft2.common.item.stage.stone.slagitem;
 import com.magneticraft2.common.item.stage.stone.tools.FireStarter;
 import com.magneticraft2.common.item.stage.stone.tools.StoneKnife;
 import com.magneticraft2.common.magneticraft2;
@@ -48,25 +51,40 @@ public class ItemRegistry {
         return ITEMS.register(block.getId().getPath(), () -> new BlockItem(block.get(), ORE_PROPERTIES));
     }
     //Items after this line
+    //Should sort this for each stage
     public static final RegistryObject<Item> rice_seed = ITEMS.register("rice_seed", () -> new ItemNameBlockItem(rice_plant.get(), new Item.Properties()));
     public static final RegistryObject<Item> rice = ITEMS.register("rice", () -> new Item(new Item.Properties().food(ModFoods.rice)));
     public static final RegistryObject<clayPot> item_clay_pot = ITEMS.register("clay_pot", clayPot::new);
     public static final RegistryObject<ceramicPot> item_ceramic_pot = ITEMS.register("ceramic_pot", ceramicPot::new);
     public static final RegistryObject<FireStarter> item_fire_starter = ITEMS.register("firestarter", FireStarter::new);
+    public static final RegistryObject<slagitem> item_slag = ITEMS.register("slagitem", slagitem::new);
     public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
     public static final RegistryObject<Blueprintmarker> item_blueprintmarker = ITEMS.register("blueprint", Blueprintmarker::new);
     public static final RegistryObject<BlockItem> item_beltblock = ITEMS.register("beltblock", () -> new beltblockitem(beltblock.get(), new Item.Properties()));
     public static final RegistryObject<multiblock_filler_item> item_multiblock_filler = ITEMS.register("multiblock_filler_item", () -> new multiblock_filler_item(multiblockfiller.get(), new Item.Properties()));
+    public static final RegistryObject<pitkiln_item> item_pitkiln = ITEMS.register("pitkilnblock", () -> new pitkiln_item(PitKilnblock.get(), new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<MBdebugger> item_mbdebugger = ITEMS.register("mbdebugger", MBdebugger::new);
     //Blocks to items
-    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
+//    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
     public static final RegistryObject<Item> item_blueprintmakermultiblock = fromBlock(blueprintmultiblock);
+    public static final RegistryObject<Item> item_primitivefurnacemultiblock = fromBlock(primitivefurnacemultiblock);
+    public static final RegistryObject<Item> item_primitivefurnacemultiblock_nogui = fromBlock(primitivefurnace_multiblock_nogui);
+    public static final RegistryObject<Item> item_bellowsmultiblockmodule = fromBlock(bellowsmultiblockmodule);
 
 
 
+    //Stone
+
+
+    //Copper
+    public static final RegistryObject<Item> ITEM_GEAR_SMALL_WOOD = fromBlock(GEAR_SMALL_WOOD);
+    public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
+    public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
+    public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
 
     //ores
     public static final RegistryObject<Item> BAUXITE_ITEM = fromBlockOre(BAUXITE_ORE);

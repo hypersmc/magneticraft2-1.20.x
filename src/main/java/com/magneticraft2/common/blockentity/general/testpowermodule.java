@@ -5,6 +5,7 @@ import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import com.magneticraft2.common.systems.Multiblocking.core.modules.EnergyModule;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
 import com.magneticraft2.common.systems.WATT.IWattStorage;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.WattStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,14 +62,16 @@ public class testpowermodule extends BlockEntity implements IMultiblockModule {
 
     @Override
     public void onActivate(Level world, BlockPos pos) {
-        LOGGER.info("Trying to activate: " + getModuleKey());
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Trying to activate: " + getModuleKey());
+        }
         if (!world.isClientSide){
             watt.ifPresent(handler -> handler.setReceive(true));
             watt.ifPresent(handler -> handler.setSend(true));
-            LOGGER.info("Activated: " + getModuleKey());
-            LOGGER.info("Stored wattage: " + wattHandler.getWattStored());
-            wattHandler.addWatt(1000);
-            LOGGER.info("Stored wattage: " + wattHandler.getWattStored());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Activated: " + getModuleKey());
+                LOGGER.info("Stored wattage: " + wattHandler.getWattStored());
+            }
 
         }
 
@@ -76,14 +79,18 @@ public class testpowermodule extends BlockEntity implements IMultiblockModule {
 
     @Override
     public void onDeactivate(Level world, BlockPos pos) {
-        LOGGER.info("Trying to deactivate: " + getModuleKey());
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Trying to deactivate: " + getModuleKey());
+        }
         if (!world.isClientSide){
             watt.ifPresent(handler -> handler.setReceive(false));
             watt.ifPresent(handler -> handler.setSend(false));
             wattHandler.setReceive(false);
             wattHandler.setSend(false);
             wattHandler.setWatt(0);
-            LOGGER.info("Deactivated: " + getModuleKey());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Deactivated: " + getModuleKey());
+            }
         }
     }
 

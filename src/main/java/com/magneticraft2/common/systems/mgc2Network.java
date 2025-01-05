@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems;
 
 import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import com.magneticraft2.common.systems.networking.PollutionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
@@ -25,6 +26,10 @@ public class mgc2Network {
                 .decoder(PollutionPacket::decode)
                 .consumerMainThread(PollutionPacket::handle)
                 .add(); //This channel is purely for pollution data send to the client's renderer.
-
+        CHANNEL.messageBuilder(GearSyncPacket.class, 1, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(GearSyncPacket::encode)
+                .decoder(GearSyncPacket::decode)
+                .consumerMainThread(GearSyncPacket::handle)
+                .add(); //This is so we can sync the torque and speed of each gear.
     }
 }

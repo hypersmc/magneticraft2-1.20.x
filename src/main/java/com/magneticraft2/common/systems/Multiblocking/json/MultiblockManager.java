@@ -87,15 +87,23 @@ public class MultiblockManager {
                         }
 
                     } catch (JsonSyntaxException e) {
-                        LOGGER.info("Could not load: " + jsonIdentifier);
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            LOGGER.info("Could not load: " + jsonIdentifier);
+                        }
                         e.printStackTrace();
                     }
                 } else {
-                    LOGGER.info("Invalid JSON structure. Expected an object.");
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.info("Invalid JSON structure. Expected an object.");
+                    }
                 }
             } catch (IOException e) {
                 throw new RuntimeException("Failed to read multiblock data from " + jsonIdentifier, e);
             }
         }
+    }
+    public static void clear(){
+        LOGGER.info("Clearing registered multiblocks");
+        MultiblockRegistry.ClearRegisteredMultiblocks();
     }
 }

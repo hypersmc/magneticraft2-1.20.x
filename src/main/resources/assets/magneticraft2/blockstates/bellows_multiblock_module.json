@@ -1,0 +1,29 @@
+{
+  "model": "magneticraft2:block/bellows_module.json",
+  "variants": {
+    "facing=north,active=false": {
+      "model": "magneticraft2:block/bellows_module", "y": 90
+    },
+    "facing=south,active=false": {
+      "model": "magneticraft2:block/bellows_module", "y": 180
+    },
+    "facing=west,active=false": {
+      "model": "magneticraft2:block/bellows_module", "y": 270
+    },
+    "facing=east,active=false": {
+      "model": "magneticraft2:block/bellows_module", "y": 90
+    },
+    "facing=north,active=true": {
+      "model": "magneticraft2:block/bellows_multiblock_module"
+    },
+    "facing=south,active=true": {
+      "model": "magneticraft2:block/bellows_multiblock_module", "y": 180
+    },
+    "facing=west,active=true": {
+      "model": "magneticraft2:block/bellows_multiblock_module", "y": 270
+    },
+    "facing=east,active=true": {
+      "model": "magneticraft2:block/bellows_multiblock_module", "y": 90
+    }
+  }
+}

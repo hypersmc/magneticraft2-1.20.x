@@ -154,4 +154,8 @@ public class BlueprintManager {
             LOGGER.warn("Local blueprint folder not found or is not a directory: " + folderPath);
         }
     }
+    public static void clear(){
+        LOGGER.info("Clearing registered blueprints");
+        BlueprintRegistry.ClearRegisteredBlueprints();
+    }
 }

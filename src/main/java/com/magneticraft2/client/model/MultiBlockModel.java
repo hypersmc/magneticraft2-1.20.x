@@ -1,5 +1,6 @@
 package com.magneticraft2.client.model;
 
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -42,7 +43,9 @@ public class MultiBlockModel extends BakedModelWrapper<BakedModel> {
 
         BakedModel submodel = Minecraft.getInstance().getModelManager().getModel(submodelLocation);
         if (submodel == null) {
-            System.out.println("Submodel " + modelKey + " not found!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                System.out.println("Submodel " + modelKey + " not found!");
+            }
             return Collections.emptyList();
         }
 

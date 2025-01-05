@@ -1,10 +1,9 @@
-package com.magneticraft2.client.render.blocks;
+package com.magneticraft2.client.render.blocks.stage.stone;
 
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -20,10 +19,10 @@ import org.apache.logging.log4j.Logger;
  * v1.0.0
  */
 public class PitKilnBlockEntityRenderer implements BlockEntityRenderer<PitKilnBlockEntity> {
+    @Deprecated(forRemoval = true)
     private static final Logger LOGGER = LogManager.getLogger("Pitrender");
-    public PitKilnBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
-
-    }
+    public PitKilnBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
+    
     @Override
     public void render(PitKilnBlockEntity blockEntity, float partialTicks, PoseStack matrixStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
 

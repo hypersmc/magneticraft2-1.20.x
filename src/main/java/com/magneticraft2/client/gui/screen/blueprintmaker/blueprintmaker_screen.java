@@ -12,14 +12,12 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +46,13 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     private boolean isDraggingScrollbar = false;
     private double prevMouseY = 0;
     private boolean triedsavingwithnoname = false;
+
+    private float rotationX = 30.0F; // Initial X rotation
+    private float rotationY = 45.0F; // Initial Y rotation
+    private long lastDragTime = System.currentTimeMillis(); // Tracks the last time the mouse was dragged
+    private boolean isDragging = false;
+    private int lastMouseX, lastMouseY;
+
     public blueprintmaker_screen(blueprintmaker_container container, Inventory inv, Component name) {
         super(container, inv, name);
     }
@@ -95,11 +100,95 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         }
     }
 
-        @Override
+    @Override
     public void render(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
         renderBackground(pGuiGraphics);
         super.render(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
         renderTooltip(pGuiGraphics, pMouseX, pMouseY);
+        do3drender(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
+
+
+
+    }
+
+    private void do3drender(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick){
+        // Check if no drag has occurred for 3 seconds
+        if (System.currentTimeMillis() - lastDragTime > 3000) {
+            rotationY += 0.5F; // Auto-rotate on the Y-axis
+        }
+        PoseStack poseStack = pGuiGraphics.pose();
+        RenderSystem.enableDepthTest();
+
+// Push the current pose stack state
+        poseStack.pushPose();
+
+// Calculate the GUI center dynamically
+        int guiCenterX = this.leftPos + this.imageWidth / 2; // Center of GUI (X)
+        int guiCenterY = this.topPos + this.imageHeight / 2; // Center of GUI (Y)
+
+// Adjust offsets to fine-tune positioning
+        int offsetX = -180; // Horizontal adjustment (if needed)
+        int offsetY = -1245; // Vertical adjustment (if needed)
+
+// Final render position on screen
+        int renderX = guiCenterX + offsetX;
+        int renderY = guiCenterY + offsetY;
+
+// Translate the pose stack to align the model with the GUI center
+        poseStack.translate(renderX, renderY, 550); // Z-axis value ensures it's in view
+        poseStack.scale(20.0F, -20.0F, 20.0F); // Scale down and invert Y-axis
+
+// Fetch the blueprint's geometric center
+        BlueprintMultiblockEntity block = menu.getBlueprintmaker();
+        BlockPos pos1 = block.getPos1BlockPos();
+        BlockPos pos2 = block.getPos2BlockPos();
+
+// Calculate the center of the blueprint (geometric center)
+        float centerBlockX = (pos1.getX() + pos2.getX() + 1) / 2.0F;
+        float centerBlockY = (pos1.getY() + pos2.getY() + 1) / 2.0F;
+        float centerBlockZ = (pos1.getZ() + pos2.getZ() + 1) / 2.0F;
+
+// Translate to the blueprint's center for proper rotation
+        poseStack.translate(-centerBlockX, -centerBlockY, -centerBlockZ);
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotationY)); // Rotate around Y-axis
+        poseStack.mulPose(Axis.XP.rotationDegrees(15.0f)); // Apply a slight fixed tilt on X-axis
+
+// Get the block renderer for rendering each block in the blueprint
+        BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
+
+// Calculate dimensions of the blueprint and scaling factors
+        int width = Math.abs(pos2.getX() - pos1.getX()) + 1;
+        int height = Math.abs(pos2.getY() - pos1.getY()) + 1;
+        int depth = Math.abs(pos2.getZ() - pos1.getZ()) + 1;
+
+// Dynamic scaling to fit within GUI
+        float scaleX = this.imageWidth / (float) width;
+        float scaleY = this.imageHeight / (float) height;
+        float scaleZ = 2.5F / (float) depth;
+        float scale = Math.min(scaleX, Math.min(scaleY, scaleZ));
+
+// Iterate through blueprint blocks and render each one
+        for (int y = Math.min(pos1.getY(), pos2.getY()); y <= Math.max(pos1.getY(), pos2.getY()); y++) {
+            for (int x = Math.min(pos1.getX(), pos2.getX()); x <= Math.max(pos1.getX(), pos2.getX()); x++) {
+                for (int z = Math.min(pos1.getZ(), pos2.getZ()); z <= Math.max(pos1.getZ(), pos2.getZ()); z++) {
+                    BlockPos currentPos = new BlockPos(x, y, z);
+                    BlockState blockState = block.getLevel().getBlockState(currentPos);
+
+                    poseStack.pushPose();
+                    poseStack.translate((x - centerBlockX) * scale, (y - centerBlockY) * scale, (z - centerBlockZ) * scale); // Translate each block relative to the blueprint center
+                    poseStack.scale(scale, scale, scale); // Apply scaling
+                    blockRenderer.renderSingleBlock(
+                            blockState, poseStack, pGuiGraphics.bufferSource(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY
+                    );
+                    poseStack.popPose();
+                }
+            }
+        }
+
+// Pop the pose stack to return to the original state
+        poseStack.popPose();
+        RenderSystem.disableDepthTest();
+
     }
 
     @Override
@@ -329,5 +418,34 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
     }
 
 
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (button == 0) { // Left mouse button for rotation
+            if (!isDragging) {
+                isDragging = true;
+                lastMouseX = (int) mouseX;
+                lastMouseY = (int) mouseY;
+            } else {
+                int deltaX = (int) (mouseX - lastMouseX);
+                int deltaY = (int) (mouseY - lastMouseY);
 
+                rotationY += deltaX * 0.5F; // Adjust rotation sensitivity
+                rotationX += deltaY * 0.5F;
+
+                lastMouseX = (int) mouseX;
+                lastMouseY = (int) mouseY;
+            }
+            lastDragTime = System.currentTimeMillis();
+            return true;
+        }
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (button == 0) { // Stop dragging on mouse release
+            isDragging = false;
+        }
+        return super.mouseReleased(mouseX, mouseY, button);
+    }
 }

@@ -12,6 +12,7 @@ import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -23,6 +24,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -147,24 +150,24 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
 
                 level.setBlock(worldPosition, newState, 3);
 
-
-                LOGGER.info("Multiblock system got this far!"); // At this point, we have identified the structure,
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Multiblock system got this far!"); // At this point, we have identified the structure,
+                }
                 // found modules, and should have activated them
-
-                LOGGER.info("Controller made and the multiblock should be formed: {}", controller.getFormed());
-                LOGGER.info("Energy module location: {} ", controller.getmodulePos("energy_storage"));
-                BlockPos pos = controller.getmodulePos("energy_storage");
-                if (pos != null) {
-                    testpowermodule testpowermodule = (testpowermodule) level.getBlockEntity(pos);
-                    LOGGER.info("Energy module power stored: {}", testpowermodule.getStored());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Controller made and the multiblock should be formed: {}", controller.getFormed());
                 }
                 requestModelDataUpdate();
                 return controller;
             }
-            LOGGER.info("Structure already formed!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Structure already formed!");
+            }
             return null;
         } else {
-            LOGGER.info("Structure NOT found!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Structure NOT found!");
+            }
             return null;
         }
     }
@@ -172,17 +175,26 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     @Override
     protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
         for (Multiblock multiblock : MultiblockRegistry.getRegisteredMultiblocks().values()) {
-            LOGGER.info("Trying Multiblock: {}", multiblock.getName());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Trying Multiblock: {}", multiblock.getName());
+            }
             MultiblockStructure structure = multiblock.getStructure();
             if (matchesStructure(world, pos, structure, multiblock)) {
-                LOGGER.info("Found multiblock: "+ multiblock.getName());
-                LOGGER.info("Replacementmodel: {}", multiblock.getSettings().getReplaceWhenFormed());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Found multiblock: " + multiblock.getName());
+                    LOGGER.info("Replacementmodel: {}", multiblock.getSettings().getReplaceWhenFormed());
+                }
                 repacementmodel = multiblock.getSettings().getReplaceWhenFormed();
                 blueprintname = multiblock.getName();
                 return structure;
             }
         }
         return null;
+    }
+
+    @Override
+    protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        return;
     }
 
     @Override
@@ -221,7 +233,7 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         pos2 = BlockPos.of(tag.getLong("pos2"));
         pos1long = tag.getLong("pos1long");
         pos2long = tag.getLong("pos2long");
-        blueprintname = tag.getString("blueprintname");
+        blueprintname1 = tag.getString("blueprintname1");
         shouldsave = tag.getBoolean("shouldsave");
         initialGameTime = tag.getLong("time");
         tag.putString("blueprintname", blueprintname);
@@ -244,7 +256,7 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         pos2 = BlockPos.of(tag.getLong("pos2"));
         pos1long = tag.getLong("pos1long");
         pos2long = tag.getLong("pos2long");
-        blueprintname = tag.getString("blueprintname");
+        blueprintname1 = tag.getString("blueprintname1");
         shouldsave = tag.getBoolean("shouldsave");
         initialGameTime = tag.getLong("time");
         if (tag.contains("MultiblockStructure")) {
@@ -323,8 +335,8 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         if (pos2 != null){
             tag.putLong("pos2", pos2.asLong());
         }
-        if (blueprintname != null){
-            tag.putString("blueprintname", blueprintname);
+        if (blueprintname1 != null){
+            tag.putString("blueprintname1", blueprintname1);
         }
         tag.putBoolean("shouldsave", shouldsave);
         tag.putLong("time", initialGameTime);
@@ -510,12 +522,14 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     }
     public void saveBlueprintClient(String owner){
         File savedir = new File("blueprints");
-        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname, owner, level, pos1, pos2);
-        LOGGER.info(newBlueprint.getName());
-        LOGGER.info(newBlueprint.getOwner());
-        LOGGER.info(newBlueprint.getStructure().getBlocks());
-        LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
-        LOGGER.info(newBlueprint.getStructure().getLayout());
+        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname1, owner, level, pos1, pos2);
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info(newBlueprint.getName());
+            LOGGER.info(newBlueprint.getOwner());
+            LOGGER.info(newBlueprint.getStructure().getBlocks());
+            LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
+            LOGGER.info(newBlueprint.getStructure().getLayout());
+        }
         BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
         BlueprintSaver.saveBlueprintClient(newBlueprint, savedir, owner);
         setBlueprintname(null);
@@ -523,11 +537,13 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     }
     public void saveBlueprintServer(String owner){
         File savedir = new File("blueprints");
-        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname, owner, level, pos1, pos2);
-        LOGGER.info(newBlueprint.getName());
-        LOGGER.info(newBlueprint.getStructure().getBlocks());
-        LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
-        LOGGER.info(newBlueprint.getStructure().getLayout());
+        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname1, owner, level, pos1, pos2);
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info(newBlueprint.getName());
+            LOGGER.info(newBlueprint.getStructure().getBlocks());
+            LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
+            LOGGER.info(newBlueprint.getStructure().getLayout());
+        }
         BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
         BlueprintSaver.saveBlueprintServer(newBlueprint, savedir);
 

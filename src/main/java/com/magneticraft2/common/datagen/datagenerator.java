@@ -25,7 +25,6 @@ public class datagenerator {
         PackOutput packOutput = generator.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider  = event.getLookupProvider();
-
-
+        generator.addProvider(event.includeClient(), new ModLangProvider(generator, "en_us"));
     }
 }

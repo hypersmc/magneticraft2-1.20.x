@@ -4,6 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.ModelBakery;
@@ -43,10 +44,13 @@ public class MultiBlockModelLoader implements IGeometryLoader<MultiBlockGeometry
             if (model != null) {
                 namedModels.put(modelName, model);
             } else {
-                LOGGER.warn("Failed to load model for key: {}", modelName);
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.warn("Failed to load model for key: {}", modelName);
+                }
             }
-            LOGGER.info("Model key: {} - Model path: {}", modelName, modelPath);
-
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Model key: {} - Model path: {}", modelName, modelPath);
+            }
         }
 
 
@@ -59,10 +63,14 @@ public class MultiBlockModelLoader implements IGeometryLoader<MultiBlockGeometry
             InputStream inputStream = manager.getResource(modelResourceLocation).get().open();
             BlockModel model = BlockModel.fromStream(new InputStreamReader(inputStream));
             inputStream.close();  // Ensure stream is closed after use
-            LOGGER.info("Successfully loaded BlockModel for path: {}", modelPath);
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Successfully loaded BlockModel for path: {}", modelPath);
+            }
             return model;
         } catch (IOException e) {
-            LOGGER.error("Failed to load BlockModel from path: {}", modelPath, e);
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.error("Failed to load BlockModel from path: {}", modelPath, e);
+            }
             return null;
         }
     }

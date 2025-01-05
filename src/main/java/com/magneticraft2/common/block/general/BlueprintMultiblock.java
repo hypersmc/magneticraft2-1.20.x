@@ -48,12 +48,12 @@ public class BlueprintMultiblock extends BaseBlockMagneticraft2{
             if (blockEntity instanceof BaseBlockEntityMagneticraft2 blueprintmaker){
                 if (multiblockEntity.isFormed()){
                     NetworkHooks.openScreen((ServerPlayer) pPlayer, (blueprintmaker).menuProvider, blockEntity.getBlockPos());
-                    return InteractionResult.SUCCESS;
                 }else {
                     multiblockEntity.onRightClick();
                     multiblockEntity.setJustPlaced(false);
                     multiblockEntity.setInitialGameTime(pLevel.getGameTime());
                 }
+                return InteractionResult.SUCCESS;
             }
         }
         return super.use(pState, pLevel, pPos, pPlayer, pHand, pHit);
@@ -73,7 +73,7 @@ public class BlueprintMultiblock extends BaseBlockMagneticraft2{
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-                return pLevel.isClientSide() ? null : createTickerHelper(pBlockEntityType, BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockEntity::serverTick);
+        return pLevel.isClientSide() ? null : createTickerHelper(pBlockEntityType, BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockEntity::serverTick);
     }
 
     @Nullable

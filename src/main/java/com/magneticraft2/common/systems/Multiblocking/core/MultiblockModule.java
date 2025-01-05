@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.Multiblocking.core;
 
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
@@ -46,7 +47,9 @@ public class MultiblockModule implements IMultiblockModule {
 
             // Validate the numeric part
             if (numericPart.isEmpty()) {
-                LOGGER.error("Invalid layer format: " + layerKey + ". Skipping...");
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.error("Invalid layer format: " + layerKey + ". Skipping...");
+                }
                 continue; // Skip to the next iteration
             }
 
@@ -84,7 +87,9 @@ public class MultiblockModule implements IMultiblockModule {
                     }
                 }
             } catch (NumberFormatException e) {
-                LOGGER.error("Invalid layer index: " + numericPart + " in layer: " + layerKey + ". Skipping...", e);
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.error("Invalid layer index: " + numericPart + " in layer: " + layerKey + ". Skipping...", e);
+                }
             }
         }
 
@@ -102,7 +107,9 @@ public class MultiblockModule implements IMultiblockModule {
         if (block instanceof IMultiblockModule){
             ((IMultiblockModule) block).onActivate(world,pos);
         }else{
-            LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
+            }
         }
     }
 
@@ -111,7 +118,9 @@ public class MultiblockModule implements IMultiblockModule {
         if (block instanceof IMultiblockModule){
             ((IMultiblockModule) block).onDeactivate(world,pos);
         }else{
-            LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.warn("Unexpected BlockEntity type at position " + pos + ": " + block.getClass().getName());
+            }
         }
     }
 

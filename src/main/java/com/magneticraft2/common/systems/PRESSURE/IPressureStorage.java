@@ -13,4 +13,6 @@ public interface IPressureStorage {
     int getMaxPressureStored();
     boolean canSend();
     boolean canReceive();
+    boolean setSend(boolean val);
+    boolean setReceive(boolean val);
 }

@@ -34,9 +34,9 @@ import static com.magneticraft2.common.block.general.BaseBlockMagneticraft2.FACI
  * v1.0.0
  */
 public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<projectortestBlockEntity> {
-    private static final Logger LOGGER = LogManager.getLogger("Projectorrender");
+    private static final Logger LOGGER = LogManager.getLogger("Projector_render");
     private static final float SQUARE_SIZE = 5.0f; // Size of the projected square
-    private static final float SQUARE_OFFSET = 0.5f - SQUARE_SIZE / 2.0f; // Offset from block center
+    private static final float SQUARE_OFFSET = 0.5f - SQUARE_SIZE / 2.0f; // Offset from the block center
     private static final int NO_OVERLAY = OverlayTexture.NO_OVERLAY;
     //TODO unused feature for now!
     private int xoffset = 0;

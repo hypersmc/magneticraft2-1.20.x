@@ -36,7 +36,7 @@ public class ClientPollutionData {
         return getPollutionLevel(chunkPos);
     }
 
-    // Clear the pollution data, for example when the player disconnects from the server.
+    // Clear the pollution data, for example, when the player disconnects from the server.
     public static void clear() {
         pollutionData.clear();
     }

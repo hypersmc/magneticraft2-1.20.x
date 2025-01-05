@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.Multiblocking.json;
 
 import com.google.gson.*;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -54,16 +55,24 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                     blocks.put(key, value);
                 }
             } catch (JsonParseException e) {
-                LOGGER.info("Error during blocks deserialization: " + e.getMessage());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Error during blocks deserialization: " + e.getMessage());
+                }
                 throw e;
             }
-            LOGGER.info("Starting to deserialize Settings");
-            LOGGER.info("Settings object: " + jsonObject.get("settings").toString());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Starting to deserialize Settings");
+                LOGGER.info("Settings object: " + jsonObject.get("settings").toString());
+            }
             MultiblockSettings settings = context.deserialize(jsonObject.get("settings"), MultiblockSettings.class);
-            LOGGER.info("Finished deserializing Settings");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Finished deserializing Settings");
+            }
             return new MultiblockData(name, structure, blocks, settings);
         } catch (JsonParseException e) {
-            LOGGER.info("Error during MultiblockData deserialize: " + e.getMessage());
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Error during MultiblockData deserialize: " + e.getMessage());
+            }
             throw e;
         }
     }
@@ -104,7 +113,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 int size = jsonObject.get("size").getAsInt();
                 return new MultiblockInput(slot, typeString, allowedItems, size);
             }catch (JsonParseException e) {
-                LOGGER.info("Error during MultiblockInput deserialize: " + e.getMessage());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Error during MultiblockInput deserialize: " + e.getMessage());
+                }
                 throw e;
             }
         }
@@ -132,7 +143,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 int size = jsonObject.get("size").getAsInt();
                 return new MultiblockOutput(slot, typeString, allowedItems, size);
             }catch (JsonParseException e) {
-                LOGGER.info("Error during MultiblockOutput deserialize: " + e.getMessage());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Error during MultiblockOutput deserialize: " + e.getMessage());
+                }
                 throw e;
             }
         }
@@ -142,7 +155,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
 
         @Override
         public JsonElement serialize(MultiblockSettings multiblockSettings, Type type, JsonSerializationContext context) {
-            LOGGER.info("MultiblockSettings started serialization");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("MultiblockSettings started serialization");
+            }
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("replacewhenformed", multiblockSettings.getReplaceWhenFormed());
             jsonObject.addProperty("inventory", multiblockSettings.hasInventory());
@@ -156,7 +171,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
 
         @Override
         public MultiblockSettings deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
-            LOGGER.info("MultiblockSettings started deserialization");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("MultiblockSettings started deserialization");
+            }
             try {
                 JsonObject jsonObject = json.getAsJsonObject();
                 String replaceWhenFormed = jsonObject.get("replacewhenformed").getAsString();
@@ -168,7 +185,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 List<MultiblockOutput> outputs = context.deserialize(jsonObject.get("outputs"), List.class);
                 return new MultiblockSettings(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid, inputs, outputs);
             }catch (JsonParseException e) {
-                LOGGER.info("Error during MultiblockSettings deserialize: " + e.getMessage());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Error during MultiblockSettings deserialize: " + e.getMessage());
+                }
                 throw e;
             }
         }
@@ -194,7 +213,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 try {
                     dimensions = context.deserialize(jsonObject.get("dimensions"), int[].class);
                 } catch (JsonParseException e) {
-                    LOGGER.info("Error during dimensions deserialization: " + e.getMessage());
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.info("Error during dimensions deserialization: " + e.getMessage());
+                    }
                     throw e;
                 }
 
@@ -217,7 +238,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                         layout.put(layerName, layer);
                     }
                 } catch (JsonParseException e) {
-                    LOGGER.info("Error during layout deserialization: " + e.getMessage());
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.info("Error during layout deserialization: " + e.getMessage());
+                    }
                     throw e;
                 }
 
@@ -234,13 +257,17 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                         blocks.put(key, value);
                     }
                 } catch (JsonParseException e) {
-                    LOGGER.info("Error during blocks deserialization: " + e.getMessage());
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.info("Error during blocks deserialization: " + e.getMessage());
+                    }
                     throw e;
                 }
 
                 return new MultiblockStructure(dimensions, layout, blocks);
             } catch (JsonParseException e) {
-                LOGGER.info("Error during MultiblockStructure deserialize: " + e.getMessage());
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Error during MultiblockStructure deserialize: " + e.getMessage());
+                }
                 throw e;
             }
         }
@@ -266,15 +293,25 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
     public static Gson createGson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(MultiblockData.class, new MultiblockDataCodec());
-        LOGGER.info("Registered adapter MultiblockData");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Registered adapter MultiblockData");
+        }
         gsonBuilder.registerTypeAdapter(MultiblockInput.class, new MultiblockInputAdapter());
-        LOGGER.info("Registered adapter MultiblockInput");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Registered adapter MultiblockInput");
+        }
         gsonBuilder.registerTypeAdapter(MultiblockOutput.class, new MultiblockOutputAdapter());
-        LOGGER.info("Registered adapter MultiblockOutput");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Registered adapter MultiblockOutput");
+        }
         gsonBuilder.registerTypeAdapter(MultiblockSettings.class, new MultiblockSettingsAdapter());
-        LOGGER.info("Registered adapter MultiblockSettings");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Registered adapter MultiblockSettings");
+        }
         gsonBuilder.registerTypeAdapter(MultiblockStructure.class, new MultiblockStructureAdapter());
-        LOGGER.info("Registered adapter MultiblockStructure");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Registered adapter MultiblockStructure");
+        }
         return gsonBuilder.create();
     }
 }

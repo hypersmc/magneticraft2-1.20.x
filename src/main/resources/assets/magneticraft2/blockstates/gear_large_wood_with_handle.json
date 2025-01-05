@@ -1,0 +1,33 @@
+{
+  "variants": {
+    "facing=north,vertical_facing_up=false,vertical_facing_down=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle",
+      "x": 90
+    },
+    "facing=south,vertical_facing_up=false,vertical_facing_down=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle",
+      "x": -90
+    },
+    "facing=east,vertical_facing_up=false,vertical_facing_down=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west,vertical_facing_up=false,vertical_facing_down=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle",
+      "x": 90,
+      "y": -90
+    },
+
+    "facing=north,vertical_facing_up=true,vertical_facing_down=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle",
+      "x": 180
+    },
+    "facing=north,vertical_facing_down=true,vertical_facing_up=false,active=false": {
+      "model": "magneticraft2:block/gear_large_wood_with_handle"
+    },
+    "active=true": {
+      "model":"magneticraft2:block/invis"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "down": "minecraft:block/mud_bricks",
+    "up": "minecraft:block/mud_bricks",
+    "north": "minecraft:block/mud_bricks",
+    "south": "minecraft:block/mud_bricks",
+    "east": "magneticraft2:multiblock/primitivefurnace_front",
+    "west": "minecraft:block/mud_bricks",
+    "particle": "minecraft:block/mud_bricks"
+  }
+}

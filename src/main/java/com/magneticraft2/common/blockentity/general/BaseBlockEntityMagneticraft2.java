@@ -15,13 +15,16 @@ import com.magneticraft2.common.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -54,6 +57,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
     protected abstract MultiblockController createMultiblockController();
     protected abstract MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos);
+    protected abstract void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit);
 
     //Biomes
     /* Energy */
@@ -122,8 +126,14 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     protected void setMultiblock(Multiblock multiblock) {
         this.multiblock = multiblock;
     }
-    protected MultiblockController getMultiblockController() {
+    public Multiblock getMultiblock(){
+        return multiblock;
+    }
+    public MultiblockController getMultiblockController() {
         return this.multiblockController;
+    }
+    public void interactable(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit){
+        interactableNoGui(pState, pLevel, pPos, pPlayer, pHand, pHit);
     }
 
     public void onRightClick() {
@@ -139,7 +149,9 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         if (this.multiblockController != null) {
             this.multiblockController.setMasterPos(worldPosition );
             this.multiblockController.destroyStructure(level);
-            LOGGER.info("onDestroy triggered");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("onDestroy triggered");
+            }
         }
     }
     public boolean matchesStructure(Level world, BlockPos pos, @NotNull MultiblockStructure structure, Multiblock multiblock) {
@@ -149,37 +161,55 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
         // Get the block at the clicked position to identify the controller
         Block controllerBlock = world.getBlockState(pos).getBlock();
-        LOGGER.info("Controller Block: " + controllerBlock);
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Controller Block: " + controllerBlock);
+        }
 
         // Find the offset based on the controller's position within the multiblock structure
         BlockPos controllerOffset = findControllerOffset(structure, controllerBlock);
-        LOGGER.info("Controller Offset: " + controllerOffset);
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Controller Offset: " + controllerOffset);
+        }
 
         // Adjust the starting position by subtracting the controller offset
         BlockPos adjustedPos = pos.offset(-controllerOffset.getX(), -controllerOffset.getY(), -controllerOffset.getZ());
-        LOGGER.info("Adjusted Position: " + adjustedPos);
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Adjusted Position: " + adjustedPos);
+        }
 
         // Iterate over each block position in the structure's dimensions
         for (int y = 0; y < dimensions[1]; y++) {
-            LOGGER.info("Checking Layer y: " + (y + 1));
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Checking Layer y: " + (y + 1));
+            }
             List<List<String>> layer = layout.get("layer" + (y + 1));
             if (layer == null) {
-                LOGGER.warn("Layer " + (y + 1) + " is not defined in the layout");
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.warn("Layer " + (y + 1) + " is not defined in the layout");
+                }
                 return false;
             }
             for (int z = 0; z < dimensions[2]; z++) {
-                LOGGER.info("Checking Layer z: " + (z + 1));
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Checking Layer z: " + (z + 1));
+                }
                 for (int x = 0; x < dimensions[0]; x++) {
-                    LOGGER.info("Checking Layer x: " + (x + 1));
+                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                        LOGGER.info("Checking Layer x: " + (x + 1));
+                    }
                     if (!validateBlock(world, adjustedPos, x, y, z, blocks, layer)) {
-                        LOGGER.warn("Structure mismatch at x=" + x + ", y=" + y + ", z=" + z);
+                        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                            LOGGER.warn("Structure mismatch at x=" + x + ", y=" + y + ", z=" + z);
+                        }
                         return false;
                     }
                 }
             }
         }
         this.setMultiblock(multiblock);
-        LOGGER.info("Structure matched successfully.");
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            LOGGER.info("Structure matched successfully.");
+        }
         return true;
     }
     private boolean validateBlock(Level world, BlockPos basePos, int x, int y, int z, Map<String, Block> blocks, List<List<String>> layer) {
@@ -190,7 +220,9 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         BlockPos blockPosToCheck = basePos.offset(x, y, z);
         Block actualBlock = world.getBlockState(blockPosToCheck).getBlock();
         if (!actualBlock.equals(expectedBlock)) {
-            LOGGER.warn("Block mismatch at " + blockPosToCheck + ": expected " + expectedBlock + ", found " + actualBlock);
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.warn("Block mismatch at " + blockPosToCheck + ": expected " + expectedBlock + ", found " + actualBlock);
+            }
             return false;
         }
         return true;
@@ -509,7 +541,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     }
 
     /*
-     * Get the dif types of capabilities storage and max storage.
+     * Get the dif types of capabilities' storage and max storage.
      */
 
     /* Heat */

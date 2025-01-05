@@ -3,6 +3,7 @@ package com.magneticraft2.common.systems.Multiblocking.core.modules;
 
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import com.magneticraft2.common.systems.WATT.IWattStorage;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.WattStorages;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -27,10 +28,6 @@ public class EnergyModule implements IMultiblockModule {
 
     public EnergyModule(int capacityW, int maxtransferW) {
         this.wattHandler = new WattStorages(capacityW, maxtransferW) {
-            @Override
-            protected void onWattChanged() {
-
-            }
 
             @Override
             public boolean canReceive() {
@@ -56,7 +53,9 @@ public class EnergyModule implements IMultiblockModule {
         if (!world.isClientSide){
             watt.ifPresent(handler -> handler.setReceive(true));
             watt.ifPresent(handler -> handler.setSend(true));
-            LOGGER.info("Energy module activated!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Energy module activated!");
+            }
         }
     }
 
@@ -68,7 +67,9 @@ public class EnergyModule implements IMultiblockModule {
             wattHandler.setReceive(false);
             wattHandler.setSend(false);
             wattHandler.setWatt(0);
-            LOGGER.info("Energy module deactivated!");
+            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                LOGGER.info("Energy module deactivated!");
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -35,9 +36,13 @@ public class testpollutionblockentity extends BlockEntity {
             if (currentPollutionLevel < 110){
                 int newPollutionLevel = currentPollutionLevel + 40;
                 pollutionData.setPollution(chunkPos, newPollutionLevel);
-                LOGGER.info(pollutionData.getPollution(chunkPos));
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info(pollutionData.getPollution(chunkPos));
+                }
             }else {
-                LOGGER.info("Pollution is now 110");
+                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+                    LOGGER.info("Pollution is now 110");
+                }
             }
         }
     }

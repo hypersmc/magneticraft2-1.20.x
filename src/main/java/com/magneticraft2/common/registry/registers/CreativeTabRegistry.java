@@ -32,14 +32,18 @@ public class CreativeTabRegistry {
     public static final RegistryObject<CreativeModeTab> MGC2Blocks = TABS.register("magneticraft2_blocks", () ->
             CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.Magneticraft2.Blocks"))
-                    .icon(() -> new ItemStack(ItemRegistry.item_pitkiln.get()))
+                    .icon(() -> new ItemStack(ItemRegistry.item_blueprintmakermultiblock.get()))
                     .displayItems((enabledFeatures, entries) -> {
+                        entries.accept(ItemRegistry.item_mbdebugger.get());
                         entries.accept(ItemRegistry.item_pitkiln.get());
                         entries.accept(ItemRegistry.item_projector.get());
                         entries.accept(ItemRegistry.item_testpowermoduleblock.get());
                         entries.accept(ItemRegistry.item_testpollutionblock.get());
                         entries.accept(ItemRegistry.item_beltblock.get());
                         entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
+                        entries.accept(ItemRegistry.item_primitivefurnacemultiblock.get());
+                        entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
+                        entries.accept(ItemRegistry.item_bellowsmultiblockmodule.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->
@@ -54,6 +58,11 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_pebble.get());
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
                         entries.accept(ItemRegistry.item_multiblock_filler.get());
+                        entries.accept(ItemRegistry.item_slag.get());
+                        entries.accept(ItemRegistry.ITEM_GEAR_SMALL_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
 //                        entries.accept(ItemRegistry.);
                     })
                     .build());

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "is_formed=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "is_formed=false": {
+      "model": "magneticraft2:block/primitive_furnace_core"
+    }
+  }
+}
