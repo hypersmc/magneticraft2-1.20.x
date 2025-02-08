@@ -40,7 +40,7 @@ public abstract class GearBlockEntity extends BlockEntity {
     public void updateGearNetwork() {
         // Update the gear network with this gear's current state
         GearNetworkManager networkManager = GearNetworkManager.getInstance();
-        networkManager.addGear(gearNode);
+        networkManager.addGear(gearNode,level);
         // Handle synchronization of power state and rotation here if necessary
         sendGearSyncPacket();  // Ensure that the packet sync is sent when necessary
     }
@@ -70,7 +70,7 @@ public abstract class GearBlockEntity extends BlockEntity {
             this.setPowered(true);
             this.syncGearState(sourceGear.getSpeed(), sourceGear.getTorque(),
                     sourceGear.getDirectionMultiplier(), sourceGear.getSourcePos());
-            LOGGER.info("Gear at location " + sourceGear.getPosition() + " updated to " + sourceGear.getSpeed());
+//            LOGGER.info("Gear at location " + sourceGear.getPosition() + " updated to " + sourceGear.getSpeed());
         } else {
             this.setPowered(false);
         }

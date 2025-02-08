@@ -4,6 +4,7 @@ import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
+import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
@@ -13,12 +14,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.POWERED;
+import static com.magneticraft2.common.systems.mgc2Network.CHANNEL;
 
 /**
  * @author JumpWatch on 27-12-2024
@@ -38,9 +43,30 @@ public class LargeGearBlockEntity_wood extends GearBlockEntity {
         GearNetworkManager manager = GearNetworkManager.getInstance();
         if (!level.isClientSide()) {
             LargeGearBlockEntity_wood entity = (LargeGearBlockEntity_wood) level.getBlockEntity(pos);
-            manager.addGear(entity.gearNode);
-            entity.gearNode.updateClientData(entity.gearNode.getSpeed(), entity.gearNode.getTorque());
-            GearNetworkManager.getInstance().updateNetwork();
+            float currentSpeed = entity.gearNode.getSpeed();
+            // Make sure the gear is in the manager
+            manager.addGear(entity.gearNode,level);
+            // Now propagate the speed to neighbors
+            manager.updateNetwork(level);
+            // Making sure the data is synced with client
+            entity.syncWithClient();
+            if (currentSpeed > 0.0f) {
+                BlockState currentState = level.getBlockState(pos);
+                BlockState newstate = currentState.setValue(POWERED, true);
+                level.setBlock(pos, newstate, 2);
+            }
+            else {
+                BlockState currentState = level.getBlockState(pos);
+                BlockState newstate = currentState.setValue(POWERED, false);
+                level.setBlock(pos, newstate, 2);
+            }
+        }
+    }
+    private void syncWithClient() {
+        if (level != null && !level.isClientSide) {
+            // Use GearSyncPacket to sync GearNode data
+            GearSyncPacket packet = new GearSyncPacket(worldPosition, gearNode.getSpeed(), gearNode.getTorque(), gearNode.getDirectionMultiplier(), gearNode.getSourcePos());
+            CHANNEL.send(PacketDistributor.ALL.noArg(), packet);
         }
     }
     @Override

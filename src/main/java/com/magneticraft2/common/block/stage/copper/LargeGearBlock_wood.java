@@ -33,12 +33,14 @@ import org.jetbrains.annotations.Nullable;
 public class LargeGearBlock_wood extends GearBlock {
     public static final BooleanProperty VERTICAL_FACING_up = BooleanProperty.create("vertical_facing_up");
     public static final BooleanProperty VERTICAL_FACING_down = BooleanProperty.create("vertical_facing_down");
+    public static final BooleanProperty POWERED = BooleanProperty.create("powered");
     private VoxelShape South = VoxelShapeUtils.rotate(downshape(), Direction.SOUTH);
     private VoxelShape East = VoxelShapeUtils.rotate(downshape(), Direction.WEST);
     private VoxelShape North = VoxelShapeUtils.rotate(downshape(), Direction.NORTH);
     private VoxelShape West = VoxelShapeUtils.rotate(downshape(), Direction.WEST);
     public LargeGearBlock_wood() {
         super(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false));
     }
 
     @Override
@@ -55,9 +57,22 @@ public class LargeGearBlock_wood extends GearBlock {
 
             // Call updateNetwork() to propagate the network and state changes
             gearBlockEntity.updateGearNetwork();
-            networkManager.updateNetwork();
+            networkManager.updateNetwork(pLevel);
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+    }
+
+    @Override
+    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock, BlockPos pNeighborPos, boolean pMovedByPiston) {
+        super.neighborChanged(pState, pLevel, pPos, pNeighborBlock, pNeighborPos, pMovedByPiston);
+        boolean hasSignal = pLevel.hasNeighborSignal(pPos);
+        if (hasSignal != pState.getValue(POWERED)) {
+            pLevel.setBlock(pPos, pState.setValue(POWERED, hasSignal), 3);
+            if (pLevel.getBlockEntity(pPos) instanceof GearBlockEntity gearEntity) {
+                gearEntity.setPowered(hasSignal);
+                gearEntity.updateGearNetwork();
+            }
+        }
     }
 
     @Override
@@ -114,7 +129,7 @@ public class LargeGearBlock_wood extends GearBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING,VERTICAL_FACING_up,VERTICAL_FACING_down);
+        pBuilder.add(FACING,VERTICAL_FACING_up,VERTICAL_FACING_down,POWERED);
     }
     public VoxelShape downshape(){
         VoxelShape shape = Shapes.empty();

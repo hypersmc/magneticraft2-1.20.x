@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood.ACTIVE;
+import static com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.POWERED;
 import static com.magneticraft2.common.systems.mgc2Network.CHANNEL;
 
 /**
@@ -42,32 +43,36 @@ public class LargeGearWithHandleBlockEntity_wood extends GearBlockEntity {
         // Start motion
         if (!isMoving) {
             isMoving = true;
-            this.gearNode.setSpeed(5.0f); // Example: Initial speed for starting motion
-            this.gearNode.setTorque(1.0f);
-            updateGearNetwork();
-            sendGearSyncPacket();
-            GearNetworkManager.getInstance().updateNetwork();
-            syncWithClient();
+            // Add speed to the gear node
+            gearNode.setSpeed(130.0F);
+            gearNode.setTorque(1.0f);
+            // Ensure we are in the network
+            GearNetworkManager.getInstance().addGear(gearNode,level);
         }
     }
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {
         if (!level.isClientSide()) {
             LargeGearWithHandleBlockEntity_wood entity = (LargeGearWithHandleBlockEntity_wood) level.getBlockEntity(pos);
             if (entity.isMoving) {
+                // Decay speed, or keep it if you want
                 float currentSpeed = entity.gearNode.getSpeed();
-                if (currentSpeed > 0.0f) {
-                    entity.gearNode.updateClientData(entity.gearNode.getSpeed(), entity.gearNode.getTorque());
-                    entity.updateGearNetwork();
-                    entity.syncWithClient();
-                    GearNetworkManager.getInstance().updateNetwork();
-                    BlockState currentState = level.getBlockState(pos);
-                    level.setBlock(pos, currentState, 2);
-                    GearNetworkManager.getInstance().printNetworkState();
-                    entity.gearNode.setSpeed(currentSpeed - 0.1f); // Slow down over time
-                    entity.checkAndUpdatePower();
-                } else {
-                    entity.gearNode.setSpeed(0.0f);
+                if (!(currentSpeed > 0)) {
                     entity.isMoving = false;
+                }
+
+                // Make sure the gear is in the manager
+                GearNetworkManager manager = GearNetworkManager.getInstance();
+                manager.addGear(entity.gearNode,level);
+
+                // Now propagate the speed to neighbors
+                manager.updateNetwork(level);
+
+                // Making sure the data is synced with client
+                entity.syncWithClient();
+                // Debug
+                if (currentSpeed>0){
+                    manager.printNetworkState();
+                }else {
                     BlockState currentState = level.getBlockState(pos);
                     BlockState newstate = currentState.setValue(ACTIVE, false);
                     level.setBlock(pos, newstate, 2);
@@ -88,12 +93,11 @@ public class LargeGearWithHandleBlockEntity_wood extends GearBlockEntity {
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         CompoundTag tag = new CompoundTag();
         saveAdditional(tag);
-        return ClientboundBlockEntityDataPacket.create(this, (blockEntity) -> tag);
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
-        super.handleUpdateTag(tag);
         load(tag);
     }
 

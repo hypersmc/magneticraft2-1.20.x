@@ -52,14 +52,7 @@ public class ItemRegistry {
     }
     //Items after this line
     //Should sort this for each stage
-    public static final RegistryObject<Item> rice_seed = ITEMS.register("rice_seed", () -> new ItemNameBlockItem(rice_plant.get(), new Item.Properties()));
-    public static final RegistryObject<Item> rice = ITEMS.register("rice", () -> new Item(new Item.Properties().food(ModFoods.rice)));
-    public static final RegistryObject<clayPot> item_clay_pot = ITEMS.register("clay_pot", clayPot::new);
-    public static final RegistryObject<ceramicPot> item_ceramic_pot = ITEMS.register("ceramic_pot", ceramicPot::new);
-    public static final RegistryObject<FireStarter> item_fire_starter = ITEMS.register("firestarter", FireStarter::new);
-    public static final RegistryObject<slagitem> item_slag = ITEMS.register("slagitem", slagitem::new);
-    public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
-    public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
+
     public static final RegistryObject<Blueprintmarker> item_blueprintmarker = ITEMS.register("blueprint", Blueprintmarker::new);
     public static final RegistryObject<BlockItem> item_beltblock = ITEMS.register("beltblock", () -> new beltblockitem(beltblock.get(), new Item.Properties()));
     public static final RegistryObject<multiblock_filler_item> item_multiblock_filler = ITEMS.register("multiblock_filler_item", () -> new multiblock_filler_item(multiblockfiller.get(), new Item.Properties()));
@@ -78,13 +71,23 @@ public class ItemRegistry {
 
 
     //Stone
-
+    public static final RegistryObject<Item> rice_seed = ITEMS.register("rice_seed", () -> new ItemNameBlockItem(rice_plant.get(), new Item.Properties()));
+    public static final RegistryObject<Item> rice = ITEMS.register("rice", () -> new Item(new Item.Properties().food(ModFoods.rice)));
+    public static final RegistryObject<clayPot> item_clay_pot = ITEMS.register("clay_pot", clayPot::new);
+    public static final RegistryObject<ceramicPot> item_ceramic_pot = ITEMS.register("ceramic_pot", ceramicPot::new);
+    public static final RegistryObject<FireStarter> item_fire_starter = ITEMS.register("firestarter", FireStarter::new);
+    public static final RegistryObject<slagitem> item_slag = ITEMS.register("slagitem", slagitem::new);
+    public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
+    public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
 
     //Copper
-    public static final RegistryObject<Item> ITEM_GEAR_SMALL_WOOD = fromBlock(GEAR_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
+
+
+
+
 
     //ores
     public static final RegistryObject<Item> BAUXITE_ITEM = fromBlockOre(BAUXITE_ORE);

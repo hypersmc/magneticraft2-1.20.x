@@ -3,6 +3,8 @@ package com.magneticraft2.common.systems.GEAR;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 
+import static com.magneticraft2.common.magneticraft2.LOGGER;
+
 /**
  * @author JumpWatch on 27-12-2024
  * @Project mgc2-1.20
@@ -10,17 +12,15 @@ import net.minecraft.nbt.CompoundTag;
  */
 public class GearNode {
     private final BlockPos position;
-    private float speed; // Current speed of the gear
-    private float torque; // Current torque of the gear
-    private float clientSpeed; // Synced speed for the client
-    private float clientTorque; // Synced torque for the client
+    private float speed = 0; // Current speed of the gear
+    private float torque = 0; // Current torque of the gear
+    private float clientSpeed = 0; // Synced speed for the client
+    private float clientTorque = 0; // Synced torque for the client
     private int directionMultiplier = 1; // +1 or -1 based on gear placement
     private BlockPos sourcePos; // Tracks the source of power
 
     public GearNode(BlockPos position) {
         this.position = position;
-        this.speed = 0;
-        this.torque = 0;
     }
 
     // --- Getters and Setters ---
@@ -33,6 +33,7 @@ public class GearNode {
     }
 
     public void setSpeed(float speed) {
+//        LOGGER.info("Gear at {}: Speed set to {}", position, speed);
         this.speed = speed;
     }
 

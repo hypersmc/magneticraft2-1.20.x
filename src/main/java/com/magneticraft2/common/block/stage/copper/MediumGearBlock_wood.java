@@ -61,7 +61,7 @@ public class MediumGearBlock_wood extends GearBlock {
 
             // Call updateNetwork() to propagate the network and state changes
             gearBlockEntity.updateGearNetwork();
-            networkManager.updateNetwork();
+            networkManager.updateNetwork(pLevel);
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
     }

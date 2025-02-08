@@ -109,5 +109,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
             }
         }
 
+        //Going to have more if cases now since this is GUIless
+
     }
 }

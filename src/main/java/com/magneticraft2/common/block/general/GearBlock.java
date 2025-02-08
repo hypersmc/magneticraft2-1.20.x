@@ -43,7 +43,7 @@ public abstract class GearBlock extends DirectionalBlock implements EntityBlock 
         GearBlockEntity blockEntity = (GearBlockEntity) pLevel.getBlockEntity(pPos);
         if (blockEntity != null) {
             System.out.println("Trigger");
-            GearNetworkManager.getInstance().removeGear(pPos);
+            GearNetworkManager.getInstance().removeGear(pPos,pLevel);
         }
         return super.onDestroyedByPlayer(state, pLevel, pPos, player, willHarvest, fluid);
 
@@ -55,7 +55,7 @@ public abstract class GearBlock extends DirectionalBlock implements EntityBlock 
         GearBlockEntity blockEntity = (GearBlockEntity) pLevel.getBlockEntity(pPos);
         if (blockEntity != null) {
             System.out.println("Trigger");
-            GearNetworkManager.getInstance().removeGear(pPos);
+            GearNetworkManager.getInstance().removeGear(pPos,pLevel);
         }
     }
 }

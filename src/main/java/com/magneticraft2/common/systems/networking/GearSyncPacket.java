@@ -12,6 +12,8 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
+import static com.magneticraft2.common.magneticraft2.LOGGER;
+
 /**
  * @author JumpWatch on 27-12-2024
  * @Project mgc2-1.20
@@ -56,17 +58,32 @@ public class GearSyncPacket {
     public static void handle(GearSyncPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            // Client-side logic
             if (context.getDirection().getReceptionSide().isClient()) {
-                // Retrieve the gear system's manager from your client-side environment
-                GearNetworkManager manager = GearNetworkManager.getInstance();
-                if (manager != null) {
-                    GearNode gear = manager.getGear(packet.position);
-                    if (gear != null) {
-                        gear.updateClientData(packet.speed, packet.torque);
-                        gear.setDirectionMultiplier(packet.directionMultiplier);
-                        gear.setSourcePos(packet.sourcePos);
+                Minecraft minecraft = Minecraft.getInstance();
+                Level level = minecraft.level;
+                if (level != null && level.hasChunkAt(packet.position)) {
+                    BlockEntity blockEntity = level.getBlockEntity(packet.position);
+                    if (blockEntity instanceof GearBlockEntity gearBlockEntity) {
+                        GearNode gearNode = gearBlockEntity.getGearNode();
+                        if (gearNode == null) {
+                            gearNode = gearBlockEntity.getGearNode();
+                        }
+                        if (gearNode != null) {
+                            gearNode.updateClientData(packet.speed, packet.torque);
+                            gearNode.setDirectionMultiplier(packet.directionMultiplier);
+                            gearNode.setSourcePos(packet.sourcePos);
+
+                            // Debug log
+//                            LOGGER.info("Synced GearNode at {}: Speed={}, Torque={}, Direction={}",
+//                                    packet.position, packet.speed, packet.torque, packet.directionMultiplier);
+                        } else {
+                            LOGGER.error("Failed to initialize GearNode at {}", packet.position);
+                        }
+                    } else {
+                        LOGGER.error("No GearBlockEntity found at {}", packet.position);
                     }
+                } else {
+                    LOGGER.error("Chunk not loaded or Level is null for position {}", packet.position);
                 }
             }
         });

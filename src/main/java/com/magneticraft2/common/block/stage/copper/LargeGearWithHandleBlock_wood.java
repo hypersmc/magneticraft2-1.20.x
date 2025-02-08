@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -78,15 +79,26 @@ public class LargeGearWithHandleBlock_wood extends GearBlock {
         // If it's a GearBlockEntity, update the network
         if (blockEntity instanceof GearBlockEntity) {
             GearBlockEntity gearBlockEntity = (GearBlockEntity) blockEntity;
-
             // Create or get the network manager
             GearNetworkManager networkManager = GearNetworkManager.getInstance();
 
             // Call updateNetwork() to propagate the network and state changes
             gearBlockEntity.updateGearNetwork();
-            networkManager.updateNetwork();
+            networkManager.updateNetwork(pLevel);
         }
         super.onPlace(pState, pLevel, pPos, pOldState, pMovedByPiston);
+    }
+
+    @Override
+    public boolean onDestroyedByPlayer(BlockState state, Level pLevel, BlockPos pPos, Player player, boolean willHarvest, FluidState fluid) {
+        // Get the block entity at the given position
+        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+
+        // If it's a GearBlockEntity, update the network
+        if (blockEntity instanceof GearBlockEntity) {
+            ((GearBlockEntity) blockEntity).getGearNode().setSpeed(0f);
+        }
+        return super.onDestroyedByPlayer(state, pLevel, pPos, player, willHarvest, fluid);
     }
 
     @Override

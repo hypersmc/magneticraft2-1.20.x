@@ -6,7 +6,6 @@ import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
-import com.magneticraft2.common.block.stage.copper.SmallGearBlock_wood;
 import com.magneticraft2.common.block.stage.stone.BellowsMultiblockModule;
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
 import com.magneticraft2.common.block.stage.stone.PrimitiveFurnaceMultiblock;
@@ -64,7 +63,6 @@ public class BlockRegistry {
 
     //Copper
 
-    public static final RegistryObject<SmallGearBlock_wood> GEAR_SMALL_WOOD = BLOCKS.register("gear_small_wood", SmallGearBlock_wood::new);
     public static final RegistryObject<MediumGearBlock_wood> GEAR_MEDIUM_WOOD = BLOCKS.register("gear_medium_wood", MediumGearBlock_wood::new);
     public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
     public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);

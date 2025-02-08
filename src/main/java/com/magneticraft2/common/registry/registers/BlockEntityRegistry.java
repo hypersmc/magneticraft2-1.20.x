@@ -4,7 +4,6 @@ import com.magneticraft2.common.blockentity.general.*;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
-import com.magneticraft2.common.blockentity.stage.copper.SmallGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.BellowsMultiblockModuleEntity;
 import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveFurnaceMultiblockEntity;
@@ -55,7 +54,6 @@ public class BlockEntityRegistry {
 
     //Copper
 
-    public static final RegistryObject<BlockEntityType<SmallGearBlockEntity_wood>> GEAR_SMALL_BE_WOOD = BLOCK_ENTITIES.register("gear_small_wood", () -> BlockEntityType.Builder.of(SmallGearBlockEntity_wood::new, BlockRegistry.GEAR_SMALL_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MediumGearBlockEntity_wood>> GEAR_MEDIUM_BE_WOOD = BLOCK_ENTITIES.register("gear_medium_wood", () -> BlockEntityType.Builder.of(MediumGearBlockEntity_wood::new, BlockRegistry.GEAR_MEDIUM_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearBlockEntity_wood>> GEAR_LARGE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood", () -> BlockEntityType.Builder.of(LargeGearBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearWithHandleBlockEntity_wood>> GEAR_LARGE_WITH_HANDLE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood_with_handle", () -> BlockEntityType.Builder.of(LargeGearWithHandleBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WITH_HANDLE_WOOD.get()).build(null));

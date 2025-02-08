@@ -1,8 +1,7 @@
 package com.magneticraft2.client.render.blocks.stage.copper;
 
-import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
 import com.magneticraft2.common.systems.GEAR.GearNode;
-import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -10,27 +9,22 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
-import net.minecraftforge.network.PacketDistributor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood.*;
-import static com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_down;
-import static com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_up;
-import static com.magneticraft2.common.systems.mgc2Network.CHANNEL;
+import static com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.*;
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 /**
- * @author JumpWatch on 29-12-2024
+ * @author JumpWatch on 15-01-2025
  * @Project mgc2-1.20
  * v1.0.0
  */
-public class LargeGearWithHandleBlock_woodRenderer implements BlockEntityRenderer<LargeGearWithHandleBlockEntity_wood> {
+public class MediumGearBlockEntity_woodRenderer implements BlockEntityRenderer<MediumGearBlockEntity_wood> {
     public static final Logger LOGGER = LogManager.getLogger("MGC2GearRenderer");
-    public LargeGearWithHandleBlock_woodRenderer(BlockEntityRendererProvider.Context context) {}
-
+    public MediumGearBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {}
     @Override
-    public void render(LargeGearWithHandleBlockEntity_wood pBlockEntity, float partialTicks, PoseStack stack, MultiBufferSource bufferSource, int pPackedLight, int pPackedOverlay) {
+    public void render(MediumGearBlockEntity_wood pBlockEntity, float partialTicks, PoseStack stack, MultiBufferSource bufferSource, int pPackedLight, int pPackedOverlay) {
         GearNode gearNode = pBlockEntity.getGearNode();
         if (gearNode != null) {
             int direction = gearNode.getDirectionMultiplier();
@@ -91,9 +85,9 @@ public class LargeGearWithHandleBlock_woodRenderer implements BlockEntityRendere
             stack.translate(-0.5, -0.5, -0.5);
 
             // Render the block's existing model
-            if (pBlockEntity.getBlockState().getValue(ACTIVE)) {
+            if (pBlockEntity.getBlockState().getValue(POWERED)) {
                 Minecraft.getInstance().getBlockRenderer().renderSingleBlock(
-                        pBlockEntity.getBlockState().setValue(ACTIVE, false),
+                        pBlockEntity.getBlockState().setValue(POWERED, false),
                         stack,
                         bufferSource,
                         pPackedLight,
