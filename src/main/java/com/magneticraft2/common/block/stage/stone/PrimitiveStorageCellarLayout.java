@@ -59,8 +59,8 @@ public final class PrimitiveStorageCellarLayout {
     // MIDDLE/UPPER inner-side positions need extra clearance from the posts.
     // LOWER keeps the original anchors because its outward presentation already
     // makes those positions work well.
-    private static final double INNER_LEFT = -1.05D;
-    private static final double INNER_RIGHT = -0.02D;
+    private static final double INNER_LEFT = -1.00D;
+    private static final double INNER_RIGHT = -0.06D;
 
     private static final List<Slot> SLOTS = buildSlots();
 
@@ -123,22 +123,14 @@ public final class PrimitiveStorageCellarLayout {
 
     private static double[] longShelfAnchors(Shelf shelf) {
         return switch (shelf) {
-            // LOWER keeps the positions that are already working.
+            // Every level stays in the same left-to-right slot order:
+            // outer-left, inner-left, center-left, center-right, inner-right, outer-right.
+            // Only MIDDLE/UPPER move the two post-facing inner anchors.
             case LOWER -> new double[]{
                     LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
-
-            // MIDDLE keeps the outer bays but moves only the two inner-side
-            // post positions farther into the open center bay.
-            case MIDDLE -> new double[]{
-                    INNER_LEFT, LONG_SAFE[0], LONG_SAFE[2],
-                    LONG_SAFE[3], LONG_SAFE[5], INNER_RIGHT
-            };
-
-            // UPPER uses the same safer inner-side coordinates while retaining
-            // its existing outer-slot ordering.
-            case UPPER -> new double[]{
+            case MIDDLE, UPPER -> new double[]{
                     LONG_SAFE[0], INNER_LEFT, LONG_SAFE[2],
                     LONG_SAFE[3], INNER_RIGHT, LONG_SAFE[5]
             };
