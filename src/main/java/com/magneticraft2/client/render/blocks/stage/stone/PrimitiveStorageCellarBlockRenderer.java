@@ -8,6 +8,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -74,7 +76,6 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         }
 
         Direction formedFacing = getFormedFacing(blockEntity.getMBblueprintname());
-        var itemRenderer = Minecraft.getInstance().getItemRenderer();
 
         for (PrimitiveStorageCellarLayout.Slot slot : PrimitiveStorageCellarLayout.slots()) {
             ItemStack stack = blockEntity.itemHandler.getStackInSlot(slot.index());
@@ -82,26 +83,197 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                 continue;
             }
 
-            Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(slot.renderPosition(), formedFacing);
+            long seed = getVisualSeed(slot.index(), stack);
+            if (stack.getItem() instanceof BlockItem) {
+                renderBlockPile(blockEntity, slot, stack, seed, formedFacing, poseStack, buffer, packedLight, packedOverlay);
+            } else {
+                renderLooseItems(blockEntity, slot, stack, seed, formedFacing, poseStack, buffer, packedLight, packedOverlay);
+            }
+        }
+    }
 
-            poseStack.pushPose();
-            poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
-            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            poseStack.scale(0.35F, 0.35F, 0.35F);
+    private void renderBlockPile(PrimitiveStorageCellarMultiblockEntity blockEntity,
+                                 PrimitiveStorageCellarLayout.Slot slot,
+                                 ItemStack stack,
+                                 long seed,
+                                 Direction formedFacing,
+                                 PoseStack poseStack,
+                                 MultiBufferSource buffer,
+                                 int packedLight,
+                                 int packedOverlay) {
+        int visibleBlocks = stack.getCount() <= 8 ? 1
+                : stack.getCount() <= 24 ? 2
+                : stack.getCount() <= 40 ? 3
+                : 4;
 
-            itemRenderer.renderStatic(
+        double[][] pile = {
+                {-0.11D, 0.00D,  0.00D},
+                { 0.11D, 0.00D,  0.02D},
+                {-0.02D, 0.18D,  0.03D},
+                { 0.03D, 0.36D, -0.01D}
+        };
+
+        Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
+
+        for (int i = 0; i < visibleBlocks; i++) {
+            double jitterX = signedUnit(seed + i * 17L) * 0.025D;
+            double jitterZ = signedUnit(seed + i * 31L) * 0.025D;
+            float yaw = (float) (signedUnit(seed + i * 43L) * 7.0D);
+
+            renderShelfItem(
+                    blockEntity,
+                    slot,
                     stack,
-                    ItemDisplayContext.FIXED,
-                    packedLight,
-                    packedOverlay,
+                    formedFacing,
+                    visibilityOffset.x + pile[i][0] + jitterX,
+                    visibilityOffset.y + pile[i][1],
+                    visibilityOffset.z + pile[i][2] + jitterZ,
+                    yaw,
+                    0.0F,
+                    0.43F,
                     poseStack,
                     buffer,
-                    blockEntity.getLevel(),
-                    slot.index()
+                    packedLight,
+                    packedOverlay,
+                    slot.index() * 10 + i
             );
-
-            poseStack.popPose();
         }
+    }
+
+    private void renderLooseItems(PrimitiveStorageCellarMultiblockEntity blockEntity,
+                                  PrimitiveStorageCellarLayout.Slot slot,
+                                  ItemStack stack,
+                                  long seed,
+                                  Direction formedFacing,
+                                  PoseStack poseStack,
+                                  MultiBufferSource buffer,
+                                  int packedLight,
+                                  int packedOverlay) {
+        int visibleItems = stack.getCount() >= 40 ? 3 : stack.getCount() >= 16 ? 2 : 1;
+        int visualPose = Math.floorMod((int) seed, 3);
+        Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
+
+        for (int i = 0; i < visibleItems; i++) {
+            double offsetX = visibilityOffset.x + signedUnit(seed + i * 23L) * 0.08D;
+            double offsetZ = visibilityOffset.z + signedUnit(seed + i * 37L) * 0.06D;
+            double offsetY = visibilityOffset.y + i * 0.018D;
+
+            float yaw = (float) (signedUnit(seed + i * 53L) * 28.0D);
+            float tilt = switch (visualPose) {
+                case 0 -> 90.0F;
+                case 1 -> 76.0F;
+                default -> 62.0F;
+            };
+
+            renderShelfItem(
+                    blockEntity,
+                    slot,
+                    stack,
+                    formedFacing,
+                    offsetX,
+                    offsetY,
+                    offsetZ,
+                    yaw,
+                    tilt,
+                    0.34F,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    packedOverlay,
+                    slot.index() * 10 + i
+            );
+        }
+    }
+
+    private void renderShelfItem(PrimitiveStorageCellarMultiblockEntity blockEntity,
+                                 PrimitiveStorageCellarLayout.Slot slot,
+                                 ItemStack stack,
+                                 Direction formedFacing,
+                                 double offsetX,
+                                 double offsetY,
+                                 double offsetZ,
+                                 float yaw,
+                                 float tilt,
+                                 float scale,
+                                 PoseStack poseStack,
+                                 MultiBufferSource buffer,
+                                 int packedLight,
+                                 int packedOverlay,
+                                 int renderSeed) {
+        Vec3 canonical = slot.renderPosition().add(offsetX, offsetY, offsetZ);
+        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(canonical, formedFacing);
+
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
+        if (tilt != 0.0F) {
+            poseStack.mulPose(Axis.XP.rotationDegrees(tilt));
+        }
+        poseStack.scale(scale, scale, scale);
+
+        Minecraft.getInstance().getItemRenderer().renderStatic(
+                stack,
+                ItemDisplayContext.FIXED,
+                packedLight,
+                packedOverlay,
+                poseStack,
+                buffer,
+                blockEntity.getLevel(),
+                renderSeed
+        );
+
+        poseStack.popPose();
+    }
+
+    private Vec3 getLowerCornerVisibilityOffset(PrimitiveStorageCellarLayout.Slot slot) {
+        if (slot.shelf() != PrimitiveStorageCellarLayout.Shelf.LOWER || !isCornerSlot(slot)) {
+            return Vec3.ZERO;
+        }
+
+        // Pull the hard-to-see lower corner displays slightly into the room and
+        // lift them above the shelf lip. This is visual only; interaction stays
+        // anchored to the original physical slot.
+        return switch (slot.wall()) {
+            case NORTH -> new Vec3(0.0D, 0.08D, 0.10D);
+            case SOUTH -> new Vec3(0.0D, 0.08D, -0.10D);
+            case WEST -> new Vec3(0.10D, 0.08D, 0.0D);
+        };
+    }
+
+    private boolean isCornerSlot(PrimitiveStorageCellarLayout.Slot slot) {
+        int indexInLevel = slot.index() % 16;
+
+        return switch (slot.wall()) {
+            case NORTH -> indexInLevel == 0 || indexInLevel == 5;
+            case SOUTH -> indexInLevel == 6 || indexInLevel == 11;
+            case WEST -> indexInLevel == 12 || indexInLevel == 15;
+        };
+    }
+
+    private long getVisualSeed(int slot, ItemStack stack) {
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        long itemHash = itemId == null ? 0L : itemId.toString().hashCode();
+        return slot * 73428767L ^ itemHash * 912931L;
+    }
+
+    private double signedUnit(long seed) {
+        long mixed = seed;
+        mixed ^= (mixed >>> 33);
+        mixed *= 0xff51afd7ed558ccdL;
+        mixed ^= (mixed >>> 33);
+        mixed *= 0xc4ceb9fe1a85ec53L;
+        mixed ^= (mixed >>> 33);
+
+        return ((mixed & 0xFFFFL) / 32767.5D) - 1.0D;
+    }
+
+    private float getFacingYaw(Direction facing) {
+        return switch (facing) {
+            case NORTH -> 90.0F;
+            case EAST -> 180.0F;
+            case SOUTH -> 270.0F;
+            default -> 0.0F;
+        };
     }
 
     private Direction getFormedFacing(String blueprintName) {
