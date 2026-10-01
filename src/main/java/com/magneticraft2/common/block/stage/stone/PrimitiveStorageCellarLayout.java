@@ -56,10 +56,6 @@ public final class PrimitiveStorageCellarLayout {
             -1.80D, -1.16D, -0.74D, -0.32D, 0.10D, 0.76D
     };
 
-    // Only the inner side of the LEFT timber post still clips MIDDLE/UPPER
-    // displays. Move that one anchor farther into the open shelf bay.
-    private static final double LEFT_INNER_SAFE = -0.96D;
-
     private static final List<Slot> SLOTS = buildSlots();
 
     private PrimitiveStorageCellarLayout() {
@@ -127,15 +123,15 @@ public final class PrimitiveStorageCellarLayout {
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
 
-            // Only the inner-left position changes. The outer-left, center,
-            // right side and slot ordering stay exactly as before.
+            // Keep the working left-to-right positions. Visibility around
+            // the left post is handled by the renderer, not by reordering slots.
             case MIDDLE -> new double[]{
-                    LEFT_INNER_SAFE, LONG_SAFE[0], LONG_SAFE[2],
+                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[5], LONG_SAFE[4]
             };
 
             case UPPER -> new double[]{
-                    LONG_SAFE[0], LEFT_INNER_SAFE, LONG_SAFE[2],
+                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
         };
