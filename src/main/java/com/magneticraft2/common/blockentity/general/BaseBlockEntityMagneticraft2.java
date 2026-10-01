@@ -5,6 +5,7 @@ import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.HEAT.IHeatStorage;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockNbtHelper;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
@@ -39,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -448,6 +450,53 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
 
 
+
+    /**
+     * Shared multiblock persistence. Individual machines should only save their
+     * machine-specific data in their own saveAdditional/load overrides.
+     */
+    protected final void saveMultiblockData(CompoundTag tag, String blueprintName, boolean formed, String replacementModel) {
+        MultiblockNbtHelper nbt = new MultiblockNbtHelper(tag);
+        nbt.put(MultiblockNbtHelper.TagType.BLUEPRINT_NAME, blueprintName);
+        nbt.put(MultiblockNbtHelper.TagType.FORMED, formed);
+        nbt.put(MultiblockNbtHelper.TagType.REPLACEMENT_MODEL, replacementModel);
+
+        MultiblockController controller = getMultiblockController();
+        if (controller != null) {
+            nbt.put(MultiblockNbtHelper.TagType.CONTROLLER, controller.saveToNBT());
+            if (controller.getStructure() != null) {
+                nbt.put(MultiblockNbtHelper.TagType.STRUCTURE, controller.getStructure().saveToNBT());
+            }
+        }
+    }
+
+    protected final MultiblockPersistentData loadMultiblockData(CompoundTag tag) {
+        MultiblockNbtHelper nbt = new MultiblockNbtHelper(tag);
+
+        if (nbt.contains(MultiblockNbtHelper.TagType.STRUCTURE)) {
+            MultiblockStructure structure = new MultiblockStructure(
+                    new int[0],
+                    new HashMap<>(),
+                    new HashMap<>()
+            );
+            structure.loadFromNBT(nbt.getCompound(MultiblockNbtHelper.TagType.STRUCTURE));
+
+            if (nbt.contains(MultiblockNbtHelper.TagType.CONTROLLER)) {
+                MultiblockController controller = new MultiblockController(structure);
+                controller.loadFromNBT(nbt.getCompound(MultiblockNbtHelper.TagType.CONTROLLER));
+                setMultiblockController(controller);
+            }
+        }
+
+        return new MultiblockPersistentData(
+                nbt.getString(MultiblockNbtHelper.TagType.BLUEPRINT_NAME),
+                nbt.getBoolean(MultiblockNbtHelper.TagType.FORMED),
+                nbt.getString(MultiblockNbtHelper.TagType.REPLACEMENT_MODEL)
+        );
+    }
+
+    protected record MultiblockPersistentData(String blueprintName, boolean formed, String replacementModel) {
+    }
 
     /*
      * Saving and loading NBT data
