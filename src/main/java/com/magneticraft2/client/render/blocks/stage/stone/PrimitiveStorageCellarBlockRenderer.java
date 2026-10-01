@@ -353,22 +353,33 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Long NORTH/SOUTH shelf anchors are now defined around the timber posts
-        // in PrimitiveStorageCellarLayout itself. Only the short WEST shelf still
-        // needs a small endpoint clearance.
-        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
-            double inset = switch (slot.shelf()) {
-                case LOWER -> 0.10D;
-                case MIDDLE -> 0.12D;
-                case UPPER -> 0.14D;
-            };
+        // NORTH/SOUTH anchors are already laid out safely in the layout itself.
+        // Only the short WEST/center shelf needs endpoint treatment.
+        if (slot.wall() != PrimitiveStorageCellarLayout.Wall.WEST) {
+            return Vec3.ZERO;
+        }
 
+        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
             if (indexInLevel == 12) {
-                return new Vec3(0.0D, 0.0D, inset);
+                return new Vec3(0.0D, 0.0D, 0.10D);
             }
             if (indexInLevel == 15) {
-                return new Vec3(0.0D, 0.0D, -inset);
+                return new Vec3(0.0D, 0.0D, -0.10D);
             }
+            return Vec3.ZERO;
+        }
+
+        // MIDDLE/UPPER endpoint items were the ones still hiding behind the two
+        // timber posts. Pull them toward the room and slightly toward the shelf
+        // center; the two middle slots remain untouched.
+        double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.22D : 0.18D;
+        double inward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.07D : 0.06D;
+
+        if (indexInLevel == 12) {
+            return new Vec3(outward, 0.0D, inward);
+        }
+        if (indexInLevel == 15) {
+            return new Vec3(outward, 0.0D, -inward);
         }
 
         return Vec3.ZERO;
