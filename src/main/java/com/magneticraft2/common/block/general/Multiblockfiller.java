@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -45,6 +46,10 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
         if (!pLevel.isClientSide) {
             // Get the filler block's BlockEntity and read its NBT data
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
@@ -62,8 +67,9 @@ public class Multiblockfiller extends BaseEntityBlock {
                     }
                 }
                 if (bl instanceof BaseBlockMagneticraft2 multiblockControllerblock) {
-                    blockEntity.saveWithoutMetadata();
-                    multiblockControllerblock.interactableNoGui(pState, pLevel, pPos, pPlayer, pHand, pHit);
+                    BlockState controllerState = pLevel.getBlockState(controllerPos);
+                    multiblockControllerblock.interactableNoGui(controllerState, pLevel, controllerPos, pPlayer, pHand, pHit);
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
@@ -114,12 +120,16 @@ public class Multiblockfiller extends BaseEntityBlock {
             if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
                 boolean isformed = controllerBlock.getStateDefinition().any().getValue(IS_FORMED);
                 if (isformed) {
-                    VoxelShape controllershape = controllerBlock.getShape(controllerState, level, controllerPos, pContext);
+                    // getShape() on the controller may itself be clipped to the controller's
+                    // local block for server-safe interaction. The visual shape remains the
+                    // complete formed multiblock and is therefore the correct source when
+                    // deriving this filler block's local slice.
+                    VoxelShape controllerShape = controllerBlock.getVisualShape(controllerState, level, controllerPos, pContext);
                     double dx = controllerPos.getX() - pos.getX();
                     double dy = controllerPos.getY() - pos.getY();
                     double dz = controllerPos.getZ() - pos.getZ();
-                    return controllershape.move(dx, dy, dz);
-//                    return Shapes.box(0.1,0.1,0.1,0.1,0.1,0.1);
+                    VoxelShape localShape = controllerShape.move(dx, dy, dz);
+                    return Shapes.join(localShape, Shapes.block(), BooleanOp.AND).optimize();
                 }
             }
         }

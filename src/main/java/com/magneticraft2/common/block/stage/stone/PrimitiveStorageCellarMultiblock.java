@@ -3,10 +3,12 @@ package com.magneticraft2.common.block.stage.stone;
 import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveStorageCellarMultiblockEntity;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +57,10 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
     }
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
         if (!pLevel.isClientSide) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof PrimitiveStorageCellarMultiblockEntity multiblockEntity) {
@@ -85,21 +91,111 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
     }
     @Override
     protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        // Transform global hit position into block-local NORTH-facing space
-        Vec3 local = toLocalHit(pHit, pPos, null);
-        double x = local.x, y = local.y, z = local.z;
+        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+        if (!(blockEntity instanceof PrimitiveStorageCellarMultiblockEntity cellarEntity)) {
+            return;
+        }
 
-        LOGGER.info(String.format("Facing: %s, X: %.3f, Y: %.3f, Z: %.3f", null, x, y, z));
+        Direction formedFacing = getFormedFacing(cellarEntity, pState);
+        Vec3 relativeHit = MultiblockHitHelper.relativeToController(pHit, pPos);
+        Vec3 localHit = MultiblockHitHelper.toCanonicalWest(relativeHit, formedFacing);
+        CellarTarget target = findCellarTarget(localHit);
+
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            String targetName = target == null
+                    ? "none"
+                    : target.wall().name() + " / " + target.shelf().name();
+
+            String message = String.format(
+                    "Cellar %s -> %s | local x=%.3f y=%.3f z=%.3f",
+                    formedFacing,
+                    targetName,
+                    localHit.x,
+                    localHit.y,
+                    localHit.z
+            );
+
+            LOGGER.info(message);
+            pPlayer.displayClientMessage(Component.literal(message), true);
+        }
     }
 
-    private Vec3 toLocalHit(BlockHitResult hit, BlockPos blockPos, Direction facing) {
-        double localX = hit.getLocation().x - blockPos.getX();
-        double localY = hit.getLocation().y - blockPos.getY();
-        double localZ = hit.getLocation().z - blockPos.getZ();
+    private Direction getFormedFacing(PrimitiveStorageCellarMultiblockEntity cellarEntity, BlockState state) {
+        String blueprintName = cellarEntity.getMBblueprintname();
+        if (blueprintName != null) {
+            if (blueprintName.endsWith("_west")) {
+                return Direction.WEST;
+            }
+            if (blueprintName.endsWith("_east")) {
+                return Direction.EAST;
+            }
+            if (blueprintName.endsWith("_north")) {
+                return Direction.NORTH;
+            }
+            if (blueprintName.endsWith("_south")) {
+                return Direction.SOUTH;
+            }
+        }
 
-        // Rotate hit based on block's facing
-        return new Vec3(localX, localY, localZ);
+        return state.hasProperty(FACING) ? state.getValue(FACING) : Direction.WEST;
     }
+
+    @Nullable
+    private CellarTarget findCellarTarget(Vec3 localHit) {
+        double x = localHit.x;
+        double y = localHit.y;
+        double z = localHit.z;
+
+        if (y < -1.05D || y > 1.05D) {
+            return null;
+        }
+
+        CellarShelf shelf;
+        if (y < -0.33D) {
+            shelf = CellarShelf.LOWER;
+        } else if (y < 0.30D) {
+            shelf = CellarShelf.MIDDLE;
+        } else {
+            shelf = CellarShelf.UPPER;
+        }
+
+        // The WEST-authored replacement model is rendered with WEST.move(-1, 0, 0).
+        // After that shift its physical shelf extents, relative to the controller, are:
+        // north: x -1.9375..0.9375, z -0.9375..0
+        // south: x -1.9375..0.9375, z 1..1.9375
+        // west:  x -1.9375..-1,     z 0..1
+        // A small tolerance makes clicks on shelf edges behave naturally.
+        if (z >= -1.00D && z <= 0.10D && x >= -2.00D && x <= 1.00D) {
+            return new CellarTarget(CellarWall.NORTH, shelf);
+        }
+        if (z >= 0.90D && z <= 2.00D && x >= -2.00D && x <= 1.00D) {
+            return new CellarTarget(CellarWall.SOUTH, shelf);
+        }
+        if (x >= -2.00D && x <= -0.90D && z >= -0.05D && z <= 1.05D) {
+            return new CellarTarget(CellarWall.WEST, shelf);
+        }
+
+        return null;
+    }
+
+    private enum CellarWall {
+        NORTH,
+        SOUTH,
+        WEST
+    }
+
+    private enum CellarShelf {
+        LOWER,
+        MIDDLE,
+        UPPER
+    }
+
+    private record CellarTarget(CellarWall wall, CellarShelf shelf) {
+    }
+    private VoxelShape controllerLocalSlice(VoxelShape fullShape) {
+        return Shapes.join(fullShape, Shapes.block(), BooleanOp.AND).optimize();
+    }
+
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
@@ -108,13 +204,13 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
                 String modelname = furnaceEntity.getMBblueprintname();
                 switch (modelname) {
                     case "primitive_storagecellar_west":
-                        return WEST.move(-1, 0,0);
+                        return controllerLocalSlice(WEST.move(-1, 0,0));
                     case "primitive_storagecellar_north":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST));
                     case "primitive_storagecellar_south":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST));
                     case "primitive_storagecellar_east":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH));
                 }
             }
         }
@@ -154,13 +250,13 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
                 String modelname = furnaceEntity.getMBblueprintname();
                 switch (modelname) {
                     case "primitive_storagecellar_west":
-                        return WEST.move(-1, 0,0);
+                        return controllerLocalSlice(WEST.move(-1, 0,0));
                     case "primitive_storagecellar_north":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST));
                     case "primitive_storagecellar_south":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST));
                     case "primitive_storagecellar_east":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH));
                 }
             }
         }
