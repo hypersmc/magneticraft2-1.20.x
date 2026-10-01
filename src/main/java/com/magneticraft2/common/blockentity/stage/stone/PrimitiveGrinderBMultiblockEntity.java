@@ -215,12 +215,12 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
     @Override
     public int capacityF() {
-        return 500;
+        return 0;
     }
 
     @Override
     public int tanks() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -260,7 +260,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
     @Override
     public boolean fluidcape() {
-        return true;
+        return false;
     }
 
     @Override
