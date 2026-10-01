@@ -166,7 +166,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
         Vec3 pillarOffset = getPillarAvoidanceOffset(slot);
-        Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D
+        Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D || isHandPlacedShelfEndpoint(slot)
                 ? Vec3.ZERO
                 : getNaturalLooseItemOffset(slot, seed);
 
@@ -350,56 +350,101 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         poseStack.popPose();
     }
 
+    private boolean isHandPlacedShelfEndpoint(PrimitiveStorageCellarLayout.Slot slot) {
+        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
+            return false;
+        }
+
+        int indexInLevel = slot.index() % 16;
+        return (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH
+                && (indexInLevel == 0 || indexInLevel == 5))
+                || (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH
+                && (indexInLevel == 6 || indexInLevel == 11));
+    }
+
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
+        Vec3 current = slot.renderPosition();
 
-        // Endpoint piles beside the timber posts need more than a small nudge.
-        // LOWER already has its own outward visibility treatment, so leave that
-        // relatively modest. MIDDLE/UPPER are pulled farther inward along the
-        // shelf and given different depth offsets so they neither clip posts nor
-        // form vertical columns.
-        double longShelfInset = switch (slot.shelf()) {
-            case LOWER -> 0.20D;
-            case MIDDLE -> 0.31D;
-            case UPPER -> 0.38D;
-        };
-
-        double westShelfInset = switch (slot.shelf()) {
-            case LOWER -> 0.10D;
-            case MIDDLE -> 0.18D;
-            case UPPER -> 0.24D;
-        };
-
-        double levelDepth = switch (slot.shelf()) {
-            case LOWER -> 0.0D;
-            case MIDDLE -> 0.060D;
-            case UPPER -> -0.050D;
-        };
-
-        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
-            if (indexInLevel == 0) {
-                return new Vec3(longShelfInset, 0.0D, levelDepth);
+        // The long side shelves have endpoint anchors directly inside the timber
+        // posts. For MIDDLE and UPPER, place those endpoints in specific open
+        // shelf bays instead of accumulating generic offsets.
+        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE) {
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
+                if (indexInLevel == 0) {
+                    return new Vec3(-1.18D, current.y, current.z).subtract(current);
+                }
+                if (indexInLevel == 5) {
+                    return new Vec3(0.18D, current.y, current.z).subtract(current);
+                }
             }
-            if (indexInLevel == 5) {
-                return new Vec3(-longShelfInset, 0.0D, levelDepth);
+
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
+                if (indexInLevel == 6) {
+                    return new Vec3(-1.18D, current.y, current.z).subtract(current);
+                }
+                if (indexInLevel == 11) {
+                    return new Vec3(0.18D, current.y, current.z).subtract(current);
+                }
             }
         }
 
-        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
-            if (indexInLevel == 6) {
-                return new Vec3(longShelfInset, 0.0D, -levelDepth);
+        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.UPPER) {
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
+                if (indexInLevel == 0) {
+                    return new Vec3(-1.78D, current.y, current.z).subtract(current);
+                }
+                if (indexInLevel == 5) {
+                    return new Vec3(0.78D, current.y, current.z).subtract(current);
+                }
             }
-            if (indexInLevel == 11) {
-                return new Vec3(-longShelfInset, 0.0D, -levelDepth);
+
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
+                if (indexInLevel == 6) {
+                    return new Vec3(-1.78D, current.y, current.z).subtract(current);
+                }
+                if (indexInLevel == 11) {
+                    return new Vec3(0.78D, current.y, current.z).subtract(current);
+                }
             }
         }
 
+        // LOWER keeps the visibility-oriented placement from the previous pass.
+        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
+                if (indexInLevel == 0) {
+                    return new Vec3(0.20D, 0.0D, 0.0D);
+                }
+                if (indexInLevel == 5) {
+                    return new Vec3(-0.20D, 0.0D, 0.0D);
+                }
+            }
+
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
+                if (indexInLevel == 6) {
+                    return new Vec3(0.20D, 0.0D, 0.0D);
+                }
+                if (indexInLevel == 11) {
+                    return new Vec3(-0.20D, 0.0D, 0.0D);
+                }
+            }
+        }
+
+        // Short WEST shelf endpoints only need to stay clear of the two corner
+        // posts; keep these conservative because their four anchors are already
+        // spread across the full shelf.
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
+            double inset = switch (slot.shelf()) {
+                case LOWER -> 0.10D;
+                case MIDDLE -> 0.12D;
+                case UPPER -> 0.14D;
+            };
+
             if (indexInLevel == 12) {
-                return new Vec3(levelDepth, 0.0D, westShelfInset);
+                return new Vec3(0.0D, 0.0D, inset);
             }
             if (indexInLevel == 15) {
-                return new Vec3(levelDepth, 0.0D, -westShelfInset);
+                return new Vec3(0.0D, 0.0D, -inset);
             }
         }
 
