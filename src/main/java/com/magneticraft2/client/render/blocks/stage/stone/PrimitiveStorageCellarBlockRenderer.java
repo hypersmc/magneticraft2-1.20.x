@@ -158,33 +158,27 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
 
-        // Loose items stay grounded on the shelf and build upward as a small pile.
-        // The offsets are deliberately compact so the pile still clearly belongs
-        // to one logical storage slot.
-        double[][] pile = {
-                {-0.040D, 0.000D,  0.000D},
-                { 0.035D, 0.022D,  0.010D},
-                {-0.022D, 0.044D, -0.008D},
-                { 0.026D, 0.066D,  0.004D}
-        };
-
+        // Loose items stay on one physical spot and stack upward.
+        // Keep X/Z almost identical between copies so the pile reads vertically,
+        // not as several items scattered across the shelf.
         for (int i = 0; i < visibleItems; i++) {
-            double jitterX = signedUnit(seed + i * 23L) * 0.018D;
-            double jitterZ = signedUnit(seed + i * 37L) * 0.018D;
-            float yaw = (float) (signedUnit(seed + i * 53L) * 18.0D);
+            double layerY = i * 0.028D;
+            double tinyX = signedUnit(seed + i * 23L) * 0.006D;
+            double tinyZ = signedUnit(seed + i * 37L) * 0.006D;
+            float yaw = (float) (signedUnit(seed + i * 53L) * 7.0D);
 
             renderShelfItem(
                     blockEntity,
                     slot,
                     stack,
                     formedFacing,
-                    visibilityOffset.x + pile[i][0] + jitterX,
-                    visibilityOffset.y + pile[i][1],
-                    visibilityOffset.z + pile[i][2] + jitterZ,
+                    visibilityOffset.x + tinyX,
+                    visibilityOffset.y + layerY,
+                    visibilityOffset.z + tinyZ,
                     yaw,
                     90.0F,
                     0.0F,
-                    0.48F,
+                    0.46F,
                     ItemDisplayContext.NONE,
                     poseStack,
                     buffer,
