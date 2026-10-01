@@ -216,15 +216,16 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
 
-        // Mirror the normal ItemEntity render path, then apply the same kind of
-        // 90 degree X rotation used by "lay dropped items flat" renderers.
+        // Redstone and other flat generated items are XY-plane models.
+        // Lay that plane onto the horizontal shelf with X=90, then yaw it
+        // around the shelf. NONE avoids GROUND's extra 0.5 model scale.
         poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
         poseStack.scale(scale, scale, scale);
 
         itemRenderer.render(
                 stack,
-                ItemDisplayContext.GROUND,
+                ItemDisplayContext.NONE,
                 false,
                 poseStack,
                 buffer,
