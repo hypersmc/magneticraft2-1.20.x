@@ -407,10 +407,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // overlap the neighboring long-shelf slots; move only along Z toward
         // the open side of their respective timber posts.
         if (slot.index() == 16 || slot.index() == 32) {
-            return new Vec3(0.18D, 0.0D, 0.22D);
+            return new Vec3(0.28D, 0.0D, 0.22D);
         }
         if (slot.index() == 22 || slot.index() == 38) {
-            return new Vec3(0.18D, 0.0D, -0.22D);
+            return new Vec3(0.28D, 0.0D, -0.22D);
         }
 
         // Preserve the working lower WEST shelf endpoint clearance.
