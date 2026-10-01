@@ -220,7 +220,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
     private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
         if (slot.index() == 16 || slot.index() == 22
-                || slot.index() == 32 || slot.index() == 38) {
+                || slot.index() == 29 || slot.index() == 30
+                || slot.index() == 32 || slot.index() == 38
+                || slot.index() == 45 || slot.index() == 46) {
             return Vec3.ZERO;
         }
 
@@ -358,13 +360,14 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Exact inner WEST-shelf pairs marked in-game. Move only these four
-        // toward their nearest timber pillar; everything else stays untouched.
+        // Exact inner WEST-shelf pairs marked in-game. Move them sideways
+        // toward their nearest pillar AND outward toward the room, matching the
+        // successful lower WEST shelf treatment so they stay in front of posts.
         if (slot.index() == 29 || slot.index() == 45) {
-            return new Vec3(0.0D, 0.0D, -0.10D);
+            return new Vec3(0.14D, 0.0D, -0.10D);
         }
         if (slot.index() == 30 || slot.index() == 46) {
-            return new Vec3(0.0D, 0.0D, 0.10D);
+            return new Vec3(0.14D, 0.0D, 0.10D);
         }
 
         // Preserve the working lower WEST shelf endpoint clearance.
