@@ -189,10 +189,13 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             };
         };
 
+        float slotYaw = getLooseItemSlotYaw(slot, seed);
+        float looseScale = slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST ? 0.36F : 0.40F;
+
         for (int i = 0; i < visibleItems; i++) {
             double tinyX = signedUnit(seed + i * 23L) * 0.003D;
             double tinyZ = signedUnit(seed + i * 37L) * 0.003D;
-            float yaw = (float) (pile[i][3] + signedUnit(seed + i * 53L) * 4.0D);
+            float yaw = (float) (slotYaw + pile[i][3] + signedUnit(seed + i * 53L) * 3.0D);
 
             renderLooseShelfItemRaw(
                     blockEntity,
@@ -203,7 +206,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     visibilityOffset.y + naturalOffset.y + pile[i][1],
                     visibilityOffset.z + naturalOffset.z + pile[i][2] + tinyZ,
                     yaw,
-                    0.40F,
+                    looseScale,
                     poseStack,
                     buffer,
                     packedLight,
@@ -214,6 +217,18 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     }
 
     private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
+            int centerIndex = (slot.index() % 16) - 12;
+            double[] depth = {0.035D, -0.015D, 0.020D, -0.030D};
+            double[] along = {-0.025D, 0.018D, -0.012D, 0.026D};
+            int index = Math.max(0, Math.min(3, centerIndex));
+            return new Vec3(
+                    depth[index],
+                    0.0D,
+                    along[index] + signedUnit(seed + 101L) * 0.012D
+            );
+        }
+
         return switch (slot.wall()) {
             case NORTH -> new Vec3(
                     signedUnit(seed + 101L) * 0.018D,
@@ -225,12 +240,18 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     0.0D,
                     0.026D
             );
-            case WEST -> new Vec3(
-                    -0.026D,
-                    0.0D,
-                    signedUnit(seed + 101L) * 0.032D
-            );
+            case WEST -> Vec3.ZERO;
         };
+    }
+
+    private float getLooseItemSlotYaw(PrimitiveStorageCellarLayout.Slot slot, long seed) {
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
+            int centerIndex = Math.max(0, Math.min(3, (slot.index() % 16) - 12));
+            float[] yaw = {-16.0F, 9.0F, -7.0F, 17.0F};
+            return yaw[centerIndex];
+        }
+
+        return (float) (signedUnit(seed + 151L) * 9.0D);
     }
 
     private void renderLooseShelfItemRaw(PrimitiveStorageCellarMultiblockEntity blockEntity,
@@ -334,9 +355,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         int indexInLevel = slot.index() % 16;
 
-        // The two hard-to-see lower corners are the inner junctions where the
-        // long NORTH/SOUTH shelves meet the WEST shelf. Put those end slots
-        // directly into the visible corner area (the user's marked X positions).
+        // Keep the two inner corner slots in their hand-tuned visible positions.
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH && indexInLevel == 0) {
             Vec3 current = slot.renderPosition();
             Vec3 target = new Vec3(-1.47D, current.y, -0.05D);
@@ -349,7 +368,14 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             return target.subtract(current);
         }
 
-        return Vec3.ZERO;
+        // The rest of the lower shelf is pulled toward the room/opening. This
+        // keeps the items over the shelf surface while making them easier to see
+        // and giving the player a clearer piece of shelf to click beneath them.
+        return switch (slot.wall()) {
+            case NORTH -> new Vec3(0.0D, 0.0D, 0.14D);
+            case SOUTH -> new Vec3(0.0D, 0.0D, -0.14D);
+            case WEST -> new Vec3(0.14D, 0.0D, 0.0D);
+        };
     }
 
     private long getVisualSeed(int slot, ItemStack stack) {
