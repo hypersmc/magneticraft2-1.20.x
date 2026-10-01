@@ -132,6 +132,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     0.0F,
                     0.0F,
                     0.43F,
+                    ItemDisplayContext.FIXED,
                     poseStack,
                     buffer,
                     packedLight,
@@ -161,10 +162,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // The offsets are deliberately compact so the pile still clearly belongs
         // to one logical storage slot.
         double[][] pile = {
-                {-0.045D, 0.000D,  0.000D},
-                { 0.040D, 0.045D,  0.012D},
-                {-0.025D, 0.090D, -0.010D},
-                { 0.030D, 0.135D,  0.004D}
+                {-0.040D, 0.000D,  0.000D},
+                { 0.035D, 0.022D,  0.010D},
+                {-0.022D, 0.044D, -0.008D},
+                { 0.026D, 0.066D,  0.004D}
         };
 
         for (int i = 0; i < visibleItems; i++) {
@@ -181,9 +182,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     visibilityOffset.y + pile[i][1],
                     visibilityOffset.z + pile[i][2] + jitterZ,
                     yaw,
-                    90.0F,
                     0.0F,
-                    0.34F,
+                    0.0F,
+                    0.52F,
+                    ItemDisplayContext.GROUND,
                     poseStack,
                     buffer,
                     packedLight,
@@ -204,6 +206,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                                  float tilt,
                                  float roll,
                                  float scale,
+                                 ItemDisplayContext displayContext,
                                  PoseStack poseStack,
                                  MultiBufferSource buffer,
                                  int packedLight,
@@ -225,7 +228,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,
-                ItemDisplayContext.FIXED,
+                displayContext,
                 packedLight,
                 packedOverlay,
                 poseStack,
