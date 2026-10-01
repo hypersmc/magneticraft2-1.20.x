@@ -5,10 +5,10 @@ import com.magneticraft2.common.blockentity.stage.stone.PrimitiveStorageCellarMu
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -211,35 +211,22 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
 
-        // Render the raw baked model instead of renderStatic(). Generated item
-        // models are vertical XY planes, so a 90 degree X rotation lays them
-        // directly onto the horizontal shelf. No ItemDisplayContext transform
-        // is applied after this.
+        // Mirror the normal ItemEntity render path, then apply the same kind of
+        // 90 degree X rotation used by "lay dropped items flat" renderers.
         poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
         poseStack.scale(scale, scale, scale);
-        poseStack.translate(-0.5D, -0.5D, -0.5D);
 
-        boolean fabulous = false;
-        for (BakedModel renderPass : model.getRenderPasses(stack, fabulous)) {
-            for (RenderType renderType : renderPass.getRenderTypes(stack, fabulous)) {
-                VertexConsumer consumer = ItemRenderer.getFoilBuffer(
-                        buffer,
-                        renderType,
-                        true,
-                        stack.hasFoil()
-                );
-
-                itemRenderer.renderModelLists(
-                        renderPass,
-                        stack,
-                        packedLight,
-                        packedOverlay,
-                        poseStack,
-                        consumer
-                );
-            }
-        }
+        itemRenderer.render(
+                stack,
+                ItemDisplayContext.GROUND,
+                false,
+                poseStack,
+                buffer,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                model
+        );
 
         poseStack.popPose();
     }
