@@ -45,7 +45,7 @@ public class BlueprintMultiblock extends BaseBlockMagneticraft2{
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
     private static final VoxelShape WEST = Stream.of(Block.box(-16, 12, -16, 16, 16, 32), Block.box(13, 0, -16, 16, 12, -13), Block.box(-16, 0, -16, -13, 12, -13), Block.box(13, 0, 29, 16, 12, 32), Block.box(-16, 0, 29, -13, 12, 32)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     public BlueprintMultiblock() {
-        super(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops());
+        super(BlockBehaviour.Properties.of().noOcclusion().isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(IS_FORMED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
 
