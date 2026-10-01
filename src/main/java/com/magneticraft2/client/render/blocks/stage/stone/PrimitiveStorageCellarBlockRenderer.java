@@ -121,6 +121,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         };
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
+        Vec3 pillarOffset = getPillarAvoidanceOffset(slot);
 
         for (int i = 0; i < visibleBlocks; i++) {
             double jitterX = signedUnit(seed + i * 17L) * 0.025D;
@@ -132,9 +133,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     slot,
                     stack,
                     formedFacing,
-                    visibilityOffset.x + pile[i][0] + jitterX,
-                    visibilityOffset.y + pile[i][1],
-                    visibilityOffset.z + pile[i][2] + jitterZ,
+                    visibilityOffset.x + pillarOffset.x + pile[i][0] + jitterX,
+                    visibilityOffset.y + pillarOffset.y + pile[i][1],
+                    visibilityOffset.z + pillarOffset.z + pile[i][2] + jitterZ,
                     yaw,
                     0.0F,
                     0.0F,
@@ -164,6 +165,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                 : 4;
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
+        Vec3 pillarOffset = getPillarAvoidanceOffset(slot);
         Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D
                 ? Vec3.ZERO
                 : getNaturalLooseItemOffset(slot, seed);
@@ -202,9 +204,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     slot,
                     stack,
                     formedFacing,
-                    visibilityOffset.x + naturalOffset.x + pile[i][0] + tinyX,
-                    visibilityOffset.y + naturalOffset.y + pile[i][1],
-                    visibilityOffset.z + naturalOffset.z + pile[i][2] + tinyZ,
+                    visibilityOffset.x + pillarOffset.x + naturalOffset.x + pile[i][0] + tinyX,
+                    visibilityOffset.y + pillarOffset.y + naturalOffset.y + pile[i][1],
+                    visibilityOffset.z + pillarOffset.z + naturalOffset.z + pile[i][2] + tinyZ,
                     yaw,
                     looseScale,
                     poseStack,
@@ -346,6 +348,45 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         );
 
         poseStack.popPose();
+    }
+
+    private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
+        int indexInLevel = slot.index() % 16;
+
+        // The long NORTH/SOUTH shelves end beside the vertical timber posts.
+        // Pull only those endpoint displays toward the middle of the shelf so
+        // block piles and flat items cannot visually pass through the posts.
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
+            if (indexInLevel == 0) {
+                return new Vec3(0.20D, 0.0D, 0.0D);
+            }
+            if (indexInLevel == 5) {
+                return new Vec3(-0.20D, 0.0D, 0.0D);
+            }
+        }
+
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
+            if (indexInLevel == 6) {
+                return new Vec3(0.20D, 0.0D, 0.0D);
+            }
+            if (indexInLevel == 11) {
+                return new Vec3(-0.20D, 0.0D, 0.0D);
+            }
+        }
+
+        // The four-slot WEST shelf meets the same posts at both ends. Its
+        // endpoints only need a smaller along-shelf nudge because the shelf is
+        // much shorter.
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
+            if (indexInLevel == 12) {
+                return new Vec3(0.0D, 0.0D, 0.10D);
+            }
+            if (indexInLevel == 15) {
+                return new Vec3(0.0D, 0.0D, -0.10D);
+            }
+        }
+
+        return Vec3.ZERO;
     }
 
     private Vec3 getLowerCornerVisibilityOffset(PrimitiveStorageCellarLayout.Slot slot) {
