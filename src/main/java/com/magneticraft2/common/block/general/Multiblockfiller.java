@@ -65,6 +65,7 @@ public class Multiblockfiller extends BaseEntityBlock {
                 if (bl instanceof BaseBlockMagneticraft2 multiblockControllerblock) {
                     BlockState controllerState = pLevel.getBlockState(controllerPos);
                     multiblockControllerblock.interactableNoGui(controllerState, pLevel, controllerPos, pPlayer, pHand, pHit);
+                    return InteractionResult.SUCCESS;
                 }
             }
         }
