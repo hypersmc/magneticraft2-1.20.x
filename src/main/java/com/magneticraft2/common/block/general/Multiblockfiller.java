@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -62,8 +63,8 @@ public class Multiblockfiller extends BaseEntityBlock {
                     }
                 }
                 if (bl instanceof BaseBlockMagneticraft2 multiblockControllerblock) {
-                    blockEntity.saveWithoutMetadata();
-                    multiblockControllerblock.interactableNoGui(pState, pLevel, pPos, pPlayer, pHand, pHit);
+                    BlockState controllerState = pLevel.getBlockState(controllerPos);
+                    multiblockControllerblock.interactableNoGui(controllerState, pLevel, controllerPos, pPlayer, pHand, pHit);
                 }
             }
         }
@@ -118,8 +119,8 @@ public class Multiblockfiller extends BaseEntityBlock {
                     double dx = controllerPos.getX() - pos.getX();
                     double dy = controllerPos.getY() - pos.getY();
                     double dz = controllerPos.getZ() - pos.getZ();
-                    return controllershape.move(dx, dy, dz);
-//                    return Shapes.box(0.1,0.1,0.1,0.1,0.1,0.1);
+                    VoxelShape localShape = controllershape.move(dx, dy, dz);
+                    return Shapes.join(localShape, Shapes.block(), BooleanOp.AND).optimize();
                 }
             }
         }
