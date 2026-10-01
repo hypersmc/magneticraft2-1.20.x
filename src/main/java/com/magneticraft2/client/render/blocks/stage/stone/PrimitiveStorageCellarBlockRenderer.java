@@ -361,7 +361,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // Their base X anchor is already correct. Only pull them forward into
         // the open shelf area; any X offset pushes them into the timber.
         if (slot.index() == 22 || slot.index() == 39) {
-            return new Vec3(0.0D, 0.0D, -0.60D);
+            // Keep the forward placement; move only slightly toward the pillar.
+            // Base X is ~-1.16 and the timber begins around -1.375, so this
+            // leaves a small visual gap without pushing the pile into the post.
+            return new Vec3(-0.14D, 0.0D, -0.60D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
