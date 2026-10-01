@@ -184,6 +184,10 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
 
     private record CellarTarget(CellarWall wall, CellarShelf shelf) {
     }
+    private VoxelShape controllerLocalSlice(VoxelShape fullShape) {
+        return Shapes.join(fullShape, Shapes.block(), BooleanOp.AND).optimize();
+    }
+
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
@@ -192,13 +196,13 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
                 String modelname = furnaceEntity.getMBblueprintname();
                 switch (modelname) {
                     case "primitive_storagecellar_west":
-                        return WEST.move(-1, 0,0);
+                        return controllerLocalSlice(WEST.move(-1, 0,0));
                     case "primitive_storagecellar_north":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST));
                     case "primitive_storagecellar_south":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST));
                     case "primitive_storagecellar_east":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH));
                 }
             }
         }
@@ -238,13 +242,13 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
                 String modelname = furnaceEntity.getMBblueprintname();
                 switch (modelname) {
                     case "primitive_storagecellar_west":
-                        return WEST.move(-1, 0,0);
+                        return controllerLocalSlice(WEST.move(-1, 0,0));
                     case "primitive_storagecellar_north":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST));
                     case "primitive_storagecellar_south":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.WEST));
                     case "primitive_storagecellar_east":
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH);
+                        return controllerLocalSlice(VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH));
                 }
             }
         }
