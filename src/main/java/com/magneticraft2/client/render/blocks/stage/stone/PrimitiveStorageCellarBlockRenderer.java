@@ -357,14 +357,12 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Inner-side displays beside the left SOUTH-wall timber post.
-        // Their base X anchor is already correct. Only pull them forward into
-        // the open shelf area; any X offset pushes them into the timber.
+        // Match the already-working LOWER SOUTH corner placement for the
+        // corresponding MIDDLE/UPPER displays, while preserving their own Y.
         if (slot.index() == 22 || slot.index() == 39) {
-            // Keep the forward placement; move only slightly toward the pillar.
-            // Base X is ~-1.16 and the timber begins around -1.375, so this
-            // leaves a small visual gap without pushing the pile into the post.
-            return new Vec3(-0.14D, 0.0D, -0.60D);
+            Vec3 current = slot.renderPosition();
+            Vec3 target = new Vec3(-1.47D, current.y, 1.05D);
+            return target.subtract(current);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
