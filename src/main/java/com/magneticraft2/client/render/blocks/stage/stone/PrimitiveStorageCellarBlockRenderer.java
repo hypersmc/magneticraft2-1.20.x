@@ -353,36 +353,51 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // The long NORTH/SOUTH shelves end beside the vertical timber posts.
-        // Pull only those endpoint displays toward the middle of the shelf so
-        // block piles and flat items cannot visually pass through the posts.
+        // Keep endpoint piles clear of the timber posts, but also stagger the
+        // MIDDLE and UPPER shelf endpoints so the same corner does not become
+        // one obvious vertical column through all three shelf levels.
+        double longShelfInset = switch (slot.shelf()) {
+            case LOWER -> 0.20D;
+            case MIDDLE -> 0.15D;
+            case UPPER -> 0.27D;
+        };
+
+        double westShelfInset = switch (slot.shelf()) {
+            case LOWER -> 0.10D;
+            case MIDDLE -> 0.07D;
+            case UPPER -> 0.15D;
+        };
+
+        double levelDepth = switch (slot.shelf()) {
+            case LOWER -> 0.0D;
+            case MIDDLE -> 0.045D;
+            case UPPER -> -0.035D;
+        };
+
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
             if (indexInLevel == 0) {
-                return new Vec3(0.20D, 0.0D, 0.0D);
+                return new Vec3(longShelfInset, 0.0D, levelDepth);
             }
             if (indexInLevel == 5) {
-                return new Vec3(-0.20D, 0.0D, 0.0D);
+                return new Vec3(-longShelfInset, 0.0D, levelDepth);
             }
         }
 
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
             if (indexInLevel == 6) {
-                return new Vec3(0.20D, 0.0D, 0.0D);
+                return new Vec3(longShelfInset, 0.0D, -levelDepth);
             }
             if (indexInLevel == 11) {
-                return new Vec3(-0.20D, 0.0D, 0.0D);
+                return new Vec3(-longShelfInset, 0.0D, -levelDepth);
             }
         }
 
-        // The four-slot WEST shelf meets the same posts at both ends. Its
-        // endpoints only need a smaller along-shelf nudge because the shelf is
-        // much shorter.
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
             if (indexInLevel == 12) {
-                return new Vec3(0.0D, 0.0D, 0.10D);
+                return new Vec3(levelDepth, 0.0D, westShelfInset);
             }
             if (indexInLevel == 15) {
-                return new Vec3(0.0D, 0.0D, -0.10D);
+                return new Vec3(levelDepth, 0.0D, -westShelfInset);
             }
         }
 
