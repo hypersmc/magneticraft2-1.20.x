@@ -155,15 +155,19 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
             shelf = CellarShelf.UPPER;
         }
 
-        // The current WEST-authored replacement model has shelves on three walls:
-        // north: z -1..0, south: z 1..2, west: x -1..0 between those walls.
-        if (z >= -1.05D && z <= 0.10D && x >= -1.05D && x <= 2.05D) {
+        // The WEST-authored replacement model is rendered with WEST.move(-1, 0, 0).
+        // After that shift its physical shelf extents, relative to the controller, are:
+        // north: x -1.9375..0.9375, z -0.9375..0
+        // south: x -1.9375..0.9375, z 1..1.9375
+        // west:  x -1.9375..-1,     z 0..1
+        // A small tolerance makes clicks on shelf edges behave naturally.
+        if (z >= -1.00D && z <= 0.10D && x >= -2.00D && x <= 1.00D) {
             return new CellarTarget(CellarWall.NORTH, shelf);
         }
-        if (z >= 0.90D && z <= 2.05D && x >= -1.05D && x <= 2.05D) {
+        if (z >= 0.90D && z <= 2.00D && x >= -2.00D && x <= 1.00D) {
             return new CellarTarget(CellarWall.SOUTH, shelf);
         }
-        if (x >= -1.05D && x <= 0.10D && z >= 0.0D && z <= 1.0D) {
+        if (x >= -2.00D && x <= -0.90D && z >= -0.05D && z <= 1.05D) {
             return new CellarTarget(CellarWall.WEST, shelf);
         }
 
