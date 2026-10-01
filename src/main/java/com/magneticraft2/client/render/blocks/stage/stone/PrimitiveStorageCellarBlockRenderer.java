@@ -4,8 +4,10 @@ import com.magneticraft2.common.block.stage.stone.PrimitiveStorageCellarLayout;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveStorageCellarMultiblockEntity;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
 import com.magneticraft2.common.utils.MultiBlockProperties;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -96,7 +98,48 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             } else {
                 renderLooseItems(blockEntity, slot, stack, seed, formedFacing, poseStack, buffer, packedLight, packedOverlay);
             }
+
+            renderSlotDebugLabel(blockEntity, slot, formedFacing, poseStack, buffer, packedLight);
         }
+    }
+
+    private void renderSlotDebugLabel(PrimitiveStorageCellarMultiblockEntity blockEntity,
+                                      PrimitiveStorageCellarLayout.Slot slot,
+                                      Direction formedFacing,
+                                      PoseStack poseStack,
+                                      MultiBufferSource buffer,
+                                      int packedLight) {
+        if (!Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            return;
+        }
+
+        Vec3 offset = getLowerCornerVisibilityOffset(slot).add(getPillarAvoidanceOffset(slot));
+        Vec3 canonical = slot.renderPosition().add(offset);
+        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(canonical, formedFacing);
+
+        String label = Integer.toString(slot.index());
+        Font font = Minecraft.getInstance().font;
+
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y + 0.18D, renderPos.z);
+        poseStack.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
+        poseStack.scale(-0.0125F, -0.0125F, 0.0125F);
+
+        float textX = -font.width(label) / 2.0F;
+        font.drawInBatch(
+                label,
+                textX,
+                0.0F,
+                0xFFFFFF55,
+                false,
+                poseStack.last().pose(),
+                buffer,
+                Font.DisplayMode.SEE_THROUGH,
+                0x60000000,
+                packedLight
+        );
+
+        poseStack.popPose();
     }
 
     private void renderBlockPile(PrimitiveStorageCellarMultiblockEntity blockEntity,
