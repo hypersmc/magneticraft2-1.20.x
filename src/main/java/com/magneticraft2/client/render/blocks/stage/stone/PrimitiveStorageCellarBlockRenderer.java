@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -86,7 +85,13 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             }
 
             long seed = getVisualSeed(slot.index(), stack);
-            if (stack.getItem() instanceof BlockItem) {
+            BakedModel itemModel = Minecraft.getInstance().getItemRenderer()
+                    .getModel(stack, blockEntity.getLevel(), null, slot.index());
+
+            // Do not classify by BlockItem: several flat items (redstone dust,
+            // seeds, etc.) place blocks and therefore extend BlockItem. The baked
+            // model tells us what we actually care about visually.
+            if (itemModel.isGui3d()) {
                 renderBlockPile(blockEntity, slot, stack, seed, formedFacing, poseStack, buffer, packedLight, packedOverlay);
             } else {
                 renderLooseItems(blockEntity, slot, stack, seed, formedFacing, poseStack, buffer, packedLight, packedOverlay);
