@@ -358,10 +358,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         int indexInLevel = slot.index() % 16;
 
         // Inner-side displays beside the left SOUTH-wall timber post.
-        // These are the actual visual slots: MIDDLE 22 and UPPER 39.
-        // Pull them in front of the post and sideways toward its center.
+        // Their base X anchor is already correct. Only pull them forward into
+        // the open shelf area; any X offset pushes them into the timber.
         if (slot.index() == 22 || slot.index() == 39) {
-            return new Vec3(-0.28D, 0.0D, -0.60D);
+            return new Vec3(0.0D, 0.0D, -0.60D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
