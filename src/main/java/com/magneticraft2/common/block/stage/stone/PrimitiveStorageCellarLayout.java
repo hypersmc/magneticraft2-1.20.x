@@ -47,8 +47,8 @@ public final class PrimitiveStorageCellarLayout {
 
     private static final double LONG_MIN = -1.80D;
     private static final double LONG_MAX = 0.80D;
-    private static final double WEST_MIN = 0.12D;
-    private static final double WEST_MAX = 0.88D;
+    private static final double WEST_MIN = 0.00D;
+    private static final double WEST_MAX = 1.00D;
 
     private static final List<Slot> SLOTS = buildSlots();
 
