@@ -182,9 +182,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     visibilityOffset.y + pile[i][1],
                     visibilityOffset.z + pile[i][2] + jitterZ,
                     yaw,
+                    90.0F,
                     0.0F,
-                    0.0F,
-                    0.52F,
+                    0.48F,
                     ItemDisplayContext.GROUND,
                     poseStack,
                     buffer,
@@ -245,25 +245,25 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             return Vec3.ZERO;
         }
 
-        // Keep lower corner items physically in the corner. Only lift them a tiny
-        // amount and move the outermost anchors slightly farther toward the corner.
+        // Keep the lower displays on the shelf itself. Move the end slots
+        // horizontally toward the visible corners/opening instead of lifting them.
         int indexInLevel = slot.index() % 16;
 
         return switch (slot.wall()) {
             case NORTH -> new Vec3(
-                    indexInLevel == 0 ? -0.10D : 0.10D,
-                    0.045D,
-                    0.0D
+                    indexInLevel == 0 ? -0.12D : 0.12D,
+                    0.0D,
+                    0.16D
             );
             case SOUTH -> new Vec3(
-                    indexInLevel == 6 ? -0.10D : 0.10D,
-                    0.045D,
-                    0.0D
+                    indexInLevel == 6 ? -0.12D : 0.12D,
+                    0.0D,
+                    -0.16D
             );
             case WEST -> new Vec3(
+                    0.16D,
                     0.0D,
-                    0.045D,
-                    indexInLevel == 12 ? -0.08D : 0.08D
+                    indexInLevel == 12 ? -0.10D : 0.10D
             );
         };
     }
