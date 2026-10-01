@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -30,7 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import static com.magneticraft2.common.block.general.BaseBlockMagneticraft2.FACING;
-import static com.magneticraft2.common.block.general.BlueprintMultiblock.IS_FORMED;
 
 /**
  * @author JumpWatch on 01-07-2024
@@ -41,7 +42,12 @@ public class Multiblockfiller extends BaseEntityBlock {
     private static final Logger LOGGER = LogManager.getLogger("MGC2MultiblockFiller");
 
     public Multiblockfiller() {
-        super(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops());
+        super(BlockBehaviour.Properties.of()
+                .noOcclusion()
+                .dynamicShape()
+                .isSuffocating((state, level, pos) -> false)
+                .isViewBlocking((state, level, pos) -> false)
+                .requiresCorrectToolForDrops());
     }
 
     @Override
@@ -107,39 +113,65 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter level, BlockPos pos, CollisionContext pContext) {
+        VoxelShape localShape = getLocalMultiblockShape(level, pos, pContext);
+        return localShape != null ? localShape : super.getShape(pState, level, pos, pContext);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState pState, BlockGetter level, BlockPos pos, CollisionContext pContext) {
+        VoxelShape localShape = getLocalMultiblockShape(level, pos, pContext);
+        return localShape != null ? localShape : super.getCollisionShape(pState, level, pos, pContext);
+    }
+
+    @Nullable
+    private VoxelShape getLocalMultiblockShape(BlockGetter level, BlockPos pos, CollisionContext context) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
 
-        if (tag != null && tag.contains("controller_x") && tag.contains("controller_y") && tag.contains("controller_z")) {
-            // Retrieve the controller position from the NBT data
-            BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
-            BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-            Block controllerBlock = level.getBlockState(controllerPos).getBlock();
-            BlockState controllerState = level.getBlockState(controllerPos);
-            // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
-            if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
-                boolean isformed = controllerBlock.getStateDefinition().any().getValue(IS_FORMED);
-                if (isformed) {
-                    // getShape() on the controller may itself be clipped to the controller's
-                    // local block for server-safe interaction. The visual shape remains the
-                    // complete formed multiblock and is therefore the correct source when
-                    // deriving this filler block's local slice.
-                    VoxelShape controllerShape = controllerBlock.getVisualShape(controllerState, level, controllerPos, pContext);
-                    double dx = controllerPos.getX() - pos.getX();
-                    double dy = controllerPos.getY() - pos.getY();
-                    double dz = controllerPos.getZ() - pos.getZ();
-                    VoxelShape localShape = controllerShape.move(dx, dy, dz);
-                    return Shapes.join(localShape, Shapes.block(), BooleanOp.AND).optimize();
-                }
-            }
+        if (tag == null
+                || !tag.contains("controller_x")
+                || !tag.contains("controller_y")
+                || !tag.contains("controller_z")) {
+            return null;
         }
-        return super.getShape(pState, level, pos, pContext);
+
+        BlockPos controllerPos = new BlockPos(
+                tag.getInt("controller_x"),
+                tag.getInt("controller_y"),
+                tag.getInt("controller_z")
+        );
+        BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
+        if (!(controllerEntity instanceof BaseBlockEntityMagneticraft2)) {
+            return null;
+        }
+
+        BlockState controllerState = level.getBlockState(controllerPos);
+        if (!isControllerFormed(controllerState)) {
+            return null;
+        }
+
+        Block controllerBlock = controllerState.getBlock();
+        VoxelShape controllerShape = controllerBlock.getVisualShape(controllerState, level, controllerPos, context);
+
+        double dx = controllerPos.getX() - pos.getX();
+        double dy = controllerPos.getY() - pos.getY();
+        double dz = controllerPos.getZ() - pos.getZ();
+
+        return Shapes.join(
+                controllerShape.move(dx, dy, dz),
+                Shapes.block(),
+                BooleanOp.AND
+        ).optimize();
     }
 
-
-    @Override
-    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return super.getCollisionShape(pState, pLevel, pPos, pContext);
+    private boolean isControllerFormed(BlockState state) {
+        for (Property<?> property : state.getProperties()) {
+            if (property instanceof BooleanProperty formedProperty
+                    && "is_formed".equals(property.getName())) {
+                return state.getValue(formedProperty);
+            }
+        }
+        return false;
     }
 
     @Override
