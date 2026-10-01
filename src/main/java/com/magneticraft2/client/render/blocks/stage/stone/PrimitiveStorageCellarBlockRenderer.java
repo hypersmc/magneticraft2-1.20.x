@@ -358,10 +358,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // Pull only these two renders toward the open center of the cellar so
         // they are no longer hidden behind the left timber post.
         if (slot.index() == 22 || slot.index() == 38) {
-            // Exact two confirmed problem renders. Move diagonally toward the
-            // front/inside corner of the timber post, matching the in-game
-            // marked direction instead of only pulling straight forward.
-            return new Vec3(0.20D, 0.0D, -0.52D);
+            // Fine-tuned from the in-game marked direction: a little farther
+            // toward the player/open center, then a little more toward the post.
+            return new Vec3(0.28D, 0.0D, -0.60D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
