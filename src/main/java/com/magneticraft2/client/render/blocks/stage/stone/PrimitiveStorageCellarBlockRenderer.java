@@ -214,7 +214,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // Mirror the normal ItemEntity render path, then apply the same kind of
         // 90 degree X rotation used by "lay dropped items flat" renderers.
         poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
-        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(90.0F));
         poseStack.scale(scale, scale, scale);
 
         itemRenderer.render(
