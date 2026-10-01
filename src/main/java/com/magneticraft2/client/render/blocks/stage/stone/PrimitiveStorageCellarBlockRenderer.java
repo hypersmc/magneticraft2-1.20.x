@@ -164,26 +164,49 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                 : 4;
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
+        Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D
+                ? Vec3.ZERO
+                : getNaturalLooseItemOffset(slot, seed);
 
-        // Loose items stay on one physical spot and stack upward.
-        // Keep X/Z almost identical between copies so the pile reads vertically,
-        // not as several items scattered across the shelf.
+        // Count-based pile templates keep full stacks compact instead of making
+        // four copies read as a neat row. Each extra item overlaps the previous
+        // one and climbs only slightly upward.
+        double[][] pile = switch (visibleItems) {
+            case 1 -> new double[][]{
+                    { 0.000D, 0.000D,  0.000D}
+            };
+            case 2 -> new double[][]{
+                    {-0.014D, 0.000D,  0.006D},
+                    { 0.014D, 0.016D, -0.004D}
+            };
+            case 3 -> new double[][]{
+                    {-0.018D, 0.000D,  0.008D},
+                    { 0.018D, 0.014D, -0.005D},
+                    { 0.000D, 0.030D,  0.002D}
+            };
+            default -> new double[][]{
+                    {-0.018D, 0.000D,  0.008D},
+                    { 0.018D, 0.009D, -0.006D},
+                    {-0.008D, 0.023D, -0.004D},
+                    { 0.010D, 0.038D,  0.005D}
+            };
+        };
+
         for (int i = 0; i < visibleItems; i++) {
-            double layerY = i * 0.028D;
-            double tinyX = signedUnit(seed + i * 23L) * 0.006D;
-            double tinyZ = signedUnit(seed + i * 37L) * 0.006D;
-            float yaw = (float) (signedUnit(seed + i * 53L) * 7.0D);
+            double tinyX = signedUnit(seed + i * 23L) * 0.004D;
+            double tinyZ = signedUnit(seed + i * 37L) * 0.004D;
+            float yaw = (float) (signedUnit(seed + i * 53L) * 5.0D);
 
             renderLooseShelfItemRaw(
                     blockEntity,
                     slot,
                     stack,
                     formedFacing,
-                    visibilityOffset.x + tinyX,
-                    visibilityOffset.y + layerY,
-                    visibilityOffset.z + tinyZ,
+                    visibilityOffset.x + naturalOffset.x + pile[i][0] + tinyX,
+                    visibilityOffset.y + naturalOffset.y + pile[i][1],
+                    visibilityOffset.z + naturalOffset.z + pile[i][2] + tinyZ,
                     yaw,
-                    0.46F,
+                    0.42F,
                     poseStack,
                     buffer,
                     packedLight,
@@ -191,6 +214,29 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     slot.index() * 10 + i
             );
         }
+    }
+
+    private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
+        // Push stored clutter a little toward its wall and break the perfectly
+        // even row of slot anchors. WEST has only four spots, so it gets a touch
+        // more along-shelf variation than the six-slot NORTH/SOUTH runs.
+        return switch (slot.wall()) {
+            case NORTH -> new Vec3(
+                    signedUnit(seed + 101L) * 0.025D,
+                    0.0D,
+                    -0.035D
+            );
+            case SOUTH -> new Vec3(
+                    signedUnit(seed + 101L) * 0.025D,
+                    0.0D,
+                    0.035D
+            );
+            case WEST -> new Vec3(
+                    -0.035D,
+                    0.0D,
+                    signedUnit(seed + 101L) * 0.045D
+            );
+        };
     }
 
     private void renderLooseShelfItemRaw(PrimitiveStorageCellarMultiblockEntity blockEntity,
