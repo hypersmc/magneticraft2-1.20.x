@@ -353,25 +353,27 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Keep endpoint piles clear of the timber posts, but also stagger the
-        // MIDDLE and UPPER shelf endpoints so the same corner does not become
-        // one obvious vertical column through all three shelf levels.
+        // Endpoint piles beside the timber posts need more than a small nudge.
+        // LOWER already has its own outward visibility treatment, so leave that
+        // relatively modest. MIDDLE/UPPER are pulled farther inward along the
+        // shelf and given different depth offsets so they neither clip posts nor
+        // form vertical columns.
         double longShelfInset = switch (slot.shelf()) {
             case LOWER -> 0.20D;
-            case MIDDLE -> 0.15D;
-            case UPPER -> 0.27D;
+            case MIDDLE -> 0.31D;
+            case UPPER -> 0.38D;
         };
 
         double westShelfInset = switch (slot.shelf()) {
             case LOWER -> 0.10D;
-            case MIDDLE -> 0.07D;
-            case UPPER -> 0.15D;
+            case MIDDLE -> 0.18D;
+            case UPPER -> 0.24D;
         };
 
         double levelDepth = switch (slot.shelf()) {
             case LOWER -> 0.0D;
-            case MIDDLE -> 0.045D;
-            case UPPER -> -0.035D;
+            case MIDDLE -> 0.060D;
+            case UPPER -> -0.050D;
         };
 
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
