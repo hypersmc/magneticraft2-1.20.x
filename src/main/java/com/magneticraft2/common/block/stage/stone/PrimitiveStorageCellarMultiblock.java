@@ -3,10 +3,12 @@ package com.magneticraft2.common.block.stage.stone;
 import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveStorageCellarMultiblockEntity;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -85,20 +87,102 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
     }
     @Override
     protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        // Transform global hit position into block-local NORTH-facing space
-        Vec3 local = toLocalHit(pHit, pPos, null);
-        double x = local.x, y = local.y, z = local.z;
+        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+        if (!(blockEntity instanceof PrimitiveStorageCellarMultiblockEntity cellarEntity)) {
+            return;
+        }
 
-        LOGGER.info(String.format("Facing: %s, X: %.3f, Y: %.3f, Z: %.3f", null, x, y, z));
+        Direction formedFacing = getFormedFacing(cellarEntity, pState);
+        Vec3 relativeHit = MultiblockHitHelper.relativeToController(pHit, pPos);
+        Vec3 localHit = MultiblockHitHelper.toCanonicalWest(relativeHit, formedFacing);
+        CellarTarget target = findCellarTarget(localHit);
+
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            String targetName = target == null
+                    ? "none"
+                    : target.wall().name() + " / " + target.shelf().name();
+
+            String message = String.format(
+                    "Cellar %s -> %s | local x=%.3f y=%.3f z=%.3f",
+                    formedFacing,
+                    targetName,
+                    localHit.x,
+                    localHit.y,
+                    localHit.z
+            );
+
+            LOGGER.info(message);
+            pPlayer.displayClientMessage(Component.literal(message), true);
+        }
     }
 
-    private Vec3 toLocalHit(BlockHitResult hit, BlockPos blockPos, Direction facing) {
-        double localX = hit.getLocation().x - blockPos.getX();
-        double localY = hit.getLocation().y - blockPos.getY();
-        double localZ = hit.getLocation().z - blockPos.getZ();
+    private Direction getFormedFacing(PrimitiveStorageCellarMultiblockEntity cellarEntity, BlockState state) {
+        String blueprintName = cellarEntity.getMBblueprintname();
+        if (blueprintName != null) {
+            if (blueprintName.endsWith("_west")) {
+                return Direction.WEST;
+            }
+            if (blueprintName.endsWith("_east")) {
+                return Direction.EAST;
+            }
+            if (blueprintName.endsWith("_north")) {
+                return Direction.NORTH;
+            }
+            if (blueprintName.endsWith("_south")) {
+                return Direction.SOUTH;
+            }
+        }
 
-        // Rotate hit based on block's facing
-        return new Vec3(localX, localY, localZ);
+        return state.hasProperty(FACING) ? state.getValue(FACING) : Direction.WEST;
+    }
+
+    @Nullable
+    private CellarTarget findCellarTarget(Vec3 localHit) {
+        double x = localHit.x;
+        double y = localHit.y;
+        double z = localHit.z;
+
+        if (y < -1.05D || y > 1.05D) {
+            return null;
+        }
+
+        CellarShelf shelf;
+        if (y < -0.33D) {
+            shelf = CellarShelf.LOWER;
+        } else if (y < 0.30D) {
+            shelf = CellarShelf.MIDDLE;
+        } else {
+            shelf = CellarShelf.UPPER;
+        }
+
+        // The current WEST-authored replacement model has shelves on three walls:
+        // north: z -1..0, south: z 1..2, west: x -1..0 between those walls.
+        if (z >= -1.05D && z <= 0.10D && x >= -1.05D && x <= 2.05D) {
+            return new CellarTarget(CellarWall.NORTH, shelf);
+        }
+        if (z >= 0.90D && z <= 2.05D && x >= -1.05D && x <= 2.05D) {
+            return new CellarTarget(CellarWall.SOUTH, shelf);
+        }
+        if (x >= -1.05D && x <= 0.10D && z >= 0.0D && z <= 1.0D) {
+            return new CellarTarget(CellarWall.WEST, shelf);
+        }
+
+        return null;
+    }
+
+    private enum CellarWall {
+        NORTH,
+        SOUTH,
+        WEST
+    }
+
+    private enum CellarShelf {
+        LOWER,
+        MIDDLE,
+        UPPER
+    }
+
+    private record CellarTarget(CellarWall wall, CellarShelf shelf) {
     }
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
