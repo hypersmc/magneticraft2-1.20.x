@@ -158,9 +158,9 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                                   MultiBufferSource buffer,
                                   int packedLight,
                                   int packedOverlay) {
-        int visibleItems = stack.getCount() <= 15 ? 1
-                : stack.getCount() <= 31 ? 2
-                : stack.getCount() <= 47 ? 3
+        int visibleItems = stack.getCount() <= 21 ? 1
+                : stack.getCount() <= 42 ? 2
+                : stack.getCount() <= 63 ? 3
                 : 4;
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
@@ -168,34 +168,31 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                 ? Vec3.ZERO
                 : getNaturalLooseItemOffset(slot, seed);
 
-        // Count-based pile templates keep full stacks compact instead of making
-        // four copies read as a neat row. Each extra item overlaps the previous
-        // one and climbs only slightly upward.
         double[][] pile = switch (visibleItems) {
             case 1 -> new double[][]{
-                    { 0.000D, 0.000D,  0.000D}
+                    { 0.000D, 0.000D,  0.000D, -8.0D}
             };
             case 2 -> new double[][]{
-                    {-0.014D, 0.000D,  0.006D},
-                    { 0.014D, 0.016D, -0.004D}
+                    {-0.018D, 0.000D,  0.008D, -18.0D},
+                    { 0.016D, 0.014D, -0.006D,  14.0D}
             };
             case 3 -> new double[][]{
-                    {-0.018D, 0.000D,  0.008D},
-                    { 0.018D, 0.014D, -0.005D},
-                    { 0.000D, 0.030D,  0.002D}
+                    {-0.020D, 0.000D,  0.010D, -20.0D},
+                    { 0.018D, 0.012D, -0.006D,  10.0D},
+                    { 0.000D, 0.026D,  0.000D,  24.0D}
             };
             default -> new double[][]{
-                    {-0.018D, 0.000D,  0.008D},
-                    { 0.018D, 0.009D, -0.006D},
-                    {-0.008D, 0.023D, -0.004D},
-                    { 0.010D, 0.038D,  0.005D}
+                    {-0.022D, 0.000D,  0.010D, -22.0D},
+                    { 0.018D, 0.010D, -0.008D,  12.0D},
+                    {-0.006D, 0.024D, -0.004D, -6.0D},
+                    { 0.012D, 0.038D,  0.006D,  26.0D}
             };
         };
 
         for (int i = 0; i < visibleItems; i++) {
-            double tinyX = signedUnit(seed + i * 23L) * 0.004D;
-            double tinyZ = signedUnit(seed + i * 37L) * 0.004D;
-            float yaw = (float) (signedUnit(seed + i * 53L) * 5.0D);
+            double tinyX = signedUnit(seed + i * 23L) * 0.003D;
+            double tinyZ = signedUnit(seed + i * 37L) * 0.003D;
+            float yaw = (float) (pile[i][3] + signedUnit(seed + i * 53L) * 4.0D);
 
             renderLooseShelfItemRaw(
                     blockEntity,
@@ -206,7 +203,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     visibilityOffset.y + naturalOffset.y + pile[i][1],
                     visibilityOffset.z + naturalOffset.z + pile[i][2] + tinyZ,
                     yaw,
-                    0.42F,
+                    0.40F,
                     poseStack,
                     buffer,
                     packedLight,
@@ -217,24 +214,21 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     }
 
     private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
-        // Push stored clutter a little toward its wall and break the perfectly
-        // even row of slot anchors. WEST has only four spots, so it gets a touch
-        // more along-shelf variation than the six-slot NORTH/SOUTH runs.
         return switch (slot.wall()) {
             case NORTH -> new Vec3(
-                    signedUnit(seed + 101L) * 0.025D,
+                    signedUnit(seed + 101L) * 0.018D,
                     0.0D,
-                    -0.035D
+                    -0.026D
             );
             case SOUTH -> new Vec3(
-                    signedUnit(seed + 101L) * 0.025D,
+                    signedUnit(seed + 101L) * 0.018D,
                     0.0D,
-                    0.035D
+                    0.026D
             );
             case WEST -> new Vec3(
-                    -0.035D,
+                    -0.026D,
                     0.0D,
-                    signedUnit(seed + 101L) * 0.045D
+                    signedUnit(seed + 101L) * 0.032D
             );
         };
     }
