@@ -353,33 +353,43 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // NORTH/SOUTH anchors are already laid out safely in the layout itself.
-        // Only the short WEST/center shelf needs endpoint treatment.
-        if (slot.wall() != PrimitiveStorageCellarLayout.Wall.WEST) {
-            return Vec3.ZERO;
+        // The remaining problem is the INNER side of the LEFT post on the
+        // MIDDLE and UPPER long shelves. Keep its X anchor unchanged and pull
+        // the display toward the open center of the cellar so the post no longer
+        // hides it.
+        if (slot.shelf() != PrimitiveStorageCellarLayout.Shelf.LOWER) {
+            double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.20D : 0.17D;
+
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH && indexInLevel == 1) {
+                return new Vec3(0.0D, 0.0D, outward);
+            }
+
+            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH && indexInLevel == 7) {
+                return new Vec3(0.0D, 0.0D, -outward);
+            }
         }
 
-        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
+        // Keep the already-working short WEST/center shelf treatment.
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
+            if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
+                if (indexInLevel == 12) {
+                    return new Vec3(0.0D, 0.0D, 0.10D);
+                }
+                if (indexInLevel == 15) {
+                    return new Vec3(0.0D, 0.0D, -0.10D);
+                }
+                return Vec3.ZERO;
+            }
+
+            double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.22D : 0.18D;
+            double inward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.07D : 0.06D;
+
             if (indexInLevel == 12) {
-                return new Vec3(0.0D, 0.0D, 0.10D);
+                return new Vec3(outward, 0.0D, inward);
             }
             if (indexInLevel == 15) {
-                return new Vec3(0.0D, 0.0D, -0.10D);
+                return new Vec3(outward, 0.0D, -inward);
             }
-            return Vec3.ZERO;
-        }
-
-        // MIDDLE/UPPER endpoint items were the ones still hiding behind the two
-        // timber posts. Pull them toward the room and slightly toward the shelf
-        // center; the two middle slots remain untouched.
-        double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.22D : 0.18D;
-        double inward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.07D : 0.06D;
-
-        if (indexInLevel == 12) {
-            return new Vec3(outward, 0.0D, inward);
-        }
-        if (indexInLevel == 15) {
-            return new Vec3(outward, 0.0D, -inward);
         }
 
         return Vec3.ZERO;
