@@ -218,15 +218,17 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
 
-        // Apply the lay-down rotation before yaw. If yaw is applied first, a
-        // generated 2D item remains a vertical "fin" even with a 90 degree tilt.
+        // PoseStack post-multiplies rotations, so the call order is opposite to
+        // the order experienced by the rendered vertices. Yaw must be composed
+        // first here so the item is actually laid onto the shelf before its
+        // horizontal yaw is applied.
+        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
         if (tilt != 0.0F) {
             poseStack.mulPose(Axis.XP.rotationDegrees(tilt));
         }
         if (roll != 0.0F) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(roll));
         }
-        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
         poseStack.scale(scale, scale, scale);
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
