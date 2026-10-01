@@ -5,10 +5,13 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveFurnaceMultiblockEntity_nogui;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -62,10 +65,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
                 switch (direction) {
                     case WEST:
                         return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
@@ -83,10 +86,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getVisualShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
 
                 switch (direction) {
                     case WEST:
@@ -105,10 +108,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
                 switch (direction) {
                     case WEST:
                         return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
@@ -217,85 +220,209 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     }
     @Override
     protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        // Transform global hit position into block-local NORTH-facing space
-        Vec3 local = toLocalHit(pHit, pPos, pState.getValue(FACING));
-        double x = local.x, y = local.y, z = local.z;
-
-        LOGGER.info(String.format("Facing: %s, X: %.3f, Y: %.3f, Z: %.3f", pState.getValue(FACING), x, y, z));
-
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (!(blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity)) return;
+        if (!(blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity)) {
+            return;
+        }
+
+        Direction formedFacing = getFormedFacing(furnaceEntity, pState);
+        Vec3 relativeHit = MultiblockHitHelper.relativeToController(pHit, pPos);
+        Vec3 localHit = MultiblockHitHelper.toCanonicalWest(relativeHit, formedFacing);
+        Direction localFace = toCanonicalWest(pHit.getDirection(), formedFacing);
+        FurnaceZone zone = findFurnaceZone(localHit);
+
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            String message = String.format(
+                    "Furnace %s -> %s | local x=%.3f y=%.3f z=%.3f | face=%s",
+                    formedFacing,
+                    zone.displayName,
+                    localHit.x,
+                    localHit.y,
+                    localHit.z,
+                    localFace
+            );
+            LOGGER.info(message);
+            pPlayer.displayClientMessage(Component.literal(message), true);
+        }
 
         IItemHandler itemHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
-        if (itemHandler == null) return;
+        if (itemHandler == null) {
+            return;
+        }
 
         ItemStack heldItem = pPlayer.getItemInHand(pHand);
 
-        // 🔵 Smeltable input (center zone)
-        if (inBox(x, 0.25, 0.75) && inBox(z, 0.25, 0.75) && inBox(y, 0.25, 0.6)) {
-            LOGGER.info("BLUE zone - inserting smeltable");
-            itemHandler.insertItem(0, heldItem, false);
-            heldItem.shrink(1);
-            furnaceEntity.sync();
-            return;
-        }
-
-        // 🔴 Coal input (outer edges, lowered to y 0.0–0.3)
-        if (((inBox(x,0.1,0.9) && inBox(z,0.05,0.15)) ||
-                (inBox(x,0.1,0.9) && inBox(z,0.85,0.95)) ||
-                (inBox(x,0.05,0.15)&& inBox(z,0.2,0.8)) ||
-                (inBox(x,0.85,0.95)&& inBox(z,0.2,0.8)))
-                && inBox(y, 0.0, 0.3)) {
-            LOGGER.info("RED zone - inserting coal");
-            if (heldItem.getItem() == Items.COAL) {
-                itemHandler.insertItem(1, heldItem, false);
-                heldItem.shrink(1);
-                furnaceEntity.sync();
+        switch (zone) {
+            case SMELTABLE_INPUT -> insertOne(itemHandler, 0, heldItem, pPlayer, furnaceEntity);
+            case FUEL_INPUT -> {
+                if (heldItem.is(Items.COAL)) {
+                    insertOne(itemHandler, 1, heldItem, pPlayer, furnaceEntity);
+                }
             }
-            return;
-        }
-        // 🟩 Green output 1 (bottom left)
-        if (inBox(x, 0.1, 0.4) && inBox(z, 0.1, 0.4) && inBox(y, 0.0, 0.4)) {
-            LOGGER.info("GREEN zone - output slot 1 clicked");
-            // Output logic here
-            return;
-        }
-
-        // 🟫 Grayish output 2 (bottom right)
-        if (inBox(x, 0.6, 0.9) && inBox(z, 0.1, 0.4) && inBox(y, 0.0, 0.4)) {
-            LOGGER.info("GRAY zone - output slot 2 clicked");
-            // Output logic here
-            return;
-        }
-
-        LOGGER.info("No zone matched");
-    }
-
-    private boolean isWithinBounds(double value, double bound1, double bound2) {
-        double min = Math.min(bound1, bound2);
-        double max = Math.max(bound1, bound2);
-        return value >= min && value <= max;
-    }
-    private Vec3 toLocalHit(BlockHitResult hit, BlockPos blockPos, Direction facing) {
-        double localX = hit.getLocation().x - blockPos.getX();
-        double localY = hit.getLocation().y - blockPos.getY();
-        double localZ = hit.getLocation().z - blockPos.getZ();
-
-        // Rotate hit based on block's facing
-        switch (facing) {
-            case NORTH:
-                return new Vec3(localX, localY, localZ);
-            case SOUTH:
-                return new Vec3(1 - localX, localY, 1 - localZ);
-            case EAST:
-                return new Vec3(1 - localZ, localY, localX);
-            case WEST:
-                return new Vec3(localZ, localY, 1 - localX);
-            default:
-                return new Vec3(localX, localY, localZ);
+            case PRIMARY_OUTPUT -> {
+                if (heldItem.isEmpty()) {
+                    extractOutput(itemHandler, 2, pPlayer, furnaceEntity);
+                }
+            }
+            case SECONDARY_OUTPUT -> {
+                if (heldItem.isEmpty()) {
+                    extractOutput(itemHandler, 3, pPlayer, furnaceEntity);
+                }
+            }
+            case NONE -> {
+            }
         }
     }
+
+    private FurnaceZone findFurnaceZone(Vec3 localHit) {
+        double x = localHit.x;
+        double y = localHit.y;
+        double z = localHit.z;
+
+        // Existing experimental zones kept for the first canonical-coordinate
+        // test pass. With the hit transform fixed, DevMode now reports exactly
+        // where the visible furnace model is being clicked so these can be
+        // tuned against the real model instead of the controller placement.
+        if (inBox(x, 0.25D, 0.75D)
+                && inBox(z, 0.25D, 0.75D)
+                && inBox(y, 0.25D, 0.60D)) {
+            return FurnaceZone.SMELTABLE_INPUT;
+        }
+
+        if (((inBox(x, 0.10D, 0.90D) && inBox(z, 0.05D, 0.15D))
+                || (inBox(x, 0.10D, 0.90D) && inBox(z, 0.85D, 0.95D))
+                || (inBox(x, 0.05D, 0.15D) && inBox(z, 0.20D, 0.80D))
+                || (inBox(x, 0.85D, 0.95D) && inBox(z, 0.20D, 0.80D)))
+                && inBox(y, 0.00D, 0.30D)) {
+            return FurnaceZone.FUEL_INPUT;
+        }
+
+        if (inBox(x, 0.10D, 0.40D)
+                && inBox(z, 0.10D, 0.40D)
+                && inBox(y, 0.00D, 0.40D)) {
+            return FurnaceZone.PRIMARY_OUTPUT;
+        }
+
+        if (inBox(x, 0.60D, 0.90D)
+                && inBox(z, 0.10D, 0.40D)
+                && inBox(y, 0.00D, 0.40D)) {
+            return FurnaceZone.SECONDARY_OUTPUT;
+        }
+
+        return FurnaceZone.NONE;
+    }
+
+    private void insertOne(IItemHandler itemHandler,
+                           int slot,
+                           ItemStack heldItem,
+                           Player player,
+                           PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
+        if (heldItem.isEmpty()) {
+            return;
+        }
+
+        ItemStack oneItem = heldItem.copy();
+        oneItem.setCount(1);
+        ItemStack remainder = itemHandler.insertItem(slot, oneItem, false);
+        int inserted = 1 - remainder.getCount();
+
+        if (inserted <= 0) {
+            return;
+        }
+
+        if (!player.getAbilities().instabuild) {
+            heldItem.shrink(inserted);
+        }
+        furnaceEntity.sync();
+    }
+
+    private void extractOutput(IItemHandler itemHandler,
+                               int slot,
+                               Player player,
+                               PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
+        ItemStack extracted = itemHandler.extractItem(slot, 64, false);
+        if (extracted.isEmpty()) {
+            return;
+        }
+
+        if (!player.getInventory().add(extracted)) {
+            player.drop(extracted, false);
+        }
+        furnaceEntity.sync();
+    }
+
+    private Direction getFormedFacing(PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity, BlockState state) {
+        String blueprintName = furnaceEntity.getMBblueprintname();
+        if (blueprintName != null && !blueprintName.isEmpty()) {
+            String normalized = blueprintName.endsWith("_nogui")
+                    ? blueprintName.substring(0, blueprintName.length() - "_nogui".length())
+                    : blueprintName;
+
+            if (normalized.endsWith("_west")) {
+                return Direction.WEST;
+            }
+            if (normalized.endsWith("_east")) {
+                return Direction.EAST;
+            }
+            if (normalized.endsWith("_north")) {
+                return Direction.NORTH;
+            }
+            if (normalized.endsWith("_south")) {
+                return Direction.SOUTH;
+            }
+        }
+
+        return state.hasProperty(FACING) ? state.getValue(FACING) : Direction.WEST;
+    }
+
+    private Direction toCanonicalWest(Direction worldFace, Direction formedFacing) {
+        if (worldFace.getAxis().isVertical()) {
+            return worldFace;
+        }
+
+        return switch (formedFacing) {
+            case WEST -> worldFace;
+            case EAST -> switch (worldFace) {
+                case NORTH -> Direction.SOUTH;
+                case SOUTH -> Direction.NORTH;
+                case EAST -> Direction.WEST;
+                case WEST -> Direction.EAST;
+                default -> worldFace;
+            };
+            case NORTH -> switch (worldFace) {
+                case NORTH -> Direction.WEST;
+                case SOUTH -> Direction.EAST;
+                case EAST -> Direction.NORTH;
+                case WEST -> Direction.SOUTH;
+                default -> worldFace;
+            };
+            case SOUTH -> switch (worldFace) {
+                case NORTH -> Direction.EAST;
+                case SOUTH -> Direction.WEST;
+                case EAST -> Direction.SOUTH;
+                case WEST -> Direction.NORTH;
+                default -> worldFace;
+            };
+            default -> worldFace;
+        };
+    }
+
     private boolean inBox(double value, double min, double max) {
         return value >= min && value <= max;
     }
+
+    private enum FurnaceZone {
+        SMELTABLE_INPUT("smeltable input"),
+        FUEL_INPUT("fuel input"),
+        PRIMARY_OUTPUT("primary output"),
+        SECONDARY_OUTPUT("secondary output"),
+        NONE("none");
+
+        private final String displayName;
+
+        FurnaceZone(String displayName) {
+            this.displayName = displayName;
+        }
+    }
+
 }
