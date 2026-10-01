@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
+import com.magneticraft2.common.recipe.stage.stone.primitive_grinder_multiblockrecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -14,7 +15,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class RecipesRegistry {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-RecipesRegistry");
@@ -24,5 +25,6 @@ public class RecipesRegistry {
     }
     //Recipes after this line
     public static final RegistryObject<RecipeSerializer<primitive_furnace_multiblockrecipe>> primitive_furnace_multiblockrecipe = RECIPE_SERIALIZERS.register("primitive_furnace_multiblock", () -> com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<primitive_grinder_multiblockrecipe>> primitive_grinder_multiblockrecipe = RECIPE_SERIALIZERS.register("primitive_grinder_bmultiblock", () -> com.magneticraft2.common.recipe.stage.stone.primitive_grinder_multiblockrecipe.Serializer.INSTANCE);
 
 }

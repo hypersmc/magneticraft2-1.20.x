@@ -8,7 +8,7 @@ import net.minecraft.world.item.Tier;
 /**
  * @author JumpWatch on 16-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class StoneKnife extends SwordItem {
     public StoneKnife(Tier p_43269_, int p_43270_, float p_43271_, Properties p_43272_) {

@@ -3,9 +3,11 @@ package com.magneticraft2.client.gui.container.projector;
 import com.magneticraft2.common.blockentity.general.projectortestBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.registry.registers.ContainerAndScreenRegistry;
+import com.magneticraft2.common.systems.Blueprint.core.BlueprintManager;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
@@ -19,7 +21,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Projector_container extends AbstractContainerMenu {
 
@@ -32,6 +34,10 @@ public class Projector_container extends AbstractContainerMenu {
         blockEntity = world.getBlockEntity(pos);
         this.player = player;
         this.itemHandler = new InvWrapper(playerInventory);
+
+        if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            BlueprintManager.syncBlueprintsToPlayer(serverPlayer);
+        }
 //        layoutPlayerInventorySlots(8, 84);
 //        if (blockEntity != null){
 //            blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
@@ -63,6 +69,11 @@ public class Projector_container extends AbstractContainerMenu {
     public BlockEntity getBlockEntity(){
         return blockEntity;
     }
+
+    public BlockPos getBlockEntityPos(){
+        return blockEntity.getBlockPos();
+    }
+
     public projectortestBlockEntity getprojector(){
         projectortestBlockEntity block = (projectortestBlockEntity) blockEntity;
         return block;
@@ -70,7 +81,10 @@ public class Projector_container extends AbstractContainerMenu {
 
 
     public int getNumRec(){
-        return BlueprintRegistry.getRegisteredBlueprints().size();
+        if (player == null) {
+            return 0;
+        }
+        return BlueprintRegistry.getRegisteredBlueprintCountByOwner(player.getName().getString());
     }
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
         for (int i = 0 ; i < amount ; i++) {

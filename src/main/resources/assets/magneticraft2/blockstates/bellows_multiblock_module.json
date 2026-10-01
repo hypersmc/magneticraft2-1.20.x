@@ -2,7 +2,7 @@
   "model": "magneticraft2:block/bellows_module.json",
   "variants": {
     "facing=north,active=false": {
-      "model": "magneticraft2:block/bellows_module", "y": 90
+      "model": "magneticraft2:block/bellows_module"
     },
     "facing=south,active=false": {
       "model": "magneticraft2:block/bellows_module", "y": 180

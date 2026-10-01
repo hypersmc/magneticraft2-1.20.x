@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class primitivefurnace_screen extends AbstractContainerScreen<primitivefurnace_container> {
     private ResourceLocation GUI = new ResourceLocation(magneticraft2.MOD_ID + ":textures/gui/primitive_furnace_gui.png");

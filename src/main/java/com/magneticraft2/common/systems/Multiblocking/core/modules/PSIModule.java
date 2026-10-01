@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PSIModule implements IMultiblockModule {
     public static final Logger LOGGER = LogManager.getLogger("PSIModule");

@@ -26,7 +26,7 @@ import static net.minecraft.world.item.Items.COPPER_INGOT;
 /**
  * @author JumpWatch on 27-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = MOD_ID,value = Dist.CLIENT)
 public class events {

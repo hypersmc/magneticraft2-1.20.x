@@ -10,6 +10,7 @@ import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
 import com.magneticraft2.common.item.stage.stone.tools.FireStarter;
+import com.magneticraft2.common.item.stage.stone.tools.StoneHammer;
 import com.magneticraft2.common.item.stage.stone.tools.StoneKnife;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.registry.ModFoods;
@@ -33,12 +34,12 @@ import static com.magneticraft2.common.registry.registers.BlockRegistry.*;
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistry {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-ItemRegistry");
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
     public static void init(IEventBus eventBus){
         ITEMS.register(eventBus);
     }
@@ -59,12 +60,13 @@ public class ItemRegistry {
     public static final RegistryObject<pitkiln_item> item_pitkiln = ITEMS.register("pitkilnblock", () -> new pitkiln_item(PitKilnblock.get(), new Item.Properties().stacksTo(1)));
     public static final RegistryObject<MBdebugger> item_mbdebugger = ITEMS.register("mbdebugger", MBdebugger::new);
     //Blocks to items
-//    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock);
+//    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock); no reason to have a pitkiln block as its never a block that should be set.
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
     public static final RegistryObject<Item> item_blueprintmakermultiblock = fromBlock(blueprintmultiblock);
     public static final RegistryObject<Item> item_primitivefurnacemultiblock = fromBlock(primitivefurnacemultiblock);
+    public static final RegistryObject<Item> item_primitivestoragecellarmultiblock = fromBlock(primitivestoragecellarmultiblock);
     public static final RegistryObject<Item> item_primitivefurnacemultiblock_nogui = fromBlock(primitivefurnace_multiblock_nogui);
     public static final RegistryObject<Item> item_bellowsmultiblockmodule = fromBlock(bellowsmultiblockmodule);
 
@@ -76,14 +78,16 @@ public class ItemRegistry {
     public static final RegistryObject<clayPot> item_clay_pot = ITEMS.register("clay_pot", clayPot::new);
     public static final RegistryObject<ceramicPot> item_ceramic_pot = ITEMS.register("ceramic_pot", ceramicPot::new);
     public static final RegistryObject<FireStarter> item_fire_starter = ITEMS.register("firestarter", FireStarter::new);
+    public static final RegistryObject<StoneHammer> item_stone_hammer = ITEMS.register("primitive_hammer", StoneHammer::new);
     public static final RegistryObject<slagitem> item_slag = ITEMS.register("slagitem", slagitem::new);
     public static final RegistryObject<StoneKnife> item_stone_knife = ITEMS.register("stoneknife", () -> new StoneKnife(Tiers.WOOD, 0,0, ITEM_PROPERTIES));
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
-
+    public static final RegistryObject<Item> ITEM_PRIMITIVE_ANVIL = fromBlock(Primitive_anvillBlock);
     //Copper
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
+    public static final RegistryObject<Item> ITEM_SHAFT_WOOD = fromBlock(SHAFT_WOOD);
 
 
 

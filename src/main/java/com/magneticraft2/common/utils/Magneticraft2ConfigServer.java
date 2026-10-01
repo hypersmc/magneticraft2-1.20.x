@@ -5,7 +5,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 /**
  * @author JumpWatch on 06-01-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Magneticraft2ConfigServer {
     public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();

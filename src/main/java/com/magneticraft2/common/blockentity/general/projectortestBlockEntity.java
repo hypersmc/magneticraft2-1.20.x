@@ -3,6 +3,8 @@ package com.magneticraft2.common.blockentity.general;
 import com.magneticraft2.client.gui.container.projector.Projector_container;
 import com.magneticraft2.common.block.general.projectortest;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
+import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import net.minecraft.core.BlockPos;
@@ -13,20 +15,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
+import static com.magneticraft2.common.magneticraft2.MOD_ID;
+
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
     private String blueprint;
@@ -41,15 +47,69 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
         return this.getBlockState().getValue(projectortest.FACING);
     }
 
-    @Override
-    public AABB getRenderBoundingBox() {
-    return new AABB(worldPosition.getX(),worldPosition.getY(),worldPosition.getZ(),worldPosition.getX()+10,worldPosition.getY()+10,worldPosition.getZ()+10);
-    }
     public void setBlueprint(String val) {
-        blueprint = val;
+        blueprint = cleanBlueprintName(val);
     }
+
+    public boolean setBlueprintFromPlayer(ServerPlayer player, String val) {
+        if (level == null || level.isClientSide() || player == null) {
+            return false;
+        }
+
+        if (player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) > 64.0D) {
+            player.sendSystemMessage(Component.literal("You are too far away from the Blueprint Projector."));
+            return false;
+        }
+
+        String cleanedBlueprintName = cleanBlueprintName(val);
+        if (cleanedBlueprintName == null) {
+            player.sendSystemMessage(Component.literal("Blueprint selection was empty."));
+            return false;
+        }
+
+        Blueprint selectedBlueprint = BlueprintRegistry.getRegisteredBlueprint(MOD_ID, cleanedBlueprintName);
+        if (selectedBlueprint == null) {
+            invalidblueprint = true;
+            setChanged();
+            sync();
+            player.sendSystemMessage(Component.literal("Blueprint does not exist on the server: " + cleanedBlueprintName));
+            return false;
+        }
+
+        if (!BlueprintRegistry.isBlueprintOwnedByPlayer(selectedBlueprint.getOwner(), player.getName().getString())) {
+            invalidblueprint = true;
+            setChanged();
+            sync();
+            player.sendSystemMessage(Component.literal("You do not own blueprint: " + cleanedBlueprintName));
+            return false;
+        }
+
+        blueprint = cleanedBlueprintName;
+        invalidblueprint = false;
+        setChanged();
+        sync();
+        return true;
+    }
+
     public String getBlueprint(){
         return blueprint;
+    }
+
+    private String cleanBlueprintName(String val) {
+        if (val == null) {
+            return null;
+        }
+
+        String cleaned = val.trim();
+        if (cleaned.isEmpty()) {
+            return null;
+        }
+
+        if (cleaned.length() > 64) {
+            cleaned = cleaned.substring(0, 64);
+        }
+
+        return cleaned;
     }
     public void setInvalidBlueprint(boolean val){
         invalidblueprint = val;
@@ -111,15 +171,21 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
         if (blueprint != null) {
             tag.putString("Blueprint", blueprint);
         }
+        tag.putBoolean("InvalidBlueprint", invalidblueprint);
+        tag.putBoolean("RenderingOutline", renderingoutline);
+        tag.putBoolean("ShouldRenderBlueprint", shouldrenderblueprint);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (tag == null) return;
-        if (tag.getString("Blueprint") != null){
+        if (tag.contains("Blueprint")){
             blueprint = tag.getString("Blueprint");
         }
+        invalidblueprint = tag.getBoolean("InvalidBlueprint");
+        renderingoutline = tag.getBoolean("RenderingOutline");
+        shouldrenderblueprint = tag.getBoolean("ShouldRenderBlueprint");
     }
 
     @Override
@@ -274,6 +340,9 @@ public class projectortestBlockEntity extends BaseBlockEntityMagneticraft2 {
 
     @Override
     public CompoundTag sync() {
-        return null;
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+        return getUpdateTag();
     }
 }

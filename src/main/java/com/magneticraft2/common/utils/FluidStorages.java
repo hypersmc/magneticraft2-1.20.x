@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class FluidStorages implements IFluidHandler, INBTSerializable<CompoundTag> {
 

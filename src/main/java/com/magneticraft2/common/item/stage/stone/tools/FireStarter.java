@@ -24,7 +24,7 @@ import java.util.Random;
 /**
  * @author JumpWatch on 14-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class FireStarter extends Item {
     private static final Logger LOGGER = LogManager.getLogger("FireStarter");

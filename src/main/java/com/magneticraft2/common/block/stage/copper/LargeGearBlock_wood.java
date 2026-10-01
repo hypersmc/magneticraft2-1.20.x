@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author JumpWatch on 27-12-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class LargeGearBlock_wood extends GearBlock {
     public static final BooleanProperty VERTICAL_FACING_up = BooleanProperty.create("vertical_facing_up");
@@ -65,13 +65,14 @@ public class LargeGearBlock_wood extends GearBlock {
     @Override
     public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock, BlockPos pNeighborPos, boolean pMovedByPiston) {
         super.neighborChanged(pState, pLevel, pPos, pNeighborBlock, pNeighborPos, pMovedByPiston);
+        if (pLevel.isClientSide) {
+            return;
+        }
+
         boolean hasSignal = pLevel.hasNeighborSignal(pPos);
-        if (hasSignal != pState.getValue(POWERED)) {
-            pLevel.setBlock(pPos, pState.setValue(POWERED, hasSignal), 3);
-            if (pLevel.getBlockEntity(pPos) instanceof GearBlockEntity gearEntity) {
-                gearEntity.setPowered(hasSignal);
-                gearEntity.updateGearNetwork();
-            }
+        if (pLevel.getBlockEntity(pPos) instanceof GearBlockEntity gearEntity && gearEntity.isSourceGear() != hasSignal) {
+            gearEntity.setPowered(hasSignal);
+            gearEntity.updateGearNetwork();
         }
     }
 
@@ -81,24 +82,46 @@ public class LargeGearBlock_wood extends GearBlock {
     }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction direction = context.getClickedFace(); // The face of the block that the player is clicking
+        Direction direction = context.getClickedFace();
+        BlockState placementState;
 
-        // Handle vertical placement (Up or Down)
         if (direction == Direction.UP) {
-            return this.defaultBlockState().setValue(VERTICAL_FACING_up, false).setValue(VERTICAL_FACING_down, true);
-
+            placementState = this.defaultBlockState()
+                    .setValue(VERTICAL_FACING_up, false)
+                    .setValue(VERTICAL_FACING_down, true)
+                    .setValue(POWERED, false);
+        } else if (direction == Direction.DOWN) {
+            placementState = this.defaultBlockState()
+                    .setValue(VERTICAL_FACING_down, false)
+                    .setValue(VERTICAL_FACING_up, true)
+                    .setValue(POWERED, false);
+        } else if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.WEST || direction == Direction.EAST) {
+            placementState = this.defaultBlockState()
+                    .setValue(FACING, direction)
+                    .setValue(VERTICAL_FACING_up, false)
+                    .setValue(VERTICAL_FACING_down, false)
+                    .setValue(POWERED, false);
+        } else {
+            placementState = this.defaultBlockState()
+                    .setValue(FACING, Direction.NORTH)
+                    .setValue(POWERED, false);
         }
-        if (direction == Direction.DOWN) {
-            return this.defaultBlockState().setValue(VERTICAL_FACING_down, false).setValue(VERTICAL_FACING_up, true);
-        }
 
-        // Handle horizontal placement (North, South, East, West)
-        else if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.WEST || direction == Direction.EAST) {
-            return this.defaultBlockState().setValue(FACING, direction).setValue(VERTICAL_FACING_up, false).setValue(VERTICAL_FACING_down, false);
-        }
+        return validateGearPlacement(context, placementState);
+    }
 
-        // Default case, fallback direction (choose a default horizontal placement)
-        return this.defaultBlockState().setValue(FACING, Direction.NORTH);
+    @Override
+    public int getPlacementGearTeeth(BlockState state) {
+        return 16;
+    }
+
+    @Override
+    public Direction.Axis getPlacementGearAxis(BlockState state) {
+        if (state.hasProperty(VERTICAL_FACING_up) && state.hasProperty(VERTICAL_FACING_down)
+                && (state.getValue(VERTICAL_FACING_up) || state.getValue(VERTICAL_FACING_down))) {
+            return Direction.Axis.Y;
+        }
+        return state.hasProperty(FACING) ? state.getValue(FACING).getAxis() : Direction.Axis.Y;
     }
 
     @Override

@@ -3,29 +3,38 @@ package com.magneticraft2.common.block.general;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.general.Multiblockfiller_tile;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.network.NetworkHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import static com.magneticraft2.common.block.general.BaseBlockMagneticraft2.FACING;
+import static com.magneticraft2.common.block.general.BlueprintMultiblock.IS_FORMED;
+
 /**
  * @author JumpWatch on 01-07-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Multiblockfiller extends BaseEntityBlock {
     private static final Logger LOGGER = LogManager.getLogger("MGC2MultiblockFiller");
@@ -44,15 +53,17 @@ public class Multiblockfiller extends BaseEntityBlock {
                 // Retrieve the controller position from the NBT data
                 BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
                 BlockEntity controllerEntity = pLevel.getBlockEntity(controllerPos);
-
+                Block bl = pLevel.getBlockState(controllerPos).getBlock();
                 // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
                 if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
                     blockEntity.saveWithoutMetadata();
                     if ((multiblockController).menuProvider != null) {
                         NetworkHooks.openScreen((ServerPlayer) pPlayer, (multiblockController).menuProvider, controllerPos);
-                    }else{
-                        (multiblockController).interactable(pState,pLevel,pPos,pPlayer,pHand,pHit);
                     }
+                }
+                if (bl instanceof BaseBlockMagneticraft2 multiblockControllerblock) {
+                    blockEntity.saveWithoutMetadata();
+                    multiblockControllerblock.interactableNoGui(pState, pLevel, pPos, pPlayer, pHand, pHit);
                 }
             }
         }
@@ -78,6 +89,52 @@ public class Multiblockfiller extends BaseEntityBlock {
             }
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+    @Override
+    public void setPlacedBy(Level pLevel, BlockPos pPos, BlockState pState, @Nullable LivingEntity pPlacer, ItemStack pStack) {
+        if (pPlacer instanceof Player){
+            pLevel.setBlock(pPos, Blocks.AIR.defaultBlockState(), 2);
+        }
+        super.setPlacedBy(pLevel, pPos, pState, pPlacer, pStack);
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter level, BlockPos pos, CollisionContext pContext) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
+
+        if (tag != null && tag.contains("controller_x") && tag.contains("controller_y") && tag.contains("controller_z")) {
+            // Retrieve the controller position from the NBT data
+            BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
+            BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
+            Block controllerBlock = level.getBlockState(controllerPos).getBlock();
+            BlockState controllerState = level.getBlockState(controllerPos);
+            // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
+            if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
+                boolean isformed = controllerBlock.getStateDefinition().any().getValue(IS_FORMED);
+                if (isformed) {
+                    VoxelShape controllershape = controllerBlock.getShape(controllerState, level, controllerPos, pContext);
+                    double dx = controllerPos.getX() - pos.getX();
+                    double dy = controllerPos.getY() - pos.getY();
+                    double dz = controllerPos.getZ() - pos.getZ();
+                    return controllershape.move(dx, dy, dz);
+//                    return Shapes.box(0.1,0.1,0.1,0.1,0.1,0.1);
+                }
+            }
+        }
+        return super.getShape(pState, level, pos, pContext);
+    }
+
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return super.getCollisionShape(pState, pLevel, pPos, pContext);
+    }
+
+    @Override
+    public BlockState updateShape(BlockState pState, Direction pDirection, BlockState pNeighborState, LevelAccessor pLevel, BlockPos pPos, BlockPos pNeighborPos) {
+        return super.updateShape(pState, pDirection, pNeighborState, pLevel, pPos, pNeighborPos);
     }
 
     @Nullable

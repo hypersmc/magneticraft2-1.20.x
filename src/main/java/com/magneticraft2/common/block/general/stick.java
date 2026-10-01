@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 /**
  * @author JumpWatch on 18-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class stick extends Block {
     private static final VoxelShape STICK = Stream.of(Block.box(10, 0.4, 10, 13, 1.4, 11), Block.box(4, 0, 4, 6, 2, 16), Block.box(6.7, -1.7, 5, 7.7, 1.3, 6)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();

@@ -18,7 +18,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 26-12-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class MultiblockAndBlueprintReloadListener extends SimpleJsonResourceReloadListener {
     public static final String FOLDER_NAME = "multiblocks";

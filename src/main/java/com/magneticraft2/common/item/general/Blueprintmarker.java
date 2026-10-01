@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * @author JumpWatch on 20-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Blueprintmarker extends Item {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-blueprintmarker");

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PrimitiveFurnaceBlockEntityRenderer implements BlockEntityRenderer<PrimitiveFurnaceMultiblockEntity> {
     public PrimitiveFurnaceBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}

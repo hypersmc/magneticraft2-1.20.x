@@ -11,7 +11,10 @@ import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -28,12 +31,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -42,10 +49,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.magneticraft2.common.block.general.BaseBlockMagneticraft2.FACING;
+
 /**
  * @author JumpWatch on 13-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagneticraft2 {
     private String blueprintname = "";
@@ -57,7 +66,7 @@ public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagne
     private MultiblockController controller;
 
     public PrimitiveFurnaceMultiblockEntity_nogui(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), pos, state);
+        super(BlockEntityRegistry.primitivefurnacemultiblockentity_nogui.get(), pos, state);
         menuProvider = null;
     }
     public boolean isFormed() {
@@ -117,6 +126,9 @@ public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagne
         }
         return -9999;
     }
+    public String getMBblueprintname() {
+        return blueprintname;
+    }
 
     @Override
     protected MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos) {
@@ -140,8 +152,9 @@ public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagne
 
     @Override
     protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        LOGGER.info("Triggered from: " + pHit.getBlockPos() + ", " + pHit.getDirection());
-        LOGGER.info("Interactable: " + pPlayer.getDisplayName());
+    }
+    private boolean isWithinBounds(double value, double min, double max) {
+        return value >= min && value <= max;
     }
 
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {

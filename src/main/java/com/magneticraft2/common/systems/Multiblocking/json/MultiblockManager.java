@@ -23,7 +23,8 @@ import java.util.Map;
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
+ * The MultiblockManager class is responsible for managing the registration and lifecycle of multiblocks within the Magneticraft2 mod.
  */
 public class MultiblockManager {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Multiblock handler");

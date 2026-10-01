@@ -14,9 +14,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author JumpWatch on 28-07-2023
- * @Project mgc2-1.20
- * v1.0.0
+ *  * @author JumpWatch on 28-07-2023
+ *  * @Project mgc2-1.20
+ * * @version 1.0.0
+ * This class is responsible for serializing and deserializing data related to the {@code BlueprintData} object.
+ * It acts as a custom Gson codec to handle the JSON representation of blueprint-related data,
+ * ensuring valid object serialization and deserialization for the application.
+ *
+ * Implements {@code JsonSerializer<BlueprintData>} and {@code JsonDeserializer<BlueprintData>}
+ * for the {@code BlueprintData} type.
+ *
+ * The primary functionality includes:
+ * - Serializing {@code BlueprintData} instances into JSON.
+ * - Deserializing JSON data into {@code BlueprintData} objects.
+ * - Validating blocks during deserialization to ensure correctness within the {@code ForgeRegistry.BLOCKS}.
+ *
+ * This codec also includes a nested adapter {@code BlueprintStructureAdapter}
+ * for handling serialization and deserialization of the {@code BlueprintStructure} type.
+ *
+ * Methods:
+ * - {@code serialize}: Converts a {@code BlueprintData} object to its JSON representation.
+ * - {@code deserialize}: Parses JSON data into a {@code BlueprintData} object.
+ * - {@code createGson}: Creates and configures a Gson instance with the necessary type adapters.
+ * - {@code validateAndGetBlock}: Validates block references during deserialization to ensure integrity.
  */
 public class BlueprintDataCodec implements JsonSerializer<BlueprintData>, JsonDeserializer<BlueprintData> {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 BlueprintDataCodec");

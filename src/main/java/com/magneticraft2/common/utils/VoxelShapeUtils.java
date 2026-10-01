@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;;
 /**
  * @author JumpWatch on 28-12-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public final class VoxelShapeUtils {
     /**

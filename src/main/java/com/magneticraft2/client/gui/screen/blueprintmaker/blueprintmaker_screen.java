@@ -3,6 +3,8 @@ package com.magneticraft2.client.gui.screen.blueprintmaker;
 import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_container;
 import com.magneticraft2.common.blockentity.general.BlueprintMultiblockEntity;
 import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.systems.mgc2Network;
+import com.magneticraft2.common.systems.networking.SaveBlueprintPacket;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
@@ -28,7 +30,7 @@ import java.util.*;
 /**
  * @author JumpWatch on 20-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmaker_container> {
     private ResourceLocation GUI = new ResourceLocation(magneticraft2.MOD_ID + ":textures/gui/blueprintmaker_gui.png");
@@ -75,29 +77,23 @@ public class blueprintmaker_screen extends AbstractContainerScreen<blueprintmake
         blueprintNameField = new EditBox(font, centerX -32 , centerY+31 , 80,  18, Component.translatable("gui.blueprintname"));
         blueprintNameField.setValue(""); // Set initial value
         blueprintNameField.setHint(Component.translatable("gui.blueprintname"));
+        blueprintNameField.setMaxLength(64);
         this.saveButtonClient = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.client"), this::onSaveButtonClickClient).bounds(centerX+55,centerY+30, 60, 20).build());
         //this.saveButtonServer = this.addRenderableWidget(Button.builder(Component.translatable("gui.savebutton.server"), this::onSaveButtonClickServer).bounds(centerX+55,centerY+30, 40, 20).build());
         this.addRenderableWidget(blueprintNameField);
         this.addWidget(saveButtonClient);
     }
     private void onSaveButtonClickClient(Button button) {
-        if (blueprintNameField.getValue().isEmpty()){
+        String blueprintName = blueprintNameField.getValue().trim();
+        if (blueprintName.isEmpty()){
             triedsavingwithnoname = true;
         }else {
-            BlueprintMultiblockEntity block = menu.getBlueprintmaker();
-            block.setBlueprintname(blueprintNameField.getValue());
-            block.saveBlueprintClient(menu.getPlayerName());
-
+            mgc2Network.CHANNEL.sendToServer(new SaveBlueprintPacket(menu.getBlockEntityPos(), blueprintName));
+            blueprintNameField.setValue("");
         }
     }
     private void onSaveButtonClickServer(Button button){
-        if (blueprintNameField.getValue().isEmpty()){
-            triedsavingwithnoname = true;
-        }else {
-            BlueprintMultiblockEntity block = menu.getBlueprintmaker();
-            block.setBlueprintname(blueprintNameField.getValue());
-            block.saveBlueprintServer(menu.getPlayerName());
-        }
+        onSaveButtonClickClient(button);
     }
 
     @Override

@@ -15,10 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
+ * Represents a module within a multiblock structure, encapsulating its functionality
+ * and behavior. This class provides mechanisms to validate, activate, deactivate,
+ * and manage the state of the module within a multiblock structure in the game world.
  */
 public class MultiblockModule implements IMultiblockModule {
     public static final Logger LOGGER = LogManager.getLogger("MGCMultiblockModule");

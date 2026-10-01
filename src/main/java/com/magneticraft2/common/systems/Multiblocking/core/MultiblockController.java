@@ -27,8 +27,13 @@ import java.util.Objects;
 /**
  * @author JumpWatch on 11-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
+ * Represents a controller for managing the lifecycle and behavior of a multiblock structure
+ * in a system. This class provides methods for forming, validating, and managing the state
+ * of the multiblock structure and its associated components or modules.
+ *
  */
+
 public class MultiblockController {
     public static final Logger LOGGER = LogManager.getLogger("MGCMultiblockController");
     private boolean isFormed = false;
@@ -326,7 +331,7 @@ public class MultiblockController {
             world.addFreshEntity(new ItemEntity(world, offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), new ItemStack(block)));
             world.setBlock(offsetPos, Blocks.AIR.defaultBlockState(), 2);
         }
-
+        //Clean up after ourselves
         blockMap.clear();
         masterPos = null;
 

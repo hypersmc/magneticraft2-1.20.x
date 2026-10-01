@@ -20,6 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -39,7 +40,10 @@ import software.bernie.geckolib.GeckoLib;
 /**
  * @author JumpWatch on 08-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
+ * The main class for the Magneticraft2 mod, responsible for initializing and setting up mod-specific logic, registries, and configurations.
+ * This class is annotated with @Mod to designate it as the entry point for the mod.
+ * It handles both server- and client-side initialization and integrates with Forge's event system to execute various setup steps.
  */
 @Mod(magneticraft2.MOD_ID)
 public class magneticraft2 {
@@ -73,6 +77,15 @@ public class magneticraft2 {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Magneticraft2ConfigCommon.SPEC, "magneticraft2-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Magneticraft2ConfigClient.SPEC, "magneticraft2-client.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, Magneticraft2ConfigServer.SPEC, "magneticraft2-server.toml");
+    }
+
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event){
+        BlueprintManager.loadLocalBlueprints(event.getServer()
+                .getWorldPath(LevelResource.ROOT)
+                .resolve("magneticraft2")
+                .resolve("blueprints")
+                .toFile());
     }
     @SubscribeEvent
     public void preClient(final FMLClientSetupEvent event){

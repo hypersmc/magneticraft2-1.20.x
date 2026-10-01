@@ -17,7 +17,36 @@ import java.util.Map;
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
+ * The MultiblockDataCodec class provides JSON serialization and deserialization logic
+ * for the MultiblockData class, allowing it to be stored and retrieved in a JSON format.
+ *
+ * <ul>
+ * <li>Implements {@code JsonSerializer<MultiblockData>} to define how MultiblockData objects
+ * are converted into JSON.</li>
+ * <li>Implements {@code JsonDeserializer<MultiblockData>} to define how JSON is converted
+ * back into MultiblockData objects.</li>
+ * <li>Supports the validation of block identifiers during deserialization.</li>
+ * <li>Handles advanced nested structures in MultiblockData, such as settings, structure,
+ * blocks, inputs, and outputs, using additional adapters for modularity.</li>
+ * <li>Includes logging outputs for debugging in development mode, controlled by
+ * Magneticraft2ConfigCommon.GENERAL.DevMode configurations.</li>
+ * </ul>
+ *
+ * Additionally, the class provides validation of block identifiers via the
+ * {@code validateAndGetBlock} method to ensure the correctness of block data during deserialization.
+ *
+ * Inner classes are used for managing serialization and deserialization tasks for
+ * nested structures:
+ * <ul>
+ * <li>{@code MultiblockInputAdapter} - Handles (de)serialization for MultiblockInput instances.</li>
+ * <li>{@code MultiblockOutputAdapter} - Handles (de)serialization for MultiblockOutput instances.</li>
+ * <li>{@code MultiblockSettingsAdapter} - Handles (de)serialization for MultiblockSettings instances.</li>
+ * <li>{@code MultiblockStructureAdapter} - Handles (de)serialization for MultiblockStructure instances.</li>
+ * </ul>
+ *
+ * This codec is intended for use in scenarios where MultiblockData JSON structures are needed,
+ * such as configuration persistence, network transmission, or debugging purposes.
  */
 public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, JsonDeserializer<MultiblockData> {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 MultiblockDataCodec");

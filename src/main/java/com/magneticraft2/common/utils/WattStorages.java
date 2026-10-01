@@ -6,7 +6,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class WattStorages extends WattStorage implements INBTSerializable<CompoundTag> {
     public WattStorages(int capacity, int maxTransfer) {

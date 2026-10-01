@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @author JumpWatch on 10-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class multiblock_filler_item extends BlockItem {
     public multiblock_filler_item(Block pBlock, Properties pProperties) {

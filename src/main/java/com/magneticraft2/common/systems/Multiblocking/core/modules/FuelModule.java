@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 14-05-2023
  * @Project magneticraft2-1.18.2
- * v1.0.0
+* @version 1.0.0
  */
 public class FuelModule implements IMultiblockModule {
     public static final Logger LOGGER = LogManager.getLogger("FuelModule");

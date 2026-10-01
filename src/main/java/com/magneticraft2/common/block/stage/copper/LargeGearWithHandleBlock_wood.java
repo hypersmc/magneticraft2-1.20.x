@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author JumpWatch on 27-12-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class LargeGearWithHandleBlock_wood extends GearBlock {
     public static final BooleanProperty VERTICAL_FACING_up = BooleanProperty.create("vertical_facing_up");
@@ -95,8 +95,8 @@ public class LargeGearWithHandleBlock_wood extends GearBlock {
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
 
         // If it's a GearBlockEntity, update the network
-        if (blockEntity instanceof GearBlockEntity) {
-            ((GearBlockEntity) blockEntity).getGearNode().setSpeed(0f);
+        if (blockEntity instanceof GearBlockEntity gearBlockEntity) {
+            gearBlockEntity.setSource(false, 0.0F, 0.0F);
         }
         return super.onDestroyedByPlayer(state, pLevel, pPos, player, willHarvest, fluid);
     }
@@ -107,23 +107,46 @@ public class LargeGearWithHandleBlock_wood extends GearBlock {
     }
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        Direction direction = context.getClickedFace(); // The face of the block that the player is clicking
+        Direction direction = context.getClickedFace();
+        BlockState placementState;
 
-        // Handle vertical placement (Up or Down)
         if (direction == Direction.UP) {
-            return this.defaultBlockState().setValue(VERTICAL_FACING_up, false).setValue(VERTICAL_FACING_down, true).setValue(ACTIVE, false);
+            placementState = this.defaultBlockState()
+                    .setValue(VERTICAL_FACING_up, false)
+                    .setValue(VERTICAL_FACING_down, true)
+                    .setValue(ACTIVE, false);
+        } else if (direction == Direction.DOWN) {
+            placementState = this.defaultBlockState()
+                    .setValue(VERTICAL_FACING_down, false)
+                    .setValue(VERTICAL_FACING_up, true)
+                    .setValue(ACTIVE, false);
+        } else if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.WEST || direction == Direction.EAST) {
+            placementState = this.defaultBlockState()
+                    .setValue(FACING, direction)
+                    .setValue(VERTICAL_FACING_up, false)
+                    .setValue(VERTICAL_FACING_down, false)
+                    .setValue(ACTIVE, false);
+        } else {
+            placementState = this.defaultBlockState()
+                    .setValue(FACING, Direction.NORTH)
+                    .setValue(ACTIVE, false);
+        }
 
-        }
-        if (direction == Direction.DOWN) {
-            return this.defaultBlockState().setValue(VERTICAL_FACING_down, false).setValue(VERTICAL_FACING_up, true).setValue(ACTIVE, false);
-        }
+        return validateGearPlacement(context, placementState);
+    }
 
-        // Handle horizontal placement (North, South, East, West)
-        else if (direction == Direction.NORTH || direction == Direction.SOUTH || direction == Direction.WEST || direction == Direction.EAST) {
-            return this.defaultBlockState().setValue(FACING, direction).setValue(VERTICAL_FACING_up, false).setValue(VERTICAL_FACING_down, false).setValue(ACTIVE, false);
+    @Override
+    public int getPlacementGearTeeth(BlockState state) {
+        return 16;
+    }
+
+    @Override
+    public Direction.Axis getPlacementGearAxis(BlockState state) {
+        if (state.hasProperty(VERTICAL_FACING_up) && state.hasProperty(VERTICAL_FACING_down)
+                && (state.getValue(VERTICAL_FACING_up) || state.getValue(VERTICAL_FACING_down))) {
+            return Direction.Axis.Y;
         }
-        // Default case, fallback direction (choose a default horizontal placement)
-        return this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false);
+        return state.hasProperty(FACING) ? state.getValue(FACING).getAxis() : Direction.Axis.Y;
     }
 
     @Override

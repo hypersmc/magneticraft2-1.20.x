@@ -8,7 +8,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class CapabilityHeat {
     public static final Capability<IHeatStorage> HEAT = CapabilityManager.get(new CapabilityToken<>(){});;

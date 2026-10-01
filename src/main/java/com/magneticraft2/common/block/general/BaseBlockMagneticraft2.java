@@ -8,6 +8,8 @@ import com.magneticraft2.compatibility.TOP.TOPDriver;
 import mcjty.theoneprobe.api.IProbeHitData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
@@ -16,19 +18,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public abstract class BaseBlockMagneticraft2 extends BaseEntityBlock implements TOPDriver, EntityBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
     public static final Logger LOGGER = LogManager.getLogger("BaseBlockMagneticraft2");
 
+    protected abstract void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit);
 
     public BaseBlockMagneticraft2(Properties p_49795_) {
         super(p_49795_);

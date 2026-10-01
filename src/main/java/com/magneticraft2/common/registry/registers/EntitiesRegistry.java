@@ -15,7 +15,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntitiesRegistry {

@@ -15,7 +15,7 @@ import java.util.Random;
 /**
  * @author JumpWatch on 18-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class stonepebbleBlockEntity extends BlockEntity {
     public stonepebbleBlockEntity(BlockPos pos, BlockState state) {

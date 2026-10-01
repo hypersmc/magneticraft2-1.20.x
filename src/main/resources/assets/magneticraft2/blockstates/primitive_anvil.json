@@ -1,0 +1,64 @@
+{
+  "variants":{
+    "facing=east,activated=true,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 270
+    },
+    "facing=north,activated=true,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 180
+    },
+    "facing=south,activated=true,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil"
+    },
+    "facing=west,activated=true,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 90
+    },
+    "facing=east,activated=false,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 270
+    },
+    "facing=north,activated=false,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 180
+    },
+    "facing=south,activated=false,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil"
+    },
+    "facing=west,activated=false,halfbroken=false": {
+      "model": "magneticraft2:block/primitive_anvil",
+      "y": 90
+    },
+    "facing=east,activated=true,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 270
+    },
+    "facing=north,activated=true,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 180
+    },
+    "facing=south,activated=true,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken"
+    },
+    "facing=west,activated=true,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 90
+    },
+    "facing=east,activated=false,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 270
+    },
+    "facing=north,activated=false,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 180
+    },
+    "facing=south,activated=false,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken"
+    },
+    "facing=west,activated=false,halfbroken=true": {
+      "model": "magneticraft2:block/primitive_anvil_half_broken",
+      "y": 90
+    }
+  }
+}

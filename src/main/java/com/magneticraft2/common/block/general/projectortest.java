@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class projectortest extends BaseBlockMagneticraft2{
     public projectortest() {
@@ -63,5 +63,10 @@ public class projectortest extends BaseBlockMagneticraft2{
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    @Override
+    protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+
     }
 }

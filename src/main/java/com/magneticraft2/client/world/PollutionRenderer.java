@@ -26,7 +26,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 24-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
 public class PollutionRenderer {
@@ -51,7 +51,7 @@ public class PollutionRenderer {
                 new ChunkPos(chunkPos.x, chunkPos.z + 1),
         };
 
-        // Get pollution levels for neighboring chunks and calculate an average
+        // Get pollution levels for neighboring chunks and caflculate an average
         int totalPollution = pollutionLevel;
         int numChunks = 1;
 

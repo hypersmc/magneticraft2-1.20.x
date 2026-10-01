@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Multiblock {
     private final String name;

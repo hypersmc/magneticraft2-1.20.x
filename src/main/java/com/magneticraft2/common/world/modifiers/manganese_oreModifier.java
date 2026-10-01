@@ -12,7 +12,7 @@ import net.minecraftforge.common.world.ModifiableBiomeInfo;
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public record manganese_oreModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
     @Override

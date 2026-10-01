@@ -69,6 +69,11 @@ minecraft {
         // applies to all the run configs below
         configureEach {
             workingDirectory project.file('run')
+            environment 'LANG', 'C.UTF-8'
+            environment 'LC_ALL', 'C.UTF-8'
+            environment 'DISPLAY', System.getenv('DISPLAY') ?: ':0'
+            environment 'GLFW_PLATFORM', 'x11'
+
 
             // Recommended logging data for a userdev environment
             // The markers can be added/remove as needed separated by commas.
@@ -137,6 +142,7 @@ dependencies {
     // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
     // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
 
 
     // Example mod dependency with JEI - using fg.deobf() ensures the dependency is remapped to your development mappings
@@ -231,13 +237,23 @@ publishing {
     }
 
 }
+
 dependencies {
     implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.20:4.2')
     implementation fg.deobf("curse.maven:the-one-probe-245211:4613250")
     implementation fg.deobf("curse.maven:mekanism-268560:5395221")
     implementation fg.deobf("curse.maven:jei-238222:4609866")
     implementation fg.deobf("curse.maven:patchouli-306770:4966125")
+}
 
+tasks.withType(JavaExec).configureEach {
+    if (name == "runClient") {
+        environment "GLFW_PLATFORM", "x11"
+    }
+}
+
+tasks.withType(JavaExec).configureEach {
+    environment "GLFW_PLATFORM", "x11"
 }
 
 tasks.withType(JavaCompile).configureEach {

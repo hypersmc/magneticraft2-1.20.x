@@ -5,8 +5,6 @@ import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintStructure;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,160 +18,205 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.magneticraft2.common.block.general.BaseBlockMagneticraft2.FACING;
-
 /**
  * @author JumpWatch on 17-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<projectortestBlockEntity> {
     private static final Logger LOGGER = LogManager.getLogger("Projector_render");
-    private static final float SQUARE_SIZE = 5.0f; // Size of the projected square
-    private static final float SQUARE_OFFSET = 0.5f - SQUARE_SIZE / 2.0f; // Offset from the block center
     private static final int NO_OVERLAY = OverlayTexture.NO_OVERLAY;
-    //TODO unused feature for now!
-    private int xoffset = 0;
-    private int yoffset = 10;
-    private int zoffset = 0;
-    private int rotation = 0;
+    private static final float PREVIEW_BLOCK_SCALE = 0.75F;
 
     private final Minecraft minecraft = Minecraft.getInstance();
+
     public ProjectorBlockEntityRenderer(BlockEntityRendererProvider.Context context){
 
     }
+
     @Override
     public void render(projectortestBlockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+        String blueprintName = pBlockEntity.getBlueprint();
+        if (blueprintName == null || blueprintName.isBlank()) {
+            return;
+        }
 
-
-        // Get the blueprint
-        Blueprint blueprint = BlueprintRegistry.getRegisteredBlueprint("magneticraft2", pBlockEntity.getBlueprint());
-        if (blueprint != null) {
-            pBlockEntity.setInvalidBlueprint(false);
-
-            BlueprintStructure structure = blueprint.getStructure();
-            Map<String, List<List<String>>> layout = structure.getLayout();
-            int[] dimensions = structure.getDimensions();
-            double halfWidth = dimensions[0] / 2.0;
-            double halfDepth = dimensions[2] / 2.0;
-
-// Centering offset: adjust based on blueprint size
-            Vec3 centeringOffset = new Vec3(-halfWidth + 0.5, 0, -halfDepth + 0.5);
-
-// Directional offset: place the projection in front of the projector
-            Direction blockFacing = pBlockEntity.getBlockState().getValue(FACING);
-            Vec3 facingOffset = Vec3.ZERO;
-
-            switch (blockFacing) {
-                case EAST -> facingOffset = new Vec3(1.5, 0, 0.5);    // Move 1 block east
-                case WEST -> facingOffset = new Vec3(-1.0, 0, 0);   // Move 1 block west
-                case NORTH -> facingOffset = new Vec3(0.5, 0, -1.0);  // Move 1 block north
-                case SOUTH -> facingOffset = new Vec3(0, 0, 1.0);   // Move 1 block south
-            }
-
-// Combine centering and directional offsets
-            Vec3 projectionOffset = centeringOffset.add(facingOffset);
-
-            // Initialize the base translation position
-            float baseX = (float) projectionOffset.x();
-            float baseY = (float) projectionOffset.y();
-            float baseZ = (float) projectionOffset.z();
-            if (!pBlockEntity.getRenderingoutline()) {
-                renderOutline(pPoseStack, pBuffer, dimensions, projectionOffset);
-            } else {
-                // Render the blueprint blocks
-                for (int layerIndex = 0; layerIndex < dimensions[1]; layerIndex++) { // Changed dimensions[2] to dimensions[1] for correct layer depth
-                    String layerName = "layer" + (layerIndex + 1);
-                    if (layout.containsKey(layerName)) {
-                        List<List<String>> layer = layout.get(layerName);
-
-                        // Check if the dimensions of the layer match the blueprint dimensions
-                        int numRows = layer.size();
-                        int numCols = numRows > 0 ? layer.get(0).size() : 0;
-
-                        // Adjust the layer layout to fit the dimensions if necessary
-                        if (numRows != dimensions[2] || numCols != dimensions[0]) { // Corrected dimension check
-                            List<List<String>> adjustedLayer = new ArrayList<>();
-                            for (int row = 0; row < dimensions[2]; row++) {
-                                List<String> newRow = new ArrayList<>();
-                                for (int col = 0; col < dimensions[0]; col++) {
-                                    int adjustedRow = row % numRows;
-                                    int adjustedCol = col % numCols;
-                                    newRow.add(layer.get(adjustedRow).get(adjustedCol));
-                                }
-                                adjustedLayer.add(newRow);
-                            }
-                            layer = adjustedLayer;
-                        }
-
-                        // Apply translation for the current layer
-                        pPoseStack.pushPose();
-                        pPoseStack.translate(baseX + projectionOffset.x(), baseY + layerIndex, baseZ + projectionOffset.z()); // Translate by layerIndex to stack layers vertically
-
-                        // Render each block in the layer
-                        for (int row = 0; row < dimensions[2]; row++) { // Corrected row count based on dimensions[2] (depth)
-                            for (int col = 0; col < dimensions[0]; col++) { // Corrected column count based on dimensions[0] (width)
-                                String value = layer.get(row).get(col);
-                                Block block = structure.getBlocks().get(value);
-                                int color = Minecraft.getInstance().level.getBiome(pBlockEntity.getBlockPos()).get().getGrassColor(pBlockEntity.getBlockPos().getX(),pBlockEntity.getBlockPos().getZ());
-                                if (block != null) {
-                                    // Render the block using Minecraft's block rendering
-                                    BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
-                                    pPoseStack.pushPose(); // Isolate transformations for each block
-                                    pPoseStack.translate(0.5, 0.5, 0.5); // Center block within its grid cell
-                                    pPoseStack.scale(0.75f, 0.75f, 0.75f); // Scale down the block
-
-                                    blockRenderer.getModelRenderer().renderModel(
-                                            pPoseStack.last(),
-                                            pBuffer.getBuffer(RenderType.cutout()),
-                                            block.defaultBlockState(),
-                                            blockRenderer.getBlockModel(block.defaultBlockState()),
-                                            ((color >> 16) & 0xFF) / 255.0F, // Red component
-                                            ((color >> 8) & 0xFF) / 255.0F,  // Green component
-                                            (color & 0xFF) / 255.0F,         // Blue component
-                                            pPackedLight,
-                                            OverlayTexture.NO_OVERLAY
-                                    );
-                                    pPoseStack.popPose(); // Revert transformations for the next block
-                                }
-                                pPoseStack.translate(1.0, 0.0, 0.0); // Move to the next block in the row
-                            }
-                            pPoseStack.translate(-dimensions[0], 0.0, 1.0); // Reset horizontal position and move to the next row
-                        }
-
-                        pPoseStack.popPose(); // Restore the original pose for the next layer
-                    }
-                }
-
-            }
-        }else{
+        Blueprint blueprint = BlueprintRegistry.getRegisteredBlueprint("magneticraft2", blueprintName);
+        if (blueprint == null) {
             pBlockEntity.setInvalidBlueprint(true);
+            return;
+        }
+
+        pBlockEntity.setInvalidBlueprint(false);
+
+        BlueprintStructure structure = blueprint.getStructure();
+        if (structure == null || structure.getDimensions() == null || structure.getDimensions().length < 3) {
+            pBlockEntity.setInvalidBlueprint(true);
+            return;
+        }
+
+        int[] dimensions = structure.getDimensions();
+        Direction blockFacing = pBlockEntity.getProjectionDirection();
+
+        if (!pBlockEntity.getRenderingoutline()) {
+            renderOutline(pPoseStack, pBuffer, dimensions, blockFacing);
+        } else {
+            renderBlueprintBlocks(pBlockEntity, pPoseStack, pBuffer, pPackedLight, structure, dimensions, blockFacing);
         }
     }
-    private void renderOutline(PoseStack pPoseStack, MultiBufferSource pBuffer, int[] dimensions, Vec3 projectionOffset) {
-        // Calculate the corner points of the outline
-        Vec3 startPoint = new Vec3(0, 0, 0);
-        Vec3 endPoint = new Vec3(dimensions[0], -dimensions[1], dimensions[2]);
-        float baseX = (float) projectionOffset.x();
-        float baseY = (float) projectionOffset.y();
-        float baseZ = (float) projectionOffset.z();
-        // Apply translation and scaling to match the projected position
-        pPoseStack.pushPose();
-        pPoseStack.translate(baseX + projectionOffset.x(), baseY + projectionOffset.y(), baseZ + projectionOffset.z());
-        pPoseStack.scale(1.0F, -1.0F, 1.0F); // Invert Y axis for correct rendering
 
-        // Render the outline using Minecraft's debug renderer
-        DebugRenderer.renderFilledBox(pPoseStack, pBuffer, startPoint.x(), startPoint.y(), startPoint.z(), endPoint.x(), endPoint.y(), endPoint.z(), 1.0F, 1.0F, 1.0F, 0.25F);
+    private void renderBlueprintBlocks(projectortestBlockEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, BlueprintStructure structure, int[] dimensions, Direction blockFacing) {
+        Map<String, List<List<String>>> layout = structure.getLayout();
+        if (layout == null || layout.isEmpty()) {
+            return;
+        }
+
+        for (int layerIndex = 0; layerIndex < dimensions[1]; layerIndex++) {
+            String layerName = "layer" + (layerIndex + 1);
+            if (!layout.containsKey(layerName)) {
+                continue;
+            }
+
+            List<List<String>> layer = normalizeLayer(layout.get(layerName), dimensions);
+
+            for (int row = 0; row < dimensions[2]; row++) {
+                for (int col = 0; col < dimensions[0]; col++) {
+                    String value = layer.get(row).get(col);
+                    Block block = structure.getBlocks().get(value);
+                    if (block == null || block.defaultBlockState().isAir()) {
+                        continue;
+                    }
+
+                    Vec3 cellCenter = getProjectedCellCenter(blockFacing, dimensions[0], col, row);
+                    renderPreviewBlock(pBlockEntity, pPoseStack, pBuffer, pPackedLight, block, cellCenter, layerIndex);
+                }
+            }
+        }
+    }
+
+    private List<List<String>> normalizeLayer(List<List<String>> layer, int[] dimensions) {
+        int width = dimensions[0];
+        int depth = dimensions[2];
+
+        if (layer == null || layer.isEmpty()) {
+            return createEmptyLayer(width, depth);
+        }
+
+        int numRows = layer.size();
+        int numCols = numRows > 0 && layer.get(0) != null ? layer.get(0).size() : 0;
+        if (numRows == depth && numCols == width) {
+            return layer;
+        }
+
+        if (numRows <= 0 || numCols <= 0) {
+            return createEmptyLayer(width, depth);
+        }
+
+        List<List<String>> adjustedLayer = new ArrayList<>();
+        for (int row = 0; row < depth; row++) {
+            List<String> newRow = new ArrayList<>();
+            for (int col = 0; col < width; col++) {
+                int adjustedRow = row % numRows;
+                int adjustedCol = col % numCols;
+                newRow.add(layer.get(adjustedRow).get(adjustedCol));
+            }
+            adjustedLayer.add(newRow);
+        }
+        return adjustedLayer;
+    }
+
+    private List<List<String>> createEmptyLayer(int width, int depth) {
+        List<List<String>> emptyLayer = new ArrayList<>();
+        for (int row = 0; row < depth; row++) {
+            List<String> newRow = new ArrayList<>();
+            for (int col = 0; col < width; col++) {
+                newRow.add(" ");
+            }
+            emptyLayer.add(newRow);
+        }
+        return emptyLayer;
+    }
+
+    private void renderPreviewBlock(projectortestBlockEntity pBlockEntity, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, Block block, Vec3 cellCenter, int layerIndex) {
+        BlockRenderDispatcher blockRenderer = minecraft.getBlockRenderer();
+        int color = 0xFFFFFF;
+        if (minecraft.level != null) {
+            color = minecraft.level.getBiome(pBlockEntity.getBlockPos()).get().getGrassColor(pBlockEntity.getBlockPos().getX(), pBlockEntity.getBlockPos().getZ());
+        }
+
+        pPoseStack.pushPose();
+        pPoseStack.translate(cellCenter.x(), layerIndex + 0.5D, cellCenter.z());
+        pPoseStack.scale(PREVIEW_BLOCK_SCALE, PREVIEW_BLOCK_SCALE, PREVIEW_BLOCK_SCALE);
+        pPoseStack.translate(-0.5D, -0.5D, -0.5D);
+
+        blockRenderer.getModelRenderer().renderModel(
+                pPoseStack.last(),
+                pBuffer.getBuffer(RenderType.cutout()),
+                block.defaultBlockState(),
+                blockRenderer.getBlockModel(block.defaultBlockState()),
+                ((color >> 16) & 0xFF) / 255.0F,
+                ((color >> 8) & 0xFF) / 255.0F,
+                (color & 0xFF) / 255.0F,
+                pPackedLight,
+                NO_OVERLAY
+        );
 
         pPoseStack.popPose();
     }
 
+    private void renderOutline(PoseStack pPoseStack, MultiBufferSource pBuffer, int[] dimensions, Direction blockFacing) {
+        if (dimensions[0] <= 0 || dimensions[1] <= 0 || dimensions[2] <= 0) {
+            return;
+        }
+
+        double minX = Double.MAX_VALUE;
+        double minZ = Double.MAX_VALUE;
+        double maxX = -Double.MAX_VALUE;
+        double maxZ = -Double.MAX_VALUE;
+
+        for (int row = 0; row < dimensions[2]; row++) {
+            for (int col = 0; col < dimensions[0]; col++) {
+                Vec3 cellCenter = getProjectedCellCenter(blockFacing, dimensions[0], col, row);
+                minX = Math.min(minX, cellCenter.x() - 0.5D);
+                minZ = Math.min(minZ, cellCenter.z() - 0.5D);
+                maxX = Math.max(maxX, cellCenter.x() + 0.5D);
+                maxZ = Math.max(maxZ, cellCenter.z() + 0.5D);
+            }
+        }
+
+        pPoseStack.pushPose();
+        DebugRenderer.renderFilledBox(pPoseStack, pBuffer, minX, 0.0D, minZ, maxX, dimensions[1], maxZ, 1.0F, 1.0F, 1.0F, 0.25F);
+        pPoseStack.popPose();
+    }
+
+    private Vec3 getProjectedCellCenter(Direction blockFacing, int width, int col, int row) {
+        Vec3 projectorCenter = new Vec3(0.5D, 0.0D, 0.5D);
+        Vec3 forward = new Vec3(blockFacing.getStepX(), 0.0D, blockFacing.getStepZ());
+        Vec3 right = new Vec3(-blockFacing.getStepZ(), 0.0D, blockFacing.getStepX());
+
+        int sideOffset = getGridAlignedSideOffset(width, col);
+        return projectorCenter
+                .add(forward.scale(row + 1.0D))
+                .add(right.scale(sideOffset));
+    }
+
+    private int getGridAlignedSideOffset(int width, int col) {
+        /*
+         * A blueprint with an even width cannot be perfectly centered on a single block while
+         * staying aligned to Minecraft's block grid. Using half-block offsets makes the preview
+         * look centered, but the outline/projection ends up between real block positions.
+         *
+         * This keeps every projected cell on a real block center. Odd widths still center on the
+         * projector's forward line. Even widths are intentionally biased one block to the left
+         * of that line, so 2-wide becomes [-1, 0] instead of [-0.5, 0.5].
+         */
+        return col - (width / 2);
+    }
 
     @Override
     public boolean shouldRender(projectortestBlockEntity pBlockEntity, Vec3 pCameraPos) {

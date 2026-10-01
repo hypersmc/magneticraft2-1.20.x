@@ -20,7 +20,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 23-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class PollutionHandler {

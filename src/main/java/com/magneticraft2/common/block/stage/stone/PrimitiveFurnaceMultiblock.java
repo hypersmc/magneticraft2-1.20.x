@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author JumpWatch on 13-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PrimitiveFurnaceMultiblock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
@@ -120,5 +120,10 @@ public class PrimitiveFurnaceMultiblock extends BaseBlockMagneticraft2 {
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return new PrimitiveFurnaceMultiblockEntity(pPos,pState);
+    }
+
+    @Override
+    protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+
     }
 }

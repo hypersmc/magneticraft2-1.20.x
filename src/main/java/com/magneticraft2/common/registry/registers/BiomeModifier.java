@@ -17,7 +17,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 26-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BiomeModifier {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-BiomeModifier");
@@ -42,6 +42,7 @@ public class BiomeModifier {
 
 
     //ores
+    //nonedeepslate
     public static RegistryObject<Codec<anthracite_oreModifier>> anthracite_ore = BIOME_MODIFIER_SERIALIZERS.register("anthracite_ore", () ->
             RecordCodecBuilder.create(builder -> builder.group(
                     Biome.LIST_CODEC.fieldOf("biomes").forGetter(anthracite_oreModifier::biome),
@@ -197,5 +198,61 @@ public class BiomeModifier {
                     Biome.LIST_CODEC.fieldOf("biomes").forGetter(wolframite_oreModifier::biome),
                     PlacedFeature.CODEC.fieldOf("feature").forGetter(wolframite_oreModifier::feature)
             ).apply(builder, wolframite_oreModifier::new)));
+    //Deepslate
+    public static RegistryObject<Codec<chromite_deepslate_oreModifier>> chromite_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("chromite_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(chromite_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(chromite_deepslate_oreModifier::feature)
+            ).apply(builder, chromite_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<cinnabar_deepslate_oreModifier>> cinnabar_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("cinnabar_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(cinnabar_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(cinnabar_deepslate_oreModifier::feature)
+            ).apply(builder, cinnabar_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<galena_deepslate_oreModifier>> galena_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("galena_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(galena_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(galena_deepslate_oreModifier::feature)
+            ).apply(builder, galena_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<garnierite_deepslate_oreModifier>> garnierite_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("garnierite_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(garnierite_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(garnierite_deepslate_oreModifier::feature)
+            ).apply(builder, garnierite_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<limonite_deepslate_oreModifier>> limonite_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("limonite_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(limonite_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(limonite_deepslate_oreModifier::feature)
+            ).apply(builder, limonite_deepslate_oreModifier::new)));
+    public static  RegistryObject<Codec<magnetite_deepslate_oreModifier>> magnetite_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("magnetite_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(magnetite_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(magnetite_deepslate_oreModifier::feature)
+            ).apply(builder, magnetite_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<manganese_deepslate_oreModifier>> manganese_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("manganese_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(manganese_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(manganese_deepslate_oreModifier::feature)
+            ).apply(builder, manganese_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<quartz_deepslate_oreModifier>> quartz_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("quartz_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(quartz_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(quartz_deepslate_oreModifier::feature)
+            ).apply(builder, quartz_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<silicium_deepslate_oreModifier>> silicium_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("silicium_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(silicium_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(silicium_deepslate_oreModifier::feature)
+            ).apply(builder, silicium_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<sulfur_deepslate_oreModifier>> sulfur_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("sulfur_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(sulfur_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(sulfur_deepslate_oreModifier::feature)
+            ).apply(builder, sulfur_deepslate_oreModifier::new)));
+    public static RegistryObject<Codec<tantalite_deepslate_oreModifier>> tantalite_deepslate_ore = BIOME_MODIFIER_SERIALIZERS.register("tantalite_deepslate_ore", () ->
+            RecordCodecBuilder.create(builder -> builder.group(
+                    Biome.LIST_CODEC.fieldOf("biomes").forGetter(tantalite_deepslate_oreModifier::biome),
+                    PlacedFeature.CODEC.fieldOf("feature").forGetter(tantalite_deepslate_oreModifier::feature)
+            ).apply(builder, tantalite_deepslate_oreModifier::new)));
 
 }

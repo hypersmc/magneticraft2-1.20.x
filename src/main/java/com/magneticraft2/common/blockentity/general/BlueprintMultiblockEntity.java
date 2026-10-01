@@ -5,6 +5,7 @@ import com.magneticraft2.common.block.general.BlueprintMultiblock;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.systems.Blueprint.core.BlueprintBuilder;
+import com.magneticraft2.common.systems.Blueprint.core.BlueprintManager;
 import com.magneticraft2.common.systems.Blueprint.core.BlueprintSaver;
 import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
@@ -24,6 +25,8 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +36,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -49,15 +53,18 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 12-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
+    private static final BlockPos INVALID_BLUEPRINT_POS = new BlockPos(-65, -65, -65);
+
     private String blueprintname = "";
     private boolean formed = false;
     private String repacementmodel = "";
 
-    private BlockPos pos1;
-    private BlockPos pos2;
+
+    private BlockPos pos1 = INVALID_BLUEPRINT_POS;
+    private BlockPos pos2 = INVALID_BLUEPRINT_POS;
     private long pos1long;
     private long pos2long;
     private long initialGameTime = 0;
@@ -102,6 +109,9 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     public String getRepacementmodel() {
         return repacementmodel;
     }
+    public String getMBblueprintname() {
+        return blueprintname;
+    }
     private void setpos1(long value){
         pos1 = BlockPos.of(value);
     }
@@ -115,10 +125,10 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         pos2long = val;
     }
     private void resetpos1(){
-        pos1 = new BlockPos(-65,-65,-65);
+        pos1 = INVALID_BLUEPRINT_POS;
     }
     private void resetpos2(){
-        pos2 = new BlockPos(-65,-65,-65);
+        pos2 = INVALID_BLUEPRINT_POS;
     }
 
     public BlockPos getPos1BlockPos(){
@@ -223,14 +233,15 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     }
     @Override
     public CompoundTag sync() {
-        level.sendBlockUpdated( worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL );
-        CompoundTag tag = super.getUpdateTag();
-        loadClientData(tag);
-        return null;
+        if (level != null) {
+            setChanged();
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+        return getUpdateTag();
     }
     private void loadClientData(CompoundTag tag) {
-        pos1 =  BlockPos.of(tag.getLong("pos1"));
-        pos2 = BlockPos.of(tag.getLong("pos2"));
+        pos1 = tag.contains("pos1") ? BlockPos.of(tag.getLong("pos1")) : INVALID_BLUEPRINT_POS;
+        pos2 = tag.contains("pos2") ? BlockPos.of(tag.getLong("pos2")) : INVALID_BLUEPRINT_POS;
         pos1long = tag.getLong("pos1long");
         pos2long = tag.getLong("pos2long");
         blueprintname1 = tag.getString("blueprintname1");
@@ -252,8 +263,8 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         blueprintname = tag.getString("BlueprintName");
         formed = tag.getBoolean("Formed");
         repacementmodel = tag.getString("Repacementmodel");
-        pos1 =  BlockPos.of(tag.getLong("pos1"));
-        pos2 = BlockPos.of(tag.getLong("pos2"));
+        pos1 = tag.contains("pos1") ? BlockPos.of(tag.getLong("pos1")) : INVALID_BLUEPRINT_POS;
+        pos2 = tag.contains("pos2") ? BlockPos.of(tag.getLong("pos2")) : INVALID_BLUEPRINT_POS;
         pos1long = tag.getLong("pos1long");
         pos2long = tag.getLong("pos2long");
         blueprintname1 = tag.getString("blueprintname1");
@@ -522,33 +533,113 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     }
     public void saveBlueprintClient(String owner){
         File savedir = new File("blueprints");
-        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname1, owner, level, pos1, pos2);
+        Blueprint newBlueprint = saveBlueprintToDirectory(blueprintname1, owner, savedir);
+        if (newBlueprint != null) {
+            BlueprintSaver.saveBlueprintClient(newBlueprint, savedir, owner);
+        }
+    }
+
+    public void saveBlueprintServer(String owner){
+        File savedir = new File("blueprints");
+        Blueprint newBlueprint = saveBlueprintToDirectory(blueprintname1, owner, savedir);
+        if (newBlueprint != null) {
+            BlueprintSaver.saveBlueprintServer(newBlueprint, savedir);
+        }
+    }
+
+    public boolean saveBlueprintForPlayer(ServerPlayer player, String requestedBlueprintName) {
+        if (level == null || level.isClientSide()) {
+            return false;
+        }
+
+        String cleanedBlueprintName = cleanBlueprintName(requestedBlueprintName);
+        if (cleanedBlueprintName == null) {
+            player.sendSystemMessage(Component.literal("Blueprint needs a name."));
+            return false;
+        }
+
+        if (!hasValidMarkerPositions()) {
+            player.sendSystemMessage(Component.literal("Blueprint marker needs both pos1 and pos2."));
+            return false;
+        }
+
+        if (player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) > 64.0D) {
+            player.sendSystemMessage(Component.literal("You are too far away from the Blueprint Maker."));
+            return false;
+        }
+
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return false;
+        }
+
+        // Keep the JSON owner as the player's current name for compatibility with the existing Projector GUI.
+        // The folder uses UUID so files still stay grouped by the actual player account.
+        String owner = player.getName().getString();
+        String ownerFolder = player.getUUID().toString();
+        File saveDir = server.getWorldPath(LevelResource.ROOT)
+                .resolve("magneticraft2")
+                .resolve("blueprints")
+                .resolve(ownerFolder)
+                .toFile();
+
+        Blueprint newBlueprint = saveBlueprintToDirectory(cleanedBlueprintName, owner, saveDir);
+        if (newBlueprint == null) {
+            player.sendSystemMessage(Component.literal("Blueprint could not be saved."));
+            return false;
+        }
+
+        BlueprintSaver.saveBlueprintServer(newBlueprint, saveDir);
+        BlueprintManager.syncBlueprintsToPlayer(player);
+        setChanged();
+        sync();
+        player.sendSystemMessage(Component.literal("Saved blueprint: " + cleanedBlueprintName));
+        return true;
+    }
+
+    private Blueprint saveBlueprintToDirectory(String blueprintName, String owner, File saveDir) {
+        String cleanedBlueprintName = cleanBlueprintName(blueprintName);
+        if (cleanedBlueprintName == null || owner == null || owner.isBlank() || level == null || !hasValidMarkerPositions()) {
+            return null;
+        }
+
+        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(cleanedBlueprintName, owner, level, pos1, pos2);
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
             LOGGER.info(newBlueprint.getName());
             LOGGER.info(newBlueprint.getOwner());
             LOGGER.info(newBlueprint.getStructure().getBlocks());
             LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
             LOGGER.info(newBlueprint.getStructure().getLayout());
+            LOGGER.info("Blueprint save directory: " + saveDir.getPath());
         }
-        BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
-        BlueprintSaver.saveBlueprintClient(newBlueprint, savedir, owner);
+        BlueprintRegistry.registerOrReplaceBlueprint(MOD_ID, newBlueprint, owner);
         setBlueprintname(null);
         setShouldsave(false);
+        return newBlueprint;
     }
-    public void saveBlueprintServer(String owner){
-        File savedir = new File("blueprints");
-        Blueprint newBlueprint = BlueprintBuilder.buildBlueprint(blueprintname1, owner, level, pos1, pos2);
-        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-            LOGGER.info(newBlueprint.getName());
-            LOGGER.info(newBlueprint.getStructure().getBlocks());
-            LOGGER.info(Arrays.toString(newBlueprint.getStructure().getDimensions()));
-            LOGGER.info(newBlueprint.getStructure().getLayout());
-        }
-        BlueprintRegistry.registerBlueprint(MOD_ID, newBlueprint, owner);
-        BlueprintSaver.saveBlueprintServer(newBlueprint, savedir);
 
-        setBlueprintname(null);
-        setShouldsave(false);
+    private boolean hasValidMarkerPositions() {
+        return pos1 != null
+                && pos2 != null
+                && !pos1.equals(INVALID_BLUEPRINT_POS)
+                && !pos2.equals(INVALID_BLUEPRINT_POS);
+    }
+
+    private String cleanBlueprintName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        String cleaned = name.trim();
+        if (cleaned.isEmpty()) {
+            return null;
+        }
+
+        if (cleaned.length() > 64) {
+            cleaned = cleaned.substring(0, 64);
+        }
+
+        return cleaned;
     }
     @Nullable
     @Override
@@ -563,4 +654,6 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         data = data.derive().with(MultiBlockProperties.MODEL_NAME, getRepacementmodel()).build();
         return data;
     }
+
+
 }

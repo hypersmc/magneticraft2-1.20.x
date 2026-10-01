@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 08-01-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class beltblockitem extends BlockItem {
     private static final Logger LOGGER = LogManager.getLogger("MGC2-beltblockitem");

@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class pitkiln_item extends BlockItem {
     public pitkiln_item(Block pBlock, Properties pProperties) {

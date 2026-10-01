@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public interface TOPDriver {
     void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level world, BlockState blockState, IProbeHitData data);

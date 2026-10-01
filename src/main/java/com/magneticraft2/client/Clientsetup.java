@@ -8,6 +8,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.MediumGearBlockEntity
 import com.magneticraft2.client.render.blocks.stage.stone.PitKilnBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceNoGUIBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveStorageCellarBlockRenderer;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -24,9 +25,23 @@ import org.apache.logging.log4j.Logger;
 import static com.magneticraft2.common.magneticraft2.MOD_ID;
 
 /**
+ *
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+ * @version 1.0.0
+ * Clientsetup is responsible for registering client-specific configurations, renderers,
+ * models, and geometry loaders for the mod.
+ *
+ * This class subscribes to relevant Forge events to handle the following tasks:
+ *
+ * - Initializing client-specific settings during the client setup phase.
+ * - Registering block entity renderers for visual representation of block entities.
+ * - Registering layer definitions required for models with custom rendering layers.
+ * - Registering additional models from the mod's resource folder.
+ * - Registering custom geometry loaders to enhance or extend rendering functionality.
+ *
+ * The event handlers implemented in this class are automatically invoked during the
+ * mod loading process on the client side.
  */
 @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class Clientsetup {
@@ -42,6 +57,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity_nogui.get(), PrimitiveFurnaceNoGUIBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.storagecellarblockentity.get(), PrimitiveStorageCellarBlockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_WITH_HANDLE_BE_WOOD.get(), LargeGearWithHandleBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), LargeGearBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), MediumGearBlockEntity_woodRenderer::new);

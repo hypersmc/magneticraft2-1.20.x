@@ -5,6 +5,8 @@ import com.magneticraft2.common.blockentity.general.projectortestBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.systems.Blueprint.json.Blueprint;
 import com.magneticraft2.common.systems.Blueprint.json.BlueprintRegistry;
+import com.magneticraft2.common.systems.mgc2Network;
+import com.magneticraft2.common.systems.networking.SetProjectorBlueprintPacket;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -26,7 +28,7 @@ import java.util.*;
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class Projector_screen extends AbstractContainerScreen<Projector_container> {
     private static final Logger LOGGER = LogManager.getLogger("Magneticraft2 Projector_screen");
@@ -89,6 +91,7 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
             if (area.isMouseOver((int) pMouseX, (int) pMouseY)) {
                 String clickedText = area.getText();
                 menu.getprojector().setBlueprint(clickedText);
+                mgc2Network.CHANNEL.sendToServer(new SetProjectorBlueprintPacket(menu.getBlockEntityPos(), clickedText));
                 break; // Exit the loop after processing one click
             }
         }
@@ -123,6 +126,7 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
         }
     }
     private void renderBlueprints(GuiGraphics pGuiGraphics, int pStartIndex, int pX, int pY, int mouseX, int mouseY) {
+        clickableAreas.clear();
 
         List<String> blueprintNames = new ArrayList<>();
 
@@ -150,13 +154,13 @@ public class Projector_screen extends AbstractContainerScreen<Projector_containe
             int i1 = pY + i * 12 + 2;
             int textColor = 16777215;
 
-            boolean isMouseOverText = isMouseOver(pX, i1, font.width(blueprintNames.get(i)), font.lineHeight, mouseX, mouseY);
+            int textWidth = font.width(blueprintNames.get(i));
+            boolean isMouseOverText = isMouseOver(pX, i1, textWidth, font.lineHeight, mouseX, mouseY);
+
+            clickableAreas.add(new ClickableArea(pX, i1, textWidth, font.lineHeight, blueprintNames.get(i)));
 
             if (isMouseOverText) {
                 textColor = 16777120;
-
-                // Add the clickable area to the list
-                clickableAreas.add(new ClickableArea(pX, i1, font.width(blueprintNames.get(i)), font.lineHeight, blueprintNames.get(i)));
             }
 
             pGuiGraphics.drawString(font, blueprintNames.get(i), pX, i1, textColor, false);

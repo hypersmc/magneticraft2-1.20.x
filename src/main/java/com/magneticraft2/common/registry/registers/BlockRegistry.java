@@ -6,10 +6,8 @@ import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
-import com.magneticraft2.common.block.stage.stone.BellowsMultiblockModule;
-import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
-import com.magneticraft2.common.block.stage.stone.PrimitiveFurnaceMultiblock;
-import com.magneticraft2.common.block.stage.stone.PrimitiveFurnaceMultiblock_nogui;
+import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
+import com.magneticraft2.common.block.stage.stone.*;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -30,7 +28,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BlockRegistry {
@@ -44,28 +42,34 @@ public class BlockRegistry {
     }
     //Blocks after this line
     //Should sort this for each stage
-    public static final RegistryObject<PitKilnBlock> PitKilnblock = BLOCKS.register("pitkilnblock", PitKilnBlock::new);
+
     public static final RegistryObject<Block> rice_plant = registerBlockWithoutBlockItem("rice_plant", () -> new RicePlantBlock(BlockBehaviour.Properties.of().noOcclusion()));
-    public static final RegistryObject<stick> stickblock = BLOCKS.register("stick", stick::new);
-    public static final RegistryObject<stonepebble> stonepebble = BLOCKS.register("stonepebble", stonepebble::new);
+
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
     public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
     public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
     public static final RegistryObject<BeltBlock> beltblock = BLOCKS.register("beltblock", BeltBlock::new);
     public static final RegistryObject<Multiblockfiller> multiblockfiller = BLOCKS.register("multiblock_filler", Multiblockfiller::new);
     public static final RegistryObject<BlueprintMultiblock> blueprintmultiblock = BLOCKS.register("blueprint_multiblock", BlueprintMultiblock::new);
-    public static final RegistryObject<PrimitiveFurnaceMultiblock> primitivefurnacemultiblock = BLOCKS.register("primitivefurnace_multiblock", PrimitiveFurnaceMultiblock::new);
-    public static final RegistryObject<PrimitiveFurnaceMultiblock_nogui> primitivefurnace_multiblock_nogui = BLOCKS.register("primitivefurnace_multiblock_nogui", PrimitiveFurnaceMultiblock_nogui::new);
     public static final RegistryObject<BellowsMultiblockModule> bellowsmultiblockmodule = BLOCKS.register("bellows_multiblock_module", BellowsMultiblockModule::new);
 
     //Stone
 
+    public static final RegistryObject<stick> stickblock = BLOCKS.register("stick", stick::new);
+    public static final RegistryObject<stonepebble> stonepebble = BLOCKS.register("stonepebble", stonepebble::new);
+    public static final RegistryObject<PitKilnBlock> PitKilnblock = BLOCKS.register("pitkilnblock", PitKilnBlock::new);
+    public static final RegistryObject<Primitive_anvilBlock> Primitive_anvillBlock = BLOCKS.register("primitive_anvil", Primitive_anvilBlock::new);
+    public static final RegistryObject<PrimitiveStorageCellarMultiblock> primitivestoragecellarmultiblock = BLOCKS.register("primitivestoragecellar_multiblock", PrimitiveStorageCellarMultiblock::new);
+    public static final RegistryObject<PrimitiveFurnaceMultiblock> primitivefurnacemultiblock = BLOCKS.register("primitivefurnace_multiblock", PrimitiveFurnaceMultiblock::new);
+    public static final RegistryObject<PrimitiveFurnaceMultiblock_nogui> primitivefurnace_multiblock_nogui = BLOCKS.register("primitivefurnace_multiblock_nogui", PrimitiveFurnaceMultiblock_nogui::new);
+    public static final RegistryObject<PrimitiveGrinderBMultiblock> primitive_grinder_bmultiblock = BLOCKS.register("primitive_grinder_bmultiblock", PrimitiveGrinderBMultiblock::new);
+    public static final RegistryObject<PrimitiveGrinderTop> primitive_grindertop = BLOCKS.register("primitive_grindertop", PrimitiveGrinderTop::new);
 
     //Copper
-
     public static final RegistryObject<MediumGearBlock_wood> GEAR_MEDIUM_WOOD = BLOCKS.register("gear_medium_wood", MediumGearBlock_wood::new);
     public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
     public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);
+    public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
 
 
 

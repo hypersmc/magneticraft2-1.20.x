@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRenderer<PrimitiveFurnaceMultiblockEntity_nogui> {
     public PrimitiveFurnaceNoGUIBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
@@ -59,7 +59,6 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
         }
 
         if (pBlockEntity.getItemInSlot(1).getItem() == Items.COAL) {
-
             if (pBlockEntity.isCooking()) {
 
                 ResourceLocation coalamber = new ResourceLocation("magneticraft2", "multiblock/coalamber");

@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "":    { "model": "magneticraft2:block/primitive_grindertop" }
+  }
+}

@@ -3,7 +3,7 @@ package com.magneticraft2.common.systems.WATT;
 /**
  * @author JumpWatch on 10-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class WattStorage implements IWattStorage {
 

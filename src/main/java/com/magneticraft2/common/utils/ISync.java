@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public interface ISync
 {

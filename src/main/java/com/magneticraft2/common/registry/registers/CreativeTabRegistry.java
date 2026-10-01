@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CreativeTabRegistry {
@@ -42,6 +42,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_beltblock.get());
                         entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock.get());
+                        entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
                         entries.accept(ItemRegistry.item_bellowsmultiblockmodule.get());
                     })
@@ -54,6 +55,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_ceramic_pot.get());
                         entries.accept(ItemRegistry.item_clay_pot.get());
                         entries.accept(ItemRegistry.item_fire_starter.get());
+                        entries.accept(ItemRegistry.item_stone_hammer.get());
                         entries.accept(ItemRegistry.item_stone_knife.get());
                         entries.accept(ItemRegistry.item_pebble.get());
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
@@ -62,6 +64,8 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_SHAFT_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_PRIMITIVE_ANVIL.get());
 //                        entries.accept(ItemRegistry.);
                     })
                     .build());

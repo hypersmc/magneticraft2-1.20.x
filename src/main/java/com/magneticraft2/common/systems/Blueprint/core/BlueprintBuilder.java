@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * @author JumpWatch on 25-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BlueprintBuilder {
     private static final String BLOCK_KEY_PREFIX = "BlockKey"; // Use your preferred prefix

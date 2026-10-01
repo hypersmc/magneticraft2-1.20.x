@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -44,8 +45,11 @@ import java.util.Optional;
 
 /**
  * @author JumpWatch on 01-07-2023
+ * @version 1.0.0
  * @Project mgc2-1.20
- * v1.0.0
+ * BaseBlockEntityMagneticraft2 represents the foundational block entity structure 
+ * for the Magneticraft 2 mod, providing utilities and mechanisms for managing 
+ * multiblock structures, energy, heat, fluid, wattage, pressure, and item handling systems.
  */
 public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implements MenuProvider, ISync {
 
@@ -58,6 +62,8 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     protected abstract MultiblockController createMultiblockController();
     protected abstract MultiblockStructure identifyMultiblockStructure(Level world, BlockPos pos);
     protected abstract void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit);
+
+
 
     //Biomes
     /* Energy */
@@ -292,10 +298,16 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
      */
 
     public void setHeatHeat(int heat) {
-        createHeat().setHeat(heat);
+        if (heatHandler != null) {
+            createHeat().setHeat(heat);
+            setChanged();
+        }
     }
     public void setEnergyEnergy(int energy) {
-        createEnergy().setEnergy(energy);
+        if (energyHandler != null) {
+            energyHandler.setEnergy(energy);
+            setChanged();
+        }
     }
 
     private FluidStorages createFluid(){
@@ -571,7 +583,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
     /* Energy */
     public int getEnergyStorage(){
-        return energyHandler.getEnergyStored();
+        return energyHandler != null ? energyHandler.getEnergyStored() : 0;
     }
     public int getMaxEnergyStorage(){
         return this.energyHandler.getMaxEnergyStored();
@@ -586,7 +598,7 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
 
     /* Item */
     public int getInvSize(){
-        return this.itemHandler.getSlots();
+        return itemHandler != null ? itemHandler.getSlots() : 0;
     }
     public ItemStack getItemInSlot(int size) {
         return this.itemHandler.getStackInSlot(size);
@@ -628,5 +640,11 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
     }
     public void onBlockBreak()
     {
+    }
+
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return super.getRenderBoundingBox().inflate(16);
     }
 }

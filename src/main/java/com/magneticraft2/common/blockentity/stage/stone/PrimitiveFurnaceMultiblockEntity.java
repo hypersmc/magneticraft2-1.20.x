@@ -44,16 +44,17 @@ import java.util.Map;
 /**
  * @author JumpWatch on 13-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PrimitiveFurnaceMultiblockEntity extends BaseBlockEntityMagneticraft2 {
     private String blueprintname = "";
     private boolean formed = false;
     private String repacementmodel = "";
+    private MultiblockController controller;
     private int cookTime;
     private boolean iscooking = false;
     private int totalCookTime = 200; // Default cook time, can be adjusted per recipe
-    private MultiblockController controller;
+
 
     public PrimitiveFurnaceMultiblockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), pos, state);

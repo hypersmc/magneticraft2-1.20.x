@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author JumpWatch on 04-07-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class MultiBlockModel extends BakedModelWrapper<BakedModel> {
     public static final Logger LOGGER = LogManager.getLogger("MultiBlockModel");

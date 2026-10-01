@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author JumpWatch on 14-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BellowsMultiblockModuleEntity extends BlockEntity implements IMultiblockModule {
     private int Master_X;

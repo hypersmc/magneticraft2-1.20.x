@@ -4,111 +4,297 @@ import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import static com.magneticraft2.common.systems.mgc2Network.CHANNEL;
 
 /**
  * @author JumpWatch on 27-12-2024
  * @Project mgc2-1.20
- * v1.0.0
+ * @version 1.0.0
  */
 public abstract class GearBlockEntity extends BlockEntity {
-    public static final Logger LOGGER = LogManager.getLogger("GearBlockEntityMagneticraft2");
+    protected static final float VISUAL_STOP_EPSILON = 0.01F;
+
     protected GearNode gearNode;
-    protected float clientSpeed;
-    protected float clientTorque;
+    private boolean hasEverRotated = false;
+    private float clientVisualRotationDegrees = 0.0F;
+    private float lastClientVisualTime = Float.NaN;
 
     public GearBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-//        this.gearNode = new GearNode(pos);
+        this.gearNode = new GearNode(pos);
+        this.gearNode.setTeeth(getGearTeeth());
+        this.gearNode.setAxis(getGearAxisFromState(state));
+        this.gearNode.setMaxTorque(getGearMaxTorque());
     }
+
     public GearNode getGearNode() {
         return gearNode;
     }
 
-    // Set powered state
-    public abstract void setPowered(boolean powered);
-
-    // Update the power and synchronization logic
-    public void updateGearNetwork() {
-        // Update the gear network with this gear's current state
-        GearNetworkManager networkManager = GearNetworkManager.getInstance();
-        networkManager.addGear(gearNode,level);
-        // Handle synchronization of power state and rotation here if necessary
-        sendGearSyncPacket();  // Ensure that the packet sync is sent when necessary
+    public GearNode getOrCreateGearNode() {
+        if (gearNode == null) {
+            gearNode = new GearNode(worldPosition);
+        }
+        gearNode.setTeeth(getGearTeeth());
+        gearNode.setAxis(getGearAxis());
+        gearNode.setMaxTorque(getGearMaxTorque());
+        gearNode.setShaftLike(isShaftLike());
+        return gearNode;
     }
 
-    // Send a sync packet to ensure client updates
+    /**
+     * Number used for simple RPM ratio calculation.
+     * Larger number = larger/slower gear when driven by a smaller gear.
+     */
+    public int getGearTeeth() {
+        return 8;
+    }
+
+    /**
+     * Temporary wood gear torque limit.
+     * This is intentionally simple until real machines/loads exist.
+     */
+    public float getGearMaxTorque() {
+        return 8.0F;
+    }
+
+    /**
+     * Shaft-like nodes transfer motion only along their own spin axis.
+     * They do not side-mesh like external gear teeth.
+     */
+    public boolean isShaftLike() {
+        return false;
+    }
+
+    /**
+     * The axis this gear visually spins around.
+     * Subclasses with vertical placement flags should override this.
+     */
+    public Direction.Axis getGearAxis() {
+        return getGearAxisFromState(getBlockState());
+    }
+
+    protected Direction.Axis getGearAxisFromState(BlockState state) {
+        if (state != null && state.hasProperty(DirectionalBlock.FACING)) {
+            return state.getValue(DirectionalBlock.FACING).getAxis();
+        }
+        return Direction.Axis.Y;
+    }
+
+    public float getDefaultSourceSpeed() {
+        return 60.0F;
+    }
+
+    public float getDefaultSourceTorque() {
+        return 8.0F;
+    }
+
+    public void setSource(boolean source, float speed, float torque) {
+        GearNode node = getOrCreateGearNode();
+        node.setSource(source);
+        if (source) {
+            node.setSpeed(speed);
+            node.setTorque(torque);
+            node.setOverloaded(torque > node.getMaxTorque());
+            node.setDirectionMultiplier(1);
+            node.setMeshPhaseDegrees(0.0F);
+            node.setSourcePos(worldPosition);
+            markHasEverRotatedIfMoving(speed);
+        } else {
+            // Do not instantly stop. Leave current speed/torque for network decay.
+            node.setSource(false);
+        }
+        setChanged();
+        updateGearNetwork();
+    }
+
+    public boolean isSourceGear() {
+        return getOrCreateGearNode().isSource();
+    }
+
+    public float getServerSpeed() {
+        return getOrCreateGearNode().getSpeed();
+    }
+
+    public float getClientSpeed() {
+        return getOrCreateGearNode().getClientSpeed();
+    }
+
+    public float getClientTorque() {
+        return getOrCreateGearNode().getClientTorque();
+    }
+
+    public float getClientMaxTorque() {
+        return getOrCreateGearNode().getClientMaxTorque();
+    }
+
+    public boolean isClientOverloaded() {
+        return getOrCreateGearNode().isClientOverloaded();
+    }
+
+    public float getClientMeshPhaseDegrees() {
+        return getOrCreateGearNode().getClientMeshPhaseDegrees();
+    }
+
+    public int getDirectionMultiplier() {
+        return getOrCreateGearNode().getDirectionMultiplier();
+    }
+
+    public boolean shouldRenderGearWithBlockEntity() {
+        GearNode node = getOrCreateGearNode();
+        return hasEverRotated
+                || hasVisiblePhaseOffset(node.getMeshPhaseDegrees())
+                || hasVisiblePhaseOffset(node.getClientMeshPhaseDegrees());
+    }
+
+    private boolean hasVisiblePhaseOffset(float phaseDegrees) {
+        float normalized = normalizeVisualDegrees(phaseDegrees);
+        return normalized > VISUAL_STOP_EPSILON && normalized < 360.0F - VISUAL_STOP_EPSILON;
+    }
+
+    public void markHasEverRotatedIfMoving(float speed) {
+        if (Math.abs(speed) > VISUAL_STOP_EPSILON) {
+            hasEverRotated = true;
+        }
+    }
+
+    /**
+     * Redstone/debug source hook. Existing subclasses can override it, but the base behavior is useful for testing.
+     */
+    public void setPowered(boolean powered) {
+        if (powered) {
+            setSource(true, getDefaultSourceSpeed(), getDefaultSourceTorque());
+        } else if (isSourceGear()) {
+            setSource(false, 0.0F, 0.0F);
+        }
+    }
+
+    public void updateGearNetwork() {
+        if (level != null && !level.isClientSide) {
+            GearNetworkManager.getInstance().addOrUpdateGear(this);
+        }
+    }
+
+    public void serverTickGear() {
+        if (level != null && !level.isClientSide) {
+            GearNetworkManager.getInstance().tickGear(this);
+            markHasEverRotatedIfMoving(getServerSpeed());
+        }
+    }
+
     public void sendGearSyncPacket() {
         if (level != null && !level.isClientSide) {
-            GearSyncPacket packet = new GearSyncPacket(gearNode.getPosition(), gearNode.getSpeed(), gearNode.getTorque(),
-                    gearNode.getDirectionMultiplier(), gearNode.getSourcePos());
-            CHANNEL.send(PacketDistributor.ALL.noArg(),packet);  // Send to all clients in the network
+            GearNode node = getOrCreateGearNode();
+            CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(
+                    node.getPosition(),
+                    node.getSpeed(),
+                    node.getTorque(),
+                    node.getMaxTorque(),
+                    node.isOverloaded(),
+                    node.getMeshPhaseDegrees(),
+                    node.getRotationDegrees(),
+                    node.getDirectionMultiplier(),
+                    node.getSourcePos()
+            ));
         }
     }
 
-    // Sync gear state with the server side
-    public void syncGearState(float speed, float torque, int directionMultiplier, BlockPos sourcePos) {
-        this.gearNode.updateClientData(speed, torque);
-        this.gearNode.setDirectionMultiplier(directionMultiplier);
-        this.gearNode.setSourcePos(sourcePos);
+    public void syncGearState(float speed, float torque, float maxTorque, boolean overloaded, float meshPhaseDegrees, float rotationDegrees, int directionMultiplier, BlockPos sourcePos) {
+        GearNode node = getOrCreateGearNode();
+        node.updateClientData(speed, torque, maxTorque, overloaded, meshPhaseDegrees, rotationDegrees);
+        node.setDirectionMultiplier(directionMultiplier);
+        node.setSourcePos(sourcePos);
+        clientVisualRotationDegrees = node.getClientRotationDegrees();
+        lastClientVisualTime = Float.NaN;
+        markHasEverRotatedIfMoving(speed);
     }
 
-    // Handle power and rotation changes based on surrounding blocks
     public void checkAndUpdatePower() {
-        // Check if the surrounding blocks provide power and update accordingly
-        GearNetworkManager manager = GearNetworkManager.getInstance();
-        GearNode sourceGear = manager.getGear(gearNode.getSourcePos());
-        if (sourceGear != null && sourceGear.getSpeed() > 0) {
-            this.setPowered(true);
-            this.syncGearState(sourceGear.getSpeed(), sourceGear.getTorque(),
-                    sourceGear.getDirectionMultiplier(), sourceGear.getSourcePos());
-//            LOGGER.info("Gear at location " + sourceGear.getPosition() + " updated to " + sourceGear.getSpeed());
-        } else {
-            this.setPowered(false);
+        if (level == null || level.isClientSide) {
+            return;
         }
+        GearNode node = getOrCreateGearNode();
+        GearNode sourceGear = GearNetworkManager.getInstance().getGear(node.getSourcePos(), level);
+        setPowered(sourceGear != null && sourceGear.getSpeed() > 0.0F);
     }
 
-    // Override the BlockEntity save method to persist gear state
+    public float getVisualRotationDegrees(float partialTicks) {
+        Level currentLevel = getLevel();
+        GearNode node = getOrCreateGearNode();
+        if (currentLevel == null) {
+            return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+        }
+
+        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
+        if (Float.isNaN(lastClientVisualTime)) {
+            clientVisualRotationDegrees = node.getClientRotationDegrees();
+            lastClientVisualTime = currentVisualTime;
+            return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+        }
+
+        float deltaTicks = currentVisualTime - lastClientVisualTime;
+        lastClientVisualTime = currentVisualTime;
+
+        if (deltaTicks < 0.0F) {
+            deltaTicks = 0.0F;
+        }
+        if (deltaTicks > 20.0F) {
+            // Avoid huge jumps if the chunk/renderer was not visible for a while.
+            deltaTicks = 20.0F;
+        }
+
+        float rpm = node.getClientSpeed();
+        if (rpm > VISUAL_STOP_EPSILON) {
+            float degreesPerTick = rpm * 360.0F / 1200.0F;
+            clientVisualRotationDegrees += degreesPerTick * deltaTicks * node.getDirectionMultiplier();
+            clientVisualRotationDegrees %= 360.0F;
+            if (clientVisualRotationDegrees < 0.0F) {
+                clientVisualRotationDegrees += 360.0F;
+            }
+        }
+
+        return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+    }
+
+    private float normalizeVisualDegrees(float degrees) {
+        float normalized = degrees % 360.0F;
+        if (normalized < 0.0F) {
+            normalized += 360.0F;
+        }
+        return normalized;
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        // Save gearNode data
-        tag = gearNode.saveToNBT();
+        if (gearNode != null) {
+            tag.put("GearNode", gearNode.saveToNBT());
+        }
+        tag.putBoolean("HasEverRotated", hasEverRotated);
     }
 
-    // Override the BlockEntity load method to restore gear state
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        // Load gearNode data
-        gearNode.loadFromNBT(tag);
+        getOrCreateGearNode();
+        if (tag.contains("GearNode")) {
+            gearNode.loadFromNBT(tag.getCompound("GearNode"));
+        } else {
+            gearNode.loadFromNBT(tag);
+        }
+        gearNode.setTeeth(getGearTeeth());
+        gearNode.setAxis(getGearAxis());
+        gearNode.setMaxTorque(getGearMaxTorque());
+        gearNode.setShaftLike(isShaftLike());
+        hasEverRotated = tag.getBoolean("HasEverRotated") || gearNode.getSpeed() > VISUAL_STOP_EPSILON;
     }
-
-
-//    public abstract void updateNetwork(GearNetworkManager networkManager);
-//
-//    public GearNode getGearNode() {
-//        return this.gearNode;
-//    }
-//
-//    public void updateClientData(float speed, float torque) {
-//        this.clientSpeed = speed;
-//        this.clientTorque = torque;
-//    }
-//
-//    @Override
-//    public void setChanged() {
-//        super.setChanged();
-//        if (level != null && !level.isClientSide) {
-//            CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(worldPosition, gearNode.getSpeed(), gearNode.getTorque()));
-//        }
-//    }
 }

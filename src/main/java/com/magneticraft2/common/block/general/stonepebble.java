@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 /**
  * @author JumpWatch on 18-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class stonepebble extends BaseBlockMagneticraft2 {
     public static final IntegerProperty TYPE = IntegerProperty.create("type", 0, 4);
@@ -51,6 +51,10 @@ public class stonepebble extends BaseBlockMagneticraft2 {
     @Override
     public boolean canSurvive(BlockState state, LevelReader reader, BlockPos pos) {
         return reader.getBlockState(pos.below()).isSolid();
+    }
+
+    @Override
+    protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
     }
 
     @Override

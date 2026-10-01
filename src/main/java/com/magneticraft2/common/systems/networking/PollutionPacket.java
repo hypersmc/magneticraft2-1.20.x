@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 /**
  * @author JumpWatch on 24-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public record PollutionPacket(ChunkPos pos, int pollutionLevel) {
     public PollutionPacket(FriendlyByteBuf buffer){

@@ -12,7 +12,7 @@ import net.minecraftforge.common.world.ModifiableBiomeInfo;
 /**
  * @author JumpWatch on 27-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public record stickModifier(HolderSet<Biome> biome, Holder<PlacedFeature> feature) implements BiomeModifier {
     @Override

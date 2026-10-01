@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author JumpWatch on 28-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BlueprintRegistry {
     private static final Map<String, BlueprintInfo> registeredBlueprints = new HashMap<>();
@@ -24,6 +24,26 @@ public class BlueprintRegistry {
             return;
         }
         registeredBlueprints.put(key, new BlueprintInfo(blueprintName, blueprint, owner));
+    }
+
+    public static void registerOrReplaceBlueprint(String modid, Blueprint blueprint, String owner) {
+        String blueprintName = blueprint.getName();
+        String key = modid + ":" + blueprintName;
+        registeredBlueprints.put(key, new BlueprintInfo(blueprintName, blueprint, owner));
+    }
+
+    public static boolean canOwnerAccessBlueprint(String blueprintOwner, String playerName) {
+        if (blueprintOwner == null) {
+            return false;
+        }
+        return blueprintOwner.equalsIgnoreCase("everyone") || isBlueprintOwnedByPlayer(blueprintOwner, playerName);
+    }
+
+    public static boolean isBlueprintOwnedByPlayer(String blueprintOwner, String playerName) {
+        if (blueprintOwner == null || playerName == null) {
+            return false;
+        }
+        return blueprintOwner.equals(playerName);
     }
 
     public static Blueprint getRegisteredBlueprint(String modid, String name) {
@@ -61,7 +81,7 @@ public class BlueprintRegistry {
         List<BlueprintInfo> blueprintInfos = new ArrayList<>(registeredBlueprints.values());
 
         for (BlueprintInfo blueprintInfo : blueprintInfos) {
-            if (blueprintInfo.getOwner().equalsIgnoreCase("everyone") || blueprintInfo.getOwner().equals(owner)) {
+            if (isBlueprintOwnedByPlayer(blueprintInfo.getOwner(), owner)) {
                 index--;
                 if (index < 0) {
                     return blueprintInfo.getName();
@@ -70,6 +90,16 @@ public class BlueprintRegistry {
         }
 
         return null; // If no matching blueprint is found for the given owner and index
+    }
+
+    public static int getRegisteredBlueprintCountByOwner(String owner) {
+        int count = 0;
+        for (BlueprintInfo blueprintInfo : registeredBlueprints.values()) {
+            if (isBlueprintOwnedByPlayer(blueprintInfo.getOwner(), owner)) {
+                count++;
+            }
+        }
+        return count;
     }
     // Custom class to represent Blueprint information
     public static class BlueprintInfo {

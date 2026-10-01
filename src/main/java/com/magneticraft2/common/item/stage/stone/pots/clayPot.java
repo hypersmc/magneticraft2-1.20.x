@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class clayPot extends Item {
     private static final Logger LOGGER = LogManager.getLogger("ClayPOT");

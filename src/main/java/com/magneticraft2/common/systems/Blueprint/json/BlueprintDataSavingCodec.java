@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author JumpWatch on 26-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class BlueprintDataSavingCodec implements JsonSerializer<BlueprintData> {
     @Override

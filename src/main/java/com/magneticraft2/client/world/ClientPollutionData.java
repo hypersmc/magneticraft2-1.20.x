@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author JumpWatch on 25-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 
 

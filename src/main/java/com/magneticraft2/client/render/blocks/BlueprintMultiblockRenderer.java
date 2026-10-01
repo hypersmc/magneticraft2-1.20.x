@@ -24,10 +24,21 @@ import java.util.List;
 /**
  * @author JumpWatch on 12-11-2024
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
-public class BlueprintMultiblockRenderer implements BlockEntityRenderer<BlueprintMultiblockEntity> {
+public class BlueprintMultiblockRenderer implements BlockEntityRenderer<BlueprintMultiblockEntity>{
     public BlueprintMultiblockRenderer(BlockEntityRendererProvider.Context context) {}
+
+    @Override
+    public boolean shouldRenderOffScreen(BlueprintMultiblockEntity pBlockEntity) {
+        return true;
+    }
+
+    @Override
+    public int getViewDistance() {
+        return 512;
+    }
+
     @Override
     public void render(BlueprintMultiblockEntity pBlockEntity, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
         // Get positions of the two posts

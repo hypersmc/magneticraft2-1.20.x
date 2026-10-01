@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * @author JumpWatch on 23-09-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class testpollutionblockentity extends BlockEntity {
 

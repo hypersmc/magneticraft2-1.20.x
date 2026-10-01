@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
 /**
  * @author JumpWatch on 01-07-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class PitKilnBlockEntity extends BlockEntity {
 
@@ -104,33 +104,59 @@ public class PitKilnBlockEntity extends BlockEntity {
     }
 
 
-
+    /**
+     * Dear maintainer:
+     * Once you are done trying to 'optimize' this,
+     * and have realized what a terrible mistake that was,
+     * please increment the following counter as a warning to the next person:
+     * total_hours_wasted_here = 18
+     **/
     public void activate(BlockState state, Level world, BlockPos pos) {
-        // Dear maintainer:
-        // Once you are done trying to 'optimize' this,
-        // and have realized what a terrible mistake that was,
-        // please increment the following counter as a warning to the next person:
-        // total_hours_wasted_here = 18
         this.level = world;
-        // Check if there are enough items in the kiln's inventory to start the firing process
+
         PitKilnBlockEntity blockEntity = (PitKilnBlockEntity) world.getBlockEntity(pos);
+        if (blockEntity == null) return;
+
         LazyOptional<IItemHandler> optionalHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
         IItemHandler itemHandler = optionalHandler.orElse(null);
-        if (itemHandler.getStackInSlot(0).getItem() == Items.OAK_LOG && itemHandler.getStackInSlot(0).getCount() == 8 && itemHandler.getStackInSlot(1).getItem() == Items.WHEAT&& itemHandler.getStackInSlot(1).getCount() == 4) {
-            // Remove the logs and hay from the kiln's inventory
-            itemHandler.extractItem(0, 8, false);
-            itemHandler.extractItem(1, 4, false);
+        if (itemHandler == null) return;
 
-            // Start the firing process
-            BlockState currentState = level.getBlockState(pos);
-            BlockState newState = currentState.setValue(PitKilnBlock.LOG_COUNT, getLogCount()).setValue(PitKilnBlock.WHEAT_COUNT, getWheatCount()).setValue(PitKilnBlock.ACTIVATED, true);
-            level.setBlock(pos, newState, 3);
-            isBurning = true;
-            burnTime = Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get();
-            world.playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.0F, 1.0F);
-            setChanged();
-        }
+        ItemStack slot0 = itemHandler.getStackInSlot(0);
+        ItemStack slot1 = itemHandler.getStackInSlot(1);
+
+        boolean hasLogs = slot0.getItem() == Items.OAK_LOG && slot0.getCount() >= 8;
+        boolean hasWheat = slot1.getItem() == Items.WHEAT && slot1.getCount() >= 4;
+
+        if (!hasLogs || !hasWheat) return;
+
+        // Remove required items
+        itemHandler.extractItem(0, 8, false);
+        itemHandler.extractItem(1, 4, false);
+
+        // Update block state
+        BlockState newState = state
+                .setValue(PitKilnBlock.LOG_COUNT, getLogCount())
+                .setValue(PitKilnBlock.WHEAT_COUNT, getWheatCount())
+                .setValue(PitKilnBlock.ACTIVATED, true);
+
+        level.setBlock(pos, newState, 3);
+
+        // Start burning
+        isBurning = true;
+        burnTime = Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get();
+        world.playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.0F, 1.0F);
+        setChanged();
     }
+    /**
+     * Handles the server tick logic for the {@link PitKilnBlockEntity}. This method is called periodically to update
+     * the state of the Pit Kiln, manage the burning process, update block states, and manage item transformations
+     * when the Pit Kiln has completed its firing process.
+     *
+     * @param level The current level where the block entity is located.
+     * @param pos The position of the block entity in the level.
+     * @param estate The current block state of the block entity.
+     * @param e The block entity being ticked, expected to be an instance of {@link PitKilnBlockEntity}.
+     */
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {
         PitKilnBlockEntity entity = (PitKilnBlockEntity) e.getLevel().getBlockEntity(pos);
         if (!level.isClientSide()) {

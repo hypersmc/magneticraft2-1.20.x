@@ -16,7 +16,7 @@ import java.util.function.Function;
 /**
  * @author JumpWatch on 30-06-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class TOPCompatibility {
     public static final Logger LOGGER = LogManager.getLogger("MGC2-CompatibilityManager");

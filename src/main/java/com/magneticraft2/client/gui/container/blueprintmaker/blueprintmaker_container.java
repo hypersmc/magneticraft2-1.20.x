@@ -20,11 +20,11 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 /**
  * @author JumpWatch on 20-08-2023
  * @Project mgc2-1.20
- * v1.0.0
+* @version 1.0.0
  */
 public class blueprintmaker_container extends AbstractContainerMenu {
     public BlockEntity blockEntity;
-    public static Player player;
+    private final Player player;
     private IItemHandler itemHandler;
     public blueprintmaker_container(int windowid, Level world, BlockPos pos, Inventory playerInventory, Player player) {
         super(ContainerAndScreenRegistry.Blueprintmaker_container.get(), windowid);
@@ -47,6 +47,9 @@ public class blueprintmaker_container extends AbstractContainerMenu {
     public String getPlayerName(){
         return player.getName().getString();
     }
+    public BlockPos getBlockEntityPos(){
+        return blockEntity.getBlockPos();
+    }
     public long gettest(){
         BlockPos pos = blockEntity.getBlockPos();
         BlockEntity entity = blockEntity.getLevel().getBlockEntity(pos);
@@ -55,7 +58,7 @@ public class blueprintmaker_container extends AbstractContainerMenu {
     }
     @Override
     public boolean stillValid(Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), player, BlockRegistry.blueprintmultiblock.get());
+        return stillValid(ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos()), pPlayer, BlockRegistry.blueprintmultiblock.get());
     }
 
     private int addSlotRange(IItemHandler handler, int index, int x, int y, int amount, int dx) {
