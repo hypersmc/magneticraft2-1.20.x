@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.stone.PrimitiveStorageCellarMu
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
@@ -167,7 +169,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
             double tinyZ = signedUnit(seed + i * 37L) * 0.006D;
             float yaw = (float) (signedUnit(seed + i * 53L) * 7.0D);
 
-            renderShelfItem(
+            renderLooseShelfItemRaw(
                     blockEntity,
                     slot,
                     stack,
@@ -176,10 +178,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     visibilityOffset.y + layerY,
                     visibilityOffset.z + tinyZ,
                     yaw,
-                    90.0F,
-                    0.0F,
                     0.46F,
-                    ItemDisplayContext.NONE,
                     poseStack,
                     buffer,
                     packedLight,
@@ -187,6 +186,62 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     slot.index() * 10 + i
             );
         }
+    }
+
+    private void renderLooseShelfItemRaw(PrimitiveStorageCellarMultiblockEntity blockEntity,
+                                         PrimitiveStorageCellarLayout.Slot slot,
+                                         ItemStack stack,
+                                         Direction formedFacing,
+                                         double offsetX,
+                                         double offsetY,
+                                         double offsetZ,
+                                         float yaw,
+                                         float scale,
+                                         PoseStack poseStack,
+                                         MultiBufferSource buffer,
+                                         int packedLight,
+                                         int packedOverlay,
+                                         int renderSeed) {
+        Vec3 canonical = slot.renderPosition().add(offsetX, offsetY, offsetZ);
+        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(canonical, formedFacing);
+
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        BakedModel model = itemRenderer.getModel(stack, blockEntity.getLevel(), null, renderSeed);
+
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+
+        // Render the raw baked model instead of renderStatic(). Generated item
+        // models are vertical XY planes, so a 90 degree X rotation lays them
+        // directly onto the horizontal shelf. No ItemDisplayContext transform
+        // is applied after this.
+        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+        poseStack.scale(scale, scale, scale);
+        poseStack.translate(-0.5D, -0.5D, -0.5D);
+
+        boolean fabulous = false;
+        for (BakedModel renderPass : model.getRenderPasses(stack, fabulous)) {
+            for (RenderType renderType : renderPass.getRenderTypes(stack, fabulous)) {
+                VertexConsumer consumer = ItemRenderer.getFoilBuffer(
+                        buffer,
+                        renderType,
+                        true,
+                        stack.hasFoil()
+                );
+
+                itemRenderer.renderModelLists(
+                        renderPass,
+                        stack,
+                        packedLight,
+                        packedOverlay,
+                        poseStack,
+                        consumer
+                );
+            }
+        }
+
+        poseStack.popPose();
     }
 
     private void renderShelfItem(PrimitiveStorageCellarMultiblockEntity blockEntity,
