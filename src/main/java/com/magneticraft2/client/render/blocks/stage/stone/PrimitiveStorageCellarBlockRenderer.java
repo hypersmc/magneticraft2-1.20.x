@@ -185,7 +185,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
                     90.0F,
                     0.0F,
                     0.48F,
-                    ItemDisplayContext.GROUND,
+                    ItemDisplayContext.NONE,
                     poseStack,
                     buffer,
                     packedLight,
