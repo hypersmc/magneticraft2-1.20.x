@@ -45,10 +45,16 @@ public final class PrimitiveStorageCellarLayout {
     private static final double SOUTH_Z = 1.45D;
     private static final double WEST_X = -1.45D;
 
-    private static final double LONG_MIN = -1.80D;
-    private static final double LONG_MAX = 0.80D;
+    private static final double LONG_MIN = -1.94D;
+    private static final double LONG_MAX = 0.94D;
     private static final double WEST_MIN = 0.00D;
     private static final double WEST_MAX = 1.00D;
+
+    // Safe X anchors around the two vertical timber posts. The post bands are
+    // roughly -1.625..-1.375 and 0.3125..0.5625 in canonical WEST space.
+    private static final double[] LONG_SAFE = {
+            -1.80D, -1.16D, -0.74D, -0.32D, 0.10D, 0.76D
+    };
 
     private static final List<Slot> SLOTS = buildSlots();
 
@@ -61,35 +67,43 @@ public final class PrimitiveStorageCellarLayout {
 
     @Nullable
     public static Slot findSlot(Wall wall, Shelf shelf, Vec3 localHit) {
-        int localIndex = switch (wall) {
-            case NORTH, SOUTH -> indexForCoordinate(localHit.x, LONG_MIN, LONG_MAX, 6);
-            case WEST -> indexForCoordinate(localHit.z, WEST_MIN, WEST_MAX, 4);
-        };
+        double coordinate = wall == Wall.WEST ? localHit.z : localHit.x;
+        double min = wall == Wall.WEST ? WEST_MIN : LONG_MIN;
+        double max = wall == Wall.WEST ? WEST_MAX : LONG_MAX;
 
-        if (localIndex < 0) {
+        if (coordinate < min || coordinate > max) {
             return null;
         }
 
-        int shelfBase = shelf.ordinal() * 16;
-        int wallOffset = switch (wall) {
-            case NORTH -> 0;
-            case SOUTH -> 6;
-            case WEST -> 12;
-        };
+        Slot closest = null;
+        double closestDistance = Double.MAX_VALUE;
 
-        return SLOTS.get(shelfBase + wallOffset + localIndex);
+        for (Slot slot : SLOTS) {
+            if (slot.wall() != wall || slot.shelf() != shelf) {
+                continue;
+            }
+
+            double anchor = wall == Wall.WEST ? slot.renderPosition().z : slot.renderPosition().x;
+            double distance = Math.abs(coordinate - anchor);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = slot;
+            }
+        }
+
+        return closest;
     }
 
     private static List<Slot> buildSlots() {
         List<Slot> slots = new ArrayList<>(SLOT_COUNT);
 
         for (Shelf shelf : Shelf.values()) {
-            for (int i = 0; i < 6; i++) {
-                double x = centerForIndex(i, LONG_MIN, LONG_MAX, 6);
+            double[] longAnchors = longShelfAnchors(shelf);
+
+            for (double x : longAnchors) {
                 slots.add(new Slot(slots.size(), Wall.NORTH, shelf, new Vec3(x, shelf.renderY(), NORTH_Z)));
             }
-            for (int i = 0; i < 6; i++) {
-                double x = centerForIndex(i, LONG_MIN, LONG_MAX, 6);
+            for (double x : longAnchors) {
                 slots.add(new Slot(slots.size(), Wall.SOUTH, shelf, new Vec3(x, shelf.renderY(), SOUTH_Z)));
             }
             for (int i = 0; i < 4; i++) {
@@ -99,6 +113,30 @@ public final class PrimitiveStorageCellarLayout {
         }
 
         return Collections.unmodifiableList(slots);
+    }
+
+    private static double[] longShelfAnchors(Shelf shelf) {
+        return switch (shelf) {
+            // LOWER keeps a simple left-to-right order.
+            case LOWER -> new double[]{
+                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
+                    LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
+            };
+
+            // MIDDLE puts the two endpoint slots on the inner side of the posts,
+            // while their neighboring slots occupy the outer bays.
+            case MIDDLE -> new double[]{
+                    LONG_SAFE[1], LONG_SAFE[0], LONG_SAFE[2],
+                    LONG_SAFE[3], LONG_SAFE[5], LONG_SAFE[4]
+            };
+
+            // UPPER does the opposite so the endpoint displays do not form
+            // vertical columns with MIDDLE.
+            case UPPER -> new double[]{
+                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
+                    LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
+            };
+        };
     }
 
     private static int indexForCoordinate(double value, double min, double max, int divisions) {
