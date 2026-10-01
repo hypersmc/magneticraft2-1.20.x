@@ -160,75 +160,18 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         tag.putInt("CrushTime", this.crushtime);
         tag.putInt("TotalCrushTime", this.totalCrushTime);
         tag.putBoolean("isCrushing", this.crushing);
-        blueprintname = tag.getString("blueprintname");
-        tag.putString("blueprintname", blueprintname);
-        tag.putBoolean("formed", formed);
-        tag.putString("repacementmodel", repacementmodel);
-        if (getMultiblockController() != null) {
-            tag.put("MultiblockController", getMultiblockController().saveToNBT());
-            CompoundTag structureTag = getMultiblockController().getStructure().saveToNBT();
-            tag.put("MultiblockStructure", structureTag);
-        }
+        saveMultiblockData(tag, blueprintname, formed, repacementmodel);
     }
-
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         this.crushtime = tag.getInt("CrushTime");
         this.totalCrushTime = tag.getInt("TotalCrushTime");
         this.crushing = tag.getBoolean("isCrushing");
-        blueprintname = tag.getString("BlueprintName");
-        formed = tag.getBoolean("Formed");
-        repacementmodel = tag.getString("Repacementmodel");
-        if (tag.contains("MultiblockStructure")) {
-            // Extract data for dimensions, layout, and blocks from the NBT tag
-            CompoundTag structureTag = tag.getCompound("MultiblockStructure");
-
-            // Retrieve dimensions
-            ListTag dimensionsList = structureTag.getList("dimensions", 3); // Assuming each dimension is an integer
-            int[] dimensions = new int[dimensionsList.size()];
-            for (int i = 0; i < dimensionsList.size(); i++) {
-                dimensions[i] = dimensionsList.getInt(i);
-            }
-
-            // Retrieve layout
-            Map<String, List<List<String>>> layout = new HashMap<>();
-            CompoundTag layoutTag = structureTag.getCompound("layout");
-            for (String layerKey : layoutTag.getAllKeys()) {
-                List<List<String>> layerList = new ArrayList<>();
-                ListTag layerData = layoutTag.getList(layerKey, 9); // Assuming each row is stored as a ListTag
-                for (int j = 0; j < layerData.size(); j++) {
-                    List<String> rowList = new ArrayList<>();
-                    ListTag rowData = layerData.getList(j);
-                    for (int k = 0; k < rowData.size(); k++) {
-                        rowList.add(rowData.getString(k));
-                    }
-                    layerList.add(rowList);
-                }
-                layout.put(layerKey, layerList);
-            }
-
-            // Retrieve blocks
-            Map<String, Block> blocks = new HashMap<>();
-            CompoundTag blocksTag = structureTag.getCompound("blocks");
-            for (String blockKey : blocksTag.getAllKeys()) {
-                Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blocksTag.getString(blockKey)));
-                if (block != null) {
-                    blocks.put(blockKey, block);
-                }
-            }
-
-            // Now construct the MultiblockStructure with the loaded data
-            MultiblockStructure structure = new MultiblockStructure(dimensions, layout, blocks);
-
-            // Now initialize MultiblockController with the loaded structure
-            if (tag.contains("MultiblockController")) {
-                MultiblockController multiblockController = new MultiblockController(structure);
-                multiblockController.loadFromNBT(tag.getCompound("MultiblockController"));
-                this.controller = multiblockController;
-                setMultiblockController(multiblockController);
-            }
-        }
+        MultiblockPersistentData multiblockData = loadMultiblockData(tag);
+        blueprintname = multiblockData.blueprintName();
+        formed = multiblockData.formed();
+        repacementmodel = multiblockData.replacementModel();
     }
 
     @Override
@@ -237,17 +180,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         tag.putInt("CrushTime", this.crushtime);
         tag.putInt("TotalCrushTime", this.totalCrushTime);
         tag.putBoolean("isCrushing", this.crushing);
-        tag.putString("BlueprintName", blueprintname);
-        tag.putBoolean("Formed", formed);
-        tag.putString("Repacementmodel", repacementmodel);
-        if (getMultiblockController() != null) {
-            tag.put("MultiblockController", getMultiblockController().saveToNBT());
-
-            // Save MultiblockStructure separately if it exists within the controller
-            if (getMultiblockController().getStructure() != null) {
-                tag.put("MultiblockStructure", getMultiblockController().getStructure().saveToNBT());
-            }
-        }
+        saveMultiblockData(tag, blueprintname, formed, repacementmodel);
     }
 
     @Override
