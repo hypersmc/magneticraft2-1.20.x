@@ -217,13 +217,16 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
-        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
+
+        // Apply the lay-down rotation before yaw. If yaw is applied first, a
+        // generated 2D item remains a vertical "fin" even with a 90 degree tilt.
         if (tilt != 0.0F) {
             poseStack.mulPose(Axis.XP.rotationDegrees(tilt));
         }
         if (roll != 0.0F) {
             poseStack.mulPose(Axis.ZP.rotationDegrees(roll));
         }
+        poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(formedFacing) + yaw));
         poseStack.scale(scale, scale, scale);
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
@@ -241,41 +244,28 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     }
 
     private Vec3 getLowerCornerVisibilityOffset(PrimitiveStorageCellarLayout.Slot slot) {
-        if (slot.shelf() != PrimitiveStorageCellarLayout.Shelf.LOWER || !isCornerSlot(slot)) {
+        if (slot.shelf() != PrimitiveStorageCellarLayout.Shelf.LOWER) {
             return Vec3.ZERO;
         }
 
-        // Keep the lower displays on the shelf itself. Move the end slots
-        // horizontally toward the visible corners/opening instead of lifting them.
         int indexInLevel = slot.index() % 16;
 
-        return switch (slot.wall()) {
-            case NORTH -> new Vec3(
-                    indexInLevel == 0 ? -0.12D : 0.12D,
-                    0.0D,
-                    0.16D
-            );
-            case SOUTH -> new Vec3(
-                    indexInLevel == 6 ? -0.12D : 0.12D,
-                    0.0D,
-                    -0.16D
-            );
-            case WEST -> new Vec3(
-                    0.16D,
-                    0.0D,
-                    indexInLevel == 12 ? -0.10D : 0.10D
-            );
-        };
-    }
+        // The two hard-to-see lower corners are the inner junctions where the
+        // long NORTH/SOUTH shelves meet the WEST shelf. Put those end slots
+        // directly into the visible corner area (the user's marked X positions).
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH && indexInLevel == 0) {
+            Vec3 current = slot.renderPosition();
+            Vec3 target = new Vec3(-1.47D, current.y, -0.05D);
+            return target.subtract(current);
+        }
 
-    private boolean isCornerSlot(PrimitiveStorageCellarLayout.Slot slot) {
-        int indexInLevel = slot.index() % 16;
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH && indexInLevel == 6) {
+            Vec3 current = slot.renderPosition();
+            Vec3 target = new Vec3(-1.47D, current.y, 1.05D);
+            return target.subtract(current);
+        }
 
-        return switch (slot.wall()) {
-            case NORTH -> indexInLevel == 0 || indexInLevel == 5;
-            case SOUTH -> indexInLevel == 6 || indexInLevel == 11;
-            case WEST -> indexInLevel == 12 || indexInLevel == 15;
-        };
+        return Vec3.ZERO;
     }
 
     private long getVisualSeed(int slot, ItemStack stack) {
