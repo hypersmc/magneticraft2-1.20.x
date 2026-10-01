@@ -219,7 +219,8 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     }
 
     private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
-        if (slot.index() == 22 || slot.index() == 39) {
+        if (slot.index() == 16 || slot.index() == 22
+                || slot.index() == 32 || slot.index() == 38) {
             return Vec3.ZERO;
         }
 
@@ -357,9 +358,15 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Match the already-working LOWER SOUTH corner placement for the
-        // corresponding MIDDLE/UPPER displays, while preserving their own Y.
-        if (slot.index() == 22 || slot.index() == 39) {
+        // MIDDLE/UPPER equivalents of the two already-working LOWER
+        // inner corners. Keep each shelf's own Y, but reuse the same X/Z target.
+        if (slot.index() == 16 || slot.index() == 32) {
+            Vec3 current = slot.renderPosition();
+            Vec3 target = new Vec3(-1.47D, current.y, -0.05D);
+            return target.subtract(current);
+        }
+
+        if (slot.index() == 22 || slot.index() == 38) {
             Vec3 current = slot.renderPosition();
             Vec3 target = new Vec3(-1.47D, current.y, 1.05D);
             return target.subtract(current);
