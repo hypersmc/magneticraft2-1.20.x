@@ -57,6 +57,10 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
     }
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
         if (!pLevel.isClientSide) {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof PrimitiveStorageCellarMultiblockEntity multiblockEntity) {
