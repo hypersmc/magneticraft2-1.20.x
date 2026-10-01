@@ -166,7 +166,7 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         Vec3 visibilityOffset = getLowerCornerVisibilityOffset(slot);
         Vec3 pillarOffset = getPillarAvoidanceOffset(slot);
-        Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D || isHandPlacedShelfEndpoint(slot)
+        Vec3 naturalOffset = visibilityOffset.lengthSqr() > 0.0D
                 ? Vec3.ZERO
                 : getNaturalLooseItemOffset(slot, seed);
 
@@ -350,89 +350,12 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         poseStack.popPose();
     }
 
-    private boolean isHandPlacedShelfEndpoint(PrimitiveStorageCellarLayout.Slot slot) {
-        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
-            return false;
-        }
-
-        int indexInLevel = slot.index() % 16;
-        return (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH
-                && (indexInLevel == 0 || indexInLevel == 5))
-                || (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH
-                && (indexInLevel == 6 || indexInLevel == 11));
-    }
-
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
-        Vec3 current = slot.renderPosition();
 
-        // The long side shelves have endpoint anchors directly inside the timber
-        // posts. For MIDDLE and UPPER, place those endpoints in specific open
-        // shelf bays instead of accumulating generic offsets.
-        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE) {
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
-                if (indexInLevel == 0) {
-                    return new Vec3(-1.18D, current.y, current.z).subtract(current);
-                }
-                if (indexInLevel == 5) {
-                    return new Vec3(0.18D, current.y, current.z).subtract(current);
-                }
-            }
-
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
-                if (indexInLevel == 6) {
-                    return new Vec3(-1.18D, current.y, current.z).subtract(current);
-                }
-                if (indexInLevel == 11) {
-                    return new Vec3(0.18D, current.y, current.z).subtract(current);
-                }
-            }
-        }
-
-        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.UPPER) {
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
-                if (indexInLevel == 0) {
-                    return new Vec3(-1.78D, current.y, current.z).subtract(current);
-                }
-                if (indexInLevel == 5) {
-                    return new Vec3(0.78D, current.y, current.z).subtract(current);
-                }
-            }
-
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
-                if (indexInLevel == 6) {
-                    return new Vec3(-1.78D, current.y, current.z).subtract(current);
-                }
-                if (indexInLevel == 11) {
-                    return new Vec3(0.78D, current.y, current.z).subtract(current);
-                }
-            }
-        }
-
-        // LOWER keeps the visibility-oriented placement from the previous pass.
-        if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH) {
-                if (indexInLevel == 0) {
-                    return new Vec3(0.20D, 0.0D, 0.0D);
-                }
-                if (indexInLevel == 5) {
-                    return new Vec3(-0.20D, 0.0D, 0.0D);
-                }
-            }
-
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH) {
-                if (indexInLevel == 6) {
-                    return new Vec3(0.20D, 0.0D, 0.0D);
-                }
-                if (indexInLevel == 11) {
-                    return new Vec3(-0.20D, 0.0D, 0.0D);
-                }
-            }
-        }
-
-        // Short WEST shelf endpoints only need to stay clear of the two corner
-        // posts; keep these conservative because their four anchors are already
-        // spread across the full shelf.
+        // Long NORTH/SOUTH shelf anchors are now defined around the timber posts
+        // in PrimitiveStorageCellarLayout itself. Only the short WEST shelf still
+        // needs a small endpoint clearance.
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
             double inset = switch (slot.shelf()) {
                 case LOWER -> 0.10D;
