@@ -247,8 +247,12 @@ dependencies {
 }
 
 tasks.withType(JavaExec).configureEach {
-    if (name == "runClient") {
-        environment "GLFW_PLATFORM", "x11"
+    if (name == 'runClient') {
+        environment.remove('WAYLAND_DISPLAY')
+        environment 'DISPLAY', System.getenv('DISPLAY') ?: ':0'
+        environment 'XDG_SESSION_TYPE', 'x11'
+        environment 'LANG', 'C.UTF-8'
+        environment 'LC_ALL', 'C.UTF-8'
     }
 }
 
