@@ -357,11 +357,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
         // 22 = SOUTH / MIDDLE, 38 = SOUTH / UPPER.
         // Pull only these two renders toward the open center of the cellar so
         // they are no longer hidden behind the left timber post.
-        if (slot.index() == 22) {
-            return new Vec3(0.0D, 0.0D, -0.24D);
-        }
-        if (slot.index() == 38) {
-            return new Vec3(0.0D, 0.0D, -0.21D);
+        if (slot.index() == 22 || slot.index() == 38) {
+            // SOUTH shelf anchor is z=1.45. Bring these two confirmed hidden
+            // slots forward to z~=1.05, right beside the pillar on the room side.
+            return new Vec3(0.0D, 0.0D, -0.40D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
