@@ -56,6 +56,12 @@ public final class PrimitiveStorageCellarLayout {
             -1.80D, -1.16D, -0.74D, -0.32D, 0.10D, 0.76D
     };
 
+    // MIDDLE/UPPER inner-side positions need extra clearance from the posts.
+    // LOWER keeps the original anchors because its outward presentation already
+    // makes those positions work well.
+    private static final double INNER_LEFT = -1.05D;
+    private static final double INNER_RIGHT = -0.02D;
+
     private static final List<Slot> SLOTS = buildSlots();
 
     private PrimitiveStorageCellarLayout() {
@@ -117,24 +123,24 @@ public final class PrimitiveStorageCellarLayout {
 
     private static double[] longShelfAnchors(Shelf shelf) {
         return switch (shelf) {
-            // LOWER keeps a simple left-to-right order.
+            // LOWER keeps the positions that are already working.
             case LOWER -> new double[]{
                     LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
 
-            // MIDDLE puts the two endpoint slots on the inner side of the posts,
-            // while their neighboring slots occupy the outer bays.
+            // MIDDLE keeps the outer bays but moves only the two inner-side
+            // post positions farther into the open center bay.
             case MIDDLE -> new double[]{
-                    LONG_SAFE[1], LONG_SAFE[0], LONG_SAFE[2],
-                    LONG_SAFE[3], LONG_SAFE[5], LONG_SAFE[4]
+                    INNER_LEFT, LONG_SAFE[0], LONG_SAFE[2],
+                    LONG_SAFE[3], LONG_SAFE[5], INNER_RIGHT
             };
 
-            // UPPER does the opposite so the endpoint displays do not form
-            // vertical columns with MIDDLE.
+            // UPPER uses the same safer inner-side coordinates while retaining
+            // its existing outer-slot ordering.
             case UPPER -> new double[]{
-                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
-                    LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
+                    LONG_SAFE[0], INNER_LEFT, LONG_SAFE[2],
+                    LONG_SAFE[3], INNER_RIGHT, LONG_SAFE[5]
             };
         };
     }
