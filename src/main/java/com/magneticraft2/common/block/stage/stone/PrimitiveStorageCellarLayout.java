@@ -56,6 +56,10 @@ public final class PrimitiveStorageCellarLayout {
             -1.80D, -1.16D, -0.74D, -0.32D, 0.10D, 0.76D
     };
 
+    // Only the inner side of the LEFT timber post still clips MIDDLE/UPPER
+    // displays. Move that one anchor farther into the open shelf bay.
+    private static final double LEFT_INNER_SAFE = -0.96D;
+
     private static final List<Slot> SLOTS = buildSlots();
 
     private PrimitiveStorageCellarLayout() {
@@ -117,23 +121,21 @@ public final class PrimitiveStorageCellarLayout {
 
     private static double[] longShelfAnchors(Shelf shelf) {
         return switch (shelf) {
-            // LOWER keeps a simple left-to-right order.
+            // LOWER stays completely unchanged.
             case LOWER -> new double[]{
                     LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
 
-            // MIDDLE puts the two endpoint slots on the inner side of the posts,
-            // while their neighboring slots occupy the outer bays.
+            // Only the inner-left position changes. The outer-left, center,
+            // right side and slot ordering stay exactly as before.
             case MIDDLE -> new double[]{
-                    LONG_SAFE[1], LONG_SAFE[0], LONG_SAFE[2],
+                    LEFT_INNER_SAFE, LONG_SAFE[0], LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[5], LONG_SAFE[4]
             };
 
-            // UPPER does the opposite so the endpoint displays do not form
-            // vertical columns with MIDDLE.
             case UPPER -> new double[]{
-                    LONG_SAFE[0], LONG_SAFE[1], LONG_SAFE[2],
+                    LONG_SAFE[0], LEFT_INNER_SAFE, LONG_SAFE[2],
                     LONG_SAFE[3], LONG_SAFE[4], LONG_SAFE[5]
             };
         };
