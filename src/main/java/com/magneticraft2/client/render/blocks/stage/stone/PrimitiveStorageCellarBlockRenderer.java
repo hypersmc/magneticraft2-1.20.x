@@ -358,40 +358,23 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // MIDDLE/UPPER equivalents of the two already-working LOWER
-        // inner corners. Keep each shelf's own Y, but reuse the same X/Z target.
-        if (slot.index() == 16 || slot.index() == 32) {
-            Vec3 current = slot.renderPosition();
-            Vec3 target = new Vec3(-1.47D, current.y, -0.05D);
-            return target.subtract(current);
+        // Exact inner WEST-shelf pairs marked in-game. Move only these four
+        // toward their nearest timber pillar; everything else stays untouched.
+        if (slot.index() == 29 || slot.index() == 45) {
+            return new Vec3(0.0D, 0.0D, -0.10D);
+        }
+        if (slot.index() == 30 || slot.index() == 46) {
+            return new Vec3(0.0D, 0.0D, 0.10D);
         }
 
-        if (slot.index() == 22 || slot.index() == 38) {
-            Vec3 current = slot.renderPosition();
-            Vec3 target = new Vec3(-1.47D, current.y, 1.05D);
-            return target.subtract(current);
-        }
-
-        // Keep the already-working short WEST/center shelf treatment.
-        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
-            if (slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
-                if (indexInLevel == 12) {
-                    return new Vec3(0.0D, 0.0D, 0.10D);
-                }
-                if (indexInLevel == 15) {
-                    return new Vec3(0.0D, 0.0D, -0.10D);
-                }
-                return Vec3.ZERO;
-            }
-
-            double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.22D : 0.18D;
-            double inward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.07D : 0.06D;
-
+        // Preserve the working lower WEST shelf endpoint clearance.
+        if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST
+                && slot.shelf() == PrimitiveStorageCellarLayout.Shelf.LOWER) {
             if (indexInLevel == 12) {
-                return new Vec3(outward, 0.0D, inward);
+                return new Vec3(0.0D, 0.0D, 0.10D);
             }
             if (indexInLevel == 15) {
-                return new Vec3(outward, 0.0D, -inward);
+                return new Vec3(0.0D, 0.0D, -0.10D);
             }
         }
 
