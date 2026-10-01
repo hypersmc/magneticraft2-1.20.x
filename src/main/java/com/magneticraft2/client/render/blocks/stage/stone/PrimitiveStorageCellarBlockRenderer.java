@@ -353,20 +353,15 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // The remaining problem is the INNER side of the LEFT post on the
-        // MIDDLE and UPPER long shelves. Keep its X anchor unchanged and pull
-        // the display toward the open center of the cellar so the post no longer
-        // hides it.
-        if (slot.shelf() != PrimitiveStorageCellarLayout.Shelf.LOWER) {
-            double outward = slot.shelf() == PrimitiveStorageCellarLayout.Shelf.MIDDLE ? 0.20D : 0.17D;
-
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.NORTH && indexInLevel == 1) {
-                return new Vec3(0.0D, 0.0D, outward);
-            }
-
-            if (slot.wall() == PrimitiveStorageCellarLayout.Wall.SOUTH && indexInLevel == 7) {
-                return new Vec3(0.0D, 0.0D, -outward);
-            }
+        // Exact problem slots confirmed in-game:
+        // 22 = SOUTH / MIDDLE, 38 = SOUTH / UPPER.
+        // Pull only these two renders toward the open center of the cellar so
+        // they are no longer hidden behind the left timber post.
+        if (slot.index() == 22) {
+            return new Vec3(0.0D, 0.0D, -0.24D);
+        }
+        if (slot.index() == 38) {
+            return new Vec3(0.0D, 0.0D, -0.21D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
