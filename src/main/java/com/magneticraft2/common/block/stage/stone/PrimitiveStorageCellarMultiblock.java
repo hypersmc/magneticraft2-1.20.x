@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -100,11 +101,15 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
         Vec3 relativeHit = MultiblockHitHelper.relativeToController(pHit, pPos);
         Vec3 localHit = MultiblockHitHelper.toCanonicalWest(relativeHit, formedFacing);
         CellarTarget target = findCellarTarget(localHit);
+        PrimitiveStorageCellarLayout.Slot slot = target == null
+                ? null
+                : PrimitiveStorageCellarLayout.findSlot(target.wall(), target.shelf(), localHit);
 
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
             String targetName = target == null
                     ? "none"
-                    : target.wall().name() + " / " + target.shelf().name();
+                    : target.wall().name() + " / " + target.shelf().name()
+                    + (slot == null ? " / no slot" : " / slot " + slot.index());
 
             String message = String.format(
                     "Cellar %s -> %s | local x=%.3f y=%.3f z=%.3f",
@@ -117,6 +122,36 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
 
             LOGGER.info(message);
             pPlayer.displayClientMessage(Component.literal(message), true);
+        }
+
+        if (slot != null) {
+            interactWithSlot(cellarEntity, slot.index(), pPlayer, pHand);
+        }
+    }
+
+    private void interactWithSlot(PrimitiveStorageCellarMultiblockEntity cellarEntity, int slot, Player player, InteractionHand hand) {
+        ItemStack heldItem = player.getItemInHand(hand);
+
+        if (heldItem.isEmpty()) {
+            ItemStack extracted = cellarEntity.itemHandler.extractItem(slot, 64, false);
+            if (!extracted.isEmpty()) {
+                if (!player.getInventory().add(extracted)) {
+                    player.drop(extracted, false);
+                }
+                cellarEntity.sync();
+            }
+            return;
+        }
+
+        ItemStack toInsert = heldItem.copy();
+        ItemStack remainder = cellarEntity.itemHandler.insertItem(slot, toInsert, false);
+        int inserted = heldItem.getCount() - remainder.getCount();
+
+        if (inserted > 0) {
+            if (!player.getAbilities().instabuild) {
+                heldItem.shrink(inserted);
+            }
+            cellarEntity.sync();
         }
     }
 
@@ -150,13 +185,13 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
             return null;
         }
 
-        CellarShelf shelf;
+        PrimitiveStorageCellarLayout.Shelf shelf;
         if (y < -0.33D) {
-            shelf = CellarShelf.LOWER;
+            shelf = PrimitiveStorageCellarLayout.Shelf.LOWER;
         } else if (y < 0.30D) {
-            shelf = CellarShelf.MIDDLE;
+            shelf = PrimitiveStorageCellarLayout.Shelf.MIDDLE;
         } else {
-            shelf = CellarShelf.UPPER;
+            shelf = PrimitiveStorageCellarLayout.Shelf.UPPER;
         }
 
         // The WEST-authored replacement model is rendered with WEST.move(-1, 0, 0).
@@ -166,31 +201,19 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
         // west:  x -1.9375..-1,     z 0..1
         // A small tolerance makes clicks on shelf edges behave naturally.
         if (z >= -1.00D && z <= 0.10D && x >= -2.00D && x <= 1.00D) {
-            return new CellarTarget(CellarWall.NORTH, shelf);
+            return new CellarTarget(PrimitiveStorageCellarLayout.Wall.NORTH, shelf);
         }
         if (z >= 0.90D && z <= 2.00D && x >= -2.00D && x <= 1.00D) {
-            return new CellarTarget(CellarWall.SOUTH, shelf);
+            return new CellarTarget(PrimitiveStorageCellarLayout.Wall.SOUTH, shelf);
         }
         if (x >= -2.00D && x <= -0.90D && z >= -0.05D && z <= 1.05D) {
-            return new CellarTarget(CellarWall.WEST, shelf);
+            return new CellarTarget(PrimitiveStorageCellarLayout.Wall.WEST, shelf);
         }
 
         return null;
     }
 
-    private enum CellarWall {
-        NORTH,
-        SOUTH,
-        WEST
-    }
-
-    private enum CellarShelf {
-        LOWER,
-        MIDDLE,
-        UPPER
-    }
-
-    private record CellarTarget(CellarWall wall, CellarShelf shelf) {
+    private record CellarTarget(PrimitiveStorageCellarLayout.Wall wall, PrimitiveStorageCellarLayout.Shelf shelf) {
     }
     private VoxelShape controllerLocalSlice(VoxelShape fullShape) {
         return Shapes.join(fullShape, Shapes.block(), BooleanOp.AND).optimize();
