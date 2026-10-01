@@ -403,11 +403,14 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
 
         // Exact four confirmed in-game. Their base X is -1.80; move only
         // sideways toward the left timber post, keeping their current Z/depth.
-        if (slot.index() == 16 || slot.index() == 22
-                || slot.index() == 32 || slot.index() == 38) {
-            // +0.33 placed the display centers at x~-1.47, inside the timber.
-            // Push them through to the open side so the piles sit beside it.
-            return new Vec3(0.60D, 0.0D, 0.0D);
+        // Confirmed mirrored corner pairs. Keep X untouched so they cannot
+        // overlap the neighboring long-shelf slots; move only along Z toward
+        // the open side of their respective timber posts.
+        if (slot.index() == 16 || slot.index() == 32) {
+            return new Vec3(0.0D, 0.0D, 0.22D);
+        }
+        if (slot.index() == 22 || slot.index() == 38) {
+            return new Vec3(0.0D, 0.0D, -0.22D);
         }
 
         // Preserve the working lower WEST shelf endpoint clearance.
