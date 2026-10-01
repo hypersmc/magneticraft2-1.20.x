@@ -240,29 +240,26 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         return getUpdateTag();
     }
     private void loadClientData(CompoundTag tag) {
-        pos1 = tag.contains("pos1") ? BlockPos.of(tag.getLong("pos1")) : INVALID_BLUEPRINT_POS;
-        pos2 = tag.contains("pos2") ? BlockPos.of(tag.getLong("pos2")) : INVALID_BLUEPRINT_POS;
-        pos1long = tag.getLong("pos1long");
-        pos2long = tag.getLong("pos2long");
-        blueprintname1 = tag.getString("blueprintname1");
-        shouldsave = tag.getBoolean("shouldsave");
-        initialGameTime = tag.getLong("time");
-        tag.putString("blueprintname", blueprintname);
-        tag.putBoolean("formed", formed);
-        tag.putString("repacementmodel", repacementmodel);
-        if (getMultiblockController() != null) {
-            tag.put("MultiblockController", getMultiblockController().saveToNBT());
-            CompoundTag structureTag = getMultiblockController().getStructure().saveToNBT();
-            tag.put("MultiblockStructure", structureTag);
+        tag.putLong("pos1", pos1.asLong());
+        tag.putLong("pos2", pos2.asLong());
+        tag.putLong("pos1long", pos1long);
+        tag.putLong("pos2long", pos2long);
+        if (blueprintname1 != null) {
+            tag.putString("blueprintname1", blueprintname1);
         }
+        tag.putBoolean("shouldsave", shouldsave);
+        tag.putLong("time", initialGameTime);
+        saveMultiblockData(tag, blueprintname, formed, repacementmodel);
     }
-
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
-        blueprintname = tag.getString("BlueprintName");
-        formed = tag.getBoolean("Formed");
-        repacementmodel = tag.getString("Repacementmodel");
+
+        MultiblockPersistentData multiblockData = loadMultiblockData(tag);
+        blueprintname = multiblockData.blueprintName();
+        formed = multiblockData.formed();
+        repacementmodel = multiblockData.replacementModel();
+
         pos1 = tag.contains("pos1") ? BlockPos.of(tag.getLong("pos1")) : INVALID_BLUEPRINT_POS;
         pos2 = tag.contains("pos2") ? BlockPos.of(tag.getLong("pos2")) : INVALID_BLUEPRINT_POS;
         pos1long = tag.getLong("pos1long");
@@ -270,83 +267,26 @@ public class BlueprintMultiblockEntity extends BaseBlockEntityMagneticraft2 {
         blueprintname1 = tag.getString("blueprintname1");
         shouldsave = tag.getBoolean("shouldsave");
         initialGameTime = tag.getLong("time");
-        if (tag.contains("MultiblockStructure")) {
-            // Extract data for dimensions, layout, and blocks from the NBT tag
-            CompoundTag structureTag = tag.getCompound("MultiblockStructure");
-
-            // Retrieve dimensions
-            ListTag dimensionsList = structureTag.getList("dimensions", 3); // Assuming each dimension is an integer
-            int[] dimensions = new int[dimensionsList.size()];
-            for (int i = 0; i < dimensionsList.size(); i++) {
-                dimensions[i] = dimensionsList.getInt(i);
-            }
-
-            // Retrieve layout
-            Map<String, List<List<String>>> layout = new HashMap<>();
-            CompoundTag layoutTag = structureTag.getCompound("layout");
-            for (String layerKey : layoutTag.getAllKeys()) {
-                List<List<String>> layerList = new ArrayList<>();
-                ListTag layerData = layoutTag.getList(layerKey, 9); // Assuming each row is stored as a ListTag
-                for (int j = 0; j < layerData.size(); j++) {
-                    List<String> rowList = new ArrayList<>();
-                    ListTag rowData = layerData.getList(j);
-                    for (int k = 0; k < rowData.size(); k++) {
-                        rowList.add(rowData.getString(k));
-                    }
-                    layerList.add(rowList);
-                }
-                layout.put(layerKey, layerList);
-            }
-
-            // Retrieve blocks
-            Map<String, Block> blocks = new HashMap<>();
-            CompoundTag blocksTag = structureTag.getCompound("blocks");
-            for (String blockKey : blocksTag.getAllKeys()) {
-                Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(blocksTag.getString(blockKey)));
-                if (block != null) {
-                    blocks.put(blockKey, block);
-                }
-            }
-
-            // Now construct the MultiblockStructure with the loaded data
-            MultiblockStructure structure = new MultiblockStructure(dimensions, layout, blocks);
-
-            // Now initialize MultiblockController with the loaded structure
-            if (tag.contains("MultiblockController")) {
-                MultiblockController multiblockController = new MultiblockController(structure);
-                multiblockController.loadFromNBT(tag.getCompound("MultiblockController"));
-                setMultiblockController(multiblockController);
-            }
-        }
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        tag.putString("BlueprintName", blueprintname);
-        tag.putBoolean("Formed", formed);
-        tag.putString("Repacementmodel", repacementmodel);
-        if (getMultiblockController() != null) {
-            tag.put("MultiblockController", getMultiblockController().saveToNBT());
+        saveMultiblockData(tag, blueprintname, formed, repacementmodel);
 
-            // Save MultiblockStructure separately if it exists within the controller
-            if (getMultiblockController().getStructure() != null) {
-                tag.put("MultiblockStructure", getMultiblockController().getStructure().saveToNBT());
-            }
-        }
-        if (pos1long != 0){
+        if (pos1long != 0) {
             tag.putLong("pos1long", pos1long);
         }
-        if (pos2long != 0){
+        if (pos2long != 0) {
             tag.putLong("pos2long", pos2long);
         }
         if (pos1 != null) {
             tag.putLong("pos1", pos1.asLong());
         }
-        if (pos2 != null){
+        if (pos2 != null) {
             tag.putLong("pos2", pos2.asLong());
         }
-        if (blueprintname1 != null){
+        if (blueprintname1 != null) {
             tag.putString("blueprintname1", blueprintname1);
         }
         tag.putBoolean("shouldsave", shouldsave);
