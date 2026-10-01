@@ -1,6 +1,7 @@
 package com.magneticraft2.common.blockentity.stage.stone;
 
 import com.magneticraft2.common.block.general.BlueprintMultiblock;
+import com.magneticraft2.common.block.stage.stone.PrimitiveStorageCellarLayout;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -156,7 +157,7 @@ public class PrimitiveStorageCellarMultiblockEntity extends BaseBlockEntityMagne
 
     @Override
     public int invsize() {
-        return 48;
+        return PrimitiveStorageCellarLayout.SLOT_COUNT;
     }
 
     @Override
