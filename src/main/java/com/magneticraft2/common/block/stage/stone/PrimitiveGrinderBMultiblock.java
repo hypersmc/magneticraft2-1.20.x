@@ -51,11 +51,10 @@ public class PrimitiveGrinderBMultiblock extends BaseBlockMagneticraft2 {
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
         if (!pLevel.isClientSide){
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            PrimitiveGrinderBMultiblockEntity multiblockEntity = (PrimitiveGrinderBMultiblockEntity) blockEntity;
-            if (blockEntity instanceof BaseBlockEntityMagneticraft2 primitivecrusher) {
+            if (blockEntity instanceof PrimitiveGrinderBMultiblockEntity multiblockEntity) {
                 if (multiblockEntity.isFormed()) {
 
-                }else {
+                } else {
                     multiblockEntity.onRightClick();
                 }
             }
