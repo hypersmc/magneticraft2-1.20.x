@@ -219,6 +219,10 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     }
 
     private Vec3 getNaturalLooseItemOffset(PrimitiveStorageCellarLayout.Slot slot, long seed) {
+        if (slot.index() == 22 || slot.index() == 39) {
+            return Vec3.ZERO;
+        }
+
         if (slot.wall() == PrimitiveStorageCellarLayout.Wall.WEST) {
             int centerIndex = (slot.index() % 16) - 12;
             double[] depth = {0.035D, -0.015D, 0.020D, -0.030D};
@@ -353,10 +357,11 @@ public class PrimitiveStorageCellarBlockRenderer implements BlockEntityRenderer<
     private Vec3 getPillarAvoidanceOffset(PrimitiveStorageCellarLayout.Slot slot) {
         int indexInLevel = slot.index() % 16;
 
-        // Matching physical slots beside the left post:
-        // MIDDLE uses slot 23 here, while UPPER uses slot 38.
-        if (slot.index() == 23 || slot.index() == 38) {
-            return new Vec3(0.30D, 0.0D, -0.60D);
+        // Inner-side displays beside the left SOUTH-wall timber post.
+        // These are the actual visual slots: MIDDLE 22 and UPPER 39.
+        // Pull them in front of the post and sideways toward its center.
+        if (slot.index() == 22 || slot.index() == 39) {
+            return new Vec3(-0.28D, 0.0D, -0.60D);
         }
 
         // Keep the already-working short WEST/center shelf treatment.
