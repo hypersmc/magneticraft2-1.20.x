@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "magneticraft2:chalcocite_ore"
+    "magneticraft2:chalcocite_ore",
+    "magneticraft2:primitive_anvil"
   ]
 }
