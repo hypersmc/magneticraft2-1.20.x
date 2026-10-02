@@ -154,13 +154,33 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         }
     }
     public void onDestroy(Level level) {
+        dropInventoryContents(level);
+
         if (this.multiblockController != null) {
-            this.multiblockController.setMasterPos(worldPosition );
+            this.multiblockController.setMasterPos(worldPosition);
             this.multiblockController.destroyStructure(level);
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("onDestroy triggered");
             }
         }
+    }
+
+    private void dropInventoryContents(Level level) {
+        if (level.isClientSide || !itemcape() || itemHandler == null) {
+            return;
+        }
+
+        for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
+            ItemStack stack = itemHandler.getStackInSlot(slot);
+            if (stack.isEmpty()) {
+                continue;
+            }
+
+            Block.popResource(level, worldPosition, stack.copy());
+            itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
+        }
+
+        setChanged();
     }
     public boolean matchesStructure(Level world, BlockPos pos, @NotNull MultiblockStructure structure, Multiblock multiblock) {
         Map<String, List<List<String>>> layout = structure.getLayout();
