@@ -1,12 +1,15 @@
 package com.magneticraft2.common.registry.registers;
 
+import com.magneticraft2.common.entity.mechanical.BeltCollisionEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,5 +28,12 @@ public class EntitiesRegistry {
         ENTITIES.register(eventBus);
     }
     //Entities after this line
+    public static final RegistryObject<EntityType<BeltCollisionEntity>> BELT_COLLISION =
+            ENTITIES.register("belt_collision", () ->
+                    EntityType.Builder.<BeltCollisionEntity>of(BeltCollisionEntity::new, MobCategory.MISC)
+                            .sized(0.1F, 0.1F)
+                            .clientTrackingRange(10)
+                            .updateInterval(Integer.MAX_VALUE)
+                            .build("belt_collision"));
 
 }
