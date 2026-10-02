@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["MM", "MM"],
+  "key": {
+    "M": { "item": "minecraft:mud_bricks" }
+  },
+  "result": { "item": "magneticraft2:primitivefurnace_multiblock_nogui" }
+}
