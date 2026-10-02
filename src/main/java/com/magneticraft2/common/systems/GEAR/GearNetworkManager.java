@@ -286,12 +286,9 @@ public class GearNetworkManager {
                 if (sourcePos != null && overloadedSources.contains(sourcePos)) {
                     gear.setOverloaded(true);
 
-                    // A load overload is a hard mechanical stall, not merely a warning flag.
-                    // Keep the source's commanded RPM/torque intact so it can recover as soon
-                    // as demand falls back within capacity, but stop every driven node.
-                    if (!gear.isSource()) {
-                        gear.setSpeed(0.0F);
-                    }
+                    // Do not erase the calculated/raw RPM here. The network still needs
+                    // that value to preserve ratios and evaluate aggregate demand while stalled.
+                    // Effective/transmitted RPM is exposed as zero through GearNode#getEffectiveSpeed().
                 }
             }
         }
@@ -562,7 +559,7 @@ public class GearNetworkManager {
 
     private void syncAll(Level level, Iterable<GearNode> gears) {
         for (GearNode gear : gears) {
-            float transmittedSpeed = gear.isOverloaded() ? 0.0F : gear.getSpeed();
+            float transmittedSpeed = gear.getEffectiveSpeed();
             CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(
                     gear.getPosition(),
                     transmittedSpeed,
