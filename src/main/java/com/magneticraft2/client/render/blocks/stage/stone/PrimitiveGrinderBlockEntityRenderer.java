@@ -88,29 +88,16 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
                 packedOverlay
         );
 
-        renderStoredItem(
+        renderInputWorkpiece(
                 blockEntity,
-                blockEntity.getInputStack(),
-                0.5D,
-                1.365D,
-                0.5D,
-                -12.0F,
-                0.34F,
-                101,
+                partialTick,
                 poseStack,
                 buffer,
                 packedLight
         );
 
-        renderStoredItem(
+        renderOutputPile(
                 blockEntity,
-                blockEntity.getOutputStack(),
-                0.5D,
-                0.925D,
-                0.16D,
-                14.0F,
-                0.32F,
-                202,
                 poseStack,
                 buffer,
                 packedLight
@@ -119,6 +106,83 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
 
     private float getInputRotation(PrimitiveGrinderBMultiblockEntity blockEntity, float partialTick) {
         return blockEntity.getMechanicalVisualRotationDegrees(partialTick);
+    }
+
+    private void renderInputWorkpiece(PrimitiveGrinderBMultiblockEntity blockEntity,
+                                      float partialTick,
+                                      PoseStack poseStack,
+                                      MultiBufferSource buffer,
+                                      int packedLight) {
+        ItemStack input = blockEntity.getInputStack();
+        if (input.isEmpty()) {
+            return;
+        }
+
+        // The workpiece belongs in the actual grinding area, not on top of the machine.
+        // As the recipe progresses it settles deeper into the grinding ring and becomes
+        // slightly smaller, giving useful GUI-less feedback without pretending the item
+        // has already been consumed.
+        float progress = blockEntity.getVisualCrushProgress(partialTick);
+        double y = 1.285D - (0.19D * progress);
+        float scale = 0.30F - (0.07F * progress);
+        float yaw = -8.0F + (6.0F * progress);
+
+        ItemStack displayStack = input.copy();
+        displayStack.setCount(1);
+
+        renderStoredItem(
+                blockEntity,
+                displayStack,
+                0.5D,
+                y,
+                0.5D,
+                yaw,
+                scale,
+                101,
+                poseStack,
+                buffer,
+                packedLight
+        );
+    }
+
+    private void renderOutputPile(PrimitiveGrinderBMultiblockEntity blockEntity,
+                                  PoseStack poseStack,
+                                  MultiBufferSource buffer,
+                                  int packedLight) {
+        ItemStack output = blockEntity.getOutputStack();
+        if (output.isEmpty()) {
+            return;
+        }
+
+        // The front-center gap in the current stone lip acts as a provisional catch point.
+        // Keep this entirely visual for now so the eventual dedicated tray/bin design can be
+        // changed without touching recipe or inventory behavior.
+        int count = output.getCount();
+        int copies = count >= 16 ? 3 : (count >= 4 ? 2 : 1);
+
+        double[] xOffsets = {0.0D, -0.055D, 0.055D};
+        double[] yOffsets = {0.0D, 0.018D, 0.028D};
+        double[] zOffsets = {0.0D, 0.035D, 0.025D};
+        float[] yawOffsets = {10.0F, -14.0F, 23.0F};
+
+        ItemStack displayStack = output.copy();
+        displayStack.setCount(1);
+
+        for (int i = 0; i < copies; i++) {
+            renderStoredItem(
+                    blockEntity,
+                    displayStack,
+                    0.5D + xOffsets[i],
+                    0.925D + yOffsets[i],
+                    0.105D + zOffsets[i],
+                    yawOffsets[i],
+                    0.27F,
+                    202 + i,
+                    poseStack,
+                    buffer,
+                    packedLight
+            );
+        }
     }
 
     private void renderRotatingModel(ResourceLocation modelLocation,
