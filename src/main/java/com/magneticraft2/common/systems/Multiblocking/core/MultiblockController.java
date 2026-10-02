@@ -58,10 +58,8 @@ public class MultiblockController {
     public BlockPos getmodulePos(String moduleName){
         for (IMultiblockModule module : modules.values()) {
             if (Objects.equals(module.getModuleKey(), moduleName)){
-                BlockPos modulePos = module.getModuleOffset();
-                return modulePos;
+                return module.getModuleOffset();
             }
-            return null;
         }
         return null;
     }
