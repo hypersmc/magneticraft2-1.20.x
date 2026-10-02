@@ -31,9 +31,11 @@ public class EntitiesRegistry {
     public static final RegistryObject<EntityType<BeltCollisionEntity>> BELT_COLLISION =
             ENTITIES.register("belt_collision", () ->
                     EntityType.Builder.<BeltCollisionEntity>of(BeltCollisionEntity::new, MobCategory.MISC)
+                            .noSave()
+                            .noSummon()
                             .sized(0.1F, 0.1F)
                             .clientTrackingRange(10)
                             .updateInterval(Integer.MAX_VALUE)
-                            .build("belt_collision"));
+                            .build(MOD_ID + ":belt_collision"));
 
 }
