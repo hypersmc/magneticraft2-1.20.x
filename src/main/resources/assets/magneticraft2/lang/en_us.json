@@ -116,5 +116,8 @@
   "tooltip.magneticraft2.ceramic_pot.empty": "Empty - right-click a water source to fill",
   "tooltip.magneticraft2.ceramic_pot.water": "Contains Water - use on dirt to make mud",
   "item.magneticraft2.copper_plate": "Copper Plate",
-  "block.magneticraft2.primitive_anvil": "Primitive Anvil"
+  "block.magneticraft2.primitive_anvil": "Primitive Anvil",
+  "block.magneticraft2.gear_medium_wood": "Medium Wooden Gear",
+  "block.magneticraft2.gear_large_wood": "Large Wooden Gear",
+  "block.magneticraft2.gear_large_wood_with_handle": "Large Wooden Gear with Handle"
 }
