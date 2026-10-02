@@ -252,7 +252,7 @@ public abstract class GearBlockEntity extends BlockEntity {
             deltaTicks = 20.0F;
         }
 
-        float rpm = node.getClientSpeed();
+        float rpm = node.isClientOverloaded() ? 0.0F : node.getClientSpeed();
         if (rpm > VISUAL_STOP_EPSILON) {
             float degreesPerTick = rpm * 360.0F / 1200.0F;
             clientVisualRotationDegrees += degreesPerTick * deltaTicks * node.getDirectionMultiplier();
