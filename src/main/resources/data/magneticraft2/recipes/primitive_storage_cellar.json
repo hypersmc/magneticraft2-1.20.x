@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" D ", "DLD", " D "],
+  "key": {
+    "D": { "item": "minecraft:coarse_dirt" },
+    "L": { "item": "minecraft:oak_log" }
+  },
+  "result": { "item": "magneticraft2:primitivestoragecellar_multiblock" }
+}
