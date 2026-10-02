@@ -15,7 +15,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -236,25 +238,118 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
             return;
         }
 
-        Vec3 center = zoneBox.bounds().getCenter();
-        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                new Vec3(center.x, 0.155D, center.z),
-                formedFacing
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        BakedModel itemModel = itemRenderer.getModel(
+                stack,
+                blockEntity.getLevel(),
+                null,
+                seed
         );
 
-        renderInventoryItem(
-                blockEntity,
+        Vec3 center = zoneBox.bounds().getCenter();
+
+        if (itemModel.isGui3d()) {
+            Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
+                    new Vec3(center.x, 0.20D, center.z),
+                    formedFacing
+            );
+
+            renderBlockOutput(
+                    blockEntity,
+                    stack,
+                    renderPos,
+                    formedFacing,
+                    extraYaw,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    packedOverlay,
+                    seed
+            );
+        } else {
+            Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
+                    new Vec3(center.x, 0.145D, center.z),
+                    formedFacing
+            );
+
+            renderFlatOutput(
+                    blockEntity,
+                    stack,
+                    itemModel,
+                    renderPos,
+                    formedFacing,
+                    extraYaw,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    seed
+            );
+        }
+    }
+
+    private void renderBlockOutput(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                   ItemStack stack,
+                                   Vec3 renderPos,
+                                   Direction formedFacing,
+                                   float extraYaw,
+                                   PoseStack poseStack,
+                                   MultiBufferSource buffer,
+                                   int packedLight,
+                                   int packedOverlay,
+                                   int seed) {
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+        poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
+        poseStack.scale(0.52F, 0.52F, 0.52F);
+
+        Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,
-                renderPos,
-                formedFacing,
-                extraYaw,
-                0.36F,
+                ItemDisplayContext.FIXED,
+                packedLight,
+                packedOverlay,
+                poseStack,
+                buffer,
+                blockEntity.getLevel(),
+                seed
+        );
+
+        poseStack.popPose();
+    }
+
+    private void renderFlatOutput(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                  ItemStack stack,
+                                  BakedModel itemModel,
+                                  Vec3 renderPos,
+                                  Direction formedFacing,
+                                  float extraYaw,
+                                  PoseStack poseStack,
+                                  MultiBufferSource buffer,
+                                  int packedLight,
+                                  int seed) {
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+
+        // Match the Storage Cellar's flat-item path: generated/2D item models
+        // live in the XY plane, so explicitly lay them onto the furnace shelf.
+        // NONE avoids the additional GROUND transform/scale.
+        poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
+        poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+        poseStack.scale(0.40F, 0.40F, 0.40F);
+
+        itemRenderer.render(
+                stack,
+                ItemDisplayContext.NONE,
+                false,
                 poseStack,
                 buffer,
                 packedLight,
-                packedOverlay,
-                seed
+                OverlayTexture.NO_OVERLAY,
+                itemModel
         );
+
+        poseStack.popPose();
     }
 
     private void renderInventoryItem(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
