@@ -172,7 +172,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
                 renderPos,
                 formedFacing,
                 4.0F,
-                0.38F,
+                0.58F,
                 poseStack,
                 buffer,
                 packedLight,
@@ -300,7 +300,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
         poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
-        poseStack.scale(0.52F, 0.52F, 0.52F);
+        poseStack.scale(0.36F, 0.36F, 0.36F);
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,
