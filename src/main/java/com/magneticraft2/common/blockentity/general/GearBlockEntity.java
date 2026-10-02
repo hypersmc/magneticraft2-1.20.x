@@ -211,25 +211,24 @@ public abstract class GearBlockEntity extends BlockEntity {
 
     public void syncGearState(float speed, float torque, float maxTorque, boolean overloaded, float meshPhaseDegrees, float rotationDegrees, int directionMultiplier, BlockPos sourcePos) {
         GearNode node = getOrCreateGearNode();
-        boolean overloadChanged = clientVisualInitialized && node.isClientOverloaded() != overloaded;
 
         node.updateClientData(speed, torque, maxTorque, overloaded, meshPhaseDegrees, rotationDegrees);
         node.setDirectionMultiplier(directionMultiplier);
         node.setSourcePos(sourcePos);
 
-        // Do not reset interpolation on every network packet. Gear V2 can send several
-        // syncs in one game tick as individual nodes tick/update the network. Resetting
-        // the visual clock for every packet reduces animation to server-tick snapshots,
-        // which causes severe stroboscopic aliasing at higher RPM (some speeds can look
-        // completely stationary because the model lands on an equivalent tooth/spoke angle).
+        // Each sync is an authoritative angular snapshot from the server. Do not let every
+        // gear accumulate its own long-running client angle: tiny timing differences between
+        // block-entity render calls eventually make meshed gears drift apart.
         //
-        // Snap only on first sync or when entering/leaving an overload stall. Normal RPM
-        // changes are integrated continuously by getVisualRotationDegrees().
-        if (!clientVisualInitialized || overloadChanged) {
-            clientVisualRotationDegrees = node.getClientRotationDegrees();
-            lastClientVisualTime = Float.NaN;
-            clientVisualInitialized = true;
-        }
+        // Instead remember the server angle and the client game time at which it arrived.
+        // Rendering extrapolates only the fractional time since this snapshot. This keeps
+        // animation smooth while every gear remains anchored to the exact server tooth mesh.
+        clientVisualRotationDegrees = node.getClientRotationDegrees();
+        Level currentLevel = getLevel();
+        lastClientVisualTime = currentLevel == null
+                ? Float.NaN
+                : (float) currentLevel.getGameTime();
+        clientVisualInitialized = true;
 
         markHasEverRotatedIfMoving(speed);
     }
@@ -251,35 +250,28 @@ public abstract class GearBlockEntity extends BlockEntity {
         }
 
         float currentVisualTime = currentLevel.getGameTime() + partialTicks;
-        if (Float.isNaN(lastClientVisualTime)) {
+        if (!clientVisualInitialized || Float.isNaN(lastClientVisualTime)) {
             clientVisualRotationDegrees = node.getClientRotationDegrees();
             lastClientVisualTime = currentVisualTime;
             clientVisualInitialized = true;
-            return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
         }
 
         float deltaTicks = currentVisualTime - lastClientVisualTime;
-        lastClientVisualTime = currentVisualTime;
-
         if (deltaTicks < 0.0F) {
             deltaTicks = 0.0F;
-        }
-        if (deltaTicks > 20.0F) {
-            // Avoid huge jumps if the chunk/renderer was not visible for a while.
+        } else if (deltaTicks > 20.0F) {
+            // Avoid a huge extrapolation if the chunk was not rendered/synced for a while.
             deltaTicks = 20.0F;
         }
 
+        float visualRotation = clientVisualRotationDegrees;
         float rpm = node.isClientOverloaded() ? 0.0F : node.getClientSpeed();
         if (rpm > VISUAL_STOP_EPSILON) {
             float degreesPerTick = rpm * 360.0F / 1200.0F;
-            clientVisualRotationDegrees += degreesPerTick * deltaTicks * node.getDirectionMultiplier();
-            clientVisualRotationDegrees %= 360.0F;
-            if (clientVisualRotationDegrees < 0.0F) {
-                clientVisualRotationDegrees += 360.0F;
-            }
+            visualRotation += degreesPerTick * deltaTicks * node.getDirectionMultiplier();
         }
 
-        return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+        return normalizeVisualDegrees(visualRotation + node.getClientMeshPhaseDegrees());
     }
 
     private float normalizeVisualDegrees(float degrees) {
