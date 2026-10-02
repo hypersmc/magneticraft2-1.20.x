@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {"item": "magneticraft2:gear_large_wood"},
+    {"item": "minecraft:stick"}
+  ],
+  "result": {"item": "magneticraft2:gear_large_wood_with_handle"}
+}
