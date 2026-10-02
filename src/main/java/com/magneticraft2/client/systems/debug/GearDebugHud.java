@@ -1,7 +1,7 @@
 package com.magneticraft2.client.systems.debug;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
-import com.magneticraft2.common.blockentity.stage.copper.MechanicalConveyorBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
@@ -96,7 +96,7 @@ public class GearDebugHud {
         String directionText = direction < 0 ? "CCW" : "CW";
         String overloadText = overloaded ? " | OVERLOADED" : "";
         String nodeType = gearBlockEntity instanceof PulleyBlockEntity_wood ? "Pulley"
-                : gearBlockEntity instanceof MechanicalConveyorBlockEntity ? "Conveyor"
+                : gearBlockEntity instanceof ConveyorRollerBlockEntity ? "Belt Roller"
                 : (gearBlockEntity.isShaftLike() ? "Shaft" : "Gear");
         String beltText = "";
         if (gearBlockEntity instanceof PulleyBlockEntity_wood pulley && pulley.getBeltPartner() != null) {
@@ -107,6 +107,9 @@ public class GearDebugHud {
             );
             beltText = " | Belt -> " + pulley.getBeltPartner().toShortString()
                     + " | Colliders: " + colliderCount;
+        } else if (gearBlockEntity instanceof ConveyorRollerBlockEntity roller
+                && roller.getItemBeltPartner() != null) {
+            beltText = " | Item Belt -> " + roller.getItemBeltPartner().toShortString();
         }
 
         minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
