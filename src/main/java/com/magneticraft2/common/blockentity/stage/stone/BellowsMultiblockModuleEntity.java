@@ -40,6 +40,7 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
     private int Master_X;
     private int Master_Y;
     private int Master_Z;
+    private boolean formedModule;
     public static final Logger LOGGER = LogManager.getLogger("PSIModule");
     private final PressureStorages pressureStorage;
     private final LazyOptional<IPressureStorage> pressure;
@@ -80,8 +81,12 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         return pressureStorage.getMaxPressureStored();
     }
 
+    public boolean isFormedModule() {
+        return formedModule;
+    }
+
     public boolean pump() {
-        if (level == null || level.isClientSide()) {
+        if (level == null || level.isClientSide() || !formedModule) {
             return false;
         }
 
@@ -123,6 +128,7 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
             LOGGER.info("Trying to activate: " + getModuleKey());
         }
         if (!world.isClientSide()) {
+            formedModule = true;
             pressure.ifPresent(handler -> handler.setReceive(true));
             pressure.ifPresent(handler -> handler.setSend(true));
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
@@ -137,6 +143,7 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
             LOGGER.info("Trying to deactivate: " + getModuleKey());
         }
         if (!world.isClientSide()) {
+            formedModule = false;
             pressure.ifPresent(handler -> handler.setReceive(false));
             pressure.ifPresent(handler -> handler.setSend(false));
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
@@ -222,6 +229,7 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         this.Master_X = pTag.getInt("controller_x");
         this.Master_Y = pTag.getInt("controller_y");
         this.Master_Z = pTag.getInt("controller_z");
+        this.formedModule = pTag.getBoolean("isformed");
         if (pTag.contains("pressure")) {
             pressureStorage.deserializeNBT(pTag.getCompound("pressure"));
         }
@@ -233,6 +241,7 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         pTag.putInt("controller_x", this.Master_X);
         pTag.putInt("controller_y", this.Master_Y);
         pTag.putInt("controller_z", this.Master_Z);
+        pTag.putBoolean("isformed", this.formedModule);
         pTag.put("pressure", pressureStorage.serializeNBT());
     }
 
