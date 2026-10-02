@@ -108,8 +108,6 @@ public final class GearPlacementValidator {
                                                         BlockState newState,
                                                         int newTeeth,
                                                         Direction.Axis newAxis) {
-        GearBlock newGear = (GearBlock) newState.getBlock();
-
         // Case 1: the newly placed gear forms a diagonal medium<->large mesh.
         // The two orthogonal cells inside that corner must remain free of other
         // visible gears, otherwise the large gear body/spokes visually overlap them.
@@ -196,6 +194,34 @@ public final class GearPlacementValidator {
 
     private static boolean isMixedSizePair(int teethA, int teethB) {
         return (teethA > 8) != (teethB > 8);
+    }
+
+    /**
+     * Runtime counterpart to placement validation. Existing worlds may already contain
+     * layouts created before the clearance rule existed, so Gear V2 must not transmit
+     * through a mixed-size mesh whose reserved corner cells are occupied.
+     */
+    public static boolean hasRequiredExternalMeshClearance(Level level,
+                                                           BlockPos first,
+                                                           BlockPos second,
+                                                           Direction.Axis axis,
+                                                           int teethA,
+                                                           int teethB) {
+        if (level == null || !isMixedSizePair(teethA, teethB)) {
+            return true;
+        }
+
+        if (!isValidExternalMeshOffset(first, second, axis, teethA, teethB)) {
+            return false;
+        }
+
+        for (BlockPos cornerPos : getMixedMeshReservedCornerPositions(first, second, axis)) {
+            if (hasBlockingVisibleGear(level, cornerPos, axis)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static boolean hasBlockingVisibleGear(Level level, BlockPos pos, Direction.Axis axis) {
