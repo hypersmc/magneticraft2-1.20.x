@@ -6,6 +6,7 @@ import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
 import com.magneticraft2.common.block.stage.stone.*;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
@@ -70,6 +71,8 @@ public class BlockRegistry {
     public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
     public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);
     public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
 
 
 
