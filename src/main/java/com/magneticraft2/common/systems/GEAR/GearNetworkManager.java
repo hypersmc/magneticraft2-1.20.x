@@ -1,7 +1,7 @@
 package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
-import com.magneticraft2.common.blockentity.stage.copper.MechanicalConveyorBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import net.minecraft.core.BlockPos;
@@ -598,25 +598,18 @@ public class GearNetworkManager {
             }
         }
 
-        // Straight Mechanical Conveyor sections share their internal roller drive
-        // along the item-travel direction. Their visible roller axis remains perpendicular
-        // so normal shafts can still connect from either side.
-        if (blockEntity instanceof MechanicalConveyorBlockEntity conveyor) {
-            Direction facing = conveyor.getConveyorFacing();
-            for (Direction travelSide : new Direction[]{facing, facing.getOpposite()}) {
-                BlockPos neighborPos = pos.relative(travelSide);
-                if (!(level.getBlockEntity(neighborPos) instanceof MechanicalConveyorBlockEntity neighborConveyor)) {
-                    continue;
-                }
-
-                if (neighborConveyor.getConveyorFacing() != facing
-                        || neighborConveyor.getGearAxis() != gear.getAxis()) {
-                    continue;
-                }
-
-                GearNode neighborNode = gears.get(neighborPos);
-                if (neighborNode != null) {
-                    connected.add(new GearConnection(neighborPos, ConnectionKind.SHAFT));
+        // Wide item belts are also remote open-belt mechanical connections. The two
+        // rollers therefore stay phase/speed locked while the continuous span between
+        // them carries items.
+        if (blockEntity instanceof ConveyorRollerBlockEntity roller) {
+            BlockPos partnerPos = roller.getItemBeltPartner();
+            if (partnerPos != null
+                    && level.getBlockEntity(partnerPos) instanceof ConveyorRollerBlockEntity partner
+                    && partner.isItemBeltLinkedTo(pos)
+                    && partner.getGearAxis() == gear.getAxis()) {
+                GearNode partnerNode = gears.get(partnerPos);
+                if (partnerNode != null) {
+                    connected.add(new GearConnection(partnerPos, ConnectionKind.BELT));
                 }
             }
         }
