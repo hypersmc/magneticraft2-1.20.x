@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "magneticraft2:block/conveyor_roller"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/conveyor_roller"
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/conveyor_roller",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/conveyor_roller",
+      "y": 90
+    },
+    "facing=up": {
+      "model": "magneticraft2:block/conveyor_roller",
+      "x": 90
+    },
+    "facing=down": {
+      "model": "magneticraft2:block/conveyor_roller",
+      "x": 90
+    }
+  }
+}
