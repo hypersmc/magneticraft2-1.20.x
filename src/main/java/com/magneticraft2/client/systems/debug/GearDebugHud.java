@@ -3,6 +3,7 @@ package com.magneticraft2.client.systems.debug;
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
+import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -97,7 +98,13 @@ public class GearDebugHud {
                 : (gearBlockEntity.isShaftLike() ? "Shaft" : "Gear");
         String beltText = "";
         if (gearBlockEntity instanceof PulleyBlockEntity_wood pulley && pulley.getBeltPartner() != null) {
-            beltText = " | Belt -> " + pulley.getBeltPartner().toShortString();
+            int colliderCount = BeltConnectionManager.getCollisionProxyCount(
+                    minecraft.level,
+                    pulley.getBlockPos(),
+                    pulley.getBeltPartner()
+            );
+            beltText = " | Belt -> " + pulley.getBeltPartner().toShortString()
+                    + " | Colliders: " + colliderCount;
         }
 
         minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
