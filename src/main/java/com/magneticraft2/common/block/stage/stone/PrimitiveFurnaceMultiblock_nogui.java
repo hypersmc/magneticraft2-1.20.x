@@ -34,7 +34,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -70,9 +69,17 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
             new FurnaceZoneBox(FurnaceZone.PRIMARY_OUTPUT, new AABB(0.72D, 0.00D, 0.50D, 0.98D, 0.14D, 0.78D)),
             new FurnaceZoneBox(FurnaceZone.SECONDARY_OUTPUT, new AABB(0.72D, 0.00D, 0.18D, 0.98D, 0.14D, 0.46D))
     );
-    private static final VoxelShape WEST = Stream.of(Block.box(4.68629, 0, 0, 11.31371, 1, 16), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(4.68629, 0, 0, 11.31371, 1, 16), Stream.of(Block.box(4.68629, 1, 0, 11.31371, 8, 1), Block.box(15, 1, 4.68629, 16, 2, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(4.68629, 1, 0, 11.31371, 8, 3), Block.box(15, 1, 4.68629, 16, 8, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Stream.of(Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(14, 0, 0, 16, 16, 4.7), Block.box(14, 0, 11.299999999999999, 16, 16, 16), Block.box(11.3, 0, 0, 14, 16, 2), Block.box(1.9999999999999982, 0, 14, 4.699999999999999, 16, 16), Block.box(2, 0, 0, 4.699999999999999, 16, 2), Block.box(11.299999999999999, 0, 14, 14, 16, 16), Block.box(0, 0, 11.299999999999999, 2, 16, 16), Block.box(0, 0, 0, 2, 16, 4.7)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Stream.of(Block.box(4.68629, -15, 0, 11.31371, -14, 1), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(13, -15, 4.68629, 16, -8, 11.31371), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(11, 13, 5.51472, 14, 32, 10.48528)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
-    private static final VoxelShape WEST_NEW2 = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(4.68629, -15, 0, 11.31371, -8, 1), Block.box(15, -15, 4.68629, 16, -14, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(4.68629, -15, 0, 11.31371, -8, 3), Block.box(15, -15, 4.68629, 16, -8, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+    // WEST is the canonical physical furnace shape. It is the same voxel that
+    // was already working for the west-facing GUI-less furnace; every other
+    // orientation is derived from it using the same canonical transform as
+    // physical item/click placement.
+    private static final VoxelShape FORMED_WEST =
+            VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0.0D, 1.0D, 0.0D);
+    private static final VoxelShape FORMED_EAST = rotateFromCanonicalWest(FORMED_WEST, Direction.EAST);
+    private static final VoxelShape FORMED_NORTH = rotateFromCanonicalWest(FORMED_WEST, Direction.NORTH);
+    private static final VoxelShape FORMED_SOUTH = rotateFromCanonicalWest(FORMED_WEST, Direction.SOUTH);
+
     public PrimitiveFurnaceMultiblock_nogui() {
         super(Properties.of().noOcclusion().isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(IS_FORMED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
@@ -84,67 +91,81 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     }
 
     @Override
-    public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
-            if (furnaceEntity.isFormed()) {
-                Direction direction = getFormedFacing(furnaceEntity, pState);
-                switch (direction) {
-                    case WEST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
-                    case NORTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.NORTH).move(0,1,0);
-                    case SOUTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH).move(0,1,0);
-                    case EAST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST).move(0,1,0);
-                }
-            }
-        }
-        return super.getInteractionShape(pState, pLevel, pPos);
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        VoxelShape formedShape = getFormedShape(state, level, pos);
+        return formedShape != null ? formedShape : super.getInteractionShape(state, level, pos);
     }
 
     @Override
-    public VoxelShape getVisualShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
-            if (furnaceEntity.isFormed()) {
-                Direction direction = getFormedFacing(furnaceEntity, pState);
-
-                switch (direction) {
-                    case WEST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
-                    case NORTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.NORTH).move(0,1,0);
-                    case SOUTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH).move(0,1,0);
-                    case EAST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST).move(0,1,0);
-                }
-            }
-        }
-        return super.getVisualShape(pState, pLevel, pPos, pContext);
+    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape formedShape = getFormedShape(state, level, pos);
+        return formedShape != null ? formedShape : super.getVisualShape(state, level, pos, context);
     }
 
     @Override
-    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
-            if (furnaceEntity.isFormed()) {
-                Direction direction = getFormedFacing(furnaceEntity, pState);
-                switch (direction) {
-                    case WEST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
-                    case NORTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.NORTH).move(0,1,0);
-                    case SOUTH:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.SOUTH).move(0,1,0);
-                    case EAST:
-                        return VoxelShapeUtils.rotateHorizontal(WEST, Direction.EAST).move(0,1,0);
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape formedShape = getFormedShape(state, level, pos);
+        return formedShape != null ? formedShape : super.getShape(state, level, pos, context);
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        VoxelShape formedShape = getFormedShape(state, level, pos);
+        return formedShape != null ? formedShape : super.getCollisionShape(state, level, pos, context);
+    }
+
+    @Nullable
+    private VoxelShape getFormedShape(BlockState state, BlockGetter level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity)
+                || !furnaceEntity.isFormed()) {
+            return null;
+        }
+
+        return switch (getFormedFacing(furnaceEntity, state)) {
+            case WEST -> FORMED_WEST;
+            case EAST -> FORMED_EAST;
+            case NORTH -> FORMED_NORTH;
+            case SOUTH -> FORMED_SOUTH;
+            default -> FORMED_WEST;
+        };
+    }
+
+    private static VoxelShape rotateFromCanonicalWest(VoxelShape canonicalShape, Direction formedFacing) {
+        if (formedFacing == Direction.WEST) {
+            return canonicalShape;
+        }
+
+        VoxelShape rotated = Shapes.empty();
+        for (AABB box : canonicalShape.toAabbs()) {
+            double minX = Double.POSITIVE_INFINITY;
+            double minZ = Double.POSITIVE_INFINITY;
+            double maxX = Double.NEGATIVE_INFINITY;
+            double maxZ = Double.NEGATIVE_INFINITY;
+
+            double[] xs = {box.minX, box.maxX};
+            double[] zs = {box.minZ, box.maxZ};
+
+            for (double x : xs) {
+                for (double z : zs) {
+                    Vec3 transformed = MultiblockHitHelper.fromCanonicalWest(
+                            new Vec3(x, 0.0D, z),
+                            formedFacing
+                    );
+                    minX = Math.min(minX, transformed.x);
+                    minZ = Math.min(minZ, transformed.z);
+                    maxX = Math.max(maxX, transformed.x);
+                    maxZ = Math.max(maxZ, transformed.z);
                 }
             }
+
+            rotated = Shapes.or(
+                    rotated,
+                    Shapes.create(new AABB(minX, box.minY, minZ, maxX, box.maxY, maxZ))
+            );
         }
-        return super.getShape(pState, pLevel, pPos, pContext);
+
+        return rotated.optimize();
     }
 
     @Override
