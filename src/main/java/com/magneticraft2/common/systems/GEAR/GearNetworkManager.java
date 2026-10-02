@@ -94,7 +94,6 @@ public class GearNetworkManager {
         Map<BlockPos, GearNode> gears = getGearMap(level);
         removeMissingBlockEntities(level, gears);
         refreshGearMetadata(level, gears);
-        advanceGearRotations(level, gears);
 
         Queue<GearNode> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -165,6 +164,13 @@ public class GearNetworkManager {
         }
 
         applyMechanicalLoads(level, gears);
+
+        // Advance visual/mechanical rotation only after the final overload state for this
+        // network tick is known. Advancing before load evaluation made stalled networks
+        // creep a few degrees every tick because refreshGearMetadata temporarily clears
+        // non-source overload flags before the load pass reapplies them.
+        advanceGearRotations(level, gears);
+
         alignPassiveGearPhases(level, gears, activelyDriven);
         syncAll(level, gears.values());
     }
