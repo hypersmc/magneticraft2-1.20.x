@@ -61,6 +61,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
     private float clientMechanicalRotationDegrees = 0.0F;
     private float lastClientMechanicalVisualTime = Float.NaN;
+    private float lastClientCrushSyncTime = Float.NaN;
 
     public PrimitiveGrinderBMultiblockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.primitivegrinderbmultiblockentity.get(), pos, state);
@@ -84,6 +85,30 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
     public int getTotalCrushTime() {
         return totalCrushTime;
+    }
+
+    /**
+     * Smooth client-side processing progress for in-world workpiece rendering.
+     *
+     * Processing advances one step per server tick while crushing, so the client can
+     * safely extrapolate from the last authoritative CrushTime snapshot between packets.
+     * When processing pauses or completes, the normal block-entity sync re-anchors it.
+     */
+    public float getVisualCrushProgress(float partialTick) {
+        if (totalCrushTime <= 0) {
+            return 0.0F;
+        }
+
+        float visualTime = crushtime;
+        Level currentLevel = getLevel();
+        if (crushing && currentLevel != null && !Float.isNaN(lastClientCrushSyncTime)) {
+            float elapsed = (currentLevel.getGameTime() + partialTick) - lastClientCrushSyncTime;
+            if (elapsed > 0.0F) {
+                visualTime += elapsed;
+            }
+        }
+
+        return Math.max(0.0F, Math.min(1.0F, visualTime / (float) totalCrushTime));
     }
 
     public float getMechanicalSpeed() {
@@ -506,6 +531,10 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         mechanicalSourceTorqueCapacity = tag.getFloat("MechanicalSourceTorqueCapacity");
         clientMechanicalRotationDegrees = mechanicalRotationDegrees;
         lastClientMechanicalVisualTime = Float.NaN;
+        Level currentLevel = getLevel();
+        lastClientCrushSyncTime = currentLevel == null
+                ? Float.NaN
+                : (float) currentLevel.getGameTime();
 
         MultiblockPersistentData multiblockData = loadMultiblockData(tag);
         blueprintname = multiblockData.blueprintName();
