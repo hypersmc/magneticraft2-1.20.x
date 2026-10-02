@@ -159,9 +159,15 @@ public class MechanicalConveyorBlockEntity extends GearBlockEntity {
             return;
         }
 
-        conveyor.serverTickGear();
-
         GearNetworkManager network = GearNetworkManager.getInstance();
+
+        // A long conveyor line must not trigger a complete Gear V2 recalculation once per
+        // conveyor block every tick. GearBlock#onPlace registers fresh sections, and this
+        // fallback covers chunk/world reloads where the runtime network map starts empty.
+        if (network.getGear(conveyor.worldPosition, level) == null) {
+            conveyor.updateGearNetwork();
+        }
+
         network.setMechanicalLoad(
                 level,
                 conveyor.worldPosition,
