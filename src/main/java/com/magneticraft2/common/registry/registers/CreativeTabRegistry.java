@@ -41,7 +41,6 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_testpollutionblock.get());
                         entries.accept(ItemRegistry.item_beltblock.get());
                         entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
-                        entries.accept(ItemRegistry.item_primitivefurnacemultiblock.get());
                         entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
                         entries.accept(ItemRegistry.item_bellowsmultiblockmodule.get());
