@@ -254,7 +254,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
 
         if (itemModel.isGui3d()) {
             Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                    new Vec3(center.x, 0.095D, center.z),
+                    new Vec3(center.x, 0.14D, center.z),
                     formedFacing
             );
 
@@ -272,7 +272,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
             );
         } else {
             Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                    new Vec3(center.x, 0.055D, center.z),
+                    new Vec3(center.x, 0.095D, center.z),
                     formedFacing
             );
 
