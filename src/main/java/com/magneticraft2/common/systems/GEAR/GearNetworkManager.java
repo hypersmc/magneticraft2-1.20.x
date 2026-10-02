@@ -562,9 +562,10 @@ public class GearNetworkManager {
 
     private void syncAll(Level level, Iterable<GearNode> gears) {
         for (GearNode gear : gears) {
+            float transmittedSpeed = gear.isOverloaded() ? 0.0F : gear.getSpeed();
             CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(
                     gear.getPosition(),
-                    gear.getSpeed(),
+                    transmittedSpeed,
                     gear.getTorque(),
                     gear.getMaxTorque(),
                     gear.isOverloaded(),
