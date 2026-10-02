@@ -2,6 +2,7 @@ package com.magneticraft2.client.render.blocks.stage.stone;
 
 import com.magneticraft2.common.block.stage.stone.Primitive_anvilBlock;
 import com.magneticraft2.common.blockentity.stage.stone.Primitive_anvilEntity;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -38,11 +39,17 @@ public class PrimitiveAnvilBlockEntityRenderer implements BlockEntityRenderer<Pr
                 ? blockEntity.getBlockState().getValue(Primitive_anvilBlock.FACING)
                 : Direction.SOUTH;
 
+        boolean finishedPlate = stack.is(ItemRegistry.ITEM_COPPER_PLATE.get());
+
         poseStack.pushPose();
-        poseStack.translate(0.5D, 1.025D, 0.5D);
+        poseStack.translate(0.5D, finishedPlate ? 1.015D : 1.028D, 0.5D);
         poseStack.mulPose(Axis.YP.rotationDegrees(getFacingYaw(facing)));
 
-        if (model.isGui3d()) {
+        if (finishedPlate) {
+            // The finished plate has a small 3D model authored flat in the XZ plane.
+            // Keep it low and broad so the visual reads as a hammered workpiece.
+            poseStack.scale(0.62F, 0.62F, 0.62F);
+        } else if (model.isGui3d()) {
             poseStack.scale(0.44F, 0.44F, 0.44F);
         } else {
             // Generated items such as vanilla ingots are authored in the XY plane.
