@@ -210,6 +210,19 @@ public final class BeltConnectionManager {
         connection.proxyIds.clear();
     }
 
+    public static int getCollisionProxyCount(Level level, BlockPos first, BlockPos second) {
+        BeltPath path = getPath(level, first, second);
+        if (path == null) {
+            return 0;
+        }
+
+        return level.getEntitiesOfClass(
+                BeltCollisionEntity.class,
+                path.bounds().inflate(0.1D),
+                entity -> !entity.isRemoved()
+        ).size();
+    }
+
     /**
      * Item-transport preparation: locate the nearest registered belt path to a point.
      */
