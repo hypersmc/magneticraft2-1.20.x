@@ -6,6 +6,7 @@ import com.magneticraft2.common.item.creativeitems.multiblock_filler_item;
 import com.magneticraft2.common.item.creativeitems.pitkiln_item;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
+import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
@@ -95,8 +96,9 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_SHAFT_WOOD = fromBlock(SHAFT_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
-    public static final RegistryObject<Item> ITEM_MECHANICAL_CONVEYOR = fromBlock(MECHANICAL_CONVEYOR);
+    public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
     public static final RegistryObject<LeatherBeltItem> ITEM_LEATHER_BELT = ITEMS.register("leather_belt", LeatherBeltItem::new);
+    public static final RegistryObject<ItemBeltItem> ITEM_ITEM_BELT = ITEMS.register("item_belt", ItemBeltItem::new);
 
 
 
