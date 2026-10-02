@@ -28,7 +28,7 @@ public final class BeltPath {
     // a full block and remains easy to jump over or walk beneath.
     public static final double COLLISION_HALF_WIDTH = 0.095D;
     public static final double COLLISION_HALF_THICKNESS = 0.045D;
-    public static final double COLLISION_SLICE_LENGTH = 0.25D;
+    public static final double COLLISION_SLICE_LENGTH = 0.50D;
 
     private static final int ARC_SEGMENTS_PER_HALF_TURN = 16;
 
@@ -217,15 +217,12 @@ public final class BeltPath {
     }
 
     /**
-     * Only the two exposed straight runs become extra world collision. The wrap sections sit
-     * on pulley blocks which already own their normal block collision.
+     * Axis-aligned collision boxes for the two exposed straight runs. These are used by
+     * native collision proxy entities so Minecraft's normal entity-collision pipeline does
+     * the actual movement resolution.
      */
-    public List<VoxelShape> collisionShapes(AABB query) {
-        if (query == null || !bounds.intersects(query)) {
-            return List.of();
-        }
-
-        List<VoxelShape> result = new ArrayList<>();
+    public List<AABB> collisionBoxes() {
+        List<AABB> result = new ArrayList<>();
 
         for (Segment segment : segments) {
             if (segment.type() != SegmentType.STRAIGHT) {
@@ -247,21 +244,34 @@ public final class BeltPath {
                 Vec3 sliceStart = segment.from().add(direction.scale(fromDistance));
                 Vec3 sliceEnd = segment.from().add(direction.scale(toDistance));
 
-                AABB box = segmentBounds(
+                result.add(segmentBounds(
                         sliceStart,
                         sliceEnd,
                         segment.widthDirection(),
                         segment.thicknessDirection(),
                         COLLISION_HALF_WIDTH,
                         COLLISION_HALF_THICKNESS
-                );
-
-                if (box.intersects(query)) {
-                    result.add(Shapes.create(box));
-                }
+                ));
             }
         }
 
+        return result;
+    }
+
+    /**
+     * Debug/helper representation of the native collision boxes as VoxelShapes.
+     */
+    public List<VoxelShape> collisionShapes(AABB query) {
+        if (query == null || !bounds.intersects(query)) {
+            return List.of();
+        }
+
+        List<VoxelShape> result = new ArrayList<>();
+        for (AABB box : collisionBoxes()) {
+            if (box.intersects(query)) {
+                result.add(Shapes.create(box));
+            }
+        }
         return result;
     }
 
