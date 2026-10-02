@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.magneticraft2.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "magneticraft2.refmap.json",
+  "mixins": [
+    "EntityBeltCollisionMixin"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
