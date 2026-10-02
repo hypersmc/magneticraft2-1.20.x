@@ -132,6 +132,8 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
             faceController();
             pressure.ifPresent(handler -> handler.setReceive(true));
             pressure.ifPresent(handler -> handler.setSend(true));
+            setChanged();
+            sync();
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("Successfully activated: " + getModuleKey());
             }
@@ -147,6 +149,8 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
             formedModule = false;
             pressure.ifPresent(handler -> handler.setReceive(false));
             pressure.ifPresent(handler -> handler.setSend(false));
+            setChanged();
+            sync();
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("Successfully deactivated: " + getModuleKey());
             }
