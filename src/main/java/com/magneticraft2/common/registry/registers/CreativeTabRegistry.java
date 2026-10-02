@@ -60,6 +60,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
                         entries.accept(ItemRegistry.item_multiblock_filler.get());
                         entries.accept(ItemRegistry.item_slag.get());
+                        entries.accept(ItemRegistry.ITEM_COPPER_PLATE.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
