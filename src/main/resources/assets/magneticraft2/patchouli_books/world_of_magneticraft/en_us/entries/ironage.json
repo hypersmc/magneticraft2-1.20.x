@@ -2,13 +2,13 @@
   "name": "Iron Age",
   "description": "",
   "category": "magneticraft2:walkthrough",
-  "icon": "magneticraft2:iron_gear",
+  "icon": "minecraft:iron_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "We are already in the Iron Age? Well before we think we might soon already be in the Nuclear Age!"
+      "text": "Iron Age progression will follow the earlier metallurgy stages."
     }
   ],
   "sortnum": 4,
-  "read_by_defaylt": true
+  "read_by_default": true
 }
