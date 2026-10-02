@@ -66,11 +66,11 @@
         },
         "symmetrical": true
       },
-      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the upper grinding assembly. Place a Wooden Shaft beside that upper block, aligned horizontally into the visible wooden bearing. The grinder requires at least 20 mechanical speed and 4 torque."
+      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the stone base. Place a horizontal Wooden Shaft directly against the small visible bearing so the shaft runs into the machine. The grinder requires at least 20 mechanical speed and 4 torque."
     },
     {
       "type": "text",
-      "text": "$(bold)3. Crush the ore$()$(br2)Right-click the formed grinder with Chalcocite Ore to load it. Connect a powered Wooden Shaft to the visible bearing on the left side of the upper grinding assembly. With at least 20 speed and 4 torque, the grinder runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the crank stops, processing pauses instead of losing progress. Use an empty hand on the grinder to retrieve its output."
+      "text": "$(bold)3. Crush the ore$()$(br2)Right-click the formed grinder with Chalcocite Ore to load it. Connect a powered horizontal Wooden Shaft to the small bearing on the left side of the stone base. With at least 20 speed and 4 torque, the grinder runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the crank stops, processing pauses instead of losing progress. Use an empty hand on the grinder to retrieve its output."
     },
     {
       "type": "text",
