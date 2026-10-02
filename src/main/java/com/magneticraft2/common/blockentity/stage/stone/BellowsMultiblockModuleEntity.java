@@ -33,6 +33,10 @@ import org.jetbrains.annotations.Nullable;
 * @version 1.0.0
  */
 public class BellowsMultiblockModuleEntity extends BlockEntity implements IMultiblockModule {
+    public static final int MAX_PRESSURE = 5;
+    public static final int PRESSURE_PER_PUMP = 1;
+    public static final int PUMP_TICKS = 5;
+
     private int Master_X;
     private int Master_Y;
     private int Master_Z;
@@ -42,7 +46,15 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
 
     public BellowsMultiblockModuleEntity(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.bellowsmultiblockmoduleentity.get(), pPos, pBlockState);
-        this.pressureStorage = new PressureStorages(5, 2){
+        this.pressureStorage = new PressureStorages(MAX_PRESSURE, MAX_PRESSURE) {
+            @Override
+            protected void onPressureChanged() {
+                setChanged();
+                if (level != null && !level.isClientSide()) {
+                    level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+                }
+            }
+
             @Override
             public boolean canReceive() {
                 return true;
@@ -60,8 +72,50 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
     public boolean isValid(Level world, BlockPos pos) {
         return true;
     }
-    public int getStored(){
+    public int getStored() {
         return pressureStorage.getPressureStored();
+    }
+
+    public int getMaxStored() {
+        return pressureStorage.getMaxPressureStored();
+    }
+
+    public boolean pump() {
+        if (level == null || level.isClientSide()) {
+            return false;
+        }
+
+        BlockState state = getBlockState();
+        if (state.getValue(BellowsMultiblockModule.ACTIVE)) {
+            return false;
+        }
+
+        int received = pressureStorage.receivePressure(PRESSURE_PER_PUMP, false);
+        if (received <= 0) {
+            return false;
+        }
+
+        setActive(true);
+        level.scheduleTick(worldPosition, state.getBlock(), PUMP_TICKS);
+        setChanged();
+        sync();
+        return true;
+    }
+
+    public boolean consumePressure(int amount) {
+        if (amount <= 0) {
+            return true;
+        }
+        if (pressureStorage.getPressureStored() < amount) {
+            return false;
+        }
+
+        int extracted = pressureStorage.extractPressure(amount, false);
+        if (extracted > 0) {
+            setChanged();
+            sync();
+        }
+        return extracted == amount;
     }
     @Override
     public void onActivate(Level world, BlockPos pos) {
@@ -99,10 +153,8 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         }
     }
 
-    // Animation trigger example
     public void animateBellows() {
-        this.setActive(true); // Compress the bellows
-        this.level.scheduleTick(this.worldPosition, this.getBlockState().getBlock(), 20); // Schedule expansion after 1 second
+        pump();
     }
 
     @Override
@@ -154,10 +206,10 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
     }
 
     public CompoundTag sync() {
-        level.sendBlockUpdated( worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL );
-        CompoundTag tag = super.getUpdateTag();
-        loadClientData(tag);
-        return null;
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
+        return getUpdateTag();
     }
     private void loadClientData(CompoundTag tag) {
         this.Master_X = tag.getInt("controller_x");
@@ -170,6 +222,9 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         this.Master_X = pTag.getInt("controller_x");
         this.Master_Y = pTag.getInt("controller_y");
         this.Master_Z = pTag.getInt("controller_z");
+        if (pTag.contains("pressure")) {
+            pressureStorage.deserializeNBT(pTag.getCompound("pressure"));
+        }
     }
 
     @Override
@@ -178,5 +233,12 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         pTag.putInt("controller_x", this.Master_X);
         pTag.putInt("controller_y", this.Master_Y);
         pTag.putInt("controller_z", this.Master_Z);
+        pTag.put("pressure", pressureStorage.serializeNBT());
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        pressure.invalidate();
     }
 }
