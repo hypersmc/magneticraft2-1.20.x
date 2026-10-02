@@ -6,6 +6,7 @@ import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.MechanicalConveyorBlock;
 import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
 import com.magneticraft2.common.block.stage.stone.*;
@@ -73,6 +74,7 @@ public class BlockRegistry {
     public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
     public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));
     public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
+    public static final RegistryObject<MechanicalConveyorBlock> MECHANICAL_CONVEYOR = BLOCKS.register("mechanical_conveyor", MechanicalConveyorBlock::new);
 
 
 
