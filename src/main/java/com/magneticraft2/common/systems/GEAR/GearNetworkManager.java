@@ -595,6 +595,13 @@ public class GearNetworkManager {
                     scanPos,
                     gear.getAxis(),
                     gear.getTeeth(),
+                    neighbor.getTeeth())
+                    && GearPlacementValidator.hasRequiredExternalMeshClearance(
+                    level,
+                    pos,
+                    scanPos,
+                    gear.getAxis(),
+                    gear.getTeeth(),
                     neighbor.getTeeth())) {
                 connected.add(new GearConnection(scanPos, false));
             }
