@@ -28,7 +28,8 @@ public final class BeltPath {
     // a full block and remains easy to jump over or walk beneath.
     public static final double COLLISION_HALF_WIDTH = 0.095D;
     public static final double COLLISION_HALF_THICKNESS = 0.045D;
-    public static final double COLLISION_SLICE_LENGTH = 0.50D;
+    public static final double COLLISION_SLICE_LENGTH = 1.00D;
+    public static final double NEAR_STRAIGHT_COLLISION_SLICE_LENGTH = 2.00D;
 
     private static final int ARC_SEGMENTS_PER_HALF_TURN = 16;
 
@@ -236,7 +237,30 @@ public final class BeltPath {
             }
 
             Vec3 direction = delta.scale(1.0D / length);
-            int slices = Math.max(1, (int) Math.ceil(length / COLLISION_SLICE_LENGTH));
+
+            // The common equal-pulley case is perfectly axis-aligned, so one long thin
+            // collision entity can represent the whole exposed run exactly.
+            if (isAxisAligned(direction)) {
+                result.add(segmentBounds(
+                        segment.from(),
+                        segment.to(),
+                        segment.widthDirection(),
+                        segment.thicknessDirection(),
+                        COLLISION_HALF_WIDTH,
+                        COLLISION_HALF_THICKNESS
+                ));
+                continue;
+            }
+
+            // Unequal pulley radii produce a very shallow tangent angle even when the pulley
+            // centers themselves are in a straight line. Keep those cheap with roughly
+            // two-block collision sections. Genuine diagonal belts retain one-block sections
+            // so their AABBs do not reserve huge rectangular areas beside the visible leather.
+            double sliceLength = isNearlyAxisAligned(direction)
+                    ? NEAR_STRAIGHT_COLLISION_SLICE_LENGTH
+                    : COLLISION_SLICE_LENGTH;
+
+            int slices = Math.max(1, (int) Math.ceil(length / sliceLength));
 
             for (int i = 0; i < slices; i++) {
                 double fromDistance = length * i / slices;
@@ -441,6 +465,22 @@ public final class BeltPath {
                 endDistance
         ));
         return endDistance;
+    }
+
+    private static boolean isAxisAligned(Vec3 direction) {
+        int significantComponents = 0;
+        if (Math.abs(direction.x) > 0.0001D) significantComponents++;
+        if (Math.abs(direction.y) > 0.0001D) significantComponents++;
+        if (Math.abs(direction.z) > 0.0001D) significantComponents++;
+        return significantComponents == 1;
+    }
+
+    private static boolean isNearlyAxisAligned(Vec3 direction) {
+        double dominant = Math.max(
+                Math.abs(direction.x),
+                Math.max(Math.abs(direction.y), Math.abs(direction.z))
+        );
+        return dominant >= 0.985D;
     }
 
     private static AABB segmentBounds(Vec3 from,
