@@ -85,6 +85,9 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_PRIMITIVE_ANVIL = fromBlock(Primitive_anvillBlock);
     //Copper
     public static final RegistryObject<Item> ITEM_COPPER_PLATE = ITEMS.register("copper_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CRUSHED_CHALCOCITE = ITEMS.register("crushed_chalcocite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
+    public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
