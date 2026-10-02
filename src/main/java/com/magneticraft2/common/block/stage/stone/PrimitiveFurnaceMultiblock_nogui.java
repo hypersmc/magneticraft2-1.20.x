@@ -82,7 +82,7 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     private static final VoxelShape FORMED_SOUTH = rotateFromCanonicalWest(FORMED_WEST, Direction.SOUTH);
 
     public PrimitiveFurnaceMultiblock_nogui() {
-        super(Properties.of().noOcclusion().isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
+        super(Properties.of().noOcclusion().strength(3.5F).isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(IS_FORMED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
 
