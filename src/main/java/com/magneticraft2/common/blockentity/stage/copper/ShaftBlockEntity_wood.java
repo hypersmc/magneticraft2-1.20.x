@@ -12,6 +12,8 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static com.magneticraft2.common.block.stage.copper.ShaftBlock_wood.ROTATING;
+
 /**
  * Simple shaft/axle block entity for Gear V2.
  */
@@ -27,6 +29,20 @@ public class ShaftBlockEntity_wood extends GearBlockEntity {
 
         if (level.getBlockEntity(pos) instanceof ShaftBlockEntity_wood entity) {
             entity.serverTickGear();
+            entity.updateRotatingState();
+        }
+    }
+
+    private void updateRotatingState() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+
+        markHasEverRotatedIfMoving(getServerSpeed());
+        boolean renderDynamically = shouldRenderGearWithBlockEntity();
+        BlockState currentState = level.getBlockState(worldPosition);
+        if (currentState.hasProperty(ROTATING) && currentState.getValue(ROTATING) != renderDynamically) {
+            level.setBlock(worldPosition, currentState.setValue(ROTATING, renderDynamically), 2);
         }
     }
 
