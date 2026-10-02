@@ -29,7 +29,7 @@
     "blocks": {
       "BlockKey1": "magneticraft2:bellows_multiblock_module",
       "BlockKey4": "minecraft:mud_bricks",
-      "BlockKey2": "magneticraft2:primitivefurnace_multiblock",
+      "BlockKey2": "magneticraft2:primitivefurnace_multiblock_nogui",
       "BlockKey3": "minecraft:air"
     }
   },

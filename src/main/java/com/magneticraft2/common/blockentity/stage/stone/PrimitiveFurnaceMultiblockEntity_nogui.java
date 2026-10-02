@@ -116,15 +116,25 @@ public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagne
             return null;
         }
     }
-    public int getAirAmount(){
-        if (controller.getFormed()) {
-            BlockPos module = controller.getmodulePos("psi_module");
-            if (module != null) {
-                BellowsMultiblockModuleEntity PSI = (BellowsMultiblockModuleEntity) getThisWorld().getBlockEntity(module);
-                return PSI.getStored();
-            }
+    public int getAirAmount() {
+        BellowsMultiblockModuleEntity bellows = getBellowsModule();
+        return bellows != null ? bellows.getStored() : 0;
+    }
+
+    @Nullable
+    private BellowsMultiblockModuleEntity getBellowsModule() {
+        MultiblockController activeController = getMultiblockController();
+        if (activeController == null || !activeController.getFormed() || level == null) {
+            return null;
         }
-        return -9999;
+
+        BlockPos modulePos = activeController.getmodulePos("psi_module");
+        if (modulePos == null) {
+            return null;
+        }
+
+        BlockEntity moduleEntity = level.getBlockEntity(modulePos);
+        return moduleEntity instanceof BellowsMultiblockModuleEntity bellows ? bellows : null;
     }
     public String getMBblueprintname() {
         return blueprintname;
@@ -195,12 +205,33 @@ public class PrimitiveFurnaceMultiblockEntity_nogui extends BaseBlockEntityMagne
             return;
         }
 
-        // Increment cook time if there's space in the output
+        // Manual bellows pressure acts as discrete air charges. Preserve cook
+        // progress while empty so pumping the bellows resumes the current batch.
+        BellowsMultiblockModuleEntity bellows = entity.getBellowsModule();
+        if (bellows == null || bellows.getStored() <= 0) {
+            boolean wasCooking = entity.iscooking;
+            entity.iscooking = false;
+            if (wasCooking) {
+                entity.setChanged();
+                level.sendBlockUpdated(pos, estate, estate, 3);
+            }
+            return;
+        }
+
+        // Increment cook time if there's space in the output and air available
         entity.totalCookTime = recipe.getCookTime();
         entity.cookTime++;
         entity.iscooking = true;
         // Check if cook time has been met
         if (entity.cookTime >= entity.totalCookTime) {
+            // One completed furnace operation consumes one bellows air charge.
+            if (!bellows.consumePressure(1)) {
+                entity.iscooking = false;
+                entity.setChanged();
+                level.sendBlockUpdated(pos, estate, estate, 3);
+                return;
+            }
+
             // Process primary output
             if (!currentOutput1.isEmpty() && currentOutput1.is(recipeOutput1.getItem())) {
                 currentOutput1.grow(recipeOutput1.getCount());
