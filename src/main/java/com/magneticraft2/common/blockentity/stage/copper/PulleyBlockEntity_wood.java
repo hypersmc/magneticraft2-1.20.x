@@ -66,7 +66,7 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
 
     @Override
     public float getGearMaxTorque() {
-        return 8.0F;
+        return getGearTeeth() > 8 ? 16.0F : 8.0F;
     }
 
     @Override
