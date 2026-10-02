@@ -44,6 +44,7 @@ public class Multiblockfiller extends BaseEntityBlock {
     public Multiblockfiller() {
         super(BlockBehaviour.Properties.of()
                 .noOcclusion()
+                .strength(3.5F)
                 .dynamicShape()
                 .isSuffocating((state, level, pos) -> false)
                 .isViewBlocking((state, level, pos) -> false)
