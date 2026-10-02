@@ -27,6 +27,7 @@ public abstract class GearBlockEntity extends BlockEntity {
     private boolean hasEverRotated = false;
     private float clientVisualRotationDegrees = 0.0F;
     private float lastClientVisualTime = Float.NaN;
+    private boolean clientVisualInitialized = false;
 
     public GearBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -210,11 +211,26 @@ public abstract class GearBlockEntity extends BlockEntity {
 
     public void syncGearState(float speed, float torque, float maxTorque, boolean overloaded, float meshPhaseDegrees, float rotationDegrees, int directionMultiplier, BlockPos sourcePos) {
         GearNode node = getOrCreateGearNode();
+        boolean overloadChanged = clientVisualInitialized && node.isClientOverloaded() != overloaded;
+
         node.updateClientData(speed, torque, maxTorque, overloaded, meshPhaseDegrees, rotationDegrees);
         node.setDirectionMultiplier(directionMultiplier);
         node.setSourcePos(sourcePos);
-        clientVisualRotationDegrees = node.getClientRotationDegrees();
-        lastClientVisualTime = Float.NaN;
+
+        // Do not reset interpolation on every network packet. Gear V2 can send several
+        // syncs in one game tick as individual nodes tick/update the network. Resetting
+        // the visual clock for every packet reduces animation to server-tick snapshots,
+        // which causes severe stroboscopic aliasing at higher RPM (some speeds can look
+        // completely stationary because the model lands on an equivalent tooth/spoke angle).
+        //
+        // Snap only on first sync or when entering/leaving an overload stall. Normal RPM
+        // changes are integrated continuously by getVisualRotationDegrees().
+        if (!clientVisualInitialized || overloadChanged) {
+            clientVisualRotationDegrees = node.getClientRotationDegrees();
+            lastClientVisualTime = Float.NaN;
+            clientVisualInitialized = true;
+        }
+
         markHasEverRotatedIfMoving(speed);
     }
 
@@ -238,6 +254,7 @@ public abstract class GearBlockEntity extends BlockEntity {
         if (Float.isNaN(lastClientVisualTime)) {
             clientVisualRotationDegrees = node.getClientRotationDegrees();
             lastClientVisualTime = currentVisualTime;
+            clientVisualInitialized = true;
             return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
         }
 
