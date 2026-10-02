@@ -30,13 +30,12 @@ public class MechanicalConveyorBlockEntity extends GearBlockEntity {
     public static final float TORQUE_DEMAND = 0.25F;
     public static final float MIN_TRANSPORT_RPM = 5.0F;
 
-    private static final double ROLLER_RADIUS = 0.22D;
+    // One full roller revolution advances the belt one texture/block repeat. This keeps
+    // physical item speed and the phase-locked Gear V2 belt animation in agreement.
+    private static final double BELT_TRAVEL_PER_REVOLUTION = 1.0D;
     private static final double MAX_BLOCKS_PER_TICK = 0.18D;
     private static final double CENTERING_PER_TICK = 0.075D;
     private static final String ITEM_TICK_TAG = "MGC2ConveyorTick";
-
-    private double clientBeltTravel = 0.0D;
-    private float lastClientVisualTime = Float.NaN;
 
     public MechanicalConveyorBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.MECHANICAL_CONVEYOR_BE.get(), pos, state);
@@ -98,40 +97,7 @@ public class MechanicalConveyorBlockEntity extends GearBlockEntity {
     }
 
     public double getVisualBeltTravel(float partialTicks) {
-        Level currentLevel = getLevel();
-        if (currentLevel == null) {
-            return clientBeltTravel;
-        }
-
-        float visualTime = currentLevel.getGameTime() + partialTicks;
-        if (Float.isNaN(lastClientVisualTime)) {
-            lastClientVisualTime = visualTime;
-            return clientBeltTravel;
-        }
-
-        float deltaTicks = visualTime - lastClientVisualTime;
-        lastClientVisualTime = visualTime;
-        if (deltaTicks < 0.0F) {
-            deltaTicks = 0.0F;
-        } else if (deltaTicks > 20.0F) {
-            deltaTicks = 20.0F;
-        }
-
-        GearNode node = getOrCreateGearNode();
-        if (!node.isClientOverloaded() && Math.abs(node.getClientSpeed()) >= MIN_TRANSPORT_RPM) {
-            double circumference = Math.PI * 2.0D * ROLLER_RADIUS;
-            double blocksPerTick = Math.min(
-                    MAX_BLOCKS_PER_TICK,
-                    Math.abs(node.getClientSpeed()) * circumference / 1200.0D
-            );
-            clientBeltTravel += blocksPerTick * deltaTicks * getDirectionMultiplier();
-
-            if (Math.abs(clientBeltTravel) > 1024.0D) {
-                clientBeltTravel %= 1.0D;
-            }
-        }
-
-        return clientBeltTravel;
+        return getVisualRotationDegrees(partialTicks) / 360.0D;
     }
 
     public double getTransportBlocksPerTick() {
@@ -144,10 +110,9 @@ public class MechanicalConveyorBlockEntity extends GearBlockEntity {
             return 0.0D;
         }
 
-        double circumference = Math.PI * 2.0D * ROLLER_RADIUS;
         return Math.min(
                 MAX_BLOCKS_PER_TICK,
-                Math.abs(rpm) * circumference / 1200.0D
+                Math.abs(rpm) * BELT_TRAVEL_PER_REVOLUTION / 1200.0D
         );
     }
 
