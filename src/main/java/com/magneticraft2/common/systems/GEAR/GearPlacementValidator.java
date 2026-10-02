@@ -92,7 +92,168 @@ public final class GearPlacementValidator {
             }
         }
 
+        if (!newShaftLike) {
+            String clearanceConflict = getMixedMeshClearanceConflict(level, pos, newState, newTeeth, newAxis);
+            if (clearanceConflict != null) {
+                return clearanceConflict;
+            }
+        }
+
         return null;
+    }
+
+    @Nullable
+    private static String getMixedMeshClearanceConflict(Level level,
+                                                        BlockPos newPos,
+                                                        BlockState newState,
+                                                        int newTeeth,
+                                                        Direction.Axis newAxis) {
+        GearBlock newGear = (GearBlock) newState.getBlock();
+
+        // Case 1: the newly placed gear forms a diagonal medium<->large mesh.
+        // The two orthogonal cells inside that corner must remain free of other
+        // visible gears, otherwise the large gear body/spokes visually overlap them.
+        for (BlockPos scanPos : BlockPos.betweenClosed(
+                newPos.offset(-1, -1, -1),
+                newPos.offset(1, 1, 1))) {
+
+            if (scanPos.equals(newPos)) {
+                continue;
+            }
+
+            BlockState neighborState = level.getBlockState(scanPos);
+            if (!(neighborState.getBlock() instanceof GearBlock neighborGear)
+                    || neighborGear.isShaftLikeForPlacement(neighborState)) {
+                continue;
+            }
+
+            Direction.Axis neighborAxis = neighborGear.getPlacementGearAxis(neighborState);
+            int neighborTeeth = neighborGear.getPlacementGearTeeth(neighborState);
+
+            if (neighborAxis != newAxis
+                    || !isMixedSizePair(newTeeth, neighborTeeth)
+                    || !isValidExternalMeshOffset(newPos, scanPos, newAxis, newTeeth, neighborTeeth)) {
+                continue;
+            }
+
+            for (BlockPos cornerPos : getMixedMeshReservedCornerPositions(newPos, scanPos, newAxis)) {
+                if (hasBlockingVisibleGear(level, cornerPos, newAxis)) {
+                    return "Large gear mesh needs clearance around the diagonal connection.";
+                }
+            }
+        }
+
+        // Case 2: an existing diagonal medium<->large mesh already reserves this
+        // position. This makes the rule independent of placement order.
+        for (BlockPos firstPos : BlockPos.betweenClosed(
+                newPos.offset(-2, -2, -2),
+                newPos.offset(2, 2, 2))) {
+
+            BlockState firstState = level.getBlockState(firstPos);
+            if (!(firstState.getBlock() instanceof GearBlock firstGear)
+                    || firstGear.isShaftLikeForPlacement(firstState)) {
+                continue;
+            }
+
+            Direction.Axis firstAxis = firstGear.getPlacementGearAxis(firstState);
+            if (firstAxis != newAxis) {
+                continue;
+            }
+
+            int firstTeeth = firstGear.getPlacementGearTeeth(firstState);
+
+            for (BlockPos secondPos : getDiagonalPlanarNeighbors(firstPos, firstAxis)) {
+                // Visit each existing pair once.
+                if (secondPos.asLong() <= firstPos.asLong()) {
+                    continue;
+                }
+
+                BlockState secondState = level.getBlockState(secondPos);
+                if (!(secondState.getBlock() instanceof GearBlock secondGear)
+                        || secondGear.isShaftLikeForPlacement(secondState)) {
+                    continue;
+                }
+
+                Direction.Axis secondAxis = secondGear.getPlacementGearAxis(secondState);
+                int secondTeeth = secondGear.getPlacementGearTeeth(secondState);
+
+                if (secondAxis != firstAxis
+                        || !isMixedSizePair(firstTeeth, secondTeeth)
+                        || !isValidExternalMeshOffset(firstPos, secondPos, firstAxis, firstTeeth, secondTeeth)) {
+                    continue;
+                }
+
+                for (BlockPos reservedPos : getMixedMeshReservedCornerPositions(firstPos, secondPos, firstAxis)) {
+                    if (reservedPos.equals(newPos)) {
+                        return "This space is reserved for clearance around a large gear mesh.";
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static boolean isMixedSizePair(int teethA, int teethB) {
+        return (teethA > 8) != (teethB > 8);
+    }
+
+    private static boolean hasBlockingVisibleGear(Level level, BlockPos pos, Direction.Axis axis) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof GearBlock gear) || gear.isShaftLikeForPlacement(state)) {
+            return false;
+        }
+        return gear.getPlacementGearAxis(state) == axis;
+    }
+
+    private static BlockPos[] getMixedMeshReservedCornerPositions(BlockPos first,
+                                                                  BlockPos second,
+                                                                  Direction.Axis axis) {
+        if (axis == Direction.Axis.X) {
+            return new BlockPos[]{
+                    new BlockPos(first.getX(), first.getY(), second.getZ()),
+                    new BlockPos(first.getX(), second.getY(), first.getZ())
+            };
+        }
+
+        if (axis == Direction.Axis.Y) {
+            return new BlockPos[]{
+                    new BlockPos(first.getX(), first.getY(), second.getZ()),
+                    new BlockPos(second.getX(), first.getY(), first.getZ())
+            };
+        }
+
+        return new BlockPos[]{
+                new BlockPos(first.getX(), second.getY(), first.getZ()),
+                new BlockPos(second.getX(), first.getY(), first.getZ())
+        };
+    }
+
+    private static BlockPos[] getDiagonalPlanarNeighbors(BlockPos pos, Direction.Axis axis) {
+        if (axis == Direction.Axis.X) {
+            return new BlockPos[]{
+                    pos.offset(0, 1, 1),
+                    pos.offset(0, 1, -1),
+                    pos.offset(0, -1, 1),
+                    pos.offset(0, -1, -1)
+            };
+        }
+
+        if (axis == Direction.Axis.Y) {
+            return new BlockPos[]{
+                    pos.offset(1, 0, 1),
+                    pos.offset(1, 0, -1),
+                    pos.offset(-1, 0, 1),
+                    pos.offset(-1, 0, -1)
+            };
+        }
+
+        return new BlockPos[]{
+                pos.offset(1, 1, 0),
+                pos.offset(1, -1, 0),
+                pos.offset(-1, 1, 0),
+                pos.offset(-1, -1, 0)
+        };
     }
 
     public static boolean canPlace(Level level, BlockPos pos, BlockState newState) {
