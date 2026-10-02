@@ -1,6 +1,7 @@
 package com.magneticraft2.client.systems.debug;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -49,6 +50,28 @@ public class GearDebugHud {
 
         BlockPos pos = blockHitResult.getBlockPos();
         BlockEntity blockEntity = minecraft.level.getBlockEntity(pos);
+
+        if (blockEntity instanceof PrimitiveGrinderBMultiblockEntity grinder) {
+            String connectionText = grinder.isMechanicalInputConnected() ? "CONNECTED" : "NO SHAFT";
+            String overloadText = grinder.isMechanicalInputOverloaded() ? " | OVERLOADED" : "";
+            String powerText = grinder.hasRequiredMechanicalPower() ? "READY" : "INSUFFICIENT";
+
+            minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
+                    "Grinder input %s @ %s | %s | %.1f RPM | Torque: %.2f / %.2f | %s%s",
+                    grinder.getMechanicalInputDirection().getName().toUpperCase(Locale.ROOT),
+                    grinder.getMechanicalInputPosition().toShortString(),
+                    connectionText,
+                    grinder.getMechanicalSpeed(),
+                    grinder.getMechanicalTorque(),
+                    PrimitiveGrinderBMultiblockEntity.REQUIRED_TORQUE,
+                    powerText,
+                    overloadText
+            )), true);
+
+            ticksUntilNextMessage = 5;
+            return;
+        }
+
         if (!(blockEntity instanceof GearBlockEntity gearBlockEntity)) {
             return;
         }
