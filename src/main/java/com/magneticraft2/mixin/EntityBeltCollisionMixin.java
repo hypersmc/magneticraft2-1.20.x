@@ -9,35 +9,33 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adds Magneticraft's non-block belt geometry to vanilla entity movement collision.
+ * Adds Magneticraft's non-block belt geometry to normal vanilla entity movement.
  *
- * The target method already combines block collision with an additional shape list;
- * we only extend that list and let vanilla resolve stepping, sliding and jumping.
+ * Entity.collide(...) calls collideBoundingBox(...) several times, including the normal
+ * movement pass and vanilla step-up attempts. Redirect every one of those calls through
+ * this wrapper so the exact same extra belt shapes participate in all movement solving.
  */
 @Mixin(Entity.class)
 public abstract class EntityBeltCollisionMixin {
-    @ModifyVariable(
-            method = "collideBoundingBox",
-            at = @At("HEAD"),
-            argsOnly = true,
-            index = 4
+    @Redirect(
+            method = "collide",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/Entity;collideBoundingBox(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Lnet/minecraft/world/level/Level;Ljava/util/List;)Lnet/minecraft/world/phys/Vec3;"
+            )
     )
-    private static List<VoxelShape> magneticraft2$appendBeltCollision(
-            List<VoxelShape> originalShapes,
+    private Vec3 magneticraft2$collideWithPhysicalBelts(
             @Nullable Entity entity,
             Vec3 movement,
             AABB entityBounds,
-            Level level) {
-
-        if (level == null || entityBounds == null || movement == null) {
-            return originalShapes;
-        }
+            Level level,
+            List<VoxelShape> vanillaEntityShapes) {
 
         AABB sweptBounds = entityBounds
                 .expandTowards(movement)
@@ -47,13 +45,26 @@ public abstract class EntityBeltCollisionMixin {
                 BeltConnectionManager.getCollisionShapes(level, entity, sweptBounds);
 
         if (beltShapes.isEmpty()) {
-            return originalShapes;
+            return Entity.collideBoundingBox(
+                    entity,
+                    movement,
+                    entityBounds,
+                    level,
+                    vanillaEntityShapes
+            );
         }
 
         List<VoxelShape> combined =
-                new ArrayList<>(originalShapes.size() + beltShapes.size());
-        combined.addAll(originalShapes);
+                new ArrayList<>(vanillaEntityShapes.size() + beltShapes.size());
+        combined.addAll(vanillaEntityShapes);
         combined.addAll(beltShapes);
-        return combined;
+
+        return Entity.collideBoundingBox(
+                entity,
+                movement,
+                entityBounds,
+                level,
+                combined
+        );
     }
 }
