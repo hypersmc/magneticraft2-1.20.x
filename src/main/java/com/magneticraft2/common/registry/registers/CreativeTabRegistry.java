@@ -39,7 +39,6 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_projector.get());
                         entries.accept(ItemRegistry.item_testpowermoduleblock.get());
                         entries.accept(ItemRegistry.item_testpollutionblock.get());
-                        entries.accept(ItemRegistry.item_beltblock.get());
                         entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
                         entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
@@ -68,6 +67,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_SHAFT_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_PULLEY_SMALL_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_PULLEY_LARGE_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_LEATHER_BELT.get());
                         entries.accept(ItemRegistry.ITEM_PRIMITIVE_ANVIL.get());
 //                        entries.accept(ItemRegistry.);
                     })
