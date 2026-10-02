@@ -54,19 +54,21 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
     private static final List<FurnaceZoneBox> INTERACTION_ZONE_BOXES = List.of(
-            // All four interaction pads sit on the reachable upper surface of
-            // the lower furnace opening. In-game probes consistently hit this
-            // surface around y=0.063, so keep the zones low instead of floating
-            // inside the hollow part of the model.
-            new FurnaceZoneBox(FurnaceZone.SMELTABLE_INPUT, new AABB(0.34D, 0.00D, 0.48D, 0.66D, 0.14D, 0.76D)),
+            // WEST-authored canonical layout. For the furnace opening, X is the
+            // useful depth axis: lower X is farther back inside the furnace and
+            // higher X is closer to the player/opening. Z splits left/right.
+            //
+            // Keep every pad on the reachable surface around y=0.063.
+            //
+            // Back: fuel.
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.14D, 0.00D, 0.34D, 0.38D, 0.14D, 0.66D)),
 
-            // Measured working points from DevMode:
-            // OUT 1: x=0.278 z=0.349
-            // OUT 2: x=0.642 z=0.220
-            // FUEL:  x=0.888 z=0.394
-            new FurnaceZoneBox(FurnaceZone.PRIMARY_OUTPUT, new AABB(0.16D, 0.00D, 0.20D, 0.40D, 0.14D, 0.48D)),
-            new FurnaceZoneBox(FurnaceZone.SECONDARY_OUTPUT, new AABB(0.52D, 0.00D, 0.10D, 0.76D, 0.14D, 0.38D)),
-            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.78D, 0.00D, 0.24D, 0.98D, 0.14D, 0.56D))
+            // Middle: smeltable input.
+            new FurnaceZoneBox(FurnaceZone.SMELTABLE_INPUT, new AABB(0.42D, 0.00D, 0.34D, 0.68D, 0.14D, 0.66D)),
+
+            // Front/outward: the two outputs, split across the opening.
+            new FurnaceZoneBox(FurnaceZone.PRIMARY_OUTPUT, new AABB(0.72D, 0.00D, 0.50D, 0.98D, 0.14D, 0.78D)),
+            new FurnaceZoneBox(FurnaceZone.SECONDARY_OUTPUT, new AABB(0.72D, 0.00D, 0.18D, 0.98D, 0.14D, 0.46D))
     );
     private static final VoxelShape WEST = Stream.of(Block.box(4.68629, 0, 0, 11.31371, 1, 16), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(4.68629, 0, 0, 11.31371, 1, 16), Stream.of(Block.box(4.68629, 1, 0, 11.31371, 8, 1), Block.box(15, 1, 4.68629, 16, 2, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(4.68629, 1, 0, 11.31371, 8, 3), Block.box(15, 1, 4.68629, 16, 8, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Stream.of(Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(14, 0, 0, 16, 16, 4.7), Block.box(14, 0, 11.299999999999999, 16, 16, 16), Block.box(11.3, 0, 0, 14, 16, 2), Block.box(1.9999999999999982, 0, 14, 4.699999999999999, 16, 16), Block.box(2, 0, 0, 4.699999999999999, 16, 2), Block.box(11.299999999999999, 0, 14, 14, 16, 16), Block.box(0, 0, 11.299999999999999, 2, 16, 16), Block.box(0, 0, 0, 2, 16, 4.7)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Stream.of(Block.box(4.68629, -15, 0, 11.31371, -14, 1), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(13, -15, 4.68629, 16, -8, 11.31371), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(11, 13, 5.51472, 14, 32, 10.48528)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
