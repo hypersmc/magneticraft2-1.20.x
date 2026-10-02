@@ -3,7 +3,7 @@ package com.magneticraft2.common.blockentity.stage.copper;
 import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
-import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
+import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -34,16 +34,27 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
         super(BlockEntityRegistry.PULLEY_BE_WOOD.get(), pos, state);
     }
 
-    public static <E extends BlockEntity> void serverTick(Level level,
-                                                          BlockPos pos,
-                                                          BlockState state,
-                                                          E blockEntity) {
-        if (level.isClientSide || !(blockEntity instanceof PulleyBlockEntity_wood pulley)) {
+    public static <E extends BlockEntity> void tick(Level level,
+                                                    BlockPos pos,
+                                                    BlockState state,
+                                                    E blockEntity) {
+        if (!(blockEntity instanceof PulleyBlockEntity_wood pulley)) {
             return;
         }
 
-        pulley.serverTickGear();
-        pulley.updatePoweredState();
+        pulley.ensureBeltConnectionRegistered();
+
+        if (!level.isClientSide) {
+            pulley.serverTickGear();
+            pulley.updatePoweredState();
+        }
+    }
+
+    private void ensureBeltConnectionRegistered() {
+        if (level != null && beltPartner != null
+                && !BeltConnectionManager.isRegistered(level, worldPosition, beltPartner)) {
+            BeltConnectionManager.ensureRegistered(this);
+        }
     }
 
     private void updatePoweredState() {
@@ -151,6 +162,7 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
 
         beltPartner = partner.immutable();
         syncBeltState();
+        BeltConnectionManager.ensureRegistered(this);
         updateGearNetwork();
     }
 
@@ -158,6 +170,10 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
         BlockPos oldPartner = beltPartner;
         if (oldPartner == null) {
             return;
+        }
+
+        if (level != null) {
+            BeltConnectionManager.remove(level, worldPosition, oldPartner);
         }
 
         beltPartner = null;
@@ -188,9 +204,18 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+
+        BlockPos previousPartner = beltPartner;
         beltPartner = tag.contains("BeltPartner")
                 ? BlockPos.of(tag.getLong("BeltPartner"))
                 : null;
+
+        if (level != null && previousPartner != null
+                && (beltPartner == null || !previousPartner.equals(beltPartner))) {
+            BeltConnectionManager.remove(level, worldPosition, previousPartner);
+        }
+
+        ensureBeltConnectionRegistered();
     }
 
     @Override
@@ -213,6 +238,14 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
         if (tag != null) {
             load(tag);
         }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (level != null) {
+            BeltConnectionManager.removeFor(level, worldPosition);
+        }
+        super.setRemoved();
     }
 
     @Override
