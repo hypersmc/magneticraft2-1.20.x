@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["C C", " C "],
+  "key": {
+    "C": { "item": "minecraft:clay_ball" }
+  },
+  "result": { "item": "magneticraft2:clay_pot" }
+}
