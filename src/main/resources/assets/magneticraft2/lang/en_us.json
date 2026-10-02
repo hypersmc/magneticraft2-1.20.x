@@ -123,5 +123,21 @@
   "item.magneticraft2.crushed_chalcocite": "Crushed Chalcocite",
   "block.magneticraft2.primitive_grinder_bmultiblock": "Mechanical Grinder Base",
   "block.magneticraft2.primitive_grindertop": "Mechanical Grinder Stone",
-  "screen.magneticraft2.primitivegrinder": "Mechanical Grinder"
+  "screen.magneticraft2.primitivegrinder": "Mechanical Grinder",
+  "block.magneticraft2.pulley_small_wood": "Small Wooden Pulley",
+  "block.magneticraft2.pulley_large_wood": "Large Wooden Pulley",
+  "item.magneticraft2.leather_belt": "Leather Belt",
+  "message.magneticraft2.belt_start": "Belt start selected at %s, %s, %s",
+  "message.magneticraft2.belt_selection_cleared": "Belt selection cleared",
+  "message.magneticraft2.belt_start_missing": "The selected starting pulley is no longer available",
+  "message.magneticraft2.belt_parallel_required": "Belt pulleys must have parallel axes",
+  "message.magneticraft2.belt_same_plane_required": "Belt pulleys must be in the same pulley plane",
+  "message.magneticraft2.belt_too_long": "Leather belt span is too long (max 8 blocks)",
+  "message.magneticraft2.belt_too_short": "Pulleys are too close for a belt",
+  "message.magneticraft2.belt_pulley_in_use": "One of these pulleys already has a belt",
+  "message.magneticraft2.belt_path_blocked": "The belt path is blocked",
+  "message.magneticraft2.belt_not_enough": "You need %s Leather Belt segments",
+  "message.magneticraft2.belt_linked": "Belt connected using %s segments",
+  "message.magneticraft2.belt_not_connected": "This pulley has no belt",
+  "message.magneticraft2.belt_removed": "Belt removed; recovered %s segments"
 }
