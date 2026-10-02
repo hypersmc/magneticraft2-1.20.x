@@ -140,6 +140,21 @@
   "message.magneticraft2.belt_linked": "Belt connected using %s segments",
   "message.magneticraft2.belt_not_connected": "This pulley has no belt",
   "message.magneticraft2.belt_removed": "Belt removed; recovered %s segments",
-  "block.magneticraft2.mechanical_conveyor": "Mechanical Conveyor",
-  "item.magneticraft2.mechanical_conveyor": "Mechanical Conveyor"
+  "block.magneticraft2.conveyor_roller": "Wooden Belt Roller",
+  "item.magneticraft2.conveyor_roller": "Wooden Belt Roller",
+  "item.magneticraft2.item_belt": "Item Belt",
+  "message.magneticraft2.item_belt_start": "Item Belt start selected at %s, %s, %s",
+  "message.magneticraft2.item_belt_selection_cleared": "Item Belt selection cleared",
+  "message.magneticraft2.item_belt_start_missing": "The selected starting Belt Roller is no longer available",
+  "message.magneticraft2.item_belt_parallel_required": "Item Belt rollers must have matching horizontal axes",
+  "message.magneticraft2.item_belt_same_plane_required": "Item Belt rollers must line up across the roller axis",
+  "message.magneticraft2.item_belt_too_long": "Item Belt span is too long (max 16 blocks)",
+  "message.magneticraft2.item_belt_too_short": "Belt Rollers are too close",
+  "message.magneticraft2.item_belt_slope_too_steep": "Item Belts can slope up to 45 degrees",
+  "message.magneticraft2.item_belt_roller_in_use": "One of these Belt Rollers already has an Item Belt",
+  "message.magneticraft2.item_belt_path_blocked": "The Item Belt path is blocked",
+  "message.magneticraft2.item_belt_not_enough": "You need %s Item Belt segments",
+  "message.magneticraft2.item_belt_linked": "Item Belt connected using %s segments",
+  "message.magneticraft2.item_belt_not_connected": "This Belt Roller has no Item Belt",
+  "message.magneticraft2.item_belt_removed": "Item Belt removed; recovered %s segments"
 }
