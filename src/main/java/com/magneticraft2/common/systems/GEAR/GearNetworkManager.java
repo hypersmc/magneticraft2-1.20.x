@@ -35,6 +35,7 @@ public class GearNetworkManager {
     private static GearNetworkManager instance;
 
     private final Map<ResourceKey<Level>, Map<BlockPos, GearNode>> gearsByLevel = new HashMap<>();
+    private final Map<ResourceKey<Level>, Map<BlockPos, MechanicalLoad>> loadsByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastDecayTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastRotationTickByLevel = new HashMap<>();
 
@@ -163,8 +164,144 @@ public class GearNetworkManager {
             }
         }
 
+        applyMechanicalLoads(level, gears);
         alignPassiveGearPhases(level, gears, activelyDriven);
         syncAll(level, gears.values());
+    }
+
+    public void setMechanicalLoad(Level level,
+                                  BlockPos loadPos,
+                                  BlockPos inputPos,
+                                  float torqueDemand,
+                                  boolean active) {
+        if (level == null || level.isClientSide || loadPos == null || inputPos == null) {
+            return;
+        }
+
+        Map<BlockPos, MechanicalLoad> loads = getLoadMap(level);
+        float clampedDemand = Math.max(0.0F, torqueDemand);
+        MechanicalLoad existing = loads.get(loadPos);
+        boolean changed = existing == null
+                || !existing.inputPos.equals(inputPos)
+                || Math.abs(existing.localTorqueDemand - clampedDemand) > TORQUE_EPSILON
+                || existing.active != active;
+
+        if (existing == null) {
+            existing = new MechanicalLoad(loadPos, inputPos);
+            loads.put(loadPos, existing);
+        }
+
+        existing.inputPos = inputPos;
+        existing.localTorqueDemand = clampedDemand;
+        existing.active = active;
+
+        if (changed) {
+            updateNetwork(level);
+        }
+    }
+
+    public void removeMechanicalLoad(Level level, BlockPos loadPos) {
+        if (level == null || level.isClientSide || loadPos == null) {
+            return;
+        }
+
+        if (getLoadMap(level).remove(loadPos) != null) {
+            updateNetwork(level);
+        }
+    }
+
+    public MechanicalLoadState getMechanicalLoadState(Level level, BlockPos loadPos) {
+        if (level == null || loadPos == null) {
+            return MechanicalLoadState.inactive();
+        }
+
+        MechanicalLoad load = getLoadMap(level).get(loadPos);
+        return load == null ? MechanicalLoadState.inactive() : load.snapshot();
+    }
+
+    private void applyMechanicalLoads(Level level, Map<BlockPos, GearNode> gears) {
+        Map<BlockPos, MechanicalLoad> loads = getLoadMap(level);
+
+        loads.entrySet().removeIf(entry ->
+                level.hasChunkAt(entry.getKey()) && level.getBlockEntity(entry.getKey()) == null);
+
+        Map<BlockPos, Float> totalSourceDemand = new HashMap<>();
+
+        for (MechanicalLoad load : loads.values()) {
+            load.resetEvaluation();
+            if (!load.active || load.localTorqueDemand <= TORQUE_EPSILON) {
+                continue;
+            }
+
+            GearNode input = gears.get(load.inputPos);
+            if (input == null || input.getSpeed() <= STOP_EPSILON) {
+                continue;
+            }
+
+            BlockPos sourcePos = input.getSourcePos();
+            GearNode source = sourcePos == null ? null : gears.get(sourcePos);
+            if (source == null || source.getSpeed() <= STOP_EPSILON) {
+                continue;
+            }
+
+            load.sourcePos = sourcePos;
+            load.sourceTorqueCapacity = source.getTorque();
+
+            // Preserve mechanical power through gearing: T_source * RPM_source =
+            // T_load * RPM_load. A faster output therefore costs proportionally
+            // more source torque for the same local machine torque requirement.
+            float speedRatio = input.getSpeed() / Math.max(STOP_EPSILON, source.getSpeed());
+            load.sourceEquivalentDemand = load.localTorqueDemand * speedRatio;
+            totalSourceDemand.merge(sourcePos, load.sourceEquivalentDemand, Float::sum);
+        }
+
+        Set<BlockPos> overloadedSources = new HashSet<>();
+
+        for (MechanicalLoad load : loads.values()) {
+            if (!load.active || load.sourcePos == null) {
+                continue;
+            }
+
+            GearNode input = gears.get(load.inputPos);
+            GearNode source = gears.get(load.sourcePos);
+            if (input == null || source == null) {
+                continue;
+            }
+
+            load.totalSourceDemand = totalSourceDemand.getOrDefault(load.sourcePos, 0.0F);
+            load.sourceTorqueCapacity = source.getTorque();
+
+            boolean localOverload = input.isOverloaded()
+                    || load.localTorqueDemand > input.getTorque() + TORQUE_EPSILON;
+            boolean sourceOverload = load.totalSourceDemand > load.sourceTorqueCapacity + TORQUE_EPSILON;
+
+            if (localOverload || sourceOverload) {
+                overloadedSources.add(load.sourcePos);
+            }
+        }
+
+        if (!overloadedSources.isEmpty()) {
+            for (GearNode gear : gears.values()) {
+                BlockPos sourcePos = gear.isSource() ? gear.getPosition() : gear.getSourcePos();
+                if (sourcePos != null && overloadedSources.contains(sourcePos)) {
+                    gear.setOverloaded(true);
+                }
+            }
+        }
+
+        for (MechanicalLoad load : loads.values()) {
+            if (!load.active || load.sourcePos == null) {
+                load.supplied = false;
+                continue;
+            }
+
+            GearNode input = gears.get(load.inputPos);
+            load.supplied = input != null
+                    && input.getSpeed() > STOP_EPSILON
+                    && !input.isOverloaded()
+                    && load.localTorqueDemand <= input.getTorque() + TORQUE_EPSILON
+                    && !overloadedSources.contains(load.sourcePos);
+        }
     }
 
     private void refreshGearMetadata(Level level, Map<BlockPos, GearNode> gears) {
@@ -412,6 +549,10 @@ public class GearNetworkManager {
         return gearsByLevel.computeIfAbsent(level.dimension(), dimension -> new HashMap<>());
     }
 
+    private Map<BlockPos, MechanicalLoad> getLoadMap(Level level) {
+        return loadsByLevel.computeIfAbsent(level.dimension(), dimension -> new HashMap<>());
+    }
+
     private void syncAll(Level level, Iterable<GearNode> gears) {
         for (GearNode gear : gears) {
             CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(
@@ -425,6 +566,56 @@ public class GearNetworkManager {
                     gear.getDirectionMultiplier(),
                     gear.getSourcePos()
             ));
+        }
+    }
+
+    public record MechanicalLoadState(boolean active,
+                                      boolean supplied,
+                                      float localTorqueDemand,
+                                      float sourceEquivalentDemand,
+                                      float totalSourceDemand,
+                                      float sourceTorqueCapacity,
+                                      BlockPos sourcePos) {
+        public static MechanicalLoadState inactive() {
+            return new MechanicalLoadState(false, false, 0.0F, 0.0F, 0.0F, 0.0F, null);
+        }
+    }
+
+    private static final class MechanicalLoad {
+        private final BlockPos loadPos;
+        private BlockPos inputPos;
+        private float localTorqueDemand;
+        private boolean active;
+
+        private boolean supplied;
+        private float sourceEquivalentDemand;
+        private float totalSourceDemand;
+        private float sourceTorqueCapacity;
+        private BlockPos sourcePos;
+
+        private MechanicalLoad(BlockPos loadPos, BlockPos inputPos) {
+            this.loadPos = loadPos;
+            this.inputPos = inputPos;
+        }
+
+        private void resetEvaluation() {
+            supplied = false;
+            sourceEquivalentDemand = 0.0F;
+            totalSourceDemand = 0.0F;
+            sourceTorqueCapacity = 0.0F;
+            sourcePos = null;
+        }
+
+        private MechanicalLoadState snapshot() {
+            return new MechanicalLoadState(
+                    active,
+                    supplied,
+                    localTorqueDemand,
+                    sourceEquivalentDemand,
+                    totalSourceDemand,
+                    sourceTorqueCapacity,
+                    sourcePos
+            );
         }
     }
 
