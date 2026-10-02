@@ -6,6 +6,7 @@ import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -18,6 +19,8 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -64,6 +67,10 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
             }
 
             pPoseStack.popPose();
+        }
+
+        if (pBlockEntity.isFormed()) {
+            renderInputItem(pBlockEntity, pPoseStack, pBuffer, pPackedLight, pPackedOverlay);
         }
 
         if (pBlockEntity.getItemInSlot(1).getItem() == Items.COAL) {
@@ -118,9 +125,187 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
 
         // Going to have more if cases now since this is GUIless
 
+        if (pBlockEntity.isFormed()) {
+            renderOutputItems(pBlockEntity, pPoseStack, pBuffer, pPackedLight, pPackedOverlay);
+        }
+
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get() && pBlockEntity.isFormed()) {
             renderInteractionZones(pBlockEntity, pPoseStack, pBuffer, pPackedLight);
         }
+    }
+
+    private void renderInputItem(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                 PoseStack poseStack,
+                                 MultiBufferSource buffer,
+                                 int packedLight,
+                                 int packedOverlay) {
+        ItemStack input = blockEntity.getItemInSlot(0);
+        if (input.isEmpty()) {
+            return;
+        }
+
+        Direction formedFacing = PrimitiveFurnaceMultiblock_nogui.getFormedFacing(
+                blockEntity,
+                blockEntity.getBlockState()
+        );
+
+        PrimitiveFurnaceMultiblock_nogui.FurnaceZoneBox inputZone =
+                getZoneBox(PrimitiveFurnaceMultiblock_nogui.FurnaceZone.SMELTABLE_INPUT);
+        if (inputZone == null) {
+            return;
+        }
+
+        Vec3 center = inputZone.bounds().getCenter();
+
+        // Keep the input low enough that the coal model, rendered immediately
+        // after this, visually surrounds and partially covers the item.
+        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
+                new Vec3(center.x, 0.11D, center.z),
+                formedFacing
+        );
+
+        renderInventoryItem(
+                blockEntity,
+                input,
+                renderPos,
+                formedFacing,
+                4.0F,
+                0.38F,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                100
+        );
+    }
+
+    private void renderOutputItems(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                   PoseStack poseStack,
+                                   MultiBufferSource buffer,
+                                   int packedLight,
+                                   int packedOverlay) {
+        Direction formedFacing = PrimitiveFurnaceMultiblock_nogui.getFormedFacing(
+                blockEntity,
+                blockEntity.getBlockState()
+        );
+
+        renderOutputItem(
+                blockEntity,
+                2,
+                PrimitiveFurnaceMultiblock_nogui.FurnaceZone.PRIMARY_OUTPUT,
+                formedFacing,
+                -10.0F,
+                200,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+
+        renderOutputItem(
+                blockEntity,
+                3,
+                PrimitiveFurnaceMultiblock_nogui.FurnaceZone.SECONDARY_OUTPUT,
+                formedFacing,
+                11.0F,
+                300,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+    }
+
+    private void renderOutputItem(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                  int slot,
+                                  PrimitiveFurnaceMultiblock_nogui.FurnaceZone zone,
+                                  Direction formedFacing,
+                                  float extraYaw,
+                                  int seed,
+                                  PoseStack poseStack,
+                                  MultiBufferSource buffer,
+                                  int packedLight,
+                                  int packedOverlay) {
+        ItemStack stack = blockEntity.getItemInSlot(slot);
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        PrimitiveFurnaceMultiblock_nogui.FurnaceZoneBox zoneBox = getZoneBox(zone);
+        if (zoneBox == null) {
+            return;
+        }
+
+        Vec3 center = zoneBox.bounds().getCenter();
+        Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
+                new Vec3(center.x, 0.155D, center.z),
+                formedFacing
+        );
+
+        renderInventoryItem(
+                blockEntity,
+                stack,
+                renderPos,
+                formedFacing,
+                extraYaw,
+                0.36F,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay,
+                seed
+        );
+    }
+
+    private void renderInventoryItem(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
+                                     ItemStack stack,
+                                     Vec3 renderPos,
+                                     Direction formedFacing,
+                                     float extraYaw,
+                                     float scale,
+                                     PoseStack poseStack,
+                                     MultiBufferSource buffer,
+                                     int packedLight,
+                                     int packedOverlay,
+                                     int seed) {
+        poseStack.pushPose();
+        poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
+        poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
+        poseStack.scale(scale, scale, scale);
+
+        Minecraft.getInstance().getItemRenderer().renderStatic(
+                stack,
+                ItemDisplayContext.GROUND,
+                packedLight,
+                packedOverlay,
+                poseStack,
+                buffer,
+                blockEntity.getLevel(),
+                seed
+        );
+
+        poseStack.popPose();
+    }
+
+    private PrimitiveFurnaceMultiblock_nogui.FurnaceZoneBox getZoneBox(
+            PrimitiveFurnaceMultiblock_nogui.FurnaceZone zone) {
+        for (PrimitiveFurnaceMultiblock_nogui.FurnaceZoneBox zoneBox
+                : PrimitiveFurnaceMultiblock_nogui.getInteractionZoneBoxes()) {
+            if (zoneBox.zone() == zone) {
+                return zoneBox;
+            }
+        }
+        return null;
+    }
+
+    private float facingYaw(Direction formedFacing) {
+        return switch (formedFacing) {
+            case WEST -> 0.0F;
+            case NORTH -> 90.0F;
+            case EAST -> 180.0F;
+            case SOUTH -> -90.0F;
+            default -> 0.0F;
+        };
     }
 
     private void renderInteractionZones(PrimitiveFurnaceMultiblockEntity_nogui blockEntity,
