@@ -27,6 +27,9 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
     @Nullable
     private BlockPos beltPartner;
 
+    private double clientBeltTravelDistance = 0.0D;
+    private float lastClientBeltVisualTime = Float.NaN;
+
     public PulleyBlockEntity_wood(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.PULLEY_BE_WOOD.get(), pos, state);
     }
@@ -81,7 +84,55 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
     }
 
     public double getPulleyRadius() {
-        return getGearTeeth() > 8 ? 0.68D : 0.38D;
+        // Radius of the wooden belt seat. The renderer adds a tiny clearance so the
+        // leather sits on the pulley instead of occupying the exact same surface.
+        return getGearTeeth() > 8 ? 0.69D : 0.43D;
+    }
+
+    /**
+     * Continuous client-side linear belt travel, measured in blocks along the upper
+     * tangent run. Unlike the visible pulley angle this deliberately does not reset
+     * to an authoritative 0..360 snapshot, otherwise the belt texture would jump each
+     * time the pulley crossed 360 degrees.
+     */
+    public double getVisualBeltTravelDistance(float partialTicks) {
+        Level currentLevel = getLevel();
+        if (currentLevel == null) {
+            return clientBeltTravelDistance;
+        }
+
+        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
+        if (Float.isNaN(lastClientBeltVisualTime)) {
+            lastClientBeltVisualTime = currentVisualTime;
+            return clientBeltTravelDistance;
+        }
+
+        float deltaTicks = currentVisualTime - lastClientBeltVisualTime;
+        lastClientBeltVisualTime = currentVisualTime;
+
+        if (deltaTicks < 0.0F) {
+            deltaTicks = 0.0F;
+        } else if (deltaTicks > 20.0F) {
+            deltaTicks = 20.0F;
+        }
+
+        float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
+        if (Math.abs(rpm) > VISUAL_STOP_EPSILON) {
+            double circumference = Math.PI * 2.0D * getPulleyRadius();
+            double blocksPerTick = (rpm / 1200.0D) * circumference;
+
+            // For the renderer's upper tangent, positive angular rotation around the
+            // pulley axis produces linear travel opposite the start->end run direction.
+            clientBeltTravelDistance -= blocksPerTick * deltaTicks * getDirectionMultiplier();
+
+            // Keep the number bounded without introducing visible jumps. The belt texture
+            // repeats every 0.5 block, so 1024 blocks is an exact repeat boundary.
+            if (Math.abs(clientBeltTravelDistance) > 1024.0D) {
+                clientBeltTravelDistance %= 0.5D;
+            }
+        }
+
+        return clientBeltTravelDistance;
     }
 
     @Nullable
