@@ -1,14 +1,14 @@
 {
   "name": "Copper Age",
-  "description": "",
+  "description": "The next stage after primitive copper production.",
   "category": "magneticraft2:walkthrough",
-  "icon": "magneticraft2:copper_gear",
+  "icon": "minecraft:copper_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Congratulations! Stone age went away so fast right? You have made it to the Copper Age! You have a lot of new things to learn, but don't worry, I'll be here to help you along the way."
+      "text": "Producing your first Copper Ingot in the Primitive Furnace brings you into the Copper Age. The full Copper Age progression is still being rebuilt; the Stone Age test currently ends at this transition."
     }
   ],
   "sortnum": 2,
-  "read_by_defaylt": true
+  "read_by_default": true
 }

@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -96,22 +97,19 @@ public class PitKilnBlock  extends BaseEntityBlock {
                         }
                     }
                 }
-                // Add wheat and oak to the pit kiln's inventory
+                // Add wheat and logs to the pit kiln's inventory.
                 if (heldStack.getItem() == Items.WHEAT && itemHandler.getStackInSlot(1).getCount() < 4) {
                     itemHandler.insertItem(1, heldStack.getItem().getDefaultInstance(), false);
-                    heldStack.setCount(heldStack.getCount() - 1);
-
-                } else if (heldStack.getItem() == Items.OAK_LOG && itemHandler.getStackInSlot(0).getCount() < 8 && itemHandler.getStackInSlot(1).getCount() == 4) {
-                    itemHandler.insertItem(0, heldStack.getItem().getDefaultInstance(), false);
-                    heldStack.setCount(heldStack.getCount() - 1);
-                }
-
-
-                // Check if the player is holding a fire starter item
-                if (heldStack.getItem() == Items.FLINT_AND_STEEL) {
-                    // Start the firing process
-                    pitKilnBlockEntity.activate(state, world, pos);
-                    return InteractionResult.PASS;
+                    heldStack.shrink(1);
+                } else if (heldStack.is(ItemTags.LOGS)
+                        && itemHandler.getStackInSlot(0).getCount() < 8
+                        && itemHandler.getStackInSlot(1).getCount() == 4) {
+                    ItemStack oneLog = heldStack.copy();
+                    oneLog.setCount(1);
+                    ItemStack remainder = itemHandler.insertItem(0, oneLog, false);
+                    if (remainder.isEmpty()) {
+                        heldStack.shrink(1);
+                    }
                 }
 
             }

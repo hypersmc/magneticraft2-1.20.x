@@ -2,13 +2,13 @@
   "name": "Bronze Age",
   "description": "",
   "category": "magneticraft2:walkthrough",
-  "icon": "magneticraft2:bronze_gear",
+  "icon": "magneticraft2:cassiterite_ore",
   "pages": [
     {
       "type": "text",
-      "text": "Got the feeling of the mod? There is so much more to do! Let's get started with the Bronze Age!"
+      "text": "Bronze Age progression will follow the Copper Age."
     }
   ],
   "sortnum": 3,
-  "read_by_defaylt": true
+  "read_by_default": true
 }

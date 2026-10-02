@@ -1,14 +1,147 @@
 {
   "name": "Stone Age",
-  "description": "",
+  "description": "From the first pebble on the ground to your first copper ingot.",
   "category": "magneticraft2:walkthrough",
-  "icon": "magneticraft2:stone_gear",
+  "icon": "magneticraft2:pebble",
   "pages": [
     {
       "type": "text",
-      "text": "The Stone Age is the first age in Magneticraft. It is unlocked by crafting a Stone Age Workbench. The Stone Age Workbench is crafted with 4 Stone Bricks and 1 Wooden Plank. The Stone Age Workbench is used to craft all the items in the Stone Age."
+      "text": "$(bold)1. Start with the ground$()$(br2)Your first resources do not come from a machine. Look around the surface for loose $(item)sticks$() and $(item)pebbles$() and right-click them to pick them up.$(br2)Grab some wood as well. Magneticraft's Crafting Table recipe uses four logs instead of four planks."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "First Crafting",
+      "recipe": "minecraft:crafting_table",
+      "recipe2": "magneticraft2:firestarter",
+      "text": "The Crafting Table opens up normal crafting. Keep the Fire Starter close: it is your primitive source of ignition."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)2. Primitive tools$()$(br2)Pebbles and sticks make your first tools. Craft a $(item)Stone Knife$() and a $(item)Primitive Hammer$().$(br2)The Fire Starter is your Stone Age ignition source. Hold right-click on the block you want to ignite until the full ignition action completes. Flint and Steel is intentionally a later steel-age tool."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Tools",
+      "recipe": "magneticraft2:stone_knife",
+      "recipe2": "magneticraft2:primitive_hammer",
+      "text": "These are your first Magneticraft tools, made entirely from resources you can gather before metallurgy."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)3. Clay and the Pit Kiln$()$(br2)Collect clay and craft a $(item)Clay Pot$(). The Clay Pot is both your first ceramic item and what creates the Pit Kiln.$(br2)Dig a one-block pit with a block beneath it and blocks on all four sides, then sneak-right-click the empty center with the Clay Pot."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Clay Pot",
+      "recipe": "magneticraft2:clay_pot",
+      "text": "Keep at least one Clay Pot for the kiln. Once fired, it becomes a reusable Ceramic Pot."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Pit Kiln",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "_D_",
+            "D0D",
+            "_D_"
+          ],
+          [
+            "___",
+            "_D_",
+            "___"
+          ]
+        ],
+        "mapping": {
+          "D": "minecraft:dirt"
+        },
+        "symmetrical": true
+      },
+      "text": "The center is the one-block-deep pit. The dirt shown here is only an example: the block underneath and the four cardinal sides just need to be filled by blocks. The corners do not matter. Sneak-right-click the empty center with a Clay Pot to create the Pit Kiln."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)4. Firing the kiln$()$(br2)Add $(item)4 Wheat$() to the Pit Kiln, then $(item)8 Logs$(). Any one log type can be used for the whole batch.$(br2)The kiln has room for four clay items total. Clay Pots become Ceramic Pots, while Clay Balls become Bricks.$(br2)When the kiln is loaded, hold the Fire Starter on it until it ignites."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)5. Water, mud and bricks$()$(br2)A fired $(item)Ceramic Pot$() can carry water. Right-click a water source to fill it, then use the filled pot on Dirt, Coarse Dirt, or Rooted Dirt to turn that block into Mud. The pot is reusable.$(br2)Combine Mud with Wheat to make Packed Mud, then craft Packed Mud into Mud Bricks."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mud Construction",
+      "recipe": "minecraft:packed_mud",
+      "recipe2": "minecraft:mud_bricks",
+      "text": "Mud Bricks are the heat-resistant building material used by the Primitive Furnace."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Optional: Primitive Storage$()$(br2)Once you have Coarse Dirt and Oak Logs you can build a Primitive Storage Cellar. Its 3x2x3 structure uses 15 Coarse Dirt, 2 Oak Logs, and the storage controller.$(br2)It is not required for metallurgy, but gives you physical in-world storage before more advanced logistics exist."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Storage",
+      "recipe": "magneticraft2:primitive_storage_cellar",
+      "text": "Craft the controller first, then use the required Coarse Dirt and Oak Logs to assemble the cellar around it."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)6. Build the Primitive Furnace$()$(br2)Craft the Primitive Furnace controller from Mud Bricks and craft a Bellows from Leather, Planks, and a Mud Brick.$(br2)The furnace structure uses the controller at ground level, two Mud Bricks stacked above it, and the Bellows immediately behind the controller. Right-click the controller once the structure is complete to form it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Furnace",
+      "recipe": "magneticraft2:primitive_furnace_controller",
+      "recipe2": "magneticraft2:bellows",
+      "text": "Both pieces are required. The Bellows provides the air needed for every primitive smelt."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Primitive Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            " M"
+          ],
+          [
+            " M"
+          ],
+          [
+            "B0"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitivefurnace_multiblock_nogui",
+          "M": "minecraft:mud_bricks",
+          "B": "magneticraft2:bellows_multiblock_module"
+        },
+        "symmetrical": false
+      },
+      "text": "The controller forms the bottom of the furnace column, with two Mud Bricks above it and the Bellows directly behind the controller. Rotate the preview to match the direction you want to build, or use Visualize to project it into the world."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)7. Smelting by hand$()$(br2)The Primitive Furnace has no GUI. Put Coal into the rear fuel area, place the ore into the middle input area, and collect products from the front.$(br2)Right-click the Bellows to pump air. It stores up to five charges, and each completed smelt consumes one charge."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)8. Your first copper$()$(br2)Find $(item)Chalcocite Ore$() underground and mine it with at least a Stone Pickaxe. Smelt one Chalcocite Ore together with Coal in the Primitive Furnace.$(br2)The result is a Copper Ingot and Slag. Producing that first copper marks the end of the current Stone Age test progression and the beginning of the Copper Age.$(br2)Once you have Copper, the vanilla Furnace can also be crafted; its recipe now requires a Copper Ingot."
     }
   ],
+  "extra_recipe_mappings": {
+    "minecraft:crafting_table": 1,
+    "magneticraft2:firestarter": 1,
+    "magneticraft2:stoneknife": 3,
+    "magneticraft2:primitive_hammer": 3,
+    "magneticraft2:clay_pot": 5,
+    "minecraft:packed_mud": 9,
+    "minecraft:mud_bricks": 9,
+    "magneticraft2:primitivestoragecellar_multiblock": 11,
+    "magneticraft2:primitivefurnace_multiblock_nogui": 13,
+    "magneticraft2:bellows_multiblock_module": 13
+  },
   "sortnum": 1,
-  "read_by_defaylt": true
+  "read_by_default": true
 }

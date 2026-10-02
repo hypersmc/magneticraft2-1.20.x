@@ -1,10 +1,31 @@
 {
   "variants": {
-    "is_formed=true": {
+    "facing=north,is_formed=false": {
+      "model": "magneticraft2:block/primitive_storage_controller"
+    },
+    "facing=east,is_formed=false": {
+      "model": "magneticraft2:block/primitive_storage_controller",
+      "y": 90
+    },
+    "facing=south,is_formed=false": {
+      "model": "magneticraft2:block/primitive_storage_controller",
+      "y": 180
+    },
+    "facing=west,is_formed=false": {
+      "model": "magneticraft2:block/primitive_storage_controller",
+      "y": 270
+    },
+    "facing=north,is_formed=true": {
       "model": "magneticraft2:block/invis"
     },
-    "is_formed=false": {
-      "model": "magneticraft2:block/primitive_furnace_core"
+    "facing=east,is_formed=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "facing=south,is_formed=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "facing=west,is_formed=true": {
+      "model": "magneticraft2:block/invis"
     }
   }
 }

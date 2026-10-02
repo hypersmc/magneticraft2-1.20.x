@@ -1,5 +1,6 @@
 package com.magneticraft2.common.item.stage.stone.tools;
 
+import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
@@ -14,84 +15,101 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Random;
 
 /**
  * @author JumpWatch on 14-07-2023
  * @Project mgc2-1.20
-* @version 1.0.0
+ * @version 1.0.0
  */
 public class FireStarter extends Item {
-    private static final Logger LOGGER = LogManager.getLogger("FireStarter");
-
     public FireStarter() {
-        super(new Properties().stacksTo(1).setNoRepair().defaultDurability(5).setNoRepair().durability(5));
+        super(new Properties().stacksTo(1).setNoRepair().defaultDurability(5).durability(5));
     }
 
-
     @Override
-    public UseAnim getUseAnimation(ItemStack pStack) {
+    public UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.BOW;
     }
 
     @Override
-    public int getUseDuration(ItemStack pStack) {
+    public int getUseDuration(ItemStack stack) {
         return 72;
     }
 
     @Override
-    public void releaseUsing(ItemStack pStack, Level pLevel, LivingEntity pLivingEntity, int pTimeCharged) {
-        if (pLivingEntity instanceof final Player player) {
-            final BlockHitResult hit = getPlayerPOVHitResult(pLevel, player, ClipContext.Fluid.NONE);
-            final BlockPos pos = hit.getBlockPos();
-            final BlockPos above = pos.above();
-            if (pLevel.isClientSide()){
-                Vec3 loc = hit.getLocation();
-                makeEffects(pLevel, player, loc.x, loc.y, loc.z, pTimeCharged, getUseDuration(pStack), pLevel.random);
-            }else if (pTimeCharged == 1){
-                if (!player.isCreative()){
-                    pStack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+    public void releaseUsing(ItemStack stack, Level level, LivingEntity livingEntity, int timeLeft) {
+        if (!(livingEntity instanceof Player player)) {
+            super.releaseUsing(stack, level, livingEntity, timeLeft);
+            return;
+        }
+
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
+        if (hit.getType() != HitResult.Type.BLOCK) {
+            super.releaseUsing(stack, level, livingEntity, timeLeft);
+            return;
+        }
+
+        BlockPos pos = hit.getBlockPos();
+        BlockPos above = pos.above();
+
+        if (level.isClientSide()) {
+            Vec3 loc = hit.getLocation();
+            makeEffects(level, loc.x, loc.y, loc.z, timeLeft, getUseDuration(stack), level.random);
+        } else if (timeLeft <= 1) {
+            boolean ignited = false;
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+
+            if (blockEntity instanceof PitKilnBlockEntity pitKiln) {
+                ignited = pitKiln.activate(level.getBlockState(pos), level, pos);
+                if (ignited && level.isEmptyBlock(above)) {
+                    level.setBlock(above, Blocks.FIRE.defaultBlockState(), 11);
                 }
-                pLevel.setBlock(above, Blocks.FIRE.defaultBlockState(), 11);
+            } else if (level.isEmptyBlock(above)) {
+                level.setBlock(above, Blocks.FIRE.defaultBlockState(), 11);
+                ignited = true;
             }
 
-
+            if (ignited && !player.isCreative()) {
+                stack.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+            }
         }
-        super.releaseUsing(pStack, pLevel, pLivingEntity, pTimeCharged);
+
+        super.releaseUsing(stack, level, livingEntity, timeLeft);
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext pContext) {
-        Level world = pContext.getLevel();
-        if (pContext.getHand() != InteractionHand.MAIN_HAND || world.isClientSide)
+    public InteractionResult useOn(UseOnContext context) {
+        Level world = context.getLevel();
+        if (context.getHand() != InteractionHand.MAIN_HAND || world.isClientSide) {
             return InteractionResult.PASS;
-        Player p = pContext.getPlayer();
-        if (p == null)
+        }
+
+        Player player = context.getPlayer();
+        if (player == null) {
             return InteractionResult.FAIL;
-        p.startUsingItem(InteractionHand.MAIN_HAND);
+        }
+
+        player.startUsingItem(InteractionHand.MAIN_HAND);
         return InteractionResult.SUCCESS;
     }
 
-    private void makeEffects(Level world, Player player, double x, double y, double z, int pTimeCharged, int total, RandomSource random)
-    {
-        int count = total - pTimeCharged;
-        if (random.nextFloat() + 0.3 < count / (double) total)
-        {
+    private void makeEffects(Level world,
+                             double x,
+                             double y,
+                             double z,
+                             int timeLeft,
+                             int total,
+                             RandomSource random) {
+        int count = total - timeLeft;
+        if (random.nextFloat() + 0.3 < count / (double) total) {
             world.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0F, 0.1F, 0.0F);
         }
-        if (pTimeCharged < 10 && random.nextFloat() + 0.3 < count / (double) total)
-        {
+        if (timeLeft < 10 && random.nextFloat() + 0.3 < count / (double) total) {
             world.addParticle(ParticleTypes.FLAME, x, y, z, 0.0F, 0.1F, 0.0F);
-        }
-        if (count % 3 == 1)
-        {
-            /// TODO: 29-03-2023 We need to have a sound for firestarter
-            //player.playSound(, 0.5F, 0.05F);
         }
     }
 }

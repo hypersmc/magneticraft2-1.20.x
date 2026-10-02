@@ -40,7 +40,7 @@ public class PrimitiveStorageCellarMultiblock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
     private static final VoxelShape WEST = Stream.of(Block.box(21, -15, -10, 25, 15, -6), Block.box(21, -15, 22, 25, 15, 26), Block.box(-10, -15, -10, -6, 15, -6), Block.box(-10, -15, 22, -6, 15, 26), Block.box(-15, -16, 16, 31, -15, 31), Block.box(-15, -16, 0, 0, -15, 16), Block.box(-15, -16, -15, 31, -15, 0), Block.box(-15, -6, 0, 0, -5, 16), Block.box(-15, -6, 16, 31, -5, 31), Block.box(-15, -6, -15, 31, -5, 0), Block.box(-15, 4, 0, 0, 5, 16), Block.box(-15, 4, 16, 31, 5, 31), Block.box(-15, 4, -15, 31, 5, 0), Block.box(-16, -16, 31, 32, 16, 32), Block.box(31, -16, 16, 32, 16, 31), Block.box(31, -16, -15, 32, 16, 0), Block.box(-16, -16, -15, -15, 16, 31), Block.box(-15, 15, -15, 31, 16, 31), Block.box(-16, -16, -16, 32, 16, -15)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     public PrimitiveStorageCellarMultiblock() {
-        super(Properties.of().noOcclusion().isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
+        super(Properties.of().noOcclusion().strength(3.5F).isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(IS_FORMED, Boolean.FALSE).setValue(FACING, Direction.NORTH));
     }
     @Override

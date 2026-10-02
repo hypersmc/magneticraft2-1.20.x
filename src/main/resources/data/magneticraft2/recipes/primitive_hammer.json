@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["PP", "S "],
+  "key": {
+    "P": { "item": "magneticraft2:pebble" },
+    "S": { "item": "minecraft:stick" }
+  },
+  "result": { "item": "magneticraft2:primitive_hammer" }
+}

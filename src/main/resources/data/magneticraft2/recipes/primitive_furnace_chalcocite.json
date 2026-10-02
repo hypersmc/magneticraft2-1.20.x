@@ -1,8 +1,8 @@
 {
   "type": "magneticraft2:primitive_furnace_multiblock",
-  "input1": { "item": "minecraft:iron_ore" },
+  "input1": { "item": "magneticraft2:chalcocite_ore" },
   "input2": { "item": "minecraft:coal" },
-  "output1": { "item": "minecraft:iron_ingot", "count": 1 },
+  "output1": { "item": "minecraft:copper_ingot", "count": 1 },
   "output2": { "item": "magneticraft2:slagitem", "count": 1 },
   "cookTime": 200
 }

@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class PrimitiveFurnaceMultiblock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
     public PrimitiveFurnaceMultiblock() {
-        super(BlockBehaviour.Properties.of().noOcclusion().isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
+        super(BlockBehaviour.Properties.of().noOcclusion().strength(3.5F).isSuffocating((state, level, pos) -> !state.getValue(IS_FORMED)).isViewBlocking((state, level, pos) -> !state.getValue(IS_FORMED)).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(IS_FORMED, Boolean.FALSE));
     }
 

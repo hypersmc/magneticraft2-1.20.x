@@ -1,0 +1,10 @@
+{
+  "criteria": {
+    "first_tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "rewards": {
+    "function": "magneticraft2:grant_world_of_magneticraft"
+  }
+}

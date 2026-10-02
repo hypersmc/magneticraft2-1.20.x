@@ -1,6 +1,6 @@
 {
   "name": "Items",
-  "description": "",
-  "icon": "magneticraft2:copper_ingot_low",
+  "description": "Reference information for useful Magneticraft2 items.",
+  "icon": "magneticraft2:firestarter",
   "sortnum": 1
 }

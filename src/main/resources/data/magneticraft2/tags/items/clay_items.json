@@ -1,5 +1,7 @@
 {
+  "replace": false,
   "values": [
-    "magneticraft2:clay_pot"
+    "magneticraft2:clay_pot",
+    "minecraft:clay_ball"
   ]
 }
