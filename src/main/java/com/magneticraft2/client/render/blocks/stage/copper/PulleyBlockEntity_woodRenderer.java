@@ -49,7 +49,7 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
             stack.popPose();
         }
 
-        renderBelt(blockEntity, stack, bufferSource);
+        renderBelt(blockEntity, partialTicks, stack, bufferSource);
     }
 
     private void applyPulleyRotation(PulleyBlockEntity_wood blockEntity,
@@ -68,6 +68,7 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
     }
 
     private void renderBelt(PulleyBlockEntity_wood blockEntity,
+                            float partialTicks,
                             PoseStack stack,
                             MultiBufferSource bufferSource) {
         BlockPos partnerPos = blockEntity.getBeltPartner();
@@ -129,6 +130,41 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
                     startB.add(thicknessOffset),
                     endB.add(thicknessOffset));
         }
+
+        // Small lighter seams make belt travel visible without needing an animated texture.
+        // The return run moves in the opposite linear direction around the open belt loop.
+        double phase = blockEntity.getVisualRotationDegrees(partialTicks) / 360.0D;
+        phase = phase - Math.floor(phase);
+
+        for (int i = 0; i < 3; i++) {
+            double spacing = i / 3.0D;
+            double forwardT = (phase + spacing) % 1.0D;
+            double returnT = (1.0D - phase + spacing) % 1.0D;
+
+            Vec3 forwardPoint = startA.lerp(endA, forwardT);
+            Vec3 returnPoint = startB.lerp(endB, returnT);
+
+            drawBeltSeam(consumer, pose, forwardPoint, axis);
+            drawBeltSeam(consumer, pose, returnPoint, axis);
+        }
+    }
+
+    private void drawBeltSeam(VertexConsumer consumer,
+                              PoseStack.Pose pose,
+                              Vec3 center,
+                              Vec3 axis) {
+        Vec3 half = axis.scale(0.045D);
+        Vec3 from = center.subtract(half);
+        Vec3 to = center.add(half);
+
+        consumer.vertex(pose.pose(), (float) from.x, (float) from.y, (float) from.z)
+                .color(0.52F, 0.28F, 0.10F, 1.0F)
+                .normal(pose.normal(), 0.0F, 1.0F, 0.0F)
+                .endVertex();
+        consumer.vertex(pose.pose(), (float) to.x, (float) to.y, (float) to.z)
+                .color(0.52F, 0.28F, 0.10F, 1.0F)
+                .normal(pose.normal(), 0.0F, 1.0F, 0.0F)
+                .endVertex();
     }
 
     private void drawLeatherLine(VertexConsumer consumer,
