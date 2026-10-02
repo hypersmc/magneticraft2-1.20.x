@@ -40,51 +40,85 @@ public class MechanicalConveyorBlockEntityRenderer implements BlockEntityRendere
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(BELT_TEXTURE));
         PoseStack.Pose pose = stack.last();
 
-        double travel = conveyor.getVisualBeltTravel(partialTicks);
-        float u0 = (float) positiveModulo(travel, 1.0D);
-        float u1 = u0 + 1.0F;
-
+        double phase = positiveModulo(conveyor.getVisualBeltTravel(partialTicks), 1.0D);
         Direction facing = conveyor.getConveyorFacing();
 
-        Vec3 leftStart;
-        Vec3 rightStart;
-        Vec3 rightEnd;
-        Vec3 leftEnd;
-
-        switch (facing) {
-            case SOUTH -> {
-                leftStart = new Vec3(BELT_MAX, BELT_Y, 0.0D);
-                rightStart = new Vec3(BELT_MIN, BELT_Y, 0.0D);
-                rightEnd = new Vec3(BELT_MIN, BELT_Y, 1.0D);
-                leftEnd = new Vec3(BELT_MAX, BELT_Y, 1.0D);
-            }
-            case EAST -> {
-                leftStart = new Vec3(0.0D, BELT_Y, BELT_MIN);
-                rightStart = new Vec3(0.0D, BELT_Y, BELT_MAX);
-                rightEnd = new Vec3(1.0D, BELT_Y, BELT_MAX);
-                leftEnd = new Vec3(1.0D, BELT_Y, BELT_MIN);
-            }
-            case WEST -> {
-                leftStart = new Vec3(1.0D, BELT_Y, BELT_MAX);
-                rightStart = new Vec3(1.0D, BELT_Y, BELT_MIN);
-                rightEnd = new Vec3(0.0D, BELT_Y, BELT_MIN);
-                leftEnd = new Vec3(0.0D, BELT_Y, BELT_MAX);
-            }
-            case NORTH -> {
-                leftStart = new Vec3(BELT_MIN, BELT_Y, 1.0D);
-                rightStart = new Vec3(BELT_MAX, BELT_Y, 1.0D);
-                rightEnd = new Vec3(BELT_MAX, BELT_Y, 0.0D);
-                leftEnd = new Vec3(BELT_MIN, BELT_Y, 0.0D);
-            }
-            default -> {
-                return;
-            }
+        // Split at the texture wrap point so all UVs remain inside 0..1. This avoids
+        // depending on texture wrap state and prevents the moving leather from smearing.
+        double firstLength = 1.0D - phase;
+        if (firstLength > 0.0001D) {
+            drawSurfaceSection(
+                    consumer,
+                    pose,
+                    facing,
+                    0.0D,
+                    firstLength,
+                    (float) phase,
+                    1.0F,
+                    packedLight
+            );
         }
+
+        if (phase > 0.0001D) {
+            drawSurfaceSection(
+                    consumer,
+                    pose,
+                    facing,
+                    firstLength,
+                    1.0D,
+                    0.0F,
+                    (float) phase,
+                    packedLight
+            );
+        }
+    }
+
+    /**
+     * fromDistance/toDistance are measured from the back of the conveyor toward its FACING.
+     */
+    private void drawSurfaceSection(VertexConsumer consumer,
+                                    PoseStack.Pose pose,
+                                    Direction facing,
+                                    double fromDistance,
+                                    double toDistance,
+                                    float u0,
+                                    float u1,
+                                    int packedLight) {
+        Vec3 leftStart = pointOnBelt(facing, fromDistance, true);
+        Vec3 rightStart = pointOnBelt(facing, fromDistance, false);
+        Vec3 rightEnd = pointOnBelt(facing, toDistance, false);
+        Vec3 leftEnd = pointOnBelt(facing, toDistance, true);
 
         vertex(consumer, pose, leftStart, u0, 0.0F, packedLight);
         vertex(consumer, pose, rightStart, u0, 1.0F, packedLight);
         vertex(consumer, pose, rightEnd, u1, 1.0F, packedLight);
         vertex(consumer, pose, leftEnd, u1, 0.0F, packedLight);
+    }
+
+    private Vec3 pointOnBelt(Direction facing, double distance, boolean left) {
+        return switch (facing) {
+            case NORTH -> new Vec3(
+                    left ? BELT_MIN : BELT_MAX,
+                    BELT_Y,
+                    1.0D - distance
+            );
+            case SOUTH -> new Vec3(
+                    left ? BELT_MAX : BELT_MIN,
+                    BELT_Y,
+                    distance
+            );
+            case EAST -> new Vec3(
+                    distance,
+                    BELT_Y,
+                    left ? BELT_MIN : BELT_MAX
+            );
+            case WEST -> new Vec3(
+                    1.0D - distance,
+                    BELT_Y,
+                    left ? BELT_MAX : BELT_MIN
+            );
+            default -> new Vec3(0.5D, BELT_Y, 0.5D);
+        };
     }
 
     private void vertex(VertexConsumer consumer,
