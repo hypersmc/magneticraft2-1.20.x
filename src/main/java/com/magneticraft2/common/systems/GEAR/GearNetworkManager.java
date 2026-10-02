@@ -439,10 +439,36 @@ public class GearNetworkManager {
     }
 
     private float calculateMeshedPhaseDegrees(GearNode current, GearNode neighbor) {
-        // External gears need one gear's teeth to sit in the other gear's gaps.
-        // This simple phase offset is half of the driven gear's tooth pitch.
-        // Example: an 8 tooth gear has 45 degrees per tooth, so its gap offset is 22.5 degrees.
-        return normalizeDegrees(current.getMeshPhaseDegrees() + (180.0F / Math.max(1, neighbor.getTeeth())));
+        // External gear meshing is a tooth-phase constraint, not a cumulative angle offset.
+        //
+        // Treat one full tooth pitch as 360 degrees of tooth phase. At the contact point,
+        // a tooth on one gear must meet a gap on the other, so the two tooth phases must
+        // add up to 180 degrees:
+        //
+        //   currentTeeth * currentPhase + neighborTeeth * neighborPhase = 180 (mod 360)
+        //
+        // Solving for the neighbor gives a stable phase that does not accumulate through
+        // a gear train. For an 8-tooth chain this produces:
+        //
+        //   0.0 -> 22.5 -> 0.0 -> 22.5 ...
+        //
+        // instead of the old incorrect:
+        //
+        //   0.0 -> 22.5 -> 45.0 -> 67.5 ...
+        int currentTeeth = Math.max(1, current.getTeeth());
+        int neighborTeeth = Math.max(1, neighbor.getTeeth());
+
+        float currentToothPhase = currentTeeth * current.getMeshPhaseDegrees();
+        float neighborPhase = (180.0F - currentToothPhase) / neighborTeeth;
+
+        // Gear models are rotationally identical after one tooth pitch, so normalize to
+        // that smaller period rather than a full 360 degrees.
+        float toothPitch = 360.0F / neighborTeeth;
+        float normalized = neighborPhase % toothPitch;
+        if (normalized < 0.0F) {
+            normalized += toothPitch;
+        }
+        return normalized;
     }
 
     private float normalizeDegrees(float degrees) {
