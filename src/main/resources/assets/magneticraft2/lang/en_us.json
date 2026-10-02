@@ -107,5 +107,12 @@
   "item.magneticraft2.blueprint": "Blueprint",
   "item.magneticraft2.pebble": "Pebble",
   "block.magneticraft2.shaft_wood": "Wooden Shaft",
-  "item.magneticraft2.shaft_wood": "Wooden Shaft"
+  "item.magneticraft2.shaft_wood": "Wooden Shaft",
+  "item.magneticraft2.firestarter": "Fire Starter",
+  "item.magneticraft2.primitive_hammer": "Primitive Hammer",
+  "item.magneticraft2.stoneknife": "Stone Knife",
+  "item.magneticraft2.clay_pot": "Clay Pot",
+  "item.magneticraft2.ceramic_pot": "Ceramic Pot",
+  "tooltip.magneticraft2.ceramic_pot.empty": "Empty - right-click a water source to fill",
+  "tooltip.magneticraft2.ceramic_pot.water": "Contains Water - use on dirt to make mud"
 }
