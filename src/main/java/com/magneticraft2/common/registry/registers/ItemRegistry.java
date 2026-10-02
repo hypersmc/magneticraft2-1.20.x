@@ -84,6 +84,7 @@ public class ItemRegistry {
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_ANVIL = fromBlock(Primitive_anvillBlock);
     //Copper
+    public static final RegistryObject<Item> ITEM_COPPER_PLATE = ITEMS.register("copper_plate", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
