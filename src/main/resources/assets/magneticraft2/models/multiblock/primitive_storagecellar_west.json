@@ -1,6 +1,6 @@
 {
   "format_version": "1.21.6",
-  "credit": "Made with Blockbench; detailed for Magneticraft2",
+  "credit": "Made with Blockbench; refined for Magneticraft2",
   "parent": "room1",
   "textures": {
     "0": "block/oak_log",
@@ -1530,268 +1530,16 @@
       }
     },
     {
-      "name": "middle shelf runner west",
-      "from": [
-        -2,
-        -8,
-        1
-      ],
-      "to": [
-        0,
-        -6,
-        15
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "middle shelf runner north",
-      "from": [
-        -14,
-        -8,
-        -2
-      ],
-      "to": [
-        30,
-        -6,
-        0
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "middle shelf runner south",
-      "from": [
-        -14,
-        -8,
-        16
-      ],
-      "to": [
-        30,
-        -6,
-        18
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "upper shelf runner west",
-      "from": [
-        -2,
-        2,
-        1
-      ],
-      "to": [
-        0,
-        4,
-        15
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "upper shelf runner north",
-      "from": [
-        -14,
-        2,
-        -2
-      ],
-      "to": [
-        30,
-        4,
-        0
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "upper shelf runner south",
-      "from": [
-        -14,
-        2,
-        16
-      ],
-      "to": [
-        30,
-        4,
-        18
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "ceiling beam west",
+      "name": "middle shelf west fascia",
       "from": [
         -15,
-        12,
-        -14
+        -6,
+        14
       ],
       "to": [
-        -11,
-        15,
-        30
+        0,
+        -4,
+        16
       ],
       "rotation": {
         "angle": 0,
@@ -1824,16 +1572,16 @@
       }
     },
     {
-      "name": "ceiling beam north",
+      "name": "middle shelf north fascia",
       "from": [
-        -11,
-        12,
-        -15
+        -15,
+        -6,
+        -2
       ],
       "to": [
         31,
-        15,
-        -11
+        -4,
+        0
       ],
       "rotation": {
         "angle": 0,
@@ -1866,14 +1614,182 @@
       }
     },
     {
-      "name": "ceiling beam south",
+      "name": "middle shelf south fascia",
       "from": [
-        -11,
-        12,
-        27
+        -15,
+        -6,
+        16
       ],
       "to": [
         31,
+        -4,
+        18
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "upper shelf west fascia",
+      "from": [
+        -15,
+        4,
+        14
+      ],
+      "to": [
+        0,
+        6,
+        16
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "upper shelf north fascia",
+      "from": [
+        -15,
+        4,
+        -2
+      ],
+      "to": [
+        31,
+        6,
+        0
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "upper shelf south fascia",
+      "from": [
+        -15,
+        4,
+        16
+      ],
+      "to": [
+        31,
+        6,
+        18
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "back wall left stud",
+      "from": [
+        -10,
+        -15,
+        29
+      ],
+      "to": [
+        -7,
         15,
         31
       ],
@@ -1908,100 +1824,142 @@
       }
     },
     {
-      "name": "entrance header",
+      "name": "back wall right stud",
       "from": [
-        27,
-        11,
-        0
+        22,
+        -15,
+        29
+      ],
+      "to": [
+        25,
+        15,
+        31
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "back wall top beam",
+      "from": [
+        -7,
+        12,
+        29
+      ],
+      "to": [
+        22,
+        15,
+        31
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "left rear brace",
+      "from": [
+        -15,
+        8,
+        22
+      ],
+      "to": [
+        -13,
+        12,
+        29
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "right rear brace",
+      "from": [
+        29,
+        8,
+        22
       ],
       "to": [
         31,
-        15,
-        16
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#0"
-        },
-        "east": {
-          "texture": "#0"
-        },
-        "south": {
-          "texture": "#0"
-        },
-        "west": {
-          "texture": "#0"
-        },
-        "up": {
-          "texture": "#0"
-        },
-        "down": {
-          "texture": "#0"
-        }
-      }
-    },
-    {
-      "name": "earth patch northwest",
-      "from": [
-        -14,
-        13,
-        -14
-      ],
-      "to": [
-        -6,
-        15,
-        -11
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#1"
-        },
-        "east": {
-          "texture": "#1"
-        },
-        "south": {
-          "texture": "#1"
-        },
-        "west": {
-          "texture": "#1"
-        },
-        "up": {
-          "texture": "#1"
-        },
-        "down": {
-          "texture": "#1"
-        }
-      }
-    },
-    {
-      "name": "earth patch northeast",
-      "from": [
-        21,
         12,
-        -14
-      ],
-      "to": [
-        29,
-        15,
-        -12
+        29
       ],
       "rotation": {
         "angle": 0,
@@ -2014,106 +1972,22 @@
       },
       "faces": {
         "north": {
-          "texture": "#1"
+          "texture": "#0"
         },
         "east": {
-          "texture": "#1"
+          "texture": "#0"
         },
         "south": {
-          "texture": "#1"
+          "texture": "#0"
         },
         "west": {
-          "texture": "#1"
+          "texture": "#0"
         },
         "up": {
-          "texture": "#1"
+          "texture": "#0"
         },
         "down": {
-          "texture": "#1"
-        }
-      }
-    },
-    {
-      "name": "earth patch southwest",
-      "from": [
-        -14,
-        13,
-        27
-      ],
-      "to": [
-        -5,
-        15,
-        30
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#1"
-        },
-        "east": {
-          "texture": "#1"
-        },
-        "south": {
-          "texture": "#1"
-        },
-        "west": {
-          "texture": "#1"
-        },
-        "up": {
-          "texture": "#1"
-        },
-        "down": {
-          "texture": "#1"
-        }
-      }
-    },
-    {
-      "name": "earth patch southeast",
-      "from": [
-        20,
-        13,
-        27
-      ],
-      "to": [
-        30,
-        15,
-        30
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          8,
-          0,
-          8
-        ]
-      },
-      "faces": {
-        "north": {
-          "texture": "#1"
-        },
-        "east": {
-          "texture": "#1"
-        },
-        "south": {
-          "texture": "#1"
-        },
-        "west": {
-          "texture": "#1"
-        },
-        "up": {
-          "texture": "#1"
-        },
-        "down": {
-          "texture": "#1"
+          "texture": "#0"
         }
       }
     }
@@ -2161,7 +2035,7 @@
       ]
     },
     {
-      "name": "Detailing",
+      "name": "Subtle detailing",
       "origin": [
         8,
         8,
@@ -2179,10 +2053,7 @@
         26,
         27,
         28,
-        29,
-        30,
-        31,
-        32
+        29
       ]
     }
   ]
