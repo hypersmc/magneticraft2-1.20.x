@@ -103,7 +103,7 @@ public class GearNode {
     }
 
     public void advanceRotation(float deltaTicks) {
-        if (deltaTicks <= 0.0F || speed <= 0.0F) {
+        if (deltaTicks <= 0.0F || speed <= 0.0F || overloaded) {
             return;
         }
 
