@@ -242,24 +242,37 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         sync();
     }
 
+    public Direction getMechanicalInputDirection() {
+        BlockState state = getBlockState();
+        Direction facing = state.hasProperty(PrimitiveGrinderBMultiblock.FACING)
+                ? state.getValue(PrimitiveGrinderBMultiblock.FACING)
+                : Direction.NORTH;
+
+        // The authored NORTH model has its mechanical bearing on the left side.
+        return facing.getCounterClockWise();
+    }
+
+    public BlockPos getMechanicalInputPosition() {
+        // The axle enters the upper grinding assembly, not the stone base.
+        return worldPosition.above().relative(getMechanicalInputDirection());
+    }
+
     @Nullable
     private GearNode findMechanicalInput(Level level) {
         GearNetworkManager network = GearNetworkManager.getInstance();
+        Direction inputDirection = getMechanicalInputDirection();
+        GearNode node = network.getGear(getMechanicalInputPosition(), level);
 
-        for (Direction direction : Direction.values()) {
-            GearNode node = network.getGear(worldPosition.relative(direction), level);
-            if (node == null
-                    || !node.isShaftLike()
-                    || node.getAxis() != direction.getAxis()
-                    || node.isOverloaded()
-                    || node.getSpeed() < MIN_MECHANICAL_SPEED
-                    || node.getTorque() < REQUIRED_TORQUE) {
-                continue;
-            }
-            return node;
+        if (node == null
+                || !node.isShaftLike()
+                || node.getAxis() != inputDirection.getAxis()
+                || node.isOverloaded()
+                || node.getSpeed() < MIN_MECHANICAL_SPEED
+                || node.getTorque() < REQUIRED_TORQUE) {
+            return null;
         }
 
-        return null;
+        return node;
     }
 
     private void updateMechanicalState(@Nullable GearNode node) {
