@@ -54,16 +54,25 @@ public class GearDebugHud {
         if (blockEntity instanceof PrimitiveGrinderBMultiblockEntity grinder) {
             String connectionText = grinder.isMechanicalInputConnected() ? "CONNECTED" : "NO SHAFT";
             String overloadText = grinder.isMechanicalInputOverloaded() ? " | OVERLOADED" : "";
-            String powerText = grinder.hasRequiredMechanicalPower() ? "READY" : "INSUFFICIENT";
+            String powerText;
+            if (!grinder.isMechanicalLoadActive()) {
+                powerText = "IDLE";
+            } else if (grinder.isMechanicalLoadSupplied()) {
+                powerText = "RUNNING";
+            } else {
+                powerText = "STARVED";
+            }
 
             minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
-                    "Grinder input %s @ %s | %s | %.1f RPM | Torque: %.2f / %.2f | %s%s",
+                    "Grinder %s | %s | %.1f RPM | Available: %.2fT | Load: %.2fT (%.2fT source) | Network: %.2f / %.2fT | %s%s",
                     grinder.getMechanicalInputDirection().getName().toUpperCase(Locale.ROOT),
-                    grinder.getMechanicalInputPosition().toShortString(),
                     connectionText,
                     grinder.getMechanicalSpeed(),
                     grinder.getMechanicalTorque(),
-                    PrimitiveGrinderBMultiblockEntity.REQUIRED_TORQUE,
+                    grinder.isMechanicalLoadActive() ? PrimitiveGrinderBMultiblockEntity.REQUIRED_TORQUE : 0.0F,
+                    grinder.getMechanicalSourceEquivalentDemand(),
+                    grinder.getMechanicalTotalSourceDemand(),
+                    grinder.getMechanicalSourceTorqueCapacity(),
                     powerText,
                     overloadText
             )), true);
