@@ -31,7 +31,6 @@ public class LargeGearBlock_woodRenderer implements BlockEntityRenderer<LargeGea
 
         stack.pushPose();
         stack.translate(0.5, 0.5, 0.5);
-        GearVisualMeshHelper.applyConnectedGearVisualOffset(blockEntity, stack);
         applyGearRotation(blockEntity, partialTicks, stack);
         stack.translate(-0.5, -0.5, -0.5);
 
