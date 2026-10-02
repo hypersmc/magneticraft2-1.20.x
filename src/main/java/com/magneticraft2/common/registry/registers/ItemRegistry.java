@@ -95,6 +95,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_SHAFT_WOOD = fromBlock(SHAFT_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
+    public static final RegistryObject<Item> ITEM_MECHANICAL_CONVEYOR = fromBlock(MECHANICAL_CONVEYOR);
     public static final RegistryObject<LeatherBeltItem> ITEM_LEATHER_BELT = ITEMS.register("leather_belt", LeatherBeltItem::new);
 
 
