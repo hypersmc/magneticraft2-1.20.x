@@ -243,18 +243,14 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     }
 
     public Direction getMechanicalInputDirection() {
-        BlockState state = getBlockState();
-        Direction facing = state.hasProperty(PrimitiveGrinderBMultiblock.FACING)
-                ? state.getValue(PrimitiveGrinderBMultiblock.FACING)
-                : Direction.NORTH;
-
-        // The authored NORTH model has its mechanical bearing on the left side.
-        return facing.getCounterClockWise();
+        // The current Grinder model is authored with its input on the WEST/left side.
+        // Keep this explicit until the formed model itself becomes directional.
+        return Direction.WEST;
     }
 
     public BlockPos getMechanicalInputPosition() {
-        // The axle enters the upper grinding assembly, not the stone base.
-        return worldPosition.above().relative(getMechanicalInputDirection());
+        // The shaft enters the centerline of the stone base.
+        return worldPosition.relative(getMechanicalInputDirection());
     }
 
     @Nullable
