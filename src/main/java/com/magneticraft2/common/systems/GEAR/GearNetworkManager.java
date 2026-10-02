@@ -565,10 +565,9 @@ public class GearNetworkManager {
             }
         }
 
-        // External gear tooth meshing can happen at larger grid distances depending on gear size.
-        // Medium-medium meshes at distance 1, medium-large at distance 2, and large-large at
-        // distance 2 for the current wooden models. This keeps small gears out of the visual
-        // footprint of large gears while avoiding invisible long-distance large-large meshing.
+        // External gear tooth meshing uses centered axle geometry:
+        // medium-medium is adjacent and straight, medium-large is diagonal (1,1), and
+        // large-large is straight at distance 2. No render-only center nudging is required.
         if (gear.isShaftLike()) {
             return connected;
         }
@@ -591,13 +590,12 @@ public class GearNetworkManager {
                 continue;
             }
 
-            if (!GearPlacementValidator.isStraightPlanarOffset(pos, scanPos, gear.getAxis())) {
-                continue;
-            }
-
-            int requiredDistance = GearPlacementValidator.getRequiredMeshDistance(gear.getTeeth(), neighbor.getTeeth());
-            int planarDistance = GearPlacementValidator.getPlanarChebyshevDistance(pos, scanPos, gear.getAxis());
-            if (planarDistance == requiredDistance) {
+            if (GearPlacementValidator.isValidExternalMeshOffset(
+                    pos,
+                    scanPos,
+                    gear.getAxis(),
+                    gear.getTeeth(),
+                    neighbor.getTeeth())) {
                 connected.add(new GearConnection(scanPos, false));
             }
         }
