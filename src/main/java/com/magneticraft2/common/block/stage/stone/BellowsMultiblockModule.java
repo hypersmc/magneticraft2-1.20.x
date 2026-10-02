@@ -107,12 +107,16 @@ public class BellowsMultiblockModule extends BaseEntityBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (!(blockEntity instanceof BellowsMultiblockModuleEntity bellows) || !bellows.isFormedModule()) {
+        if (!(blockEntity instanceof BellowsMultiblockModuleEntity bellows)) {
             return InteractionResult.PASS;
         }
 
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
+        }
+
+        if (!bellows.isFormedModule()) {
+            return InteractionResult.PASS;
         }
 
         boolean pumped = bellows.pump();
