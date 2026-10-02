@@ -87,9 +87,7 @@ public class PulleyBlock_wood extends GearBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,
                                                                   BlockState state,
                                                                   BlockEntityType<T> type) {
-        return level.isClientSide()
-                ? null
-                : createTickerHelper(type, BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_wood::serverTick);
+        return createTickerHelper(type, BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_wood::tick);
     }
 
     @Nullable
