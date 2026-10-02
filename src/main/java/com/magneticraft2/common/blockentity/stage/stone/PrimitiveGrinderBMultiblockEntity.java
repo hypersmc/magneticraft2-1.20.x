@@ -49,6 +49,13 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     private int totalCrushTime = 200;
     private float mechanicalSpeed = 0.0F;
     private float mechanicalTorque = 0.0F;
+    private float mechanicalRotationDegrees = 0.0F;
+    private int mechanicalDirectionMultiplier = 1;
+    private boolean mechanicalInputConnected = false;
+    private boolean mechanicalInputOverloaded = false;
+
+    private float clientMechanicalRotationDegrees = 0.0F;
+    private float lastClientMechanicalVisualTime = Float.NaN;
 
     public PrimitiveGrinderBMultiblockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.primitivegrinderbmultiblockentity.get(), pos, state);
@@ -80,6 +87,54 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
     public float getMechanicalTorque() {
         return mechanicalTorque;
+    }
+
+    public boolean isMechanicalInputConnected() {
+        return mechanicalInputConnected;
+    }
+
+    public boolean isMechanicalInputOverloaded() {
+        return mechanicalInputOverloaded;
+    }
+
+    public int getMechanicalDirectionMultiplier() {
+        return mechanicalDirectionMultiplier;
+    }
+
+    public boolean hasRequiredMechanicalPower() {
+        return mechanicalInputConnected
+                && !mechanicalInputOverloaded
+                && mechanicalSpeed >= MIN_MECHANICAL_SPEED
+                && mechanicalTorque >= REQUIRED_TORQUE;
+    }
+
+    public float getMechanicalVisualRotationDegrees(float partialTicks) {
+        Level currentLevel = getLevel();
+        if (currentLevel == null) {
+            return normalizeDegrees(clientMechanicalRotationDegrees);
+        }
+
+        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
+        if (Float.isNaN(lastClientMechanicalVisualTime)) {
+            clientMechanicalRotationDegrees = mechanicalRotationDegrees;
+            lastClientMechanicalVisualTime = currentVisualTime;
+            return normalizeDegrees(clientMechanicalRotationDegrees);
+        }
+
+        float deltaTicks = currentVisualTime - lastClientMechanicalVisualTime;
+        lastClientMechanicalVisualTime = currentVisualTime;
+        if (deltaTicks < 0.0F) {
+            deltaTicks = 0.0F;
+        } else if (deltaTicks > 20.0F) {
+            deltaTicks = 20.0F;
+        }
+
+        if (mechanicalSpeed > 0.01F) {
+            float degreesPerTick = mechanicalSpeed * 360.0F / 1200.0F;
+            clientMechanicalRotationDegrees += degreesPerTick * deltaTicks * mechanicalDirectionMultiplier;
+        }
+
+        return normalizeDegrees(clientMechanicalRotationDegrees);
     }
 
     public ItemStack getInputStack() {
@@ -199,12 +254,16 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
             return;
         }
 
+        // Mechanical state is independent of recipes. A connected shaft should visibly
+        // drive the Grinder even while it is idle or when the current item cannot process.
+        GearNode mechanicalInput = findConnectedMechanicalInput(level);
+        updateMechanicalState(mechanicalInput);
+
         SimpleContainer input = new SimpleContainer(itemHandler.getStackInSlot(0));
         primitive_grinder_multiblockrecipe recipe = getMatchingRecipe(input, level);
         if (recipe == null) {
             crushtime = 0;
             totalCrushTime = 200;
-            updateMechanicalState(null);
             setCrushing(false);
             setChanged();
             return;
@@ -212,16 +271,13 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
         ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
         if (!canAcceptOutput(result)) {
-            updateMechanicalState(findMechanicalInput(level));
             setCrushing(false);
             return;
         }
 
-        GearNode mechanicalInput = findMechanicalInput(level);
-        updateMechanicalState(mechanicalInput);
-
-        if (mechanicalInput == null) {
-            // Mechanical progress pauses instead of resetting when the crank stops.
+        if (!hasRequiredMechanicalPower(mechanicalInput)) {
+            // Mechanical progress pauses instead of resetting when the crank stops
+            // or when the attached network cannot supply enough speed/torque.
             setCrushing(false);
             return;
         }
@@ -254,26 +310,56 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     }
 
     @Nullable
-    private GearNode findMechanicalInput(Level level) {
+    private GearNode findConnectedMechanicalInput(Level level) {
         GearNetworkManager network = GearNetworkManager.getInstance();
         Direction inputDirection = getMechanicalInputDirection();
         GearNode node = network.getGear(getMechanicalInputPosition(), level);
 
         if (node == null
                 || !node.isShaftLike()
-                || node.getAxis() != inputDirection.getAxis()
-                || node.isOverloaded()
-                || node.getSpeed() < MIN_MECHANICAL_SPEED
-                || node.getTorque() < REQUIRED_TORQUE) {
+                || node.getAxis() != inputDirection.getAxis()) {
             return null;
         }
 
         return node;
     }
 
+    private boolean hasRequiredMechanicalPower(@Nullable GearNode node) {
+        return node != null
+                && !node.isOverloaded()
+                && node.getSpeed() >= MIN_MECHANICAL_SPEED
+                && node.getTorque() >= REQUIRED_TORQUE;
+    }
+
     private void updateMechanicalState(@Nullable GearNode node) {
-        mechanicalSpeed = node == null ? 0.0F : node.getSpeed();
-        mechanicalTorque = node == null ? 0.0F : node.getTorque();
+        float newSpeed = node == null ? 0.0F : node.getSpeed();
+        float newTorque = node == null ? 0.0F : node.getTorque();
+        float newRotation = node == null ? mechanicalRotationDegrees : node.getRotationDegrees();
+        int newDirection = node == null ? mechanicalDirectionMultiplier : node.getDirectionMultiplier();
+        boolean newConnected = node != null;
+        boolean newOverloaded = node != null && node.isOverloaded();
+
+        boolean changed = Math.abs(mechanicalSpeed - newSpeed) > 0.01F
+                || Math.abs(mechanicalTorque - newTorque) > 0.01F
+                || mechanicalDirectionMultiplier != newDirection
+                || mechanicalInputConnected != newConnected
+                || mechanicalInputOverloaded != newOverloaded;
+
+        mechanicalSpeed = newSpeed;
+        mechanicalTorque = newTorque;
+        mechanicalRotationDegrees = newRotation;
+        mechanicalDirectionMultiplier = newDirection;
+        mechanicalInputConnected = newConnected;
+        mechanicalInputOverloaded = newOverloaded;
+
+        if (changed) {
+            sync();
+        }
+    }
+
+    private float normalizeDegrees(float degrees) {
+        float normalized = degrees % 360.0F;
+        return normalized < 0.0F ? normalized + 360.0F : normalized;
     }
 
     private boolean canAcceptOutput(ItemStack result) {
@@ -335,6 +421,14 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         crushtime = tag.getInt("CrushTime");
         totalCrushTime = tag.contains("TotalCrushTime") ? tag.getInt("TotalCrushTime") : 200;
         crushing = tag.getBoolean("isCrushing");
+        mechanicalSpeed = tag.getFloat("MechanicalSpeed");
+        mechanicalTorque = tag.getFloat("MechanicalTorque");
+        mechanicalRotationDegrees = tag.getFloat("MechanicalRotationDegrees");
+        mechanicalDirectionMultiplier = tag.getInt("MechanicalDirectionMultiplier") < 0 ? -1 : 1;
+        mechanicalInputConnected = tag.getBoolean("MechanicalInputConnected");
+        mechanicalInputOverloaded = tag.getBoolean("MechanicalInputOverloaded");
+        clientMechanicalRotationDegrees = mechanicalRotationDegrees;
+        lastClientMechanicalVisualTime = Float.NaN;
 
         MultiblockPersistentData multiblockData = loadMultiblockData(tag);
         blueprintname = multiblockData.blueprintName();
@@ -348,6 +442,12 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         tag.putInt("CrushTime", crushtime);
         tag.putInt("TotalCrushTime", totalCrushTime);
         tag.putBoolean("isCrushing", crushing);
+        tag.putFloat("MechanicalSpeed", mechanicalSpeed);
+        tag.putFloat("MechanicalTorque", mechanicalTorque);
+        tag.putFloat("MechanicalRotationDegrees", mechanicalRotationDegrees);
+        tag.putInt("MechanicalDirectionMultiplier", mechanicalDirectionMultiplier);
+        tag.putBoolean("MechanicalInputConnected", mechanicalInputConnected);
+        tag.putBoolean("MechanicalInputOverloaded", mechanicalInputOverloaded);
         saveMultiblockData(tag, blueprintname, formed, repacementmodel);
     }
 
