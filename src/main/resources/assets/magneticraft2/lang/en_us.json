@@ -119,5 +119,9 @@
   "block.magneticraft2.primitive_anvil": "Primitive Anvil",
   "block.magneticraft2.gear_medium_wood": "Medium Wooden Gear",
   "block.magneticraft2.gear_large_wood": "Large Wooden Gear",
-  "block.magneticraft2.gear_large_wood_with_handle": "Large Wooden Gear with Handle"
+  "block.magneticraft2.gear_large_wood_with_handle": "Large Wooden Gear with Handle",
+  "item.magneticraft2.crushed_chalcocite": "Crushed Chalcocite",
+  "block.magneticraft2.primitive_grinder_bmultiblock": "Mechanical Grinder Base",
+  "block.magneticraft2.primitive_grindertop": "Mechanical Grinder Stone",
+  "screen.magneticraft2.primitivegrinder": "Mechanical Grinder"
 }
