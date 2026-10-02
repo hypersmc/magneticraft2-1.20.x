@@ -300,7 +300,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
         poseStack.pushPose();
         poseStack.translate(renderPos.x, renderPos.y, renderPos.z);
         poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
-        poseStack.scale(0.36F, 0.36F, 0.36F);
+        poseStack.scale(0.30F, 0.30F, 0.30F);
 
         Minecraft.getInstance().getItemRenderer().renderStatic(
                 stack,
@@ -336,7 +336,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
         // NONE avoids the additional GROUND transform/scale.
         poseStack.mulPose(Axis.YP.rotationDegrees(facingYaw(formedFacing) + extraYaw));
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        poseStack.scale(0.40F, 0.40F, 0.40F);
+        poseStack.scale(0.24F, 0.24F, 0.24F);
 
         itemRenderer.render(
                 stack,
