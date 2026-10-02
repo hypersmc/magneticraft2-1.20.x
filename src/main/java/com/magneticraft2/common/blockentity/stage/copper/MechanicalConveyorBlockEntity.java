@@ -1,6 +1,5 @@
 package com.magneticraft2.common.blockentity.stage.copper;
 
-import com.magneticraft2.common.block.stage.copper.MechanicalConveyorBlock;
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
@@ -82,13 +81,18 @@ public class MechanicalConveyorBlockEntity extends GearBlockEntity {
 
     public boolean isTransportRunning() {
         GearNode node = getOrCreateGearNode();
-        if (node.isOverloaded() || Math.abs(node.getSpeed()) < MIN_TRANSPORT_RPM) {
+
+        if (level != null && level.isClientSide) {
+            return Math.abs(node.getClientSpeed()) >= MIN_TRANSPORT_RPM
+                    && !node.isClientOverloaded();
+        }
+
+        if (node.isOverloaded() || Math.abs(node.getEffectiveSpeed()) < MIN_TRANSPORT_RPM) {
             return false;
         }
 
-        if (level == null || level.isClientSide) {
-            return Math.abs(node.getClientSpeed()) >= MIN_TRANSPORT_RPM
-                    && !node.isClientOverloaded();
+        if (level == null) {
+            return false;
         }
 
         GearNetworkManager.MechanicalLoadState loadState =
