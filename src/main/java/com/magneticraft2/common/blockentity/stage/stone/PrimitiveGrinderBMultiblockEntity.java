@@ -53,6 +53,11 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     private int mechanicalDirectionMultiplier = 1;
     private boolean mechanicalInputConnected = false;
     private boolean mechanicalInputOverloaded = false;
+    private boolean mechanicalLoadActive = false;
+    private boolean mechanicalLoadSupplied = false;
+    private float mechanicalSourceEquivalentDemand = 0.0F;
+    private float mechanicalTotalSourceDemand = 0.0F;
+    private float mechanicalSourceTorqueCapacity = 0.0F;
 
     private float clientMechanicalRotationDegrees = 0.0F;
     private float lastClientMechanicalVisualTime = Float.NaN;
@@ -101,11 +106,32 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         return mechanicalDirectionMultiplier;
     }
 
+    public boolean isMechanicalLoadActive() {
+        return mechanicalLoadActive;
+    }
+
+    public boolean isMechanicalLoadSupplied() {
+        return mechanicalLoadSupplied;
+    }
+
+    public float getMechanicalSourceEquivalentDemand() {
+        return mechanicalSourceEquivalentDemand;
+    }
+
+    public float getMechanicalTotalSourceDemand() {
+        return mechanicalTotalSourceDemand;
+    }
+
+    public float getMechanicalSourceTorqueCapacity() {
+        return mechanicalSourceTorqueCapacity;
+    }
+
     public boolean hasRequiredMechanicalPower() {
-        return mechanicalInputConnected
+        boolean basePowerAvailable = mechanicalInputConnected
                 && !mechanicalInputOverloaded
                 && mechanicalSpeed >= MIN_MECHANICAL_SPEED
                 && mechanicalTorque >= REQUIRED_TORQUE;
+        return basePowerAvailable && (!mechanicalLoadActive || mechanicalLoadSupplied);
     }
 
     public float getMechanicalVisualRotationDegrees(float partialTicks) {
@@ -129,7 +155,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
             deltaTicks = 20.0F;
         }
 
-        if (mechanicalSpeed > 0.01F) {
+        if (!mechanicalInputOverloaded && mechanicalSpeed > 0.01F) {
             float degreesPerTick = mechanicalSpeed * 360.0F / 1200.0F;
             clientMechanicalRotationDegrees += degreesPerTick * deltaTicks * mechanicalDirectionMultiplier;
         }
@@ -248,7 +274,10 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     }
 
     private void tickProcessing(Level level) {
+        GearNetworkManager network = GearNetworkManager.getInstance();
+
         if (!formed) {
+            updateMechanicalLoad(level, false);
             updateMechanicalState(null);
             setCrushing(false);
             return;
@@ -262,6 +291,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         SimpleContainer input = new SimpleContainer(itemHandler.getStackInSlot(0));
         primitive_grinder_multiblockrecipe recipe = getMatchingRecipe(input, level);
         if (recipe == null) {
+            updateMechanicalLoad(level, false);
             crushtime = 0;
             totalCrushTime = 200;
             setCrushing(false);
@@ -271,13 +301,25 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
         ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
         if (!canAcceptOutput(result)) {
+            updateMechanicalLoad(level, false);
             setCrushing(false);
             return;
         }
 
-        if (!hasRequiredMechanicalPower(mechanicalInput)) {
-            // Mechanical progress pauses instead of resetting when the crank stops
-            // or when the attached network cannot supply enough speed/torque.
+        // A valid pending job is a real 4T load on the connected shaft. Registering it
+        // can overload the complete source network, so refresh the input state afterwards.
+        updateMechanicalLoad(level, true);
+        mechanicalInput = findConnectedMechanicalInput(level);
+        updateMechanicalState(mechanicalInput);
+
+        GearNetworkManager.MechanicalLoadState loadState =
+                network.getMechanicalLoadState(level, worldPosition);
+
+        if (mechanicalInput == null
+                || mechanicalInput.getSpeed() < MIN_MECHANICAL_SPEED
+                || !loadState.supplied()) {
+            // Progress pauses rather than resetting when the crank stops or the aggregate
+            // network demand exceeds what the source/gearing can actually provide.
             setCrushing(false);
             return;
         }
@@ -329,6 +371,36 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
                 && !node.isOverloaded()
                 && node.getSpeed() >= MIN_MECHANICAL_SPEED
                 && node.getTorque() >= REQUIRED_TORQUE;
+    }
+
+    private void updateMechanicalLoad(Level level, boolean active) {
+        GearNetworkManager network = GearNetworkManager.getInstance();
+        network.setMechanicalLoad(
+                level,
+                worldPosition,
+                getMechanicalInputPosition(),
+                REQUIRED_TORQUE,
+                active
+        );
+
+        GearNetworkManager.MechanicalLoadState state =
+                network.getMechanicalLoadState(level, worldPosition);
+
+        boolean changed = mechanicalLoadActive != state.active()
+                || mechanicalLoadSupplied != state.supplied()
+                || Math.abs(mechanicalSourceEquivalentDemand - state.sourceEquivalentDemand()) > 0.01F
+                || Math.abs(mechanicalTotalSourceDemand - state.totalSourceDemand()) > 0.01F
+                || Math.abs(mechanicalSourceTorqueCapacity - state.sourceTorqueCapacity()) > 0.01F;
+
+        mechanicalLoadActive = state.active();
+        mechanicalLoadSupplied = state.supplied();
+        mechanicalSourceEquivalentDemand = state.sourceEquivalentDemand();
+        mechanicalTotalSourceDemand = state.totalSourceDemand();
+        mechanicalSourceTorqueCapacity = state.sourceTorqueCapacity();
+
+        if (changed) {
+            sync();
+        }
     }
 
     private void updateMechanicalState(@Nullable GearNode node) {
@@ -427,6 +499,11 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         mechanicalDirectionMultiplier = tag.getInt("MechanicalDirectionMultiplier") < 0 ? -1 : 1;
         mechanicalInputConnected = tag.getBoolean("MechanicalInputConnected");
         mechanicalInputOverloaded = tag.getBoolean("MechanicalInputOverloaded");
+        mechanicalLoadActive = tag.getBoolean("MechanicalLoadActive");
+        mechanicalLoadSupplied = tag.getBoolean("MechanicalLoadSupplied");
+        mechanicalSourceEquivalentDemand = tag.getFloat("MechanicalSourceEquivalentDemand");
+        mechanicalTotalSourceDemand = tag.getFloat("MechanicalTotalSourceDemand");
+        mechanicalSourceTorqueCapacity = tag.getFloat("MechanicalSourceTorqueCapacity");
         clientMechanicalRotationDegrees = mechanicalRotationDegrees;
         lastClientMechanicalVisualTime = Float.NaN;
 
@@ -448,7 +525,20 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         tag.putInt("MechanicalDirectionMultiplier", mechanicalDirectionMultiplier);
         tag.putBoolean("MechanicalInputConnected", mechanicalInputConnected);
         tag.putBoolean("MechanicalInputOverloaded", mechanicalInputOverloaded);
+        tag.putBoolean("MechanicalLoadActive", mechanicalLoadActive);
+        tag.putBoolean("MechanicalLoadSupplied", mechanicalLoadSupplied);
+        tag.putFloat("MechanicalSourceEquivalentDemand", mechanicalSourceEquivalentDemand);
+        tag.putFloat("MechanicalTotalSourceDemand", mechanicalTotalSourceDemand);
+        tag.putFloat("MechanicalSourceTorqueCapacity", mechanicalSourceTorqueCapacity);
         saveMultiblockData(tag, blueprintname, formed, repacementmodel);
+    }
+
+    @Override
+    public void onDestroy(Level level) {
+        if (!level.isClientSide) {
+            GearNetworkManager.getInstance().removeMechanicalLoad(level, worldPosition);
+        }
+        super.onDestroy(level);
     }
 
     @Override
