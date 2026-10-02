@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [" C ", "CGC", " C "],
+  "key": {
+    "C": {"item": "minecraft:cobblestone"},
+    "G": {"item": "minecraft:grindstone"}
+  },
+  "result": {"item": "magneticraft2:primitive_grindertop"}
+}
