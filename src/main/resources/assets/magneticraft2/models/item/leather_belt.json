@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/leather"
+    "layer0": "magneticraft2:block/leather_belt"
   }
 }
