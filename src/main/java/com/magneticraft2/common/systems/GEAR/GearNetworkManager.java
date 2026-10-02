@@ -170,6 +170,7 @@ public class GearNetworkManager {
         // creep a few degrees every tick because refreshGearMetadata temporarily clears
         // non-source overload flags before the load pass reapplies them.
         advanceGearRotations(level, gears);
+        lockDrivenGearRotations(level, gears);
 
         alignPassiveGearPhases(level, gears, activelyDriven);
         syncAll(level, gears.values());
@@ -345,6 +346,69 @@ public class GearNetworkManager {
         }
 
         lastRotationTickByLevel.put(dimension, gameTime);
+    }
+
+    /**
+     * Re-lock every actively driven gear to the exact angular relationship of its source.
+     *
+     * RPM ratios alone are not enough: letting every node integrate its own angle causes
+     * floating-point and client interpolation drift over time. For an external mesh the
+     * contact constraint is:
+     *
+     *   currentTeeth * currentVisualAngle
+     *       + neighborTeeth * neighborVisualAngle = 180 degrees (mod 360)
+     *
+     * Shafts remain 1:1 and therefore copy the same rotation/phase directly.
+     */
+    private void lockDrivenGearRotations(Level level, Map<BlockPos, GearNode> gears) {
+        Set<BlockPos> visited = new HashSet<>();
+        Queue<GearNode> queue = new ArrayDeque<>();
+
+        for (GearNode gear : gears.values()) {
+            if (!gear.isSource() || gear.getSpeed() <= STOP_EPSILON) {
+                continue;
+            }
+
+            visited.add(gear.getPosition());
+            queue.add(gear);
+        }
+
+        while (!queue.isEmpty()) {
+            GearNode current = queue.poll();
+
+            for (GearConnection connection : getConnectedGears(current.getPosition(), level)) {
+                GearNode neighbor = gears.get(connection.neighborPos());
+                if (neighbor == null || visited.contains(neighbor.getPosition())) {
+                    continue;
+                }
+
+                BlockPos expectedSource = current.isSource()
+                        ? current.getPosition()
+                        : current.getSourcePos();
+                if (expectedSource == null || !expectedSource.equals(neighbor.getSourcePos())) {
+                    continue;
+                }
+
+                if (connection.shaftConnection()) {
+                    neighbor.setMeshPhaseDegrees(current.getMeshPhaseDegrees());
+                    neighbor.setRotationDegrees(current.getRotationDegrees());
+                } else {
+                    float neighborPhase = calculateMeshedPhaseDegrees(current, neighbor);
+                    neighbor.setMeshPhaseDegrees(neighborPhase);
+
+                    float currentVisualAngle =
+                            current.getRotationDegrees() + current.getMeshPhaseDegrees();
+                    float neighborVisualAngle =
+                            (180.0F - current.getTeeth() * currentVisualAngle)
+                                    / Math.max(1, neighbor.getTeeth());
+
+                    neighbor.setRotationDegrees(neighborVisualAngle - neighborPhase);
+                }
+
+                visited.add(neighbor.getPosition());
+                queue.add(neighbor);
+            }
+        }
     }
 
     private boolean shouldDecayThisTick(Level level) {
