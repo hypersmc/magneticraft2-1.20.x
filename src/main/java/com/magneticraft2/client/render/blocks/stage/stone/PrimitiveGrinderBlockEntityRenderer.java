@@ -1,6 +1,5 @@
 package com.magneticraft2.client.render.blocks.stage.stone;
 
-import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -19,7 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 
@@ -120,20 +118,7 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
     }
 
     private float getInputRotation(PrimitiveGrinderBMultiblockEntity blockEntity, float partialTick) {
-        if (blockEntity.getLevel() == null) {
-            return 0.0F;
-        }
-
-        BlockEntity input = blockEntity.getLevel().getBlockEntity(blockEntity.getMechanicalInputPosition());
-        if (!(input instanceof ShaftBlockEntity_wood shaft)) {
-            return 0.0F;
-        }
-
-        if (shaft.getGearAxis() != blockEntity.getMechanicalInputDirection().getAxis()) {
-            return 0.0F;
-        }
-
-        return shaft.getVisualRotationDegrees(partialTick);
+        return blockEntity.getMechanicalVisualRotationDegrees(partialTick);
     }
 
     private void renderRotatingModel(ResourceLocation modelLocation,
