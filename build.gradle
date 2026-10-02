@@ -69,6 +69,7 @@ minecraft {
         // applies to all the run configs below
         configureEach {
             workingDirectory project.file('run')
+            arg "-mixin.config=${mod_id}.mixins.json"
             environment 'LANG', 'C.UTF-8'
             environment 'LC_ALL', 'C.UTF-8'
             environment 'DISPLAY', System.getenv('DISPLAY') ?: ':0'
@@ -130,6 +131,8 @@ mixin {
 }
 
 repositories {
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+
     // Put repositories for dependencies here
     // ForgeGradle automatically adds the Forge maven and Maven Central for you
 
