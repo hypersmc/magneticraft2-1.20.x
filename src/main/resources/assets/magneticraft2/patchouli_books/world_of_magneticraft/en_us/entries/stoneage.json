@@ -97,12 +97,37 @@
       "text": "Both pieces are required. The Bellows provides the air needed for every primitive smelt."
     },
     {
+      "type": "patchouli:multiblock",
+      "name": "Primitive Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            " M"
+          ],
+          [
+            " M"
+          ],
+          [
+            "B0"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitivefurnace_multiblock_nogui",
+          "M": "minecraft:mud_bricks",
+          "B": "magneticraft2:bellows_multiblock_module"
+        },
+        "symmetrical": false
+      },
+      "text": "The controller forms the bottom of the furnace column, with two Mud Bricks above it and the Bellows directly behind the controller. Rotate the preview to match the direction you want to build, or use Visualize to project it into the world."
+    },
+    {
       "type": "text",
       "text": "$(bold)7. Smelting by hand$()$(br2)The Primitive Furnace has no GUI. Put Coal into the rear fuel area, place the ore into the middle input area, and collect products from the front.$(br2)Right-click the Bellows to pump air. It stores up to five charges, and each completed smelt consumes one charge."
     },
     {
       "type": "text",
-      "text": "$(bold)8. Your first copper$()$(br2)Find $(item)Chalcocite Ore$() underground and mine it with at least a Stone Pickaxe. Smelt one Chalcocite Ore together with Coal in the Primitive Furnace.$(br2)The result is a Copper Ingot and Slag. Producing that first copper marks the end of the current Stone Age test progression and the beginning of the Copper Age."
+      "text": "$(bold)8. Your first copper$()$(br2)Find $(item)Chalcocite Ore$() underground and mine it with at least a Stone Pickaxe. Smelt one Chalcocite Ore together with Coal in the Primitive Furnace.$(br2)The result is a Copper Ingot and Slag. Producing that first copper marks the end of the current Stone Age test progression and the beginning of the Copper Age.$(br2)Once you have Copper, the vanilla Furnace can also be crafted; its recipe now requires a Copper Ingot."
     }
   ],
   "extra_recipe_mappings": {
