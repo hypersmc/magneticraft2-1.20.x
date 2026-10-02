@@ -1,12 +1,13 @@
 package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
+import com.magneticraft2.common.entity.mechanical.BeltCollisionEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -14,13 +15,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.WeakHashMap;
 
 /**
- * Runtime registry for physical pulley-belt connections.
+ * Runtime registry for pulley-belt connections.
  *
- * Weak Level keys keep client/server worlds isolated and allow old worlds to be collected
- * after disconnect. Connections themselves contain no Level reference.
+ * BeltPath owns the geometry. On the logical server, each exposed straight run is backed by
+ * lightweight invisible BeltCollisionEntity proxies. Vanilla automatically includes those
+ * entity AABBs in Entity.collide(...), so belt collision requires neither hidden blocks nor
+ * movement mixins.
  */
 public final class BeltConnectionManager {
     private static final Map<Level, Map<BeltKey, BeltConnection>> CONNECTIONS =
@@ -51,10 +55,15 @@ public final class BeltConnectionManager {
 
         BeltConnection existing = levelConnections.get(key);
         if (existing != null
-                && existing.axis() == start.getGearAxis()
-                && Math.abs(existing.startRadius() - start.getPulleyRadius()) < 0.00001D
-                && Math.abs(existing.endRadius() - end.getPulleyRadius()) < 0.00001D) {
+                && existing.axis == start.getGearAxis()
+                && Math.abs(existing.startRadius - start.getPulleyRadius()) < 0.00001D
+                && Math.abs(existing.endRadius - end.getPulleyRadius()) < 0.00001D) {
+            ensureCollisionProxies(level, existing);
             return;
+        }
+
+        if (existing != null) {
+            removeCollisionProxies(level, existing);
         }
 
         BeltPath path = BeltPath.create(
@@ -70,22 +79,23 @@ public final class BeltConnectionManager {
             return;
         }
 
-        levelConnections.put(
+        BeltConnection connection = new BeltConnection(
                 key,
-                new BeltConnection(
-                        key,
-                        start.getGearAxis(),
-                        start.getPulleyRadius(),
-                        end.getPulleyRadius(),
-                        path
-                )
+                start.getGearAxis(),
+                start.getPulleyRadius(),
+                end.getPulleyRadius(),
+                path
         );
+
+        levelConnections.put(key, connection);
+        ensureCollisionProxies(level, connection);
     }
 
     public static boolean isRegistered(Level level, BlockPos first, BlockPos second) {
         if (level == null || first == null || second == null) {
             return false;
         }
+
         Map<BeltKey, BeltConnection> map = CONNECTIONS.get(level);
         return map != null && map.containsKey(BeltKey.of(first, second));
     }
@@ -95,12 +105,14 @@ public final class BeltConnectionManager {
         if (level == null || first == null || second == null) {
             return null;
         }
+
         Map<BeltKey, BeltConnection> map = CONNECTIONS.get(level);
         if (map == null) {
             return null;
         }
+
         BeltConnection connection = map.get(BeltKey.of(first, second));
-        return connection == null ? null : connection.path();
+        return connection == null ? null : connection.path;
     }
 
     public static void remove(Level level, BlockPos first, BlockPos second) {
@@ -113,7 +125,11 @@ public final class BeltConnectionManager {
             return;
         }
 
-        map.remove(BeltKey.of(first, second));
+        BeltConnection removed = map.remove(BeltKey.of(first, second));
+        if (removed != null) {
+            removeCollisionProxies(level, removed);
+        }
+
         if (map.isEmpty()) {
             CONNECTIONS.remove(level);
         }
@@ -129,45 +145,78 @@ public final class BeltConnectionManager {
             return;
         }
 
-        map.entrySet().removeIf(entry -> entry.getKey().contains(pulleyPos));
+        List<BeltKey> removeKeys = new ArrayList<>();
+        for (Map.Entry<BeltKey, BeltConnection> entry : map.entrySet()) {
+            if (entry.getKey().contains(pulleyPos)) {
+                removeCollisionProxies(level, entry.getValue());
+                removeKeys.add(entry.getKey());
+            }
+        }
+
+        for (BeltKey key : removeKeys) {
+            map.remove(key);
+        }
+
         if (map.isEmpty()) {
             CONNECTIONS.remove(level);
         }
     }
 
-    /**
-     * Shapes are queried with the entity's swept movement box, so vanilla can resolve the
-     * impending collision before the entity enters the belt.
-     */
-    public static List<VoxelShape> getCollisionShapes(Level level,
-                                                      @Nullable Entity entity,
-                                                      AABB sweptBounds) {
-        if (level == null || sweptBounds == null || (entity != null && entity.isSpectator())) {
-            return List.of();
+    private static void ensureCollisionProxies(Level level, BeltConnection connection) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
         }
 
-        Map<BeltKey, BeltConnection> map = CONNECTIONS.get(level);
-        if (map == null || map.isEmpty()) {
-            return List.of();
+        if (!connection.proxyIds.isEmpty()) {
+            boolean complete = true;
+            for (UUID proxyId : connection.proxyIds) {
+                Entity entity = serverLevel.getEntity(proxyId);
+                if (!(entity instanceof BeltCollisionEntity) || entity.isRemoved()) {
+                    complete = false;
+                    break;
+                }
+            }
+
+            if (complete) {
+                return;
+            }
+
+            removeCollisionProxies(level, connection);
         }
 
-        List<VoxelShape> result = new ArrayList<>();
+        for (AABB collisionBox : connection.path.collisionBoxes()) {
+            BeltCollisionEntity proxy = new BeltCollisionEntity(serverLevel, collisionBox);
+            if (serverLevel.addFreshEntity(proxy)) {
+                connection.proxyIds.add(proxy.getUUID());
+            } else {
+                proxy.discard();
+            }
+        }
+    }
 
-        for (BeltConnection connection : map.values()) {
-            BeltPath path = connection.path();
-            if (path.bounds().intersects(sweptBounds)) {
-                result.addAll(path.collisionShapes(sweptBounds));
+    private static void removeCollisionProxies(Level level, BeltConnection connection) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            connection.proxyIds.clear();
+            return;
+        }
+
+        for (UUID proxyId : connection.proxyIds) {
+            Entity entity = serverLevel.getEntity(proxyId);
+            if (entity instanceof BeltCollisionEntity) {
+                entity.discard();
             }
         }
 
-        return result;
+        connection.proxyIds.clear();
     }
 
     /**
      * Item-transport preparation: locate the nearest registered belt path to a point.
      */
     @Nullable
-    public static BeltHit findNearest(Level level, net.minecraft.world.phys.Vec3 point, double maxDistance) {
+    public static BeltHit findNearest(Level level,
+                                      net.minecraft.world.phys.Vec3 point,
+                                      double maxDistance) {
         Map<BeltKey, BeltConnection> map = CONNECTIONS.get(level);
         if (map == null || map.isEmpty()) {
             return null;
@@ -177,28 +226,45 @@ public final class BeltConnectionManager {
         BeltHit best = null;
 
         for (BeltConnection connection : map.values()) {
-            BeltPath.Projection projection = connection.path().project(point);
+            BeltPath.Projection projection = connection.path.project(point);
             if (projection.distanceSquared() <= maxDistanceSquared
-                    && (best == null || projection.distanceSquared() < best.projection().distanceSquared())) {
-                best = new BeltHit(connection.path(), projection);
+                    && (best == null
+                    || projection.distanceSquared() < best.projection().distanceSquared())) {
+                best = new BeltHit(connection.path, projection);
             }
         }
 
         return best;
     }
 
-    private record BeltConnection(BeltKey key,
-                                  Direction.Axis axis,
-                                  double startRadius,
-                                  double endRadius,
-                                  BeltPath path) {
+    private static final class BeltConnection {
+        private final BeltKey key;
+        private final Direction.Axis axis;
+        private final double startRadius;
+        private final double endRadius;
+        private final BeltPath path;
+        private final List<UUID> proxyIds = new ArrayList<>();
+
+        private BeltConnection(BeltKey key,
+                               Direction.Axis axis,
+                               double startRadius,
+                               double endRadius,
+                               BeltPath path) {
+            this.key = key;
+            this.axis = axis;
+            this.startRadius = startRadius;
+            this.endRadius = endRadius;
+            this.path = path;
+        }
     }
 
     private record BeltKey(BlockPos start, BlockPos end) {
         private static BeltKey of(BlockPos first, BlockPos second) {
             BlockPos a = first.immutable();
             BlockPos b = second.immutable();
-            return a.asLong() <= b.asLong() ? new BeltKey(a, b) : new BeltKey(b, a);
+            return a.asLong() <= b.asLong()
+                    ? new BeltKey(a, b)
+                    : new BeltKey(b, a);
         }
 
         private boolean contains(BlockPos pos) {
