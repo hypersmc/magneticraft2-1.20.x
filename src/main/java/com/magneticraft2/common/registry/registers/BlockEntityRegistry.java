@@ -4,6 +4,7 @@ import com.magneticraft2.common.blockentity.general.*;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalConveyorBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.*;
@@ -58,6 +59,13 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<LargeGearBlockEntity_wood>> GEAR_LARGE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood", () -> BlockEntityType.Builder.of(LargeGearBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearWithHandleBlockEntity_wood>> GEAR_LARGE_WITH_HANDLE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood_with_handle", () -> BlockEntityType.Builder.of(LargeGearWithHandleBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WITH_HANDLE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<ShaftBlockEntity_wood>> SHAFT_BE_WOOD = BLOCK_ENTITIES.register("shaft_wood", () -> BlockEntityType.Builder.of(ShaftBlockEntity_wood::new, BlockRegistry.SHAFT_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalConveyorBlockEntity>> MECHANICAL_CONVEYOR_BE =
+            BLOCK_ENTITIES.register("mechanical_conveyor", () ->
+                    BlockEntityType.Builder.of(
+                            MechanicalConveyorBlockEntity::new,
+                            BlockRegistry.MECHANICAL_CONVEYOR.get()
+                    ).build(null));
+
     public static final RegistryObject<BlockEntityType<PulleyBlockEntity_wood>> PULLEY_BE_WOOD = BLOCK_ENTITIES.register(
             "pulley_wood",
             () -> BlockEntityType.Builder.of(
