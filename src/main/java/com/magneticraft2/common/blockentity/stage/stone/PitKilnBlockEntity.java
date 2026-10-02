@@ -16,6 +16,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -111,29 +112,37 @@ public class PitKilnBlockEntity extends BlockEntity {
      * please increment the following counter as a warning to the next person:
      * total_hours_wasted_here = 18
      **/
-    public void activate(BlockState state, Level world, BlockPos pos) {
+    public boolean activate(BlockState state, Level world, BlockPos pos) {
         this.level = world;
 
-        PitKilnBlockEntity blockEntity = (PitKilnBlockEntity) world.getBlockEntity(pos);
-        if (blockEntity == null) return;
+        if (isBurning) {
+            return false;
+        }
+
+        BlockEntity foundEntity = world.getBlockEntity(pos);
+        if (!(foundEntity instanceof PitKilnBlockEntity blockEntity)) {
+            return false;
+        }
 
         LazyOptional<IItemHandler> optionalHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
         IItemHandler itemHandler = optionalHandler.orElse(null);
-        if (itemHandler == null) return;
+        if (itemHandler == null) {
+            return false;
+        }
 
         ItemStack slot0 = itemHandler.getStackInSlot(0);
         ItemStack slot1 = itemHandler.getStackInSlot(1);
 
-        boolean hasLogs = slot0.getItem() == Items.OAK_LOG && slot0.getCount() >= 8;
-        boolean hasWheat = slot1.getItem() == Items.WHEAT && slot1.getCount() >= 4;
+        boolean hasLogs = slot0.is(ItemTags.LOGS) && slot0.getCount() >= 8;
+        boolean hasWheat = slot1.is(Items.WHEAT) && slot1.getCount() >= 4;
 
-        if (!hasLogs || !hasWheat) return;
+        if (!hasLogs || !hasWheat) {
+            return false;
+        }
 
-        // Remove required items
         itemHandler.extractItem(0, 8, false);
         itemHandler.extractItem(1, 4, false);
 
-        // Update block state
         BlockState newState = state
                 .setValue(PitKilnBlock.LOG_COUNT, getLogCount())
                 .setValue(PitKilnBlock.WHEAT_COUNT, getWheatCount())
@@ -141,12 +150,13 @@ public class PitKilnBlockEntity extends BlockEntity {
 
         level.setBlock(pos, newState, 3);
 
-        // Start burning
         isBurning = true;
         burnTime = Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get();
         world.playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.0F, 1.0F);
         setChanged();
+        return true;
     }
+
     /**
      * Handles the server tick logic for the {@link PitKilnBlockEntity}. This method is called periodically to update
      * the state of the Pit Kiln, manage the burning process, update block states, and manage item transformations
@@ -300,8 +310,11 @@ public class PitKilnBlockEntity extends BlockEntity {
         if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
             LOGGER.info(itemStack.getItem());
         }
-        if (itemStack.getItem().equals(ItemRegistry.item_clay_pot.get().asItem())) {
+        if (itemStack.is(ItemRegistry.item_clay_pot.get())) {
             return ItemRegistry.item_ceramic_pot.get().getDefaultInstance();
+        }
+        if (itemStack.is(Items.CLAY_BALL)) {
+            return Items.BRICK.getDefaultInstance();
         }
         return Items.AIR.getDefaultInstance();
     }
