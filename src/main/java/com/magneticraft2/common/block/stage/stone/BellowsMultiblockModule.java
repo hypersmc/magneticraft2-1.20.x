@@ -56,7 +56,7 @@ public class BellowsMultiblockModule extends BaseEntityBlock {
             Block.box(12.0D, 0.0D, 7.5D, 16.0D, 1.0D, 8.5D)
     ).optimize();
     public BellowsMultiblockModule() {
-        super(BlockBehaviour.Properties.of().noOcclusion().requiresCorrectToolForDrops());
+        super(BlockBehaviour.Properties.of().noOcclusion().strength(3.5F).requiresCorrectToolForDrops());
         this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(ACTIVE, false));
 
     }
