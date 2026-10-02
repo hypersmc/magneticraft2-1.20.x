@@ -1,6 +1,6 @@
 {
   "name": "Walkthrough",
-  "description": "",
-  "icon": "",
-  "sortnum": 1
+  "description": "Follow Magneticraft2 from scavenged materials to increasingly capable technology.",
+  "icon": "magneticraft2:pebble",
+  "sortnum": 0
 }
