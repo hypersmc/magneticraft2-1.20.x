@@ -1,7 +1,7 @@
 {
   "name": "World of Magneticraft2",
-  "landing_text": "Magneticraft2 entire guide book. This book will show you how machines work and how to build them.",
-  "version": 1.0,
+  "landing_text": "A practical guide to Magneticraft2 progression. Start with what you can gather by hand, learn primitive processing, and work your way into metallurgy and machines.",
+  "version": 2.0,
   "book_texture": "magneticraft2:textures/book/background.png",
   "model": "magneticraft2:world_of_magneticraft",
   "show_progress": false,
