@@ -452,28 +452,28 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
 
     private void drawQuad(VertexConsumer consumer,
                           PoseStack.Pose pose,
-                          Vec3 v0,
-                          Vec3 v1,
-                          Vec3 v2,
-                          Vec3 v3,
+                          Vec3 vertex0,
+                          Vec3 vertex1,
+                          Vec3 vertex2,
+                          Vec3 vertex3,
                           Vec3 normal,
-                          float u0,
-                          float v0,
-                          float u1,
-                          float v1,
-                          float u2,
-                          float v2,
-                          float u3,
-                          float v3,
+                          float texU0,
+                          float texV0,
+                          float texU1,
+                          float texV1,
+                          float texU2,
+                          float texV2,
+                          float texU3,
+                          float texV3,
                           int packedLight) {
         Vec3 n = normal.lengthSqr() < 0.0001D
                 ? new Vec3(0.0D, 1.0D, 0.0D)
                 : normal.normalize();
 
-        beltVertex(consumer, pose, v0, n, u0, v0, packedLight);
-        beltVertex(consumer, pose, v1, n, u1, v1, packedLight);
-        beltVertex(consumer, pose, v2, n, u2, v2, packedLight);
-        beltVertex(consumer, pose, v3, n, u3, v3, packedLight);
+        beltVertex(consumer, pose, vertex0, n, texU0, texV0, packedLight);
+        beltVertex(consumer, pose, vertex1, n, texU1, texV1, packedLight);
+        beltVertex(consumer, pose, vertex2, n, texU2, texV2, packedLight);
+        beltVertex(consumer, pose, vertex3, n, texU3, texV3, packedLight);
     }
 
     private void beltVertex(VertexConsumer consumer,
