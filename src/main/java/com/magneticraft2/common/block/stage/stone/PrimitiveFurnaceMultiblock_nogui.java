@@ -5,10 +5,13 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveFurnaceMultiblockEntity_nogui;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockHitHelper;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -38,6 +42,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -47,6 +52,24 @@ import java.util.stream.Stream;
  */
 public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
+
+    private static final List<FurnaceZoneBox> INTERACTION_ZONE_BOXES = List.of(
+            // WEST-authored canonical layout. For the furnace opening, X is the
+            // useful depth axis: lower X is farther back inside the furnace and
+            // higher X is closer to the player/opening. Z splits left/right.
+            //
+            // Keep every pad on the reachable surface around y=0.063.
+            //
+            // Back: fuel.
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.14D, 0.00D, 0.34D, 0.38D, 0.14D, 0.66D)),
+
+            // Middle: smeltable input.
+            new FurnaceZoneBox(FurnaceZone.SMELTABLE_INPUT, new AABB(0.42D, 0.00D, 0.34D, 0.68D, 0.14D, 0.66D)),
+
+            // Front/outward: the two outputs, split across the opening.
+            new FurnaceZoneBox(FurnaceZone.PRIMARY_OUTPUT, new AABB(0.72D, 0.00D, 0.50D, 0.98D, 0.14D, 0.78D)),
+            new FurnaceZoneBox(FurnaceZone.SECONDARY_OUTPUT, new AABB(0.72D, 0.00D, 0.18D, 0.98D, 0.14D, 0.46D))
+    );
     private static final VoxelShape WEST = Stream.of(Block.box(4.68629, 0, 0, 11.31371, 1, 16), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(4.68629, 0, 0, 11.31371, 1, 16), Stream.of(Block.box(4.68629, 1, 0, 11.31371, 8, 1), Block.box(15, 1, 4.68629, 16, 2, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(4.68629, 1, 0, 11.31371, 8, 3), Block.box(15, 1, 4.68629, 16, 8, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Stream.of(Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(14, 0, 0, 16, 16, 4.7), Block.box(14, 0, 11.299999999999999, 16, 16, 16), Block.box(11.3, 0, 0, 14, 16, 2), Block.box(1.9999999999999982, 0, 14, 4.699999999999999, 16, 16), Block.box(2, 0, 0, 4.699999999999999, 16, 2), Block.box(11.299999999999999, 0, 14, 14, 16, 16), Block.box(0, 0, 11.299999999999999, 2, 16, 16), Block.box(0, 0, 0, 2, 16, 4.7)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Stream.of(Block.box(4.68629, -15, 0, 11.31371, -14, 1), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(13, -15, 4.68629, 16, -8, 11.31371), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(11, 13, 5.51472, 14, 32, 10.48528)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW2 = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(4.68629, -15, 0, 11.31371, -8, 1), Block.box(15, -15, 4.68629, 16, -14, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(4.68629, -15, 0, 11.31371, -8, 3), Block.box(15, -15, 4.68629, 16, -8, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
@@ -62,10 +85,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getInteractionShape(BlockState pState, BlockGetter pLevel, BlockPos pPos) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
                 switch (direction) {
                     case WEST:
                         return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
@@ -83,10 +106,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getVisualShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
 
                 switch (direction) {
                     case WEST:
@@ -105,10 +128,10 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        Direction direction = pState.getValue(FACING);
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
         if (blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
             if (furnaceEntity.isFormed()) {
+                Direction direction = getFormedFacing(furnaceEntity, pState);
                 switch (direction) {
                     case WEST:
                         return VoxelShapeUtils.rotateHorizontal(WEST_NEW, Direction.EAST).move(0,1,0);
@@ -217,85 +240,195 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     }
     @Override
     protected void interactableNoGui(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
-        // Transform global hit position into block-local NORTH-facing space
-        Vec3 local = toLocalHit(pHit, pPos, pState.getValue(FACING));
-        double x = local.x, y = local.y, z = local.z;
-
-        LOGGER.info(String.format("Facing: %s, X: %.3f, Y: %.3f, Z: %.3f", pState.getValue(FACING), x, y, z));
-
         BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-        if (!(blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity)) return;
+        if (!(blockEntity instanceof PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity)) {
+            return;
+        }
+
+        Direction formedFacing = getFormedFacing(furnaceEntity, pState);
+        Vec3 relativeHit = MultiblockHitHelper.relativeToController(pHit, pPos);
+        Vec3 localHit = MultiblockHitHelper.toCanonicalWest(relativeHit, formedFacing);
+        Direction localFace = toCanonicalWest(pHit.getDirection(), formedFacing);
+        FurnaceZone zone = findFurnaceZone(localHit);
+
+        if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
+            String message = String.format(
+                    "Furnace %s -> %s | local x=%.3f y=%.3f z=%.3f | face=%s",
+                    formedFacing,
+                    zone.displayName,
+                    localHit.x,
+                    localHit.y,
+                    localHit.z,
+                    localFace
+            );
+            LOGGER.info(message);
+            pPlayer.displayClientMessage(Component.literal(message), true);
+        }
 
         IItemHandler itemHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null).orElse(null);
-        if (itemHandler == null) return;
+        if (itemHandler == null) {
+            return;
+        }
 
         ItemStack heldItem = pPlayer.getItemInHand(pHand);
 
-        // 🔵 Smeltable input (center zone)
-        if (inBox(x, 0.25, 0.75) && inBox(z, 0.25, 0.75) && inBox(y, 0.25, 0.6)) {
-            LOGGER.info("BLUE zone - inserting smeltable");
-            itemHandler.insertItem(0, heldItem, false);
-            heldItem.shrink(1);
-            furnaceEntity.sync();
-            return;
-        }
-
-        // 🔴 Coal input (outer edges, lowered to y 0.0–0.3)
-        if (((inBox(x,0.1,0.9) && inBox(z,0.05,0.15)) ||
-                (inBox(x,0.1,0.9) && inBox(z,0.85,0.95)) ||
-                (inBox(x,0.05,0.15)&& inBox(z,0.2,0.8)) ||
-                (inBox(x,0.85,0.95)&& inBox(z,0.2,0.8)))
-                && inBox(y, 0.0, 0.3)) {
-            LOGGER.info("RED zone - inserting coal");
-            if (heldItem.getItem() == Items.COAL) {
-                itemHandler.insertItem(1, heldItem, false);
-                heldItem.shrink(1);
-                furnaceEntity.sync();
+        switch (zone) {
+            case SMELTABLE_INPUT -> insertOne(itemHandler, 0, heldItem, pPlayer, furnaceEntity);
+            case FUEL_INPUT -> {
+                if (heldItem.is(Items.COAL)) {
+                    insertOne(itemHandler, 1, heldItem, pPlayer, furnaceEntity);
+                }
             }
+            case PRIMARY_OUTPUT -> {
+                if (heldItem.isEmpty()) {
+                    extractOutput(itemHandler, 2, pPlayer, furnaceEntity);
+                }
+            }
+            case SECONDARY_OUTPUT -> {
+                if (heldItem.isEmpty()) {
+                    extractOutput(itemHandler, 3, pPlayer, furnaceEntity);
+                }
+            }
+            case NONE -> {
+            }
+        }
+    }
+
+    private FurnaceZone findFurnaceZone(Vec3 localHit) {
+        // The renderer consumes these exact same boxes in DevMode, so what is
+        // drawn in-world is always the area that the interaction code tests.
+        for (FurnaceZoneBox zoneBox : INTERACTION_ZONE_BOXES) {
+            if (zoneBox.bounds.contains(localHit)) {
+                return zoneBox.zone;
+            }
+        }
+        return FurnaceZone.NONE;
+    }
+
+    public static List<FurnaceZoneBox> getInteractionZoneBoxes() {
+        return INTERACTION_ZONE_BOXES;
+    }
+
+    private void insertOne(IItemHandler itemHandler,
+                           int slot,
+                           ItemStack heldItem,
+                           Player player,
+                           PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
+        if (heldItem.isEmpty()) {
             return;
         }
-        // 🟩 Green output 1 (bottom left)
-        if (inBox(x, 0.1, 0.4) && inBox(z, 0.1, 0.4) && inBox(y, 0.0, 0.4)) {
-            LOGGER.info("GREEN zone - output slot 1 clicked");
-            // Output logic here
+
+        ItemStack oneItem = heldItem.copy();
+        oneItem.setCount(1);
+        ItemStack remainder = itemHandler.insertItem(slot, oneItem, false);
+        int inserted = 1 - remainder.getCount();
+
+        if (inserted <= 0) {
             return;
         }
 
-        // 🟫 Grayish output 2 (bottom right)
-        if (inBox(x, 0.6, 0.9) && inBox(z, 0.1, 0.4) && inBox(y, 0.0, 0.4)) {
-            LOGGER.info("GRAY zone - output slot 2 clicked");
-            // Output logic here
+        if (!player.getAbilities().instabuild) {
+            heldItem.shrink(inserted);
+        }
+        furnaceEntity.sync();
+    }
+
+    private void extractOutput(IItemHandler itemHandler,
+                               int slot,
+                               Player player,
+                               PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {
+        ItemStack extracted = itemHandler.extractItem(slot, 64, false);
+        if (extracted.isEmpty()) {
             return;
         }
 
-        LOGGER.info("No zone matched");
+        if (!player.getInventory().add(extracted)) {
+            player.drop(extracted, false);
+        }
+        furnaceEntity.sync();
     }
 
-    private boolean isWithinBounds(double value, double bound1, double bound2) {
-        double min = Math.min(bound1, bound2);
-        double max = Math.max(bound1, bound2);
-        return value >= min && value <= max;
-    }
-    private Vec3 toLocalHit(BlockHitResult hit, BlockPos blockPos, Direction facing) {
-        double localX = hit.getLocation().x - blockPos.getX();
-        double localY = hit.getLocation().y - blockPos.getY();
-        double localZ = hit.getLocation().z - blockPos.getZ();
+    public static Direction getFormedFacing(PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity, BlockState state) {
+        String blueprintName = furnaceEntity.getMBblueprintname();
+        if (blueprintName != null && !blueprintName.isEmpty()) {
+            String normalized = blueprintName.endsWith("_nogui")
+                    ? blueprintName.substring(0, blueprintName.length() - "_nogui".length())
+                    : blueprintName;
 
-        // Rotate hit based on block's facing
-        switch (facing) {
-            case NORTH:
-                return new Vec3(localX, localY, localZ);
-            case SOUTH:
-                return new Vec3(1 - localX, localY, 1 - localZ);
-            case EAST:
-                return new Vec3(1 - localZ, localY, localX);
-            case WEST:
-                return new Vec3(localZ, localY, 1 - localX);
-            default:
-                return new Vec3(localX, localY, localZ);
+            if (normalized.endsWith("_west")) {
+                return Direction.WEST;
+            }
+            if (normalized.endsWith("_east")) {
+                return Direction.EAST;
+            }
+            if (normalized.endsWith("_north")) {
+                return Direction.NORTH;
+            }
+            if (normalized.endsWith("_south")) {
+                return Direction.SOUTH;
+            }
+        }
+
+        return state.hasProperty(FACING) ? state.getValue(FACING) : Direction.WEST;
+    }
+
+    private Direction toCanonicalWest(Direction worldFace, Direction formedFacing) {
+        if (worldFace.getAxis().isVertical()) {
+            return worldFace;
+        }
+
+        return switch (formedFacing) {
+            case WEST -> worldFace;
+            case EAST -> switch (worldFace) {
+                case NORTH -> Direction.SOUTH;
+                case SOUTH -> Direction.NORTH;
+                case EAST -> Direction.WEST;
+                case WEST -> Direction.EAST;
+                default -> worldFace;
+            };
+            case NORTH -> switch (worldFace) {
+                case NORTH -> Direction.WEST;
+                case SOUTH -> Direction.EAST;
+                case EAST -> Direction.NORTH;
+                case WEST -> Direction.SOUTH;
+                default -> worldFace;
+            };
+            case SOUTH -> switch (worldFace) {
+                case NORTH -> Direction.EAST;
+                case SOUTH -> Direction.WEST;
+                case EAST -> Direction.SOUTH;
+                case WEST -> Direction.NORTH;
+                default -> worldFace;
+            };
+            default -> worldFace;
+        };
+    }
+
+    public record FurnaceZoneBox(FurnaceZone zone, AABB bounds) {
+    }
+
+    public enum FurnaceZone {
+        SMELTABLE_INPUT("smeltable input", "INPUT"),
+        FUEL_INPUT("fuel input", "FUEL"),
+        PRIMARY_OUTPUT("primary output", "OUT 1"),
+        SECONDARY_OUTPUT("secondary output", "OUT 2"),
+        NONE("none", "NONE");
+
+        private final String displayName;
+        private final String debugLabel;
+
+        FurnaceZone(String displayName, String debugLabel) {
+            this.displayName = displayName;
+            this.debugLabel = debugLabel;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public String getDebugLabel() {
+            return debugLabel;
         }
     }
-    private boolean inBox(double value, double min, double max) {
-        return value >= min && value <= max;
-    }
+
 }
