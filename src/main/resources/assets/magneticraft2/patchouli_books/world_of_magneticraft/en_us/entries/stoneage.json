@@ -43,14 +43,14 @@
       "multiblock": {
         "pattern": [
           [
-            "DDD",
+            "_D_",
             "D0D",
-            "DDD"
+            "_D_"
           ],
           [
-            "DDD",
-            "DDD",
-            "DDD"
+            "___",
+            "_D_",
+            "___"
           ]
         ],
         "mapping": {
@@ -58,7 +58,7 @@
         },
         "symmetrical": true
       },
-      "text": "The center is the one-block-deep pit. The dirt shown here is only an example: the floor and four sides just need to be filled by blocks. Sneak-right-click the empty center with a Clay Pot to create the Pit Kiln."
+      "text": "The center is the one-block-deep pit. The dirt shown here is only an example: the block underneath and the four cardinal sides just need to be filled by blocks. The corners do not matter. Sneak-right-click the empty center with a Clay Pot to create the Pit Kiln."
     },
     {
       "type": "text",
