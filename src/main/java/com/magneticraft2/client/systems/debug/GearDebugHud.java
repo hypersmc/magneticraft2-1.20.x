@@ -1,6 +1,7 @@
 package com.magneticraft2.client.systems.debug;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -92,10 +93,15 @@ public class GearDebugHud {
         int direction = gearBlockEntity.getDirectionMultiplier();
         String directionText = direction < 0 ? "CCW" : "CW";
         String overloadText = overloaded ? " | OVERLOADED" : "";
-        String nodeType = gearBlockEntity.isShaftLike() ? "Shaft" : "Gear";
+        String nodeType = gearBlockEntity instanceof PulleyBlockEntity_wood ? "Pulley"
+                : (gearBlockEntity.isShaftLike() ? "Shaft" : "Gear");
+        String beltText = "";
+        if (gearBlockEntity instanceof PulleyBlockEntity_wood pulley && pulley.getBeltPartner() != null) {
+            beltText = " | Belt -> " + pulley.getBeltPartner().toShortString();
+        }
 
         minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
-                "%s: %.1f RPM | Torque: %.2f / %.2f | Dir: %s | Teeth: %d | Axis: %s | Phase: %.1f | Rot: %.1f%s",
+                "%s: %.1f RPM | Torque: %.2f / %.2f | Dir: %s | Teeth: %d | Axis: %s | Phase: %.1f | Rot: %.1f%s%s",
                 nodeType,
                 speed,
                 torque,
@@ -105,7 +111,8 @@ public class GearDebugHud {
                 gearBlockEntity.getGearAxis().getName(),
                 gearBlockEntity.getClientMeshPhaseDegrees(),
                 gearBlockEntity.getGearNode().getClientRotationDegrees(),
-                overloadText
+                overloadText,
+                beltText
         )), true);
 
         ticksUntilNextMessage = 5;
