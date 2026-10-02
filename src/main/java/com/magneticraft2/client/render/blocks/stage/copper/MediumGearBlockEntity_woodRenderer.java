@@ -31,7 +31,6 @@ public class MediumGearBlockEntity_woodRenderer implements BlockEntityRenderer<M
 
         stack.pushPose();
         stack.translate(0.5, 0.5, 0.5);
-        GearVisualMeshHelper.applyConnectedGearVisualOffset(blockEntity, stack);
         applyGearRotation(blockEntity, partialTicks, stack);
         stack.translate(-0.5, -0.5, -0.5);
 
