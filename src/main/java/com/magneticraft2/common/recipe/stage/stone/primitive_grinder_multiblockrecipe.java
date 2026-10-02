@@ -62,14 +62,18 @@ public class primitive_grinder_multiblockrecipe implements Recipe<Container> {
     }
     public static class Type implements RecipeType<primitive_grinder_multiblockrecipe> {
         public static final Type INSTANCE = new Type();
-        public static final String ID = "primitive_furnace_multiblock";
+        public static final String ID = "primitive_grinder_bmultiblock";
     }
     public static class Serializer implements RecipeSerializer<primitive_grinder_multiblockrecipe> {
         public static final Serializer INSTANCE = new Serializer();
         @Override
         public primitive_grinder_multiblockrecipe fromJson(ResourceLocation resourceLocation, JsonObject jsonObject) {
             Ingredient ingredient = Ingredient.fromJson(jsonObject.get("input"));
-            ItemStack output1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(jsonObject.getAsJsonObject("output").get("item").getAsString())).getDefaultInstance();
+            JsonObject outputJson = jsonObject.getAsJsonObject("output");
+            ItemStack output1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(outputJson.get("item").getAsString())).getDefaultInstance();
+            if (outputJson.has("count")) {
+                output1.setCount(outputJson.get("count").getAsInt());
+            }
             int crushtime = jsonObject.get("crushtime").getAsInt();
 
             return new primitive_grinder_multiblockrecipe(resourceLocation, ingredient, output1, crushtime);
