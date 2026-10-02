@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "magneticraft2:chalcocite_ore",
-    "magneticraft2:primitive_anvil"
+    "magneticraft2:primitive_anvil",
+    "magneticraft2:primitive_grinder_bmultiblock",
+    "magneticraft2:primitive_grindertop"
   ]
 }
