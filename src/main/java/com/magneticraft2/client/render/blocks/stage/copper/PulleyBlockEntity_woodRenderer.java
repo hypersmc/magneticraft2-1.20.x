@@ -19,19 +19,22 @@ import static com.magneticraft2.common.block.stage.copper.PulleyBlock_wood.POWER
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
 /**
- * Dynamic wooden pulley + open leather-belt renderer.
+ * Wooden pulley + open leather-belt renderer.
  *
- * The belt is rendered as an actual narrow textured ribbon wrapped around both
- * pulleys rather than as debug lines. One endpoint renders each connection to
- * avoid duplicate geometry.
+ * The belt uses true external tangent points, tiled custom leather UVs, and a small
+ * radial clearance from the pulley rim. Belt geometry is open-ended between segments
+ * so touching straight/arc sections share an edge instead of z-fighting through
+ * overlapping end caps.
  */
 public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<PulleyBlockEntity_wood> {
     private static final ResourceLocation BELT_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/brown_wool.png");
+            new ResourceLocation("magneticraft2", "textures/block/leather_belt.png");
 
-    private static final double BELT_HALF_WIDTH = 0.075D;
-    private static final double BELT_HALF_THICKNESS = 0.022D;
-    private static final int ARC_SEGMENTS = 10;
+    private static final double BELT_HALF_WIDTH = 0.085D;
+    private static final double BELT_HALF_THICKNESS = 0.018D;
+    private static final double BELT_CLEARANCE = 0.030D;
+    private static final double TEXTURE_REPEAT_LENGTH = 0.50D;
+    private static final int ARC_SEGMENTS_PER_HALF_TURN = 16;
 
     public PulleyBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -87,7 +90,7 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
             return;
         }
 
-        // Render once from the deterministically lower endpoint.
+        // Render each complete belt exactly once.
         if (blockEntity.getBlockPos().asLong() > partnerPos.asLong()) {
             return;
         }
@@ -107,193 +110,288 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
         );
 
         Vec3 centerLine = endCenter.subtract(startCenter);
-        if (centerLine.lengthSqr() < 0.0001D) {
+        double centerDistance = centerLine.length();
+        if (centerDistance < 0.0001D) {
             return;
         }
 
-        Vec3 runDirection = centerLine.normalize();
-        Vec3 axis = switch (blockEntity.getGearAxis()) {
-            case X -> new Vec3(1.0D, 0.0D, 0.0D);
-            case Y -> new Vec3(0.0D, 1.0D, 0.0D);
-            case Z -> new Vec3(0.0D, 0.0D, 1.0D);
-        };
+        Vec3 runDirection = centerLine.scale(1.0D / centerDistance);
+        Vec3 axis = axisVector(blockEntity.getGearAxis());
 
-        Vec3 radialSide = axis.cross(runDirection);
-        if (radialSide.lengthSqr() < 0.0001D) {
+        Vec3 sideDirection = axis.cross(runDirection);
+        if (sideDirection.lengthSqr() < 0.0001D) {
             return;
         }
-        radialSide = radialSide.normalize();
+        sideDirection = sideDirection.normalize();
 
-        double startRadius = blockEntity.getPulleyRadius();
-        double endRadius = partner.getPulleyRadius();
+        double startRadius = blockEntity.getPulleyRadius() + BELT_CLEARANCE;
+        double endRadius = partner.getPulleyRadius() + BELT_CLEARANCE;
 
-        Vec3 startA = startCenter.add(radialSide.scale(startRadius));
-        Vec3 endA = endCenter.add(radialSide.scale(endRadius));
-        Vec3 startB = startCenter.subtract(radialSide.scale(startRadius));
-        Vec3 endB = endCenter.subtract(radialSide.scale(endRadius));
+        // True external tangents for unequal pulley radii.
+        //
+        // Let n be the radial vector to a tangent point. For the segment between
+        // C1 + r1*n and C2 + r2*n to be tangent, that segment must be perpendicular
+        // to n, yielding n.run = (r1-r2)/distance.
+        double radiusDifference = startRadius - endRadius;
+        double tangentRunComponent = radiusDifference / centerDistance;
+        tangentRunComponent = Math.max(-0.999D, Math.min(0.999D, tangentRunComponent));
 
-        VertexConsumer consumer = bufferSource.getBuffer(RenderType.entityCutoutNoCull(BELT_TEXTURE));
+        double tangentSideComponent =
+                Math.sqrt(Math.max(0.0D, 1.0D - tangentRunComponent * tangentRunComponent));
+
+        Vec3 topRadial = runDirection.scale(tangentRunComponent)
+                .add(sideDirection.scale(tangentSideComponent))
+                .normalize();
+        Vec3 bottomRadial = runDirection.scale(tangentRunComponent)
+                .subtract(sideDirection.scale(tangentSideComponent))
+                .normalize();
+
+        Vec3 startTop = startCenter.add(topRadial.scale(startRadius));
+        Vec3 endTop = endCenter.add(topRadial.scale(endRadius));
+        Vec3 startBottom = startCenter.add(bottomRadial.scale(startRadius));
+        Vec3 endBottom = endCenter.add(bottomRadial.scale(endRadius));
+
+        VertexConsumer consumer =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(BELT_TEXTURE));
         PoseStack.Pose pose = stack.last();
 
-        // Straight upper/lower runs.
-        drawBeltPrism(
+        // UV distance follows the actual physical belt loop. Moving the offset in the
+        // opposite direction of belt travel makes texture details move with the leather.
+        double textureDistance = -blockEntity.getVisualBeltTravelDistance(partialTicks);
+
+        // Upper run: start pulley -> end pulley.
+        textureDistance = drawTiledBeltSegment(
                 consumer,
                 pose,
-                startA,
-                endA,
+                startTop,
+                endTop,
                 axis,
-                radialSide,
+                topRadial,
                 packedLight,
-                0.56F,
-                0.34F,
-                0.18F
-        );
-        drawBeltPrism(
-                consumer,
-                pose,
-                startB,
-                endB,
-                axis,
-                radialSide.scale(-1.0D),
-                packedLight,
-                0.56F,
-                0.34F,
-                0.18F
+                textureDistance
         );
 
-        // Wrap the belt around the outer half of each pulley so it reads as one loop
-        // rather than two disconnected rails.
+        // Wrap outside of end pulley: top -> bottom.
+        textureDistance = drawPulleyArc(
+                consumer,
+                pose,
+                endCenter,
+                topRadial,
+                bottomRadial,
+                runDirection,
+                runDirection,
+                sideDirection,
+                axis,
+                endRadius,
+                packedLight,
+                textureDistance
+        );
+
+        // Return run: end pulley -> start pulley.
+        textureDistance = drawTiledBeltSegment(
+                consumer,
+                pose,
+                endBottom,
+                startBottom,
+                axis,
+                bottomRadial,
+                packedLight,
+                textureDistance
+        );
+
+        // Wrap outside of start pulley: bottom -> top.
         drawPulleyArc(
                 consumer,
                 pose,
                 startCenter,
-                radialSide,
+                bottomRadial,
+                topRadial,
                 runDirection.scale(-1.0D),
+                runDirection,
+                sideDirection,
                 axis,
                 startRadius,
-                packedLight
+                packedLight,
+                textureDistance
         );
-        drawPulleyArc(
-                consumer,
-                pose,
-                endCenter,
-                radialSide.scale(-1.0D),
-                runDirection,
-                axis,
-                endRadius,
-                packedLight
-        );
-
-        // The tangent velocity is opposite the positive angular direction at startA:
-        // v = omega x r, and r = axis x run. Therefore belt travel uses -rotation here.
-        // This fixes the previous visual where a CCW pulley appeared to drive the belt CW.
-        double phase = -blockEntity.getVisualRotationDegrees(partialTicks) / 360.0D;
-        phase = phase - Math.floor(phase);
-
-        for (int i = 0; i < 3; i++) {
-            double spacing = i / 3.0D;
-            double forwardT = (phase + spacing) % 1.0D;
-            double returnT = (1.0D - phase + spacing) % 1.0D;
-
-            Vec3 forwardPoint = startA.lerp(endA, forwardT);
-            Vec3 returnPoint = startB.lerp(endB, returnT);
-
-            drawTravelMarker(
-                    consumer,
-                    pose,
-                    forwardPoint,
-                    endA.subtract(startA).normalize(),
-                    axis,
-                    radialSide,
-                    packedLight
-            );
-            drawTravelMarker(
-                    consumer,
-                    pose,
-                    returnPoint,
-                    startB.subtract(endB).normalize(),
-                    axis,
-                    radialSide.scale(-1.0D),
-                    packedLight
-            );
-        }
     }
 
-    private void drawPulleyArc(VertexConsumer consumer,
-                               PoseStack.Pose pose,
-                               Vec3 center,
-                               Vec3 firstRadial,
-                               Vec3 outerDirection,
-                               Vec3 axis,
-                               double radius,
-                               int packedLight) {
-        Vec3 previous = center.add(firstRadial.scale(radius));
+    private Vec3 axisVector(Direction.Axis axis) {
+        return switch (axis) {
+            case X -> new Vec3(1.0D, 0.0D, 0.0D);
+            case Y -> new Vec3(0.0D, 1.0D, 0.0D);
+            case Z -> new Vec3(0.0D, 0.0D, 1.0D);
+        };
+    }
 
-        for (int i = 1; i <= ARC_SEGMENTS; i++) {
-            double t = i / (double) ARC_SEGMENTS;
-            double angle = Math.PI * t;
+    private double drawPulleyArc(VertexConsumer consumer,
+                                 PoseStack.Pose pose,
+                                 Vec3 center,
+                                 Vec3 startRadial,
+                                 Vec3 endRadial,
+                                 Vec3 wantedOuterDirection,
+                                 Vec3 runBasis,
+                                 Vec3 sideBasis,
+                                 Vec3 axis,
+                                 double radius,
+                                 int packedLight,
+                                 double textureDistance) {
+        double startAngle = Math.atan2(startRadial.dot(sideBasis), startRadial.dot(runBasis));
+        double endAngle = Math.atan2(endRadial.dot(sideBasis), endRadial.dot(runBasis));
 
-            Vec3 radial = firstRadial.scale(Math.cos(angle))
-                    .add(outerDirection.scale(Math.sin(angle)))
-                    .normalize();
+        double shortDelta = wrapRadians(endAngle - startAngle);
+        double longDelta = shortDelta >= 0.0D
+                ? shortDelta - Math.PI * 2.0D
+                : shortDelta + Math.PI * 2.0D;
 
-            Vec3 next = center.add(radial.scale(radius));
-            Vec3 midpointRadial = previous.add(next).scale(0.5D).subtract(center);
-            if (midpointRadial.lengthSqr() < 0.0001D) {
-                midpointRadial = radial;
+        double shortScore = radialAt(
+                startAngle + shortDelta * 0.5D,
+                runBasis,
+                sideBasis
+        ).dot(wantedOuterDirection);
+
+        double longScore = radialAt(
+                startAngle + longDelta * 0.5D,
+                runBasis,
+                sideBasis
+        ).dot(wantedOuterDirection);
+
+        double delta = longScore > shortScore ? longDelta : shortDelta;
+        int segments = Math.max(
+                4,
+                (int) Math.ceil(
+                        ARC_SEGMENTS_PER_HALF_TURN * Math.abs(delta) / Math.PI
+                )
+        );
+
+        Vec3 previousRadial = startRadial;
+        Vec3 previousPoint = center.add(previousRadial.scale(radius));
+
+        for (int i = 1; i <= segments; i++) {
+            double t = i / (double) segments;
+            Vec3 radial = radialAt(
+                    startAngle + delta * t,
+                    runBasis,
+                    sideBasis
+            );
+            Vec3 nextPoint = center.add(radial.scale(radius));
+
+            Vec3 thicknessDirection = previousRadial.add(radial);
+            if (thicknessDirection.lengthSqr() < 0.0001D) {
+                thicknessDirection = radial;
             } else {
-                midpointRadial = midpointRadial.normalize();
+                thicknessDirection = thicknessDirection.normalize();
             }
 
-            drawBeltPrism(
+            textureDistance = drawTiledBeltSegment(
                     consumer,
                     pose,
-                    previous,
-                    next,
+                    previousPoint,
+                    nextPoint,
                     axis,
-                    midpointRadial,
+                    thicknessDirection,
                     packedLight,
-                    0.56F,
-                    0.34F,
-                    0.18F
+                    textureDistance
             );
 
-            previous = next;
+            previousRadial = radial;
+            previousPoint = nextPoint;
         }
+
+        return textureDistance;
     }
 
-    private void drawTravelMarker(VertexConsumer consumer,
-                                  PoseStack.Pose pose,
-                                  Vec3 center,
-                                  Vec3 travelDirection,
-                                  Vec3 axis,
-                                  Vec3 thicknessDirection,
-                                  int packedLight) {
-        Vec3 halfTravel = travelDirection.scale(0.035D);
-        drawBeltPrism(
-                consumer,
-                pose,
-                center.subtract(halfTravel),
-                center.add(halfTravel),
-                axis,
-                thicknessDirection,
-                packedLight,
-                0.82F,
-                0.58F,
-                0.30F
-        );
+    private Vec3 radialAt(double angle, Vec3 runBasis, Vec3 sideBasis) {
+        return runBasis.scale(Math.cos(angle))
+                .add(sideBasis.scale(Math.sin(angle)))
+                .normalize();
     }
 
-    private void drawBeltPrism(VertexConsumer consumer,
-                               PoseStack.Pose pose,
-                               Vec3 from,
-                               Vec3 to,
-                               Vec3 widthDirection,
-                               Vec3 thicknessDirection,
-                               int packedLight,
-                               float red,
-                               float green,
-                               float blue) {
+    private double wrapRadians(double radians) {
+        double wrapped = radians % (Math.PI * 2.0D);
+        if (wrapped > Math.PI) {
+            wrapped -= Math.PI * 2.0D;
+        } else if (wrapped < -Math.PI) {
+            wrapped += Math.PI * 2.0D;
+        }
+        return wrapped;
+    }
+
+    /**
+     * Draw a belt path using fixed physical UV scale. The texture restarts only at an
+     * exact repeat boundary, so a six-block belt receives twelve half-block repeats
+     * rather than one texture stretched across all six blocks.
+     */
+    private double drawTiledBeltSegment(VertexConsumer consumer,
+                                        PoseStack.Pose pose,
+                                        Vec3 from,
+                                        Vec3 to,
+                                        Vec3 widthDirection,
+                                        Vec3 thicknessDirection,
+                                        int packedLight,
+                                        double textureDistance) {
+        Vec3 delta = to.subtract(from);
+        double length = delta.length();
+        if (length < 0.00001D) {
+            return textureDistance;
+        }
+
+        Vec3 direction = delta.scale(1.0D / length);
+        double cursor = 0.0D;
+
+        while (cursor < length - 0.000001D) {
+            double phase = positiveModulo(textureDistance, TEXTURE_REPEAT_LENGTH);
+            double untilRepeat = TEXTURE_REPEAT_LENGTH - phase;
+
+            if (untilRepeat < 0.000001D) {
+                untilRepeat = TEXTURE_REPEAT_LENGTH;
+            }
+
+            double step = Math.min(length - cursor, untilRepeat);
+            Vec3 segmentStart = from.add(direction.scale(cursor));
+            Vec3 segmentEnd = from.add(direction.scale(cursor + step));
+
+            float u0 = (float) (phase / TEXTURE_REPEAT_LENGTH);
+            float u1 = (float) ((phase + step) / TEXTURE_REPEAT_LENGTH);
+
+            drawBeltSegment(
+                    consumer,
+                    pose,
+                    segmentStart,
+                    segmentEnd,
+                    widthDirection,
+                    thicknessDirection,
+                    packedLight,
+                    u0,
+                    u1
+            );
+
+            cursor += step;
+            textureDistance += step;
+        }
+
+        return textureDistance;
+    }
+
+    private double positiveModulo(double value, double divisor) {
+        double result = value % divisor;
+        return result < 0.0D ? result + divisor : result;
+    }
+
+    /**
+     * Four-sided open belt prism. There are deliberately no end caps: adjacent straight
+     * and arc pieces meet exactly at their shared edge, eliminating the coplanar faces
+     * that caused the previous z-fighting.
+     */
+    private void drawBeltSegment(VertexConsumer consumer,
+                                 PoseStack.Pose pose,
+                                 Vec3 from,
+                                 Vec3 to,
+                                 Vec3 widthDirection,
+                                 Vec3 thicknessDirection,
+                                 int packedLight,
+                                 float u0,
+                                 float u1) {
         Vec3 width = widthDirection.normalize().scale(BELT_HALF_WIDTH);
         Vec3 thickness = thicknessDirection.normalize().scale(BELT_HALF_THICKNESS);
 
@@ -307,15 +405,49 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
         Vec3 b2 = to.add(width).add(thickness);
         Vec3 b3 = to.subtract(width).add(thickness);
 
-        Vec3 run = to.subtract(from);
-        Vec3 runNormal = run.lengthSqr() < 0.0001D ? new Vec3(0.0D, 1.0D, 0.0D) : run.normalize();
+        drawQuad(
+                consumer, pose,
+                a3, a2, b2, b3,
+                thicknessDirection,
+                u0, 0.0F,
+                u0, 1.0F,
+                u1, 1.0F,
+                u1, 0.0F,
+                packedLight
+        );
 
-        drawQuad(consumer, pose, a3, a2, b2, b3, thicknessDirection, packedLight, red, green, blue);
-        drawQuad(consumer, pose, a0, b0, b1, a1, thicknessDirection.scale(-1.0D), packedLight, red, green, blue);
-        drawQuad(consumer, pose, a1, b1, b2, a2, widthDirection, packedLight, red, green, blue);
-        drawQuad(consumer, pose, a0, a3, b3, b0, widthDirection.scale(-1.0D), packedLight, red, green, blue);
-        drawQuad(consumer, pose, a0, a1, a2, a3, runNormal.scale(-1.0D), packedLight, red, green, blue);
-        drawQuad(consumer, pose, b3, b2, b1, b0, runNormal, packedLight, red, green, blue);
+        drawQuad(
+                consumer, pose,
+                a0, b0, b1, a1,
+                thicknessDirection.scale(-1.0D),
+                u0, 0.0F,
+                u1, 0.0F,
+                u1, 1.0F,
+                u0, 1.0F,
+                packedLight
+        );
+
+        drawQuad(
+                consumer, pose,
+                a1, b1, b2, a2,
+                widthDirection,
+                u0, 0.0F,
+                u1, 0.0F,
+                u1, 1.0F,
+                u0, 1.0F,
+                packedLight
+        );
+
+        drawQuad(
+                consumer, pose,
+                a0, a3, b3, b0,
+                widthDirection.scale(-1.0D),
+                u0, 0.0F,
+                u0, 1.0F,
+                u1, 1.0F,
+                u1, 0.0F,
+                packedLight
+        );
     }
 
     private void drawQuad(VertexConsumer consumer,
@@ -325,18 +457,23 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
                           Vec3 v2,
                           Vec3 v3,
                           Vec3 normal,
-                          int packedLight,
-                          float red,
-                          float green,
-                          float blue) {
+                          float u0,
+                          float v0,
+                          float u1,
+                          float v1,
+                          float u2,
+                          float v2,
+                          float u3,
+                          float v3,
+                          int packedLight) {
         Vec3 n = normal.lengthSqr() < 0.0001D
                 ? new Vec3(0.0D, 1.0D, 0.0D)
                 : normal.normalize();
 
-        beltVertex(consumer, pose, v0, n, 0.0F, 0.0F, packedLight, red, green, blue);
-        beltVertex(consumer, pose, v1, n, 1.0F, 0.0F, packedLight, red, green, blue);
-        beltVertex(consumer, pose, v2, n, 1.0F, 1.0F, packedLight, red, green, blue);
-        beltVertex(consumer, pose, v3, n, 0.0F, 1.0F, packedLight, red, green, blue);
+        beltVertex(consumer, pose, v0, n, u0, v0, packedLight);
+        beltVertex(consumer, pose, v1, n, u1, v1, packedLight);
+        beltVertex(consumer, pose, v2, n, u2, v2, packedLight);
+        beltVertex(consumer, pose, v3, n, u3, v3, packedLight);
     }
 
     private void beltVertex(VertexConsumer consumer,
@@ -345,16 +482,23 @@ public class PulleyBlockEntity_woodRenderer implements BlockEntityRenderer<Pulle
                             Vec3 normal,
                             float u,
                             float v,
-                            int packedLight,
-                            float red,
-                            float green,
-                            float blue) {
-        consumer.vertex(pose.pose(), (float) position.x, (float) position.y, (float) position.z)
-                .color(red, green, blue, 1.0F)
+                            int packedLight) {
+        consumer.vertex(
+                        pose.pose(),
+                        (float) position.x,
+                        (float) position.y,
+                        (float) position.z
+                )
+                .color(1.0F, 1.0F, 1.0F, 1.0F)
                 .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(packedLight)
-                .normal(pose.normal(), (float) normal.x, (float) normal.y, (float) normal.z)
+                .normal(
+                        pose.normal(),
+                        (float) normal.x,
+                        (float) normal.y,
+                        (float) normal.z
+                )
                 .endVertex();
     }
 }
