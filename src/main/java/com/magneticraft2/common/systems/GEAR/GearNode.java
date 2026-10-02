@@ -42,6 +42,17 @@ public class GearNode {
         return speed;
     }
 
+    /**
+     * Actual RPM available to consumers/renderers.
+     *
+     * The raw speed is intentionally preserved while overloaded so Gear V2 can keep
+     * evaluating ratios, source identity and load demand without an overload/stall
+     * causing the network calculation itself to forget how the network is connected.
+     */
+    public float getEffectiveSpeed() {
+        return overloaded ? 0.0F : speed;
+    }
+
     public void setSpeed(float speed) {
         this.speed = Math.max(0.0F, speed);
     }
