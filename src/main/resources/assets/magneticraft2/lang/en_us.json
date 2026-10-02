@@ -114,5 +114,7 @@
   "item.magneticraft2.clay_pot": "Clay Pot",
   "item.magneticraft2.ceramic_pot": "Ceramic Pot",
   "tooltip.magneticraft2.ceramic_pot.empty": "Empty - right-click a water source to fill",
-  "tooltip.magneticraft2.ceramic_pot.water": "Contains Water - use on dirt to make mud"
+  "tooltip.magneticraft2.ceramic_pot.water": "Contains Water - use on dirt to make mud",
+  "item.magneticraft2.copper_plate": "Copper Plate",
+  "block.magneticraft2.primitive_anvil": "Primitive Anvil"
 }
