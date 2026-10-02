@@ -53,6 +53,7 @@
   "block.magneticraft2.blueprint_multiblock": "Blueprint maker",
   "block.magneticraft2.primitivestoragecellar_multiblock": "Primitive Storage",
   "block.magneticraft2.primitivefurnace_multiblock": "Primitive Furnace",
+  "block.magneticraft2.primitivefurnace_multiblock_nogui": "Primitive Furnace",
   "block.magneticraft2.bellows_multiblock_module": "Bellows Block",
   "block.magneticraft2.anthracite_ore": "Anthracite Ore",
   "block.magneticraft2.apatite_ore": "Apatite Ore",
