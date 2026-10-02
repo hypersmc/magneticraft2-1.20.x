@@ -285,6 +285,13 @@ public class GearNetworkManager {
                 BlockPos sourcePos = gear.isSource() ? gear.getPosition() : gear.getSourcePos();
                 if (sourcePos != null && overloadedSources.contains(sourcePos)) {
                     gear.setOverloaded(true);
+
+                    // A load overload is a hard mechanical stall, not merely a warning flag.
+                    // Keep the source's commanded RPM/torque intact so it can recover as soon
+                    // as demand falls back within capacity, but stop every driven node.
+                    if (!gear.isSource()) {
+                        gear.setSpeed(0.0F);
+                    }
                 }
             }
         }
