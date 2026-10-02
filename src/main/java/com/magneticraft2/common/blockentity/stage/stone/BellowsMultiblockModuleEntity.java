@@ -129,7 +129,6 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
         }
         if (!world.isClientSide()) {
             formedModule = true;
-            faceController();
             pressure.ifPresent(handler -> handler.setReceive(true));
             pressure.ifPresent(handler -> handler.setSend(true));
             setChanged();
@@ -156,40 +155,6 @@ public class BellowsMultiblockModuleEntity extends BlockEntity implements IMulti
             }
         }
     }
-    private void faceController() {
-        if (level == null) {
-            return;
-        }
-
-        int dx = Integer.compare(Master_X, worldPosition.getX());
-        int dz = Integer.compare(Master_Z, worldPosition.getZ());
-        if (dx == 0 && dz == 0) {
-            return;
-        }
-
-        Direction nozzleDirection;
-        if (Math.abs(Master_X - worldPosition.getX()) >= Math.abs(Master_Z - worldPosition.getZ())) {
-            nozzleDirection = dx > 0 ? Direction.EAST : Direction.WEST;
-        } else {
-            nozzleDirection = dz > 0 ? Direction.SOUTH : Direction.NORTH;
-        }
-
-        // The authored NORTH model points its nozzle EAST, so convert the
-        // desired nozzle direction back into the blockstate rotation.
-        Direction facing = switch (nozzleDirection) {
-            case EAST -> Direction.NORTH;
-            case WEST -> Direction.SOUTH;
-            case SOUTH -> Direction.WEST;
-            case NORTH -> Direction.EAST;
-            default -> Direction.NORTH;
-        };
-
-        BlockState state = getBlockState();
-        if (state.getValue(BellowsMultiblockModule.FACING) != facing) {
-            level.setBlock(worldPosition, state.setValue(BellowsMultiblockModule.FACING, facing), Block.UPDATE_ALL);
-        }
-    }
-
     public void setActive(boolean active) {
         if (this.level != null) {
             BlockState state = this.getBlockState();
