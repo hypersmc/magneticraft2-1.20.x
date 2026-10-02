@@ -404,7 +404,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
     }
 
     private void updateMechanicalState(@Nullable GearNode node) {
-        float newSpeed = node == null ? 0.0F : node.getSpeed();
+        float newSpeed = node == null ? 0.0F : node.getEffectiveSpeed();
         float newTorque = node == null ? 0.0F : node.getTorque();
         float newRotation = node == null ? mechanicalRotationDegrees : node.getRotationDegrees();
         int newDirection = node == null ? mechanicalDirectionMultiplier : node.getDirectionMultiplier();
