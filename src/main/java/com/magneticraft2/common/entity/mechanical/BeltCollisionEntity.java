@@ -23,6 +23,7 @@ public class BeltCollisionEntity extends Entity implements IEntityAdditionalSpaw
         super(type, level);
         setNoGravity(true);
         setInvisible(true);
+        noPhysics = true;
     }
 
     public BeltCollisionEntity(Level level, AABB collisionBox) {
@@ -78,10 +79,9 @@ public class BeltCollisionEntity extends Entity implements IEntityAdditionalSpaw
 
     @Override
     public void tick() {
-        setDeltaMovement(0.0D, 0.0D, 0.0D);
-        if (collisionBox != null) {
-            setBoundingBox(collisionBox);
-        }
+        // Static collision proxy: no gravity, interpolation, movement, portal checks, or
+        // repeated AABB work is needed. Vanilla still queries this entity's bounding box
+        // through getEntityCollisions() when another entity moves nearby.
     }
 
     @Override
