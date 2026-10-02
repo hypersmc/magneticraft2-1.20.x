@@ -158,11 +158,15 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
         }
 
         Vec3 center = inputZone.bounds().getCenter();
+        boolean hasCoal = blockEntity.getItemInSlot(1).getItem() == Items.COAL;
 
-        // Keep the input low enough that the coal model, rendered immediately
-        // after this, visually surrounds and partially covers the item.
+        // With coal present, keep the input raised slightly so the coal model,
+        // rendered immediately after this, surrounds and partially covers it.
+        // Without coal there is nothing supporting it, so let it rest directly
+        // on the furnace floor instead of hovering at the coal-supported height.
+        double inputY = hasCoal ? 0.11D : 0.035D;
         Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                new Vec3(center.x, 0.11D, center.z),
+                new Vec3(center.x, inputY, center.z),
                 formedFacing
         );
 
@@ -250,7 +254,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
 
         if (itemModel.isGui3d()) {
             Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                    new Vec3(center.x, 0.20D, center.z),
+                    new Vec3(center.x, 0.095D, center.z),
                     formedFacing
             );
 
@@ -268,7 +272,7 @@ public class PrimitiveFurnaceNoGUIBlockEntityRenderer implements BlockEntityRend
             );
         } else {
             Vec3 renderPos = MultiblockHitHelper.fromCanonicalWest(
-                    new Vec3(center.x, 0.145D, center.z),
+                    new Vec3(center.x, 0.055D, center.z),
                     formedFacing
             );
 
