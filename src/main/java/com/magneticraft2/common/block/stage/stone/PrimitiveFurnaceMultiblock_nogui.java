@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -41,6 +42,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -50,6 +52,18 @@ import java.util.stream.Stream;
  */
 public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
+
+    private static final List<FurnaceZoneBox> INTERACTION_ZONE_BOXES = List.of(
+            new FurnaceZoneBox(FurnaceZone.SMELTABLE_INPUT, new AABB(0.25D, 0.25D, 0.25D, 0.75D, 0.60D, 0.75D)),
+
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.10D, 0.00D, 0.05D, 0.90D, 0.30D, 0.15D)),
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.10D, 0.00D, 0.85D, 0.90D, 0.30D, 0.95D)),
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.05D, 0.00D, 0.20D, 0.15D, 0.30D, 0.80D)),
+            new FurnaceZoneBox(FurnaceZone.FUEL_INPUT, new AABB(0.85D, 0.00D, 0.20D, 0.95D, 0.30D, 0.80D)),
+
+            new FurnaceZoneBox(FurnaceZone.PRIMARY_OUTPUT, new AABB(0.10D, 0.00D, 0.10D, 0.40D, 0.40D, 0.40D)),
+            new FurnaceZoneBox(FurnaceZone.SECONDARY_OUTPUT, new AABB(0.60D, 0.00D, 0.10D, 0.90D, 0.40D, 0.40D))
+    );
     private static final VoxelShape WEST = Stream.of(Block.box(4.68629, 0, 0, 11.31371, 1, 16), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(0, 0, 4.68629, 16, 1, 11.31371), Block.box(4.68629, 0, 0, 11.31371, 1, 16), Stream.of(Block.box(4.68629, 1, 0, 11.31371, 8, 1), Block.box(15, 1, 4.68629, 16, 2, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(0, 1, 4.68629, 3, 8, 11.31371), Block.box(4.68629, 1, 0, 11.31371, 8, 3), Block.box(15, 1, 4.68629, 16, 8, 11.31371), Block.box(4.68629, 1, 13, 11.31371, 8, 16), Stream.of(Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(0, 8, 4.68629, 3, 16, 11.31371), Block.box(4.68629, 8, 0, 11.31371, 16, 3), Block.box(13, 8, 4.68629, 16, 16, 11.31371), Block.box(4.68629, 8, 13, 11.31371, 16, 16), Block.box(14, 0, 0, 16, 16, 4.7), Block.box(14, 0, 11.299999999999999, 16, 16, 16), Block.box(11.3, 0, 0, 14, 16, 2), Block.box(1.9999999999999982, 0, 14, 4.699999999999999, 16, 16), Block.box(2, 0, 0, 4.699999999999999, 16, 2), Block.box(11.299999999999999, 0, 14, 14, 16, 16), Block.box(0, 0, 11.299999999999999, 2, 16, 16), Block.box(0, 0, 0, 2, 16, 4.7)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Stream.of(Block.box(4.68629, -15, 0, 11.31371, -14, 1), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(13, -15, 4.68629, 16, -8, 11.31371), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(11, 13, 5.51472, 14, 32, 10.48528)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
     private static final VoxelShape WEST_NEW2 = Stream.of(Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(0, -16, 4.68629, 16, -15, 11.31371), Block.box(4.68629, -16, 0, 11.31371, -15, 16), Block.box(4.68629, -15, 0, 11.31371, -8, 1), Block.box(15, -15, 4.68629, 16, -14, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(0, -15, 4.68629, 3, -8, 11.31371), Block.box(4.68629, -15, 0, 11.31371, -8, 3), Block.box(15, -15, 4.68629, 16, -8, 11.31371), Block.box(4.68629, -15, 13, 11.31371, -8, 16), Stream.of(Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(0, -8, 4.68629, 3, 13, 11.31371), Block.box(4.68629, -8, 0, 11.31371, 13, 3), Block.box(13, -8, 4.68629, 16, 13, 11.31371), Block.box(4.68629, -8, 13, 11.31371, 13, 16), Stream.of(Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(2, 13, 5.51472, 5, 32, 10.48528), Block.box(5.51472, 13, 2, 10.48528, 32, 5), Block.box(11, 13, 5.51472, 14, 32, 10.48528), Block.box(5.51472, 13, 11, 10.48528, 32, 14)).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get()).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
@@ -275,41 +289,18 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
     }
 
     private FurnaceZone findFurnaceZone(Vec3 localHit) {
-        double x = localHit.x;
-        double y = localHit.y;
-        double z = localHit.z;
-
-        // Existing experimental zones kept for the first canonical-coordinate
-        // test pass. With the hit transform fixed, DevMode now reports exactly
-        // where the visible furnace model is being clicked so these can be
-        // tuned against the real model instead of the controller placement.
-        if (inBox(x, 0.25D, 0.75D)
-                && inBox(z, 0.25D, 0.75D)
-                && inBox(y, 0.25D, 0.60D)) {
-            return FurnaceZone.SMELTABLE_INPUT;
+        // The renderer consumes these exact same boxes in DevMode, so what is
+        // drawn in-world is always the area that the interaction code tests.
+        for (FurnaceZoneBox zoneBox : INTERACTION_ZONE_BOXES) {
+            if (zoneBox.bounds.contains(localHit)) {
+                return zoneBox.zone;
+            }
         }
-
-        if (((inBox(x, 0.10D, 0.90D) && inBox(z, 0.05D, 0.15D))
-                || (inBox(x, 0.10D, 0.90D) && inBox(z, 0.85D, 0.95D))
-                || (inBox(x, 0.05D, 0.15D) && inBox(z, 0.20D, 0.80D))
-                || (inBox(x, 0.85D, 0.95D) && inBox(z, 0.20D, 0.80D)))
-                && inBox(y, 0.00D, 0.30D)) {
-            return FurnaceZone.FUEL_INPUT;
-        }
-
-        if (inBox(x, 0.10D, 0.40D)
-                && inBox(z, 0.10D, 0.40D)
-                && inBox(y, 0.00D, 0.40D)) {
-            return FurnaceZone.PRIMARY_OUTPUT;
-        }
-
-        if (inBox(x, 0.60D, 0.90D)
-                && inBox(z, 0.10D, 0.40D)
-                && inBox(y, 0.00D, 0.40D)) {
-            return FurnaceZone.SECONDARY_OUTPUT;
-        }
-
         return FurnaceZone.NONE;
+    }
+
+    public static List<FurnaceZoneBox> getInteractionZoneBoxes() {
+        return INTERACTION_ZONE_BOXES;
     }
 
     private void insertOne(IItemHandler itemHandler,
@@ -351,7 +342,7 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
         furnaceEntity.sync();
     }
 
-    private Direction getFormedFacing(PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity, BlockState state) {
+    public static Direction getFormedFacing(PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity, BlockState state) {
         String blueprintName = furnaceEntity.getMBblueprintname();
         if (blueprintName != null && !blueprintName.isEmpty()) {
             String normalized = blueprintName.endsWith("_nogui")
@@ -407,21 +398,30 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
         };
     }
 
-    private boolean inBox(double value, double min, double max) {
-        return value >= min && value <= max;
+    public record FurnaceZoneBox(FurnaceZone zone, AABB bounds) {
     }
 
-    private enum FurnaceZone {
-        SMELTABLE_INPUT("smeltable input"),
-        FUEL_INPUT("fuel input"),
-        PRIMARY_OUTPUT("primary output"),
-        SECONDARY_OUTPUT("secondary output"),
-        NONE("none");
+    public enum FurnaceZone {
+        SMELTABLE_INPUT("smeltable input", "INPUT"),
+        FUEL_INPUT("fuel input", "FUEL"),
+        PRIMARY_OUTPUT("primary output", "OUT 1"),
+        SECONDARY_OUTPUT("secondary output", "OUT 2"),
+        NONE("none", "NONE");
 
         private final String displayName;
+        private final String debugLabel;
 
-        FurnaceZone(String displayName) {
+        FurnaceZone(String displayName, String debugLabel) {
             this.displayName = displayName;
+            this.debugLabel = debugLabel;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public String getDebugLabel() {
+            return debugLabel;
         }
     }
 
