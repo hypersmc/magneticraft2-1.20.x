@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["CCC", " M ", "M M"],
+  "key": {
+    "C": {"item": "minecraft:cobblestone"},
+    "M": {"item": "minecraft:mud_bricks"}
+  },
+  "result": {"item": "magneticraft2:primitive_anvil"}
+}
