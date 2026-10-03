@@ -154,7 +154,7 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                          BlockState newState,
                          boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock())) {
-            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(level, pos);
+            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(level, pos, state);
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
