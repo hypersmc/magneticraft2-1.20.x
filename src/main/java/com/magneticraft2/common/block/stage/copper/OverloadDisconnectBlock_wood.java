@@ -44,17 +44,22 @@ public class OverloadDisconnectBlock_wood extends GearBlock {
     public static final BooleanProperty ROTATING =
             BooleanProperty.create("rotating");
 
+    // A substantial wooden breaker housing with only the two shaft ends exposed.
+    // This reads as a real protective device rather than another collar on a shaft.
     private static final VoxelShape X_AXIS_SHAPE = Shapes.or(
-            Block.box(0.0D, 5.0D, 5.0D, 16.0D, 11.0D, 11.0D),
-            Block.box(4.5D, 3.5D, 3.5D, 11.5D, 13.5D, 12.5D)
+            Block.box(2.0D, 1.0D, 1.0D, 14.0D, 15.0D, 15.0D),
+            Block.box(0.0D, 5.0D, 5.0D, 2.0D, 11.0D, 11.0D),
+            Block.box(14.0D, 5.0D, 5.0D, 16.0D, 11.0D, 11.0D)
     );
     private static final VoxelShape Y_AXIS_SHAPE = Shapes.or(
-            Block.box(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D),
-            Block.box(3.5D, 4.5D, 3.5D, 12.5D, 11.5D, 13.5D)
+            Block.box(1.0D, 2.0D, 1.0D, 15.0D, 14.0D, 15.0D),
+            Block.box(5.0D, 0.0D, 5.0D, 11.0D, 2.0D, 11.0D),
+            Block.box(5.0D, 14.0D, 5.0D, 11.0D, 16.0D, 11.0D)
     );
     private static final VoxelShape Z_AXIS_SHAPE = Shapes.or(
-            Block.box(5.0D, 5.0D, 0.0D, 11.0D, 11.0D, 16.0D),
-            Block.box(3.5D, 3.5D, 4.5D, 12.5D, 13.5D, 11.5D)
+            Block.box(1.0D, 1.0D, 2.0D, 15.0D, 15.0D, 14.0D),
+            Block.box(5.0D, 5.0D, 0.0D, 11.0D, 11.0D, 2.0D),
+            Block.box(5.0D, 5.0D, 14.0D, 11.0D, 11.0D, 16.0D)
     );
 
     public OverloadDisconnectBlock_wood() {
