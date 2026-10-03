@@ -11,33 +11,33 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * Client -> server request to cycle one internal custom-gearbox grid cell.
+ * Client -> server request to place one explicit component in a custom-gearbox cell.
  */
 public class CustomGearboxEditPacket {
     private final BlockPos blockEntityPos;
     private final int cellIndex;
-    private final int delta;
+    private final int componentOrdinal;
 
     public CustomGearboxEditPacket(BlockPos blockEntityPos,
                                    int cellIndex,
-                                   int delta) {
+                                   int componentOrdinal) {
         this.blockEntityPos = blockEntityPos;
         this.cellIndex = cellIndex;
-        this.delta = Integer.signum(delta);
+        this.componentOrdinal = componentOrdinal;
     }
 
     public static void encode(CustomGearboxEditPacket packet,
                               FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.blockEntityPos);
         buffer.writeVarInt(packet.cellIndex);
-        buffer.writeByte(packet.delta);
+        buffer.writeVarInt(packet.componentOrdinal);
     }
 
     public static CustomGearboxEditPacket decode(FriendlyByteBuf buffer) {
         return new CustomGearboxEditPacket(
                 buffer.readBlockPos(),
                 buffer.readVarInt(),
-                buffer.readByte()
+                buffer.readVarInt()
         );
     }
 
@@ -47,10 +47,14 @@ public class CustomGearboxEditPacket {
 
         context.enqueueWork(() -> {
             ServerPlayer player = context.getSender();
+            CustomGearboxBlockEntity_wood.InternalComponent[] values =
+                    CustomGearboxBlockEntity_wood.InternalComponent.values();
+
             if (player == null
-                    || packet.delta == 0
                     || packet.cellIndex < 0
-                    || packet.cellIndex >= CustomGearboxBlockEntity_wood.CELL_COUNT) {
+                    || packet.cellIndex >= CustomGearboxBlockEntity_wood.CELL_COUNT
+                    || packet.componentOrdinal < 0
+                    || packet.componentOrdinal >= values.length) {
                 return;
             }
 
@@ -71,10 +75,10 @@ public class CustomGearboxEditPacket {
                     .getBlockEntity(packet.blockEntityPos);
 
             if (blockEntity instanceof CustomGearboxBlockEntity_wood gearbox) {
-                gearbox.cycleComponentFromPlayer(
+                gearbox.setComponentFromPlayer(
                         player,
                         packet.cellIndex,
-                        packet.delta
+                        values[packet.componentOrdinal]
                 );
             }
         });
