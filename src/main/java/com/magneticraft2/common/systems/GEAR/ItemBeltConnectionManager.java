@@ -500,7 +500,12 @@ public final class ItemBeltConnectionManager {
                             );
                     handedOff.setLateralOffset(handoff.lateralOffset());
                     handedOff.setStalled(false);
-                    handedOff.beginHandoff(handoff.origin(), 0.0D);
+                    handedOff.beginHandoff(
+                            handoff.origin(),
+                            handoff.tangent(),
+                            handoff.normal(),
+                            0.0D
+                    );
 
                     handoff.carrier().getTransportedItems().add(handedOff);
                     handoff.carrier().syncTransportedItems();
@@ -1287,7 +1292,9 @@ public final class ItemBeltConnectionManager {
                     candidateCarrier,
                     entryDistance,
                     lateralOffset,
-                    sourceExit
+                    sourceExit,
+                    source.transportRun.tangent(),
+                    source.transportRun.surfaceNormal()
             );
             bestDistanceSqr = distanceSqr;
         }
@@ -1648,7 +1655,9 @@ public final class ItemBeltConnectionManager {
                                ConveyorRollerBlockEntity carrier,
                                double entryDistance,
                                double lateralOffset,
-                               Vec3 origin) {
+                               Vec3 origin,
+                               Vec3 tangent,
+                               Vec3 normal) {
     }
 
     private record Ejection(Vec3 position,
