@@ -2,6 +2,7 @@ package com.magneticraft2.client.systems.debug;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
@@ -98,6 +99,8 @@ public class GearDebugHud {
         String overloadText = overloaded ? " | OVERLOADED" : "";
         String nodeType = gearBlockEntity instanceof PulleyBlockEntity_wood ? "Pulley"
                 : gearBlockEntity instanceof ConveyorRollerBlockEntity ? "Belt Roller"
+                : gearBlockEntity instanceof WaterWheelBlockEntity waterWheel
+                ? (waterWheel.isLarge() ? "Large Water Wheel" : "Small Water Wheel")
                 : (gearBlockEntity.isShaftLike() ? "Shaft" : "Gear");
         String beltText = "";
         if (gearBlockEntity instanceof PulleyBlockEntity_wood pulley && pulley.getBeltPartner() != null) {
