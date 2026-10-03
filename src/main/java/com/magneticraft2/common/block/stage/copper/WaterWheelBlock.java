@@ -250,12 +250,47 @@ public class WaterWheelBlock extends GearBlock implements SimpleWaterloggedBlock
 
         for (BlockPos fillerPos : largeWheelFillerPositions(center, axis)) {
             boolean waterlogged = level.getFluidState(fillerPos).is(FluidTags.WATER);
+
+            int horizontal = axis == Direction.Axis.X
+                    ? fillerPos.getZ() - center.getZ()
+                    : fillerPos.getX() - center.getX();
+            int vertical = fillerPos.getY() - center.getY();
+
             level.setBlock(
                     fillerPos,
-                    fillerBase.setValue(WaterWheelFillerBlock.WATERLOGGED, waterlogged),
+                    fillerBase
+                            .setValue(WaterWheelFillerBlock.PART, partFor(horizontal, vertical))
+                            .setValue(WaterWheelFillerBlock.ACTIVE, false)
+                            .setValue(WaterWheelFillerBlock.WATERLOGGED, waterlogged),
                     Block.UPDATE_ALL
             );
         }
+    }
+
+    private WaterWheelFillerBlock.Part partFor(int horizontal, int vertical) {
+        if (vertical > 0) {
+            if (horizontal < 0) {
+                return WaterWheelFillerBlock.Part.TOP_LEFT;
+            }
+            if (horizontal > 0) {
+                return WaterWheelFillerBlock.Part.TOP_RIGHT;
+            }
+            return WaterWheelFillerBlock.Part.TOP;
+        }
+
+        if (vertical < 0) {
+            if (horizontal < 0) {
+                return WaterWheelFillerBlock.Part.BOTTOM_LEFT;
+            }
+            if (horizontal > 0) {
+                return WaterWheelFillerBlock.Part.BOTTOM_RIGHT;
+            }
+            return WaterWheelFillerBlock.Part.BOTTOM;
+        }
+
+        return horizontal < 0
+                ? WaterWheelFillerBlock.Part.LEFT
+                : WaterWheelFillerBlock.Part.RIGHT;
     }
 
     private void removeLargeWheelFillers(Level level,
