@@ -1,6 +1,8 @@
 package com.magneticraft2.common.item.stage.copper;
 
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
+import com.magneticraft2.common.systems.GEAR.ItemBeltGeometry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,13 +14,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 /**
  * Segment item used to create one continuous wide item belt between two Conveyor Rollers.
+ *
+ * The player selects only the two endpoints. The intermediate ItemBeltBlocks are generated
+ * automatically so the belt remains one logical machine while still having real block physics.
  */
 public class ItemBeltItem extends Item {
-    public static final int MAX_ITEM_BELT_SPAN = 16;
+    public static final int MAX_ITEM_BELT_SPAN = ItemBeltConnectionManager.MAX_ITEM_BELT_SPAN;
 
     private static final String START_POS = "Mgc2ItemBeltStart";
     private static final String START_DIMENSION = "Mgc2ItemBeltDimension";
@@ -84,8 +88,18 @@ public class ItemBeltItem extends Item {
             return fail(player, validationError);
         }
 
-        double distance = Vec3.atCenterOf(startPos).distanceTo(Vec3.atCenterOf(clickedPos));
-        int requiredSegments = Math.max(1, (int) Math.ceil(distance));
+        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
+                startPos,
+                clickedPos,
+                startRoller.getGearAxis(),
+                MAX_ITEM_BELT_SPAN
+        );
+
+        if (layout == null) {
+            return fail(player, "message.magneticraft2.item_belt_unsupported_geometry");
+        }
+
+        int requiredSegments = layout.requiredSegments();
 
         if (player != null
                 && !player.getAbilities().instabuild
@@ -122,83 +136,55 @@ public class ItemBeltItem extends Item {
             return "message.magneticraft2.item_belt_parallel_required";
         }
 
-        if (!sameRollerPlane(start.getBlockPos(), end.getBlockPos(), axis)) {
-            return "message.magneticraft2.item_belt_same_plane_required";
-        }
-
-        Vec3 startCenter = Vec3.atCenterOf(start.getBlockPos());
-        Vec3 endCenter = Vec3.atCenterOf(end.getBlockPos());
-        double distance = startCenter.distanceTo(endCenter);
-
-        if (distance > MAX_ITEM_BELT_SPAN + 0.001D) {
-            return "message.magneticraft2.item_belt_too_long";
-        }
-
-        if (distance < 1.5D) {
-            return "message.magneticraft2.item_belt_too_short";
-        }
-
-        double horizontalDistance = Math.sqrt(
-                Math.pow(endCenter.x - startCenter.x, 2.0D)
-                        + Math.pow(endCenter.z - startCenter.z, 2.0D)
-        );
-        double verticalDistance = Math.abs(endCenter.y - startCenter.y);
-
-        if (horizontalDistance < 1.0D || verticalDistance > horizontalDistance + 0.001D) {
-            return "message.magneticraft2.item_belt_slope_too_steep";
-        }
-
         if ((start.getItemBeltPartner() != null && !start.isItemBeltLinkedTo(end.getBlockPos()))
                 || (end.getItemBeltPartner() != null && !end.isItemBeltLinkedTo(start.getBlockPos()))) {
             return "message.magneticraft2.item_belt_roller_in_use";
         }
 
-        if (!isPathClear(level, start.getBlockPos(), end.getBlockPos(), axis)) {
+        int dx = end.getBlockPos().getX() - start.getBlockPos().getX();
+        int dy = end.getBlockPos().getY() - start.getBlockPos().getY();
+        int dz = end.getBlockPos().getZ() - start.getBlockPos().getZ();
+
+        if ((axis == Direction.Axis.X && dx != 0)
+                || (axis == Direction.Axis.Z && dz != 0)) {
+            return "message.magneticraft2.item_belt_same_plane_required";
+        }
+
+        int horizontalSteps = Math.abs(axis == Direction.Axis.X ? dz : dx);
+        int verticalSteps = Math.abs(dy);
+        int gridSpan = Math.max(horizontalSteps, verticalSteps);
+
+        if (gridSpan > MAX_ITEM_BELT_SPAN) {
+            return "message.magneticraft2.item_belt_too_long";
+        }
+
+        if (gridSpan < 2) {
+            return "message.magneticraft2.item_belt_too_short";
+        }
+
+        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
+                start.getBlockPos(),
+                end.getBlockPos(),
+                axis,
+                MAX_ITEM_BELT_SPAN
+        );
+
+        if (layout == null) {
+            return "message.magneticraft2.item_belt_unsupported_geometry";
+        }
+
+        if (!isPathClear(level, layout)) {
             return "message.magneticraft2.item_belt_path_blocked";
         }
 
         return null;
     }
 
-    private boolean sameRollerPlane(BlockPos first, BlockPos second, Direction.Axis axis) {
-        return switch (axis) {
-            case X -> first.getX() == second.getX();
-            case Z -> first.getZ() == second.getZ();
-            case Y -> false;
-        };
-    }
-
-    private boolean isPathClear(Level level,
-                                BlockPos first,
-                                BlockPos second,
-                                Direction.Axis axis) {
-        Vec3 start = Vec3.atCenterOf(first);
-        Vec3 end = Vec3.atCenterOf(second);
-        double distance = start.distanceTo(end);
-        int samples = Math.max(4, (int) Math.ceil(distance * 6.0D));
-
-        Vec3 width = axis == Direction.Axis.X
-                ? new Vec3(0.34D, 0.0D, 0.0D)
-                : new Vec3(0.0D, 0.0D, 0.34D);
-
-        for (int i = 1; i < samples; i++) {
-            double t = i / (double) samples;
-            Vec3 center = start.lerp(end, t);
-
-            for (Vec3 sample : new Vec3[]{
-                    center,
-                    center.add(width),
-                    center.subtract(width)
-            }) {
-                BlockPos samplePos = BlockPos.containing(sample);
-                if (samplePos.equals(first) || samplePos.equals(second)) {
-                    continue;
-                }
-
-                BlockState state = level.getBlockState(samplePos);
-                if (!state.isAir() && !state.canBeReplaced()) {
-                    return false;
-                }
+    private boolean isPathClear(Level level, ItemBeltGeometry.Layout layout) {
+        for (BlockPos beltPos : layout.beltBlocks()) {
+            BlockState state = level.getBlockState(beltPos);
+            if (!state.isAir() && !state.canBeReplaced()) {
+                return false;
             }
         }
 
@@ -213,9 +199,16 @@ public class ItemBeltItem extends Item {
             return;
         }
 
-        double distance = Vec3.atCenterOf(roller.getBlockPos())
-                .distanceTo(Vec3.atCenterOf(partnerPos));
-        int recoveredSegments = Math.max(1, (int) Math.ceil(distance));
+        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
+                roller.getBlockPos(),
+                partnerPos,
+                roller.getGearAxis(),
+                MAX_ITEM_BELT_SPAN
+        );
+
+        int recoveredSegments = layout == null
+                ? 1
+                : layout.requiredSegments();
 
         roller.disconnectItemBelt(true);
 
