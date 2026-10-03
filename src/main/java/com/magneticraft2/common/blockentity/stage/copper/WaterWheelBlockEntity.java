@@ -76,6 +76,13 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
     }
 
     @Override
+    public boolean supportsExternalGearMesh() {
+        // Hybrid node: shafts/gears may mount directly on the axle, while visible gears
+        // may also mesh against the wheel rim.
+        return true;
+    }
+
+    @Override
     public Direction.Axis getGearAxis() {
         BlockState state = getBlockState();
         return state.hasProperty(FACING)
