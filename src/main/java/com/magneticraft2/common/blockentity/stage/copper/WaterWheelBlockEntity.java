@@ -40,7 +40,11 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
             return;
         }
 
-        if (wheel.waterCheckCooldown-- <= 0) {
+        boolean activeButSourceLost = state.hasProperty(ACTIVE)
+                && state.getValue(ACTIVE)
+                && !wheel.getOrCreateGearNode().isSource();
+
+        if (wheel.waterCheckCooldown-- <= 0 || activeButSourceLost) {
             wheel.waterCheckCooldown = WATER_CHECK_INTERVAL - 1;
             wheel.updateWaterDrive();
         }
@@ -296,28 +300,37 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
     @Override
     public AABB getRenderBoundingBox() {
         if (!isLarge()) {
-            return super.getRenderBoundingBox();
+            // Small paddles intentionally protrude slightly into the neighboring water
+            // cell, so the default one-block BE render box is too tight.
+            return new AABB(
+                    worldPosition.getX() - 0.25D,
+                    worldPosition.getY() - 0.25D,
+                    worldPosition.getZ() - 0.25D,
+                    worldPosition.getX() + 1.25D,
+                    worldPosition.getY() + 1.25D,
+                    worldPosition.getZ() + 1.25D
+            );
         }
 
         Direction.Axis axis = getGearAxis();
         if (axis == Direction.Axis.X) {
             return new AABB(
-                    worldPosition.getX(),
-                    worldPosition.getY() - 1.0D,
-                    worldPosition.getZ() - 1.0D,
-                    worldPosition.getX() + 1.0D,
-                    worldPosition.getY() + 2.0D,
-                    worldPosition.getZ() + 2.0D
+                    worldPosition.getX() - 0.10D,
+                    worldPosition.getY() - 1.30D,
+                    worldPosition.getZ() - 1.30D,
+                    worldPosition.getX() + 1.10D,
+                    worldPosition.getY() + 2.30D,
+                    worldPosition.getZ() + 2.30D
             );
         }
 
         return new AABB(
-                worldPosition.getX() - 1.0D,
-                worldPosition.getY() - 1.0D,
-                worldPosition.getZ(),
-                worldPosition.getX() + 2.0D,
-                worldPosition.getY() + 2.0D,
-                worldPosition.getZ() + 1.0D
+                worldPosition.getX() - 1.30D,
+                worldPosition.getY() - 1.30D,
+                worldPosition.getZ() - 0.10D,
+                worldPosition.getX() + 2.30D,
+                worldPosition.getY() + 2.30D,
+                worldPosition.getZ() + 1.10D
         );
     }
 
