@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEnti
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
+import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -109,7 +110,15 @@ public class GearDebugHud {
                     + " | Colliders: " + colliderCount;
         } else if (gearBlockEntity instanceof ConveyorRollerBlockEntity roller
                 && roller.getItemBeltPartner() != null) {
-            beltText = " | Item Belt -> " + roller.getItemBeltPartner().toShortString();
+            ItemBeltConnectionManager.PhysicalBeltState physicalState =
+                    ItemBeltConnectionManager.getPhysicalBeltState(
+                            minecraft.level,
+                            roller.getBlockPos(),
+                            roller.getItemBeltPartner()
+                    );
+            beltText = " | Item Belt -> " + roller.getItemBeltPartner().toShortString()
+                    + " | Cells: " + physicalState.presentCells()
+                    + "/" + physicalState.expectedCells();
         }
 
         minecraft.player.displayClientMessage(Component.literal(String.format(Locale.ROOT,
