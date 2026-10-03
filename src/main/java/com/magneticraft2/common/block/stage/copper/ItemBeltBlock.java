@@ -86,7 +86,7 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock implements EntityB
                                BlockGetter level,
                                BlockPos pos,
                                CollisionContext context) {
-        return shapeFor(state);
+        return getPhysicalShape(state);
     }
 
     @Override
@@ -94,10 +94,10 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock implements EntityB
                                         BlockGetter level,
                                         BlockPos pos,
                                         CollisionContext context) {
-        return shapeFor(state);
+        return getPhysicalShape(state);
     }
 
-    private VoxelShape shapeFor(BlockState state) {
+    public VoxelShape getPhysicalShape(BlockState state) {
         Direction facing = state.getValue(FACING);
         ItemBeltGeometry.BeltSlope slope = state.getValue(SLOPE);
 
