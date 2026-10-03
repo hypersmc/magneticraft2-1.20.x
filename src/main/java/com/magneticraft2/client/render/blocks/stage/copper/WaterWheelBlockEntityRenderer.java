@@ -91,11 +91,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         renderSideRim(stack, oak, packedLight, 8, sideOffset, 0.365D, 0.11D, 0.30D, 0.10D);
         renderSideRim(stack, oak, packedLight, 8, -sideOffset, 0.365D, 0.11D, 0.30D, 0.10D);
 
-        // Eight full-depth paddle boards. The rim still stays inside the 1x1 footprint,
-        // but the complete wheel now uses nearly the full block in both diameter and depth.
-        // Extend slightly beyond the nominal 0.5-block radius so the paddle visually
-        // enters the adjacent water block instead of stopping on the exact voxel border.
-        renderPaddles(stack, spruce, packedLight, 8, 0.500D, 0.115D, 0.11D, 0.78D);
+        // Eight proper water-catching boards. Each board is broad along the axle and
+        // extends deeply outward from the rim, while remaining thin tangentially.
+        // This is a paddle/fin, not another little rim/gear segment.
+        renderPaddles(stack, spruce, packedLight, 8, 0.470D, 0.30D, 0.065D, 0.78D);
     }
 
     private void renderLargeWheel(PoseStack stack,
@@ -117,12 +116,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         renderSideRim(stack, oak, packedLight, 16, sideOffset, 1.20D, 0.20D, 0.50D, 0.12D);
         renderSideRim(stack, oak, packedLight, 16, -sideOffset, 1.20D, 0.20D, 0.50D, 0.12D);
 
-        // Sixteen wide, thin paddles reach the edge of the 3-block diameter and span
-        // essentially the full one-block shaft depth.
-        // Nominal 3-block wheel radius is 1.5. Give the outer board a small overlap into
-        // the adjacent water cell so the powered water and visible paddle occupy the same
-        // space rather than merely touching at an invisible block boundary.
-        renderPaddles(stack, spruce, packedLight, 16, 1.505D, 0.15D, 0.13D, 0.98D);
+        // Twelve substantial paddle boards instead of sixteen tooth-like chunks.
+        // Their inner edge bites into the rim and the outer edge projects well into the
+        // adjacent water volume, so they visually behave like water-wheel fins.
+        renderPaddles(stack, spruce, packedLight, 12, 1.39D, 0.44D, 0.075D, 0.98D);
     }
 
     private void renderSideSpokes(PoseStack stack,
