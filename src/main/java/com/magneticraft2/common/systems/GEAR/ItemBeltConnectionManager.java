@@ -730,6 +730,37 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    @Nullable
+    public static CarryingSample sampleCarryingSurface(Level level,
+                                                       BlockPos first,
+                                                       BlockPos second,
+                                                       double distance) {
+        if (level == null || first == null || second == null) {
+            return null;
+        }
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return null;
+        }
+
+        ItemBeltConnection connection = map.get(BeltKey.of(first, second));
+        if (connection == null) {
+            return null;
+        }
+
+        TransportRun run = connection.transportRun;
+        double clamped = Math.max(0.0D, Math.min(run.length(), distance));
+
+        return new CarryingSample(
+                run.pointAt(clamped),
+                run.tangent(),
+                run.surfaceNormal(),
+                run.widthDirection(),
+                run.length()
+        );
+    }
+
     public static PhysicalBeltState getPhysicalBeltState(Level level,
                                                         BlockPos first,
                                                         BlockPos second) {
@@ -842,6 +873,13 @@ public final class ItemBeltConnectionManager {
         private boolean contains(BlockPos pos) {
             return start.equals(pos) || end.equals(pos);
         }
+    }
+
+    public record CarryingSample(Vec3 position,
+                                 Vec3 tangent,
+                                 Vec3 surfaceNormal,
+                                 Vec3 widthDirection,
+                                 double runLength) {
     }
 
     public record PhysicalBeltState(int expectedCells, int presentCells) {
