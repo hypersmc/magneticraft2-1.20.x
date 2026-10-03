@@ -259,7 +259,7 @@ public class WaterWheelBlock extends GearBlock implements SimpleWaterloggedBlock
             level.setBlock(
                     fillerPos,
                     fillerBase
-                            .setValue(WaterWheelFillerBlock.PART, partFor(horizontal, vertical))
+                            .setValue(WaterWheelFillerBlock.PART, partForOffset(horizontal, vertical))
                             .setValue(WaterWheelFillerBlock.ACTIVE, false)
                             .setValue(WaterWheelFillerBlock.WATERLOGGED, waterlogged),
                     Block.UPDATE_ALL
@@ -267,7 +267,7 @@ public class WaterWheelBlock extends GearBlock implements SimpleWaterloggedBlock
         }
     }
 
-    private WaterWheelFillerBlock.Part partFor(int horizontal, int vertical) {
+    public static WaterWheelFillerBlock.Part partForOffset(int horizontal, int vertical) {
         if (vertical > 0) {
             if (horizontal < 0) {
                 return WaterWheelFillerBlock.Part.TOP_LEFT;
