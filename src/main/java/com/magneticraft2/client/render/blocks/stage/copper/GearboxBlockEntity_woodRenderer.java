@@ -169,18 +169,25 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
     }
 
     private void orientLocalXToDirection(PoseStack stack, Direction direction) {
-        if (direction.getAxis() == Direction.Axis.Y) {
-            stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-        } else if (direction.getAxis() == Direction.Axis.Z) {
-            stack.mulPose(Axis.YN.rotationDegrees(90.0F));
-        }
-
-        // The transforms above map local +X onto the positive global axis. Flip the local
-        // frame for negative-facing ports so +X always means "out of the housing".
-        if (direction == Direction.WEST
-                || direction == Direction.DOWN
-                || direction == Direction.NORTH) {
-            stack.mulPose(Axis.YP.rotationDegrees(180.0F));
+        switch (direction) {
+            case EAST -> {
+                // Local +X already points east.
+            }
+            case WEST -> stack.mulPose(
+                    Axis.YP.rotationDegrees(180.0F)
+            );
+            case UP -> stack.mulPose(
+                    Axis.ZP.rotationDegrees(90.0F)
+            );
+            case DOWN -> stack.mulPose(
+                    Axis.ZN.rotationDegrees(90.0F)
+            );
+            case SOUTH -> stack.mulPose(
+                    Axis.YN.rotationDegrees(90.0F)
+            );
+            case NORTH -> stack.mulPose(
+                    Axis.YP.rotationDegrees(90.0F)
+            );
         }
     }
 
