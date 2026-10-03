@@ -54,15 +54,13 @@ public class MediumGearBlockEntity_woodRenderer implements BlockEntityRenderer<M
             return;
         }
 
-        Direction facing = blockEntity.getBlockState().getValue(FACING);
-        if (facing == Direction.EAST) {
+        Direction.Axis axis = blockEntity.getGearAxis();
+        if (axis == Direction.Axis.X) {
             stack.mulPose(Axis.XP.rotationDegrees(rotationAngle));
-        } else if (facing == Direction.WEST) {
-            stack.mulPose(Axis.XN.rotationDegrees(rotationAngle));
-        } else if (facing == Direction.SOUTH) {
+        } else if (axis == Direction.Axis.Z) {
             stack.mulPose(Axis.ZP.rotationDegrees(rotationAngle));
         } else {
-            stack.mulPose(Axis.ZN.rotationDegrees(rotationAngle));
+            stack.mulPose(Axis.YP.rotationDegrees(rotationAngle));
         }
     }
 }
