@@ -67,6 +67,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_SHAFT_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_CLUTCH_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_PULLEY_SMALL_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_PULLEY_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_CONVEYOR_ROLLER.get());
