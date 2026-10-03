@@ -27,14 +27,6 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
 
     private int waterCheckCooldown = 0;
 
-    // Water wheels are large, slow visual sources. Re-anchoring their rendered angle to
-    // every GearSyncPacket makes the whole 3x3 assembly visibly judder. Keep a client-side
-    // continuous visual accumulator instead; Gear V2 still remains authoritative for RPM,
-    // overload and direction.
-    private float clientWheelVisualRotationDegrees = 0.0F;
-    private float lastClientWheelVisualTime = Float.NaN;
-    private boolean clientWheelVisualInitialized = false;
-
     public WaterWheelBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.WATER_WHEEL_BE.get(), pos, state);
     }
@@ -101,46 +93,6 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
     @Override
     public float getDefaultSourceTorque() {
         return isLarge() ? 16.0F : 6.0F;
-    }
-
-    public float getSmoothWheelVisualRotationDegrees(float partialTicks) {
-        Level currentLevel = getLevel();
-        if (currentLevel == null) {
-            return clientWheelVisualRotationDegrees;
-        }
-
-        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
-
-        if (!clientWheelVisualInitialized || Float.isNaN(lastClientWheelVisualTime)) {
-            clientWheelVisualRotationDegrees = getVisualRotationDegrees(partialTicks);
-            lastClientWheelVisualTime = currentVisualTime;
-            clientWheelVisualInitialized = true;
-            return clientWheelVisualRotationDegrees;
-        }
-
-        float deltaTicks = currentVisualTime - lastClientWheelVisualTime;
-        lastClientWheelVisualTime = currentVisualTime;
-
-        if (deltaTicks < 0.0F) {
-            deltaTicks = 0.0F;
-        } else if (deltaTicks > 2.0F) {
-            // A renderer/chunk pause must not turn into one giant catch-up jump.
-            deltaTicks = 2.0F;
-        }
-
-        float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
-        if (rpm > VISUAL_STOP_EPSILON) {
-            float degreesPerTick = rpm * 360.0F / 1200.0F;
-            clientWheelVisualRotationDegrees +=
-                    degreesPerTick * deltaTicks * getDirectionMultiplier();
-        }
-
-        clientWheelVisualRotationDegrees %= 360.0F;
-        if (clientWheelVisualRotationDegrees < 0.0F) {
-            clientWheelVisualRotationDegrees += 360.0F;
-        }
-
-        return clientWheelVisualRotationDegrees;
     }
 
     private void updateWaterDrive() {
