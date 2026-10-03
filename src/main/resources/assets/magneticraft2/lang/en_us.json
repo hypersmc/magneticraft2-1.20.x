@@ -158,5 +158,10 @@
   "message.magneticraft2.item_belt_not_connected": "This Belt Roller has no Item Belt",
   "message.magneticraft2.item_belt_removed": "Item Belt removed; recovered %s segments",
   "block.magneticraft2.item_belt_block": "Item Belt",
-  "message.magneticraft2.item_belt_unsupported_geometry": "Item Belts must be horizontal, vertical, or exactly 45 degrees"
+  "message.magneticraft2.item_belt_unsupported_geometry": "Item Belts must be horizontal, vertical, or exactly 45 degrees",
+  "block.magneticraft2.water_wheel_small": "Small Wooden Water Wheel",
+  "item.magneticraft2.water_wheel_small": "Small Wooden Water Wheel",
+  "block.magneticraft2.water_wheel_large": "Large Wooden Water Wheel",
+  "item.magneticraft2.water_wheel_large": "Large Wooden Water Wheel",
+  "block.magneticraft2.water_wheel_filler": "Large Water Wheel"
 }
