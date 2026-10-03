@@ -119,7 +119,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         // Twelve substantial paddle boards instead of sixteen tooth-like chunks.
         // Their inner edge bites into the rim and the outer edge projects well into the
         // adjacent water volume, so they visually behave like water-wheel fins.
-        renderPaddles(stack, spruce, packedLight, 12, 1.39D, 0.44D, 0.075D, 0.98D);
+        // Outer edge reaches ~1.72 blocks from the axle, so the fin visibly
+        // penetrates well into the adjacent water cell while its inner edge still overlaps
+        // the structural rim.
+        renderPaddles(stack, spruce, packedLight, 12, 1.44D, 0.56D, 0.075D, 0.98D);
     }
 
     private void renderSideSpokes(PoseStack stack,
