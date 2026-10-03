@@ -44,7 +44,6 @@ public final class ItemBeltConnectionManager {
     private static final double ITEM_CAPTURE_HALF_WIDTH = 0.52D;
     private static final double ITEM_CAPTURE_BELOW = 0.22D;
     private static final double ITEM_CAPTURE_ABOVE = 0.70D;
-    private static final String ITEM_TICK_TAG = "MGC2ItemBeltTick";
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
 
     private static final Map<Level, Map<BeltKey, ItemBeltConnection>> CONNECTIONS =
@@ -235,7 +234,9 @@ public final class ItemBeltConnectionManager {
                 )
                 : 0.0D;
 
-        int direction = start.getDirectionMultiplier() < 0 ? -1 : 1;
+        // Positive roller rotation moves the carrying tangent opposite the BeltPath's
+        // canonical start -> end direction.
+        int direction = -start.getDirectionMultiplier();
         moveItems(level, connection, blocksPerTick, direction, running);
     }
 
@@ -284,13 +285,21 @@ public final class ItemBeltConnectionManager {
         TransportRun run = connection.transportRun;
         long gameTick = level.getGameTime();
 
+        if (!(level.getBlockEntity(connection.key.start()) instanceof ConveyorRollerBlockEntity carrier)) {
+            return;
+        }
+
+        boolean changed = false;
+        boolean listChanged = false;
+
+        // Capture loose dropped items into the belt controller. Once captured they stop
+        // being gravity/bobbing ItemEntities and become belt-owned transported stacks.
         for (ItemEntity item : level.getEntitiesOfClass(
                 ItemEntity.class,
                 run.captureBounds(),
                 entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
 
-            if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) > gameTick
-                    || item.getPersistentData().getLong(ITEM_TICK_TAG) == gameTick) {
+            if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) > gameTick) {
                 continue;
             }
 
@@ -299,9 +308,25 @@ public final class ItemBeltConnectionManager {
                 continue;
             }
 
-            item.getPersistentData().putLong(ITEM_TICK_TAG, gameTick);
+            carrier.getTransportedItems().add(
+                    new ConveyorRollerBlockEntity.TransportedItem(
+                            item.getItem().copy(),
+                            projection.distance()
+                    )
+            );
+            item.discard();
+            changed = true;
+            listChanged = true;
+        }
 
-            double nextDistance = projection.distance();
+        List<ConveyorRollerBlockEntity.TransportedItem> transportedItems =
+                carrier.getTransportedItems();
+
+        for (int i = transportedItems.size() - 1; i >= 0; i--) {
+            ConveyorRollerBlockEntity.TransportedItem transportedItem =
+                    transportedItems.get(i);
+
+            double nextDistance = transportedItem.getDistance();
             if (running) {
                 nextDistance += blocksPerTick * direction;
             }
@@ -312,20 +337,36 @@ public final class ItemBeltConnectionManager {
                         .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
                 Vec3 travelDirection = run.tangent().scale(direction);
 
-                item.setPos(exitPoint.x, exitPoint.y, exitPoint.z);
-                item.setDeltaMovement(travelDirection.scale(Math.max(0.04D, blocksPerTick)));
-                item.getPersistentData().putLong(ITEM_COOLDOWN_TAG, gameTick + 4L);
-                item.hurtMarked = true;
+                ItemEntity dropped = new ItemEntity(
+                        level,
+                        exitPoint.x,
+                        exitPoint.y,
+                        exitPoint.z,
+                        transportedItem.getStack().copy()
+                );
+                dropped.setDeltaMovement(
+                        travelDirection.scale(Math.max(0.04D, blocksPerTick))
+                );
+                dropped.getPersistentData().putLong(ITEM_COOLDOWN_TAG, gameTick + 4L);
+                level.addFreshEntity(dropped);
+
+                transportedItems.remove(i);
+                changed = true;
+                listChanged = true;
                 continue;
             }
 
-            Vec3 target = run.pointAt(nextDistance)
-                    .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
+            if (running
+                    && Math.abs(nextDistance - transportedItem.getDistance()) > 0.000001D) {
+                transportedItem.setDistance(nextDistance);
+                changed = true;
+            }
+        }
 
-            item.setPos(target.x, target.y, target.z);
-            item.setDeltaMovement(Vec3.ZERO);
-            item.fallDistance = 0.0F;
-            item.hurtMarked = true;
+        // Captures/exits sync immediately. Motion snapshots re-anchor every four ticks;
+        // the client interpolates using the already-synced Gear V2 RPM.
+        if (listChanged || (changed && gameTick % 4L == 0L)) {
+            carrier.syncTransportedItems();
         }
     }
 
