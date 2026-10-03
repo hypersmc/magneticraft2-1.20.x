@@ -247,20 +247,35 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
                     worldPosition,
                     getGearAxis())) {
                 BlockState fillerState = level.getBlockState(fillerPos);
-                if (!fillerState.is(BlockRegistry.WATER_WHEEL_FILLER.get())
-                        || !fillerState.hasProperty(com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE)
-                        || fillerState.getValue(com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE) == active) {
+                if (!fillerState.is(BlockRegistry.WATER_WHEEL_FILLER.get())) {
                     continue;
                 }
 
-                level.setBlock(
-                        fillerPos,
-                        fillerState.setValue(
+                int horizontal = getGearAxis() == Direction.Axis.X
+                        ? fillerPos.getZ() - worldPosition.getZ()
+                        : fillerPos.getX() - worldPosition.getX();
+                int vertical = fillerPos.getY() - worldPosition.getY();
+
+                com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.Part expectedPart =
+                        WaterWheelBlock.partForOffset(horizontal, vertical);
+
+                BlockState correctedState = fillerState
+                        .setValue(
+                                com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.PART,
+                                expectedPart
+                        )
+                        .setValue(
                                 com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE,
                                 active
-                        ),
-                        Block.UPDATE_CLIENTS
-                );
+                        );
+
+                if (!correctedState.equals(fillerState)) {
+                    level.setBlock(
+                            fillerPos,
+                            correctedState,
+                            Block.UPDATE_CLIENTS
+                    );
+                }
             }
         }
     }
