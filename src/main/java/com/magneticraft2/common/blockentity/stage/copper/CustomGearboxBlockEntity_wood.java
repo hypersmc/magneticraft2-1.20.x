@@ -351,6 +351,46 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         return false;
     }
 
+    /**
+     * Bit mask describing which side(s) of this gear's shaft contain a
+     * perpendicular bevel mesh. Bit 0 = negative axis side, bit 1 = positive
+     * axis side. The renderer uses this to point the bevel face toward the
+     * actual shaft intersection instead of leaning every gear the same way.
+     */
+    public int getBevelSideMask(int cellIndex) {
+        InternalComponent component = getComponent(cellIndex);
+        if (!component.isGear() || component.getAxis() == null) {
+            return 0;
+        }
+
+        int[] xyz = coordinates(cellIndex);
+        int mask = 0;
+
+        for (InternalEdge edge : getInternalEdges(cellIndex)) {
+            InternalComponent neighbor = getComponent(edge.neighborIndex());
+            if (!neighbor.isGear()
+                    || neighbor.getAxis() == component.getAxis()) {
+                continue;
+            }
+
+            int[] other = coordinates(edge.neighborIndex());
+            int along = componentAlongAxis(
+                    other[0] - xyz[0],
+                    other[1] - xyz[1],
+                    other[2] - xyz[2],
+                    component.getAxis()
+            );
+
+            if (along < 0) {
+                mask |= 1;
+            } else if (along > 0) {
+                mask |= 2;
+            }
+        }
+
+        return mask;
+    }
+
     private void rebuildGraphCacheIfNeeded() {
         if (!graphDirty) {
             return;
@@ -365,6 +405,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
 
         Direction bestReference = null;
         int bestReachablePortCount = -1;
+        boolean conflictingPortComponent = false;
 
         for (Direction candidate : PORT_ORDER) {
             int candidateCell = getPortCellIndex(candidate);
@@ -376,6 +417,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
 
             GraphTraversal traversal = traverseFrom(candidateCell);
             if (!traversal.valid()) {
+                conflictingPortComponent = true;
                 continue;
             }
 
@@ -387,6 +429,11 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
                 bestReachablePortCount = reachablePorts;
                 bestReference = candidate;
             }
+        }
+
+        if (conflictingPortComponent) {
+            cachedGraphValid = false;
+            return;
         }
 
         if (bestReference == null) {
