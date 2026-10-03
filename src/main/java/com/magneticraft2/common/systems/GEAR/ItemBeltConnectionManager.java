@@ -265,12 +265,25 @@ public final class ItemBeltConnectionManager {
                 level.setBlock(pos, desired, Block.UPDATE_ALL);
             }
 
-            if (level.getBlockEntity(pos) instanceof ItemBeltBlockEntity beltBlockEntity) {
-                beltBlockEntity.setRollers(
-                        connection.key.start(),
-                        connection.key.end()
+            ItemBeltBlockEntity beltBlockEntity =
+                    level.getBlockEntity(pos) instanceof ItemBeltBlockEntity existing
+                            ? existing
+                            : null;
+
+            // Upgrade cells created by the previous endpoint-only implementation. Their
+            // blockstate already exists in the chunk, but no BlockEntity NBT existed yet.
+            if (beltBlockEntity == null) {
+                beltBlockEntity = new ItemBeltBlockEntity(
+                        pos,
+                        level.getBlockState(pos)
                 );
+                level.setBlockEntity(beltBlockEntity);
             }
+
+            beltBlockEntity.setRollers(
+                    connection.key.start(),
+                    connection.key.end()
+            );
         }
 
         return true;
