@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -73,6 +74,31 @@ public class CustomGearboxBlock_wood extends Block implements EntityBlock {
                 instanceof CustomGearboxBlockEntity_wood gearbox) {
             gearbox.updateGearNetwork();
         }
+    }
+
+    @Override
+    public void playerWillDestroy(Level level,
+                                  BlockPos pos,
+                                  BlockState state,
+                                  Player player) {
+        if (!level.isClientSide
+                && !player.getAbilities().instabuild
+                && level.getBlockEntity(pos)
+                instanceof CustomGearboxBlockEntity_wood gearbox) {
+            for (var stack : gearbox.extractInstalledComponents()) {
+                ItemEntity dropped = new ItemEntity(
+                        level,
+                        pos.getX() + 0.5D,
+                        pos.getY() + 0.65D,
+                        pos.getZ() + 0.5D,
+                        stack
+                );
+                dropped.setDefaultPickUpDelay();
+                level.addFreshEntity(dropped);
+            }
+        }
+
+        super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
