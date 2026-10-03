@@ -304,11 +304,10 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
 
     @Override
     public CompoundTag getUpdateTag() {
-        CompoundTag tag = super.getUpdateTag();
-        if (itemBeltPartner != null) {
-            tag.putLong("ItemBeltPartner", itemBeltPartner.asLong());
-        }
-        return tag;
+        // BlockEntity#getUpdateTag() is empty in vanilla. Use the same payload we persist
+        // to disk so client-side renderers receive both the belt partner and the
+        // transported ItemStack list.
+        return saveWithoutMetadata();
     }
 
     @Override
