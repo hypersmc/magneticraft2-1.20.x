@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
@@ -190,6 +191,7 @@ public class GearNetworkManager {
 
                 float ratio = connection.kind() == ConnectionKind.SHAFT
                         || connection.kind() == ConnectionKind.RIGHT_ANGLE
+                        || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
                         ? 1.0F
                         : (float) current.getTeeth() / (float) neighbor.getTeeth();
                 float newSpeed = current.getSpeed() * ratio;
@@ -223,6 +225,19 @@ public class GearNetworkManager {
                     );
                     neighbor.setDirectionMultiplier(
                             current.getDirectionMultiplier() * turnSign
+                    );
+                } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
+                    int customSign = getCustomGearboxDirectionSign(
+                            level,
+                            current.getPosition(),
+                            neighbor.getPosition()
+                    );
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(
+                            current.getRotationDegrees() * customSign
+                    );
+                    neighbor.setDirectionMultiplier(
+                            current.getDirectionMultiplier() * customSign
                     );
                 } else if (connection.kind() == ConnectionKind.BELT) {
                     neighbor.setMeshPhaseDegrees(0.0F);
@@ -490,6 +505,16 @@ public class GearNetworkManager {
                     neighbor.setRotationDegrees(
                             current.getRotationDegrees() * turnSign
                     );
+                } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
+                    int customSign = getCustomGearboxDirectionSign(
+                            level,
+                            current.getPosition(),
+                            neighbor.getPosition()
+                    );
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(
+                            current.getRotationDegrees() * customSign
+                    );
                 } else if (connection.kind() == ConnectionKind.BELT) {
                     float ratio = (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
                     neighbor.setMeshPhaseDegrees(0.0F);
@@ -568,6 +593,19 @@ public class GearNetworkManager {
                         );
                         neighbor.setDirectionMultiplier(
                                 current.getDirectionMultiplier() * turnSign
+                        );
+                    } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
+                        int customSign = getCustomGearboxDirectionSign(
+                                level,
+                                current.getPosition(),
+                                neighbor.getPosition()
+                        );
+                        neighbor.setMeshPhaseDegrees(0.0F);
+                        neighbor.setRotationDegrees(
+                                current.getRotationDegrees() * customSign
+                        );
+                        neighbor.setDirectionMultiplier(
+                                current.getDirectionMultiplier() * customSign
                         );
                     } else if (connection.kind() == ConnectionKind.BELT) {
                         float ratio = (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
@@ -709,6 +747,18 @@ public class GearNetworkManager {
             return connected;
         }
 
+        if (blockEntity instanceof CustomGearboxBlockEntity_wood customGearbox) {
+            for (Direction port : customGearbox.getActivePorts()) {
+                addCustomGearboxPortConnection(
+                        connected,
+                        gears,
+                        pos,
+                        port
+                );
+            }
+            return connected;
+        }
+
         // Shaft/axle style transmission is only along the spin axis and remains adjacent.
         // When the adjacent node is a gearbox, only its explicitly exposed face may connect.
         for (Direction direction : Direction.values()) {
@@ -723,6 +773,19 @@ public class GearNetworkManager {
             }
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
+            if (neighborBlockEntity instanceof CustomGearboxBlockEntity_wood customGearbox) {
+                Direction customPort = direction.getOpposite();
+                if (!customGearbox.isPortActive(customPort)) {
+                    continue;
+                }
+
+                connected.add(new GearConnection(
+                        neighborPos,
+                        ConnectionKind.CUSTOM_GEARBOX
+                ));
+                continue;
+            }
+
             if (neighborBlockEntity instanceof GearboxBlockEntity_wood gearbox) {
                 Direction gearboxPort = direction.getOpposite();
                 if (!gearbox.acceptsPort(gearboxPort)) {
@@ -838,6 +901,71 @@ public class GearNetworkManager {
         }
 
         return connected;
+    }
+
+    private void addCustomGearboxPortConnection(List<GearConnection> connected,
+                                                    Map<BlockPos, GearNode> gears,
+                                                    BlockPos gearboxPos,
+                                                    Direction portDirection) {
+        BlockPos neighborPos = gearboxPos.relative(portDirection);
+        GearNode neighbor = gears.get(neighborPos);
+        if (neighbor == null
+                || neighbor.getAxis() != portDirection.getAxis()) {
+            return;
+        }
+
+        connected.add(new GearConnection(
+                neighborPos,
+                ConnectionKind.CUSTOM_GEARBOX
+        ));
+    }
+
+    private int getCustomGearboxDirectionSign(Level level,
+                                              BlockPos firstPos,
+                                              BlockPos secondPos) {
+        BlockEntity first = level.getBlockEntity(firstPos);
+        if (first instanceof CustomGearboxBlockEntity_wood gearbox) {
+            Direction port = directionBetween(firstPos, secondPos);
+            int sign = port == null ? 0 : gearbox.getPortDirectionSign(port);
+            return sign == 0 ? 1 : sign;
+        }
+
+        BlockEntity second = level.getBlockEntity(secondPos);
+        if (second instanceof CustomGearboxBlockEntity_wood gearbox) {
+            Direction port = directionBetween(secondPos, firstPos);
+            int sign = port == null ? 0 : gearbox.getPortDirectionSign(port);
+            return sign == 0 ? 1 : sign;
+        }
+
+        return 1;
+    }
+
+    @Nullable
+    private Direction directionBetween(BlockPos from, BlockPos to) {
+        int dx = to.getX() - from.getX();
+        int dy = to.getY() - from.getY();
+        int dz = to.getZ() - from.getZ();
+
+        if (dx == 1 && dy == 0 && dz == 0) {
+            return Direction.EAST;
+        }
+        if (dx == -1 && dy == 0 && dz == 0) {
+            return Direction.WEST;
+        }
+        if (dy == 1 && dx == 0 && dz == 0) {
+            return Direction.UP;
+        }
+        if (dy == -1 && dx == 0 && dz == 0) {
+            return Direction.DOWN;
+        }
+        if (dz == 1 && dx == 0 && dy == 0) {
+            return Direction.SOUTH;
+        }
+        if (dz == -1 && dx == 0 && dy == 0) {
+            return Direction.NORTH;
+        }
+
+        return null;
     }
 
     private void addGearboxPortConnection(List<GearConnection> connected,
@@ -1128,6 +1256,7 @@ public class GearNetworkManager {
     private enum ConnectionKind {
         SHAFT,
         RIGHT_ANGLE,
+        CUSTOM_GEARBOX,
         GEAR_MESH,
         BELT
     }
