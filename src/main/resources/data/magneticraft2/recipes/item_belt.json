@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LLL",
+    "PPP"
+  ],
+  "key": {
+    "L": {
+      "item": "magneticraft2:leather_belt"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:item_belt",
+    "count": 3
+  }
+}

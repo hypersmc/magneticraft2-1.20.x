@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems;
 
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
+import com.magneticraft2.common.systems.networking.CustomGearboxEditPacket;
 import com.magneticraft2.common.systems.networking.PollutionPacket;
 import com.magneticraft2.common.systems.networking.SaveBlueprintPacket;
 import com.magneticraft2.common.systems.networking.SetProjectorBlueprintPacket;
@@ -49,5 +50,10 @@ public class mgc2Network {
                 .decoder(SetProjectorBlueprintPacket::decode)
                 .consumerMainThread(SetProjectorBlueprintPacket::handle)
                 .add(); //Client selects the active blueprint on a Projector block entity.
+        CHANNEL.messageBuilder(CustomGearboxEditPacket.class, 5, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CustomGearboxEditPacket::encode)
+                .decoder(CustomGearboxEditPacket::decode)
+                .consumerMainThread(CustomGearboxEditPacket::handle)
+                .add(); //Client edits one cell in the custom wooden gearbox.
     }
 }

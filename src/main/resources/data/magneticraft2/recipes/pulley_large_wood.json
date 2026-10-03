@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PSP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "item": "magneticraft2:pulley_small_wood"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:pulley_large_wood",
+    "count": 1
+  }
+}

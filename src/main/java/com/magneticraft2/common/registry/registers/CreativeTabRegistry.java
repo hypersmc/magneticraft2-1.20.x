@@ -39,7 +39,6 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_projector.get());
                         entries.accept(ItemRegistry.item_testpowermoduleblock.get());
                         entries.accept(ItemRegistry.item_testpollutionblock.get());
-                        entries.accept(ItemRegistry.item_beltblock.get());
                         entries.accept(ItemRegistry.item_blueprintmakermultiblock.get());
                         entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
@@ -60,10 +59,25 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_blueprintmarker.get());
                         entries.accept(ItemRegistry.item_multiblock_filler.get());
                         entries.accept(ItemRegistry.item_slag.get());
+                        entries.accept(ItemRegistry.ITEM_COPPER_PLATE.get());
+                        entries.accept(ItemRegistry.ITEM_CRUSHED_CHALCOCITE.get());
+                        entries.accept(ItemRegistry.ITEM_PRIMITIVE_GRINDER_BASE.get());
+                        entries.accept(ItemRegistry.ITEM_PRIMITIVE_GRINDER_TOP.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_LARGE_WITH_HANDLE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_SHAFT_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_CLUTCH_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_OVERLOAD_DISCONNECT_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_PULLEY_SMALL_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_PULLEY_LARGE_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_CONVEYOR_ROLLER.get());
+                        entries.accept(ItemRegistry.ITEM_GEARBOX_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_CUSTOM_GEARBOX_WOOD.get());
+                        entries.accept(ItemRegistry.ITEM_LEATHER_BELT.get());
+                        entries.accept(ItemRegistry.ITEM_ITEM_BELT.get());
+                        entries.accept(ItemRegistry.ITEM_WATER_WHEEL_SMALL.get());
+                        entries.accept(ItemRegistry.ITEM_WATER_WHEEL_LARGE.get());
                         entries.accept(ItemRegistry.ITEM_PRIMITIVE_ANVIL.get());
 //                        entries.accept(ItemRegistry.);
                     })

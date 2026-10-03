@@ -63,20 +63,6 @@ public class LargeGearBlock_wood extends GearBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState pState, Level pLevel, BlockPos pPos, Block pNeighborBlock, BlockPos pNeighborPos, boolean pMovedByPiston) {
-        super.neighborChanged(pState, pLevel, pPos, pNeighborBlock, pNeighborPos, pMovedByPiston);
-        if (pLevel.isClientSide) {
-            return;
-        }
-
-        boolean hasSignal = pLevel.hasNeighborSignal(pPos);
-        if (pLevel.getBlockEntity(pPos) instanceof GearBlockEntity gearEntity && gearEntity.isSourceGear() != hasSignal) {
-            gearEntity.setPowered(hasSignal);
-            gearEntity.updateGearNetwork();
-        }
-    }
-
-    @Override
     protected BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         return new LargeGearBlockEntity_wood(pos, state);
     }

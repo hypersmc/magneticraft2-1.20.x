@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    "PWP",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "W": {
+      "item": "magneticraft2:water_wheel_small"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:water_wheel_large"
+  }
+}

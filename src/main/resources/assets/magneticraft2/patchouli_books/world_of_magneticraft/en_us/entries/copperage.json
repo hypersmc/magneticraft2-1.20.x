@@ -1,14 +1,103 @@
 {
   "name": "Copper Age",
-  "description": "The next stage after primitive copper production.",
+  "description": "Turn your first copper into mechanical power and the beginnings of automation.",
   "category": "magneticraft2:walkthrough",
   "icon": "minecraft:copper_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Producing your first Copper Ingot in the Primitive Furnace brings you into the Copper Age. The full Copper Age progression is still being rebuilt; the Stone Age test currently ends at this transition."
+      "text": "$(bold)Welcome to the Copper Age$()$(br2)Your first Copper Ingot ends the Stone Age, but Copper is not just a stronger crafting material. This age is about learning to work metal, transmit rotational power, process ore mechanically, and gradually replace manual labor with machinery.$(br2)Producing your first Bronze will eventually mark the end of the Copper Age."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Anvil",
+      "recipe": "magneticraft2:primitive_anvil",
+      "text": "The Primitive Anvil is your first metalworking station. It gives the Primitive Hammer a real job and turns raw ingots into manufactured machine components."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)1. Work your first Copper$()$(br2)Right-click the Primitive Anvil with a Copper Ingot to place it on the work surface. The ingot is visible on the anvil while you work.$(br2)Strike it four times with the Primitive Hammer. The finished Copper Plate replaces the ingot visibly on the anvil; use an empty hand to take it."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)2. Mechanical Power$()$(br2)Copper Plates reinforce your first wooden mechanical components. Shafts carry rotation along their axis, while gears move rotation between parallel axes.$(br2)The current wooden gears have 8 and 16 teeth. Changing gear size changes speed and torque rather than creating free power."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Shafts & Medium Gears",
+      "recipe": "magneticraft2:shaft_wood",
+      "recipe2": "magneticraft2:gear_medium_wood",
+      "text": "Shafts form the backbone of a mechanical line. Medium gears are the smaller 8-tooth gear."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Large Gears & Handle",
+      "recipe": "magneticraft2:gear_large_wood",
+      "recipe2": "magneticraft2:gear_large_wood_with_handle",
+      "text": "The handled Large Gear is your first mechanical power source. Right-click it to crank the network for a limited time. Ordinary gears are passive transmission components."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Manual Mechanical Era$()$(br2)Early Copper Age machinery is intentionally hand-powered. The handled gear only drives the network for a limited time.$(br2)Build with shafts and gears now; later, continuous mechanical power should feel like a major upgrade rather than just another recipe."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Grinder",
+      "recipe": "magneticraft2:primitive_grinder_base",
+      "recipe2": "magneticraft2:primitive_grinder_top",
+      "text": "The first powered machine is a simple two-block grinder: place the Mechanical Grinder Base and put the Grinder Stone directly above it, then right-click the base to form the multiblock."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Grinder",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "T"
+          ],
+          [
+            "0"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitive_grinder_bmultiblock",
+          "T": "magneticraft2:primitive_grindertop"
+        },
+        "symmetrical": true
+      },
+      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the stone base. Place a horizontal Wooden Shaft directly against the small visible bearing so the shaft runs into the machine. The grinder requires at least 20 mechanical speed and 4 torque."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)3. Crush the ore$()$(br2)Right-click the formed grinder with Chalcocite Ore to load it. Connect a powered horizontal Wooden Shaft to the small bearing on the left side of the stone base. With at least 20 speed and 4 torque, the grinder runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the crank stops, processing pauses instead of losing progress. Use an empty hand on the grinder to retrieve its output."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why bother?$()$(br2)Direct Primitive Furnace processing remains valid: one Chalcocite Ore produces one Copper Ingot and Slag.$(br2)Crushing the Chalcocite first improves the same furnace batch to $(bold)two Copper Ingots$() plus Slag. Mechanical processing makes your ore more valuable instead of existing only as a progression lock."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Next milestone: continuous power$()$(br2)The grinder is currently the first real consumer of the Gear V2 network. The next Copper Age milestone will replace repeated hand cranking with a continuous mechanical source.$(br2)The planned direction is a Water Wheel, followed by a larger mechanical workshop and additional processing."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Later Copper Age$()$(br2)After continuous power, the age is planned to expand into improved Copper metallurgy, basic item logistics, and a small functioning mechanical factory rather than a checklist of machines."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)The road to Bronze$()$(br2)Cassiterite and Tin will form the final Copper Age challenge. Tin processing is intended to depend on the mechanical infrastructure learned during this age.$(br2)Combining processed Tin with Copper to produce the first Bronze will eventually mark the transition into the Bronze Age."
     }
   ],
+  "extra_recipe_mappings": {
+    "magneticraft2:primitive_anvil": 1,
+    "magneticraft2:shaft_wood": 4,
+    "magneticraft2:gear_medium_wood": 4,
+    "magneticraft2:gear_large_wood": 5,
+    "magneticraft2:gear_large_wood_with_handle": 5,
+    "magneticraft2:primitive_grinder_bmultiblock": 7,
+    "magneticraft2:primitive_grindertop": 7
+  },
   "sortnum": 2,
   "read_by_default": true
 }

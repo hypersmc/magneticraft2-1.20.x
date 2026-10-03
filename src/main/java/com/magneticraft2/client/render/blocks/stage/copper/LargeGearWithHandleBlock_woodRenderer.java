@@ -31,7 +31,6 @@ public class LargeGearWithHandleBlock_woodRenderer implements BlockEntityRendere
 
         stack.pushPose();
         stack.translate(0.5, 0.5, 0.5);
-        GearVisualMeshHelper.applyConnectedGearVisualOffset(blockEntity, stack);
         applyGearRotation(blockEntity, partialTicks, stack);
         stack.translate(-0.5, -0.5, -0.5);
 
@@ -55,13 +54,13 @@ public class LargeGearWithHandleBlock_woodRenderer implements BlockEntityRendere
             return;
         }
 
-        Direction facing = blockEntity.getBlockState().getValue(FACING);
-        if (facing == Direction.EAST || facing == Direction.WEST) {
+        Direction.Axis axis = blockEntity.getGearAxis();
+        if (axis == Direction.Axis.X) {
             stack.mulPose(Axis.XP.rotationDegrees(rotationAngle));
-        } else if (facing == Direction.SOUTH) {
+        } else if (axis == Direction.Axis.Z) {
             stack.mulPose(Axis.ZP.rotationDegrees(rotationAngle));
         } else {
-            stack.mulPose(Axis.ZN.rotationDegrees(rotationAngle));
+            stack.mulPose(Axis.YP.rotationDegrees(rotationAngle));
         }
     }
 }

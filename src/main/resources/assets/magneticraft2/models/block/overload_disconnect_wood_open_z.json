@@ -1,0 +1,236 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "shaft": "minecraft:block/stripped_oak_log",
+    "wood": "minecraft:block/spruce_planks",
+    "copper": "minecraft:block/copper_block",
+    "trip": "minecraft:block/redstone_block",
+    "particle": "minecraft:block/spruce_planks"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        5,
+        0
+      ],
+      "to": [
+        11,
+        11,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#shaft"
+        },
+        "east": {
+          "texture": "#shaft"
+        },
+        "south": {
+          "texture": "#shaft"
+        },
+        "west": {
+          "texture": "#shaft"
+        },
+        "up": {
+          "texture": "#shaft"
+        },
+        "down": {
+          "texture": "#shaft"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        1,
+        2
+      ],
+      "to": [
+        15,
+        15,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
+        }
+      }
+    },
+    {
+      "from": [
+        0.75,
+        0.75,
+        4
+      ],
+      "to": [
+        15.25,
+        15.25,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        0.75,
+        0.75,
+        11
+      ],
+      "to": [
+        15.25,
+        15.25,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        4.25,
+        4.25,
+        1.5
+      ],
+      "to": [
+        11.75,
+        11.75,
+        2.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        4.25,
+        4.25,
+        13.5
+      ],
+      "to": [
+        11.75,
+        11.75,
+        14.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        15,
+        7
+      ],
+      "to": [
+        9.5,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#trip"
+        },
+        "east": {
+          "texture": "#trip"
+        },
+        "south": {
+          "texture": "#trip"
+        },
+        "west": {
+          "texture": "#trip"
+        },
+        "up": {
+          "texture": "#trip"
+        },
+        "down": {
+          "texture": "#trip"
+        }
+      }
+    }
+  ]
+}

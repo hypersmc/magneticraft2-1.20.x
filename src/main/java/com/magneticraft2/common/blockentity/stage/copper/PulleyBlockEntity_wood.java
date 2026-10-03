@@ -1,0 +1,266 @@
+package com.magneticraft2.common.blockentity.stage.copper;
+
+import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
+import com.magneticraft2.common.blockentity.general.GearBlockEntity;
+import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.GEAR.BeltConnectionManager;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
+
+import static com.magneticraft2.common.block.stage.copper.PulleyBlock_wood.POWERED;
+import static net.minecraft.world.level.block.DirectionalBlock.FACING;
+
+/**
+ * Gear V2 pulley node with one optional belt partner.
+ */
+public class PulleyBlockEntity_wood extends GearBlockEntity {
+    @Nullable
+    private BlockPos beltPartner;
+
+    private double clientBeltTravelDistance = 0.0D;
+    private float lastClientBeltVisualTime = Float.NaN;
+
+    public PulleyBlockEntity_wood(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.PULLEY_BE_WOOD.get(), pos, state);
+    }
+
+    public static <E extends BlockEntity> void tick(Level level,
+                                                    BlockPos pos,
+                                                    BlockState state,
+                                                    E blockEntity) {
+        if (!(blockEntity instanceof PulleyBlockEntity_wood pulley)) {
+            return;
+        }
+
+        pulley.ensureBeltConnectionRegistered();
+
+        if (!level.isClientSide) {
+            pulley.serverTickGear();
+            pulley.updatePoweredState();
+        }
+    }
+
+    private void ensureBeltConnectionRegistered() {
+        if (level != null && beltPartner != null
+                && !BeltConnectionManager.isRegistered(level, worldPosition, beltPartner)) {
+            BeltConnectionManager.ensureRegistered(this);
+        }
+    }
+
+    private void updatePoweredState() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+
+        markHasEverRotatedIfMoving(getServerSpeed());
+        boolean dynamic = shouldRenderGearWithBlockEntity();
+        BlockState state = getBlockState();
+        if (state.hasProperty(POWERED) && state.getValue(POWERED) != dynamic) {
+            level.setBlock(worldPosition, state.setValue(POWERED, dynamic), 2);
+        }
+    }
+
+    @Override
+    public int getGearTeeth() {
+        if (getBlockState().getBlock() instanceof PulleyBlock_wood pulley) {
+            return pulley.getPulleyTeeth();
+        }
+        return 8;
+    }
+
+    @Override
+    public float getGearMaxTorque() {
+        return getGearTeeth() > 8 ? 16.0F : 8.0F;
+    }
+
+    @Override
+    public boolean isShaftLike() {
+        return true;
+    }
+
+    @Override
+    public Direction.Axis getGearAxis() {
+        BlockState state = getBlockState();
+        return state.hasProperty(FACING) ? state.getValue(FACING).getAxis() : Direction.Axis.Y;
+    }
+
+    public double getPulleyRadius() {
+        // Radius of the wooden belt seat. The renderer adds a tiny clearance so the
+        // leather sits on the pulley instead of occupying the exact same surface.
+        return getGearTeeth() > 8 ? 0.69D : 0.43D;
+    }
+
+    /**
+     * Continuous client-side linear belt travel, measured in blocks along the upper
+     * tangent run. Unlike the visible pulley angle this deliberately does not reset
+     * to an authoritative 0..360 snapshot, otherwise the belt texture would jump each
+     * time the pulley crossed 360 degrees.
+     */
+    public double getVisualBeltTravelDistance(float partialTicks) {
+        Level currentLevel = getLevel();
+        if (currentLevel == null) {
+            return clientBeltTravelDistance;
+        }
+
+        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
+        if (Float.isNaN(lastClientBeltVisualTime)) {
+            lastClientBeltVisualTime = currentVisualTime;
+            return clientBeltTravelDistance;
+        }
+
+        float deltaTicks = currentVisualTime - lastClientBeltVisualTime;
+        lastClientBeltVisualTime = currentVisualTime;
+
+        if (deltaTicks < 0.0F) {
+            deltaTicks = 0.0F;
+        } else if (deltaTicks > 20.0F) {
+            deltaTicks = 20.0F;
+        }
+
+        float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
+        if (Math.abs(rpm) > VISUAL_STOP_EPSILON) {
+            double circumference = Math.PI * 2.0D * getPulleyRadius();
+            double blocksPerTick = (rpm / 1200.0D) * circumference;
+
+            // For the renderer's upper tangent, positive angular rotation around the
+            // pulley axis produces linear travel opposite the start->end run direction.
+            clientBeltTravelDistance -= blocksPerTick * deltaTicks * getDirectionMultiplier();
+
+            // Keep the number bounded without introducing visible jumps. The belt texture
+            // repeats every 0.5 block, so 1024 blocks is an exact repeat boundary.
+            if (Math.abs(clientBeltTravelDistance) > 1024.0D) {
+                clientBeltTravelDistance %= 0.5D;
+            }
+        }
+
+        return clientBeltTravelDistance;
+    }
+
+    @Nullable
+    public BlockPos getBeltPartner() {
+        return beltPartner;
+    }
+
+    public boolean isLinkedTo(BlockPos pos) {
+        return beltPartner != null && beltPartner.equals(pos);
+    }
+
+    public void linkBelt(BlockPos partner) {
+        if (partner == null || partner.equals(worldPosition)) {
+            return;
+        }
+
+        beltPartner = partner.immutable();
+        syncBeltState();
+        BeltConnectionManager.ensureRegistered(this);
+        updateGearNetwork();
+    }
+
+    public void disconnectBelt(boolean notifyPartner) {
+        BlockPos oldPartner = beltPartner;
+        if (oldPartner == null) {
+            return;
+        }
+
+        if (level != null) {
+            BeltConnectionManager.remove(level, worldPosition, oldPartner);
+        }
+
+        beltPartner = null;
+        syncBeltState();
+        updateGearNetwork();
+
+        if (notifyPartner && level != null && level.getBlockEntity(oldPartner) instanceof PulleyBlockEntity_wood other
+                && other.isLinkedTo(worldPosition)) {
+            other.disconnectBelt(false);
+        }
+    }
+
+    private void syncBeltState() {
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        if (beltPartner != null) {
+            tag.putLong("BeltPartner", beltPartner.asLong());
+        }
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+
+        BlockPos previousPartner = beltPartner;
+        beltPartner = tag.contains("BeltPartner")
+                ? BlockPos.of(tag.getLong("BeltPartner"))
+                : null;
+
+        if (level != null && previousPartner != null
+                && (beltPartner == null || !previousPartner.equals(beltPartner))) {
+            BeltConnectionManager.remove(level, worldPosition, previousPartner);
+        }
+
+        ensureBeltConnectionRegistered();
+    }
+
+    @Override
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
+        if (beltPartner != null) {
+            tag.putLong("BeltPartner", beltPartner.asLong());
+        }
+        return tag;
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet) {
+        CompoundTag tag = packet.getTag();
+        if (tag != null) {
+            load(tag);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        if (level != null) {
+            BeltConnectionManager.removeFor(level, worldPosition);
+        }
+        super.setRemoved();
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        if (beltPartner == null) {
+            return super.getRenderBoundingBox();
+        }
+
+        return new AABB(
+                Math.min(worldPosition.getX(), beltPartner.getX()) - 1.0D,
+                Math.min(worldPosition.getY(), beltPartner.getY()) - 1.0D,
+                Math.min(worldPosition.getZ(), beltPartner.getZ()) - 1.0D,
+                Math.max(worldPosition.getX(), beltPartner.getX()) + 2.0D,
+                Math.max(worldPosition.getY(), beltPartner.getY()) + 2.0D,
+                Math.max(worldPosition.getZ(), beltPartner.getZ()) + 2.0D
+        );
+    }
+}

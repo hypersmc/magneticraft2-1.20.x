@@ -108,8 +108,16 @@ public class primitive_furnace_multiblockrecipe implements Recipe<Container> {
         public primitive_furnace_multiblockrecipe fromJson(ResourceLocation recipeId, JsonObject json) {
             Ingredient input1 = Ingredient.fromJson(json.get("input1"));
             Ingredient input2 = Ingredient.fromJson(json.get("input2"));
-            ItemStack output1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(json.getAsJsonObject("output1").get("item").getAsString())).getDefaultInstance();
-            ItemStack output2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(json.getAsJsonObject("output2").get("item").getAsString())).getDefaultInstance();
+            JsonObject output1Json = json.getAsJsonObject("output1");
+            JsonObject output2Json = json.getAsJsonObject("output2");
+            ItemStack output1 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(output1Json.get("item").getAsString())).getDefaultInstance();
+            ItemStack output2 = ForgeRegistries.ITEMS.getValue(new ResourceLocation(output2Json.get("item").getAsString())).getDefaultInstance();
+            if (output1Json.has("count")) {
+                output1.setCount(output1Json.get("count").getAsInt());
+            }
+            if (output2Json.has("count")) {
+                output2.setCount(output2Json.get("count").getAsInt());
+            }
             int cookTime = json.get("cookTime").getAsInt();
 
             return new primitive_furnace_multiblockrecipe(recipeId, input1, input2, output1, output2, cookTime);

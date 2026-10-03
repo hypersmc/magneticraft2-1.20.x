@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "engaged=false,facing=east,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open"
+    },
+    "engaged=false,facing=east,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=east,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed"
+    },
+    "engaged=true,facing=east,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=false,facing=west,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open"
+    },
+    "engaged=false,facing=west,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=west,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed"
+    },
+    "engaged=true,facing=west,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=false,facing=up,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open_y"
+    },
+    "engaged=false,facing=up,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=up,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed_y"
+    },
+    "engaged=true,facing=up,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=false,facing=down,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open_y"
+    },
+    "engaged=false,facing=down,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=down,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed_y"
+    },
+    "engaged=true,facing=down,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=false,facing=north,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open_z"
+    },
+    "engaged=false,facing=north,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=north,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed_z"
+    },
+    "engaged=true,facing=north,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=false,facing=south,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_open_z"
+    },
+    "engaged=false,facing=south,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    },
+    "engaged=true,facing=south,rotating=false": {
+      "model": "magneticraft2:block/clutch_wood_closed_z"
+    },
+    "engaged=true,facing=south,rotating=true": {
+      "model": "magneticraft2:block/invis"
+    }
+  }
+}

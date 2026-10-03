@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PSP",
+    "LWL",
+    "PSP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:overload_disconnect_wood",
+    "count": 1
+  }
+}

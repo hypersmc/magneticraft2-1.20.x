@@ -6,6 +6,8 @@ import com.magneticraft2.common.item.creativeitems.multiblock_filler_item;
 import com.magneticraft2.common.item.creativeitems.pitkiln_item;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
+import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
+import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -84,10 +86,25 @@ public class ItemRegistry {
     public static final RegistryObject<pebble> item_pebble = ITEMS.register("pebble", pebble::new);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_ANVIL = fromBlock(Primitive_anvillBlock);
     //Copper
+    public static final RegistryObject<Item> ITEM_COPPER_PLATE = ITEMS.register("copper_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CRUSHED_CHALCOCITE = ITEMS.register("crushed_chalcocite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
+    public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WOOD = fromBlock(GEAR_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_GEAR_LARGE_WITH_HANDLE_WOOD = fromBlock(GEAR_LARGE_WITH_HANDLE_WOOD);
     public static final RegistryObject<Item> ITEM_SHAFT_WOOD = fromBlock(SHAFT_WOOD);
+    public static final RegistryObject<Item> ITEM_CLUTCH_WOOD = fromBlock(CLUTCH_WOOD);
+    public static final RegistryObject<Item> ITEM_OVERLOAD_DISCONNECT_WOOD = fromBlock(OVERLOAD_DISCONNECT_WOOD);
+    public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
+    public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
+    public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
+    public static final RegistryObject<Item> ITEM_GEARBOX_WOOD = fromBlock(GEARBOX_WOOD);
+    public static final RegistryObject<Item> ITEM_CUSTOM_GEARBOX_WOOD = fromBlock(CUSTOM_GEARBOX_WOOD);
+    public static final RegistryObject<LeatherBeltItem> ITEM_LEATHER_BELT = ITEMS.register("leather_belt", LeatherBeltItem::new);
+    public static final RegistryObject<ItemBeltItem> ITEM_ITEM_BELT = ITEMS.register("item_belt", ItemBeltItem::new);
+    public static final RegistryObject<Item> ITEM_WATER_WHEEL_SMALL = fromBlock(WATER_WHEEL_SMALL);
+    public static final RegistryObject<Item> ITEM_WATER_WHEEL_LARGE = fromBlock(WATER_WHEEL_LARGE);
 
 
 

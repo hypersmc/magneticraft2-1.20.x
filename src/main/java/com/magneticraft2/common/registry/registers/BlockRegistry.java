@@ -5,8 +5,17 @@ import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
+import com.magneticraft2.common.block.stage.copper.GearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.CustomGearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
+import com.magneticraft2.common.block.stage.copper.OverloadDisconnectBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
+import com.magneticraft2.common.block.stage.copper.WaterWheelBlock;
+import com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock;
 import com.magneticraft2.common.block.stage.stone.*;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -70,6 +79,17 @@ public class BlockRegistry {
     public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
     public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);
     public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
+    public static final RegistryObject<ClutchBlock_wood> CLUTCH_WOOD = BLOCKS.register("clutch_wood", ClutchBlock_wood::new);
+    public static final RegistryObject<OverloadDisconnectBlock_wood> OVERLOAD_DISCONNECT_WOOD = BLOCKS.register("overload_disconnect_wood", OverloadDisconnectBlock_wood::new);
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
+    public static final RegistryObject<ConveyorRollerBlock> CONVEYOR_ROLLER = BLOCKS.register("conveyor_roller", ConveyorRollerBlock::new);
+    public static final RegistryObject<GearboxBlock_wood> GEARBOX_WOOD = BLOCKS.register("gearbox_wood", GearboxBlock_wood::new);
+    public static final RegistryObject<CustomGearboxBlock_wood> CUSTOM_GEARBOX_WOOD = BLOCKS.register("custom_gearbox_wood", CustomGearboxBlock_wood::new);
+    public static final RegistryObject<ItemBeltBlock> ITEM_BELT_BLOCK = registerBlockWithoutBlockItem("item_belt_block", ItemBeltBlock::new);
+    public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_SMALL = BLOCKS.register("water_wheel_small", () -> new WaterWheelBlock(false));
+    public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_LARGE = BLOCKS.register("water_wheel_large", () -> new WaterWheelBlock(true));
+    public static final RegistryObject<WaterWheelFillerBlock> WATER_WHEEL_FILLER = registerBlockWithoutBlockItem("water_wheel_filler", WaterWheelFillerBlock::new);
 
 
 

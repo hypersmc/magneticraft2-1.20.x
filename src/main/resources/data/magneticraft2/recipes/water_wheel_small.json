@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PSP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:water_wheel_small"
+  }
+}

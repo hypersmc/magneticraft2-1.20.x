@@ -1,28 +1,31 @@
 {
   "variants": {
-    "facing=up": {
+    "facing=up,rotating=false": {
       "model": "magneticraft2:block/shaft_wood"
     },
-    "facing=down": {
+    "facing=down,rotating=false": {
       "model": "magneticraft2:block/shaft_wood"
     },
-    "facing=north": {
+    "facing=north,rotating=false": {
       "model": "magneticraft2:block/shaft_wood",
       "x": 90
     },
-    "facing=south": {
+    "facing=south,rotating=false": {
       "model": "magneticraft2:block/shaft_wood",
       "x": 90
     },
-    "facing=east": {
+    "facing=east,rotating=false": {
       "model": "magneticraft2:block/shaft_wood",
       "x": 90,
       "y": 90
     },
-    "facing=west": {
+    "facing=west,rotating=false": {
       "model": "magneticraft2:block/shaft_wood",
       "x": 90,
       "y": 90
+    },
+    "rotating=true": {
+      "model": "magneticraft2:block/invis"
     }
   }
 }

@@ -4,13 +4,25 @@ import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.render.blocks.*;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearBlock_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearWithHandleBlock_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.ClutchBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.ConveyorRollerBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.GearboxBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.CustomGearboxBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MediumGearBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.PulleyBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.OverloadDisconnectBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PitKilnBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveAnvilBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveFurnaceNoGUIBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveGrinderBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PrimitiveStorageCellarBlockRenderer;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.EntitiesRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
@@ -58,9 +70,20 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity_nogui.get(), PrimitiveFurnaceNoGUIBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.storagecellarblockentity.get(), PrimitiveStorageCellarBlockRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.Primitive_anvilEntity.get(), PrimitiveAnvilBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.primitivegrinderbmultiblockentity.get(), PrimitiveGrinderBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_WITH_HANDLE_BE_WOOD.get(), LargeGearWithHandleBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), LargeGearBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), MediumGearBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CLUTCH_BE_WOOD.get(), ClutchBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.OVERLOAD_DISCONNECT_BE_WOOD.get(), OverloadDisconnectBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CUSTOM_GEARBOX_BE_WOOD.get(), CustomGearboxBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_WHEEL_BE.get(), WaterWheelBlockEntityRenderer::new);
+        event.registerEntityRenderer(EntitiesRegistry.BELT_COLLISION.get(), NoopRenderer::new);
     }
     @SubscribeEvent
     public static void onRegisterLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
