@@ -28,6 +28,7 @@ public abstract class GearBlockEntity extends BlockEntity {
     private float clientVisualRotationDegrees = 0.0F;
     private float lastClientVisualTime = Float.NaN;
     private boolean clientVisualInitialized = false;
+    private long lastClientVisualSyncGameTime = Long.MIN_VALUE;
 
     public GearBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -227,19 +228,23 @@ public abstract class GearBlockEntity extends BlockEntity {
         node.setDirectionMultiplier(directionMultiplier);
         node.setSourcePos(sourcePos);
 
-        // Each sync is an authoritative angular snapshot from the server. Do not let every
-        // gear accumulate its own long-running client angle: tiny timing differences between
-        // block-entity render calls eventually make meshed gears drift apart.
-        //
-        // Instead remember the server angle and the client game time at which it arrived.
-        // Rendering extrapolates only the fractional time since this snapshot. This keeps
-        // animation smooth while every gear remains anchored to the exact server tooth mesh.
-        clientVisualRotationDegrees = node.getClientRotationDegrees();
+        // Keep one visual anchor per client game tick. Duplicate packets carrying the
+        // same server-tick snapshot used to repeatedly reset interpolation during a frame,
+        // which showed up as the mechanical animation visibly juddering.
         Level currentLevel = getLevel();
-        lastClientVisualTime = currentLevel == null
-                ? Float.NaN
-                : (float) currentLevel.getGameTime();
-        clientVisualInitialized = true;
+        long currentGameTime = currentLevel == null
+                ? Long.MIN_VALUE
+                : currentLevel.getGameTime();
+
+        if (!clientVisualInitialized
+                || currentGameTime != lastClientVisualSyncGameTime) {
+            clientVisualRotationDegrees = node.getClientRotationDegrees();
+            lastClientVisualTime = currentLevel == null
+                    ? Float.NaN
+                    : (float) currentGameTime;
+            lastClientVisualSyncGameTime = currentGameTime;
+            clientVisualInitialized = true;
+        }
 
         markHasEverRotatedIfMoving(speed);
     }
