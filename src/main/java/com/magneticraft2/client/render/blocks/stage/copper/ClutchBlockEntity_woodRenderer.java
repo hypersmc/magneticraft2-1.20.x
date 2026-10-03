@@ -57,8 +57,14 @@ public class ClutchBlockEntity_woodRenderer
             return;
         }
 
-        Direction facing = clutch.getBlockState()
-                .getValue(DirectionalBlock.FACING);
+        Direction.Axis axis = clutch.getBlockState()
+                .getValue(DirectionalBlock.FACING)
+                .getAxis();
+        Direction positiveDirection =
+                positiveDirection(axis);
+        Direction negativeDirection =
+                positiveDirection.getOpposite();
+
         boolean engaged = clutch.getBlockState()
                 .getValue(ClutchBlock_wood.ENGAGED);
 
@@ -83,12 +89,12 @@ public class ClutchBlockEntity_woodRenderer
 
         float positiveAngle = sideRotation(
                 clutch,
-                facing,
+                positiveDirection,
                 partialTicks
         );
         float negativeAngle = sideRotation(
                 clutch,
-                facing.getOpposite(),
+                negativeDirection,
                 partialTicks
         );
 
@@ -96,8 +102,7 @@ public class ClutchBlockEntity_woodRenderer
             float lockedAngle =
                     clutch.getVisualRotationDegrees(
                             partialTicks
-                    )
-                            * axisDirectionSign(facing);
+                    );
 
             positiveAngle = lockedAngle;
             negativeAngle = lockedAngle;
@@ -105,7 +110,10 @@ public class ClutchBlockEntity_woodRenderer
 
         stack.pushPose();
         stack.translate(0.5D, 0.5D, 0.5D);
-        orientLocalXToDirection(stack, facing);
+        orientLocalXToDirection(
+                stack,
+                positiveDirection
+        );
 
         renderRotatingBox(
                 stack,
@@ -162,21 +170,11 @@ public class ClutchBlockEntity_woodRenderer
                 == clutch.getGearAxis()) {
             return gear.getVisualRotationDegrees(
                     partialTicks
-            ) * axisDirectionSign(
-                    clutch.getBlockState()
-                            .getValue(
-                                    DirectionalBlock.FACING
-                            )
             );
         }
 
         return clutch.getVisualRotationDegrees(
                 partialTicks
-        ) * axisDirectionSign(
-                clutch.getBlockState()
-                        .getValue(
-                                DirectionalBlock.FACING
-                        )
         );
     }
 
@@ -257,10 +255,12 @@ public class ClutchBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private int axisDirectionSign(Direction direction) {
-        return switch (direction) {
-            case EAST, UP, SOUTH -> 1;
-            case WEST, DOWN, NORTH -> -1;
+    private Direction positiveDirection(
+            Direction.Axis axis) {
+        return switch (axis) {
+            case X -> Direction.EAST;
+            case Y -> Direction.UP;
+            case Z -> Direction.SOUTH;
         };
     }
 
