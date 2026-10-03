@@ -101,43 +101,130 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                                  boolean secondary) {
         stack.pushPose();
 
-        // Work in local space where +X points out through this gearbox port. That makes
-        // both miter gears taper toward the shared block center regardless of whether the
-        // real port is EAST/WEST, UP/DOWN or NORTH/SOUTH.
+        // Local +X points out through the shaft. The miter apex is therefore
+        // toward local -X at the block center.
         orientLocalXToDirection(stack, port);
-
-        // A 1:1 miter pair has both pitch cones meeting at the intersection of the
-        // two shaft axes. Keep each wheel close to that intersection instead of
-        // rendering two large spur-like crowns on opposite sides of the housing.
-        double gearCenter = 0.105D;
-        stack.translate(gearCenter, 0.0D, 0.0D);
+        stack.translate(0.135D, 0.0D, 0.0D);
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        // Compact hub on the shaft side of the wheel.
         drawBox(
                 stack,
                 consumer,
                 packedLight,
-                0.10D,
+                0.13D,
                 0.14D,
                 0.14D
         );
 
-        double radius = 0.145D;
-        double radialDepth = 0.070D;
-        double tangentWidth = 0.082D;
-        double axialDepth = 0.070D;
+        // Three connected stepped rings form a readable wooden bevel wheel.
+        // The previous version was eight oversized floating cubes and looked
+        // more like paddles than a gear.
+        renderRing(
+                stack,
+                consumer,
+                packedLight,
+                0.150D,
+                0.040D,
+                0.052D,
+                0.055D,
+                16,
+                0.035D
+        );
+        renderRing(
+                stack,
+                consumer,
+                packedLight,
+                0.116D,
+                0.036D,
+                0.047D,
+                0.048D,
+                16,
+                -0.005D
+        );
+        renderRing(
+                stack,
+                consumer,
+                packedLight,
+                0.082D,
+                0.030D,
+                0.040D,
+                0.040D,
+                16,
+                -0.045D
+        );
 
-        for (int i = 0; i < 8; i++) {
+        for (int spoke = 0; spoke < 4; spoke++) {
             stack.pushPose();
-            stack.mulPose(Axis.XP.rotationDegrees(i * 45.0F));
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(spoke * 90.0F)
+            );
+            stack.translate(
+                    0.005D,
+                    0.082D,
+                    0.0D
+            );
+            stack.mulPose(
+                    Axis.ZP.rotationDegrees(18.0F)
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    0.050D,
+                    0.115D,
+                    0.036D
+            );
+            stack.popPose();
+        }
 
-            // For equal-size bevel gears the tooth face is approximately a 45 degree
-            // cone. Move the tooth ring inward and lean it toward the common shaft
-            // intersection so the two wheels visibly mesh at the corner.
-            stack.translate(-0.040D, radius, 0.0D);
-            stack.mulPose(Axis.ZP.rotationDegrees(45.0F));
+        for (int tooth = 0; tooth < 8; tooth++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(tooth * 45.0F)
+            );
+            stack.translate(
+                    0.040D,
+                    0.188D,
+                    0.0D
+            );
+            stack.mulPose(
+                    Axis.ZP.rotationDegrees(38.0F)
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    0.082D,
+                    0.070D,
+                    0.060D
+            );
+            stack.popPose();
+        }
 
+        stack.popPose();
+    }
+
+    private void renderRing(PoseStack stack,
+                            VertexConsumer consumer,
+                            int packedLight,
+                            double radius,
+                            double radialDepth,
+                            double tangentWidth,
+                            double axialDepth,
+                            int segments,
+                            double axialOffset) {
+        for (int segment = 0; segment < segments; segment++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(
+                            segment * (360.0F / segments)
+                    )
+            );
+            stack.translate(
+                    axialOffset,
+                    radius,
+                    0.0D
+            );
             drawBox(
                     stack,
                     consumer,
@@ -146,28 +233,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                     radialDepth,
                     tangentWidth
             );
-
             stack.popPose();
         }
-
-        // Four short spokes make the wheel read as a gear rather than eight floating
-        // wooden blocks. They stay on the shaft side of the bevel tooth ring.
-        for (int i = 0; i < 4; i++) {
-            stack.pushPose();
-            stack.mulPose(Axis.XP.rotationDegrees(i * 90.0F));
-            stack.translate(0.020D, 0.085D, 0.0D);
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    0.050D,
-                    0.105D,
-                    0.045D
-            );
-            stack.popPose();
-        }
-
-        stack.popPose();
     }
 
     private void orientLocalXToDirection(PoseStack stack, Direction direction) {
