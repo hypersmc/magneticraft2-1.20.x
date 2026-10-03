@@ -62,7 +62,10 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
 
     @Override
     public int getGearTeeth() {
-        return isLarge() ? 16 : 8;
+        // The 3x3 wheel has roughly a 1.5-block pitch radius, so model its rim as
+        // 24 teeth rather than pretending it is the same diameter as the normal
+        // 16-tooth wooden large gear.
+        return isLarge() ? 24 : 8;
     }
 
     @Override
