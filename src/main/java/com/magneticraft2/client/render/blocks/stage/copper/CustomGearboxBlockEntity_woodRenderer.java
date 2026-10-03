@@ -82,7 +82,7 @@ public class CustomGearboxBlockEntity_woodRenderer
                         packedLight,
                         component.getAxis(),
                         angle,
-                        gearbox.isBevelGear(index)
+                        gearbox.getBevelSideMask(index)
                 );
             } else {
                 renderInternalShaft(
@@ -148,27 +148,180 @@ public class CustomGearboxBlockEntity_woodRenderer
                                     int packedLight,
                                     Direction.Axis axis,
                                     float rotation,
-                                    boolean bevel) {
+                                    int bevelSideMask) {
         orientLocalXToAxis(stack, axis);
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        // Hub/axle.
+        // Axle/hub through the center. The old renderer was essentially eight
+        // disconnected wooden paddles around this box; keep the hub but build a
+        // real rim, spokes and teeth around it.
         drawBox(
                 stack,
                 shaft,
                 packedLight,
-                0.14D,
-                0.075D,
-                0.075D
+                0.18D,
+                0.070D,
+                0.070D
         );
 
-        // Perpendicular miter pairs sit on diagonal cells, so their pitch circles need
-        // to reach farther than ordinary same-plane spur gears. Keeping the two sizes
-        // distinct makes both arrangements visibly meet instead of floating apart.
-        double radius = bevel ? 0.160D : 0.110D;
-        double radial = bevel ? 0.080D : 0.072D;
-        double tangent = bevel ? 0.080D : 0.072D;
-        double axial = bevel ? 0.065D : 0.050D;
+        if (bevelSideMask == 0) {
+            renderSpurGearProfile(
+                    stack,
+                    oak,
+                    packedLight
+            );
+            return;
+        }
+
+        if ((bevelSideMask & 1) != 0) {
+            renderBevelGearProfile(
+                    stack,
+                    oak,
+                    packedLight,
+                    -1
+            );
+        }
+
+        if ((bevelSideMask & 2) != 0) {
+            renderBevelGearProfile(
+                    stack,
+                    oak,
+                    packedLight,
+                    1
+            );
+        }
+    }
+
+    /**
+     * Blocky wooden spur gear with a connected rim, four spokes and eight
+     * compact teeth. It deliberately keeps the 8-tooth mechanical identity
+     * while reading as one gear instead of eight floating cubes.
+     */
+    private void renderSpurGearProfile(PoseStack stack,
+                                       VertexConsumer oak,
+                                       int packedLight) {
+        renderRing(
+                stack,
+                oak,
+                packedLight,
+                0.095D,
+                0.034D,
+                0.043D,
+                0.050D,
+                16,
+                0.0D
+        );
+
+        for (int spoke = 0; spoke < 4; spoke++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(spoke * 90.0F)
+            );
+            stack.translate(0.0D, 0.057D, 0.0D);
+            drawBox(
+                    stack,
+                    oak,
+                    packedLight,
+                    0.046D,
+                    0.090D,
+                    0.032D
+            );
+            stack.popPose();
+        }
+
+        for (int tooth = 0; tooth < 8; tooth++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(tooth * 45.0F)
+            );
+            stack.translate(0.0D, 0.132D, 0.0D);
+            drawBox(
+                    stack,
+                    oak,
+                    packedLight,
+                    0.060D,
+                    0.050D,
+                    0.050D
+            );
+            stack.popPose();
+        }
+    }
+
+    /**
+     * Stepped miter/bevel profile. The side sign points at the actual common
+     * shaft intersection for this gear, so EAST/WEST and UP/DOWN arrangements
+     * no longer all lean in the same arbitrary direction.
+     */
+    private void renderBevelGearProfile(PoseStack stack,
+                                        VertexConsumer oak,
+                                        int packedLight,
+                                        int sideSign) {
+        stack.pushPose();
+
+        // Pull the wheel toward its real miter intersection. This is what makes
+        // perpendicular pairs visually converge instead of floating in their
+        // individual grid cells.
+        stack.translate(sideSign * 0.070D, 0.0D, 0.0D);
+
+        renderRing(
+                stack,
+                oak,
+                packedLight,
+                0.125D,
+                0.036D,
+                0.046D,
+                0.040D,
+                16,
+                -sideSign * 0.030D
+        );
+        renderRing(
+                stack,
+                oak,
+                packedLight,
+                0.098D,
+                0.032D,
+                0.041D,
+                0.036D,
+                16,
+                sideSign * 0.008D
+        );
+        renderRing(
+                stack,
+                oak,
+                packedLight,
+                0.070D,
+                0.028D,
+                0.036D,
+                0.032D,
+                16,
+                sideSign * 0.042D
+        );
+
+        for (int spoke = 0; spoke < 4; spoke++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(spoke * 90.0F)
+            );
+            stack.translate(
+                    -sideSign * 0.012D,
+                    0.071D,
+                    0.0D
+            );
+            stack.mulPose(
+                    Axis.ZP.rotationDegrees(
+                            -sideSign * 18.0F
+                    )
+            );
+            drawBox(
+                    stack,
+                    oak,
+                    packedLight,
+                    0.040D,
+                    0.100D,
+                    0.030D
+            );
+            stack.popPose();
+        }
 
         for (int tooth = 0; tooth < 8; tooth++) {
             stack.pushPose();
@@ -176,26 +329,58 @@ public class CustomGearboxBlockEntity_woodRenderer
                     Axis.XP.rotationDegrees(tooth * 45.0F)
             );
             stack.translate(
-                    bevel ? -0.028D : 0.0D,
-                    radius,
+                    -sideSign * 0.037D,
+                    0.158D,
                     0.0D
             );
-
-            if (bevel) {
-                // A stronger inward lean makes the diagonal pair converge at the corner
-                // between their cells like a real miter set.
-                stack.mulPose(Axis.ZP.rotationDegrees(30.0F));
-            }
-
+            stack.mulPose(
+                    Axis.ZP.rotationDegrees(
+                            -sideSign * 38.0F
+                    )
+            );
             drawBox(
                     stack,
                     oak,
                     packedLight,
-                    axial,
-                    radial,
-                    tangent
+                    0.070D,
+                    0.060D,
+                    0.052D
             );
+            stack.popPose();
+        }
 
+        stack.popPose();
+    }
+
+    private void renderRing(PoseStack stack,
+                            VertexConsumer consumer,
+                            int packedLight,
+                            double radius,
+                            double radialDepth,
+                            double tangentWidth,
+                            double axialDepth,
+                            int segments,
+                            double axialOffset) {
+        for (int segment = 0; segment < segments; segment++) {
+            stack.pushPose();
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(
+                            segment * (360.0F / segments)
+                    )
+            );
+            stack.translate(
+                    axialOffset,
+                    radius,
+                    0.0D
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    axialDepth,
+                    radialDepth,
+                    tangentWidth
+            );
             stack.popPose();
         }
     }
