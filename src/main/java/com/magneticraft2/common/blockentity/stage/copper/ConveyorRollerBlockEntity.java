@@ -177,9 +177,16 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                 (rpm / 1200.0D) * (Math.PI * 2.0D * ROLLER_RADIUS)
         );
 
-        // Positive angular rotation moves the carrying tangent opposite the BeltPath's
-        // canonical start->end direction.
-        return distance - blocksPerTick * elapsed * getDirectionMultiplier();
+        int transportDirection = itemBeltPartner == null
+                ? (getDirectionMultiplier() < 0 ? -1 : 1)
+                : ItemBeltConnectionManager.getTransportDirectionSign(
+                currentLevel,
+                worldPosition,
+                itemBeltPartner,
+                getDirectionMultiplier()
+        );
+
+        return distance + blocksPerTick * elapsed * transportDirection;
     }
 
     public List<ItemStack> clearTransportedItems() {
