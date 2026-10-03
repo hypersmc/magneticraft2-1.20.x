@@ -80,7 +80,8 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   int packedLight) {
         // Classic narrow wooden water wheel: axle/hub in the middle, two side rims,
         // spokes on each rim, and boards spanning the two rims as actual paddles.
-        drawBox(stack, axle, packedLight, 1.00D, 0.16D, 0.16D);
+        // Exact match for shaft_wood.json: 6x6 px = 0.375x0.375 blocks.
+        drawBox(stack, axle, packedLight, 1.00D, 0.375D, 0.375D);
         drawBox(stack, oak, packedLight, 0.44D, 0.30D, 0.30D);
 
         double sideOffset = 0.275D;
@@ -92,7 +93,9 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
 
         // Eight full-depth paddle boards. The rim still stays inside the 1x1 footprint,
         // but the complete wheel now uses nearly the full block in both diameter and depth.
-        renderPaddles(stack, spruce, packedLight, 8, 0.455D, 0.09D, 0.11D, 0.72D);
+        // Extend slightly beyond the nominal 0.5-block radius so the paddle visually
+        // enters the adjacent water block instead of stopping on the exact voxel border.
+        renderPaddles(stack, spruce, packedLight, 8, 0.500D, 0.115D, 0.11D, 0.78D);
     }
 
     private void renderLargeWheel(PoseStack stack,
@@ -100,7 +103,8 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   VertexConsumer spruce,
                                   VertexConsumer axle,
                                   int packedLight) {
-        drawBox(stack, axle, packedLight, 1.00D, 0.22D, 0.22D);
+        // Same cross-section as a normal Wooden Shaft.
+        drawBox(stack, axle, packedLight, 1.00D, 0.375D, 0.375D);
         drawBox(stack, oak, packedLight, 0.58D, 0.42D, 0.42D);
 
         double sideOffset = 0.43D;
@@ -115,7 +119,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
 
         // Sixteen wide, thin paddles reach the edge of the 3-block diameter and span
         // essentially the full one-block shaft depth.
-        renderPaddles(stack, spruce, packedLight, 16, 1.405D, 0.19D, 0.13D, 0.98D);
+        // Nominal 3-block wheel radius is 1.5. Give the outer board a small overlap into
+        // the adjacent water cell so the powered water and visible paddle occupy the same
+        // space rather than merely touching at an invisible block boundary.
+        renderPaddles(stack, spruce, packedLight, 16, 1.505D, 0.15D, 0.13D, 0.98D);
     }
 
     private void renderSideSpokes(PoseStack stack,
