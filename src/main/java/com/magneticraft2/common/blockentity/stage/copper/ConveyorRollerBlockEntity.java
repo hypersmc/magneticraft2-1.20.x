@@ -17,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -168,7 +169,8 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         }
 
         float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
-        if (Math.abs(rpm) <= VISUAL_STOP_EPSILON) {
+        if (transportedItem.isStalled()
+                || Math.abs(rpm) <= VISUAL_STOP_EPSILON) {
             return distance;
         }
 
@@ -187,6 +189,41 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         );
 
         return distance + blocksPerTick * elapsed * transportDirection;
+    }
+
+    public double getClientHandoffProgress(TransportedItem transportedItem,
+                                           float partialTicks) {
+        if (!transportedItem.isHandoffActive()) {
+            return 1.0D;
+        }
+
+        double progress = transportedItem.getHandoffProgress();
+        Level currentLevel = getLevel();
+        if (currentLevel == null
+                || Float.isNaN(clientTransportSyncTime)
+                || transportedItem.isStalled()) {
+            return progress;
+        }
+
+        float elapsed = (currentLevel.getGameTime() + partialTicks)
+                - clientTransportSyncTime;
+        elapsed = Math.max(0.0F, Math.min(10.0F, elapsed));
+
+        float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
+        if (Math.abs(rpm) <= VISUAL_STOP_EPSILON) {
+            return progress;
+        }
+
+        double blocksPerTick = Math.min(
+                0.18D,
+                (rpm / 1200.0D) * (Math.PI * 2.0D * ROLLER_RADIUS)
+        );
+
+        return Math.min(
+                1.0D,
+                progress + blocksPerTick * elapsed
+                        / ItemBeltConnectionManager.HANDOFF_BLEND_DISTANCE
+        );
     }
 
     public List<ItemStack> clearTransportedItems() {
@@ -280,6 +317,17 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
 
             CompoundTag transportedTag = new CompoundTag();
             transportedTag.putDouble("Distance", transportedItem.getDistance());
+            transportedTag.putDouble("LateralOffset", transportedItem.getLateralOffset());
+            transportedTag.putBoolean("Stalled", transportedItem.isStalled());
+            transportedTag.putBoolean("HandoffActive", transportedItem.isHandoffActive());
+            transportedTag.putDouble("HandoffProgress", transportedItem.getHandoffProgress());
+
+            if (transportedItem.isHandoffActive()) {
+                Vec3 origin = transportedItem.getHandoffOrigin();
+                transportedTag.putDouble("HandoffOriginX", origin.x);
+                transportedTag.putDouble("HandoffOriginY", origin.y);
+                transportedTag.putDouble("HandoffOriginZ", origin.z);
+            }
 
             CompoundTag stackTag = new CompoundTag();
             transportedItem.getStack().save(stackTag);
@@ -304,10 +352,29 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
             CompoundTag transportedTag = transportedList.getCompound(i);
             ItemStack stack = ItemStack.of(transportedTag.getCompound("Stack"));
             if (!stack.isEmpty()) {
-                transportedItems.add(new TransportedItem(
+                TransportedItem transportedItem = new TransportedItem(
                         stack,
                         transportedTag.getDouble("Distance")
-                ));
+                );
+                transportedItem.setLateralOffset(
+                        transportedTag.getDouble("LateralOffset")
+                );
+                transportedItem.setStalled(
+                        transportedTag.getBoolean("Stalled")
+                );
+
+                if (transportedTag.getBoolean("HandoffActive")) {
+                    transportedItem.beginHandoff(
+                            new Vec3(
+                                    transportedTag.getDouble("HandoffOriginX"),
+                                    transportedTag.getDouble("HandoffOriginY"),
+                                    transportedTag.getDouble("HandoffOriginZ")
+                            ),
+                            transportedTag.getDouble("HandoffProgress")
+                    );
+                }
+
+                transportedItems.add(transportedItem);
             }
         }
 
@@ -371,6 +438,11 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
     public static final class TransportedItem {
         private final ItemStack stack;
         private double distance;
+        private double lateralOffset;
+        private boolean stalled;
+        private boolean handoffActive;
+        private Vec3 handoffOrigin = Vec3.ZERO;
+        private double handoffProgress = 1.0D;
 
         public TransportedItem(ItemStack stack, double distance) {
             this.stack = stack == null ? ItemStack.EMPTY : stack;
@@ -387,6 +459,55 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
 
         public void setDistance(double distance) {
             this.distance = distance;
+        }
+
+        public double getLateralOffset() {
+            return lateralOffset;
+        }
+
+        public void setLateralOffset(double lateralOffset) {
+            this.lateralOffset = lateralOffset;
+        }
+
+        public boolean isStalled() {
+            return stalled;
+        }
+
+        public void setStalled(boolean stalled) {
+            this.stalled = stalled;
+        }
+
+        public boolean isHandoffActive() {
+            return handoffActive;
+        }
+
+        public Vec3 getHandoffOrigin() {
+            return handoffOrigin;
+        }
+
+        public double getHandoffProgress() {
+            return handoffProgress;
+        }
+
+        public void beginHandoff(Vec3 origin, double progress) {
+            handoffOrigin = origin == null ? Vec3.ZERO : origin;
+            handoffProgress = Math.max(0.0D, Math.min(1.0D, progress));
+            handoffActive = handoffProgress < 1.0D;
+        }
+
+        public void advanceHandoff(double progressDelta) {
+            if (!handoffActive) {
+                return;
+            }
+
+            handoffProgress = Math.min(
+                    1.0D,
+                    handoffProgress + Math.max(0.0D, progressDelta)
+            );
+            if (handoffProgress >= 1.0D) {
+                handoffProgress = 1.0D;
+                handoffActive = false;
+            }
         }
     }
 
