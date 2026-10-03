@@ -105,12 +105,10 @@ public class GearNetworkManager {
             if (gear.isSource() && gear.getSpeed() > STOP_EPSILON) {
                 gear.setSourcePos(gear.getPosition());
 
-                // A source owns its rotation direction. Do not force every source back
-                // to +1 here: continuous sources such as Water Wheels derive clockwise
-                // vs counter-clockwise rotation from their physical input. Downstream
-                // shaft/belt connections preserve that direction and external gear
-                // meshes perform the single required reversal.
-                gear.setDirectionMultiplier(gear.getDirectionMultiplier());
+                // A source owns its rotation direction. Do not overwrite it here:
+                // continuous sources such as Water Wheels derive clockwise vs
+                // counter-clockwise rotation from their physical input. Downstream
+                // shafts/belts preserve it and external gears reverse exactly once.
                 gear.setMeshPhaseDegrees(0.0F);
                 gear.setOverloaded(gear.getTorque() > gear.getMaxTorque() + TORQUE_EPSILON);
                 visited.add(gear.getPosition());
