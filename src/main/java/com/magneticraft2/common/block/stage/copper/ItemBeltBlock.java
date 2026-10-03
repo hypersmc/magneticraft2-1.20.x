@@ -1,5 +1,6 @@
 package com.magneticraft2.common.block.stage.copper;
 
+import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import com.magneticraft2.common.systems.GEAR.ItemBeltGeometry;
 import net.minecraft.core.BlockPos;
@@ -7,8 +8,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -24,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * Wooden Belt Rollers so Minecraft gets normal block collision, selection and chunk
  * ownership while the endpoint renderer still draws one visually continuous moving belt.
  */
-public class ItemBeltBlock extends HorizontalDirectionalBlock {
+public class ItemBeltBlock extends HorizontalDirectionalBlock implements EntityBlock {
     public static final EnumProperty<ItemBeltGeometry.BeltSlope> SLOPE =
             EnumProperty.create("slope", ItemBeltGeometry.BeltSlope.class);
 
@@ -53,6 +56,11 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
         registerDefaultState(stateDefinition.any()
                 .setValue(FACING, Direction.SOUTH)
                 .setValue(SLOPE, ItemBeltGeometry.BeltSlope.HORIZONTAL));
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new ItemBeltBlockEntity(pos, state);
     }
 
     public BlockState stateFor(ItemBeltGeometry.Layout layout) {
@@ -164,7 +172,21 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                          BlockState newState,
                          boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock())) {
-            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(level, pos, state);
+            BlockPos startRoller = null;
+            BlockPos endRoller = null;
+
+            if (level.getBlockEntity(pos) instanceof ItemBeltBlockEntity beltBlockEntity) {
+                startRoller = beltBlockEntity.getStartRoller();
+                endRoller = beltBlockEntity.getEndRoller();
+            }
+
+            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(
+                    level,
+                    pos,
+                    state,
+                    startRoller,
+                    endRoller
+            );
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
