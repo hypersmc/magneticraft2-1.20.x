@@ -34,6 +34,7 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
     private static final double TEXTURE_REPEAT_LENGTH = 1.0D;
     private static final double ROLLER_RADIUS = 3.0D / 16.0D;
     private static final int ROLLER_SIDES = 8;
+    private static final float TRANSPORTED_ITEM_SCALE = 2.20F;
 
     public ConveyorRollerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -350,7 +351,12 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             // without the bob/spin behavior of a dropped ItemEntity.
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yawDegrees));
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(pitchDegrees));
-            stack.scale(0.55F, 0.55F, 0.55F);
+            // Render transported stacks at four times the original 0.55 scale.
+            stack.scale(
+                    TRANSPORTED_ITEM_SCALE,
+                    TRANSPORTED_ITEM_SCALE,
+                    TRANSPORTED_ITEM_SCALE
+            );
 
             Minecraft.getInstance().getItemRenderer().renderStatic(
                     transportedItem.getStack(),
