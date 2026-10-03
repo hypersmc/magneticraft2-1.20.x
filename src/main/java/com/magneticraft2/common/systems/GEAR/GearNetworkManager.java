@@ -331,45 +331,78 @@ public class GearNetworkManager {
         return load == null ? MechanicalLoadState.inactive() : load.snapshot();
     }
 
-    private void applyMechanicalLoads(Level level, Map<BlockPos, GearNode> gears) {
+    private void applyMechanicalLoads(Level level,
+                                      Map<BlockPos, GearNode> gears) {
         Map<BlockPos, MechanicalLoad> loads = getLoadMap(level);
 
         loads.entrySet().removeIf(entry ->
-                level.hasChunkAt(entry.getKey()) && level.getBlockEntity(entry.getKey()) == null);
+                level.hasChunkAt(entry.getKey())
+                        && level.getBlockEntity(entry.getKey()) == null);
 
         Map<BlockPos, Float> totalSourceDemand = new HashMap<>();
 
         for (MechanicalLoad load : loads.values()) {
             load.resetEvaluation();
-            if (!load.active || load.localTorqueDemand <= TORQUE_EPSILON) {
+            if (!load.active
+                    || load.localTorqueDemand <= TORQUE_EPSILON) {
                 continue;
             }
 
             GearNode input = gears.get(load.inputPos);
-            if (input == null || input.getSpeed() <= STOP_EPSILON) {
+            if (input == null
+                    || input.getSpeed() <= STOP_EPSILON) {
                 continue;
             }
 
             BlockPos sourcePos = input.getSourcePos();
-            GearNode source = sourcePos == null ? null : gears.get(sourcePos);
-            if (source == null || source.getSpeed() <= STOP_EPSILON) {
+            GearNode source = sourcePos == null
+                    ? null
+                    : gears.get(sourcePos);
+
+            if (source == null
+                    || source.getSpeed() <= STOP_EPSILON) {
                 continue;
             }
 
             load.sourcePos = sourcePos;
             load.sourceTorqueCapacity = source.getTorque();
 
-            // Preserve mechanical power through gearing: T_source * RPM_source =
-            // T_load * RPM_load. A faster output therefore costs proportionally
-            // more source torque for the same local machine torque requirement.
-            float speedRatio = input.getSpeed() / Math.max(STOP_EPSILON, source.getSpeed());
-            load.sourceEquivalentDemand = load.localTorqueDemand * speedRatio;
-            totalSourceDemand.merge(sourcePos, load.sourceEquivalentDemand, Float::sum);
+            // Preserve mechanical power through gearing:
+            // T_source * RPM_source = T_load * RPM_load.
+            float speedRatio =
+                    input.getSpeed()
+                            / Math.max(
+                                    STOP_EPSILON,
+                                    source.getSpeed()
+                            );
+
+            load.sourceEquivalentDemand =
+                    load.localTorqueDemand * speedRatio;
+
+            totalSourceDemand.merge(
+                    sourcePos,
+                    load.sourceEquivalentDemand,
+                    Float::sum
+            );
         }
 
         Set<BlockPos> overloadedSources = new HashSet<>();
+        Set<BlockPos> protectedSources = new HashSet<>();
 
-        for (MechanicalLoad load : loads.values()) {
+        // Prefer shedding the heaviest branch first when aggregate source load
+        // is too high. This makes automatic clutch behavior deterministic and
+        // avoids opening every clutch on a source at once.
+        List<MechanicalLoad> evaluatedLoads =
+                new ArrayList<>(loads.values());
+
+        evaluatedLoads.sort(
+                (first, second) -> Float.compare(
+                        second.sourceEquivalentDemand,
+                        first.sourceEquivalentDemand
+                )
+        );
+
+        for (MechanicalLoad load : evaluatedLoads) {
             if (!load.active || load.sourcePos == null) {
                 continue;
             }
@@ -380,27 +413,64 @@ public class GearNetworkManager {
                 continue;
             }
 
-            load.totalSourceDemand = totalSourceDemand.getOrDefault(load.sourcePos, 0.0F);
-            load.sourceTorqueCapacity = source.getTorque();
+            load.totalSourceDemand =
+                    totalSourceDemand.getOrDefault(
+                            load.sourcePos,
+                            0.0F
+                    );
+            load.sourceTorqueCapacity =
+                    source.getTorque();
 
-            boolean localOverload = input.isOverloaded()
-                    || load.localTorqueDemand > input.getTorque() + TORQUE_EPSILON;
-            boolean sourceOverload = load.totalSourceDemand > load.sourceTorqueCapacity + TORQUE_EPSILON;
+            boolean localOverload =
+                    input.isOverloaded()
+                            || load.localTorqueDemand
+                            > input.getTorque()
+                            + TORQUE_EPSILON;
 
-            if (localOverload || sourceOverload) {
-                overloadedSources.add(load.sourcePos);
+            boolean sourceOverload =
+                    load.totalSourceDemand
+                            > load.sourceTorqueCapacity
+                            + TORQUE_EPSILON;
+
+            if (!localOverload && !sourceOverload) {
+                continue;
             }
+
+            if (protectedSources.contains(load.sourcePos)) {
+                continue;
+            }
+
+            // Before stalling the source, look for an engaged clutch between
+            // that source and the overloaded consumer. If one exists, trip the
+            // clutch and let the source keep rotating unloaded.
+            if (tripProtectiveClutchOnPath(
+                    level,
+                    gears,
+                    load.sourcePos,
+                    load.inputPos
+            )) {
+                protectedSources.add(load.sourcePos);
+                overloadedSources.remove(load.sourcePos);
+                load.supplied = false;
+                continue;
+            }
+
+            overloadedSources.add(load.sourcePos);
         }
 
         if (!overloadedSources.isEmpty()) {
             for (GearNode gear : gears.values()) {
-                BlockPos sourcePos = gear.isSource() ? gear.getPosition() : gear.getSourcePos();
-                if (sourcePos != null && overloadedSources.contains(sourcePos)) {
+                BlockPos sourcePos =
+                        gear.isSource()
+                                ? gear.getPosition()
+                                : gear.getSourcePos();
+
+                if (sourcePos != null
+                        && overloadedSources.contains(sourcePos)) {
                     gear.setOverloaded(true);
 
-                    // Do not erase the calculated/raw RPM here. The network still needs
-                    // that value to preserve ratios and evaluate aggregate demand while stalled.
-                    // Effective/transmitted RPM is exposed as zero through GearNode#getEffectiveSpeed().
+                    // Keep the raw RPM relationship intact for load/ratio
+                    // evaluation. Effective speed becomes zero while stalled.
                 }
             }
         }
@@ -412,12 +482,94 @@ public class GearNetworkManager {
             }
 
             GearNode input = gears.get(load.inputPos);
-            load.supplied = input != null
-                    && input.getSpeed() > STOP_EPSILON
-                    && !input.isOverloaded()
-                    && load.localTorqueDemand <= input.getTorque() + TORQUE_EPSILON
-                    && !overloadedSources.contains(load.sourcePos);
+            load.supplied =
+                    input != null
+                            && input.getSpeed() > STOP_EPSILON
+                            && !input.isOverloaded()
+                            && load.localTorqueDemand
+                            <= input.getTorque()
+                            + TORQUE_EPSILON
+                            && !overloadedSources.contains(
+                                    load.sourcePos
+                            );
         }
+    }
+
+    /**
+     * Finds the nearest engaged clutch to the overloaded consumer on a real
+     * Gear V2 path from the source. The path is reconstructed backwards from
+     * the consumer, so the first clutch found isolates the smallest possible
+     * downstream branch.
+     */
+    private boolean tripProtectiveClutchOnPath(
+            Level level,
+            Map<BlockPos, GearNode> gears,
+            BlockPos sourcePos,
+            BlockPos inputPos) {
+        if (sourcePos == null
+                || inputPos == null
+                || sourcePos.equals(inputPos)) {
+            return false;
+        }
+
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        Map<BlockPos, BlockPos> parent = new HashMap<>();
+        Set<BlockPos> visited = new HashSet<>();
+
+        queue.add(sourcePos);
+        visited.add(sourcePos);
+
+        boolean found = false;
+
+        while (!queue.isEmpty() && !found) {
+            BlockPos current = queue.poll();
+
+            for (GearConnection connection :
+                    getConnectedGears(current, level)) {
+                BlockPos neighbor =
+                        connection.neighborPos();
+
+                if (!gears.containsKey(neighbor)
+                        || !visited.add(neighbor)) {
+                    continue;
+                }
+
+                parent.put(neighbor, current);
+
+                if (neighbor.equals(inputPos)) {
+                    found = true;
+                    break;
+                }
+
+                queue.add(neighbor);
+            }
+        }
+
+        if (!found) {
+            return false;
+        }
+
+        BlockPos cursor = inputPos;
+
+        while (cursor != null
+                && !cursor.equals(sourcePos)) {
+            BlockEntity blockEntity =
+                    level.getBlockEntity(cursor);
+
+            if (blockEntity
+                    instanceof ClutchBlockEntity_wood clutch
+                    && clutch.tripFromOverload()) {
+                // The clutch state changed during network evaluation. Do not
+                // recurse into updateNetwork(); invalidate the cached topology
+                // so the next tick rebuilds around the now-open clutch.
+                markTopologyDirty(level);
+                return true;
+            }
+
+            cursor = parent.get(cursor);
+        }
+
+        return false;
     }
 
     private void refreshGearMetadata(Level level, Map<BlockPos, GearNode> gears) {
