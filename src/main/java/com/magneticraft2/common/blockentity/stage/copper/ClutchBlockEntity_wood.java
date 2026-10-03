@@ -19,7 +19,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * the network rather than merely stopping the visual shaft.
  */
 public class ClutchBlockEntity_wood extends GearBlockEntity {
+    public static final int OVERLOAD_RESET_TICKS = 100;
+
     private boolean manualEngaged = true;
+    private boolean overloadTripped = false;
+    private int overloadResetTicks = 0;
 
     public ClutchBlockEntity_wood(BlockPos pos,
                                   BlockState state) {
@@ -41,6 +45,7 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
             return;
         }
 
+        clutch.tickOverloadReset();
         clutch.refreshEffectiveEngagement();
         clutch.serverTickGear();
         clutch.markHasEverRotatedIfMoving(
@@ -111,6 +116,59 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
         return manualEngaged;
     }
 
+    public boolean isOverloadTripped() {
+        return overloadTripped;
+    }
+
+    public int getOverloadResetTicks() {
+        return overloadResetTicks;
+    }
+
+    /**
+     * Opens the clutch before an overloaded downstream branch can stall its
+     * power source. The trip is self-resetting: after five seconds the clutch
+     * tries to engage again. If the overload still exists, Gear V2 immediately
+     * trips it for another cycle.
+     *
+     * This intentionally does not call updateGearNetwork() itself because the
+     * network manager invokes it while already evaluating a network. The
+     * manager invalidates topology after a successful trip.
+     */
+    public boolean tripFromOverload() {
+        if (!isEngaged() || overloadTripped) {
+            return false;
+        }
+
+        overloadTripped = true;
+        overloadResetTicks = OVERLOAD_RESET_TICKS;
+        setChanged();
+        applyEffectiveEngagement(false);
+        return true;
+    }
+
+    private void tickOverloadReset() {
+        if (!overloadTripped || overloadResetTicks <= 0) {
+            return;
+        }
+
+        overloadResetTicks--;
+        if (overloadResetTicks > 0) {
+            if (overloadResetTicks % 20 == 0) {
+                setChanged();
+            }
+            return;
+        }
+
+        overloadTripped = false;
+        overloadResetTicks = 0;
+        setChanged();
+
+        // Reconnect only if the manual latch and redstone state also permit it.
+        // A persistent overload will trip the clutch again during this network
+        // recalculation, giving us a simple built-in retry cycle.
+        refreshEffectiveEngagement();
+    }
+
     public boolean isEngaged() {
         BlockState state = getBlockState();
         return state.hasProperty(ClutchBlock_wood.ENGAGED)
@@ -128,13 +186,27 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
 
         boolean effectiveEngaged =
                 manualEngaged
+                        && !overloadTripped
                         && !level.hasNeighborSignal(worldPosition);
+
+        if (applyEffectiveEngagement(effectiveEngaged)) {
+            // Normal manual/redstone/reset changes can safely rebuild the graph
+            // immediately. Overload trips use the no-recursion path above.
+            updateGearNetwork();
+        }
+    }
+
+    private boolean applyEffectiveEngagement(
+            boolean effectiveEngaged) {
+        if (level == null || level.isClientSide) {
+            return false;
+        }
 
         BlockState state = getBlockState();
         if (!state.hasProperty(ClutchBlock_wood.ENGAGED)
                 || state.getValue(ClutchBlock_wood.ENGAGED)
                 == effectiveEngaged) {
-            return;
+            return false;
         }
 
         level.setBlock(
@@ -147,9 +219,7 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
         );
 
         setChanged();
-
-        // Engagement changes graph topology immediately.
-        updateGearNetwork();
+        return true;
     }
 
     @Override
@@ -183,6 +253,14 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
                 "ManualEngaged",
                 manualEngaged
         );
+        tag.putBoolean(
+                "OverloadTripped",
+                overloadTripped
+        );
+        tag.putInt(
+                "OverloadResetTicks",
+                overloadResetTicks
+        );
     }
 
     @Override
@@ -190,5 +268,12 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
         super.load(tag);
         manualEngaged = !tag.contains("ManualEngaged")
                 || tag.getBoolean("ManualEngaged");
+        overloadTripped = tag.getBoolean(
+                "OverloadTripped"
+        );
+        overloadResetTicks = Math.max(
+                0,
+                tag.getInt("OverloadResetTicks")
+        );
     }
 }
