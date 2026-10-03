@@ -156,5 +156,7 @@
   "message.magneticraft2.item_belt_not_enough": "You need %s Item Belt segments",
   "message.magneticraft2.item_belt_linked": "Item Belt connected using %s segments",
   "message.magneticraft2.item_belt_not_connected": "This Belt Roller has no Item Belt",
-  "message.magneticraft2.item_belt_removed": "Item Belt removed; recovered %s segments"
+  "message.magneticraft2.item_belt_removed": "Item Belt removed; recovered %s segments",
+  "block.magneticraft2.item_belt_block": "Item Belt",
+  "message.magneticraft2.item_belt_unsupported_geometry": "Item Belts must be horizontal, vertical, or exactly 45 degrees"
 }
