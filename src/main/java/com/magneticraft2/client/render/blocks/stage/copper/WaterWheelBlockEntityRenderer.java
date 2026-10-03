@@ -50,10 +50,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         }
 
         if (blockEntity.getBlockState().getValue(WaterWheelBlock.ACTIVE)) {
-            // Mechanical output direction is already correct. The wheel model's local
-            // positive visual rotation is opposite Gear V2's positive axle convention.
+            // Use the exact same authoritative Gear V2 angle/direction that every connected
+            // shaft and gear receives. The renderer must not invent a second sign convention.
             stack.mulPose(Axis.XP.rotationDegrees(
-                    -blockEntity.getSmoothWheelVisualRotationDegrees(partialTicks)
+                    blockEntity.getVisualRotationDegrees(partialTicks)
             ));
         }
 
@@ -78,16 +78,21 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   VertexConsumer spruce,
                                   VertexConsumer axle,
                                   int packedLight) {
-        // Axle + hub.
-        drawBox(stack, axle, packedLight, 0.72D, 0.12D, 0.12D);
-        drawBox(stack, oak, packedLight, 0.30D, 0.24D, 0.24D);
+        // Classic narrow wooden water wheel: axle/hub in the middle, two side rims,
+        // spokes on each rim, and boards spanning the two rims as actual paddles.
+        drawBox(stack, axle, packedLight, 0.72D, 0.11D, 0.11D);
+        drawBox(stack, oak, packedLight, 0.28D, 0.23D, 0.23D);
 
-        // Four spokes and eight rim/paddle positions.
-        renderSpokes(stack, oak, packedLight, 4, 0.31D, 0.26D, 0.07D, 0.055D);
-        renderRim(stack, oak, packedLight, 8, 0.34D, 0.08D, 0.26D, 0.18D);
+        double sideOffset = 0.17D;
+        renderSideSpokes(stack, oak, packedLight, 4, sideOffset, 0.27D, 0.24D, 0.055D, 0.055D);
+        renderSideSpokes(stack, oak, packedLight, 4, -sideOffset, 0.27D, 0.24D, 0.055D, 0.055D);
 
-        // Clear, broad fins around the circumference rather than decorative spoke blocks.
-        renderPaddles(stack, spruce, packedLight, 8, 0.455D, 0.075D, 0.29D, 0.46D);
+        renderSideRim(stack, oak, packedLight, 8, sideOffset, 0.34D, 0.075D, 0.26D, 0.07D);
+        renderSideRim(stack, oak, packedLight, 8, -sideOffset, 0.34D, 0.075D, 0.26D, 0.07D);
+
+        // Eight thin radial boards. The broad X dimension bridges both side rims; the
+        // board extends outward from the rim and is deliberately thin tangentially.
+        renderPaddles(stack, spruce, packedLight, 8, 0.43D, 0.13D, 0.065D, 0.46D);
     }
 
     private void renderLargeWheel(PoseStack stack,
@@ -95,64 +100,72 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   VertexConsumer spruce,
                                   VertexConsumer axle,
                                   int packedLight) {
-        // Long axle through the one-block-thick 3x3 wheel and a large central hub.
-        drawBox(stack, axle, packedLight, 1.35D, 0.16D, 0.16D);
-        drawBox(stack, oak, packedLight, 0.42D, 0.34D, 0.34D);
+        drawBox(stack, axle, packedLight, 1.35D, 0.15D, 0.15D);
+        drawBox(stack, oak, packedLight, 0.40D, 0.32D, 0.32D);
 
-        // Eight real spokes into a 16-segment wooden rim.
-        renderSpokes(stack, oak, packedLight, 8, 1.07D, 0.88D, 0.12D, 0.085D);
-        renderRim(stack, oak, packedLight, 16, 1.12D, 0.15D, 0.44D, 0.28D);
+        double sideOffset = 0.31D;
 
-        // Sixteen independent water-catching fins. These sit outside the rim and are
-        // intentionally wider along the axle so they read as paddles, not more spokes.
-        renderPaddles(stack, spruce, packedLight, 16, 1.365D, 0.09D, 0.46D, 0.78D);
+        // Two structural rims are what makes this read as a water wheel rather than a
+        // wooden gear. Each side gets its own spokes and rim, while the paddles bridge
+        // the complete depth between them.
+        renderSideSpokes(stack, oak, packedLight, 8, sideOffset, 0.66D, 0.86D, 0.075D, 0.075D);
+        renderSideSpokes(stack, oak, packedLight, 8, -sideOffset, 0.66D, 0.86D, 0.075D, 0.075D);
+
+        renderSideRim(stack, oak, packedLight, 16, sideOffset, 1.11D, 0.14D, 0.43D, 0.085D);
+        renderSideRim(stack, oak, packedLight, 16, -sideOffset, 1.11D, 0.14D, 0.43D, 0.085D);
+
+        // Sixteen real fins around the outside. They project radially beyond the rim,
+        // are only a few pixels thick tangentially, and span the two side rims.
+        renderPaddles(stack, spruce, packedLight, 16, 1.34D, 0.28D, 0.075D, 0.78D);
     }
 
-    private void renderSpokes(PoseStack stack,
-                              VertexConsumer consumer,
-                              int packedLight,
-                              int count,
-                              double radialCenter,
-                              double radialLength,
-                              double tangentialThickness,
-                              double axleThickness) {
+    private void renderSideSpokes(PoseStack stack,
+                                  VertexConsumer consumer,
+                                  int packedLight,
+                                  int count,
+                                  double xOffset,
+                                  double radialCenter,
+                                  double radialLength,
+                                  double tangentialThickness,
+                                  double sideThickness) {
         for (int i = 0; i < count; i++) {
             double angle = 360.0D * i / count;
 
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees((float) angle));
-            stack.translate(0.0D, radialCenter, 0.0D);
+            stack.translate(xOffset, radialCenter, 0.0D);
             drawBox(
                     stack,
                     consumer,
                     packedLight,
-                    axleThickness * 2.0D,
+                    sideThickness,
                     radialLength,
-                    tangentialThickness * 2.0D
+                    tangentialThickness
             );
             stack.popPose();
         }
     }
 
-    private void renderRim(PoseStack stack,
-                           VertexConsumer consumer,
-                           int packedLight,
-                           int count,
-                           double radius,
-                           double radialThickness,
-                           double tangentialLength,
-                           double axleWidth) {
+    private void renderSideRim(PoseStack stack,
+                               VertexConsumer consumer,
+                               int packedLight,
+                               int count,
+                               double xOffset,
+                               double radius,
+                               double radialThickness,
+                               double tangentialLength,
+                               double sideThickness) {
         for (int i = 0; i < count; i++) {
             double angle = 360.0D * i / count;
 
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees((float) angle));
-            stack.translate(0.0D, radius, 0.0D);
+            stack.translate(xOffset, radius, 0.0D);
             drawBox(
                     stack,
                     consumer,
                     packedLight,
-                    axleWidth,
+                    sideThickness,
                     radialThickness,
                     tangentialLength
             );
@@ -165,8 +178,8 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                int packedLight,
                                int count,
                                double radius,
-                               double radialDepth,
-                               double tangentialWidth,
+                               double radialLength,
+                               double tangentialThickness,
                                double axleWidth) {
         for (int i = 0; i < count; i++) {
             double angle = 360.0D * i / count;
@@ -175,18 +188,13 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
             stack.mulPose(Axis.XP.rotationDegrees((float) angle));
             stack.translate(0.0D, radius, 0.0D);
 
-            // Pitch every paddle slightly backwards relative to the radial line. Combined
-            // with a very thin radial depth and a broad tangential face, this makes the
-            // pieces read as actual water-catching boards instead of chunky rim segments.
-            stack.mulPose(Axis.XP.rotationDegrees(-12.0F));
-
             drawBox(
                     stack,
                     consumer,
                     packedLight,
                     axleWidth,
-                    radialDepth,
-                    tangentialWidth
+                    radialLength,
+                    tangentialThickness
             );
             stack.popPose();
         }
