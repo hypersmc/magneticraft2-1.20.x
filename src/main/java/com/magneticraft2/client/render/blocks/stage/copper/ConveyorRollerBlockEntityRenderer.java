@@ -42,6 +42,11 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
     // Twice the original 0.55 transported-item scale.
     private static final float TRANSPORTED_ITEM_SCALE = 1.10F;
 
+    // ItemDisplayContext.GROUND applies its own upward display transform. Without
+    // compensating for it, transported items visibly hover above the belt once
+    // rendered larger. Sink the visual anchor back toward the carrying surface.
+    private static final double TRANSPORTED_ITEM_SURFACE_SINK = 0.14D;
+
     public ConveyorRollerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
 
@@ -361,6 +366,16 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             // without the bob/spin behavior of a dropped ItemEntity.
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yawDegrees));
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(pitchDegrees));
+
+            // GROUND-model transforms lift the model above this origin. Apply the
+            // compensation in local Y after orienting the item so it follows the
+            // belt normal on both flat and 45-degree runs.
+            stack.translate(
+                    0.0D,
+                    -TRANSPORTED_ITEM_SURFACE_SINK,
+                    0.0D
+            );
+
             // Render transported stacks at twice the original 0.55 scale.
             stack.scale(
                     TRANSPORTED_ITEM_SCALE,
