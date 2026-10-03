@@ -188,6 +188,13 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
+        // Both endpoint block entities tick, but the connection itself only needs one
+        // server simulation owner. Let the canonical start roller own it and avoid doing
+        // duplicate guards/lookups from the second endpoint every tick.
+        if (!connection.key.start().equals(roller.getBlockPos())) {
+            return;
+        }
+
         long gameTick = level.getGameTime();
         if (connection.lastProcessedTick == gameTick) {
             return;
