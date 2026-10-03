@@ -71,9 +71,16 @@ public class ClutchBlock_wood extends GearBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos placementPos = context.getClickedPos()
+                .relative(context.getClickedFace());
+
         BlockState placementState = defaultBlockState()
                 .setValue(FACING, context.getClickedFace())
-                .setValue(ENGAGED, true);
+                .setValue(
+                        ENGAGED,
+                        !context.getLevel()
+                                .hasNeighborSignal(placementPos)
+                );
 
         return validateGearPlacement(context, placementState);
     }
