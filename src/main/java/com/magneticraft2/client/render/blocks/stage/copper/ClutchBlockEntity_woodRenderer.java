@@ -68,25 +68,6 @@ public class ClutchBlockEntity_woodRenderer
         boolean engaged = clutch.getBlockState()
                 .getValue(ClutchBlock_wood.ENGAGED);
 
-        VertexConsumer shaftConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                SHAFT_TEXTURE
-                        )
-                );
-        VertexConsumer woodConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                WOOD_TEXTURE
-                        )
-                );
-        VertexConsumer bandConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                BAND_TEXTURE
-                        )
-                );
-
         float positiveAngle = sideRotation(
                 clutch,
                 positiveDirection,
@@ -115,6 +96,13 @@ public class ClutchBlockEntity_woodRenderer
                 positiveDirection
         );
 
+        VertexConsumer shaftConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                SHAFT_TEXTURE
+                        )
+                );
+
         renderRotatingBox(
                 stack,
                 shaftConsumer,
@@ -142,8 +130,7 @@ public class ClutchBlockEntity_woodRenderer
 
         renderClutchCollar(
                 stack,
-                woodConsumer,
-                bandConsumer,
+                bufferSource,
                 packedLight,
                 collarX,
                 collarAngle,
@@ -204,8 +191,7 @@ public class ClutchBlockEntity_woodRenderer
     }
 
     private void renderClutchCollar(PoseStack stack,
-                                    VertexConsumer woodConsumer,
-                                    VertexConsumer bandConsumer,
+                                    MultiBufferSource bufferSource,
                                     int packedLight,
                                     double centerX,
                                     float rotation,
@@ -220,6 +206,17 @@ public class ClutchBlockEntity_woodRenderer
                 ? 0.34D
                 : 0.27D;
 
+        // Fetch and write one material at a time. MultiBufferSource.BufferSource
+        // can reuse its immediate BufferBuilder when the RenderType changes; holding
+        // shaft/wood/copper consumers simultaneously caused every box to inherit
+        // whichever texture was requested last.
+        VertexConsumer woodConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                WOOD_TEXTURE
+                        )
+                );
+
         drawBox(
                 stack,
                 woodConsumer,
@@ -228,6 +225,13 @@ public class ClutchBlockEntity_woodRenderer
                 0.50D,
                 0.50D
         );
+
+        VertexConsumer bandConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                BAND_TEXTURE
+                        )
+                );
 
         // Narrow metal bands make the moving sleeve read as a mechanical
         // coupling rather than another oversized section of shaft.
