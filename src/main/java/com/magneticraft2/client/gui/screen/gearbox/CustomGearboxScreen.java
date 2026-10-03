@@ -16,25 +16,25 @@ import java.util.EnumSet;
 /**
  * Player-facing editor for the custom gearbox's 3x3x3 internal assembly.
  *
- * Only one north/south layer is shown at a time. The player first selects a
- * component from the palette and then places it into the grid. Right-clicking
- * a cell clears it. This keeps the editor spatial instead of exposing the
- * internal graph/debug representation.
+ * One north/south layer is shown at a time. The left side is intentionally
+ * spatial and large enough to read at normal GUI scale; the right side is a
+ * simple part palette. Right-clicking a cell removes its installed part.
  */
 public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMenu> {
-    private static final int CELL_SIZE = 28;
+    private static final int CELL_SIZE = 36;
     private static final int GRID_PIXELS = CELL_SIZE * 3;
     private static final int GRID_LEFT = 30;
-    private static final int GRID_TOP = 70;
+    private static final int GRID_TOP = 78;
 
-    private static final int PALETTE_LEFT = 132;
-    private static final int PALETTE_TOP = 55;
-    private static final int PALETTE_WIDTH = 142;
-    private static final int PALETTE_HEIGHT = 17;
-    private static final int PALETTE_GAP = 2;
+    private static final int PALETTE_LEFT = 166;
+    private static final int PALETTE_TOP = 66;
+    private static final int PALETTE_WIDTH = 184;
+    private static final int PALETTE_HEIGHT = 21;
+    private static final int PALETTE_GAP = 4;
 
-    private static final int LAYER_BUTTON_Y = 43;
-    private static final int LAYER_BUTTON_SIZE = 18;
+    private static final int LAYER_BUTTON_Y = 47;
+    private static final int LAYER_BUTTON_WIDTH = 22;
+    private static final int LAYER_BUTTON_HEIGHT = 18;
 
     private static final InternalComponent[] PALETTE = {
             InternalComponent.EMPTY,
@@ -53,8 +53,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                                Inventory inventory,
                                Component title) {
         super(menu, inventory, title);
-        imageWidth = 292;
-        imageHeight = 212;
+        imageWidth = 372;
+        imageHeight = 272;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         graphics.drawString(
                 font,
                 Component.translatable("screen.magneticraft2.custom_gearbox"),
-                left + 10,
+                left + 12,
                 top + 10,
                 0xFFF0D7A4,
                 false
@@ -101,8 +101,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         graphics.drawString(
                 font,
                 Component.translatable("screen.magneticraft2.custom_gearbox_help"),
-                left + 10,
-                top + 25,
+                left + 12,
+                top + 27,
                 0xFFB9A98E,
                 false
         );
@@ -112,32 +112,86 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
             graphics.drawString(
                     font,
                     "Gearbox unavailable",
-                    left + 10,
-                    top + 48,
+                    left + 12,
+                    top + 52,
                     0xFFFF5555,
                     false
             );
             return;
         }
 
+        renderSectionFrames(graphics, left, top);
         renderLayerSelector(graphics, left, top);
         renderGrid(graphics, gearbox, left, top);
         renderPalette(graphics, left, top);
         renderStatus(graphics, gearbox, left, top);
     }
 
+    private void renderSectionFrames(GuiGraphics graphics,
+                                     int left,
+                                     int top) {
+        graphics.drawString(
+                font,
+                "INTERNAL LAYOUT",
+                left + GRID_LEFT,
+                top + 43,
+                0xFFE5C78F,
+                false
+        );
+        graphics.drawString(
+                font,
+                "PARTS",
+                left + PALETTE_LEFT,
+                top + 43,
+                0xFFE5C78F,
+                false
+        );
+
+        graphics.fill(
+                left + 18,
+                top + 61,
+                left + 151,
+                top + 200,
+                0xFF6D5943
+        );
+        graphics.fill(
+                left + 19,
+                top + 62,
+                left + 150,
+                top + 199,
+                0xFF2A241E
+        );
+
+        graphics.fill(
+                left + 156,
+                top + 61,
+                left + 360,
+                top + 242,
+                0xFF6D5943
+        );
+        graphics.fill(
+                left + 157,
+                top + 62,
+                left + 359,
+                top + 241,
+                0xFF2A241E
+        );
+    }
+
     private void renderLayerSelector(GuiGraphics graphics,
                                      int left,
                                      int top) {
         int previousX = left + GRID_LEFT;
-        int nextX = left + GRID_LEFT + GRID_PIXELS - LAYER_BUTTON_SIZE;
+        int nextX = left + GRID_LEFT
+                + GRID_PIXELS
+                - LAYER_BUTTON_WIDTH;
 
         drawButton(
                 graphics,
                 previousX,
                 top + LAYER_BUTTON_Y,
-                LAYER_BUTTON_SIZE,
-                16,
+                LAYER_BUTTON_WIDTH,
+                LAYER_BUTTON_HEIGHT,
                 "<",
                 false
         );
@@ -145,8 +199,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 graphics,
                 nextX,
                 top + LAYER_BUTTON_Y,
-                LAYER_BUTTON_SIZE,
-                16,
+                LAYER_BUTTON_WIDTH,
+                LAYER_BUTTON_HEIGHT,
                 ">",
                 false
         );
@@ -161,7 +215,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 font,
                 "Layer " + (selectedSlice + 1) + " / 3  " + layerName,
                 left + GRID_LEFT + GRID_PIXELS / 2,
-                top + 47,
+                top + 52,
                 0xFFE5C78F
         );
 
@@ -169,20 +223,20 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 font,
                 "UP",
                 left + GRID_LEFT + GRID_PIXELS / 2,
-                top + GRID_TOP - 10,
+                top + GRID_TOP - 12,
                 0xFF9D8E78
         );
         graphics.drawCenteredString(
                 font,
                 "DOWN",
                 left + GRID_LEFT + GRID_PIXELS / 2,
-                top + GRID_TOP + GRID_PIXELS + 3,
+                top + GRID_TOP + GRID_PIXELS + 4,
                 0xFF9D8E78
         );
         graphics.drawString(
                 font,
                 "W",
-                left + GRID_LEFT - 10,
+                left + GRID_LEFT - 11,
                 top + GRID_TOP + GRID_PIXELS / 2 - 4,
                 0xFF9D8E78,
                 false
@@ -190,7 +244,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         graphics.drawString(
                 font,
                 "E",
-                left + GRID_LEFT + GRID_PIXELS + 4,
+                left + GRID_LEFT + GRID_PIXELS + 5,
                 top + GRID_TOP + GRID_PIXELS / 2 - 4,
                 0xFF9D8E78,
                 false
@@ -233,24 +287,24 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 graphics.fill(
                         screenX,
                         screenY,
-                        screenX + CELL_SIZE - 1,
-                        screenY + CELL_SIZE - 1,
+                        screenX + CELL_SIZE - 2,
+                        screenY + CELL_SIZE - 2,
                         border
                 );
                 graphics.fill(
                         screenX + 2,
                         screenY + 2,
-                        screenX + CELL_SIZE - 3,
-                        screenY + CELL_SIZE - 3,
-                        0xFF251F1A
+                        screenX + CELL_SIZE - 4,
+                        screenY + CELL_SIZE - 4,
+                        0xFF211C18
                 );
 
                 if (portCell) {
                     graphics.drawString(
                             font,
                             "P",
-                            screenX + 3,
-                            screenY + 3,
+                            screenX + 4,
+                            screenY + 4,
                             activePortCell ? 0xFF8FE277 : 0xFF9A8162,
                             false
                     );
@@ -279,61 +333,61 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 ? 0xFFD6A34F
                 : 0xFFC4874E;
 
-        int centerX = x + CELL_SIZE / 2;
-        int centerY = y + CELL_SIZE / 2;
+        int centerX = x + (CELL_SIZE - 2) / 2;
+        int centerY = y + (CELL_SIZE - 2) / 2;
 
         if (component.isGear()) {
             graphics.fill(
+                    centerX - 10,
+                    centerY - 4,
+                    centerX + 11,
+                    centerY + 5,
+                    iconColor
+            );
+            graphics.fill(
+                    centerX - 4,
+                    centerY - 10,
+                    centerX + 5,
+                    centerY + 11,
+                    iconColor
+            );
+            graphics.fill(
                     centerX - 8,
-                    centerY - 3,
-                    centerX + 9,
-                    centerY + 4,
-                    iconColor
-            );
-            graphics.fill(
-                    centerX - 3,
                     centerY - 8,
-                    centerX + 4,
+                    centerX + 9,
                     centerY + 9,
-                    iconColor
-            );
-            graphics.fill(
-                    centerX - 6,
-                    centerY - 6,
-                    centerX + 7,
-                    centerY + 7,
                     iconColor
             );
         } else if (axis == Direction.Axis.X) {
             graphics.fill(
-                    centerX - 9,
-                    centerY - 2,
-                    centerX + 10,
-                    centerY + 3,
+                    centerX - 12,
+                    centerY - 3,
+                    centerX + 13,
+                    centerY + 4,
                     iconColor
             );
         } else if (axis == Direction.Axis.Y) {
             graphics.fill(
-                    centerX - 2,
-                    centerY - 9,
-                    centerX + 3,
-                    centerY + 10,
+                    centerX - 3,
+                    centerY - 12,
+                    centerX + 4,
+                    centerY + 13,
                     iconColor
             );
         } else {
             graphics.fill(
-                    centerX - 5,
-                    centerY - 5,
-                    centerX + 6,
-                    centerY + 6,
+                    centerX - 7,
+                    centerY - 7,
+                    centerX + 8,
+                    centerY + 8,
                     iconColor
             );
             graphics.fill(
-                    centerX - 2,
-                    centerY - 2,
-                    centerX + 3,
-                    centerY + 3,
-                    0xFF251F1A
+                    centerX - 3,
+                    centerY - 3,
+                    centerX + 4,
+                    centerY + 4,
+                    0xFF211C18
             );
         }
 
@@ -349,15 +403,6 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
     private void renderPalette(GuiGraphics graphics,
                                int left,
                                int top) {
-        graphics.drawString(
-                font,
-                "PLACE PART",
-                left + PALETTE_LEFT,
-                top + 43,
-                0xFFE5C78F,
-                false
-        );
-
         for (int i = 0; i < PALETTE.length; i++) {
             InternalComponent component = PALETTE[i];
             int y = top + PALETTE_TOP
@@ -378,7 +423,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 font,
                 "X = WEST-EAST",
                 left + PALETTE_LEFT,
-                top + 190,
+                top + 248,
                 0xFF9D8E78,
                 false
         );
@@ -386,7 +431,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 font,
                 "Y = DOWN-UP   Z = NORTH-SOUTH",
                 left + PALETTE_LEFT,
-                top + 200,
+                top + 259,
                 0xFF9D8E78,
                 false
         );
@@ -407,9 +452,9 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
         graphics.drawString(
                 font,
-                "Ports: " + ports,
-                left + 10,
-                top + 166,
+                "Active: " + ports,
+                left + 18,
+                top + 208,
                 activePorts.isEmpty() ? 0xFFB9A98E : 0xFFB9DCA6,
                 false
         );
@@ -417,35 +462,31 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         graphics.drawString(
                 font,
                 gearbox.isGraphValid()
-                        ? "Path: valid"
-                        : "Path: conflicting loop",
-                left + 10,
-                top + 179,
+                        ? "Network: valid"
+                        : "Network: conflict",
+                left + 18,
+                top + 221,
                 gearbox.isGraphValid() ? 0xFF91D67B : 0xFFFF6666,
                 false
         );
 
-        if (selectedSlice == 0 || selectedSlice == 2) {
-            graphics.drawString(
-                    font,
-                    selectedSlice == 0
-                            ? "NORTH port: center cell"
-                            : "SOUTH port: center cell",
-                    left + 10,
-                    top + 192,
-                    0xFFB9A98E,
-                    false
-            );
+        String layerPorts;
+        if (selectedSlice == 0) {
+            layerPorts = "Port cell: NORTH center";
+        } else if (selectedSlice == 2) {
+            layerPorts = "Port cell: SOUTH center";
         } else {
-            graphics.drawString(
-                    font,
-                    "Ports: W / E / UP / DOWN edge centers.",
-                    left + 10,
-                    top + 192,
-                    0xFFB9A98E,
-                    false
-            );
+            layerPorts = "Port cells: W / E / UP / DOWN";
         }
+
+        graphics.drawString(
+                font,
+                layerPorts,
+                left + 18,
+                top + 234,
+                0xFFB9A98E,
+                false
+        );
     }
 
     private void drawButton(GuiGraphics graphics,
@@ -485,12 +526,12 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
     private String componentLabel(InternalComponent component) {
         return switch (component) {
             case EMPTY -> "Empty";
-            case SHAFT_X -> "Shaft X   W-E";
-            case SHAFT_Y -> "Shaft Y   D-U";
-            case SHAFT_Z -> "Shaft Z   N-S";
-            case GEAR_X -> "Gear X    W-E";
-            case GEAR_Y -> "Gear Y    D-U";
-            case GEAR_Z -> "Gear Z    N-S";
+            case SHAFT_X -> "Shaft X     West - East";
+            case SHAFT_Y -> "Shaft Y     Down - Up";
+            case SHAFT_Z -> "Shaft Z     North - South";
+            case GEAR_X -> "Gear X      West - East";
+            case GEAR_Y -> "Gear Y      Down - Up";
+            case GEAR_Z -> "Gear Z      North - South";
         };
     }
 
@@ -538,15 +579,15 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         int previousX = leftPos + GRID_LEFT;
         int nextX = leftPos + GRID_LEFT
                 + GRID_PIXELS
-                - LAYER_BUTTON_SIZE;
+                - LAYER_BUTTON_WIDTH;
 
         if (inside(
                 mouseX,
                 mouseY,
                 previousX,
                 y,
-                LAYER_BUTTON_SIZE,
-                16
+                LAYER_BUTTON_WIDTH,
+                LAYER_BUTTON_HEIGHT
         )) {
             selectedSlice = Math.floorMod(selectedSlice - 1, 3);
             return true;
@@ -557,8 +598,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 mouseY,
                 nextX,
                 y,
-                LAYER_BUTTON_SIZE,
-                16
+                LAYER_BUTTON_WIDTH,
+                LAYER_BUTTON_HEIGHT
         )) {
             selectedSlice = Math.floorMod(selectedSlice + 1, 3);
             return true;
@@ -604,8 +645,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                         mouseY,
                         screenX,
                         screenY,
-                        CELL_SIZE - 1,
-                        CELL_SIZE - 1
+                        CELL_SIZE - 2,
+                        CELL_SIZE - 2
                 )) {
                     int y = 2 - displayY;
                     return CustomGearboxBlockEntity_wood.index(
