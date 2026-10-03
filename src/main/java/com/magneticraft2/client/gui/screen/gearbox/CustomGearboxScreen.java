@@ -636,8 +636,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 - LAYER_BUTTON_WIDTH;
 
         if (inside(
-                mouseX,
-                mouseY,
+                localX,
+                localY,
                 previousX,
                 y,
                 LAYER_BUTTON_WIDTH,
@@ -648,8 +648,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         }
 
         if (inside(
-                mouseX,
-                mouseY,
+                localX,
+                localY,
                 nextX,
                 y,
                 LAYER_BUTTON_WIDTH,
@@ -673,8 +673,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                     + i * (PALETTE_HEIGHT + PALETTE_GAP);
 
             if (inside(
-                    mouseX,
-                    mouseY,
+                    localX,
+                    localY,
                     x,
                     y,
                     PALETTE_WIDTH,
@@ -700,8 +700,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                         + displayY * CELL_SIZE;
 
                 if (inside(
-                        mouseX,
-                        mouseY,
+                        localX,
+                        localY,
                         screenX,
                         screenY,
                         CELL_SIZE - 2,
