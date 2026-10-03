@@ -82,9 +82,14 @@ public final class ItemBeltGeometry {
                 facing = horizontalDelta > 0 ? Direction.EAST : Direction.WEST;
             }
         } else {
-            // Vertical belts still need a horizontal orientation for width/collision.
-            // Choose the direction perpendicular to the axle.
-            facing = rollerAxis == Direction.Axis.X ? Direction.SOUTH : Direction.EAST;
+            // For vertical belts FACING encodes the carrying side of the loop. This lets
+            // the generated physical slab line up with the same straight run selected by
+            // BeltPath/rendering instead of sitting through the roller center.
+            if (rollerAxis == Direction.Axis.X) {
+                facing = dy > 0 ? Direction.SOUTH : Direction.NORTH;
+            } else {
+                facing = dy > 0 ? Direction.WEST : Direction.EAST;
+            }
         }
 
         int stepX = Integer.signum(dx);
