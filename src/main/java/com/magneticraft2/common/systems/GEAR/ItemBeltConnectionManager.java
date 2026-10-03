@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -405,9 +406,27 @@ public final class ItemBeltConnectionManager {
                 double exitDistance = leavingAtStart ? 0.0D : run.length();
                 Vec3 travelDirection = run.tangent().scale(direction);
 
-                Ejection ejection = createEjection(
+                if (isEndpointBlocked(
                         level,
                         connection,
+                        run,
+                        exitDistance,
+                        travelDirection)) {
+                    // Back-pressure: an obstructed belt does not throw the item onto the
+                    // floor. Hold it just before the roller until the exit clears or the
+                    // player right-clicks the item off the belt.
+                    double holdDistance = leavingAtStart
+                            ? Math.min(0.16D, run.length())
+                            : Math.max(0.0D, run.length() - 0.16D);
+
+                    if (Math.abs(transportedItem.getDistance() - holdDistance) > 0.000001D) {
+                        transportedItem.setDistance(holdDistance);
+                        changed = true;
+                    }
+                    continue;
+                }
+
+                Ejection ejection = createOpenEjection(
                         run,
                         exitDistance,
                         travelDirection,
@@ -422,12 +441,9 @@ public final class ItemBeltConnectionManager {
                         transportedItem.getStack().copy()
                 );
                 dropped.setDeltaMovement(ejection.velocity());
-
-                // A solid block immediately beyond the roller must not make the dropped
-                // entity bounce back into the belt and get captured again forever.
                 dropped.getPersistentData().putLong(
                         ITEM_COOLDOWN_TAG,
-                        gameTick + (ejection.blocked() ? 40L : 8L)
+                        gameTick + 8L
                 );
                 dropped.getPersistentData().putLong(
                         ITEM_COOLDOWN_START_TAG,
@@ -1076,12 +1092,11 @@ public final class ItemBeltConnectionManager {
         return cooldownKey.equals(connection.key);
     }
 
-    private static Ejection createEjection(Level level,
-                                           ItemBeltConnection connection,
-                                           TransportRun run,
-                                           double exitDistance,
-                                           Vec3 travelDirection,
-                                           double blocksPerTick) {
+    private static boolean isEndpointBlocked(Level level,
+                                             ItemBeltConnection connection,
+                                             TransportRun run,
+                                             double exitDistance,
+                                             Vec3 travelDirection) {
         Vec3 tangent = travelDirection.lengthSqr() < 0.000001D
                 ? run.tangent()
                 : travelDirection.normalize();
@@ -1089,53 +1104,150 @@ public final class ItemBeltConnectionManager {
         Vec3 surfaceExit = run.pointAt(exitDistance)
                 .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
 
-        // Release slightly *past* the roller, not directly on its tangent point. This is
-        // especially important on an ascending belt: the item should leave the top roller
-        // moving forward, so it can land on a following belt instead of dropping straight
-        // down at the crest.
-        Vec3 forwardRelease = surfaceExit
-                .add(tangent.scale(0.28D))
-                .add(run.surfaceNormal().scale(0.04D));
+        // Probe in the block *in front* of the roller. Another belt/roller is a valid
+        // handoff target; any other collidable block means the belt should queue the item.
+        Vec3 probe = surfaceExit.add(tangent.scale(0.70D));
+        BlockPos probePos = BlockPos.containing(probe);
+        BlockState state = level.getBlockState(probePos);
 
-        Vec3 forwardProbe = forwardRelease.add(tangent.scale(0.28D));
-        BlockPos forwardBlock = BlockPos.containing(forwardProbe);
-        BlockState forwardState = level.getBlockState(forwardBlock);
-
-        boolean nextMechanicalBelt =
-                forwardState.is(BlockRegistry.ITEM_BELT_BLOCK.get())
-                        || forwardState.is(BlockRegistry.CONVEYOR_ROLLER.get());
-
-        boolean blocked = !nextMechanicalBelt
-                && !forwardState.getCollisionShape(level, forwardBlock).isEmpty();
-
-        if (!blocked) {
-            // Preserve meaningful forward momentum even at early-game Water Wheel speeds.
-            // Gravity remains vanilla, so with no following belt the item naturally arcs
-            // forward and then falls; with another belt it lands on/can be captured by it.
-            double releaseSpeed = Math.max(0.075D, blocksPerTick * 1.15D);
-            return new Ejection(
-                    forwardRelease,
-                    tangent.scale(releaseSpeed),
-                    false
-            );
+        if (state.is(BlockRegistry.ITEM_BELT_BLOCK.get())
+                || state.is(BlockRegistry.CONVEYOR_ROLLER.get())) {
+            return false;
         }
 
-        // A genuine solid obstruction should not swallow the stack. Detach it just before
-        // the roller and let gravity pull it down rather than kicking it upward/back onto
-        // the same belt.
-        double backedOffDistance = exitDistance <= 0.0001D
-                ? Math.min(0.32D, run.length())
-                : Math.max(0.0D, run.length() - 0.32D);
+        return !state.getCollisionShape(level, probePos).isEmpty();
+    }
 
-        Vec3 safeDrop = run.pointAt(backedOffDistance)
-                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET + 0.08D));
+    private static Ejection createOpenEjection(TransportRun run,
+                                               double exitDistance,
+                                               Vec3 travelDirection,
+                                               double blocksPerTick) {
+        Vec3 tangent = travelDirection.lengthSqr() < 0.000001D
+                ? run.tangent()
+                : travelDirection.normalize();
 
+        Vec3 surfaceExit = run.pointAt(exitDistance)
+                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
+
+        // Put the detached entity clearly in the block in front of the roller, not on the
+        // roller tangent itself. This makes ascending belts throw forward onto a following
+        // belt; if no belt exists, vanilla gravity naturally takes over from there.
+        Vec3 forwardRelease = surfaceExit
+                .add(tangent.scale(0.62D))
+                .add(run.surfaceNormal().scale(0.03D));
+
+        double releaseSpeed = Math.max(0.085D, blocksPerTick * 1.20D);
         return new Ejection(
-                safeDrop,
-                new Vec3(0.0D, -0.035D, 0.0D),
-                true
+                forwardRelease,
+                tangent.scale(releaseSpeed)
         );
     }
+
+    /**
+     * Right-click pickup for belt-owned transported stacks.
+     *
+     * Transported items are not real ItemEntities while riding. This ray-tests the
+     * rendered stack positions so right-clicking the visible item removes exactly that
+     * stack from the belt and returns it to the player.
+     */
+    public static boolean pickupLookedAtItem(Level level,
+                                            BlockPos first,
+                                            BlockPos second,
+                                            Player player) {
+        if (level == null
+                || player == null
+                || first == null
+                || second == null) {
+            return false;
+        }
+
+        ConveyorRollerBlockEntity firstRoller =
+                level.getBlockEntity(first) instanceof ConveyorRollerBlockEntity roller
+                        ? roller
+                        : null;
+        ConveyorRollerBlockEntity secondRoller =
+                level.getBlockEntity(second) instanceof ConveyorRollerBlockEntity roller
+                        ? roller
+                        : null;
+
+        if (firstRoller != null) {
+            ensureRegistered(firstRoller);
+        } else if (secondRoller != null) {
+            ensureRegistered(secondRoller);
+        }
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return false;
+        }
+
+        BeltKey key = BeltKey.of(first, second);
+        ItemBeltConnection connection = map.get(key);
+        if (connection == null
+                || !(level.getBlockEntity(key.start()) instanceof ConveyorRollerBlockEntity carrier)
+                || carrier.getTransportedItems().isEmpty()) {
+            return false;
+        }
+
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getViewVector(1.0F).normalize();
+        double maxReach = 5.0D;
+        double maxPickDistanceSqr = 0.42D * 0.42D;
+
+        int bestIndex = -1;
+        double bestPerpendicularSqr = Double.MAX_VALUE;
+        double bestAlong = Double.MAX_VALUE;
+
+        List<ConveyorRollerBlockEntity.TransportedItem> items =
+                carrier.getTransportedItems();
+
+        for (int i = 0; i < items.size(); i++) {
+            ConveyorRollerBlockEntity.TransportedItem item = items.get(i);
+            Vec3 itemPos = connection.transportRun
+                    .pointAt(item.getDistance())
+                    .add(connection.transportRun.surfaceNormal()
+                            .scale(ITEM_SURFACE_OFFSET + 0.04D));
+
+            Vec3 fromEye = itemPos.subtract(eye);
+            double along = fromEye.dot(look);
+            if (along < 0.0D || along > maxReach) {
+                continue;
+            }
+
+            Vec3 nearestRayPoint = eye.add(look.scale(along));
+            double perpendicularSqr = nearestRayPoint.distanceToSqr(itemPos);
+            if (perpendicularSqr > maxPickDistanceSqr) {
+                continue;
+            }
+
+            if (perpendicularSqr < bestPerpendicularSqr
+                    || (Math.abs(perpendicularSqr - bestPerpendicularSqr) < 0.000001D
+                    && along < bestAlong)) {
+                bestIndex = i;
+                bestPerpendicularSqr = perpendicularSqr;
+                bestAlong = along;
+            }
+        }
+
+        if (bestIndex < 0) {
+            return false;
+        }
+
+        if (level.isClientSide) {
+            return true;
+        }
+
+        ConveyorRollerBlockEntity.TransportedItem picked = items.remove(bestIndex);
+        ItemStack stack = picked.getStack().copy();
+
+        if (!player.getInventory().add(stack)) {
+            player.drop(stack, false);
+        }
+
+        carrier.syncTransportedItems();
+        return true;
+    }
+
 
     @Nullable
     public static CarryingSample sampleCarryingSurface(Level level,
@@ -1296,8 +1408,7 @@ public final class ItemBeltConnectionManager {
     }
 
     private record Ejection(Vec3 position,
-                            Vec3 velocity,
-                            boolean blocked) {
+                            Vec3 velocity) {
     }
 
     private record Projection(double distance, boolean onSurface) {
