@@ -28,7 +28,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
     private static final int CELL_SIZE = 36;
     private static final int GRID_PIXELS = CELL_SIZE * 3;
     private static final int GRID_LEFT = 30;
-    private static final int GRID_TOP = 88;
+    private static final int GRID_TOP = 96;
 
     private static final int PALETTE_LEFT = 166;
     private static final int PALETTE_TOP = 66;
@@ -202,14 +202,14 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 left + 18,
                 top + 68,
                 left + 151,
-                top + 214,
+                top + 222,
                 0xFF6D5943
         );
         graphics.fill(
                 left + 19,
                 top + 69,
                 left + 150,
-                top + 213,
+                top + 221,
                 0xFF2A241E
         );
 
@@ -508,7 +508,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 font,
                 "Active: " + ports,
                 left + 18,
-                top + 220,
+                top + 228,
                 activePorts.isEmpty() ? 0xFFB9A98E : 0xFFB9DCA6,
                 false
         );
@@ -519,7 +519,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                         ? "Network: valid"
                         : "Network: conflict",
                 left + 18,
-                top + 233,
+                top + 241,
                 gearbox.isGraphValid() ? 0xFF91D67B : 0xFFFF6666,
                 false
         );
@@ -537,7 +537,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                 graphics,
                 layerPorts,
                 left + 18,
-                top + 246,
+                top + 254,
                 0xFFB9A98E,
                 0.82F
         );
