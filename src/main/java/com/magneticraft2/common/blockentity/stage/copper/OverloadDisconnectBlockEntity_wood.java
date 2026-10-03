@@ -93,6 +93,11 @@ public class OverloadDisconnectBlockEntity_wood extends GearBlockEntity {
                         + RESET_SECONDS.length)
                         % RESET_SECONDS.length;
 
+        if (tripped) {
+            resetTicksRemaining =
+                    getResetSeconds() * 20;
+        }
+
         setChanged();
         return getResetSeconds();
     }
