@@ -32,9 +32,15 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log_top.png");
 
     private static final double TEXTURE_REPEAT_LENGTH = 1.0D;
-    private static final double ROLLER_RADIUS = 3.0D / 16.0D;
+    // Keep the visible drum on the exact same radius used by BeltPath. The old
+    // 3/16 renderer drum was much smaller than the logical 0.31-block roller,
+    // which made the belt appear to float around it.
+    private static final double ROLLER_RADIUS =
+            ConveyorRollerBlockEntity.ROLLER_RADIUS;
     private static final int ROLLER_SIDES = 8;
-    private static final float TRANSPORTED_ITEM_SCALE = 2.20F;
+
+    // Twice the original 0.55 transported-item scale.
+    private static final float TRANSPORTED_ITEM_SCALE = 1.10F;
 
     public ConveyorRollerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -157,8 +163,12 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
                                      VertexConsumer endConsumer,
                                      PoseStack.Pose pose,
                                      int packedLight) {
-        double x0 = -0.5D;
-        double x1 = 0.5D;
+        // The drum sits inside the bearing housings rather than ending exactly
+        // on the block boundary. Besides looking mechanically supported, this
+        // prevents the rotating end texture from sharing a plane with the static
+        // bearing faces (the source of the side/end z-fighting).
+        double x0 = -0.375D;
+        double x1 = 0.375D;
         double angularOffset = Math.PI / ROLLER_SIDES;
 
         for (int segment = 0; segment < ROLLER_SIDES; segment++) {
@@ -351,7 +361,7 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             // without the bob/spin behavior of a dropped ItemEntity.
             stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yawDegrees));
             stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(pitchDegrees));
-            // Render transported stacks at four times the original 0.55 scale.
+            // Render transported stacks at twice the original 0.55 scale.
             stack.scale(
                     TRANSPORTED_ITEM_SCALE,
                     TRANSPORTED_ITEM_SCALE,
