@@ -1,10 +1,17 @@
 package com.magneticraft2.common.systems.GEAR;
 
+import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -13,18 +20,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * Runtime manager for continuous wide item belts between two Conveyor Rollers.
+ * Runtime controller for Create-style continuous Item Belts.
  *
- * Unlike the thin transmission belt, this system does not fill the world with proxy
- * collision entities. Items are projected onto the shared BeltPath top run and moved
- * deterministically along that continuous surface.
+ * The connection is visually rendered as one continuous loop by the canonical roller,
+ * while every intermediate grid position is backed by a real ItemBeltBlock. That gives
+ * Minecraft normal collision, selection and chunk ownership without collision entities.
  */
 public final class ItemBeltConnectionManager {
+    public static final int MAX_ITEM_BELT_SPAN = 16;
     public static final double BELT_HALF_WIDTH = 0.375D;
     public static final double BELT_HALF_THICKNESS = 0.035D;
 
@@ -38,6 +48,8 @@ public final class ItemBeltConnectionManager {
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
 
     private static final Map<Level, Map<BeltKey, ItemBeltConnection>> CONNECTIONS =
+            Collections.synchronizedMap(new WeakHashMap<>());
+    private static final Map<Level, Set<BlockPos>> REMOVING_PHYSICAL_BLOCKS =
             Collections.synchronizedMap(new WeakHashMap<>());
 
     private ItemBeltConnectionManager() {
@@ -65,10 +77,26 @@ public final class ItemBeltConnectionManager {
                 : partner;
         ConveyorRollerBlockEntity end = start == roller ? partner : roller;
 
+        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
+                start.getBlockPos(),
+                end.getBlockPos(),
+                start.getGearAxis(),
+                MAX_ITEM_BELT_SPAN
+        );
+
+        if (layout == null) {
+            levelConnections.remove(key);
+            return;
+        }
+
         ItemBeltConnection existing = levelConnections.get(key);
         if (existing != null
                 && existing.axis == start.getGearAxis()
+                && existing.layout.equals(layout)
                 && Math.abs(existing.radius - start.getRollerRadius()) < 0.00001D) {
+            if (!level.isClientSide) {
+                ensurePhysicalBlocks(level, existing);
+            }
             return;
         }
 
@@ -85,22 +113,26 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
-        TransportRun transportRun = findUpperRun(path, start.getBlockPos(), end.getBlockPos());
+        TransportRun transportRun = findCarryingRun(path, start.getBlockPos());
         if (transportRun == null) {
             levelConnections.remove(key);
             return;
         }
 
-        levelConnections.put(
+        ItemBeltConnection connection = new ItemBeltConnection(
                 key,
-                new ItemBeltConnection(
-                        key,
-                        start.getGearAxis(),
-                        start.getRollerRadius(),
-                        path,
-                        transportRun
-                )
+                start.getGearAxis(),
+                start.getRollerRadius(),
+                path,
+                layout,
+                transportRun
         );
+
+        levelConnections.put(key, connection);
+
+        if (!level.isClientSide) {
+            ensurePhysicalBlocks(level, connection);
+        }
     }
 
     public static boolean isRegistered(Level level, BlockPos first, BlockPos second) {
@@ -160,8 +192,18 @@ public final class ItemBeltConnectionManager {
                 || !(level.getBlockEntity(connection.key.end()) instanceof ConveyorRollerBlockEntity end)
                 || !start.isItemBeltLinkedTo(end.getBlockPos())
                 || !end.isItemBeltLinkedTo(start.getBlockPos())) {
-            remove(level, connection.key.start(), connection.key.end());
+            unregister(level, connection.key);
             return;
+        }
+
+        if (!hasCompletePhysicalBelt(level, connection)) {
+            // Do not silently overwrite a newly placed obstruction. A valid saved belt will
+            // recreate missing replaceable cells, but an occupied route remains stopped until
+            // the player clears/reconnects it.
+            if (!ensurePhysicalBlocks(level, connection)) {
+                GearNetworkManager.getInstance().removeMechanicalLoad(level, connection.key.start());
+                return;
+            }
         }
 
         GearNetworkManager network = GearNetworkManager.getInstance();
@@ -195,6 +237,43 @@ public final class ItemBeltConnectionManager {
 
         int direction = start.getDirectionMultiplier() < 0 ? -1 : 1;
         moveItems(level, connection, blocksPerTick, direction, running);
+    }
+
+    private static boolean ensurePhysicalBlocks(Level level, ItemBeltConnection connection) {
+        BlockState desired = BlockRegistry.ITEM_BELT_BLOCK.get().stateFor(connection.layout);
+
+        for (BlockPos pos : connection.layout.beltBlocks()) {
+            BlockState state = level.getBlockState(pos);
+
+            if (state.is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                if (!state.equals(desired)) {
+                    level.setBlock(pos, desired, Block.UPDATE_ALL);
+                }
+                continue;
+            }
+
+            if (!state.isAir() && !state.canBeReplaced()) {
+                return false;
+            }
+        }
+
+        for (BlockPos pos : connection.layout.beltBlocks()) {
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(BlockRegistry.ITEM_BELT_BLOCK.get()) || !state.equals(desired)) {
+                level.setBlock(pos, desired, Block.UPDATE_ALL);
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean hasCompletePhysicalBelt(Level level, ItemBeltConnection connection) {
+        for (BlockPos pos : connection.layout.beltBlocks()) {
+            if (!level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static void moveItems(Level level,
@@ -250,6 +329,9 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    /**
+     * Manual unlink path used by ItemBeltItem. The item itself performs the inventory refund.
+     */
     public static void remove(Level level, BlockPos first, BlockPos second) {
         if (level == null || first == null || second == null) {
             return;
@@ -261,8 +343,12 @@ public final class ItemBeltConnectionManager {
         }
 
         BeltKey key = BeltKey.of(first, second);
-        if (map.remove(key) != null && !level.isClientSide) {
-            GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
+        ItemBeltConnection connection = map.remove(key);
+        if (connection != null) {
+            if (!level.isClientSide) {
+                GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
+                removePhysicalBlocks(level, connection);
+            }
         }
 
         if (map.isEmpty()) {
@@ -270,6 +356,10 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    /**
+     * Runtime-only unregister used by BlockEntity#setRemoved during chunk unload.
+     * Physical belt cells and saved endpoint links remain untouched.
+     */
     public static void removeFor(Level level, BlockPos rollerPos) {
         if (level == null || rollerPos == null) {
             return;
@@ -299,10 +389,148 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    public static void onPhysicalBeltBlockRemoved(Level level, BlockPos beltPos) {
+        if (level == null
+                || level.isClientSide
+                || beltPos == null
+                || isRemovingPhysicalBlock(level, beltPos)) {
+            return;
+        }
+
+        ItemBeltConnection connection = findByPhysicalBlock(level, beltPos);
+        if (connection != null) {
+            destroyConnection(level, connection, true, beltPos);
+        }
+    }
+
+    public static void breakAtRoller(Level level, BlockPos rollerPos) {
+        if (level == null || level.isClientSide || rollerPos == null) {
+            return;
+        }
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return;
+        }
+
+        ItemBeltConnection connection = null;
+        for (Map.Entry<BeltKey, ItemBeltConnection> entry : map.entrySet()) {
+            if (entry.getKey().contains(rollerPos)) {
+                connection = entry.getValue();
+                break;
+            }
+        }
+
+        if (connection != null) {
+            destroyConnection(level, connection, true, rollerPos);
+        }
+    }
+
+    private static void destroyConnection(Level level,
+                                          ItemBeltConnection connection,
+                                          boolean refundSegments,
+                                          BlockPos dropPos) {
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map != null) {
+            map.remove(connection.key);
+            if (map.isEmpty()) {
+                CONNECTIONS.remove(level);
+            }
+        }
+
+        GearNetworkManager.getInstance().removeMechanicalLoad(level, connection.key.start());
+        removePhysicalBlocks(level, connection);
+
+        if (level.getBlockEntity(connection.key.start()) instanceof ConveyorRollerBlockEntity start
+                && start.isItemBeltLinkedTo(connection.key.end())) {
+            start.disconnectItemBelt(false);
+        }
+
+        if (level.getBlockEntity(connection.key.end()) instanceof ConveyorRollerBlockEntity end
+                && end.isItemBeltLinkedTo(connection.key.start())) {
+            end.disconnectItemBelt(false);
+        }
+
+        if (refundSegments && dropPos != null && connection.layout.requiredSegments() > 0) {
+            ItemStack refund = new ItemStack(
+                    ItemRegistry.ITEM_ITEM_BELT.get(),
+                    connection.layout.requiredSegments()
+            );
+            ItemEntity dropped = new ItemEntity(
+                    level,
+                    dropPos.getX() + 0.5D,
+                    dropPos.getY() + 0.5D,
+                    dropPos.getZ() + 0.5D,
+                    refund
+            );
+            level.addFreshEntity(dropped);
+        }
+    }
+
+    private static void removePhysicalBlocks(Level level, ItemBeltConnection connection) {
+        Set<BlockPos> removing = REMOVING_PHYSICAL_BLOCKS.computeIfAbsent(
+                level,
+                ignored -> new HashSet<>()
+        );
+
+        try {
+            for (BlockPos pos : connection.layout.beltBlocks()) {
+                removing.add(pos);
+            }
+
+            for (BlockPos pos : connection.layout.beltBlocks()) {
+                if (level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                    level.removeBlock(pos, false);
+                }
+            }
+        } finally {
+            for (BlockPos pos : connection.layout.beltBlocks()) {
+                removing.remove(pos);
+            }
+            if (removing.isEmpty()) {
+                REMOVING_PHYSICAL_BLOCKS.remove(level);
+            }
+        }
+    }
+
+    private static boolean isRemovingPhysicalBlock(Level level, BlockPos pos) {
+        Set<BlockPos> removing = REMOVING_PHYSICAL_BLOCKS.get(level);
+        return removing != null && removing.contains(pos);
+    }
+
     @Nullable
-    private static TransportRun findUpperRun(BeltPath path,
-                                             BlockPos startRoller,
-                                             BlockPos endRoller) {
+    private static ItemBeltConnection findByPhysicalBlock(Level level, BlockPos pos) {
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return null;
+        }
+
+        for (ItemBeltConnection connection : map.values()) {
+            if (connection.layout.beltBlocks().contains(pos)) {
+                return connection;
+            }
+        }
+
+        return null;
+    }
+
+    private static void unregister(Level level, BeltKey key) {
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return;
+        }
+
+        if (map.remove(key) != null && !level.isClientSide) {
+            GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
+        }
+
+        if (map.isEmpty()) {
+            CONNECTIONS.remove(level);
+        }
+    }
+
+    @Nullable
+    private static TransportRun findCarryingRun(BeltPath path, BlockPos canonicalStart) {
         List<BeltPath.Segment> straightSegments = path.segments().stream()
                 .filter(segment -> segment.type() == BeltPath.SegmentType.STRAIGHT)
                 .toList();
@@ -311,28 +539,26 @@ public final class ItemBeltConnectionManager {
             return null;
         }
 
-        BeltPath.Segment upper = straightSegments.stream()
+        BeltPath.Segment carrying = straightSegments.stream()
                 .max(Comparator.comparingDouble(segment ->
                         (segment.from().y + segment.to().y) * 0.5D))
                 .orElse(null);
 
-        if (upper == null) {
+        if (carrying == null) {
             return null;
         }
 
-        Vec3 startCenter = Vec3.atCenterOf(startRoller);
-        Vec3 from = upper.from();
-        Vec3 to = upper.to();
+        Vec3 startCenter = Vec3.atCenterOf(canonicalStart);
+        Vec3 from = carrying.from();
+        Vec3 to = carrying.to();
 
-        // Orient the transport coordinate so distance 0 is always the canonical start roller,
-        // independent of which direction BeltPath happened to emit the physical upper run.
         if (to.distanceToSqr(startCenter) < from.distanceToSqr(startCenter)) {
             Vec3 swap = from;
             from = to;
             to = swap;
         }
 
-        Vec3 normal = upper.thicknessDirection().normalize();
+        Vec3 normal = carrying.thicknessDirection().normalize();
         if (normal.y < 0.0D) {
             normal = normal.scale(-1.0D);
         }
@@ -340,28 +566,31 @@ public final class ItemBeltConnectionManager {
         return new TransportRun(
                 from,
                 to,
-                upper.widthDirection().normalize(),
+                carrying.widthDirection().normalize(),
                 normal
         );
     }
 
     private static final class ItemBeltConnection {
         private final BeltKey key;
-        private final net.minecraft.core.Direction.Axis axis;
+        private final Direction.Axis axis;
         private final double radius;
         private final BeltPath path;
+        private final ItemBeltGeometry.Layout layout;
         private final TransportRun transportRun;
         private long lastProcessedTick = Long.MIN_VALUE;
 
         private ItemBeltConnection(BeltKey key,
-                                   net.minecraft.core.Direction.Axis axis,
+                                   Direction.Axis axis,
                                    double radius,
                                    BeltPath path,
+                                   ItemBeltGeometry.Layout layout,
                                    TransportRun transportRun) {
             this.key = key;
             this.axis = axis;
             this.radius = radius;
             this.path = path;
+            this.layout = layout;
             this.transportRun = transportRun;
         }
     }
