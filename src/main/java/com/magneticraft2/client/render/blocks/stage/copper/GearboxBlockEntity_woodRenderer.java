@@ -42,11 +42,23 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         Direction input = gearbox.getInputDirection();
         Direction output = gearbox.getOutputDirection();
 
-        renderPortShaft(stack, shaft, packedLight, input);
-        renderPortShaft(stack, shaft, packedLight, output);
-
         float inputAngle = gearbox.getVisualRotationDegrees(partialTicks);
         float outputAngle = gearbox.getOutputVisualRotationDegrees(partialTicks);
+
+        renderPortShaft(
+                stack,
+                shaft,
+                packedLight,
+                input,
+                inputAngle * axisDirectionSign(input)
+        );
+        renderPortShaft(
+                stack,
+                shaft,
+                packedLight,
+                output,
+                outputAngle * axisDirectionSign(output)
+        );
 
         renderBevelGear(
                 stack,
@@ -68,28 +80,79 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.popPose();
     }
 
+    /**
+     * Connects a normal 6/16 Wooden Shaft at the block face to the compact
+     * internal bevel-gear axle. The previous renderer used one 6/16-thick box
+     * all the way through the gearbox; on UP/DOWN ports that appeared as a huge
+     * wooden cube sitting directly on top of the gears.
+     */
     private void renderPortShaft(PoseStack stack,
                                  VertexConsumer consumer,
                                  int packedLight,
-                                 Direction port) {
+                                 Direction port,
+                                 float rotation) {
         stack.pushPose();
+        orientLocalXToDirection(stack, port);
+        stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        double offset = 0.31D;
-        stack.translate(
-                port.getStepX() * offset,
-                port.getStepY() * offset,
-                port.getStepZ() * offset
+        // Thin internal axle into the gear hub.
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.115D,
+                0.160D,
+                0.100D
         );
 
-        Direction.Axis axis = port.getAxis();
-        if (axis == Direction.Axis.X) {
-            drawBox(stack, consumer, packedLight, 0.62D, 0.375D, 0.375D);
-        } else if (axis == Direction.Axis.Y) {
-            drawBox(stack, consumer, packedLight, 0.375D, 0.62D, 0.375D);
-        } else {
-            drawBox(stack, consumer, packedLight, 0.375D, 0.375D, 0.62D);
-        }
+        // Two stepped shoulders make the transition readable instead of hiding
+        // the mechanism inside one oversized square shaft.
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.225D,
+                0.120D,
+                0.160D
+        );
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.325D,
+                0.120D,
+                0.255D
+        );
 
+        // Match the normal Wooden Shaft exactly at the outer block face.
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.445D,
+                0.110D,
+                0.375D
+        );
+
+        stack.popPose();
+    }
+
+    private void drawBoxAtLocalX(PoseStack stack,
+                                 VertexConsumer consumer,
+                                 int packedLight,
+                                 double centerX,
+                                 double length,
+                                 double thickness) {
+        stack.pushPose();
+        stack.translate(centerX, 0.0D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                length,
+                thickness,
+                thickness
+        );
         stack.popPose();
     }
 
@@ -235,6 +298,13 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
             );
             stack.popPose();
         }
+    }
+
+    private int axisDirectionSign(Direction direction) {
+        return switch (direction) {
+            case EAST, UP, SOUTH -> 1;
+            case WEST, DOWN, NORTH -> -1;
+        };
     }
 
     private void orientLocalXToDirection(PoseStack stack, Direction direction) {
