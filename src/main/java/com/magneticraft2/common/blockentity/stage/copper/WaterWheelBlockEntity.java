@@ -274,9 +274,9 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
         float rpm = minRpm + (maxRpm - minRpm) * engagement;
         float torque = minTorque + (maxTorque - minTorque) * engagement;
         // Fluid torque is measured in world-space around the axle. Gear V2's
-        // direction multiplier uses the opposite positive rotation convention for these
-        // horizontal source axles, so invert the sign here to keep the visible wheel and
-        // the powered network rotating in the same direction.
+        // mechanical +axis convention is opposite this cross-product sign, so convert it
+        // here. The renderer separately converts Gear V2's axle convention back into the
+        // wheel model's visual convention; downstream gears use this value unchanged.
         int direction = signedDrive >= 0.0D ? -1 : 1;
 
         return new WaterDrive(true, rpm, torque, direction);
