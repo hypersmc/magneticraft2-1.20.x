@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems.GEAR;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -110,11 +111,22 @@ public final class ItemBeltGeometry {
         );
     }
 
-    public enum BeltSlope {
-        HORIZONTAL,
-        UPWARD,
-        DOWNWARD,
-        VERTICAL
+    public enum BeltSlope implements StringRepresentable {
+        HORIZONTAL("horizontal"),
+        UPWARD("upward"),
+        DOWNWARD("downward"),
+        VERTICAL("vertical");
+
+        private final String serializedName;
+
+        BeltSlope(String serializedName) {
+            this.serializedName = serializedName;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return serializedName;
+        }
     }
 
     public record Layout(BlockPos start,
