@@ -21,6 +21,10 @@ import java.util.EnumSet;
  * simple part palette. Right-clicking a cell removes its installed part.
  */
 public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMenu> {
+    private static final int BASE_WIDTH = 372;
+    private static final int BASE_HEIGHT = 272;
+    private static final int SCREEN_MARGIN = 12;
+
     private static final int CELL_SIZE = 36;
     private static final int GRID_PIXELS = CELL_SIZE * 3;
     private static final int GRID_LEFT = 30;
@@ -48,13 +52,45 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
     private int selectedSlice = 1;
     private InternalComponent selectedComponent = InternalComponent.SHAFT_X;
+    private float uiScale = 1.0F;
 
     public CustomGearboxScreen(CustomGearboxMenu menu,
                                Inventory inventory,
                                Component title) {
         super(menu, inventory, title);
-        imageWidth = 372;
-        imageHeight = 272;
+        imageWidth = BASE_WIDTH;
+        imageHeight = BASE_HEIGHT;
+    }
+
+    @Override
+    protected void init() {
+        float availableWidth = Math.max(
+                1.0F,
+                width - SCREEN_MARGIN * 2.0F
+        );
+        float availableHeight = Math.max(
+                1.0F,
+                height - SCREEN_MARGIN * 2.0F
+        );
+
+        uiScale = Math.min(
+                1.0F,
+                Math.min(
+                        availableWidth / BASE_WIDTH,
+                        availableHeight / BASE_HEIGHT
+                )
+        );
+
+        imageWidth = Math.max(
+                1,
+                Math.round(BASE_WIDTH * uiScale)
+        );
+        imageHeight = Math.max(
+                1,
+                Math.round(BASE_HEIGHT * uiScale)
+        );
+
+        super.init();
     }
 
     @Override
@@ -72,21 +108,33 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                             float partialTick,
                             int mouseX,
                             int mouseY) {
-        int left = leftPos;
-        int top = topPos;
+        graphics.pose().pushPose();
+        graphics.pose().translate(
+                leftPos,
+                topPos,
+                0.0F
+        );
+        graphics.pose().scale(
+                uiScale,
+                uiScale,
+                1.0F
+        );
+
+        int left = 0;
+        int top = 0;
 
         graphics.fill(
                 left,
                 top,
-                left + imageWidth,
-                top + imageHeight,
+                left + BASE_WIDTH,
+                top + BASE_HEIGHT,
                 0xEE211A13
         );
         graphics.fill(
                 left + 4,
                 top + 4,
-                left + imageWidth - 4,
-                top + imageHeight - 4,
+                left + BASE_WIDTH - 4,
+                top + BASE_HEIGHT - 4,
                 0xFF35291E
         );
 
@@ -117,6 +165,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                     0xFFFF5555,
                     false
             );
+            graphics.pose().popPose();
             return;
         }
 
@@ -125,6 +174,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         renderGrid(graphics, gearbox, left, top);
         renderPalette(graphics, left, top);
         renderStatus(graphics, gearbox, left, top);
+
+        graphics.pose().popPose();
     }
 
     private void renderSectionFrames(GuiGraphics graphics,
@@ -575,9 +626,12 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
     private boolean clickLayerSelector(double mouseX,
                                        double mouseY) {
-        int y = topPos + LAYER_BUTTON_Y;
-        int previousX = leftPos + GRID_LEFT;
-        int nextX = leftPos + GRID_LEFT
+        double localX = toLocalX(mouseX);
+        double localY = toLocalY(mouseY);
+
+        int y = LAYER_BUTTON_Y;
+        int previousX = GRID_LEFT;
+        int nextX = GRID_LEFT
                 + GRID_PIXELS
                 - LAYER_BUTTON_WIDTH;
 
@@ -610,10 +664,12 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
     private boolean clickPalette(double mouseX,
                                  double mouseY) {
-        int x = leftPos + PALETTE_LEFT;
+        double localX = toLocalX(mouseX);
+        double localY = toLocalY(mouseY);
+        int x = PALETTE_LEFT;
 
         for (int i = 0; i < PALETTE.length; i++) {
-            int y = topPos + PALETTE_TOP
+            int y = PALETTE_TOP
                     + i * (PALETTE_HEIGHT + PALETTE_GAP);
 
             if (inside(
@@ -634,10 +690,13 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
     private int getHoveredCell(double mouseX,
                                double mouseY) {
+        double localX = toLocalX(mouseX);
+        double localY = toLocalY(mouseY);
+
         for (int displayY = 0; displayY < 3; displayY++) {
             for (int x = 0; x < 3; x++) {
-                int screenX = leftPos + GRID_LEFT + x * CELL_SIZE;
-                int screenY = topPos + GRID_TOP
+                int screenX = GRID_LEFT + x * CELL_SIZE;
+                int screenY = GRID_TOP
                         + displayY * CELL_SIZE;
 
                 if (inside(
@@ -694,6 +753,14 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
                     mouseY
             );
         }
+    }
+
+    private double toLocalX(double mouseX) {
+        return (mouseX - leftPos) / uiScale;
+    }
+
+    private double toLocalY(double mouseY) {
+        return (mouseY - topPos) / uiScale;
     }
 
     private boolean inside(double mouseX,
