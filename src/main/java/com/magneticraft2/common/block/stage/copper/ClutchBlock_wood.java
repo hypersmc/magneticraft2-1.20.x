@@ -37,6 +37,8 @@ import org.jetbrains.annotations.Nullable;
 public class ClutchBlock_wood extends GearBlock {
     public static final BooleanProperty ENGAGED =
             BooleanProperty.create("engaged");
+    public static final BooleanProperty ROTATING =
+            BooleanProperty.create("rotating");
 
     private static final VoxelShape X_AXIS_SHAPE = Shapes.or(
             Block.box(0.0D, 5.0D, 5.0D, 16.0D, 11.0D, 11.0D),
@@ -60,6 +62,7 @@ public class ClutchBlock_wood extends GearBlock {
                 stateDefinition.any()
                         .setValue(FACING, Direction.EAST)
                         .setValue(ENGAGED, true)
+                        .setValue(ROTATING, false)
         );
     }
 
@@ -80,7 +83,8 @@ public class ClutchBlock_wood extends GearBlock {
                         ENGAGED,
                         !context.getLevel()
                                 .hasNeighborSignal(placementPos)
-                );
+                )
+                .setValue(ROTATING, false);
 
         return validateGearPlacement(context, placementState);
     }
@@ -185,7 +189,7 @@ public class ClutchBlock_wood extends GearBlock {
     @Override
     protected void createBlockStateDefinition(
             StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, ENGAGED);
+        builder.add(FACING, ENGAGED, ROTATING);
     }
 
     @Nullable
