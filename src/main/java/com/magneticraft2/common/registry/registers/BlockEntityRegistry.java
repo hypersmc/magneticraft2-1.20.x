@@ -8,6 +8,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.*;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -72,6 +73,14 @@ public class BlockEntityRegistry {
                     BlockEntityType.Builder.of(
                             ItemBeltBlockEntity::new,
                             BlockRegistry.ITEM_BELT_BLOCK.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<WaterWheelBlockEntity>> WATER_WHEEL_BE =
+            BLOCK_ENTITIES.register("water_wheel", () ->
+                    BlockEntityType.Builder.of(
+                            WaterWheelBlockEntity::new,
+                            BlockRegistry.WATER_WHEEL_SMALL.get(),
+                            BlockRegistry.WATER_WHEEL_LARGE.get()
                     ).build(null));
 
     public static final RegistryObject<BlockEntityType<PulleyBlockEntity_wood>> PULLEY_BE_WOOD = BLOCK_ENTITIES.register(
