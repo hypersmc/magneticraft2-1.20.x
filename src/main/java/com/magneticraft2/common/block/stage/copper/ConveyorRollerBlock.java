@@ -34,20 +34,28 @@ import org.jetbrains.annotations.Nullable;
  * axis, so a normal Wooden Shaft can drive the roller directly from either side.
  */
 public class ConveyorRollerBlock extends GearBlock {
+    // Open bearing-frame geometry. The old tall side loops boxed the belt in and
+    // visually collided with 45-degree runs. The roller remains fully collidable,
+    // but the frame now stays below/beside the belt wrap so horizontal and sloped
+    // connections both have a believable path around the drum.
     private static final VoxelShape BASE_X = Shapes.or(
             Block.box(0.0D, 0.0D, 2.0D, 16.0D, 3.0D, 5.0D),
             Block.box(0.0D, 0.0D, 11.0D, 16.0D, 3.0D, 14.0D),
             Block.box(0.0D, 5.0D, 5.0D, 16.0D, 11.0D, 11.0D),
-            Block.box(1.0D, 3.0D, 4.0D, 3.0D, 12.0D, 12.0D),
-            Block.box(13.0D, 3.0D, 4.0D, 15.0D, 12.0D, 12.0D)
+            Block.box(1.0D, 3.0D, 6.0D, 3.0D, 9.0D, 10.0D),
+            Block.box(13.0D, 3.0D, 6.0D, 15.0D, 9.0D, 10.0D),
+            Block.box(0.0D, 6.0D, 6.0D, 2.0D, 10.0D, 10.0D),
+            Block.box(14.0D, 6.0D, 6.0D, 16.0D, 10.0D, 10.0D)
     );
 
     private static final VoxelShape BASE_Z = Shapes.or(
             Block.box(2.0D, 0.0D, 0.0D, 5.0D, 3.0D, 16.0D),
             Block.box(11.0D, 0.0D, 0.0D, 14.0D, 3.0D, 16.0D),
             Block.box(5.0D, 5.0D, 0.0D, 11.0D, 11.0D, 16.0D),
-            Block.box(4.0D, 3.0D, 1.0D, 12.0D, 12.0D, 3.0D),
-            Block.box(4.0D, 3.0D, 13.0D, 12.0D, 12.0D, 15.0D)
+            Block.box(6.0D, 3.0D, 1.0D, 10.0D, 9.0D, 3.0D),
+            Block.box(6.0D, 3.0D, 13.0D, 10.0D, 9.0D, 15.0D),
+            Block.box(6.0D, 6.0D, 0.0D, 10.0D, 10.0D, 2.0D),
+            Block.box(6.0D, 6.0D, 14.0D, 10.0D, 10.0D, 16.0D)
     );
 
     public ConveyorRollerBlock() {
@@ -141,8 +149,9 @@ public class ConveyorRollerBlock extends GearBlock {
         );
 
         // The roller's collision follows the actual connected belt geometry: horizontal
-        // gets upper/lower runs, 45-degree gets the two sloped runs, and vertical gets
-        // the two side strips. The wooden frame/roller model remains collidable as well.
+        // gets upper/lower runs and 45-degree gets the two sloped runs. Straight vertical
+        // Item Belts are rejected by ItemBeltGeometry. The open frame/roller remains
+        // collidable as well.
         return Shapes.or(base, beltShape);
     }
 
