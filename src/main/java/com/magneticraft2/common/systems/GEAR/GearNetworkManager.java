@@ -41,6 +41,7 @@ public class GearNetworkManager {
     private final Map<ResourceKey<Level>, Map<BlockPos, MechanicalLoad>> loadsByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastDecayTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastRotationTickByLevel = new HashMap<>();
+    private final Map<ResourceKey<Level>, Long> lastSyncTickByLevel = new HashMap<>();
 
     private GearNetworkManager() {
     }
@@ -836,6 +837,20 @@ public class GearNetworkManager {
     }
 
     private void syncAll(Level level, Iterable<GearNode> gears) {
+        ResourceKey<Level> dimension = level.dimension();
+        long gameTime = level.getGameTime();
+
+        // Every GearBlockEntity currently asks the manager to refresh the network each
+        // server tick. The mechanical calculation is cheap enough for now, but sending
+        // the exact same angular snapshot once per gear in the same tick causes visible
+        // client re-anchoring/judder. One authoritative snapshot per level per tick is
+        // sufficient.
+        Long lastSyncTick = lastSyncTickByLevel.get(dimension);
+        if (lastSyncTick != null && lastSyncTick == gameTime) {
+            return;
+        }
+        lastSyncTickByLevel.put(dimension, gameTime);
+
         for (GearNode gear : gears) {
             float transmittedSpeed = gear.getEffectiveSpeed();
             CHANNEL.send(PacketDistributor.ALL.noArg(), new GearSyncPacket(
