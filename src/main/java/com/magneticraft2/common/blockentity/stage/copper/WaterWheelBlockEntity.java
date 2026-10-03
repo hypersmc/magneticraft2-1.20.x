@@ -241,6 +241,28 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
                     Block.UPDATE_CLIENTS
             );
         }
+
+        if (isLarge()) {
+            for (BlockPos fillerPos : WaterWheelBlock.largeWheelFillerPositions(
+                    worldPosition,
+                    getGearAxis())) {
+                BlockState fillerState = level.getBlockState(fillerPos);
+                if (!fillerState.is(BlockRegistry.WATER_WHEEL_FILLER.get())
+                        || !fillerState.hasProperty(com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE)
+                        || fillerState.getValue(com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE) == active) {
+                    continue;
+                }
+
+                level.setBlock(
+                        fillerPos,
+                        fillerState.setValue(
+                                com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock.ACTIVE,
+                                active
+                        ),
+                        Block.UPDATE_CLIENTS
+                );
+            }
+        }
     }
 
     @Override
