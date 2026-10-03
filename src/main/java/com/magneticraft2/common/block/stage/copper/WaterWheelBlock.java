@@ -99,7 +99,7 @@ public class WaterWheelBlock extends GearBlock implements SimpleWaterloggedBlock
 
     @Override
     public int getPlacementGearTeeth(BlockState state) {
-        return large ? 16 : 8;
+        return large ? 24 : 8;
     }
 
     @Override
