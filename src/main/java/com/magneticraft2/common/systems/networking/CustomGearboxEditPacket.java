@@ -71,7 +71,8 @@ public class CustomGearboxEditPacket {
                     .getBlockEntity(packet.blockEntityPos);
 
             if (blockEntity instanceof CustomGearboxBlockEntity_wood gearbox) {
-                gearbox.cycleComponent(
+                gearbox.cycleComponentFromPlayer(
+                        player,
                         packet.cellIndex,
                         packet.delta
                 );
