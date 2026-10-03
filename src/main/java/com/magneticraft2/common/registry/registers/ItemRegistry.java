@@ -99,6 +99,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
     public static final RegistryObject<LeatherBeltItem> ITEM_LEATHER_BELT = ITEMS.register("leather_belt", LeatherBeltItem::new);
     public static final RegistryObject<ItemBeltItem> ITEM_ITEM_BELT = ITEMS.register("item_belt", ItemBeltItem::new);
+    public static final RegistryObject<Item> ITEM_WATER_WHEEL_SMALL = fromBlock(WATER_WHEEL_SMALL);
+    public static final RegistryObject<Item> ITEM_WATER_WHEEL_LARGE = fromBlock(WATER_WHEEL_LARGE);
 
 
 
