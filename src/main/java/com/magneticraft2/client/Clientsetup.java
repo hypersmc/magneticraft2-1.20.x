@@ -4,6 +4,7 @@ import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.render.blocks.*;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearBlock_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearWithHandleBlock_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.ClutchBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ConveyorRollerBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.GearboxBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.CustomGearboxBlockEntity_woodRenderer;
@@ -74,6 +75,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), LargeGearBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), MediumGearBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CLUTCH_BE_WOOD.get(), ClutchBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
