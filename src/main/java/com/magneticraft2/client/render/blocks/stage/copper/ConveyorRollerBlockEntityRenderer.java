@@ -5,6 +5,7 @@ import com.magneticraft2.common.systems.GEAR.BeltPath;
 import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
@@ -24,8 +26,14 @@ import net.minecraft.world.phys.Vec3;
 public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<ConveyorRollerBlockEntity> {
     private static final ResourceLocation BELT_TEXTURE =
             new ResourceLocation("magneticraft2", "textures/block/leather_belt.png");
+    private static final ResourceLocation ROLLER_SIDE_TEXTURE =
+            new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
+    private static final ResourceLocation ROLLER_END_TEXTURE =
+            new ResourceLocation("minecraft", "textures/block/stripped_oak_log_top.png");
 
     private static final double TEXTURE_REPEAT_LENGTH = 1.0D;
+    private static final double ROLLER_RADIUS = 3.0D / 16.0D;
+    private static final int ROLLER_SIDES = 8;
 
     public ConveyorRollerBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -37,6 +45,16 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
                        MultiBufferSource bufferSource,
                        int packedLight,
                        int packedOverlay) {
+        // The block model only contains the stationary open bearing frame. Draw the
+        // actual drum here so Gear V2 rotation is visible even when no belt is attached.
+        renderRoller(
+                roller,
+                partialTicks,
+                stack,
+                bufferSource,
+                packedLight
+        );
+
         BlockPos partnerPos = roller.getItemBeltPartner();
         if (partnerPos == null || roller.getLevel() == null) {
             return;
@@ -94,6 +112,136 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
                 packedLight,
                 renderOrigin
         );
+    }
+
+    private void renderRoller(ConveyorRollerBlockEntity roller,
+                              float partialTicks,
+                              PoseStack stack,
+                              MultiBufferSource bufferSource,
+                              int packedLight) {
+        VertexConsumer sideConsumer = bufferSource.getBuffer(
+                RenderType.entityCutoutNoCull(ROLLER_SIDE_TEXTURE)
+        );
+        VertexConsumer endConsumer = bufferSource.getBuffer(
+                RenderType.entityCutoutNoCull(ROLLER_END_TEXTURE)
+        );
+
+        stack.pushPose();
+        stack.translate(0.5D, 0.5D, 0.5D);
+
+        // The authored roller runs along local X. Rotate local +X onto global +Z
+        // when this block's shaft axis is Z. Using the positive global axis keeps
+        // the visual drum direction consistent with Gear V2.
+        if (roller.getGearAxis() == Direction.Axis.Z) {
+            stack.mulPose(Axis.YN.rotationDegrees(90.0F));
+        }
+
+        stack.mulPose(
+                Axis.XP.rotationDegrees(
+                        roller.getVisualRotationDegrees(partialTicks)
+                )
+        );
+
+        drawOctagonalRoller(
+                sideConsumer,
+                endConsumer,
+                stack.last(),
+                packedLight
+        );
+
+        stack.popPose();
+    }
+
+    private void drawOctagonalRoller(VertexConsumer sideConsumer,
+                                     VertexConsumer endConsumer,
+                                     PoseStack.Pose pose,
+                                     int packedLight) {
+        double x0 = -0.5D;
+        double x1 = 0.5D;
+        double angularOffset = Math.PI / ROLLER_SIDES;
+
+        for (int segment = 0; segment < ROLLER_SIDES; segment++) {
+            double angle0 = angularOffset
+                    + segment * Math.PI * 2.0D / ROLLER_SIDES;
+            double angle1 = angularOffset
+                    + (segment + 1) * Math.PI * 2.0D / ROLLER_SIDES;
+            double middle = (angle0 + angle1) * 0.5D;
+
+            double y0 = Math.cos(angle0) * ROLLER_RADIUS;
+            double z0 = Math.sin(angle0) * ROLLER_RADIUS;
+            double y1 = Math.cos(angle1) * ROLLER_RADIUS;
+            double z1 = Math.sin(angle1) * ROLLER_RADIUS;
+
+            Vec3 normal = new Vec3(
+                    0.0D,
+                    Math.cos(middle),
+                    Math.sin(middle)
+            );
+
+            float v0 = segment / (float) ROLLER_SIDES;
+            float v1 = (segment + 1) / (float) ROLLER_SIDES;
+
+            drawQuad(
+                    sideConsumer,
+                    pose,
+                    new Vec3(x0, y0, z0),
+                    new Vec3(x1, y0, z0),
+                    new Vec3(x1, y1, z1),
+                    new Vec3(x0, y1, z1),
+                    normal,
+                    0.0F, v0,
+                    1.0F, v0,
+                    1.0F, v1,
+                    0.0F, v1,
+                    packedLight
+            );
+
+            Vec3 leftCenter = new Vec3(x0, 0.0D, 0.0D);
+            Vec3 left0 = new Vec3(x0, y0, z0);
+            Vec3 left1 = new Vec3(x0, y1, z1);
+
+            drawQuad(
+                    endConsumer,
+                    pose,
+                    leftCenter,
+                    left1,
+                    left0,
+                    leftCenter,
+                    new Vec3(-1.0D, 0.0D, 0.0D),
+                    0.5F, 0.5F,
+                    endU(z1), endV(y1),
+                    endU(z0), endV(y0),
+                    0.5F, 0.5F,
+                    packedLight
+            );
+
+            Vec3 rightCenter = new Vec3(x1, 0.0D, 0.0D);
+            Vec3 right0 = new Vec3(x1, y0, z0);
+            Vec3 right1 = new Vec3(x1, y1, z1);
+
+            drawQuad(
+                    endConsumer,
+                    pose,
+                    rightCenter,
+                    right0,
+                    right1,
+                    rightCenter,
+                    new Vec3(1.0D, 0.0D, 0.0D),
+                    0.5F, 0.5F,
+                    endU(z0), endV(y0),
+                    endU(z1), endV(y1),
+                    0.5F, 0.5F,
+                    packedLight
+            );
+        }
+    }
+
+    private float endU(double z) {
+        return (float) (0.5D + z / (ROLLER_RADIUS * 2.0D));
+    }
+
+    private float endV(double y) {
+        return (float) (0.5D - y / (ROLLER_RADIUS * 2.0D));
     }
 
     private void renderTransportedItems(ConveyorRollerBlockEntity roller,
