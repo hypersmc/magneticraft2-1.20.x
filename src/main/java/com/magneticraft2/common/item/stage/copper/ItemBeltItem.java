@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Segment item used to create one continuous wide item belt between two Conveyor Rollers.
@@ -83,22 +84,16 @@ public class ItemBeltItem extends Item {
             return fail(player, "message.magneticraft2.item_belt_start_missing");
         }
 
-        String validationError = validateConnection(level, startRoller, clickedRoller);
-        if (validationError != null) {
-            return fail(player, validationError);
-        }
-
-        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
-                startPos,
-                clickedPos,
-                startRoller.getGearAxis(),
-                MAX_ITEM_BELT_SPAN
+        PlacementCheck placement = evaluateConnection(
+                level,
+                startRoller,
+                clickedRoller
         );
-
-        if (layout == null) {
-            return fail(player, "message.magneticraft2.item_belt_unsupported_geometry");
+        if (!placement.valid()) {
+            return fail(player, placement.errorKey());
         }
 
+        ItemBeltGeometry.Layout layout = placement.layout();
         int requiredSegments = layout.requiredSegments();
 
         if (player != null
@@ -127,18 +122,64 @@ public class ItemBeltItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private String validateConnection(Level level,
-                                      ConveyorRollerBlockEntity start,
-                                      ConveyorRollerBlockEntity end) {
+    /**
+     * Returns the currently selected first roller from an Item Belt stack.
+     * Used by the client placement guide as well as normal placement state.
+     */
+    @Nullable
+    public static BlockPos getSelectedStart(ItemStack stack,
+                                            Level level) {
+        if (stack == null
+                || stack.isEmpty()
+                || !(stack.getItem() instanceof ItemBeltItem)
+                || level == null
+                || stack.getTag() == null) {
+            return null;
+        }
+
+        CompoundTag tag = stack.getTag();
+        if (!tag.contains(START_POS)
+                || !level.dimension().location().toString()
+                .equals(tag.getString(START_DIMENSION))) {
+            return null;
+        }
+
+        return BlockPos.of(tag.getLong(START_POS));
+    }
+
+    /**
+     * Shared client/server placement validation. The preview must use the same
+     * rules as the actual click so a green guide always means the server will
+     * accept that path (inventory count aside).
+     */
+    public static PlacementCheck evaluateConnection(
+            Level level,
+            ConveyorRollerBlockEntity start,
+            ConveyorRollerBlockEntity end) {
+        if (level == null || start == null || end == null) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_start_missing",
+                    null
+            );
+        }
+
         Direction.Axis axis = start.getGearAxis();
 
         if (axis == Direction.Axis.Y || axis != end.getGearAxis()) {
-            return "message.magneticraft2.item_belt_parallel_required";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_parallel_required",
+                    null
+            );
         }
 
-        if ((start.getItemBeltPartner() != null && !start.isItemBeltLinkedTo(end.getBlockPos()))
-                || (end.getItemBeltPartner() != null && !end.isItemBeltLinkedTo(start.getBlockPos()))) {
-            return "message.magneticraft2.item_belt_roller_in_use";
+        if ((start.getItemBeltPartner() != null
+                && !start.isItemBeltLinkedTo(end.getBlockPos()))
+                || (end.getItemBeltPartner() != null
+                && !end.isItemBeltLinkedTo(start.getBlockPos()))) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_roller_in_use",
+                    null
+            );
         }
 
         int dx = end.getBlockPos().getX() - start.getBlockPos().getX();
@@ -147,25 +188,37 @@ public class ItemBeltItem extends Item {
 
         if ((axis == Direction.Axis.X && dx != 0)
                 || (axis == Direction.Axis.Z && dz != 0)) {
-            return "message.magneticraft2.item_belt_same_plane_required";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_same_plane_required",
+                    null
+            );
         }
 
-        int horizontalSteps = Math.abs(axis == Direction.Axis.X ? dz : dx);
+        int horizontalSteps = Math.abs(
+                axis == Direction.Axis.X ? dz : dx
+        );
         int verticalSteps = Math.abs(dy);
         int gridSpan = Math.max(horizontalSteps, verticalSteps);
 
-        // Basic Item Belts may climb at 45 degrees, but they are not elevators.
-        // This also catches a direct up/down endpoint pair before geometry creation.
         if (verticalSteps > horizontalSteps) {
-            return "message.magneticraft2.item_belt_slope_too_steep";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_slope_too_steep",
+                    null
+            );
         }
 
         if (gridSpan > MAX_ITEM_BELT_SPAN) {
-            return "message.magneticraft2.item_belt_too_long";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_too_long",
+                    null
+            );
         }
 
         if (gridSpan < 2) {
-            return "message.magneticraft2.item_belt_too_short";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_too_short",
+                    null
+            );
         }
 
         ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
@@ -176,17 +229,23 @@ public class ItemBeltItem extends Item {
         );
 
         if (layout == null) {
-            return "message.magneticraft2.item_belt_unsupported_geometry";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_unsupported_geometry",
+                    null
+            );
         }
 
         if (!isPathClear(level, layout)) {
-            return "message.magneticraft2.item_belt_path_blocked";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.item_belt_path_blocked",
+                    layout
+            );
         }
 
-        return null;
+        return PlacementCheck.valid(layout);
     }
 
-    private boolean isPathClear(Level level, ItemBeltGeometry.Layout layout) {
+    private static boolean isPathClear(Level level, ItemBeltGeometry.Layout layout) {
         for (BlockPos beltPos : layout.beltBlocks()) {
             BlockState state = level.getBlockState(beltPos);
             if (!state.isAir() && !state.canBeReplaced()) {
@@ -233,6 +292,25 @@ public class ItemBeltItem extends Item {
         player.displayClientMessage(Component.translatable(
                 "message.magneticraft2.item_belt_removed",
                 recoveredSegments), true);
+    }
+
+    public record PlacementCheck(
+            @Nullable ItemBeltGeometry.Layout layout,
+            @Nullable String errorKey) {
+        public static PlacementCheck valid(
+                ItemBeltGeometry.Layout layout) {
+            return new PlacementCheck(layout, null);
+        }
+
+        public static PlacementCheck invalid(
+                String errorKey,
+                @Nullable ItemBeltGeometry.Layout layout) {
+            return new PlacementCheck(layout, errorKey);
+        }
+
+        public boolean valid() {
+            return layout != null && errorKey == null;
+        }
     }
 
     private InteractionResult fail(Player player, String translationKey) {
