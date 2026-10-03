@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
@@ -123,9 +124,7 @@ public class ClutchBlockEntity_woodRenderer
                 positiveAngle
         );
 
-        float collarAngle = engaged
-                ? positiveAngle
-                : positiveAngle;
+        float collarAngle = positiveAngle;
 
         double collarX = engaged
                 ? 0.0D
@@ -417,15 +416,4 @@ public class ClutchBlockEntity_woodRenderer
                 .endVertex();
     }
 
-    /**
-     * Avoid importing DirectionalBlock solely for one property access in several
-     * places above.
-     */
-    private static final class DirectionPropertyHolder {
-        private static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
-                net.minecraft.world.level.block.DirectionalBlock.FACING;
-
-        private DirectionPropertyHolder() {
-        }
-    }
 }
