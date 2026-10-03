@@ -260,6 +260,19 @@ public class GearNetworkManager {
             }
         }
 
+        // A topology split (manual clutch, overload disconnect, removed belt,
+        // etc.) must sever source ownership immediately. Detached nodes may keep
+        // some residual RPM/torque while they visually coast down, but that motion
+        // is no longer mechanically connected to the old source and therefore must
+        // not keep contributing load to it.
+        for (GearNode gear : gears.values()) {
+            if (!gear.isSource()
+                    && !activelyDriven.contains(gear.getPosition())) {
+                gear.setSourcePos(null);
+                gear.setOverloaded(false);
+            }
+        }
+
         boolean shouldDecayThisTick = shouldDecayThisTick(level);
         if (shouldDecayThisTick) {
             for (GearNode gear : gears.values()) {
