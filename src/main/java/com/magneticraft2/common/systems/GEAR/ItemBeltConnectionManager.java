@@ -49,6 +49,8 @@ public final class ItemBeltConnectionManager {
 
     private static final double MIN_ITEM_SPACING = 0.42D;
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
+    private static final String ITEM_COOLDOWN_START_TAG = "MGC2ItemBeltCooldownStart";
+    private static final String ITEM_COOLDOWN_END_TAG = "MGC2ItemBeltCooldownEnd";
     private static final String MANUAL_CAPTURED_TAG = "MGC2ItemBeltManualCaptured";
 
     private static final Map<Level, Map<BeltKey, ItemBeltConnection>> CONNECTIONS =
@@ -333,11 +335,14 @@ public final class ItemBeltConnectionManager {
                 run.captureBounds(),
                 entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
 
-            if (transportedItemCount(carrier) >= MAX_TRANSPORTED_ITEMS) {
+            // Player/world drops are intentionally limited to one transported item on a
+            // belt. Future machine insertion uses insertFromAutomation() and may occupy all
+            // four transport slots.
+            if (transportedItemCount(carrier) >= 1) {
                 break;
             }
 
-            if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) > gameTick
+            if (isCoolingDownForConnection(item, connection, gameTick)
                     || item.getPersistentData().getBoolean(MANUAL_CAPTURED_TAG)) {
                 continue;
             }
@@ -402,6 +407,7 @@ public final class ItemBeltConnectionManager {
 
                 Ejection ejection = createEjection(
                         level,
+                        connection,
                         run,
                         exitDistance,
                         travelDirection,
@@ -422,6 +428,14 @@ public final class ItemBeltConnectionManager {
                 dropped.getPersistentData().putLong(
                         ITEM_COOLDOWN_TAG,
                         gameTick + (ejection.blocked() ? 40L : 8L)
+                );
+                dropped.getPersistentData().putLong(
+                        ITEM_COOLDOWN_START_TAG,
+                        connection.key.start().asLong()
+                );
+                dropped.getPersistentData().putLong(
+                        ITEM_COOLDOWN_END_TAG,
+                        connection.key.end().asLong()
                 );
                 level.addFreshEntity(dropped);
 
@@ -1039,44 +1053,86 @@ public final class ItemBeltConnectionManager {
         return true;
     }
 
+    private static boolean isCoolingDownForConnection(ItemEntity item,
+                                                      ItemBeltConnection connection,
+                                                      long gameTick) {
+        if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) <= gameTick) {
+            return false;
+        }
+
+        if (!item.getPersistentData().contains(ITEM_COOLDOWN_START_TAG)
+                || !item.getPersistentData().contains(ITEM_COOLDOWN_END_TAG)) {
+            return true;
+        }
+
+        BeltKey cooldownKey = BeltKey.of(
+                BlockPos.of(item.getPersistentData().getLong(ITEM_COOLDOWN_START_TAG)),
+                BlockPos.of(item.getPersistentData().getLong(ITEM_COOLDOWN_END_TAG))
+        );
+
+        // Cooldown only prevents the item from being immediately swallowed back by the
+        // belt it just left. A different belt may accept it immediately, which gives us
+        // natural belt-to-belt handoff through ordinary ItemEntity physics.
+        return cooldownKey.equals(connection.key);
+    }
+
     private static Ejection createEjection(Level level,
+                                           ItemBeltConnection connection,
                                            TransportRun run,
                                            double exitDistance,
                                            Vec3 travelDirection,
                                            double blocksPerTick) {
-        Vec3 normalExit = run.pointAt(exitDistance)
+        Vec3 tangent = travelDirection.lengthSqr() < 0.000001D
+                ? run.tangent()
+                : travelDirection.normalize();
+
+        Vec3 surfaceExit = run.pointAt(exitDistance)
                 .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
 
-        Vec3 forwardProbe = normalExit.add(
-                travelDirection.normalize().scale(0.55D)
-        );
+        // Release slightly *past* the roller, not directly on its tangent point. This is
+        // especially important on an ascending belt: the item should leave the top roller
+        // moving forward, so it can land on a following belt instead of dropping straight
+        // down at the crest.
+        Vec3 forwardRelease = surfaceExit
+                .add(tangent.scale(0.28D))
+                .add(run.surfaceNormal().scale(0.04D));
+
+        Vec3 forwardProbe = forwardRelease.add(tangent.scale(0.28D));
         BlockPos forwardBlock = BlockPos.containing(forwardProbe);
-        boolean blocked = !level.getBlockState(forwardBlock)
-                .getCollisionShape(level, forwardBlock)
-                .isEmpty();
+        BlockState forwardState = level.getBlockState(forwardBlock);
+
+        boolean nextMechanicalBelt =
+                forwardState.is(BlockRegistry.ITEM_BELT_BLOCK.get())
+                        || forwardState.is(BlockRegistry.CONVEYOR_ROLLER.get());
+
+        boolean blocked = !nextMechanicalBelt
+                && !forwardState.getCollisionShape(level, forwardBlock).isEmpty();
 
         if (!blocked) {
+            // Preserve meaningful forward momentum even at early-game Water Wheel speeds.
+            // Gravity remains vanilla, so with no following belt the item naturally arcs
+            // forward and then falls; with another belt it lands on/can be captured by it.
+            double releaseSpeed = Math.max(0.075D, blocksPerTick * 1.15D);
             return new Ejection(
-                    normalExit,
-                    travelDirection.scale(Math.max(0.04D, blocksPerTick)),
+                    forwardRelease,
+                    tangent.scale(releaseSpeed),
                     false
             );
         }
 
-        // If the exit is blocked, detach the item *before* the roller rather than
-        // spawning it inside the obstruction. Give it a tiny upward kick and a longer
-        // no-recapture window so it genuinely falls off the belt.
+        // A genuine solid obstruction should not swallow the stack. Detach it just before
+        // the roller and let gravity pull it down rather than kicking it upward/back onto
+        // the same belt.
         double backedOffDistance = exitDistance <= 0.0001D
-                ? Math.min(0.35D, run.length())
-                : Math.max(0.0D, run.length() - 0.35D);
+                ? Math.min(0.32D, run.length())
+                : Math.max(0.0D, run.length() - 0.32D);
 
         Vec3 safeDrop = run.pointAt(backedOffDistance)
-                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET + 0.10D))
-                .add(0.0D, 0.12D, 0.0D);
+                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET + 0.08D));
 
         return new Ejection(
                 safeDrop,
-                new Vec3(0.0D, 0.06D, 0.0D),
+                new Vec3(0.0D, -0.035D, 0.0D),
                 true
         );
     }
