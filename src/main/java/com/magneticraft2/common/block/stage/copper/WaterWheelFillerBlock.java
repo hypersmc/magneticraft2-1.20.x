@@ -62,9 +62,9 @@ public class WaterWheelFillerBlock extends Block implements SimpleWaterloggedBlo
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return state.getValue(ACTIVE)
-                ? RenderShape.INVISIBLE
-                : RenderShape.MODEL;
+        // The controller BER draws the complete 3x3 wheel, including these occupied
+        // cells, both stopped and running.
+        return RenderShape.INVISIBLE;
     }
 
     @Override
