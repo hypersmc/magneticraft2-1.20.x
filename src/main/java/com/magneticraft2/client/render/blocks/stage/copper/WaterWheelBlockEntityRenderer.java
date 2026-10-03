@@ -80,19 +80,19 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   int packedLight) {
         // Classic narrow wooden water wheel: axle/hub in the middle, two side rims,
         // spokes on each rim, and boards spanning the two rims as actual paddles.
-        drawBox(stack, axle, packedLight, 0.72D, 0.11D, 0.11D);
-        drawBox(stack, oak, packedLight, 0.28D, 0.23D, 0.23D);
+        drawBox(stack, axle, packedLight, 1.00D, 0.16D, 0.16D);
+        drawBox(stack, oak, packedLight, 0.44D, 0.30D, 0.30D);
 
-        double sideOffset = 0.17D;
-        renderSideSpokes(stack, oak, packedLight, 4, sideOffset, 0.27D, 0.24D, 0.055D, 0.055D);
-        renderSideSpokes(stack, oak, packedLight, 4, -sideOffset, 0.27D, 0.24D, 0.055D, 0.055D);
+        double sideOffset = 0.275D;
+        renderSideSpokes(stack, oak, packedLight, 4, sideOffset, 0.275D, 0.30D, 0.075D, 0.085D);
+        renderSideSpokes(stack, oak, packedLight, 4, -sideOffset, 0.275D, 0.30D, 0.075D, 0.085D);
 
-        renderSideRim(stack, oak, packedLight, 8, sideOffset, 0.34D, 0.075D, 0.26D, 0.07D);
-        renderSideRim(stack, oak, packedLight, 8, -sideOffset, 0.34D, 0.075D, 0.26D, 0.07D);
+        renderSideRim(stack, oak, packedLight, 8, sideOffset, 0.365D, 0.11D, 0.30D, 0.10D);
+        renderSideRim(stack, oak, packedLight, 8, -sideOffset, 0.365D, 0.11D, 0.30D, 0.10D);
 
-        // Eight thin radial boards. The broad X dimension bridges both side rims; the
-        // board extends outward from the rim and is deliberately thin tangentially.
-        renderPaddles(stack, spruce, packedLight, 8, 0.43D, 0.13D, 0.065D, 0.46D);
+        // Eight full-depth paddle boards. The rim still stays inside the 1x1 footprint,
+        // but the complete wheel now uses nearly the full block in both diameter and depth.
+        renderPaddles(stack, spruce, packedLight, 8, 0.455D, 0.09D, 0.11D, 0.72D);
     }
 
     private void renderLargeWheel(PoseStack stack,
@@ -100,23 +100,22 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
                                   VertexConsumer spruce,
                                   VertexConsumer axle,
                                   int packedLight) {
-        drawBox(stack, axle, packedLight, 1.35D, 0.15D, 0.15D);
-        drawBox(stack, oak, packedLight, 0.40D, 0.32D, 0.32D);
+        drawBox(stack, axle, packedLight, 1.00D, 0.22D, 0.22D);
+        drawBox(stack, oak, packedLight, 0.58D, 0.42D, 0.42D);
 
-        double sideOffset = 0.31D;
+        double sideOffset = 0.43D;
 
-        // Two structural rims are what makes this read as a water wheel rather than a
-        // wooden gear. Each side gets its own spokes and rim, while the paddles bridge
-        // the complete depth between them.
-        renderSideSpokes(stack, oak, packedLight, 8, sideOffset, 0.66D, 0.86D, 0.075D, 0.075D);
-        renderSideSpokes(stack, oak, packedLight, 8, -sideOffset, 0.66D, 0.86D, 0.075D, 0.075D);
+        // The large wheel now really fills its 3x3x1 footprint: two substantial side rims
+        // sit close to the front/back faces and the paddles bridge almost the whole depth.
+        renderSideSpokes(stack, oak, packedLight, 8, sideOffset, 0.72D, 1.04D, 0.10D, 0.11D);
+        renderSideSpokes(stack, oak, packedLight, 8, -sideOffset, 0.72D, 1.04D, 0.10D, 0.11D);
 
-        renderSideRim(stack, oak, packedLight, 16, sideOffset, 1.11D, 0.14D, 0.43D, 0.085D);
-        renderSideRim(stack, oak, packedLight, 16, -sideOffset, 1.11D, 0.14D, 0.43D, 0.085D);
+        renderSideRim(stack, oak, packedLight, 16, sideOffset, 1.20D, 0.20D, 0.50D, 0.12D);
+        renderSideRim(stack, oak, packedLight, 16, -sideOffset, 1.20D, 0.20D, 0.50D, 0.12D);
 
-        // Sixteen real fins around the outside. They project radially beyond the rim,
-        // are only a few pixels thick tangentially, and span the two side rims.
-        renderPaddles(stack, spruce, packedLight, 16, 1.34D, 0.28D, 0.075D, 0.78D);
+        // Sixteen wide, thin paddles reach the edge of the 3-block diameter and span
+        // essentially the full one-block shaft depth.
+        renderPaddles(stack, spruce, packedLight, 16, 1.405D, 0.19D, 0.13D, 0.98D);
     }
 
     private void renderSideSpokes(PoseStack stack,
