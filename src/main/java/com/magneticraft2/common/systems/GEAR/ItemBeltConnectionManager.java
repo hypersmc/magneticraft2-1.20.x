@@ -1311,7 +1311,31 @@ public final class ItemBeltConnectionManager {
 
             double distanceSqr = sourceExit.distanceToSqr(targetEntry);
 
-            if (distanceSqr > 1.45D * 1.45D
+            Vec3 sourceTravelDirection = source.transportRun.tangent();
+            if (sourceExitDistance <= 0.0001D) {
+                sourceTravelDirection = sourceTravelDirection.scale(-1.0D);
+            }
+
+            boolean leavingUphill = sourceTravelDirection.y > 0.15D;
+            double maxHandoffDistance = leavingUphill ? 1.90D : 1.45D;
+
+            // On an uphill exit the receiving horizontal belt can sit a little farther
+            // beyond the crest than an ordinary same-level corner. Allow that extra reach,
+            // but reject candidates that are actually behind the direction of travel.
+            Vec3 toTarget = targetEntry.subtract(sourceExit);
+            Vec3 horizontalTravel = new Vec3(
+                    sourceTravelDirection.x,
+                    0.0D,
+                    sourceTravelDirection.z
+            );
+            if (leavingUphill
+                    && horizontalTravel.lengthSqr() > 0.000001D
+                    && new Vec3(toTarget.x, 0.0D, toTarget.z)
+                    .dot(horizontalTravel.normalize()) < -0.10D) {
+                continue;
+            }
+
+            if (distanceSqr > maxHandoffDistance * maxHandoffDistance
                     || distanceSqr >= bestDistanceSqr) {
                 continue;
             }
@@ -1394,9 +1418,40 @@ public final class ItemBeltConnectionManager {
         Vec3 surfaceExit = run.pointAt(exitDistance)
                 .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
 
-        // Put the detached entity clearly in the block in front of the roller, not on the
-        // roller tangent itself. This makes ascending belts throw forward onto a following
-        // belt; if no belt exists, vanilla gravity naturally takes over from there.
+        double horizontalLength = Math.sqrt(
+                tangent.x * tangent.x + tangent.z * tangent.z
+        );
+
+        // At the crest of an ascending belt, following the exact 45-degree tangent wastes
+        // half the release distance going upward. Bias the detached item across the top
+        // roller instead: lots of forward travel, only a little lift. That lets it reach a
+        // horizontal belt sitting just beyond the crest while still falling naturally if
+        // there is nothing there.
+        if (tangent.y > 0.15D && horizontalLength > 0.0001D) {
+            Vec3 horizontalForward = new Vec3(
+                    tangent.x / horizontalLength,
+                    0.0D,
+                    tangent.z / horizontalLength
+            );
+
+            Vec3 forwardRelease = surfaceExit
+                    .add(horizontalForward.scale(0.90D))
+                    .add(0.0D, 0.16D, 0.0D)
+                    .add(run.surfaceNormal().scale(0.02D));
+
+            double horizontalSpeed = Math.max(
+                    0.115D,
+                    blocksPerTick * 1.45D
+            );
+
+            return new Ejection(
+                    forwardRelease,
+                    horizontalForward.scale(horizontalSpeed)
+                            .add(0.0D, 0.025D, 0.0D)
+            );
+        }
+
+        // Horizontal/downhill exits keep their ordinary tangent handoff.
         Vec3 forwardRelease = surfaceExit
                 .add(tangent.scale(0.78D))
                 .add(run.surfaceNormal().scale(0.03D));
