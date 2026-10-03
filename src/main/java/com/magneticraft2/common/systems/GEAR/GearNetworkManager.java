@@ -40,6 +40,8 @@ public class GearNetworkManager {
 
     private final Map<ResourceKey<Level>, Map<BlockPos, GearNode>> gearsByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Map<BlockPos, MechanicalLoad>> loadsByLevel = new HashMap<>();
+    private final Map<ResourceKey<Level>, Map<BlockPos, List<GearConnection>>> connectionsByLevel = new HashMap<>();
+    private final Set<ResourceKey<Level>> topologyDirtyLevels = new HashSet<>();
     private final Map<ResourceKey<Level>, Long> lastDecayTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastRotationTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastNetworkTickByLevel = new HashMap<>();
@@ -60,6 +62,7 @@ public class GearNetworkManager {
             return;
         }
         getGearMap(level).put(gear.getPosition(), gear);
+        markTopologyDirty(level);
         updateNetwork(level);
     }
 
@@ -71,16 +74,17 @@ public class GearNetworkManager {
         }
 
         registerGearMetadata(gearBlockEntity);
+        markTopologyDirty(gearBlockEntity.getLevel());
         // Explicit calls mean something meaningful changed (placement, source state,
         // topology, etc.), so refresh immediately. Normal per-BE ticking uses tickGear()
         // and is guarded to one whole-network evaluation per level per game tick.
         updateNetwork(gearBlockEntity.getLevel());
     }
 
-    private void registerGearMetadata(GearBlockEntity gearBlockEntity) {
+    private boolean registerGearMetadata(GearBlockEntity gearBlockEntity) {
         Level level = gearBlockEntity.getLevel();
         if (level == null || level.isClientSide) {
-            return;
+            return false;
         }
 
         GearNode node = gearBlockEntity.getOrCreateGearNode();
@@ -88,14 +92,20 @@ public class GearNetworkManager {
         node.setAxis(gearBlockEntity.getGearAxis());
         node.setMaxTorque(gearBlockEntity.getGearMaxTorque());
         node.setShaftLike(gearBlockEntity.isShaftLike());
-        getGearMap(level).put(node.getPosition(), node);
+
+        Map<BlockPos, GearNode> gears = getGearMap(level);
+        boolean newlyRegistered = !gears.containsKey(node.getPosition());
+        gears.put(node.getPosition(), node);
+        return newlyRegistered;
     }
 
     public void removeGear(BlockPos position, Level level) {
         if (position == null || level == null || level.isClientSide) {
             return;
         }
-        getGearMap(level).remove(position);
+        if (getGearMap(level).remove(position) != null) {
+            markTopologyDirty(level);
+        }
         updateNetwork(level);
     }
 
@@ -107,7 +117,9 @@ public class GearNetworkManager {
         }
 
         Level level = gearBlockEntity.getLevel();
-        registerGearMetadata(gearBlockEntity);
+        if (registerGearMetadata(gearBlockEntity)) {
+            markTopologyDirty(level);
+        }
 
         ResourceKey<Level> dimension = level.dimension();
         long gameTime = level.getGameTime();
@@ -131,8 +143,17 @@ public class GearNetworkManager {
         }
 
         Map<BlockPos, GearNode> gears = getGearMap(level);
-        removeMissingBlockEntities(level, gears);
-        refreshGearMetadata(level, gears);
+        ResourceKey<Level> dimension = level.dimension();
+
+        boolean topologyDirty = topologyDirtyLevels.remove(dimension);
+        if (removeMissingBlockEntities(level, gears)) {
+            topologyDirty = true;
+        }
+
+        if (topologyDirty) {
+            refreshGearMetadata(level, gears);
+            getConnectionCache(level).clear();
+        }
 
         Queue<GearNode> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
@@ -527,8 +548,11 @@ public class GearNetworkManager {
         }
     }
 
-    private void removeMissingBlockEntities(Level level, Map<BlockPos, GearNode> gears) {
-        gears.entrySet().removeIf(entry -> !(level.getBlockEntity(entry.getKey()) instanceof GearBlockEntity));
+    private boolean removeMissingBlockEntities(Level level, Map<BlockPos, GearNode> gears) {
+        int before = gears.size();
+        gears.entrySet().removeIf(entry ->
+                !(level.getBlockEntity(entry.getKey()) instanceof GearBlockEntity));
+        return gears.size() != before;
     }
 
     private int getTeethFor(Level level, BlockPos pos, int fallback) {
@@ -605,6 +629,19 @@ public class GearNetworkManager {
     }
 
     private List<GearConnection> getConnectedGears(BlockPos pos, Level level) {
+        Map<BlockPos, List<GearConnection>> cache = getConnectionCache(level);
+        List<GearConnection> cached = cache.get(pos);
+        if (cached != null) {
+            return cached;
+        }
+
+        List<GearConnection> calculated = calculateConnectedGears(pos, level);
+        List<GearConnection> immutable = List.copyOf(calculated);
+        cache.put(pos.immutable(), immutable);
+        return immutable;
+    }
+
+    private List<GearConnection> calculateConnectedGears(BlockPos pos, Level level) {
         List<GearConnection> connected = new ArrayList<>();
         Map<BlockPos, GearNode> gears = getGearMap(level);
         GearNode gear = gears.get(pos);
@@ -865,6 +902,26 @@ public class GearNetworkManager {
                         " | Axis: " + gear.getAxis());
             }
         }
+    }
+
+    private void markTopologyDirty(Level level) {
+        if (level == null) {
+            return;
+        }
+
+        ResourceKey<Level> dimension = level.dimension();
+        topologyDirtyLevels.add(dimension);
+        Map<BlockPos, List<GearConnection>> cache = connectionsByLevel.get(dimension);
+        if (cache != null) {
+            cache.clear();
+        }
+    }
+
+    private Map<BlockPos, List<GearConnection>> getConnectionCache(Level level) {
+        return connectionsByLevel.computeIfAbsent(
+                level.dimension(),
+                ignored -> new HashMap<>()
+        );
     }
 
     private Map<BlockPos, GearNode> getGearMap(Level level) {
