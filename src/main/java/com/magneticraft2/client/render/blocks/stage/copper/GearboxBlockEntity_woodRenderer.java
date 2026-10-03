@@ -106,35 +106,37 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         // real port is EAST/WEST, UP/DOWN or NORTH/SOUTH.
         orientLocalXToDirection(stack, port);
 
-        double gearCenter = secondary ? 0.175D : 0.165D;
+        // A 1:1 miter pair has both pitch cones meeting at the intersection of the
+        // two shaft axes. Keep each wheel close to that intersection instead of
+        // rendering two large spur-like crowns on opposite sides of the housing.
+        double gearCenter = 0.105D;
         stack.translate(gearCenter, 0.0D, 0.0D);
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        // Small hub kept away from the common center so the two perpendicular hubs do not
-        // visually intersect.
+        // Compact hub on the shaft side of the wheel.
         drawBox(
                 stack,
                 consumer,
                 packedLight,
+                0.10D,
                 0.14D,
-                0.18D,
-                0.18D
+                0.14D
         );
 
-        double radius = secondary ? 0.215D : 0.225D;
-        double radialDepth = secondary ? 0.095D : 0.10D;
-        double tangentWidth = secondary ? 0.105D : 0.115D;
-        double axialDepth = 0.105D;
+        double radius = 0.145D;
+        double radialDepth = 0.070D;
+        double tangentWidth = 0.082D;
+        double axialDepth = 0.070D;
 
         for (int i = 0; i < 8; i++) {
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees(i * 45.0F));
 
-            // Teeth sit on a shallow cone. Their outer ends lean toward local -X (the
-            // gearbox center), making the two perpendicular tooth rings meet like actual
-            // wooden miter gears instead of two flat spur gears clipping through each other.
-            stack.translate(-0.02D, radius, 0.0D);
-            stack.mulPose(Axis.ZP.rotationDegrees(28.0F));
+            // For equal-size bevel gears the tooth face is approximately a 45 degree
+            // cone. Move the tooth ring inward and lean it toward the common shaft
+            // intersection so the two wheels visibly mesh at the corner.
+            stack.translate(-0.040D, radius, 0.0D);
+            stack.mulPose(Axis.ZP.rotationDegrees(45.0F));
 
             drawBox(
                     stack,
@@ -148,19 +150,19 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
             stack.popPose();
         }
 
-        // Inner support ring/spokes: smaller and farther out on the shaft than the tooth
-        // tips, reinforcing the truncated-cone silhouette.
+        // Four short spokes make the wheel read as a gear rather than eight floating
+        // wooden blocks. They stay on the shaft side of the bevel tooth ring.
         for (int i = 0; i < 4; i++) {
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees(i * 90.0F));
-            stack.translate(0.035D, 0.13D, 0.0D);
+            stack.translate(0.020D, 0.085D, 0.0D);
             drawBox(
                     stack,
                     consumer,
                     packedLight,
-                    0.075D,
-                    0.15D,
-                    0.055D
+                    0.050D,
+                    0.105D,
+                    0.045D
             );
             stack.popPose();
         }
