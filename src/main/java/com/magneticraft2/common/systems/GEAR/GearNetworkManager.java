@@ -3,6 +3,7 @@ package com.magneticraft2.common.systems.GEAR;
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -618,10 +619,14 @@ public class GearNetworkManager {
             }
         }
 
-        // External gear tooth meshing uses centered axle geometry:
-        // medium-medium is adjacent and straight, medium-large is diagonal (1,1), and
-        // large-large is straight at distance 2. No render-only center nudging is required.
-        if (gear.isShaftLike()) {
+        // External gear/rim meshing. Ordinary shaft-like nodes stop here, but hybrid
+        // components such as Water Wheels expose both an axial shaft port and a visible
+        // rim that can drive gears directly.
+        GearBlockEntity currentBlockEntity =
+                blockEntity instanceof GearBlockEntity gearBlockEntity
+                        ? gearBlockEntity
+                        : null;
+        if (currentBlockEntity == null || !currentBlockEntity.supportsExternalGearMesh()) {
             return connected;
         }
 
@@ -635,7 +640,13 @@ public class GearNetworkManager {
             }
 
             GearNode neighbor = gears.get(scanPos);
-            if (neighbor == null || neighbor.isShaftLike() || neighbor.getAxis() != gear.getAxis()) {
+            if (neighbor == null || neighbor.getAxis() != gear.getAxis()) {
+                continue;
+            }
+
+            BlockEntity neighborBlockEntity = level.getBlockEntity(scanPos);
+            if (!(neighborBlockEntity instanceof GearBlockEntity neighborGearBlockEntity)
+                    || !neighborGearBlockEntity.supportsExternalGearMesh()) {
                 continue;
             }
 
@@ -643,12 +654,17 @@ public class GearNetworkManager {
                 continue;
             }
 
-            if (GearPlacementValidator.isValidExternalMeshOffset(
+            boolean validMesh = isValidExternalMeshBetween(
                     pos,
+                    currentBlockEntity,
                     scanPos,
+                    neighborGearBlockEntity,
                     gear.getAxis(),
                     gear.getTeeth(),
-                    neighbor.getTeeth())
+                    neighbor.getTeeth()
+            );
+
+            if (validMesh
                     && GearPlacementValidator.hasRequiredExternalMeshClearance(
                     level,
                     pos,
@@ -661,6 +677,70 @@ public class GearNetworkManager {
         }
 
         return connected;
+    }
+
+    private boolean isValidExternalMeshBetween(BlockPos firstPos,
+                                               GearBlockEntity first,
+                                               BlockPos secondPos,
+                                               GearBlockEntity second,
+                                               Direction.Axis axis,
+                                               int firstTeeth,
+                                               int secondTeeth) {
+        boolean firstWaterWheel = first instanceof WaterWheelBlockEntity;
+        boolean secondWaterWheel = second instanceof WaterWheelBlockEntity;
+
+        if (!firstWaterWheel && !secondWaterWheel) {
+            return GearPlacementValidator.isValidExternalMeshOffset(
+                    firstPos,
+                    secondPos,
+                    axis,
+                    firstTeeth,
+                    secondTeeth
+            );
+        }
+
+        WaterWheelBlockEntity wheel = firstWaterWheel
+                ? (WaterWheelBlockEntity) first
+                : (WaterWheelBlockEntity) second;
+        BlockPos wheelPos = firstWaterWheel ? firstPos : secondPos;
+        BlockPos gearPos = firstWaterWheel ? secondPos : firstPos;
+
+        int[] offset = getPlanarOffsetComponents(wheelPos, gearPos, axis);
+        int a = offset[0];
+        int b = offset[1];
+
+        if (wheel.isLarge()) {
+            // The 3x3 wheel occupies every cell one block from the axle, so a directly
+            // meshed Medium or Large Gear sits two blocks from the axle along a cardinal
+            // direction, against the outside of the wheel rim.
+            return (a == 2 && b == 0) || (a == 0 && b == 2);
+        }
+
+        // The 1x1 wheel uses the same pitch relationships as the corresponding wooden
+        // 8-tooth node.
+        return GearPlacementValidator.isValidExternalMeshOffset(
+                firstPos,
+                secondPos,
+                axis,
+                firstTeeth,
+                secondTeeth
+        );
+    }
+
+    private int[] getPlanarOffsetComponents(BlockPos first,
+                                            BlockPos second,
+                                            Direction.Axis axis) {
+        int dx = Math.abs(second.getX() - first.getX());
+        int dy = Math.abs(second.getY() - first.getY());
+        int dz = Math.abs(second.getZ() - first.getZ());
+
+        if (axis == Direction.Axis.X) {
+            return new int[]{dy, dz};
+        }
+        if (axis == Direction.Axis.Y) {
+            return new int[]{dx, dz};
+        }
+        return new int[]{dx, dy};
     }
 
     public GearNode getGear(BlockPos position) {
