@@ -97,6 +97,18 @@ public final class ItemBeltConnectionManager {
 
         if (layout == null) {
             levelConnections.remove(key);
+
+            // Migration from the short-lived vertical-belt implementation. Those
+            // connections are no longer valid, but leaving the saved endpoint links
+            // would permanently mark both rollers as "in use". Tear a direct vertical
+            // legacy run down once on the server and refund its generated segments.
+            if (!level.isClientSide
+                    && start.getBlockPos().getX() == end.getBlockPos().getX()
+                    && start.getBlockPos().getZ() == end.getBlockPos().getZ()
+                    && start.getBlockPos().getY() != end.getBlockPos().getY()) {
+                removeLegacyVerticalConnection(level, start, end);
+            }
+
             return;
         }
 
@@ -267,7 +279,7 @@ public final class ItemBeltConnectionManager {
         //     v = omega x r
         //
         // Projecting that onto the carrying-run tangent avoids hard-coded sign assumptions
-        // and works identically for horizontal, 45-degree and vertical belts.
+        // and works identically for horizontal and 45-degree belts.
         int direction = transportDirection(
                 connection,
                 start.getDirectionMultiplier()
@@ -1014,6 +1026,60 @@ public final class ItemBeltConnectionManager {
                 dropPos.getZ() + 0.5D,
                 new ItemStack(ItemRegistry.ITEM_ITEM_BELT.get(), count)
         ));
+    }
+
+    private static void removeLegacyVerticalConnection(
+            Level level,
+            ConveyorRollerBlockEntity first,
+            ConveyorRollerBlockEntity second) {
+        BlockPos firstPos = first.getBlockPos();
+        BlockPos secondPos = second.getBlockPos();
+
+        int dy = Integer.signum(secondPos.getY() - firstPos.getY());
+        int distance = Math.abs(secondPos.getY() - firstPos.getY());
+        int recoveredSegments = Math.max(0, distance - 1);
+
+        Set<BlockPos> removing = REMOVING_PHYSICAL_BLOCKS.computeIfAbsent(
+                level,
+                ignored -> new HashSet<>()
+        );
+        List<BlockPos> legacyBlocks = new ArrayList<>();
+
+        for (int step = 1; step < distance; step++) {
+            legacyBlocks.add(firstPos.offset(0, dy * step, 0).immutable());
+        }
+
+        try {
+            removing.addAll(legacyBlocks);
+            for (BlockPos pos : legacyBlocks) {
+                if (level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                    level.removeBlock(pos, false);
+                }
+            }
+        } finally {
+            removing.removeAll(legacyBlocks);
+            if (removing.isEmpty()) {
+                REMOVING_PHYSICAL_BLOCKS.remove(level);
+            }
+        }
+
+        ejectTransportedItemsFromRoller(level, first, firstPos);
+        ejectTransportedItemsFromRoller(level, second, firstPos);
+
+        first.clearItemBeltLink();
+        if (second.isItemBeltLinkedTo(firstPos)) {
+            second.clearItemBeltLink();
+        }
+
+        GearNetworkManager.getInstance().removeMechanicalLoad(level, firstPos);
+
+        if (recoveredSegments > 0) {
+            dropItemBeltSegments(
+                    level,
+                    firstPos,
+                    recoveredSegments
+            );
+        }
     }
 
     private static void removePhysicalBlocks(Level level,
