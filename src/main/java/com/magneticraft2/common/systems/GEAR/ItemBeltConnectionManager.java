@@ -385,11 +385,21 @@ public final class ItemBeltConnectionManager {
 
         BeltKey key = BeltKey.of(first, second);
         ItemBeltConnection connection = map.remove(key);
-        if (connection != null) {
-            if (!level.isClientSide) {
-                GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
-                removePhysicalBlocks(level, connection);
-            }
+        if (connection != null && !level.isClientSide) {
+            GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
+
+            ConveyorRollerBlockEntity startRoller =
+                    level.getBlockEntity(key.start()) instanceof ConveyorRollerBlockEntity start
+                            ? start
+                            : null;
+            ConveyorRollerBlockEntity endRoller =
+                    level.getBlockEntity(key.end()) instanceof ConveyorRollerBlockEntity end
+                            ? end
+                            : null;
+
+            ejectTransportedItemsFromRoller(level, startRoller, key.start());
+            ejectTransportedItemsFromRoller(level, endRoller, key.end());
+            removePhysicalBlocks(level, connection.layout);
         }
 
         if (map.isEmpty()) {
