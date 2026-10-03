@@ -135,11 +135,19 @@ public class GearNetworkManager {
                         ? 1.0F
                         : (float) current.getTeeth() / (float) neighbor.getTeeth();
                 float newSpeed = current.getSpeed() * ratio;
-                float newTorque = current.getTorque() / Math.max(TORQUE_EPSILON, ratio);
-                boolean overloaded = newTorque > neighbor.getMaxTorque() + TORQUE_EPSILON;
 
-                neighbor.setTorque(newTorque);
-                neighbor.setOverloaded(overloaded);
+                // Torque on the network is available capacity, not a load that is being
+                // continuously applied. A 16T shaft connected to an 8T wooden gear does
+                // not magically put 16T through that unloaded gear and stall it; the gear
+                // can simply pass at most 8T. Actual overload is evaluated later from
+                // MechanicalLoad demand.
+                float availableTorque =
+                        current.getTorque() / Math.max(TORQUE_EPSILON, ratio);
+                float transmittedTorque =
+                        Math.min(availableTorque, neighbor.getMaxTorque());
+
+                neighbor.setTorque(transmittedTorque);
+                neighbor.setOverloaded(false);
 
                 if (connection.kind() == ConnectionKind.SHAFT) {
                     neighbor.setMeshPhaseDegrees(current.getMeshPhaseDegrees());
@@ -155,12 +163,8 @@ public class GearNetworkManager {
                 }
                 neighbor.setSourcePos(current.getSourcePos() == null ? current.getPosition() : current.getSourcePos());
 
-                if (overloaded) {
-                    neighbor.setSpeed(0.0F);
-                } else {
-                    neighbor.setSpeed(newSpeed);
-                    queue.add(neighbor);
-                }
+                neighbor.setSpeed(newSpeed);
+                queue.add(neighbor);
 
                 visited.add(connection.neighborPos());
                 activelyDriven.add(connection.neighborPos());
