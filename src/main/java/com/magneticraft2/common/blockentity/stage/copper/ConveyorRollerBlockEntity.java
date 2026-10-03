@@ -214,6 +214,21 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         updateGearNetwork();
     }
 
+    /**
+     * Clears only this endpoint's saved/rendered belt link. Used by the authoritative
+     * connection manager while it is already tearing the full belt down, so it must not
+     * recursively remove the same connection again.
+     */
+    public void clearItemBeltLink() {
+        if (itemBeltPartner == null) {
+            return;
+        }
+
+        itemBeltPartner = null;
+        syncItemBeltState();
+        updateGearNetwork();
+    }
+
     public void disconnectItemBelt(boolean notifyPartner) {
         BlockPos oldPartner = itemBeltPartner;
         if (oldPartner == null) {
