@@ -407,7 +407,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
 
         graphics.drawString(
                 font,
-                "Connected faces: " + ports,
+                "Ports: " + ports,
                 left + 10,
                 top + 166,
                 activePorts.isEmpty() ? 0xFFB9A98E : 0xFFB9DCA6,
@@ -417,8 +417,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         graphics.drawString(
                 font,
                 gearbox.isGraphValid()
-                        ? "Mechanical path: valid"
-                        : "Mechanical path: conflicting gear loop",
+                        ? "Path: valid"
+                        : "Path: conflicting loop",
                 left + 10,
                 top + 179,
                 gearbox.isGraphValid() ? 0xFF91D67B : 0xFFFF6666,
@@ -429,8 +429,8 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
             graphics.drawString(
                     font,
                     selectedSlice == 0
-                            ? "Center cell can expose the NORTH face."
-                            : "Center cell can expose the SOUTH face.",
+                            ? "NORTH port: center cell"
+                            : "SOUTH port: center cell",
                     left + 10,
                     top + 192,
                     0xFFB9A98E,
@@ -439,7 +439,7 @@ public class CustomGearboxScreen extends AbstractContainerScreen<CustomGearboxMe
         } else {
             graphics.drawString(
                     font,
-                    "Edge-center cells expose WEST / EAST / UP / DOWN.",
+                    "Ports: W / E / UP / DOWN edge centers.",
                     left + 10,
                     top + 192,
                     0xFFB9A98E,
