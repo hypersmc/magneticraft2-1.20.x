@@ -113,7 +113,7 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
-        TransportRun transportRun = findCarryingRun(path, start.getBlockPos());
+        TransportRun transportRun = findCarryingRun(path, start.getBlockPos(), layout);
         if (transportRun == null) {
             levelConnections.remove(key);
             return;
@@ -529,8 +529,37 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    public static PhysicalBeltState getPhysicalBeltState(Level level,
+                                                        BlockPos first,
+                                                        BlockPos second) {
+        if (level == null || first == null || second == null) {
+            return new PhysicalBeltState(0, 0);
+        }
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return new PhysicalBeltState(0, 0);
+        }
+
+        ItemBeltConnection connection = map.get(BeltKey.of(first, second));
+        if (connection == null) {
+            return new PhysicalBeltState(0, 0);
+        }
+
+        int present = 0;
+        for (BlockPos pos : connection.layout.beltBlocks()) {
+            if (level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                present++;
+            }
+        }
+
+        return new PhysicalBeltState(connection.layout.beltBlocks().size(), present);
+    }
+
     @Nullable
-    private static TransportRun findCarryingRun(BeltPath path, BlockPos canonicalStart) {
+    private static TransportRun findCarryingRun(BeltPath path,
+                                                 BlockPos canonicalStart,
+                                                 ItemBeltGeometry.Layout layout) {
         List<BeltPath.Segment> straightSegments = path.segments().stream()
                 .filter(segment -> segment.type() == BeltPath.SegmentType.STRAIGHT)
                 .toList();
@@ -539,7 +568,12 @@ public final class ItemBeltConnectionManager {
             return null;
         }
 
-        BeltPath.Segment carrying = straightSegments.stream()
+        // For vertical belts both long runs have the same average Y. BeltPath emits the
+        // carrying-side tangent first, and ItemBeltGeometry encodes that same side in
+        // FACING. Horizontal/sloped belts can simply choose the physically upper run.
+        BeltPath.Segment carrying = layout.slope() == ItemBeltGeometry.BeltSlope.VERTICAL
+                ? straightSegments.get(0)
+                : straightSegments.stream()
                 .max(Comparator.comparingDouble(segment ->
                         (segment.from().y + segment.to().y) * 0.5D))
                 .orElse(null);
@@ -606,6 +640,12 @@ public final class ItemBeltConnectionManager {
 
         private boolean contains(BlockPos pos) {
             return start.equals(pos) || end.equals(pos);
+        }
+    }
+
+    public record PhysicalBeltState(int expectedCells, int presentCells) {
+        public boolean complete() {
+            return expectedCells > 0 && expectedCells == presentCells;
         }
     }
 
