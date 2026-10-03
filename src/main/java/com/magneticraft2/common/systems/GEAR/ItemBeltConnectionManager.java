@@ -51,6 +51,8 @@ public final class ItemBeltConnectionManager {
     private static final double MIN_ITEM_SPACING = 0.50D;
     private static final double MAX_LATERAL_OFFSET = 0.24D;
     public static final double HANDOFF_BLEND_DISTANCE = 0.48D;
+    private static final int PHYSICAL_BELT_VALIDATION_INTERVAL_TICKS = 20;
+    private static final int LOOSE_ITEM_SCAN_INTERVAL_TICKS = 2;
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
     private static final String ITEM_COOLDOWN_START_TAG = "MGC2ItemBeltCooldownStart";
     private static final String ITEM_COOLDOWN_END_TAG = "MGC2ItemBeltCooldownEnd";
@@ -103,9 +105,6 @@ public final class ItemBeltConnectionManager {
                 && existing.axis == start.getGearAxis()
                 && existing.layout.equals(layout)
                 && Math.abs(existing.radius - start.getRollerRadius()) < 0.00001D) {
-            if (!level.isClientSide) {
-                ensurePhysicalBlocks(level, existing);
-            }
             return;
         }
 
@@ -175,7 +174,9 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
-        ensureRegistered(roller);
+        if (!isRegistered(level, roller.getBlockPos(), partnerPos)) {
+            ensureRegistered(roller);
+        }
 
         Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
         if (map == null) {
@@ -205,13 +206,23 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
-        if (!hasCompletePhysicalBelt(level, connection)) {
-            // Do not silently overwrite a newly placed obstruction. A valid saved belt will
-            // recreate missing replaceable cells, but an occupied route remains stopped until
-            // the player clears/reconnects it.
-            if (!ensurePhysicalBlocks(level, connection)) {
-                GearNetworkManager.getInstance().removeMechanicalLoad(level, connection.key.start());
-                return;
+        long gameTick = level.getGameTime();
+        if (connection.lastPhysicalValidationTick == Long.MIN_VALUE
+                || gameTick - connection.lastPhysicalValidationTick
+                >= PHYSICAL_BELT_VALIDATION_INTERVAL_TICKS) {
+            connection.lastPhysicalValidationTick = gameTick;
+
+            if (!hasCompletePhysicalBelt(level, connection)) {
+                // Block removal already tears belts down immediately. This periodic pass is
+                // only a recovery/sanity check, so it does not need to rescan every cell
+                // every server tick.
+                if (!ensurePhysicalBlocks(level, connection)) {
+                    GearNetworkManager.getInstance().removeMechanicalLoad(
+                            level,
+                            connection.key.start()
+                    );
+                    return;
+                }
             }
         }
 
@@ -329,14 +340,24 @@ public final class ItemBeltConnectionManager {
         boolean changed = false;
         boolean listChanged = false;
 
-        // Loose world items are the "player/manual" input path. Capture exactly one
-        // item from that dropped entity and never repeatedly drain the remainder of the
-        // same ItemEntity on subsequent ticks. Automated machines use insertFromAutomation()
-        // and may fill the belt up to its four-item capacity.
-        for (ItemEntity item : level.getEntitiesOfClass(
-                ItemEntity.class,
-                run.captureBounds(),
-                entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
+        // Entity queries over a long belt AABB are much more expensive than advancing
+        // our four belt-owned transported items. Scan loose world items at 10 Hz while the
+        // deterministic transported-item simulation still runs every tick.
+        boolean scanLooseItems = transportedItemCount(carrier) < MAX_TRANSPORTED_ITEMS
+                && (connection.lastLooseItemScanTick == Long.MIN_VALUE
+                || gameTick - connection.lastLooseItemScanTick
+                >= LOOSE_ITEM_SCAN_INTERVAL_TICKS);
+
+        if (scanLooseItems) {
+            connection.lastLooseItemScanTick = gameTick;
+
+            // Loose world items are the "player/manual" input path. Capture exactly one
+            // item from that dropped entity and never repeatedly drain the remainder of
+            // the same ItemEntity on subsequent ticks.
+            for (ItemEntity item : level.getEntitiesOfClass(
+                    ItemEntity.class,
+                    run.captureBounds(),
+                    entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
 
             // The belt may carry up to four items regardless of where they came from.
             // A player-dropped ItemEntity contributes only one item from its stack; future
@@ -390,8 +411,9 @@ public final class ItemBeltConnectionManager {
                 item.hurtMarked = true;
             }
 
-            changed = true;
-            listChanged = true;
+                changed = true;
+                listChanged = true;
+            }
         }
 
         List<ConveyorRollerBlockEntity.TransportedItem> transportedItems =
@@ -1608,6 +1630,8 @@ public final class ItemBeltConnectionManager {
         private final ItemBeltGeometry.Layout layout;
         private final TransportRun transportRun;
         private long lastProcessedTick = Long.MIN_VALUE;
+        private long lastPhysicalValidationTick = Long.MIN_VALUE;
+        private long lastLooseItemScanTick = Long.MIN_VALUE;
 
         private ItemBeltConnection(BeltKey key,
                                    Direction.Axis axis,
