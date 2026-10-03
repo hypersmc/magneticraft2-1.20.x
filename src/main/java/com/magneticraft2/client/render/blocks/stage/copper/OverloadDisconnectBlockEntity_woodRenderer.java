@@ -17,6 +17,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+/**
+ * Only the exposed shaft ends are dynamic.
+ *
+ * The wooden breaker housing, copper straps and trip indicator stay in the JSON
+ * block model even while the drivetrain is moving. This keeps item/block visuals
+ * identical and avoids rebuilding the whole enclosure in the BER.
+ */
 public class OverloadDisconnectBlockEntity_woodRenderer
         implements BlockEntityRenderer<OverloadDisconnectBlockEntity_wood> {
 
@@ -24,24 +31,6 @@ public class OverloadDisconnectBlockEntity_woodRenderer
             new ResourceLocation(
                     "minecraft",
                     "textures/block/stripped_oak_log.png"
-            );
-
-    private static final ResourceLocation WOOD_TEXTURE =
-            new ResourceLocation(
-                    "minecraft",
-                    "textures/block/spruce_planks.png"
-            );
-
-    private static final ResourceLocation COPPER_TEXTURE =
-            new ResourceLocation(
-                    "minecraft",
-                    "textures/block/copper_block.png"
-            );
-
-    private static final ResourceLocation TRIP_TEXTURE =
-            new ResourceLocation(
-                    "minecraft",
-                    "textures/block/redstone_block.png"
             );
 
     public OverloadDisconnectBlockEntity_woodRenderer(
@@ -76,7 +65,6 @@ public class OverloadDisconnectBlockEntity_woodRenderer
                 positive,
                 partialTicks
         );
-
         float negativeAngle = sideRotation(
                 disconnect,
                 negative,
@@ -103,6 +91,8 @@ public class OverloadDisconnectBlockEntity_woodRenderer
                         )
                 );
 
+        // Run both halves through the housing. The static JSON casing hides the
+        // internal section, leaving only the two external shaft ends visible.
         renderRotatingBox(
                 stack,
                 shaftConsumer,
@@ -122,71 +112,6 @@ public class OverloadDisconnectBlockEntity_woodRenderer
                 0.375D,
                 positiveAngle
         );
-
-        VertexConsumer woodConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                WOOD_TEXTURE
-                        )
-                );
-
-        drawBox(
-                stack,
-                woodConsumer,
-                packedLight,
-                0.30D,
-                0.54D,
-                0.54D
-        );
-
-        VertexConsumer copperConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                COPPER_TEXTURE
-                        )
-                );
-
-        for (double x : new double[]{-0.115D, 0.115D}) {
-            stack.pushPose();
-            stack.translate(x, 0.0D, 0.0D);
-            drawBox(
-                    stack,
-                    copperConsumer,
-                    packedLight,
-                    0.04D,
-                    0.575D,
-                    0.575D
-            );
-            stack.popPose();
-        }
-
-        ResourceLocation indicatorTexture =
-                disconnect.isTripped()
-                        ? TRIP_TEXTURE
-                        : COPPER_TEXTURE;
-
-        VertexConsumer indicatorConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                indicatorTexture
-                        )
-                );
-
-        stack.pushPose();
-        stack.translate(
-                0.0D,
-                0.34D,
-                0.0D
-        );
-        drawBox(
-                stack,
-                indicatorConsumer,
-                packedLight,
-                0.14D,
-                0.12D,
-                0.18D
-        );
-        stack.popPose();
 
         stack.popPose();
     }
