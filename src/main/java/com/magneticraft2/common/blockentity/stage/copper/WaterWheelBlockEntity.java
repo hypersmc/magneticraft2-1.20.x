@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -206,6 +207,18 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
                 }
 
                 Vec3 flow = fluidState.getFlow(level, samplePos);
+
+                // Vanilla FlowingFluid#getFlow() only injects its downward component for
+                // FALLING water in certain solid-face situations. Around waterlogged wheel
+                // cells that can produce a zero vector even though a visible falling stream
+                // is still hitting the paddles. Falling water is unambiguously moving down,
+                // so preserve that physical information explicitly.
+                if (flow.lengthSqr() < 0.0001D
+                        && fluidState.hasProperty(FlowingFluid.FALLING)
+                        && fluidState.getValue(FlowingFluid.FALLING)) {
+                    flow = new Vec3(0.0D, -1.0D, 0.0D);
+                }
+
                 if (flow.lengthSqr() < 0.0001D) {
                     continue;
                 }
