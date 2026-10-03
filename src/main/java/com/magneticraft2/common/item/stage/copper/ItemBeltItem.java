@@ -154,6 +154,12 @@ public class ItemBeltItem extends Item {
         int verticalSteps = Math.abs(dy);
         int gridSpan = Math.max(horizontalSteps, verticalSteps);
 
+        // Basic Item Belts may climb at 45 degrees, but they are not elevators.
+        // This also catches a direct up/down endpoint pair before geometry creation.
+        if (verticalSteps > horizontalSteps) {
+            return "message.magneticraft2.item_belt_slope_too_steep";
+        }
+
         if (gridSpan > MAX_ITEM_BELT_SPAN) {
             return "message.magneticraft2.item_belt_too_long";
         }
