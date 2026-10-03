@@ -28,10 +28,14 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
     public static final EnumProperty<ItemBeltGeometry.BeltSlope> SLOPE =
             EnumProperty.create("slope", ItemBeltGeometry.BeltSlope.class);
 
-    private static final VoxelShape HORIZONTAL_NORTH_SOUTH =
-            Block.box(2.0D, 12.5D, 0.0D, 14.0D, 14.5D, 16.0D);
-    private static final VoxelShape HORIZONTAL_EAST_WEST =
-            Block.box(0.0D, 12.5D, 2.0D, 16.0D, 14.5D, 14.0D);
+    private static final VoxelShape HORIZONTAL_NORTH_SOUTH = Shapes.or(
+            Block.box(2.0D, 12.5D, 0.0D, 14.0D, 14.5D, 16.0D),
+            Block.box(2.0D, 1.5D, 0.0D, 14.0D, 3.5D, 16.0D)
+    );
+    private static final VoxelShape HORIZONTAL_EAST_WEST = Shapes.or(
+            Block.box(0.0D, 12.5D, 2.0D, 16.0D, 14.5D, 14.0D),
+            Block.box(0.0D, 1.5D, 2.0D, 16.0D, 3.5D, 14.0D)
+    );
 
     private static final VoxelShape VERTICAL_NORTH =
             Block.box(2.0D, 0.0D, 1.5D, 14.0D, 16.0D, 3.5D);
@@ -96,19 +100,22 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
         }
 
         if (slope == ItemBeltGeometry.BeltSlope.VERTICAL) {
-            return switch (facing) {
-                case NORTH -> VERTICAL_NORTH;
-                case SOUTH -> VERTICAL_SOUTH;
-                case WEST -> VERTICAL_WEST;
-                case EAST -> VERTICAL_EAST;
-                default -> Shapes.empty();
-            };
+            // A vertical belt is still a loop: one strip carries while the opposite strip
+            // returns. Both rendered sides are physically present.
+            return facing.getAxis() == Direction.Axis.Z
+                    ? Shapes.or(VERTICAL_NORTH, VERTICAL_SOUTH)
+                    : Shapes.or(VERTICAL_WEST, VERTICAL_EAST);
         }
 
-        return makeSlopeShape(facing, slope == ItemBeltGeometry.BeltSlope.UPWARD);
+        return Shapes.or(
+                makeSlopeRun(facing, slope == ItemBeltGeometry.BeltSlope.UPWARD, true),
+                makeSlopeRun(facing, slope == ItemBeltGeometry.BeltSlope.UPWARD, false)
+        );
     }
 
-    private VoxelShape makeSlopeShape(Direction facing, boolean risesAlongFacing) {
+    private VoxelShape makeSlopeRun(Direction facing,
+                                        boolean risesAlongFacing,
+                                        boolean carryingRun) {
         VoxelShape result = Shapes.empty();
         final int slices = 8;
         final double sliceSize = 16.0D / slices;
@@ -123,13 +130,16 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                     ? travelIndex
                     : slices - 1 - travelIndex;
 
-            // Equal roller radii put the visible carrying run about 0.24 blocks above
-            // the center line on a 45-degree belt. Keep each generated shape inside its
-            // own block cell; the small staircase overlap is intentionally thicker than
-            // the rendered leather so entity collision remains stable at the boundaries.
-            double centerY = (heightIndex + 0.5D) * sliceSize + 3.8D;
-            double minY = Math.max(0.0D, centerY - 4.0D);
-            double maxY = Math.min(16.0D, centerY + 4.0D);
+            // Two parallel stair-stepped strips approximate the visible loop. Equal
+            // rollers put the two tangents roughly +/-0.24 block around the center line.
+            double runOffset = carryingRun ? 3.8D : -3.8D;
+            double centerY = (heightIndex + 0.5D) * sliceSize + runOffset;
+            double minY = Math.max(0.0D, centerY - 2.0D);
+            double maxY = Math.min(16.0D, centerY + 2.0D);
+
+            if (maxY <= minY) {
+                continue;
+            }
 
             double from = coordinateIndex * sliceSize;
             double to = (coordinateIndex + 1) * sliceSize;
@@ -154,7 +164,7 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                          BlockState newState,
                          boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock())) {
-            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(level, pos);
+            ItemBeltConnectionManager.onPhysicalBeltBlockRemoved(level, pos, state);
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);

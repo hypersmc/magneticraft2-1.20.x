@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -72,6 +73,97 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
                     packedLight,
                     textureOffset + segment.startDistance()
             );
+        }
+
+        renderTransportedItems(
+                roller,
+                partnerPos,
+                partialTicks,
+                stack,
+                bufferSource,
+                packedLight,
+                renderOrigin
+        );
+    }
+
+    private void renderTransportedItems(ConveyorRollerBlockEntity roller,
+                                        BlockPos partnerPos,
+                                        float partialTicks,
+                                        PoseStack stack,
+                                        MultiBufferSource bufferSource,
+                                        int packedLight,
+                                        Vec3 renderOrigin) {
+        if (roller.getTransportedItems().isEmpty() || roller.getLevel() == null) {
+            return;
+        }
+
+        int seed = 0;
+        for (ConveyorRollerBlockEntity.TransportedItem transportedItem
+                : roller.getTransportedItems()) {
+            if (transportedItem.getStack().isEmpty()) {
+                continue;
+            }
+
+            double distance = roller.getClientTransportDistance(
+                    transportedItem,
+                    partialTicks
+            );
+
+            ItemBeltConnectionManager.CarryingSample sample =
+                    ItemBeltConnectionManager.sampleCarryingSurface(
+                            roller.getLevel(),
+                            roller.getBlockPos(),
+                            partnerPos,
+                            distance
+                    );
+            if (sample == null) {
+                continue;
+            }
+
+            Vec3 surfacePosition = sample.position()
+                    .add(sample.surfaceNormal().scale(
+                            ItemBeltConnectionManager.BELT_HALF_THICKNESS + 0.025D
+                    ))
+                    .subtract(renderOrigin);
+
+            Vec3 tangent = sample.tangent();
+            double horizontalLength = Math.sqrt(
+                    tangent.x * tangent.x + tangent.z * tangent.z
+            );
+
+            float yawDegrees = horizontalLength < 0.0001D
+                    ? 0.0F
+                    : (float) Math.toDegrees(Math.atan2(tangent.x, tangent.z));
+            float pitchDegrees = (float) -Math.toDegrees(
+                    Math.atan2(tangent.y, horizontalLength)
+            );
+
+            stack.pushPose();
+            stack.translate(
+                    surfacePosition.x,
+                    surfacePosition.y,
+                    surfacePosition.z
+            );
+
+            // Local Z follows belt travel and local Y follows the carrying surface
+            // normal. ItemDisplayContext.GROUND then places the model on that plane
+            // without the bob/spin behavior of a dropped ItemEntity.
+            stack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(yawDegrees));
+            stack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(pitchDegrees));
+            stack.scale(0.55F, 0.55F, 0.55F);
+
+            Minecraft.getInstance().getItemRenderer().renderStatic(
+                    transportedItem.getStack(),
+                    ItemDisplayContext.GROUND,
+                    packedLight,
+                    OverlayTexture.NO_OVERLAY,
+                    stack,
+                    bufferSource,
+                    roller.getLevel(),
+                    seed++
+            );
+
+            stack.popPose();
         }
     }
 
