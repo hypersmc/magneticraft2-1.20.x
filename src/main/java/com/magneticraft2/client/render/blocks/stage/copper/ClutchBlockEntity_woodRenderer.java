@@ -51,7 +51,9 @@ public class ClutchBlockEntity_woodRenderer
                        MultiBufferSource bufferSource,
                        int packedLight,
                        int packedOverlay) {
-        if (clutch.getLevel() == null) {
+        if (clutch.getLevel() == null
+                || !clutch.getBlockState()
+                        .getValue(ClutchBlock_wood.ROTATING)) {
             return;
         }
 
