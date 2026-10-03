@@ -55,8 +55,10 @@ public class LargeGearBlock_woodRenderer implements BlockEntityRenderer<LargeGea
         }
 
         Direction facing = blockEntity.getBlockState().getValue(FACING);
-        if (facing == Direction.EAST || facing == Direction.WEST) {
+        if (facing == Direction.EAST) {
             stack.mulPose(Axis.XP.rotationDegrees(rotationAngle));
+        } else if (facing == Direction.WEST) {
+            stack.mulPose(Axis.XN.rotationDegrees(rotationAngle));
         } else if (facing == Direction.SOUTH) {
             stack.mulPose(Axis.ZP.rotationDegrees(rotationAngle));
         } else {
