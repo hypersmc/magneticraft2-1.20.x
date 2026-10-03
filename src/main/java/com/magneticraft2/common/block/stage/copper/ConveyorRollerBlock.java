@@ -3,6 +3,7 @@ package com.magneticraft2.common.block.stage.copper;
 import com.magneticraft2.common.block.general.GearBlock;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -73,10 +74,8 @@ public class ConveyorRollerBlock extends GearBlock {
                          BlockPos pos,
                          BlockState newState,
                          boolean movedByPiston) {
-        if (!level.isClientSide
-                && !state.is(newState.getBlock())
-                && level.getBlockEntity(pos) instanceof ConveyorRollerBlockEntity roller) {
-            roller.disconnectItemBelt(true);
+        if (!level.isClientSide && !state.is(newState.getBlock())) {
+            ItemBeltConnectionManager.breakAtRoller(level, pos);
         }
 
         super.onRemove(state, level, pos, newState, movedByPiston);
