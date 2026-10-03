@@ -199,6 +199,11 @@ public class ItemBeltItem extends Item {
             return;
         }
 
+        // Saved endpoint links may exist briefly before the runtime connection map
+        // has rebuilt after a chunk/world load. Rebuild it before unlinking so the
+        // generated physical cells are always removed with the logical connection.
+        ItemBeltConnectionManager.ensureRegistered(roller);
+
         ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
                 roller.getBlockPos(),
                 partnerPos,
