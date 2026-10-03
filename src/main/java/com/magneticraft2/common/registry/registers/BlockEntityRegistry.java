@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wo
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
@@ -74,6 +75,13 @@ public class BlockEntityRegistry {
                     BlockEntityType.Builder.of(
                             GearboxBlockEntity_wood::new,
                             BlockRegistry.GEARBOX_WOOD.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<CustomGearboxBlockEntity_wood>> CUSTOM_GEARBOX_BE_WOOD =
+            BLOCK_ENTITIES.register("custom_gearbox_wood", () ->
+                    BlockEntityType.Builder.of(
+                            CustomGearboxBlockEntity_wood::new,
+                            BlockRegistry.CUSTOM_GEARBOX_WOOD.get()
                     ).build(null));
 
     public static final RegistryObject<BlockEntityType<ItemBeltBlockEntity>> ITEM_BELT_BE =
