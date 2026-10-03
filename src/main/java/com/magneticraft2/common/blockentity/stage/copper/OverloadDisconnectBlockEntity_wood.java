@@ -232,7 +232,10 @@ public class OverloadDisconnectBlockEntity_wood extends GearBlockEntity {
 
     @Override
     public float getGearMaxTorque() {
-        return 8.0F;
+        // The protector should not itself halve a wooden shaft network's
+        // capacity. It only opens when the actual downstream demand would
+        // overload the source/network.
+        return 16.0F;
     }
 
     @Override
