@@ -40,7 +40,10 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         stack.pushPose();
         stack.translate(0.5D, 0.5D, 0.5D);
 
-        float rotation = blockEntity.getVisualRotationDegrees(partialTicks);
+        // Gear V2's source direction is correct for the output network, but the wheel
+        // model's positive visual rotation is the opposite convention. Invert only the
+        // rendered wheel; do not alter the mechanical source direction.
+        float rotation = -blockEntity.getSmoothWheelVisualRotationDegrees(partialTicks);
         Direction.Axis axis = blockEntity.getGearAxis();
 
         if (axis == Direction.Axis.X) {
