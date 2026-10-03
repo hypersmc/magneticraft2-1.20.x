@@ -49,7 +49,11 @@ public class ConveyorRollerBlock extends GearBlock {
             Block.box(13.0D, 3.0D, 6.0D, 15.0D, 8.0D, 10.0D),
 
             Block.box(0.0D, 6.0D, 6.0D, 2.5D, 10.0D, 10.0D),
-            Block.box(13.5D, 6.0D, 6.0D, 16.0D, 10.0D, 10.0D)
+            Block.box(13.5D, 6.0D, 6.0D, 16.0D, 10.0D, 10.0D),
+
+            // Two intersecting prisms approximate the animated octagonal drum.
+            Block.box(2.0D, 4.0D, 3.0D, 14.0D, 12.0D, 13.0D),
+            Block.box(2.0D, 3.0D, 4.0D, 14.0D, 13.0D, 12.0D)
     );
 
     private static final VoxelShape BASE_Z = Shapes.or(
@@ -63,7 +67,11 @@ public class ConveyorRollerBlock extends GearBlock {
             Block.box(6.0D, 3.0D, 13.0D, 10.0D, 8.0D, 15.0D),
 
             Block.box(6.0D, 6.0D, 0.0D, 10.0D, 10.0D, 2.5D),
-            Block.box(6.0D, 6.0D, 13.5D, 10.0D, 10.0D, 16.0D)
+            Block.box(6.0D, 6.0D, 13.5D, 10.0D, 10.0D, 16.0D),
+
+            // Rotated equivalent of the animated octagonal drum.
+            Block.box(3.0D, 4.0D, 2.0D, 13.0D, 12.0D, 14.0D),
+            Block.box(4.0D, 3.0D, 2.0D, 12.0D, 13.0D, 14.0D)
     );
 
     public ConveyorRollerBlock() {
