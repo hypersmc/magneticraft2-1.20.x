@@ -327,6 +327,16 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                 transportedTag.putDouble("HandoffOriginX", origin.x);
                 transportedTag.putDouble("HandoffOriginY", origin.y);
                 transportedTag.putDouble("HandoffOriginZ", origin.z);
+
+                Vec3 tangent = transportedItem.getHandoffTangent();
+                transportedTag.putDouble("HandoffTangentX", tangent.x);
+                transportedTag.putDouble("HandoffTangentY", tangent.y);
+                transportedTag.putDouble("HandoffTangentZ", tangent.z);
+
+                Vec3 normal = transportedItem.getHandoffNormal();
+                transportedTag.putDouble("HandoffNormalX", normal.x);
+                transportedTag.putDouble("HandoffNormalY", normal.y);
+                transportedTag.putDouble("HandoffNormalZ", normal.z);
             }
 
             CompoundTag stackTag = new CompoundTag();
@@ -369,6 +379,16 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                                     transportedTag.getDouble("HandoffOriginX"),
                                     transportedTag.getDouble("HandoffOriginY"),
                                     transportedTag.getDouble("HandoffOriginZ")
+                            ),
+                            new Vec3(
+                                    transportedTag.getDouble("HandoffTangentX"),
+                                    transportedTag.getDouble("HandoffTangentY"),
+                                    transportedTag.getDouble("HandoffTangentZ")
+                            ),
+                            new Vec3(
+                                    transportedTag.getDouble("HandoffNormalX"),
+                                    transportedTag.getDouble("HandoffNormalY"),
+                                    transportedTag.getDouble("HandoffNormalZ")
                             ),
                             transportedTag.getDouble("HandoffProgress")
                     );
@@ -442,6 +462,8 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         private boolean stalled;
         private boolean handoffActive;
         private Vec3 handoffOrigin = Vec3.ZERO;
+        private Vec3 handoffTangent = Vec3.ZERO;
+        private Vec3 handoffNormal = new Vec3(0.0D, 1.0D, 0.0D);
         private double handoffProgress = 1.0D;
 
         public TransportedItem(ItemStack stack, double distance) {
@@ -489,10 +511,34 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
             return handoffProgress;
         }
 
-        public void beginHandoff(Vec3 origin, double progress) {
+        public Vec3 getHandoffTangent() {
+            return handoffTangent;
+        }
+
+        public Vec3 getHandoffNormal() {
+            return handoffNormal;
+        }
+
+        public void beginHandoff(Vec3 origin,
+                                 Vec3 tangent,
+                                 Vec3 normal,
+                                 double progress) {
             handoffOrigin = origin == null ? Vec3.ZERO : origin;
+            handoffTangent = tangent == null ? Vec3.ZERO : tangent;
+            handoffNormal = normal == null
+                    ? new Vec3(0.0D, 1.0D, 0.0D)
+                    : normal;
             handoffProgress = Math.max(0.0D, Math.min(1.0D, progress));
             handoffActive = handoffProgress < 1.0D;
+        }
+
+        public void beginHandoff(Vec3 origin, double progress) {
+            beginHandoff(
+                    origin,
+                    Vec3.ZERO,
+                    new Vec3(0.0D, 1.0D, 0.0D),
+                    progress
+            );
         }
 
         public void advanceHandoff(double progressDelta) {
