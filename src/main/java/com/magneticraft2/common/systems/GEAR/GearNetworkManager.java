@@ -730,21 +730,34 @@ public class GearNetworkManager {
             );
         }
 
+        // Water wheels may drive ordinary gears directly, but two water wheels are
+        // not treated as a tooth mesh.
+        if (firstWaterWheel && secondWaterWheel) {
+            return false;
+        }
+
         WaterWheelBlockEntity wheel = firstWaterWheel
                 ? (WaterWheelBlockEntity) first
                 : (WaterWheelBlockEntity) second;
         BlockPos wheelPos = firstWaterWheel ? firstPos : secondPos;
         BlockPos gearPos = firstWaterWheel ? secondPos : firstPos;
+        int otherTeeth = firstWaterWheel ? secondTeeth : firstTeeth;
 
         int[] offset = getPlanarOffsetComponents(wheelPos, gearPos, axis);
         int a = offset[0];
         int b = offset[1];
 
         if (wheel.isLarge()) {
-            // The 3x3 wheel occupies every cell one block from the axle, so a directly
-            // meshed Medium or Large Gear sits two blocks from the axle along a cardinal
-            // direction, against the outside of the wheel rim.
-            return (a == 2 && b == 0) || (a == 0 && b == 2);
+            if (otherTeeth <= 8) {
+                // 24-tooth water-wheel rim (~1.5 block radius) + 8-tooth gear
+                // (~0.5 block radius) lands cleanly at a cardinal distance of 2.
+                return (a == 2 && b == 0) || (a == 0 && b == 2);
+            }
+
+            // A 16-tooth large gear needs a little more center distance from the 3x3
+            // wheel. The 2-by-1 grid offset is sqrt(5) ~= 2.24 blocks, which is a much
+            // better visual contact than overlapping it at straight distance 2.
+            return (a == 2 && b == 1) || (a == 1 && b == 2);
         }
 
         // The 1x1 wheel uses the same pitch relationships as the corresponding wooden
