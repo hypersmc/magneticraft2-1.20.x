@@ -101,32 +101,40 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                                  boolean secondary) {
         stack.pushPose();
 
-        // Move the two miter gears slightly toward their own shaft faces so the rims meet
-        // around the block center rather than occupying exactly the same plane.
-        double centerOffset = secondary ? 0.08D : 0.05D;
-        stack.translate(
-                port.getStepX() * centerOffset,
-                port.getStepY() * centerOffset,
-                port.getStepZ() * centerOffset
-        );
+        // Work in local space where +X points out through this gearbox port. That makes
+        // both miter gears taper toward the shared block center regardless of whether the
+        // real port is EAST/WEST, UP/DOWN or NORTH/SOUTH.
+        orientLocalXToDirection(stack, port);
 
-        orientLocalXToAxis(stack, port.getAxis());
+        double gearCenter = secondary ? 0.175D : 0.165D;
+        stack.translate(gearCenter, 0.0D, 0.0D);
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        // Compact hub.
-        drawBox(stack, consumer, packedLight, 0.18D, 0.22D, 0.22D);
+        // Small hub kept away from the common center so the two perpendicular hubs do not
+        // visually intersect.
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.14D,
+                0.18D,
+                0.18D
+        );
 
-        // Eight chunky wooden miter teeth. The secondary gear is slightly smaller so the
-        // two perpendicular sets read cleanly inside the open frame.
-        double radius = secondary ? 0.235D : 0.255D;
-        double radialDepth = secondary ? 0.10D : 0.11D;
-        double tangentWidth = secondary ? 0.14D : 0.15D;
-        double axialDepth = secondary ? 0.15D : 0.17D;
+        double radius = secondary ? 0.215D : 0.225D;
+        double radialDepth = secondary ? 0.095D : 0.10D;
+        double tangentWidth = secondary ? 0.105D : 0.115D;
+        double axialDepth = 0.105D;
 
         for (int i = 0; i < 8; i++) {
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees(i * 45.0F));
-            stack.translate(0.0D, radius, 0.0D);
+
+            // Teeth sit on a shallow cone. Their outer ends lean toward local -X (the
+            // gearbox center), making the two perpendicular tooth rings meet like actual
+            // wooden miter gears instead of two flat spur gears clipping through each other.
+            stack.translate(-0.02D, radius, 0.0D);
+            stack.mulPose(Axis.ZP.rotationDegrees(28.0F));
 
             drawBox(
                     stack,
@@ -140,14 +148,39 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
             stack.popPose();
         }
 
+        // Inner support ring/spokes: smaller and farther out on the shaft than the tooth
+        // tips, reinforcing the truncated-cone silhouette.
+        for (int i = 0; i < 4; i++) {
+            stack.pushPose();
+            stack.mulPose(Axis.XP.rotationDegrees(i * 90.0F));
+            stack.translate(0.035D, 0.13D, 0.0D);
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    0.075D,
+                    0.15D,
+                    0.055D
+            );
+            stack.popPose();
+        }
+
         stack.popPose();
     }
 
-    private void orientLocalXToAxis(PoseStack stack, Direction.Axis axis) {
-        if (axis == Direction.Axis.Y) {
+    private void orientLocalXToDirection(PoseStack stack, Direction direction) {
+        if (direction.getAxis() == Direction.Axis.Y) {
             stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
-        } else if (axis == Direction.Axis.Z) {
+        } else if (direction.getAxis() == Direction.Axis.Z) {
             stack.mulPose(Axis.YN.rotationDegrees(90.0F));
+        }
+
+        // The transforms above map local +X onto the positive global axis. Flip the local
+        // frame for negative-facing ports so +X always means "out of the housing".
+        if (direction == Direction.WEST
+                || direction == Direction.DOWN
+                || direction == Direction.NORTH) {
+            stack.mulPose(Axis.YP.rotationDegrees(180.0F));
         }
     }
 
