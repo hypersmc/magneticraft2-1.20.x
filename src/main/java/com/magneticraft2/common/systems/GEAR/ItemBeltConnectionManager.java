@@ -430,10 +430,13 @@ public final class ItemBeltConnectionManager {
         }
     }
 
-    public static void onPhysicalBeltBlockRemoved(Level level, BlockPos beltPos) {
+    public static void onPhysicalBeltBlockRemoved(Level level,
+                                                  BlockPos beltPos,
+                                                  BlockState oldState) {
         if (level == null
                 || level.isClientSide
                 || beltPos == null
+                || oldState == null
                 || isRemovingPhysicalBlock(level, beltPos)) {
             return;
         }
@@ -441,7 +444,98 @@ public final class ItemBeltConnectionManager {
         ItemBeltConnection connection = findByPhysicalBlock(level, beltPos);
         if (connection != null) {
             destroyConnection(level, connection, true, beltPos);
+            return;
         }
+
+        // The runtime connection map is intentionally ephemeral. If a belt cell is broken
+        // before the rollers have ticked after a chunk/world load, recover both endpoints
+        // directly from the physical grid cells so their saved links cannot remain behind.
+        RecoveredEndpoints recovered = recoverEndpointsFromPhysicalCell(
+                level,
+                beltPos,
+                oldState
+        );
+        if (recovered != null) {
+            destroyRecoveredConnection(level, recovered, beltPos);
+        }
+    }
+
+    @Nullable
+    private static RecoveredEndpoints recoverEndpointsFromPhysicalCell(Level level,
+                                                                        BlockPos beltPos,
+                                                                        BlockState oldState) {
+        if (!oldState.hasProperty(ItemBeltBlock.FACING)
+                || !oldState.hasProperty(ItemBeltBlock.SLOPE)) {
+            return null;
+        }
+
+        Direction facing = oldState.getValue(ItemBeltBlock.FACING);
+        ItemBeltGeometry.BeltSlope slope = oldState.getValue(ItemBeltBlock.SLOPE);
+
+        BlockPos step;
+        if (slope == ItemBeltGeometry.BeltSlope.VERTICAL) {
+            step = new BlockPos(0, 1, 0);
+        } else {
+            int stepY = switch (slope) {
+                case UPWARD -> 1;
+                case DOWNWARD -> -1;
+                default -> 0;
+            };
+            step = new BlockPos(
+                    facing.getStepX(),
+                    stepY,
+                    facing.getStepZ()
+            );
+        }
+
+        ConveyorRollerBlockEntity first =
+                scanForRoller(level, beltPos, step, 1);
+        ConveyorRollerBlockEntity second =
+                scanForRoller(level, beltPos, step, -1);
+
+        if (first == null
+                || second == null
+                || first.getGearAxis() != second.getGearAxis()
+                || !first.isItemBeltLinkedTo(second.getBlockPos())
+                || !second.isItemBeltLinkedTo(first.getBlockPos())) {
+            return null;
+        }
+
+        ItemBeltGeometry.Layout layout = ItemBeltGeometry.create(
+                first.getBlockPos(),
+                second.getBlockPos(),
+                first.getGearAxis(),
+                MAX_ITEM_BELT_SPAN
+        );
+        if (layout == null || !layout.beltBlocks().contains(beltPos)) {
+            return null;
+        }
+
+        return new RecoveredEndpoints(first, second, layout);
+    }
+
+    @Nullable
+    private static ConveyorRollerBlockEntity scanForRoller(Level level,
+                                                            BlockPos origin,
+                                                            BlockPos step,
+                                                            int direction) {
+        for (int distance = 1; distance <= MAX_ITEM_BELT_SPAN; distance++) {
+            BlockPos pos = origin.offset(
+                    step.getX() * distance * direction,
+                    step.getY() * distance * direction,
+                    step.getZ() * distance * direction
+            );
+
+            if (level.getBlockEntity(pos) instanceof ConveyorRollerBlockEntity roller) {
+                return roller;
+            }
+
+            if (!level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     public static void breakAtRoller(Level level, BlockPos rollerPos) {
@@ -479,55 +573,121 @@ public final class ItemBeltConnectionManager {
             }
         }
 
-        GearNetworkManager.getInstance().removeMechanicalLoad(level, connection.key.start());
-        removePhysicalBlocks(level, connection);
+        GearNetworkManager.getInstance().removeMechanicalLoad(
+                level,
+                connection.key.start()
+        );
 
-        if (level.getBlockEntity(connection.key.start()) instanceof ConveyorRollerBlockEntity start
-                && start.isItemBeltLinkedTo(connection.key.end())) {
-            start.disconnectItemBelt(false);
+        ConveyorRollerBlockEntity startRoller =
+                level.getBlockEntity(connection.key.start()) instanceof ConveyorRollerBlockEntity start
+                        ? start
+                        : null;
+        ConveyorRollerBlockEntity endRoller =
+                level.getBlockEntity(connection.key.end()) instanceof ConveyorRollerBlockEntity end
+                        ? end
+                        : null;
+
+        ejectTransportedItemsFromRoller(level, startRoller, dropPos);
+        ejectTransportedItemsFromRoller(level, endRoller, dropPos);
+
+        removePhysicalBlocks(level, connection.layout);
+
+        if (startRoller != null && startRoller.isItemBeltLinkedTo(connection.key.end())) {
+            startRoller.disconnectItemBelt(false);
         }
 
-        if (level.getBlockEntity(connection.key.end()) instanceof ConveyorRollerBlockEntity end
-                && end.isItemBeltLinkedTo(connection.key.start())) {
-            end.disconnectItemBelt(false);
+        if (endRoller != null && endRoller.isItemBeltLinkedTo(connection.key.start())) {
+            endRoller.disconnectItemBelt(false);
         }
 
-        if (refundSegments && dropPos != null && connection.layout.requiredSegments() > 0) {
-            ItemStack refund = new ItemStack(
-                    ItemRegistry.ITEM_ITEM_BELT.get(),
+        if (refundSegments
+                && dropPos != null
+                && connection.layout.requiredSegments() > 0) {
+            dropItemBeltSegments(
+                    level,
+                    dropPos,
                     connection.layout.requiredSegments()
             );
-            ItemEntity dropped = new ItemEntity(
-                    level,
-                    dropPos.getX() + 0.5D,
-                    dropPos.getY() + 0.5D,
-                    dropPos.getZ() + 0.5D,
-                    refund
-            );
-            level.addFreshEntity(dropped);
         }
     }
 
-    private static void removePhysicalBlocks(Level level, ItemBeltConnection connection) {
+    private static void destroyRecoveredConnection(Level level,
+                                                   RecoveredEndpoints recovered,
+                                                   BlockPos dropPos) {
+        ejectTransportedItemsFromRoller(level, recovered.first(), dropPos);
+        ejectTransportedItemsFromRoller(level, recovered.second(), dropPos);
+
+        removePhysicalBlocks(level, recovered.layout());
+
+        recovered.first().disconnectItemBelt(false);
+        recovered.second().disconnectItemBelt(false);
+
+        if (recovered.layout().requiredSegments() > 0) {
+            dropItemBeltSegments(
+                    level,
+                    dropPos,
+                    recovered.layout().requiredSegments()
+            );
+        }
+    }
+
+    private static void ejectTransportedItemsFromRoller(Level level,
+                                                        @Nullable ConveyorRollerBlockEntity roller,
+                                                        BlockPos fallbackPos) {
+        if (roller == null || roller.getTransportedItems().isEmpty()) {
+            return;
+        }
+
+        Vec3 drop = fallbackPos == null
+                ? Vec3.atCenterOf(roller.getBlockPos())
+                : Vec3.atCenterOf(fallbackPos);
+
+        for (ItemStack stack : roller.clearTransportedItems()) {
+            if (!stack.isEmpty()) {
+                level.addFreshEntity(new ItemEntity(
+                        level,
+                        drop.x,
+                        drop.y,
+                        drop.z,
+                        stack
+                ));
+            }
+        }
+    }
+
+    private static void dropItemBeltSegments(Level level,
+                                             BlockPos dropPos,
+                                             int count) {
+        if (dropPos == null || count <= 0) {
+            return;
+        }
+
+        level.addFreshEntity(new ItemEntity(
+                level,
+                dropPos.getX() + 0.5D,
+                dropPos.getY() + 0.5D,
+                dropPos.getZ() + 0.5D,
+                new ItemStack(ItemRegistry.ITEM_ITEM_BELT.get(), count)
+        ));
+    }
+
+    private static void removePhysicalBlocks(Level level,
+                                             ItemBeltGeometry.Layout layout) {
         Set<BlockPos> removing = REMOVING_PHYSICAL_BLOCKS.computeIfAbsent(
                 level,
                 ignored -> new HashSet<>()
         );
 
         try {
-            for (BlockPos pos : connection.layout.beltBlocks()) {
-                removing.add(pos);
-            }
+            removing.addAll(layout.beltBlocks());
 
-            for (BlockPos pos : connection.layout.beltBlocks()) {
+            for (BlockPos pos : layout.beltBlocks()) {
                 if (level.getBlockState(pos).is(BlockRegistry.ITEM_BELT_BLOCK.get())) {
                     level.removeBlock(pos, false);
                 }
             }
         } finally {
-            for (BlockPos pos : connection.layout.beltBlocks()) {
-                removing.remove(pos);
-            }
+            removing.removeAll(layout.beltBlocks());
             if (removing.isEmpty()) {
                 REMOVING_PHYSICAL_BLOCKS.remove(level);
             }
@@ -761,5 +921,10 @@ public final class ItemBeltConnectionManager {
                     Math.max(start.z, end.z) + extentZ
             );
         }
+    }    private record RecoveredEndpoints(ConveyorRollerBlockEntity first,
+                                      ConveyorRollerBlockEntity second,
+                                      ItemBeltGeometry.Layout layout) {
     }
+
+
 }
