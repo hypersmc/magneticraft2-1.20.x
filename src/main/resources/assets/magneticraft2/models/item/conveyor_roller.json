@@ -2,6 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "wood": "minecraft:block/oak_planks",
+    "bearing": "minecraft:block/stripped_oak_log_top",
     "roller": "minecraft:block/stripped_oak_log",
     "end": "minecraft:block/stripped_oak_log_top",
     "particle": "minecraft:block/oak_planks"
@@ -49,6 +50,70 @@
         16,
         3,
         14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        3
+      ],
+      "to": [
+        3,
+        3,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        0,
+        3
+      ],
+      "to": [
+        15,
+        3,
+        13
       ],
       "faces": {
         "north": {
@@ -142,34 +207,34 @@
         6
       ],
       "to": [
-        2,
+        2.5,
         10,
         10
       ],
       "faces": {
         "north": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "east": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "south": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "west": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "up": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "down": {
-          "texture": "#end"
+          "texture": "#bearing"
         }
       }
     },
     {
       "from": [
-        14,
+        13.5,
         6,
         6
       ],
@@ -180,35 +245,35 @@
       ],
       "faces": {
         "north": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "east": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "south": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "west": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "up": {
-          "texture": "#end"
+          "texture": "#bearing"
         },
         "down": {
-          "texture": "#end"
+          "texture": "#bearing"
         }
       }
     },
     {
       "from": [
-        0,
-        5,
-        5
+        2,
+        3,
+        3
       ],
       "to": [
-        16,
-        11,
-        11
+        14,
+        13,
+        13
       ],
       "faces": {
         "north": {
