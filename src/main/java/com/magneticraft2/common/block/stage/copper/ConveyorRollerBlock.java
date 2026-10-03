@@ -75,6 +75,9 @@ public class ConveyorRollerBlock extends GearBlock {
                          BlockState newState,
                          boolean movedByPiston) {
         if (!level.isClientSide && !state.is(newState.getBlock())) {
+            if (level.getBlockEntity(pos) instanceof ConveyorRollerBlockEntity roller) {
+                ItemBeltConnectionManager.ensureRegistered(roller);
+            }
             ItemBeltConnectionManager.breakAtRoller(level, pos);
         }
 
