@@ -71,6 +71,8 @@ public class CustomGearboxBlockEntity_woodRenderer
             float angle = directionSign == 0
                     ? 0.0F
                     : referenceAngle * directionSign;
+            float toothPhase =
+                    gearbox.getComponentVisualPhaseDegrees(index);
 
             stack.pushPose();
             stack.translate(cx, cy, cz);
@@ -83,6 +85,7 @@ public class CustomGearboxBlockEntity_woodRenderer
                         packedLight,
                         component.getAxis(),
                         angle,
+                        toothPhase,
                         gearbox.getBevelSideMask(index)
                 );
             } else {
@@ -102,7 +105,9 @@ public class CustomGearboxBlockEntity_woodRenderer
             int portSign = gearbox.getPortDirectionSign(port);
             float portAngle = portSign == 0
                     ? 0.0F
-                    : referenceAngle * portSign;
+                    : referenceAngle
+                    * portSign
+                    * axisDirectionSign(port);
 
             renderPortAdapter(
                     stack,
@@ -143,6 +148,7 @@ public class CustomGearboxBlockEntity_woodRenderer
                                     int packedLight,
                                     Direction.Axis axis,
                                     float rotation,
+                                    float toothPhase,
                                     int bevelSideMask) {
         orientLocalXToAxis(stack, axis);
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
@@ -159,32 +165,41 @@ public class CustomGearboxBlockEntity_woodRenderer
                 0.070D
         );
 
+        // Tooth phase is an installation/indexing offset, not a shaft
+        // direction change. Apply it only to the wheel profile so the square
+        // axle remains aligned with connected internal/external shafts.
+        stack.pushPose();
+        stack.mulPose(
+                Axis.XP.rotationDegrees(toothPhase)
+        );
+
         if (bevelSideMask == 0) {
             renderSpurGearProfile(
                     stack,
                     oak,
                     packedLight
             );
-            return;
+        } else {
+            if ((bevelSideMask & 1) != 0) {
+                renderBevelGearProfile(
+                        stack,
+                        oak,
+                        packedLight,
+                        -1
+                );
+            }
+
+            if ((bevelSideMask & 2) != 0) {
+                renderBevelGearProfile(
+                        stack,
+                        oak,
+                        packedLight,
+                        1
+                );
+            }
         }
 
-        if ((bevelSideMask & 1) != 0) {
-            renderBevelGearProfile(
-                    stack,
-                    oak,
-                    packedLight,
-                    -1
-            );
-        }
-
-        if ((bevelSideMask & 2) != 0) {
-            renderBevelGearProfile(
-                    stack,
-                    oak,
-                    packedLight,
-                    1
-            );
-        }
+        stack.popPose();
     }
 
     /**
@@ -479,6 +494,13 @@ public class CustomGearboxBlockEntity_woodRenderer
                     Axis.YP.rotationDegrees(90.0F)
             );
         }
+    }
+
+    private int axisDirectionSign(Direction direction) {
+        return switch (direction) {
+            case EAST, UP, SOUTH -> 1;
+            case WEST, DOWN, NORTH -> -1;
+        };
     }
 
     private void orientLocalXToAxis(PoseStack stack,
