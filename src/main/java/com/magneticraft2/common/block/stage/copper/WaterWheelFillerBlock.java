@@ -3,7 +3,7 @@ package com.magneticraft2.common.block.stage.copper;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -22,18 +22,26 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Internal occupancy/collision cell for the 3x3 large Water Wheel.
+ * Internal occupancy + visual segment for the 3x3 large Water Wheel.
+ *
+ * While idle these cells render their own block-sized wheel segment. While the wheel is
+ * active the static segments become invisible and the controller BER renders the same
+ * eight pieces under one common rotation transform.
  */
 public class WaterWheelFillerBlock extends Block implements SimpleWaterloggedBlock {
     public static final EnumProperty<Direction.Axis> AXIS =
             BlockStateProperties.HORIZONTAL_AXIS;
+    public static final EnumProperty<Part> PART =
+            EnumProperty.create("part", Part.class);
+    public static final BooleanProperty ACTIVE =
+            BooleanProperty.create("active");
     public static final BooleanProperty WATERLOGGED =
             BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape X_SHAPE =
-            Block.box(4.0D, 0.0D, 0.0D, 12.0D, 16.0D, 16.0D);
+            Block.box(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 16.0D);
     private static final VoxelShape Z_SHAPE =
-            Block.box(0.0D, 0.0D, 4.0D, 16.0D, 16.0D, 12.0D);
+            Block.box(0.0D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D);
 
     public WaterWheelFillerBlock() {
         super(BlockBehaviour.Properties.of()
@@ -42,17 +50,21 @@ public class WaterWheelFillerBlock extends Block implements SimpleWaterloggedBlo
 
         registerDefaultState(stateDefinition.any()
                 .setValue(AXIS, Direction.Axis.X)
+                .setValue(PART, Part.TOP)
+                .setValue(ACTIVE, false)
                 .setValue(WATERLOGGED, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(AXIS, WATERLOGGED);
+        builder.add(AXIS, PART, ACTIVE, WATERLOGGED);
     }
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.INVISIBLE;
+        return state.getValue(ACTIVE)
+                ? RenderShape.INVISIBLE
+                : RenderShape.MODEL;
     }
 
     @Override
@@ -142,5 +154,27 @@ public class WaterWheelFillerBlock extends Block implements SimpleWaterloggedBlo
         }
 
         return null;
+    }
+
+    public enum Part implements StringRepresentable {
+        TOP("top"),
+        TOP_RIGHT("top_right"),
+        RIGHT("right"),
+        BOTTOM_RIGHT("bottom_right"),
+        BOTTOM("bottom"),
+        BOTTOM_LEFT("bottom_left"),
+        LEFT("left"),
+        TOP_LEFT("top_left");
+
+        private final String serializedName;
+
+        Part(String serializedName) {
+            this.serializedName = serializedName;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return serializedName;
+        }
     }
 }
