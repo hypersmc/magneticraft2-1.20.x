@@ -39,9 +39,9 @@ public class WaterWheelFillerBlock extends Block implements SimpleWaterloggedBlo
             BlockStateProperties.WATERLOGGED;
 
     private static final VoxelShape X_SHAPE =
-            Block.box(3.0D, 0.0D, 0.0D, 13.0D, 16.0D, 16.0D);
+            Block.box(1.5D, 0.0D, 0.0D, 14.5D, 16.0D, 16.0D);
     private static final VoxelShape Z_SHAPE =
-            Block.box(0.0D, 0.0D, 3.0D, 16.0D, 16.0D, 13.0D);
+            Block.box(0.0D, 0.0D, 1.5D, 16.0D, 16.0D, 14.5D);
 
     public WaterWheelFillerBlock() {
         super(BlockBehaviour.Properties.of()
