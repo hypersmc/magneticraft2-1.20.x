@@ -60,6 +60,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
 
     private boolean graphDirty = true;
     private final int[] cachedCellSigns = new int[CELL_COUNT];
+    private final int[] cachedCellPhaseSteps = new int[CELL_COUNT];
     private final EnumMap<Direction, Integer> cachedPortSigns =
             new EnumMap<>(Direction.class);
     private final EnumSet<Direction> cachedActivePorts =
@@ -71,6 +72,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
     public CustomGearboxBlockEntity_wood(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CUSTOM_GEARBOX_BE_WOOD.get(), pos, state);
         Arrays.fill(components, InternalComponent.EMPTY);
+        Arrays.fill(cachedCellPhaseSteps, -1);
     }
 
     public static <E extends BlockEntity> void serverTick(Level level,
@@ -334,6 +336,24 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         return cachedCellSigns[cellIndex];
     }
 
+    /**
+     * Static half-tooth phase used only for rendering. Every internal wooden
+     * gear has 8 teeth, so one tooth pitch is 45 degrees and a meshing neighbor
+     * must be offset by half of that: 22.5 degrees.
+     */
+    public float getComponentVisualPhaseDegrees(int cellIndex) {
+        rebuildGraphCacheIfNeeded();
+        if (!cachedGraphValid
+                || cellIndex < 0
+                || cellIndex >= CELL_COUNT) {
+            return 0.0F;
+        }
+
+        return cachedCellPhaseSteps[cellIndex] == 1
+                ? 22.5F
+                : 0.0F;
+    }
+
     public boolean isBevelGear(int cellIndex) {
         if (!getComponent(cellIndex).isGear()) {
             return false;
@@ -402,6 +422,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         cachedActivePorts.clear();
         cachedPortSigns.clear();
         Arrays.fill(cachedCellSigns, 0);
+        Arrays.fill(cachedCellPhaseSteps, -1);
 
         Direction bestReference = null;
         int bestReachablePortCount = -1;
@@ -455,6 +476,13 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
                 0,
                 CELL_COUNT
         );
+        System.arraycopy(
+                finalTraversal.phaseSteps(),
+                0,
+                cachedCellPhaseSteps,
+                0,
+                CELL_COUNT
+        );
 
         for (Direction port : PORT_ORDER) {
             int cell = getPortCellIndex(port);
@@ -474,8 +502,12 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
 
     private GraphTraversal traverseFrom(int startCell) {
         int[] signs = new int[CELL_COUNT];
+        int[] phaseSteps = new int[CELL_COUNT];
+        Arrays.fill(phaseSteps, -1);
+
         Queue<Integer> queue = new ArrayDeque<>();
         signs[startCell] = 1;
+        phaseSteps[startCell] = 0;
         queue.add(startCell);
 
         boolean valid = true;
@@ -483,21 +515,63 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         while (!queue.isEmpty()) {
             int current = queue.poll();
             int currentSign = signs[current];
+            int currentPhaseStep = phaseSteps[current];
 
             for (InternalEdge edge : getInternalEdges(current)) {
+                int neighborIndex = edge.neighborIndex();
                 int expectedSign = currentSign * edge.directionSign();
-                int existing = signs[edge.neighborIndex()];
+                int expectedPhaseStep = currentPhaseStep
+                        ^ (isGearMeshEdge(current, neighborIndex) ? 1 : 0);
 
-                if (existing == 0) {
-                    signs[edge.neighborIndex()] = expectedSign;
-                    queue.add(edge.neighborIndex());
-                } else if (existing != expectedSign) {
-                    valid = false;
+                int existingSign = signs[neighborIndex];
+                int existingPhaseStep = phaseSteps[neighborIndex];
+
+                if (existingSign == 0) {
+                    signs[neighborIndex] = expectedSign;
+                    phaseSteps[neighborIndex] = expectedPhaseStep;
+                    queue.add(neighborIndex);
+                } else {
+                    if (existingSign != expectedSign) {
+                        valid = false;
+                    }
+                    if (existingPhaseStep != expectedPhaseStep) {
+                        // Even if the rotation signs happen to close, an odd
+                        // tooth-mesh loop cannot keep every 8T pair interleaved.
+                        valid = false;
+                    }
                 }
             }
         }
 
-        return new GraphTraversal(signs, valid);
+        return new GraphTraversal(signs, phaseSteps, valid);
+    }
+
+    private boolean isGearMeshEdge(int firstIndex,
+                                   int secondIndex) {
+        InternalComponent first = getComponent(firstIndex);
+        InternalComponent second = getComponent(secondIndex);
+
+        if (!first.isGear() || !second.isGear()) {
+            return false;
+        }
+
+        if (first.getAxis() != second.getAxis()) {
+            // Any valid perpendicular gear edge is a bevel/miter mesh.
+            return true;
+        }
+
+        int[] firstPos = coordinates(firstIndex);
+        int[] secondPos = coordinates(secondIndex);
+        Direction.Axis deltaAxis = nonZeroAxis(
+                secondPos[0] - firstPos[0],
+                secondPos[1] - firstPos[1],
+                secondPos[2] - firstPos[2]
+        );
+
+        // Same-axis neighbors along their shaft are rigidly coupled. A
+        // same-axis neighbor beside the shaft is a spur-gear mesh.
+        return deltaAxis != null
+                && deltaAxis != first.getAxis();
     }
 
     private int countReachablePorts(int[] signs) {
@@ -808,6 +882,7 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
     }
 
     private record GraphTraversal(int[] signs,
+                                  int[] phaseSteps,
                                   boolean valid) {
     }
 }
