@@ -224,6 +224,41 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         onInternalLayoutChanged();
     }
 
+    public List<ItemStack> extractInstalledComponents() {
+        int shafts = 0;
+        int gears = 0;
+
+        for (int i = 0; i < CELL_COUNT; i++) {
+            ComponentCost cost = ComponentCost.of(components[i]);
+            if (cost == ComponentCost.SHAFT) {
+                shafts++;
+            } else if (cost == ComponentCost.GEAR) {
+                gears++;
+            }
+
+            components[i] = InternalComponent.EMPTY;
+        }
+
+        graphDirty = true;
+        setChanged();
+
+        List<ItemStack> drops = new ArrayList<>();
+        if (shafts > 0) {
+            drops.add(new ItemStack(
+                    ItemRegistry.ITEM_SHAFT_WOOD.get(),
+                    shafts
+            ));
+        }
+        if (gears > 0) {
+            drops.add(new ItemStack(
+                    ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get(),
+                    gears
+            ));
+        }
+
+        return drops;
+    }
+
     public void setComponent(int cellIndex, InternalComponent component) {
         if (cellIndex < 0 || cellIndex >= CELL_COUNT || component == null) {
             return;
