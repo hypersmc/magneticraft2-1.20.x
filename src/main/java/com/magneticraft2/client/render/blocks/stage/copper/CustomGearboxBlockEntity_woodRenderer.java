@@ -26,6 +26,7 @@ public class CustomGearboxBlockEntity_woodRenderer
     private static final double GRID_SPACING = 0.26D;
     private static final double SHAFT_THICKNESS = 0.085D;
     private static final double SHAFT_CELL_LENGTH = 0.30D;
+    private static final double OUTSIDE_SHAFT_THICKNESS = 6.0D / 16.0D;
 
     public CustomGearboxBlockEntity_woodRenderer(
             BlockEntityRendererProvider.Context context) {
@@ -89,7 +90,8 @@ public class CustomGearboxBlockEntity_woodRenderer
                         stack,
                         shaft,
                         packedLight,
-                        component.getAxis()
+                        component.getAxis(),
+                        angle
                 );
             }
 
@@ -97,11 +99,17 @@ public class CustomGearboxBlockEntity_woodRenderer
         }
 
         for (Direction port : gearbox.getActivePorts()) {
-            renderPortStub(
+            int portSign = gearbox.getPortDirectionSign(port);
+            float portAngle = portSign == 0
+                    ? 0.0F
+                    : referenceAngle * portSign;
+
+            renderPortAdapter(
                     stack,
                     shaft,
                     packedLight,
-                    port
+                    port,
+                    portAngle
             );
         }
 
@@ -111,35 +119,22 @@ public class CustomGearboxBlockEntity_woodRenderer
     private void renderInternalShaft(PoseStack stack,
                                      VertexConsumer consumer,
                                      int packedLight,
-                                     Direction.Axis axis) {
-        if (axis == Direction.Axis.X) {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    SHAFT_CELL_LENGTH,
-                    SHAFT_THICKNESS,
-                    SHAFT_THICKNESS
-            );
-        } else if (axis == Direction.Axis.Y) {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    SHAFT_THICKNESS,
-                    SHAFT_CELL_LENGTH,
-                    SHAFT_THICKNESS
-            );
-        } else {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    SHAFT_THICKNESS,
-                    SHAFT_THICKNESS,
-                    SHAFT_CELL_LENGTH
-            );
-        }
+                                     Direction.Axis axis,
+                                     float rotation) {
+        stack.pushPose();
+        orientLocalXToAxis(stack, axis);
+        stack.mulPose(Axis.XP.rotationDegrees(rotation));
+
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                SHAFT_CELL_LENGTH,
+                SHAFT_THICKNESS,
+                SHAFT_THICKNESS
+        );
+
+        stack.popPose();
     }
 
     private void renderInternalGear(PoseStack stack,
@@ -159,7 +154,7 @@ public class CustomGearboxBlockEntity_woodRenderer
                 stack,
                 shaft,
                 packedLight,
-                0.18D,
+                0.24D,
                 0.070D,
                 0.070D
         );
@@ -261,7 +256,11 @@ public class CustomGearboxBlockEntity_woodRenderer
         // Pull the wheel toward its real miter intersection. This is what makes
         // perpendicular pairs visually converge instead of floating in their
         // individual grid cells.
-        stack.translate(sideSign * 0.070D, 0.0D, 0.0D);
+        stack.translate(
+                sideSign * (GRID_SPACING * 0.5D),
+                0.0D,
+                0.0D
+        );
 
         renderRing(
                 stack,
@@ -330,12 +329,12 @@ public class CustomGearboxBlockEntity_woodRenderer
             );
             stack.translate(
                     -sideSign * 0.037D,
-                    0.158D,
+                    0.145D,
                     0.0D
             );
             stack.mulPose(
                     Axis.ZP.rotationDegrees(
-                            -sideSign * 38.0F
+                            -sideSign * 40.0F
                     )
             );
             drawBox(
@@ -343,8 +342,8 @@ public class CustomGearboxBlockEntity_woodRenderer
                     oak,
                     packedLight,
                     0.070D,
-                    0.060D,
-                    0.052D
+                    0.052D,
+                    0.050D
             );
             stack.popPose();
         }
@@ -385,47 +384,101 @@ public class CustomGearboxBlockEntity_woodRenderer
         }
     }
 
-    private void renderPortStub(PoseStack stack,
-                                VertexConsumer consumer,
-                                int packedLight,
-                                Direction port) {
-        double cx = port.getStepX() * 0.39D;
-        double cy = port.getStepY() * 0.39D;
-        double cz = port.getStepZ() * 0.39D;
-
+    /**
+     * Bridges the compact internal gearbox shaft to the full-size Wooden Shaft
+     * outside the block. The last stage is exactly 6/16 blocks thick, matching
+     * shaft_wood.json at the block boundary.
+     */
+    private void renderPortAdapter(PoseStack stack,
+                                   VertexConsumer consumer,
+                                   int packedLight,
+                                   Direction port,
+                                   float rotation) {
         stack.pushPose();
-        stack.translate(cx, cy, cz);
+        orientLocalXToDirection(stack, port);
+        stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        if (port.getAxis() == Direction.Axis.X) {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    0.24D,
-                    SHAFT_THICKNESS,
-                    SHAFT_THICKNESS
-            );
-        } else if (port.getAxis() == Direction.Axis.Y) {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    SHAFT_THICKNESS,
-                    0.24D,
-                    SHAFT_THICKNESS
-            );
-        } else {
-            drawBox(
-                    stack,
-                    consumer,
-                    packedLight,
-                    SHAFT_THICKNESS,
-                    SHAFT_THICKNESS,
-                    0.24D
-            );
-        }
+        // The port cell center is 0.26 blocks from the gearbox center. Its
+        // internal shaft already reaches outward to ~0.41, so these overlapping
+        // stages make one continuous wooden coupling from the tiny mechanism to
+        // the external shaft instead of a floating pencil-thin stub.
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.355D,
+                0.190D,
+                0.105D
+        );
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.405D,
+                0.130D,
+                0.165D
+        );
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.450D,
+                0.100D,
+                0.255D
+        );
+        drawBoxAtLocalX(
+                stack,
+                consumer,
+                packedLight,
+                0.475D,
+                0.050D,
+                OUTSIDE_SHAFT_THICKNESS
+        );
 
         stack.popPose();
+    }
+
+    private void drawBoxAtLocalX(PoseStack stack,
+                                 VertexConsumer consumer,
+                                 int packedLight,
+                                 double centerX,
+                                 double length,
+                                 double thickness) {
+        stack.pushPose();
+        stack.translate(centerX, 0.0D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                length,
+                thickness,
+                thickness
+        );
+        stack.popPose();
+    }
+
+    private void orientLocalXToDirection(PoseStack stack,
+                                         Direction direction) {
+        switch (direction) {
+            case EAST -> {
+                // Local +X already points east.
+            }
+            case WEST -> stack.mulPose(
+                    Axis.YP.rotationDegrees(180.0F)
+            );
+            case UP -> stack.mulPose(
+                    Axis.ZP.rotationDegrees(90.0F)
+            );
+            case DOWN -> stack.mulPose(
+                    Axis.ZN.rotationDegrees(90.0F)
+            );
+            case SOUTH -> stack.mulPose(
+                    Axis.YN.rotationDegrees(90.0F)
+            );
+            case NORTH -> stack.mulPose(
+                    Axis.YP.rotationDegrees(90.0F)
+            );
+        }
     }
 
     private void orientLocalXToAxis(PoseStack stack,
