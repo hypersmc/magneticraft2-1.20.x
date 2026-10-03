@@ -29,14 +29,18 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
             EnumProperty.create("slope", ItemBeltGeometry.BeltSlope.class);
 
     private static final VoxelShape HORIZONTAL_NORTH_SOUTH =
-            Block.box(2.0D, 7.0D, 0.0D, 14.0D, 9.0D, 16.0D);
+            Block.box(2.0D, 12.5D, 0.0D, 14.0D, 14.5D, 16.0D);
     private static final VoxelShape HORIZONTAL_EAST_WEST =
-            Block.box(0.0D, 7.0D, 2.0D, 16.0D, 9.0D, 14.0D);
+            Block.box(0.0D, 12.5D, 2.0D, 16.0D, 14.5D, 14.0D);
 
-    private static final VoxelShape VERTICAL_NORTH_SOUTH =
-            Block.box(2.0D, 0.0D, 7.0D, 14.0D, 16.0D, 9.0D);
-    private static final VoxelShape VERTICAL_EAST_WEST =
-            Block.box(7.0D, 0.0D, 2.0D, 9.0D, 16.0D, 14.0D);
+    private static final VoxelShape VERTICAL_NORTH =
+            Block.box(2.0D, 0.0D, 1.5D, 14.0D, 16.0D, 3.5D);
+    private static final VoxelShape VERTICAL_SOUTH =
+            Block.box(2.0D, 0.0D, 12.5D, 14.0D, 16.0D, 14.5D);
+    private static final VoxelShape VERTICAL_WEST =
+            Block.box(1.5D, 0.0D, 2.0D, 3.5D, 16.0D, 14.0D);
+    private static final VoxelShape VERTICAL_EAST =
+            Block.box(12.5D, 0.0D, 2.0D, 14.5D, 16.0D, 14.0D);
 
     public ItemBeltBlock() {
         super(BlockBehaviour.Properties.of()
@@ -92,9 +96,13 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
         }
 
         if (slope == ItemBeltGeometry.BeltSlope.VERTICAL) {
-            return facing.getAxis() == Direction.Axis.Z
-                    ? VERTICAL_NORTH_SOUTH
-                    : VERTICAL_EAST_WEST;
+            return switch (facing) {
+                case NORTH -> VERTICAL_NORTH;
+                case SOUTH -> VERTICAL_SOUTH;
+                case WEST -> VERTICAL_WEST;
+                case EAST -> VERTICAL_EAST;
+                default -> Shapes.empty();
+            };
         }
 
         return makeSlopeShape(facing, slope == ItemBeltGeometry.BeltSlope.UPWARD);
@@ -115,9 +123,12 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                     ? travelIndex
                     : slices - 1 - travelIndex;
 
-            double centerY = (heightIndex + 0.5D) * sliceSize;
-            double minY = Math.max(0.0D, centerY - 1.5D);
-            double maxY = Math.min(16.0D, centerY + 1.5D);
+            // Equal roller radii put the visible carrying run about 0.24 blocks above
+            // the center line on a 45-degree belt. Shapes may extend slightly outside
+            // the local 0..16 cube; neighboring generated belt cells overlap that edge.
+            double centerY = (heightIndex + 0.5D) * sliceSize + 3.8D;
+            double minY = centerY - 1.5D;
+            double maxY = centerY + 1.5D;
 
             double from = coordinateIndex * sliceSize;
             double to = (coordinateIndex + 1) * sliceSize;
