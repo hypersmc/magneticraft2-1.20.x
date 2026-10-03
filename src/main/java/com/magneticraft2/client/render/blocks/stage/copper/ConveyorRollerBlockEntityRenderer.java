@@ -5,6 +5,7 @@ import com.magneticraft2.common.systems.GEAR.BeltPath;
 import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
