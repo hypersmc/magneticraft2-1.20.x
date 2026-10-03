@@ -735,6 +735,7 @@ public class GearNetworkManager {
             addGearboxPortConnection(
                     connected,
                     gears,
+                    level,
                     pos,
                     gearbox.getInputDirection(),
                     ConnectionKind.SHAFT
@@ -742,6 +743,7 @@ public class GearNetworkManager {
             addGearboxPortConnection(
                     connected,
                     gears,
+                    level,
                     pos,
                     gearbox.getOutputDirection(),
                     ConnectionKind.RIGHT_ANGLE
@@ -754,6 +756,7 @@ public class GearNetworkManager {
                 addCustomGearboxPortConnection(
                         connected,
                         gears,
+                        level,
                         pos,
                         port
                 );
@@ -923,12 +926,14 @@ public class GearNetworkManager {
 
     private void addCustomGearboxPortConnection(List<GearConnection> connected,
                                                     Map<BlockPos, GearNode> gears,
+                                                    Level level,
                                                     BlockPos gearboxPos,
                                                     Direction portDirection) {
         BlockPos neighborPos = gearboxPos.relative(portDirection);
         GearNode neighbor = gears.get(neighborPos);
         if (neighbor == null
-                || neighbor.getAxis() != portDirection.getAxis()) {
+                || neighbor.getAxis() != portDirection.getAxis()
+                || isOpenClutch(level, neighborPos)) {
             return;
         }
 
@@ -988,17 +993,26 @@ public class GearNetworkManager {
 
     private void addGearboxPortConnection(List<GearConnection> connected,
                                               Map<BlockPos, GearNode> gears,
+                                              Level level,
                                               BlockPos gearboxPos,
                                               Direction portDirection,
                                               ConnectionKind kind) {
         BlockPos neighborPos = gearboxPos.relative(portDirection);
         GearNode neighbor = gears.get(neighborPos);
         if (neighbor == null
-                || neighbor.getAxis() != portDirection.getAxis()) {
+                || neighbor.getAxis() != portDirection.getAxis()
+                || isOpenClutch(level, neighborPos)) {
             return;
         }
 
         connected.add(new GearConnection(neighborPos, kind));
+    }
+
+    private boolean isOpenClutch(Level level,
+                                 BlockPos pos) {
+        return level.getBlockEntity(pos)
+                instanceof ClutchBlockEntity_wood clutch
+                && !clutch.isEngaged();
     }
 
     private int getRightAngleDirectionSign(Level level,
