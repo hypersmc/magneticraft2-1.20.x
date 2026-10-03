@@ -665,10 +665,12 @@ public class GearNetworkManager {
             );
 
             if (validMesh
-                    && GearPlacementValidator.hasRequiredExternalMeshClearance(
+                    && hasRequiredExternalMeshClearanceBetween(
                     level,
                     pos,
+                    currentBlockEntity,
                     scanPos,
+                    neighborGearBlockEntity,
                     gear.getAxis(),
                     gear.getTeeth(),
                     neighbor.getTeeth())) {
@@ -677,6 +679,35 @@ public class GearNetworkManager {
         }
 
         return connected;
+    }
+
+    private boolean hasRequiredExternalMeshClearanceBetween(Level level,
+                                                              BlockPos firstPos,
+                                                              GearBlockEntity first,
+                                                              BlockPos secondPos,
+                                                              GearBlockEntity second,
+                                                              Direction.Axis axis,
+                                                              int firstTeeth,
+                                                              int secondTeeth) {
+        boolean largeWaterWheel =
+                (first instanceof WaterWheelBlockEntity firstWheel && firstWheel.isLarge())
+                        || (second instanceof WaterWheelBlockEntity secondWheel && secondWheel.isLarge());
+
+        if (largeWaterWheel) {
+            // The special distance-2 rim connection is already outside the wheel's 3x3
+            // occupied cells. Generic mixed medium/large corner-clearance rules describe
+            // two ordinary gears and do not apply to the water-wheel rim.
+            return true;
+        }
+
+        return GearPlacementValidator.hasRequiredExternalMeshClearance(
+                level,
+                firstPos,
+                secondPos,
+                axis,
+                firstTeeth,
+                secondTeeth
+        );
     }
 
     private boolean isValidExternalMeshBetween(BlockPos firstPos,
