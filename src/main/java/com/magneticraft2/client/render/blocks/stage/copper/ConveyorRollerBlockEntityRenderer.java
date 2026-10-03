@@ -121,11 +121,26 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
                 continue;
             }
 
-            Vec3 surfacePosition = sample.position()
+            Vec3 targetWorldPosition = sample.position()
+                    .add(sample.widthDirection()
+                            .scale(transportedItem.getLateralOffset()))
                     .add(sample.surfaceNormal().scale(
                             ItemBeltConnectionManager.BELT_HALF_THICKNESS + 0.025D
-                    ))
-                    .subtract(renderOrigin);
+                    ));
+
+            double handoffProgress = roller.getClientHandoffProgress(
+                    transportedItem,
+                    partialTicks
+            );
+
+            Vec3 worldPosition = transportedItem.isHandoffActive()
+                    ? transportedItem.getHandoffOrigin().lerp(
+                    targetWorldPosition,
+                    handoffProgress
+            )
+                    : targetWorldPosition;
+
+            Vec3 surfacePosition = worldPosition.subtract(renderOrigin);
 
             Vec3 tangent = sample.tangent();
             double horizontalLength = Math.sqrt(
