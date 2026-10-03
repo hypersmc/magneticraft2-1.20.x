@@ -77,6 +77,17 @@ public abstract class GearBlockEntity extends BlockEntity {
     }
 
     /**
+     * Whether this node can also participate in external tooth/rim meshing.
+     *
+     * Most shaft-like nodes return false. Hybrid source components such as Water Wheels
+     * can override this so they still accept shafts on the axle while also driving a
+     * gear placed against the wheel rim.
+     */
+    public boolean supportsExternalGearMesh() {
+        return !isShaftLike();
+    }
+
+    /**
      * The axis this gear visually spins around.
      * Subclasses with vertical placement flags should override this.
      */
