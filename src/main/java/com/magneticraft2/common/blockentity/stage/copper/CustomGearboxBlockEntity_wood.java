@@ -146,22 +146,20 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         return getComponent(index(x, y, z));
     }
 
-    public boolean cycleComponentFromPlayer(ServerPlayer player,
-                                            int cellIndex,
-                                            int delta) {
+    public boolean setComponentFromPlayer(ServerPlayer player,
+                                          int cellIndex,
+                                          InternalComponent next) {
         if (player == null
                 || cellIndex < 0
                 || cellIndex >= CELL_COUNT
-                || delta == 0) {
+                || next == null) {
             return false;
         }
 
         InternalComponent current = components[cellIndex];
-        InternalComponent[] values = InternalComponent.values();
-        InternalComponent next = values[Math.floorMod(
-                current.ordinal() + Integer.signum(delta),
-                values.length
-        )];
+        if (current == next) {
+            return true;
+        }
 
         ComponentCost oldCost = ComponentCost.of(current);
         ComponentCost newCost = ComponentCost.of(next);
