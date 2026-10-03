@@ -1,8 +1,183 @@
 {
   "multipart": [
     {
+      "when": {
+        "axis": "x",
+        "part": "top"
+      },
       "apply": {
-        "model": "magneticraft2:block/invis"
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "top_right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "bottom_right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "bottom"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "bottom_left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "x",
+        "part": "top_left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 270,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "top"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "top_right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 90,
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "bottom_right"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 90,
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "bottom"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 180,
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "bottom_left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 180,
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_edge",
+        "x": 270,
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "axis": "z",
+        "part": "top_left"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_large_corner",
+        "x": 270,
+        "y": 90,
+        "uvlock": true
       }
     }
   ]
