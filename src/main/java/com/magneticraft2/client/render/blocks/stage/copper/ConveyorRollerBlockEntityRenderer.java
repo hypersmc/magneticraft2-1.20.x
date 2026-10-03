@@ -42,12 +42,21 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             return;
         }
 
-        ItemBeltConnectionManager.ensureRegistered(roller);
         BeltPath path = ItemBeltConnectionManager.getPath(
                 roller.getLevel(),
                 roller.getBlockPos(),
                 partnerPos
         );
+        if (path == null) {
+            // Registration is normally handled by the block-entity tick. Only recover it
+            // from the renderer when the client has just loaded the connection.
+            ItemBeltConnectionManager.ensureRegistered(roller);
+            path = ItemBeltConnectionManager.getPath(
+                    roller.getLevel(),
+                    roller.getBlockPos(),
+                    partnerPos
+            );
+        }
 
         if (path == null || !path.startPulley().equals(roller.getBlockPos())) {
             return;
