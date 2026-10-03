@@ -45,7 +45,11 @@ public final class ItemBeltConnectionManager {
     private static final double ITEM_CAPTURE_HALF_WIDTH = 0.52D;
     private static final double ITEM_CAPTURE_BELOW = 0.22D;
     private static final double ITEM_CAPTURE_ABOVE = 0.70D;
+    public static final int MAX_TRANSPORTED_ITEMS = 4;
+
+    private static final double MIN_ITEM_SPACING = 0.42D;
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
+    private static final String MANUAL_CAPTURED_TAG = "MGC2ItemBeltManualCaptured";
 
     private static final Map<Level, Map<BeltKey, ItemBeltConnection>> CONNECTIONS =
             Collections.synchronizedMap(new WeakHashMap<>());
@@ -235,9 +239,16 @@ public final class ItemBeltConnectionManager {
                 )
                 : 0.0D;
 
-        // Positive roller rotation moves the carrying tangent opposite the BeltPath's
-        // canonical start -> end direction.
-        int direction = -start.getDirectionMultiplier();
+        // Derive transport from the actual velocity of the carrying roller surface:
+        //
+        //     v = omega x r
+        //
+        // Projecting that onto the carrying-run tangent avoids hard-coded sign assumptions
+        // and works identically for horizontal, 45-degree and vertical belts.
+        int direction = transportDirection(
+                connection,
+                start.getDirectionMultiplier()
+        );
         moveItems(level, connection, blocksPerTick, direction, running);
     }
 
@@ -313,29 +324,61 @@ public final class ItemBeltConnectionManager {
         boolean changed = false;
         boolean listChanged = false;
 
-        // Capture loose dropped items into the belt controller. Once captured they stop
-        // being gravity/bobbing ItemEntities and become belt-owned transported stacks.
+        // Loose world items are the "player/manual" input path. Capture exactly one
+        // item from that dropped entity and never repeatedly drain the remainder of the
+        // same ItemEntity on subsequent ticks. Automated machines use insertFromAutomation()
+        // and may fill the belt up to its four-item capacity.
         for (ItemEntity item : level.getEntitiesOfClass(
                 ItemEntity.class,
                 run.captureBounds(),
                 entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
 
-            if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) > gameTick) {
+            if (transportedItemCount(carrier) >= MAX_TRANSPORTED_ITEMS) {
+                break;
+            }
+
+            if (item.getPersistentData().getLong(ITEM_COOLDOWN_TAG) > gameTick
+                    || item.getPersistentData().getBoolean(MANUAL_CAPTURED_TAG)) {
                 continue;
             }
 
             Projection projection = run.project(item.position());
-            if (!projection.onSurface()) {
+            if (!projection.onSurface()
+                    || !isTransportSlotFree(
+                    carrier,
+                    projection.distance(),
+                    MIN_ITEM_SPACING)) {
                 continue;
             }
 
+            ItemStack captured = item.getItem().copy();
+            captured.setCount(1);
+
             carrier.getTransportedItems().add(
                     new ConveyorRollerBlockEntity.TransportedItem(
-                            item.getItem().copy(),
+                            captured,
                             projection.distance()
                     )
             );
-            item.discard();
+
+            ItemStack remainder = item.getItem().copy();
+            remainder.shrink(1);
+
+            if (remainder.isEmpty()) {
+                item.discard();
+            } else {
+                item.setItem(remainder);
+                item.getPersistentData().putBoolean(MANUAL_CAPTURED_TAG, true);
+
+                // Move the unconsumed remainder off the carrying line so dropping a stack
+                // by hand visibly contributes one item rather than leaving the rest parked
+                // directly on top of the belt.
+                Vec3 nudge = run.widthDirection().scale(0.08D)
+                        .add(0.0D, 0.05D, 0.0D);
+                item.setDeltaMovement(nudge);
+                item.hurtMarked = true;
+            }
+
             changed = true;
             listChanged = true;
         }
@@ -353,22 +396,33 @@ public final class ItemBeltConnectionManager {
             }
 
             if (nextDistance < 0.0D || nextDistance > run.length()) {
-                double exitDistance = nextDistance < 0.0D ? 0.0D : run.length();
-                Vec3 exitPoint = run.pointAt(exitDistance)
-                        .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
+                boolean leavingAtStart = nextDistance < 0.0D;
+                double exitDistance = leavingAtStart ? 0.0D : run.length();
                 Vec3 travelDirection = run.tangent().scale(direction);
+
+                Ejection ejection = createEjection(
+                        level,
+                        run,
+                        exitDistance,
+                        travelDirection,
+                        blocksPerTick
+                );
 
                 ItemEntity dropped = new ItemEntity(
                         level,
-                        exitPoint.x,
-                        exitPoint.y,
-                        exitPoint.z,
+                        ejection.position().x,
+                        ejection.position().y,
+                        ejection.position().z,
                         transportedItem.getStack().copy()
                 );
-                dropped.setDeltaMovement(
-                        travelDirection.scale(Math.max(0.04D, blocksPerTick))
+                dropped.setDeltaMovement(ejection.velocity());
+
+                // A solid block immediately beyond the roller must not make the dropped
+                // entity bounce back into the belt and get captured again forever.
+                dropped.getPersistentData().putLong(
+                        ITEM_COOLDOWN_TAG,
+                        gameTick + (ejection.blocked() ? 40L : 8L)
                 );
-                dropped.getPersistentData().putLong(ITEM_COOLDOWN_TAG, gameTick + 4L);
                 level.addFreshEntity(dropped);
 
                 transportedItems.remove(i);
@@ -831,6 +885,202 @@ public final class ItemBeltConnectionManager {
         }
     }
 
+    /**
+     * Direction along the canonical carrying run for the current roller rotation.
+     * +1 means TransportRun.start -> end, -1 means end -> start.
+     */
+    public static int getTransportDirectionSign(Level level,
+                                                BlockPos first,
+                                                BlockPos second,
+                                                int mechanicalDirection) {
+        if (level == null || first == null || second == null) {
+            return mechanicalDirection < 0 ? -1 : 1;
+        }
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return mechanicalDirection < 0 ? -1 : 1;
+        }
+
+        ItemBeltConnection connection = map.get(BeltKey.of(first, second));
+        return connection == null
+                ? (mechanicalDirection < 0 ? -1 : 1)
+                : transportDirection(connection, mechanicalDirection);
+    }
+
+    /**
+     * Future machine/logistics insertion hook.
+     *
+     * World/player-dropped ItemEntities contribute one item. A machine can use this API
+     * to insert multiple individual items, but the entire belt never holds more than four.
+     *
+     * @return number of items accepted from source
+     */
+    public static int insertFromAutomation(ConveyorRollerBlockEntity roller,
+                                           ItemStack source) {
+        if (roller == null
+                || source == null
+                || source.isEmpty()
+                || roller.getLevel() == null
+                || roller.getLevel().isClientSide
+                || roller.getItemBeltPartner() == null) {
+            return 0;
+        }
+
+        Level level = roller.getLevel();
+        ensureRegistered(roller);
+
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null) {
+            return 0;
+        }
+
+        BeltKey key = BeltKey.of(
+                roller.getBlockPos(),
+                roller.getItemBeltPartner()
+        );
+        ItemBeltConnection connection = map.get(key);
+        if (connection == null
+                || !(level.getBlockEntity(key.start()) instanceof ConveyorRollerBlockEntity carrier)) {
+            return 0;
+        }
+
+        int available = MAX_TRANSPORTED_ITEMS - transportedItemCount(carrier);
+        if (available <= 0) {
+            return 0;
+        }
+
+        int direction = transportDirection(
+                connection,
+                carrier.getDirectionMultiplier()
+        );
+        boolean insertingAtStart = roller.getBlockPos().equals(key.start());
+
+        // Only accept from the end the belt is moving away from.
+        if ((insertingAtStart && direction < 0)
+                || (!insertingAtStart && direction > 0)) {
+            return 0;
+        }
+
+        int requested = Math.min(
+                Math.min(source.getCount(), available),
+                MAX_TRANSPORTED_ITEMS
+        );
+        int inserted = 0;
+
+        for (int i = 0; i < requested; i++) {
+            double distance = insertingAtStart
+                    ? 0.12D + i * MIN_ITEM_SPACING
+                    : connection.transportRun.length() - 0.12D - i * MIN_ITEM_SPACING;
+
+            if (distance < 0.0D
+                    || distance > connection.transportRun.length()
+                    || !isTransportSlotFree(
+                    carrier,
+                    distance,
+                    MIN_ITEM_SPACING)) {
+                continue;
+            }
+
+            ItemStack one = source.copy();
+            one.setCount(1);
+            carrier.getTransportedItems().add(
+                    new ConveyorRollerBlockEntity.TransportedItem(
+                            one,
+                            distance
+                    )
+            );
+            inserted++;
+        }
+
+        if (inserted > 0) {
+            carrier.syncTransportedItems();
+        }
+
+        return inserted;
+    }
+
+    private static int transportDirection(ItemBeltConnection connection,
+                                          int mechanicalDirection) {
+        Vec3 axisVector = switch (connection.axis) {
+            case X -> new Vec3(1.0D, 0.0D, 0.0D);
+            case Y -> new Vec3(0.0D, 1.0D, 0.0D);
+            case Z -> new Vec3(0.0D, 0.0D, 1.0D);
+        };
+
+        Vec3 surfaceVelocity = axisVector
+                .scale(mechanicalDirection < 0 ? -1.0D : 1.0D)
+                .cross(connection.transportRun.surfaceNormal());
+
+        double along = surfaceVelocity.dot(
+                connection.transportRun.tangent()
+        );
+        return along >= 0.0D ? 1 : -1;
+    }
+
+    private static int transportedItemCount(ConveyorRollerBlockEntity carrier) {
+        int count = 0;
+        for (ConveyorRollerBlockEntity.TransportedItem item
+                : carrier.getTransportedItems()) {
+            count += item.getStack().getCount();
+        }
+        return count;
+    }
+
+    private static boolean isTransportSlotFree(ConveyorRollerBlockEntity carrier,
+                                               double distance,
+                                               double spacing) {
+        for (ConveyorRollerBlockEntity.TransportedItem item
+                : carrier.getTransportedItems()) {
+            if (Math.abs(item.getDistance() - distance) < spacing) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Ejection createEjection(Level level,
+                                           TransportRun run,
+                                           double exitDistance,
+                                           Vec3 travelDirection,
+                                           double blocksPerTick) {
+        Vec3 normalExit = run.pointAt(exitDistance)
+                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
+
+        Vec3 forwardProbe = normalExit.add(
+                travelDirection.normalize().scale(0.55D)
+        );
+        BlockPos forwardBlock = BlockPos.containing(forwardProbe);
+        boolean blocked = !level.getBlockState(forwardBlock)
+                .getCollisionShape(level, forwardBlock)
+                .isEmpty();
+
+        if (!blocked) {
+            return new Ejection(
+                    normalExit,
+                    travelDirection.scale(Math.max(0.04D, blocksPerTick)),
+                    false
+            );
+        }
+
+        // If the exit is blocked, detach the item *before* the roller rather than
+        // spawning it inside the obstruction. Give it a tiny upward kick and a longer
+        // no-recapture window so it genuinely falls off the belt.
+        double backedOffDistance = exitDistance <= 0.0001D
+                ? Math.min(0.35D, run.length())
+                : Math.max(0.0D, run.length() - 0.35D);
+
+        Vec3 safeDrop = run.pointAt(backedOffDistance)
+                .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET + 0.10D))
+                .add(0.0D, 0.12D, 0.0D);
+
+        return new Ejection(
+                safeDrop,
+                new Vec3(0.0D, 0.06D, 0.0D),
+                true
+        );
+    }
+
     @Nullable
     public static CarryingSample sampleCarryingSurface(Level level,
                                                        BlockPos first,
@@ -987,6 +1237,11 @@ public final class ItemBeltConnectionManager {
         public boolean complete() {
             return expectedCells > 0 && expectedCells == presentCells;
         }
+    }
+
+    private record Ejection(Vec3 position,
+                            Vec3 velocity,
+                            boolean blocked) {
     }
 
     private record Projection(double distance, boolean onSurface) {
