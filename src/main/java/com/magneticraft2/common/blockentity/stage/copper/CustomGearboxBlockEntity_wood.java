@@ -3,6 +3,7 @@ package com.magneticraft2.common.blockentity.stage.copper;
 import com.magneticraft2.client.gui.container.gearbox.CustomGearboxMenu;
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -12,9 +13,12 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -140,6 +144,68 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
 
     public InternalComponent getComponent(int x, int y, int z) {
         return getComponent(index(x, y, z));
+    }
+
+    public boolean cycleComponentFromPlayer(ServerPlayer player,
+                                            int cellIndex,
+                                            int delta) {
+        if (player == null
+                || cellIndex < 0
+                || cellIndex >= CELL_COUNT
+                || delta == 0) {
+            return false;
+        }
+
+        InternalComponent current = components[cellIndex];
+        InternalComponent[] values = InternalComponent.values();
+        InternalComponent next = values[Math.floorMod(
+                current.ordinal() + Integer.signum(delta),
+                values.length
+        )];
+
+        ComponentCost oldCost = ComponentCost.of(current);
+        ComponentCost newCost = ComponentCost.of(next);
+
+        if (!player.getAbilities().instabuild
+                && oldCost != newCost
+                && newCost != ComponentCost.NONE) {
+            Item required = newCost.getItem();
+            if (!consumeOne(player, required)) {
+                player.displayClientMessage(
+                        Component.translatable(
+                                newCost == ComponentCost.GEAR
+                                        ? "message.magneticraft2.custom_gearbox_need_gear"
+                                        : "message.magneticraft2.custom_gearbox_need_shaft"
+                        ),
+                        true
+                );
+                return false;
+            }
+        }
+
+        if (!player.getAbilities().instabuild
+                && oldCost != newCost
+                && oldCost != ComponentCost.NONE) {
+            ItemStack refund = new ItemStack(oldCost.getItem());
+            if (!player.getInventory().add(refund)) {
+                player.drop(refund, false);
+            }
+        }
+
+        components[cellIndex] = next;
+        onInternalLayoutChanged();
+        return true;
+    }
+
+    private boolean consumeOne(ServerPlayer player, Item required) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (!stack.isEmpty() && stack.is(required)) {
+                stack.shrink(1);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void cycleComponent(int cellIndex, int delta) {
@@ -599,6 +665,25 @@ public class CustomGearboxBlockEntity_wood extends GearBlockEntity implements Me
         CompoundTag tag = packet.getTag();
         if (tag != null) {
             handleUpdateTag(tag);
+        }
+    }
+
+    private enum ComponentCost {
+        NONE,
+        SHAFT,
+        GEAR;
+
+        static ComponentCost of(InternalComponent component) {
+            if (component == null || component == InternalComponent.EMPTY) {
+                return NONE;
+            }
+            return component.isGear() ? GEAR : SHAFT;
+        }
+
+        Item getItem() {
+            return this == GEAR
+                    ? ItemRegistry.ITEM_GEAR_MEDIUM_WOOD.get()
+                    : ItemRegistry.ITEM_SHAFT_WOOD.get();
         }
     }
 
