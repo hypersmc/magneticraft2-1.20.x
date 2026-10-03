@@ -163,5 +163,9 @@
   "item.magneticraft2.water_wheel_small": "Small Wooden Water Wheel",
   "block.magneticraft2.water_wheel_large": "Large Wooden Water Wheel",
   "item.magneticraft2.water_wheel_large": "Large Wooden Water Wheel",
-  "block.magneticraft2.water_wheel_filler": "Large Water Wheel"
+  "block.magneticraft2.water_wheel_filler": "Large Water Wheel",
+  "block.magneticraft2.gearbox_wood": "Wooden Right-Angle Gearbox",
+  "item.magneticraft2.gearbox_wood": "Wooden Right-Angle Gearbox",
+  "message.magneticraft2.gearbox_output": "Gearbox output: %s",
+  "message.magneticraft2.gearbox_ports_swapped": "Gearbox input/output ports swapped"
 }
