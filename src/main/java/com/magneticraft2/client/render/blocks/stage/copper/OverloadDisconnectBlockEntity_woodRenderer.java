@@ -160,30 +160,33 @@ public class OverloadDisconnectBlockEntity_woodRenderer
             stack.popPose();
         }
 
-        if (disconnect.isTripped()) {
-            VertexConsumer tripConsumer =
-                    bufferSource.getBuffer(
-                            RenderType.entityCutoutNoCull(
-                                    TRIP_TEXTURE
-                            )
-                    );
+        ResourceLocation indicatorTexture =
+                disconnect.isTripped()
+                        ? TRIP_TEXTURE
+                        : COPPER_TEXTURE;
 
-            stack.pushPose();
-            stack.translate(
-                    0.0D,
-                    0.34D,
-                    0.0D
-            );
-            drawBox(
-                    stack,
-                    tripConsumer,
-                    packedLight,
-                    0.14D,
-                    0.12D,
-                    0.18D
-            );
-            stack.popPose();
-        }
+        VertexConsumer indicatorConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                indicatorTexture
+                        )
+                );
+
+        stack.pushPose();
+        stack.translate(
+                0.0D,
+                0.34D,
+                0.0D
+        );
+        drawBox(
+                stack,
+                indicatorConsumer,
+                packedLight,
+                0.14D,
+                0.12D,
+                0.18D
+        );
+        stack.popPose();
 
         stack.popPose();
     }
