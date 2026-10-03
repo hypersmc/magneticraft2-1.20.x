@@ -124,11 +124,12 @@ public class ItemBeltBlock extends HorizontalDirectionalBlock {
                     : slices - 1 - travelIndex;
 
             // Equal roller radii put the visible carrying run about 0.24 blocks above
-            // the center line on a 45-degree belt. Shapes may extend slightly outside
-            // the local 0..16 cube; neighboring generated belt cells overlap that edge.
+            // the center line on a 45-degree belt. Keep each generated shape inside its
+            // own block cell; the small staircase overlap is intentionally thicker than
+            // the rendered leather so entity collision remains stable at the boundaries.
             double centerY = (heightIndex + 0.5D) * sliceSize + 3.8D;
-            double minY = centerY - 1.5D;
-            double maxY = centerY + 1.5D;
+            double minY = Math.max(0.0D, centerY - 4.0D);
+            double maxY = Math.min(16.0D, centerY + 4.0D);
 
             double from = coordinateIndex * sliceSize;
             double to = (coordinateIndex + 1) * sliceSize;
