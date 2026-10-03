@@ -6,15 +6,21 @@ import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static net.minecraft.world.level.block.DirectionalBlock.FACING;
 
@@ -29,6 +35,13 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
 
     private double clientBeltTravelDistance = 0.0D;
     private float lastClientBeltVisualTime = Float.NaN;
+
+    // Items on a belt are no longer loose ItemEntities being shoved every tick. The
+    // canonical roller owns their stack + exact distance along the carrying run, similar
+    // to Create's transported-item concept. The renderer places the stack directly on
+    // the moving belt surface.
+    private final List<TransportedItem> transportedItems = new ArrayList<>();
+    private float clientTransportSyncTime = Float.NaN;
 
     public ConveyorRollerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), pos, state);
@@ -120,6 +133,67 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         return clientBeltTravelDistance;
     }
 
+    public List<TransportedItem> getTransportedItems() {
+        return transportedItems;
+    }
+
+    public void addTransportedItem(ItemStack stack, double distance) {
+        if (stack == null || stack.isEmpty()) {
+            return;
+        }
+
+        transportedItems.add(new TransportedItem(stack.copy(), distance));
+        syncTransportedItems();
+    }
+
+    public void syncTransportedItems() {
+        setChanged();
+        if (level != null) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public double getClientTransportDistance(TransportedItem transportedItem, float partialTicks) {
+        double distance = transportedItem.getDistance();
+        Level currentLevel = getLevel();
+        if (currentLevel == null || Float.isNaN(clientTransportSyncTime)) {
+            return distance;
+        }
+
+        float elapsed = (currentLevel.getGameTime() + partialTicks) - clientTransportSyncTime;
+        if (elapsed < 0.0F) {
+            elapsed = 0.0F;
+        } else if (elapsed > 10.0F) {
+            elapsed = 10.0F;
+        }
+
+        float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
+        if (Math.abs(rpm) <= VISUAL_STOP_EPSILON) {
+            return distance;
+        }
+
+        double blocksPerTick = Math.min(
+                0.18D,
+                (rpm / 1200.0D) * (Math.PI * 2.0D * ROLLER_RADIUS)
+        );
+
+        // Positive angular rotation moves the carrying tangent opposite the BeltPath's
+        // canonical start->end direction.
+        return distance - blocksPerTick * elapsed * getDirectionMultiplier();
+    }
+
+    public List<ItemStack> clearTransportedItems() {
+        List<ItemStack> stacks = new ArrayList<>();
+        for (TransportedItem transportedItem : transportedItems) {
+            if (!transportedItem.getStack().isEmpty()) {
+                stacks.add(transportedItem.getStack().copy());
+            }
+        }
+        transportedItems.clear();
+        syncTransportedItems();
+        return stacks;
+    }
+
     @Nullable
     public BlockPos getItemBeltPartner() {
         return itemBeltPartner;
@@ -175,6 +249,22 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         if (itemBeltPartner != null) {
             tag.putLong("ItemBeltPartner", itemBeltPartner.asLong());
         }
+
+        ListTag transportedList = new ListTag();
+        for (TransportedItem transportedItem : transportedItems) {
+            if (transportedItem.getStack().isEmpty()) {
+                continue;
+            }
+
+            CompoundTag transportedTag = new CompoundTag();
+            transportedTag.putDouble("Distance", transportedItem.getDistance());
+
+            CompoundTag stackTag = new CompoundTag();
+            transportedItem.getStack().save(stackTag);
+            transportedTag.put("Stack", stackTag);
+            transportedList.add(transportedTag);
+        }
+        tag.put("TransportedItems", transportedList);
     }
 
     @Override
@@ -185,6 +275,23 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         itemBeltPartner = tag.contains("ItemBeltPartner")
                 ? BlockPos.of(tag.getLong("ItemBeltPartner"))
                 : null;
+
+        transportedItems.clear();
+        ListTag transportedList = tag.getList("TransportedItems", Tag.TAG_COMPOUND);
+        for (int i = 0; i < transportedList.size(); i++) {
+            CompoundTag transportedTag = transportedList.getCompound(i);
+            ItemStack stack = ItemStack.of(transportedTag.getCompound("Stack"));
+            if (!stack.isEmpty()) {
+                transportedItems.add(new TransportedItem(
+                        stack,
+                        transportedTag.getDouble("Distance")
+                ));
+            }
+        }
+
+        if (level != null && level.isClientSide) {
+            clientTransportSyncTime = (float) level.getGameTime();
+        }
 
         if (level != null
                 && previousPartner != null
@@ -240,4 +347,26 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                 Math.max(worldPosition.getZ(), itemBeltPartner.getZ()) + 2.0D
         );
     }
+    public static final class TransportedItem {
+        private final ItemStack stack;
+        private double distance;
+
+        public TransportedItem(ItemStack stack, double distance) {
+            this.stack = stack == null ? ItemStack.EMPTY : stack;
+            this.distance = distance;
+        }
+
+        public ItemStack getStack() {
+            return stack;
+        }
+
+        public double getDistance() {
+            return distance;
+        }
+
+        public void setDistance(double distance) {
+            this.distance = distance;
+        }
+    }
+
 }
