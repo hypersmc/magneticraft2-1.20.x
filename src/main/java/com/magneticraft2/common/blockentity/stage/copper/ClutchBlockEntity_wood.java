@@ -46,6 +46,58 @@ public class ClutchBlockEntity_wood extends GearBlockEntity {
         clutch.markHasEverRotatedIfMoving(
                 clutch.getServerSpeed()
         );
+        clutch.markNeighborMotionForRendering();
+        clutch.updateRotatingState();
+    }
+
+    private void markNeighborMotionForRendering() {
+        if (level == null) {
+            return;
+        }
+
+        Direction.Axis axis = getGearAxis();
+        for (Direction direction : Direction.values()) {
+            if (direction.getAxis() != axis) {
+                continue;
+            }
+
+            if (level.getBlockEntity(
+                    worldPosition.relative(direction)
+            ) instanceof GearBlockEntity neighbor
+                    && neighbor.getGearAxis() == axis) {
+                markHasEverRotatedIfMoving(
+                        neighbor.getServerSpeed()
+                );
+            }
+        }
+    }
+
+    private void updateRotatingState() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+
+        boolean dynamic =
+                shouldRenderGearWithBlockEntity();
+
+        BlockState state = level.getBlockState(
+                worldPosition
+        );
+
+        if (state.hasProperty(
+                ClutchBlock_wood.ROTATING
+        ) && state.getValue(
+                ClutchBlock_wood.ROTATING
+        ) != dynamic) {
+            level.setBlock(
+                    worldPosition,
+                    state.setValue(
+                            ClutchBlock_wood.ROTATING,
+                            dynamic
+                    ),
+                    2
+            );
+        }
     }
 
     public boolean toggleManualEngagement() {
