@@ -24,8 +24,10 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
  */
 public class WaterWheelBlockEntity extends GearBlockEntity {
     private static final int WATER_CHECK_INTERVAL = 10;
+    private static final int WATER_STOP_CONFIRMATION_SAMPLES = 3;
 
     private int waterCheckCooldown = 0;
+    private int consecutiveDryWaterSamples = 0;
 
     public WaterWheelBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.WATER_WHEEL_BE.get(), pos, state);
@@ -115,10 +117,25 @@ public class WaterWheelBlockEntity extends GearBlockEntity {
 
         WaterDrive drive = sampleWaterDrive();
         if (!drive.powered()) {
+            // Fluid flow values can briefly report no useful tangent while neighboring
+            // water updates settle (especially around waterlogged multiblock cells).
+            // A real water wheel has inertia anyway, so one transient sample must not
+            // hard-stop a source that was spinning normally a moment ago.
+            consecutiveDryWaterSamples++;
+
+            GearNode node = getOrCreateGearNode();
+            if (node.isSource()
+                    && consecutiveDryWaterSamples < WATER_STOP_CONFIRMATION_SAMPLES) {
+                updateActiveState(true);
+                return;
+            }
+
+            consecutiveDryWaterSamples = 0;
             stopWaterDrive();
             return;
         }
 
+        consecutiveDryWaterSamples = 0;
         GearNode node = getOrCreateGearNode();
 
         boolean changed = !node.isSource()
