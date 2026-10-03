@@ -193,7 +193,7 @@ public class LeatherBeltItem extends Item {
             );
         }
 
-        return PlacementCheck.valid();
+        return PlacementCheck.success();
     }
 
     public static int requiredSegments(BlockPos first,
@@ -244,7 +244,7 @@ public class LeatherBeltItem extends Item {
     }
 
     public record PlacementCheck(@Nullable String errorKey) {
-        public static PlacementCheck valid() {
+        public static PlacementCheck success() {
             return new PlacementCheck(null);
         }
 
