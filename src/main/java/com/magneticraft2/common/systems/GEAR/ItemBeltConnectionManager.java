@@ -392,6 +392,20 @@ public final class ItemBeltConnectionManager {
         List<ConveyorRollerBlockEntity.TransportedItem> transportedItems =
                 carrier.getTransportedItems();
 
+        boolean leavingAtStart = direction < 0;
+        double activeExitDistance = leavingAtStart ? 0.0D : run.length();
+        Vec3 activeTravelDirection = run.tangent().scale(direction);
+        boolean activeExitBlocked = isEndpointBlocked(
+                level,
+                connection,
+                run,
+                activeExitDistance,
+                activeTravelDirection
+        );
+        double blockedHoldDistance = leavingAtStart
+                ? Math.min(0.16D, run.length())
+                : Math.max(0.0D, run.length() - 0.16D);
+
         for (int i = transportedItems.size() - 1; i >= 0; i--) {
             ConveyorRollerBlockEntity.TransportedItem transportedItem =
                     transportedItems.get(i);
@@ -399,32 +413,17 @@ public final class ItemBeltConnectionManager {
             double nextDistance = transportedItem.getDistance();
             if (running) {
                 nextDistance += blocksPerTick * direction;
+
+                if (activeExitBlocked) {
+                    nextDistance = leavingAtStart
+                            ? Math.max(nextDistance, blockedHoldDistance)
+                            : Math.min(nextDistance, blockedHoldDistance);
+                }
             }
 
             if (nextDistance < 0.0D || nextDistance > run.length()) {
-                boolean leavingAtStart = nextDistance < 0.0D;
-                double exitDistance = leavingAtStart ? 0.0D : run.length();
+                double exitDistance = nextDistance < 0.0D ? 0.0D : run.length();
                 Vec3 travelDirection = run.tangent().scale(direction);
-
-                if (isEndpointBlocked(
-                        level,
-                        connection,
-                        run,
-                        exitDistance,
-                        travelDirection)) {
-                    // Back-pressure: an obstructed belt does not throw the item onto the
-                    // floor. Hold it just before the roller until the exit clears or the
-                    // player right-clicks the item off the belt.
-                    double holdDistance = leavingAtStart
-                            ? Math.min(0.16D, run.length())
-                            : Math.max(0.0D, run.length() - 0.16D);
-
-                    if (Math.abs(transportedItem.getDistance() - holdDistance) > 0.000001D) {
-                        transportedItem.setDistance(holdDistance);
-                        changed = true;
-                    }
-                    continue;
-                }
 
                 Ejection ejection = createOpenEjection(
                         run,
@@ -1104,18 +1103,27 @@ public final class ItemBeltConnectionManager {
         Vec3 surfaceExit = run.pointAt(exitDistance)
                 .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
 
-        // Probe in the block *in front* of the roller. Another belt/roller is a valid
-        // handoff target; any other collidable block means the belt should queue the item.
-        Vec3 probe = surfaceExit.add(tangent.scale(0.70D));
-        BlockPos probePos = BlockPos.containing(probe);
-        BlockState state = level.getBlockState(probePos);
+        // Check several points from the roller surface into the block in front. The
+        // first sample may still be inside the endpoint roller itself, especially on a
+        // 45-degree belt, so a single BlockPos probe is not reliable.
+        double[] probeDistances = {0.35D, 0.60D, 0.85D};
 
-        if (state.is(BlockRegistry.ITEM_BELT_BLOCK.get())
-                || state.is(BlockRegistry.CONVEYOR_ROLLER.get())) {
-            return false;
+        for (double probeDistance : probeDistances) {
+            Vec3 probe = surfaceExit.add(tangent.scale(probeDistance));
+            BlockPos probePos = BlockPos.containing(probe);
+            BlockState state = level.getBlockState(probePos);
+
+            if (state.is(BlockRegistry.ITEM_BELT_BLOCK.get())
+                    || state.is(BlockRegistry.CONVEYOR_ROLLER.get())) {
+                continue;
+            }
+
+            if (!state.getCollisionShape(level, probePos).isEmpty()) {
+                return true;
+            }
         }
 
-        return !state.getCollisionShape(level, probePos).isEmpty();
+        return false;
     }
 
     private static Ejection createOpenEjection(TransportRun run,
@@ -1133,7 +1141,7 @@ public final class ItemBeltConnectionManager {
         // roller tangent itself. This makes ascending belts throw forward onto a following
         // belt; if no belt exists, vanilla gravity naturally takes over from there.
         Vec3 forwardRelease = surfaceExit
-                .add(tangent.scale(0.62D))
+                .add(tangent.scale(0.78D))
                 .add(run.surfaceNormal().scale(0.03D));
 
         double releaseSpeed = Math.max(0.085D, blocksPerTick * 1.20D);
