@@ -56,7 +56,7 @@ public class ClutchBlockEntity_woodRenderer
         }
 
         Direction facing = clutch.getBlockState()
-                .getValue(DirectionPropertyHolder.FACING);
+                .getValue(DirectionalBlock.FACING);
         boolean engaged = clutch.getBlockState()
                 .getValue(ClutchBlock_wood.ENGAGED);
 
@@ -163,7 +163,7 @@ public class ClutchBlockEntity_woodRenderer
             ) * axisDirectionSign(
                     clutch.getBlockState()
                             .getValue(
-                                    DirectionPropertyHolder.FACING
+                                    DirectionalBlock.FACING
                             )
             );
         }
@@ -173,7 +173,7 @@ public class ClutchBlockEntity_woodRenderer
         ) * axisDirectionSign(
                 clutch.getBlockState()
                         .getValue(
-                                DirectionPropertyHolder.FACING
+                                DirectionalBlock.FACING
                         )
         );
     }
