@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
 import net.minecraft.core.BlockPos;
@@ -263,6 +264,13 @@ public final class ItemBeltConnectionManager {
             if (!state.is(BlockRegistry.ITEM_BELT_BLOCK.get()) || !state.equals(desired)) {
                 level.setBlock(pos, desired, Block.UPDATE_ALL);
             }
+
+            if (level.getBlockEntity(pos) instanceof ItemBeltBlockEntity beltBlockEntity) {
+                beltBlockEntity.setRollers(
+                        connection.key.start(),
+                        connection.key.end()
+                );
+            }
         }
 
         return true;
@@ -442,12 +450,24 @@ public final class ItemBeltConnectionManager {
 
     public static void onPhysicalBeltBlockRemoved(Level level,
                                                   BlockPos beltPos,
-                                                  BlockState oldState) {
+                                                  BlockState oldState,
+                                                  @Nullable BlockPos startRollerPos,
+                                                  @Nullable BlockPos endRollerPos) {
         if (level == null
                 || level.isClientSide
                 || beltPos == null
                 || oldState == null
                 || isRemovingPhysicalBlock(level, beltPos)) {
+            return;
+        }
+
+        if (startRollerPos != null && endRollerPos != null) {
+            destroyConnectionByEndpoints(
+                    level,
+                    startRollerPos,
+                    endRollerPos,
+                    beltPos
+            );
             return;
         }
 
@@ -457,9 +477,7 @@ public final class ItemBeltConnectionManager {
             return;
         }
 
-        // The runtime connection map is intentionally ephemeral. If a belt cell is broken
-        // before the rollers have ticked after a chunk/world load, recover both endpoints
-        // directly from the physical grid cells so their saved links cannot remain behind.
+        // Fallback for belt cells created before per-cell controller metadata existed.
         RecoveredEndpoints recovered = recoverEndpointsFromPhysicalCell(
                 level,
                 beltPos,
@@ -468,6 +486,66 @@ public final class ItemBeltConnectionManager {
         if (recovered != null) {
             destroyRecoveredConnection(level, recovered, beltPos);
         }
+    }
+
+    private static void destroyConnectionByEndpoints(Level level,
+                                                     BlockPos firstPos,
+                                                     BlockPos secondPos,
+                                                     BlockPos dropPos) {
+        BeltKey key = BeltKey.of(firstPos, secondPos);
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        ItemBeltConnection connection = map == null ? null : map.get(key);
+
+        if (connection != null) {
+            destroyConnection(level, connection, true, dropPos);
+            return;
+        }
+
+        ConveyorRollerBlockEntity first =
+                level.getBlockEntity(firstPos) instanceof ConveyorRollerBlockEntity roller
+                        ? roller
+                        : null;
+        ConveyorRollerBlockEntity second =
+                level.getBlockEntity(secondPos) instanceof ConveyorRollerBlockEntity roller
+                        ? roller
+                        : null;
+
+        Direction.Axis axis = first != null
+                ? first.getGearAxis()
+                : second != null ? second.getGearAxis() : null;
+
+        ItemBeltGeometry.Layout layout = axis == null
+                ? null
+                : ItemBeltGeometry.create(
+                        firstPos,
+                        secondPos,
+                        axis,
+                        MAX_ITEM_BELT_SPAN
+                );
+
+        if (layout != null) {
+            removePhysicalBlocks(level, layout);
+        }
+
+        ejectTransportedItemsFromRoller(level, first, dropPos);
+        ejectTransportedItemsFromRoller(level, second, dropPos);
+
+        if (first != null && first.isItemBeltLinkedTo(secondPos)) {
+            first.clearItemBeltLink();
+        }
+        if (second != null && second.isItemBeltLinkedTo(firstPos)) {
+            second.clearItemBeltLink();
+        }
+
+        if (layout != null && layout.requiredSegments() > 0) {
+            dropItemBeltSegments(
+                    level,
+                    dropPos,
+                    layout.requiredSegments()
+            );
+        }
+
+        GearNetworkManager.getInstance().removeMechanicalLoad(level, key.start());
     }
 
     @Nullable
