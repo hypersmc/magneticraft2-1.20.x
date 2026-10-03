@@ -7,6 +7,7 @@ import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
 import com.magneticraft2.common.block.stage.copper.GearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.CustomGearboxBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
@@ -80,6 +81,7 @@ public class BlockRegistry {
     public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
     public static final RegistryObject<ConveyorRollerBlock> CONVEYOR_ROLLER = BLOCKS.register("conveyor_roller", ConveyorRollerBlock::new);
     public static final RegistryObject<GearboxBlock_wood> GEARBOX_WOOD = BLOCKS.register("gearbox_wood", GearboxBlock_wood::new);
+    public static final RegistryObject<CustomGearboxBlock_wood> CUSTOM_GEARBOX_WOOD = BLOCKS.register("custom_gearbox_wood", CustomGearboxBlock_wood::new);
     public static final RegistryObject<ItemBeltBlock> ITEM_BELT_BLOCK = registerBlockWithoutBlockItem("item_belt_block", ItemBeltBlock::new);
     public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_SMALL = BLOCKS.register("water_wheel_small", () -> new WaterWheelBlock(false));
     public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_LARGE = BLOCKS.register("water_wheel_large", () -> new WaterWheelBlock(true));
