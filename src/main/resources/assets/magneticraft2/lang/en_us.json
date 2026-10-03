@@ -167,5 +167,13 @@
   "block.magneticraft2.gearbox_wood": "Wooden Right-Angle Gearbox",
   "item.magneticraft2.gearbox_wood": "Wooden Right-Angle Gearbox",
   "message.magneticraft2.gearbox_output": "Gearbox output: %s",
-  "message.magneticraft2.gearbox_ports_swapped": "Gearbox input/output ports swapped"
+  "message.magneticraft2.gearbox_ports_swapped": "Gearbox input/output ports swapped",
+  "block.magneticraft2.custom_gearbox_wood": "Custom Wooden Gearbox",
+  "item.magneticraft2.custom_gearbox_wood": "Custom Wooden Gearbox",
+  "screen.magneticraft2.custom_gearbox": "Custom Wooden Gearbox",
+  "screen.magneticraft2.custom_gearbox_help": "Left click: next part   Right click: previous part",
+  "screen.magneticraft2.custom_gearbox_conflict": "Invalid closed gear loop: rotation directions conflict.",
+  "screen.magneticraft2.custom_gearbox_rules": "SX/SY/SZ = shaft   GX/GY/GZ = gear   green cells = active ports",
+  "message.magneticraft2.custom_gearbox_need_gear": "You need a Medium Wooden Gear for that gearbox cell.",
+  "message.magneticraft2.custom_gearbox_need_shaft": "You need a Wooden Shaft for that gearbox cell."
 }
