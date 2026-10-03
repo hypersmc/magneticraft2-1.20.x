@@ -162,7 +162,7 @@ public final class ItemBeltPlacementPreviewRenderer {
         );
 
         BeltPath path = null;
-        if (startPos != endPos
+        if (!startPos.equals(endPos)
                 && startRoller.getGearAxis()
                 != Direction.Axis.Y
                 && startRoller.getGearAxis()
@@ -353,8 +353,14 @@ public final class ItemBeltPlacementPreviewRenderer {
                                        BlockPos pos,
                                        PreviewColor color,
                                        boolean start) {
-        AABB box = new AABB(pos)
-                .inflate(ENDPOINT_INFLATE);
+        AABB box = new AABB(
+                pos.getX(),
+                pos.getY(),
+                pos.getZ(),
+                pos.getX() + 1.0D,
+                pos.getY() + 1.0D,
+                pos.getZ() + 1.0D
+        ).inflate(ENDPOINT_INFLATE);
 
         float alpha = start
                 ? ALPHA * 0.72F
