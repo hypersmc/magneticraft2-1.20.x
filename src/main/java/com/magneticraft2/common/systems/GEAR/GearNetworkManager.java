@@ -34,6 +34,7 @@ public class GearNetworkManager {
     private static final float STOP_EPSILON = 0.05F;
     private static final float TORQUE_EPSILON = 0.001F;
     private static final int GEAR_MESH_SCAN_RADIUS = 3;
+    private static final int VISUAL_SYNC_INTERVAL_TICKS = 4;
 
     private static GearNetworkManager instance;
 
@@ -41,6 +42,7 @@ public class GearNetworkManager {
     private final Map<ResourceKey<Level>, Map<BlockPos, MechanicalLoad>> loadsByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastDecayTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastRotationTickByLevel = new HashMap<>();
+    private final Map<ResourceKey<Level>, Long> lastNetworkTickByLevel = new HashMap<>();
     private final Map<ResourceKey<Level>, Long> lastSyncTickByLevel = new HashMap<>();
 
     private GearNetworkManager() {
@@ -62,7 +64,22 @@ public class GearNetworkManager {
     }
 
     public void addOrUpdateGear(GearBlockEntity gearBlockEntity) {
-        if (gearBlockEntity == null || gearBlockEntity.getLevel() == null || gearBlockEntity.getLevel().isClientSide) {
+        if (gearBlockEntity == null
+                || gearBlockEntity.getLevel() == null
+                || gearBlockEntity.getLevel().isClientSide) {
+            return;
+        }
+
+        registerGearMetadata(gearBlockEntity);
+        // Explicit calls mean something meaningful changed (placement, source state,
+        // topology, etc.), so refresh immediately. Normal per-BE ticking uses tickGear()
+        // and is guarded to one whole-network evaluation per level per game tick.
+        updateNetwork(gearBlockEntity.getLevel());
+    }
+
+    private void registerGearMetadata(GearBlockEntity gearBlockEntity) {
+        Level level = gearBlockEntity.getLevel();
+        if (level == null || level.isClientSide) {
             return;
         }
 
@@ -71,8 +88,7 @@ public class GearNetworkManager {
         node.setAxis(gearBlockEntity.getGearAxis());
         node.setMaxTorque(gearBlockEntity.getGearMaxTorque());
         node.setShaftLike(gearBlockEntity.isShaftLike());
-        getGearMap(gearBlockEntity.getLevel()).put(node.getPosition(), node);
-        updateNetwork(gearBlockEntity.getLevel());
+        getGearMap(level).put(node.getPosition(), node);
     }
 
     public void removeGear(BlockPos position, Level level) {
@@ -84,10 +100,29 @@ public class GearNetworkManager {
     }
 
     public void tickGear(GearBlockEntity gearBlockEntity) {
-        if (gearBlockEntity == null || gearBlockEntity.getLevel() == null || gearBlockEntity.getLevel().isClientSide) {
+        if (gearBlockEntity == null
+                || gearBlockEntity.getLevel() == null
+                || gearBlockEntity.getLevel().isClientSide) {
             return;
         }
-        addOrUpdateGear(gearBlockEntity);
+
+        Level level = gearBlockEntity.getLevel();
+        registerGearMetadata(gearBlockEntity);
+
+        ResourceKey<Level> dimension = level.dimension();
+        long gameTime = level.getGameTime();
+        Long lastTick = lastNetworkTickByLevel.get(dimension);
+
+        // Every GearBlockEntity ticks independently. Previously each one rebuilt the
+        // complete Gear V2 graph, scanned all possible mesh neighbors, evaluated all
+        // loads and synchronized every node. With N nodes that turned one network tick
+        // into roughly N full network rebuilds.
+        if (lastTick != null && lastTick == gameTime) {
+            return;
+        }
+
+        lastNetworkTickByLevel.put(dimension, gameTime);
+        updateNetwork(level);
     }
 
     public void updateNetwork(Level level) {
@@ -844,13 +879,12 @@ public class GearNetworkManager {
         ResourceKey<Level> dimension = level.dimension();
         long gameTime = level.getGameTime();
 
-        // Every GearBlockEntity currently asks the manager to refresh the network each
-        // server tick. The mechanical calculation is cheap enough for now, but sending
-        // the exact same angular snapshot once per gear in the same tick causes visible
-        // client re-anchoring/judder. One authoritative snapshot per level per tick is
-        // sufficient.
+        // Client animation now integrates RPM continuously and only needs occasional
+        // authoritative phase correction. Sending the whole graph at 20 Hz wastes both
+        // server time and bandwidth; 5 Hz keeps visual drift corrected without packet spam.
         Long lastSyncTick = lastSyncTickByLevel.get(dimension);
-        if (lastSyncTick != null && lastSyncTick == gameTime) {
+        if (lastSyncTick != null
+                && gameTime - lastSyncTick < VISUAL_SYNC_INTERVAL_TICKS) {
             return;
         }
         lastSyncTickByLevel.put(dimension, gameTime);
