@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PSP",
+    "WWW",
+    "PSP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:clutch_wood",
+    "count": 1
+  }
+}
