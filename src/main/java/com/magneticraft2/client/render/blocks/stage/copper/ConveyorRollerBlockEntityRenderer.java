@@ -143,6 +143,33 @@ public class ConveyorRollerBlockEntityRenderer implements BlockEntityRenderer<Co
             Vec3 surfacePosition = worldPosition.subtract(renderOrigin);
 
             Vec3 tangent = sample.tangent();
+            Vec3 surfaceNormal = sample.surfaceNormal();
+
+            if (transportedItem.isHandoffActive()
+                    && handoffProgress < 1.0D) {
+                Vec3 fromTangent = transportedItem.getHandoffTangent();
+                if (fromTangent.lengthSqr() > 0.000001D) {
+                    Vec3 blendedTangent = fromTangent.lerp(
+                            tangent,
+                            handoffProgress
+                    );
+                    if (blendedTangent.lengthSqr() > 0.000001D) {
+                        tangent = blendedTangent.normalize();
+                    }
+                }
+
+                Vec3 fromNormal = transportedItem.getHandoffNormal();
+                if (fromNormal.lengthSqr() > 0.000001D) {
+                    Vec3 blendedNormal = fromNormal.lerp(
+                            surfaceNormal,
+                            handoffProgress
+                    );
+                    if (blendedNormal.lengthSqr() > 0.000001D) {
+                        surfaceNormal = blendedNormal.normalize();
+                    }
+                }
+            }
+
             double horizontalLength = Math.sqrt(
                     tangent.x * tangent.x + tangent.z * tangent.z
             );
