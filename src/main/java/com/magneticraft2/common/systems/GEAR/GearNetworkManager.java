@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
@@ -440,10 +441,10 @@ public class GearNetworkManager {
                 continue;
             }
 
-            // Before stalling the source, look for an engaged clutch between
-            // that source and the overloaded consumer. If one exists, trip the
-            // clutch and let the source keep rotating unloaded.
-            if (tripProtectiveClutchOnPath(
+            // Before stalling the source, look for an engaged overload disconnect
+            // between that source and the overloaded consumer. If one exists,
+            // trip it and let the source keep rotating unloaded.
+            if (tripProtectiveDisconnectOnPath(
                     level,
                     gears,
                     load.sourcePos,
@@ -496,12 +497,11 @@ public class GearNetworkManager {
     }
 
     /**
-     * Finds the nearest engaged clutch to the overloaded consumer on a real
-     * Gear V2 path from the source. The path is reconstructed backwards from
-     * the consumer, so the first clutch found isolates the smallest possible
-     * downstream branch.
+     * Finds the nearest engaged overload disconnect to the overloaded consumer
+     * on a real Gear V2 path from the source. The path is reconstructed backwards
+     * from the consumer so the first protector found isolates the smallest branch.
      */
-    private boolean tripProtectiveClutchOnPath(
+    private boolean tripProtectiveDisconnectOnPath(
             Level level,
             Map<BlockPos, GearNode> gears,
             BlockPos sourcePos,
@@ -557,11 +557,11 @@ public class GearNetworkManager {
                     level.getBlockEntity(cursor);
 
             if (blockEntity
-                    instanceof ClutchBlockEntity_wood clutch
-                    && clutch.tripFromOverload()) {
-                // The clutch state changed during network evaluation. Do not
-                // recurse into updateNetwork(); invalidate the cached topology
-                // so the next tick rebuilds around the now-open clutch.
+                    instanceof OverloadDisconnectBlockEntity_wood disconnect
+                    && disconnect.tripFromOverload()) {
+                // The protector opened during network evaluation. Do not recurse
+                // into updateNetwork(); invalidate the topology so the next tick
+                // rebuilds around the isolated downstream branch.
                 markTopologyDirty(level);
                 return true;
             }
@@ -916,10 +916,9 @@ public class GearNetworkManager {
             return connected;
         }
 
-        // An open clutch is an actual topology break, not merely a shaft whose
-        // displayed RPM has been forced to zero.
-        if (blockEntity instanceof ClutchBlockEntity_wood clutch
-                && !clutch.isEngaged()) {
+        // An open inline disconnect is an actual topology break, not merely a
+        // shaft whose displayed RPM has been forced to zero.
+        if (isOpenInlineDisconnect(blockEntity)) {
             return connected;
         }
 
@@ -938,11 +937,9 @@ public class GearNetworkManager {
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
 
-            // A shaft beside an open clutch must not connect "into" the clutch
-            // from the neighbor side either, otherwise the topology would only
-            // be broken when traversal happened to start at the clutch itself.
-            if (neighborBlockEntity instanceof ClutchBlockEntity_wood clutch
-                    && !clutch.isEngaged()) {
+            // A shaft beside an open inline disconnect must not connect into it
+            // from the neighbor side either.
+            if (isOpenInlineDisconnect(neighborBlockEntity)) {
                 continue;
             }
 
@@ -1085,7 +1082,7 @@ public class GearNetworkManager {
         GearNode neighbor = gears.get(neighborPos);
         if (neighbor == null
                 || neighbor.getAxis() != portDirection.getAxis()
-                || isOpenClutch(level, neighborPos)) {
+                || isOpenInlineDisconnect(level, neighborPos)) {
             return;
         }
 
@@ -1153,18 +1150,33 @@ public class GearNetworkManager {
         GearNode neighbor = gears.get(neighborPos);
         if (neighbor == null
                 || neighbor.getAxis() != portDirection.getAxis()
-                || isOpenClutch(level, neighborPos)) {
+                || isOpenInlineDisconnect(level, neighborPos)) {
             return;
         }
 
         connected.add(new GearConnection(neighborPos, kind));
     }
 
-    private boolean isOpenClutch(Level level,
-                                 BlockPos pos) {
-        return level.getBlockEntity(pos)
-                instanceof ClutchBlockEntity_wood clutch
-                && !clutch.isEngaged();
+    private boolean isOpenInlineDisconnect(Level level,
+                                           BlockPos pos) {
+        return isOpenInlineDisconnect(
+                level.getBlockEntity(pos)
+        );
+    }
+
+    private boolean isOpenInlineDisconnect(
+            BlockEntity blockEntity) {
+        if (blockEntity
+                instanceof ClutchBlockEntity_wood clutch) {
+            return !clutch.isEngaged();
+        }
+
+        if (blockEntity
+                instanceof OverloadDisconnectBlockEntity_wood disconnect) {
+            return !disconnect.isEngaged();
+        }
+
+        return false;
     }
 
     private int getRightAngleDirectionSign(Level level,
