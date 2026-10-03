@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
@@ -760,6 +761,13 @@ public class GearNetworkManager {
             return connected;
         }
 
+        // An open clutch is an actual topology break, not merely a shaft whose
+        // displayed RPM has been forced to zero.
+        if (blockEntity instanceof ClutchBlockEntity_wood clutch
+                && !clutch.isEngaged()) {
+            return connected;
+        }
+
         // Shaft/axle style transmission is only along the spin axis and remains adjacent.
         // When the adjacent node is a gearbox, only its explicitly exposed face may connect.
         for (Direction direction : Direction.values()) {
@@ -774,6 +782,15 @@ public class GearNetworkManager {
             }
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
+
+            // A shaft beside an open clutch must not connect "into" the clutch
+            // from the neighbor side either, otherwise the topology would only
+            // be broken when traversal happened to start at the clutch itself.
+            if (neighborBlockEntity instanceof ClutchBlockEntity_wood clutch
+                    && !clutch.isEngaged()) {
+                continue;
+            }
+
             if (neighborBlockEntity instanceof CustomGearboxBlockEntity_wood customGearbox) {
                 Direction customPort = direction.getOpposite();
                 if (!customGearbox.isPortActive(customPort)) {
