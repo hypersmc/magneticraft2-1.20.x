@@ -44,10 +44,10 @@ public class WaterWheelBlock extends GearBlock implements SimpleWaterloggedBlock
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    private static final VoxelShape SMALL_X = Block.box(2.0D, 0.0D, 0.0D, 14.0D, 16.0D, 16.0D);
-    private static final VoxelShape SMALL_Z = Block.box(0.0D, 0.0D, 2.0D, 16.0D, 16.0D, 14.0D);
-    private static final VoxelShape LARGE_CENTER_X = Block.box(4.0D, 0.0D, 0.0D, 12.0D, 16.0D, 16.0D);
-    private static final VoxelShape LARGE_CENTER_Z = Block.box(0.0D, 0.0D, 4.0D, 16.0D, 16.0D, 12.0D);
+    private static final VoxelShape SMALL_X = Block.box(1.0D, 0.0D, 0.0D, 15.0D, 16.0D, 16.0D);
+    private static final VoxelShape SMALL_Z = Block.box(0.0D, 0.0D, 1.0D, 16.0D, 16.0D, 15.0D);
+    private static final VoxelShape LARGE_CENTER_X = Block.box(1.5D, 0.0D, 0.0D, 14.5D, 16.0D, 16.0D);
+    private static final VoxelShape LARGE_CENTER_Z = Block.box(0.0D, 0.0D, 1.5D, 16.0D, 16.0D, 14.5D);
 
     private final boolean large;
 
