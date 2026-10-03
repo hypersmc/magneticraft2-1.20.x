@@ -162,10 +162,13 @@ public class CustomGearboxBlockEntity_woodRenderer
                 0.075D
         );
 
-        double radius = bevel ? 0.105D : 0.115D;
-        double radial = bevel ? 0.072D : 0.078D;
-        double tangent = bevel ? 0.070D : 0.075D;
-        double axial = bevel ? 0.060D : 0.050D;
+        // Perpendicular miter pairs sit on diagonal cells, so their pitch circles need
+        // to reach farther than ordinary same-plane spur gears. Keeping the two sizes
+        // distinct makes both arrangements visibly meet instead of floating apart.
+        double radius = bevel ? 0.160D : 0.110D;
+        double radial = bevel ? 0.080D : 0.072D;
+        double tangent = bevel ? 0.080D : 0.072D;
+        double axial = bevel ? 0.065D : 0.050D;
 
         for (int tooth = 0; tooth < 8; tooth++) {
             stack.pushPose();
@@ -173,15 +176,15 @@ public class CustomGearboxBlockEntity_woodRenderer
                     Axis.XP.rotationDegrees(tooth * 45.0F)
             );
             stack.translate(
-                    bevel ? -0.018D : 0.0D,
+                    bevel ? -0.028D : 0.0D,
                     radius,
                     0.0D
             );
 
             if (bevel) {
-                // A small inward lean sells the fact that perpendicular gears are
-                // meeting on a miter face rather than intersecting as flat spur gears.
-                stack.mulPose(Axis.ZP.rotationDegrees(24.0F));
+                // A stronger inward lean makes the diagonal pair converge at the corner
+                // between their cells like a real miter set.
+                stack.mulPose(Axis.ZP.rotationDegrees(30.0F));
             }
 
             drawBox(
