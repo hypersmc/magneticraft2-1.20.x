@@ -2,6 +2,7 @@ package com.magneticraft2.common.systems.GEAR;
 
 import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.systems.networking.GearSyncPacket;
@@ -188,6 +189,7 @@ public class GearNetworkManager {
                 }
 
                 float ratio = connection.kind() == ConnectionKind.SHAFT
+                        || connection.kind() == ConnectionKind.RIGHT_ANGLE
                         ? 1.0F
                         : (float) current.getTeeth() / (float) neighbor.getTeeth();
                 float newSpeed = current.getSpeed() * ratio;
@@ -209,6 +211,19 @@ public class GearNetworkManager {
                     neighbor.setMeshPhaseDegrees(current.getMeshPhaseDegrees());
                     neighbor.setRotationDegrees(current.getRotationDegrees());
                     neighbor.setDirectionMultiplier(current.getDirectionMultiplier());
+                } else if (connection.kind() == ConnectionKind.RIGHT_ANGLE) {
+                    int turnSign = getRightAngleDirectionSign(
+                            level,
+                            current.getPosition(),
+                            neighbor.getPosition()
+                    );
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(
+                            current.getRotationDegrees() * turnSign
+                    );
+                    neighbor.setDirectionMultiplier(
+                            current.getDirectionMultiplier() * turnSign
+                    );
                 } else if (connection.kind() == ConnectionKind.BELT) {
                     neighbor.setMeshPhaseDegrees(0.0F);
                     neighbor.setRotationDegrees(current.getRotationDegrees() * ratio);
@@ -465,6 +480,16 @@ public class GearNetworkManager {
                 if (connection.kind() == ConnectionKind.SHAFT) {
                     neighbor.setMeshPhaseDegrees(current.getMeshPhaseDegrees());
                     neighbor.setRotationDegrees(current.getRotationDegrees());
+                } else if (connection.kind() == ConnectionKind.RIGHT_ANGLE) {
+                    int turnSign = getRightAngleDirectionSign(
+                            level,
+                            current.getPosition(),
+                            neighbor.getPosition()
+                    );
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(
+                            current.getRotationDegrees() * turnSign
+                    );
                 } else if (connection.kind() == ConnectionKind.BELT) {
                     float ratio = (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
                     neighbor.setMeshPhaseDegrees(0.0F);
@@ -531,6 +556,19 @@ public class GearNetworkManager {
                         neighbor.setMeshPhaseDegrees(current.getMeshPhaseDegrees());
                         neighbor.setRotationDegrees(current.getRotationDegrees());
                         neighbor.setDirectionMultiplier(current.getDirectionMultiplier());
+                    } else if (connection.kind() == ConnectionKind.RIGHT_ANGLE) {
+                        int turnSign = getRightAngleDirectionSign(
+                                level,
+                                current.getPosition(),
+                                neighbor.getPosition()
+                        );
+                        neighbor.setMeshPhaseDegrees(0.0F);
+                        neighbor.setRotationDegrees(
+                                current.getRotationDegrees() * turnSign
+                        );
+                        neighbor.setDirectionMultiplier(
+                                current.getDirectionMultiplier() * turnSign
+                        );
                     } else if (connection.kind() == ConnectionKind.BELT) {
                         float ratio = (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
                         neighbor.setMeshPhaseDegrees(0.0F);
@@ -649,8 +687,30 @@ public class GearNetworkManager {
             return connected;
         }
 
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        // The wooden gearbox is a hybrid two-port node. Its GearNode reference axis is
+        // the INPUT port; OUTPUT is a 1:1 right-angle edge into a perpendicular shaft axis.
+        if (blockEntity instanceof GearboxBlockEntity_wood gearbox) {
+            addGearboxPortConnection(
+                    connected,
+                    gears,
+                    pos,
+                    gearbox.getInputDirection(),
+                    ConnectionKind.SHAFT
+            );
+            addGearboxPortConnection(
+                    connected,
+                    gears,
+                    pos,
+                    gearbox.getOutputDirection(),
+                    ConnectionKind.RIGHT_ANGLE
+            );
+            return connected;
+        }
+
         // Shaft/axle style transmission is only along the spin axis and remains adjacent.
-        // This is how a shaft line keeps the exact same speed, direction, phase, and rotation.
+        // When the adjacent node is a gearbox, only its explicitly exposed face may connect.
         for (Direction direction : Direction.values()) {
             if (direction.getAxis() != gear.getAxis()) {
                 continue;
@@ -658,15 +718,37 @@ public class GearNetworkManager {
 
             BlockPos neighborPos = pos.relative(direction);
             GearNode neighbor = gears.get(neighborPos);
-            if (neighbor != null && neighbor.getAxis() == gear.getAxis()) {
-                connected.add(new GearConnection(neighborPos, ConnectionKind.SHAFT));
+            if (neighbor == null) {
+                continue;
+            }
+
+            BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
+            if (neighborBlockEntity instanceof GearboxBlockEntity_wood gearbox) {
+                Direction gearboxPort = direction.getOpposite();
+                if (!gearbox.acceptsPort(gearboxPort)) {
+                    continue;
+                }
+
+                connected.add(new GearConnection(
+                        neighborPos,
+                        gearbox.isPrimaryPort(gearboxPort)
+                                ? ConnectionKind.SHAFT
+                                : ConnectionKind.RIGHT_ANGLE
+                ));
+                continue;
+            }
+
+            if (neighbor.getAxis() == gear.getAxis()) {
+                connected.add(new GearConnection(
+                        neighborPos,
+                        ConnectionKind.SHAFT
+                ));
             }
         }
 
         // Pulley-to-pulley belts are remote mechanical connections. They are checked
         // before the shaft-like early return because pulleys deliberately behave as shafts
         // locally while still exposing one remote belt edge.
-        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof PulleyBlockEntity_wood pulley) {
             BlockPos partnerPos = pulley.getBeltPartner();
             if (partnerPos != null
@@ -756,6 +838,37 @@ public class GearNetworkManager {
         }
 
         return connected;
+    }
+
+    private void addGearboxPortConnection(List<GearConnection> connected,
+                                              Map<BlockPos, GearNode> gears,
+                                              BlockPos gearboxPos,
+                                              Direction portDirection,
+                                              ConnectionKind kind) {
+        BlockPos neighborPos = gearboxPos.relative(portDirection);
+        GearNode neighbor = gears.get(neighborPos);
+        if (neighbor == null
+                || neighbor.getAxis() != portDirection.getAxis()) {
+            return;
+        }
+
+        connected.add(new GearConnection(neighborPos, kind));
+    }
+
+    private int getRightAngleDirectionSign(Level level,
+                                           BlockPos firstPos,
+                                           BlockPos secondPos) {
+        BlockEntity first = level.getBlockEntity(firstPos);
+        if (first instanceof GearboxBlockEntity_wood gearbox) {
+            return gearbox.getRightAngleDirectionSign();
+        }
+
+        BlockEntity second = level.getBlockEntity(secondPos);
+        if (second instanceof GearboxBlockEntity_wood gearbox) {
+            return gearbox.getRightAngleDirectionSign();
+        }
+
+        return -1;
     }
 
     private boolean hasRequiredExternalMeshClearanceBetween(Level level,
@@ -1014,6 +1127,7 @@ public class GearNetworkManager {
 
     private enum ConnectionKind {
         SHAFT,
+        RIGHT_ANGLE,
         GEAR_MESH,
         BELT
     }
