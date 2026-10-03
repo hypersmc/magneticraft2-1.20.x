@@ -681,11 +681,11 @@ public final class ItemBeltConnectionManager {
         removePhysicalBlocks(level, connection.layout);
 
         if (startRoller != null && startRoller.isItemBeltLinkedTo(connection.key.end())) {
-            startRoller.disconnectItemBelt(false);
+            startRoller.clearItemBeltLink();
         }
 
         if (endRoller != null && endRoller.isItemBeltLinkedTo(connection.key.start())) {
-            endRoller.disconnectItemBelt(false);
+            endRoller.clearItemBeltLink();
         }
 
         if (refundSegments
@@ -707,8 +707,8 @@ public final class ItemBeltConnectionManager {
 
         removePhysicalBlocks(level, recovered.layout());
 
-        recovered.first().disconnectItemBelt(false);
-        recovered.second().disconnectItemBelt(false);
+        recovered.first().clearItemBeltLink();
+        recovered.second().clearItemBeltLink();
 
         if (recovered.layout().requiredSegments() > 0) {
             dropItemBeltSegments(
