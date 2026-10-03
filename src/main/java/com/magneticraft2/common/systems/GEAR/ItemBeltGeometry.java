@@ -13,7 +13,9 @@ import java.util.List;
  * Grid geometry for Create-style physical item belts.
  *
  * A belt is only valid when it follows one of the discrete shapes Minecraft can represent
- * cleanly with real blocks: horizontal, 45-degree ascending/descending, or vertical.
+ * cleanly with real blocks: horizontal or exactly 45-degree ascending/descending.
+ * Straight vertical item belts are deliberately rejected; gravity-defying vertical item
+ * transport belongs to a later machine rather than the basic Copper Age belt.
  * The roller axis remains horizontal and is perpendicular to horizontal belt travel.
  */
 public final class ItemBeltGeometry {
@@ -50,13 +52,13 @@ public final class ItemBeltGeometry {
         BeltSlope slope;
         int steps;
 
+        // Item Belts need horizontal travel. A direct vertical run would make items
+        // climb a wall with no buckets, cleats or other lifting mechanism.
         if (horizontalSteps == 0) {
-            if (verticalSteps < 2) {
-                return null;
-            }
-            slope = BeltSlope.VERTICAL;
-            steps = verticalSteps;
-        } else if (dy == 0) {
+            return null;
+        }
+
+        if (dy == 0) {
             if (horizontalSteps < 2) {
                 return null;
             }
@@ -75,21 +77,10 @@ public final class ItemBeltGeometry {
         }
 
         Direction facing;
-        if (horizontalSteps > 0) {
-            if (rollerAxis == Direction.Axis.X) {
-                facing = horizontalDelta > 0 ? Direction.SOUTH : Direction.NORTH;
-            } else {
-                facing = horizontalDelta > 0 ? Direction.EAST : Direction.WEST;
-            }
+        if (rollerAxis == Direction.Axis.X) {
+            facing = horizontalDelta > 0 ? Direction.SOUTH : Direction.NORTH;
         } else {
-            // For vertical belts FACING encodes the carrying side of the loop. This lets
-            // the generated physical slab line up with the same straight run selected by
-            // BeltPath/rendering instead of sitting through the roller center.
-            if (rollerAxis == Direction.Axis.X) {
-                facing = dy > 0 ? Direction.SOUTH : Direction.NORTH;
-            } else {
-                facing = dy > 0 ? Direction.WEST : Direction.EAST;
-            }
+            facing = horizontalDelta > 0 ? Direction.EAST : Direction.WEST;
         }
 
         int stepX = Integer.signum(dx);
