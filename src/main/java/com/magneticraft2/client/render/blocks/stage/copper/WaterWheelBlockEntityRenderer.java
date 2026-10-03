@@ -87,7 +87,7 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
         renderRim(stack, oak, packedLight, 8, 0.34D, 0.08D, 0.26D, 0.18D);
 
         // Clear, broad fins around the circumference rather than decorative spoke blocks.
-        renderPaddles(stack, spruce, packedLight, 8, 0.445D, 0.11D, 0.24D, 0.34D);
+        renderPaddles(stack, spruce, packedLight, 8, 0.455D, 0.075D, 0.29D, 0.46D);
     }
 
     private void renderLargeWheel(PoseStack stack,
@@ -105,7 +105,7 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
 
         // Sixteen independent water-catching fins. These sit outside the rim and are
         // intentionally wider along the axle so they read as paddles, not more spokes.
-        renderPaddles(stack, spruce, packedLight, 16, 1.355D, 0.27D, 0.34D, 0.62D);
+        renderPaddles(stack, spruce, packedLight, 16, 1.365D, 0.09D, 0.46D, 0.78D);
     }
 
     private void renderSpokes(PoseStack stack,
@@ -175,8 +175,11 @@ public class WaterWheelBlockEntityRenderer implements BlockEntityRenderer<WaterW
             stack.mulPose(Axis.XP.rotationDegrees((float) angle));
             stack.translate(0.0D, radius, 0.0D);
 
-            // The broad X dimension is the width of the water-catching board. The board
-            // is thin radially and wide tangentially so it reads unmistakably as a fin.
+            // Pitch every paddle slightly backwards relative to the radial line. Combined
+            // with a very thin radial depth and a broad tangential face, this makes the
+            // pieces read as actual water-catching boards instead of chunky rim segments.
+            stack.mulPose(Axis.XP.rotationDegrees(-12.0F));
+
             drawBox(
                     stack,
                     consumer,
