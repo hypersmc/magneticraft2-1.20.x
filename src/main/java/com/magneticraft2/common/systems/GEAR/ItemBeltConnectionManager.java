@@ -48,7 +48,7 @@ public final class ItemBeltConnectionManager {
     private static final double ITEM_CAPTURE_ABOVE = 0.70D;
     public static final int MAX_TRANSPORTED_ITEMS = 4;
 
-    private static final double MIN_ITEM_SPACING = 0.42D;
+    private static final double MIN_ITEM_SPACING = 0.50D;
     private static final String ITEM_COOLDOWN_TAG = "MGC2ItemBeltCooldown";
     private static final String ITEM_COOLDOWN_START_TAG = "MGC2ItemBeltCooldownStart";
     private static final String ITEM_COOLDOWN_END_TAG = "MGC2ItemBeltCooldownEnd";
@@ -336,10 +336,10 @@ public final class ItemBeltConnectionManager {
                 run.captureBounds(),
                 entity -> entity.isAlive() && !entity.getItem().isEmpty())) {
 
-            // Player/world drops are intentionally limited to one transported item on a
-            // belt. Future machine insertion uses insertFromAutomation() and may occupy all
-            // four transport slots.
-            if (transportedItemCount(carrier) >= 1) {
+            // The belt may carry up to four items regardless of where they came from.
+            // A player-dropped ItemEntity contributes only one item from its stack; future
+            // automated insertion may contribute several individual items at once.
+            if (transportedItemCount(carrier) >= MAX_TRANSPORTED_ITEMS) {
                 break;
             }
 
@@ -392,79 +392,144 @@ public final class ItemBeltConnectionManager {
         List<ConveyorRollerBlockEntity.TransportedItem> transportedItems =
                 carrier.getTransportedItems();
 
+        // Process the front-most item first so everything behind it can be clamped to a
+        // stable half-block queue instead of overlapping/snap-backing at a blocked end.
+        transportedItems.sort(direction > 0
+                ? Comparator.comparingDouble(
+                        ConveyorRollerBlockEntity.TransportedItem::getDistance).reversed()
+                : Comparator.comparingDouble(
+                        ConveyorRollerBlockEntity.TransportedItem::getDistance));
+
         boolean leavingAtStart = direction < 0;
         double activeExitDistance = leavingAtStart ? 0.0D : run.length();
         Vec3 activeTravelDirection = run.tangent().scale(direction);
-        boolean activeExitBlocked = isEndpointBlocked(
-                level,
-                connection,
-                run,
-                activeExitDistance,
-                activeTravelDirection
-        );
         double blockedHoldDistance = leavingAtStart
                 ? Math.min(0.16D, run.length())
                 : Math.max(0.0D, run.length() - 0.16D);
 
-        for (int i = transportedItems.size() - 1; i >= 0; i--) {
+        double frontItemDistance = direction > 0
+                ? Double.POSITIVE_INFINITY
+                : Double.NEGATIVE_INFINITY;
+
+        for (int i = 0; i < transportedItems.size(); ) {
             ConveyorRollerBlockEntity.TransportedItem transportedItem =
                     transportedItems.get(i);
 
             double nextDistance = transportedItem.getDistance();
             if (running) {
                 nextDistance += blocksPerTick * direction;
+            }
 
-                if (activeExitBlocked) {
-                    nextDistance = leavingAtStart
-                            ? Math.max(nextDistance, blockedHoldDistance)
-                            : Math.min(nextDistance, blockedHoldDistance);
+            // Maintain at least half a block between transported items. The front item
+            // determines how far the item behind it may advance.
+            if (direction > 0 && frontItemDistance != Double.POSITIVE_INFINITY) {
+                nextDistance = Math.min(
+                        nextDistance,
+                        frontItemDistance - MIN_ITEM_SPACING
+                );
+            } else if (direction < 0 && frontItemDistance != Double.NEGATIVE_INFINITY) {
+                nextDistance = Math.max(
+                        nextDistance,
+                        frontItemDistance + MIN_ITEM_SPACING
+                );
+            }
+
+            boolean crossingExit = nextDistance < 0.0D || nextDistance > run.length();
+            if (crossingExit) {
+                BeltHandoff handoff = findHandoffTarget(
+                        level,
+                        connection,
+                        activeExitDistance
+                );
+
+                if (handoff != null) {
+                    if (canAcceptHandoff(handoff)) {
+                        handoff.carrier().getTransportedItems().add(
+                                new ConveyorRollerBlockEntity.TransportedItem(
+                                        transportedItem.getStack().copy(),
+                                        handoff.entryDistance()
+                                )
+                        );
+                        handoff.carrier().syncTransportedItems();
+
+                        transportedItems.remove(i);
+                        changed = true;
+                        listChanged = true;
+                        continue;
+                    }
+
+                    // A valid next belt exists but it has no room. Treat that exactly like
+                    // physical back-pressure and queue on this belt.
+                    nextDistance = blockedHoldDistance;
+                } else if (isEndpointBlocked(
+                        level,
+                        connection,
+                        run,
+                        activeExitDistance,
+                        activeTravelDirection)) {
+                    nextDistance = blockedHoldDistance;
+                } else {
+                    Ejection ejection = createOpenEjection(
+                            run,
+                            activeExitDistance,
+                            activeTravelDirection,
+                            blocksPerTick
+                    );
+
+                    ItemEntity dropped = new ItemEntity(
+                            level,
+                            ejection.position().x,
+                            ejection.position().y,
+                            ejection.position().z,
+                            transportedItem.getStack().copy()
+                    );
+                    dropped.setDeltaMovement(ejection.velocity());
+                    dropped.getPersistentData().putLong(
+                            ITEM_COOLDOWN_TAG,
+                            gameTick + 8L
+                    );
+                    dropped.getPersistentData().putLong(
+                            ITEM_COOLDOWN_START_TAG,
+                            connection.key.start().asLong()
+                    );
+                    dropped.getPersistentData().putLong(
+                            ITEM_COOLDOWN_END_TAG,
+                            connection.key.end().asLong()
+                    );
+                    level.addFreshEntity(dropped);
+
+                    transportedItems.remove(i);
+                    changed = true;
+                    listChanged = true;
+                    continue;
                 }
             }
 
-            if (nextDistance < 0.0D || nextDistance > run.length()) {
-                double exitDistance = nextDistance < 0.0D ? 0.0D : run.length();
-                Vec3 travelDirection = run.tangent().scale(direction);
-
-                Ejection ejection = createOpenEjection(
-                        run,
-                        exitDistance,
-                        travelDirection,
-                        blocksPerTick
+            // Clamp a queued item behind the endpoint and behind the item ahead of it.
+            if (direction > 0 && frontItemDistance != Double.POSITIVE_INFINITY) {
+                nextDistance = Math.min(
+                        nextDistance,
+                        frontItemDistance - MIN_ITEM_SPACING
                 );
-
-                ItemEntity dropped = new ItemEntity(
-                        level,
-                        ejection.position().x,
-                        ejection.position().y,
-                        ejection.position().z,
-                        transportedItem.getStack().copy()
+            } else if (direction < 0 && frontItemDistance != Double.NEGATIVE_INFINITY) {
+                nextDistance = Math.max(
+                        nextDistance,
+                        frontItemDistance + MIN_ITEM_SPACING
                 );
-                dropped.setDeltaMovement(ejection.velocity());
-                dropped.getPersistentData().putLong(
-                        ITEM_COOLDOWN_TAG,
-                        gameTick + 8L
-                );
-                dropped.getPersistentData().putLong(
-                        ITEM_COOLDOWN_START_TAG,
-                        connection.key.start().asLong()
-                );
-                dropped.getPersistentData().putLong(
-                        ITEM_COOLDOWN_END_TAG,
-                        connection.key.end().asLong()
-                );
-                level.addFreshEntity(dropped);
-
-                transportedItems.remove(i);
-                changed = true;
-                listChanged = true;
-                continue;
             }
 
-            if (running
-                    && Math.abs(nextDistance - transportedItem.getDistance()) > 0.000001D) {
+            nextDistance = Math.max(
+                    0.0D,
+                    Math.min(run.length(), nextDistance)
+            );
+
+            if (Math.abs(nextDistance - transportedItem.getDistance()) > 0.000001D) {
                 transportedItem.setDistance(nextDistance);
                 changed = true;
             }
+
+            frontItemDistance = nextDistance;
+            i++;
         }
 
         // Captures/exits sync immediately. Motion snapshots re-anchor every four ticks;
@@ -1091,6 +1156,77 @@ public final class ItemBeltConnectionManager {
         return cooldownKey.equals(connection.key);
     }
 
+    @Nullable
+    private static BeltHandoff findHandoffTarget(Level level,
+                                                 ItemBeltConnection source,
+                                                 double sourceExitDistance) {
+        Map<BeltKey, ItemBeltConnection> map = CONNECTIONS.get(level);
+        if (map == null || map.size() <= 1) {
+            return null;
+        }
+
+        Vec3 sourceExit = source.transportRun
+                .pointAt(sourceExitDistance)
+                .add(source.transportRun.surfaceNormal()
+                        .scale(ITEM_SURFACE_OFFSET));
+
+        BeltHandoff best = null;
+        double bestDistanceSqr = Double.MAX_VALUE;
+
+        for (ItemBeltConnection candidate : map.values()) {
+            if (candidate == source || candidate.key.equals(source.key)) {
+                continue;
+            }
+
+            if (!(level.getBlockEntity(candidate.key.start())
+                    instanceof ConveyorRollerBlockEntity candidateCarrier)) {
+                continue;
+            }
+
+            int candidateDirection = transportDirection(
+                    candidate,
+                    candidateCarrier.getDirectionMultiplier()
+            );
+
+            double entryDistance = candidateDirection > 0
+                    ? Math.min(0.12D, candidate.transportRun.length())
+                    : Math.max(0.0D, candidate.transportRun.length() - 0.12D);
+
+            Vec3 intakePoint = candidate.transportRun
+                    .pointAt(entryDistance)
+                    .add(candidate.transportRun.surfaceNormal()
+                            .scale(ITEM_SURFACE_OFFSET));
+
+            double distanceSqr = sourceExit.distanceToSqr(intakePoint);
+
+            // Adjacent endpoint rollers, 90-degree corners and incline-to-horizontal
+            // handoffs all fit comfortably inside this radius, while unrelated nearby
+            // belt runs generally do not.
+            if (distanceSqr > 1.35D * 1.35D
+                    || distanceSqr >= bestDistanceSqr) {
+                continue;
+            }
+
+            best = new BeltHandoff(
+                    candidate,
+                    candidateCarrier,
+                    entryDistance
+            );
+            bestDistanceSqr = distanceSqr;
+        }
+
+        return best;
+    }
+
+    private static boolean canAcceptHandoff(BeltHandoff handoff) {
+        return transportedItemCount(handoff.carrier()) < MAX_TRANSPORTED_ITEMS
+                && isTransportSlotFree(
+                handoff.carrier(),
+                handoff.entryDistance(),
+                MIN_ITEM_SPACING
+        );
+    }
+
     private static boolean isEndpointBlocked(Level level,
                                              ItemBeltConnection connection,
                                              TransportRun run,
@@ -1103,21 +1239,21 @@ public final class ItemBeltConnectionManager {
         Vec3 surfaceExit = run.pointAt(exitDistance)
                 .add(run.surfaceNormal().scale(ITEM_SURFACE_OFFSET));
 
-        // Check several points from the roller surface into the block in front. The
-        // first sample may still be inside the endpoint roller itself, especially on a
-        // 45-degree belt, so a single BlockPos probe is not reliable.
+        // Check several points from the roller surface into the block in front. Ignore
+        // only this connection's own endpoint rollers. Another belt is handled explicitly
+        // by findHandoffTarget(); if it is not a valid intake, its collision can correctly
+        // act as an obstruction.
         double[] probeDistances = {0.35D, 0.60D, 0.85D};
 
         for (double probeDistance : probeDistances) {
             Vec3 probe = surfaceExit.add(tangent.scale(probeDistance));
             BlockPos probePos = BlockPos.containing(probe);
-            BlockState state = level.getBlockState(probePos);
 
-            if (state.is(BlockRegistry.ITEM_BELT_BLOCK.get())
-                    || state.is(BlockRegistry.CONVEYOR_ROLLER.get())) {
+            if (connection.key.contains(probePos)) {
                 continue;
             }
 
+            BlockState state = level.getBlockState(probePos);
             if (!state.getCollisionShape(level, probePos).isEmpty()) {
                 return true;
             }
@@ -1413,6 +1549,11 @@ public final class ItemBeltConnectionManager {
         public boolean complete() {
             return expectedCells > 0 && expectedCells == presentCells;
         }
+    }
+
+    private record BeltHandoff(ItemBeltConnection connection,
+                               ConveyorRollerBlockEntity carrier,
+                               double entryDistance) {
     }
 
     private record Ejection(Vec3 position,
