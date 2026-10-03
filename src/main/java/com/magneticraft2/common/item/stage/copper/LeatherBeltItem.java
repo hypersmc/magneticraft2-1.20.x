@@ -14,6 +14,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 public class LeatherBeltItem extends Item {
     public static final int MAX_BELT_SPAN = 8;
@@ -75,13 +76,19 @@ public class LeatherBeltItem extends Item {
             return fail(player, "message.magneticraft2.belt_start_missing");
         }
 
-        String validationError = validateConnection(level, startPulley, clickedPulley);
-        if (validationError != null) {
-            return fail(player, validationError);
+        PlacementCheck placement = evaluateConnection(
+                level,
+                startPulley,
+                clickedPulley
+        );
+        if (!placement.valid()) {
+            return fail(player, placement.errorKey());
         }
 
-        double distance = Vec3.atCenterOf(startPos).distanceTo(Vec3.atCenterOf(clickedPos));
-        int requiredSegments = Math.max(1, (int) Math.ceil(distance));
+        int requiredSegments = requiredSegments(
+                startPos,
+                clickedPos
+        );
 
         if (player != null && !player.getAbilities().instabuild && stack.getCount() < requiredSegments) {
             player.displayClientMessage(Component.translatable(
@@ -107,39 +114,99 @@ public class LeatherBeltItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
-    private String validateConnection(Level level,
-                                      PulleyBlockEntity_wood start,
-                                      PulleyBlockEntity_wood end) {
+    @Nullable
+    public static BlockPos getSelectedStart(ItemStack stack,
+                                            Level level) {
+        if (stack == null
+                || stack.isEmpty()
+                || !(stack.getItem() instanceof LeatherBeltItem)
+                || level == null
+                || stack.getTag() == null) {
+            return null;
+        }
+
+        CompoundTag tag = stack.getTag();
+        if (!tag.contains(START_POS)
+                || !level.dimension().location().toString()
+                .equals(tag.getString(START_DIMENSION))) {
+            return null;
+        }
+
+        return BlockPos.of(tag.getLong(START_POS));
+    }
+
+    public static PlacementCheck evaluateConnection(
+            Level level,
+            PulleyBlockEntity_wood start,
+            PulleyBlockEntity_wood end) {
+        if (level == null || start == null || end == null) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_start_missing"
+            );
+        }
+
         if (start.getGearAxis() != end.getGearAxis()) {
-            return "message.magneticraft2.belt_parallel_required";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_parallel_required"
+            );
         }
 
-        if (!samePulleyPlane(start.getBlockPos(), end.getBlockPos(), start.getGearAxis())) {
-            return "message.magneticraft2.belt_same_plane_required";
+        if (!samePulleyPlane(
+                start.getBlockPos(),
+                end.getBlockPos(),
+                start.getGearAxis()
+        )) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_same_plane_required"
+            );
         }
 
-        double distance = Vec3.atCenterOf(start.getBlockPos()).distanceTo(Vec3.atCenterOf(end.getBlockPos()));
+        double distance = Vec3.atCenterOf(start.getBlockPos())
+                .distanceTo(Vec3.atCenterOf(end.getBlockPos()));
         if (distance > MAX_BELT_SPAN + 0.001D) {
-            return "message.magneticraft2.belt_too_long";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_too_long"
+            );
         }
 
         if (distance < 1.5D) {
-            return "message.magneticraft2.belt_too_short";
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_too_short"
+            );
         }
 
-        if ((start.getBeltPartner() != null && !start.isLinkedTo(end.getBlockPos()))
-                || (end.getBeltPartner() != null && !end.isLinkedTo(start.getBlockPos()))) {
-            return "message.magneticraft2.belt_pulley_in_use";
+        if ((start.getBeltPartner() != null
+                && !start.isLinkedTo(end.getBlockPos()))
+                || (end.getBeltPartner() != null
+                && !end.isLinkedTo(start.getBlockPos()))) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_pulley_in_use"
+            );
         }
 
-        if (!isPathClear(level, start.getBlockPos(), end.getBlockPos())) {
-            return "message.magneticraft2.belt_path_blocked";
+        if (!isPathClear(
+                level,
+                start.getBlockPos(),
+                end.getBlockPos()
+        )) {
+            return PlacementCheck.invalid(
+                    "message.magneticraft2.belt_path_blocked"
+            );
         }
 
-        return null;
+        return PlacementCheck.valid();
     }
 
-    private boolean samePulleyPlane(BlockPos first, BlockPos second, Direction.Axis axis) {
+    public static int requiredSegments(BlockPos first,
+                                       BlockPos second) {
+        double distance = Vec3.atCenterOf(first)
+                .distanceTo(Vec3.atCenterOf(second));
+        return Math.max(1, (int) Math.ceil(distance));
+    }
+
+    private static boolean samePulleyPlane(BlockPos first,
+                                           BlockPos second,
+                                           Direction.Axis axis) {
         return switch (axis) {
             case X -> first.getX() == second.getX();
             case Y -> first.getY() == second.getY();
@@ -147,18 +214,24 @@ public class LeatherBeltItem extends Item {
         };
     }
 
-    private boolean isPathClear(Level level, BlockPos first, BlockPos second) {
+    private static boolean isPathClear(Level level,
+                                       BlockPos first,
+                                       BlockPos second) {
         Vec3 start = Vec3.atCenterOf(first);
         Vec3 end = Vec3.atCenterOf(second);
         double distance = start.distanceTo(end);
-        int samples = Math.max(4, (int) Math.ceil(distance * 8.0D));
+        int samples = Math.max(
+                4,
+                (int) Math.ceil(distance * 8.0D)
+        );
 
         for (int i = 1; i < samples; i++) {
             double t = i / (double) samples;
             Vec3 sample = start.lerp(end, t);
             BlockPos samplePos = BlockPos.containing(sample);
 
-            if (samplePos.equals(first) || samplePos.equals(second)) {
+            if (samplePos.equals(first)
+                    || samplePos.equals(second)) {
                 continue;
             }
 
@@ -171,6 +244,20 @@ public class LeatherBeltItem extends Item {
         return true;
     }
 
+    public record PlacementCheck(@Nullable String errorKey) {
+        public static PlacementCheck valid() {
+            return new PlacementCheck(null);
+        }
+
+        public static PlacementCheck invalid(String errorKey) {
+            return new PlacementCheck(errorKey);
+        }
+
+        public boolean valid() {
+            return errorKey == null;
+        }
+    }
+
     private void disconnectPulley(PulleyBlockEntity_wood pulley, Player player) {
         BlockPos partnerPos = pulley.getBeltPartner();
         if (partnerPos == null) {
@@ -178,8 +265,10 @@ public class LeatherBeltItem extends Item {
             return;
         }
 
-        double distance = Vec3.atCenterOf(pulley.getBlockPos()).distanceTo(Vec3.atCenterOf(partnerPos));
-        int recoveredSegments = Math.max(1, (int) Math.ceil(distance));
+        int recoveredSegments = requiredSegments(
+                pulley.getBlockPos(),
+                partnerPos
+        );
         pulley.disconnectBelt(true);
 
         if (!player.getAbilities().instabuild) {
