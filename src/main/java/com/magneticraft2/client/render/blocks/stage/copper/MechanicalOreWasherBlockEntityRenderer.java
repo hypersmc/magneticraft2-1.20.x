@@ -119,7 +119,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         poseStack.translate(
                 0.5D,
                 1.125D,
-                1.5D
+                0.5D
         );
         poseStack.mulPose(
                 Axis.ZP.rotationDegrees(
@@ -129,7 +129,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         poseStack.translate(
                 -0.5D,
                 -1.125D,
-                -1.5D
+                -0.5D
         );
 
         renderModel(
@@ -158,7 +158,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer.getInputStack(),
                 0.5D,
                 1.72D,
-                0.32D,
+                -0.68D,
                 0.34F,
                 301,
                 poseStack,
@@ -172,7 +172,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer.getOutputStack(),
                 0.03D,
                 0.36D,
-                2.55D,
+                1.55D,
                 0.30F,
                 302,
                 poseStack,
@@ -186,7 +186,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer.getByproductStack(),
                 0.97D,
                 0.36D,
-                2.55D,
+                1.55D,
                 0.28F,
                 303,
                 poseStack,
