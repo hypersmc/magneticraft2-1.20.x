@@ -42,12 +42,15 @@ public class CrankBlockEntity_woodRenderer
                     "textures/block/copper_block.png"
             );
 
-    private static final double WHEEL_RADIUS = 0.30D;
+    private static final double WHEEL_RADIUS = 0.27D;
     private static final double WHEEL_HALF_LENGTH = 0.075D;
     private static final int WHEEL_SIDES = 12;
 
-    private static final double CRANK_RADIUS = 0.16D;
-    private static final double CONNECTING_ROD_LENGTH = 0.34D;
+    // Keep the crosshead outside the wheel at inner dead center:
+    // slider minimum = rod length - crank radius = 0.36,
+    // while the wheel only reaches 0.27 from the axle.
+    private static final double CRANK_RADIUS = 0.12D;
+    private static final double CONNECTING_ROD_LENGTH = 0.48D;
 
     public CrankBlockEntity_woodRenderer(
             BlockEntityRendererProvider.Context context) {
@@ -199,7 +202,7 @@ public class CrankBlockEntity_woodRenderer
             stack.pushPose();
             stack.translate(
                     0.0D,
-                    0.35D,
+                    0.47D,
                     guideZ
             );
             drawBox(
@@ -207,7 +210,7 @@ public class CrankBlockEntity_woodRenderer
                     woodConsumer,
                     packedLight,
                     0.12D,
-                    0.38D,
+                    0.50D,
                     0.06D
             );
             stack.popPose();
@@ -252,7 +255,10 @@ public class CrankBlockEntity_woodRenderer
         );
         stack.popPose();
 
-        double outputEnd = 0.54D;
+        // Carry the crosshead through the block boundary and overlap the
+        // Mechanical Bellows' rear pushrod. This stays entirely outside the
+        // wheel instead of disappearing into the rim at inner dead center.
+        double outputEnd = 0.70D;
         double outputLength =
                 Math.max(
                         0.02D,
