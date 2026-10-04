@@ -47,28 +47,28 @@ public class MechanicalOreWasherBlock
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
                     // foundation skids and cross ties
-                    Block.box(-14, 0, 1, -11, 3, 47),
-                    Block.box(27, 0, 1, 30, 3, 47),
-                    Block.box(-14, 2, 2, 30, 5, 5),
-                    Block.box(-14, 2, 22, 30, 5, 25),
-                    Block.box(-14, 2, 43, 30, 5, 46),
+                    Block.box(-14, 0, -15, -11, 3, 31),
+                    Block.box(27, 0, -15, 30, 3, 31),
+                    Block.box(-14, 2, -14, 30, 5, -11),
+                    Block.box(-14, 2, 6, 30, 5, 9),
+                    Block.box(-14, 2, 27, 30, 5, 30),
 
                     // timber A-frame
-                    Block.box(-13, 3, 7, -10, 27, 10),
-                    Block.box(26, 3, 7, 29, 27, 10),
-                    Block.box(-13, 3, 34, -10, 27, 37),
-                    Block.box(26, 3, 34, 29, 27, 37),
-                    Block.box(-13, 26, 7, 29, 29, 10),
-                    Block.box(-13, 26, 34, 29, 29, 37),
+                    Block.box(-13, 3, -9, -10, 27, -6),
+                    Block.box(26, 3, -9, 29, 27, -6),
+                    Block.box(-13, 3, 18, -10, 27, 21),
+                    Block.box(26, 3, 18, 29, 27, 21),
+                    Block.box(-13, 26, -9, 29, 29, -6),
+                    Block.box(-13, 26, 18, 29, 29, 21),
 
                     // trough and rotating drum envelope
-                    Block.box(-12, 5, 9, 28, 13, 41),
-                    Block.box(-1, 9, 8, 17, 27, 40),
+                    Block.box(-12, 5, -7, 28, 13, 25),
+                    Block.box(-1, 9, -8, 17, 27, 24),
 
                     // feed and discharge chutes
-                    Block.box(-5, 18, 0, 21, 25, 10),
-                    Block.box(-9, 5, 39, 5, 9, 48),
-                    Block.box(11, 5, 39, 25, 9, 48)
+                    Block.box(-5, 18, -16, 21, 25, -6),
+                    Block.box(-9, 5, 23, 5, 9, 32),
+                    Block.box(11, 5, 23, 25, 9, 32)
             );
 
     public MechanicalOreWasherBlock() {
