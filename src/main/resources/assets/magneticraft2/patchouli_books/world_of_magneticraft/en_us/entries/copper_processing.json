@@ -120,6 +120,16 @@
       "text": "The Copper Fluid Tank stores 8000 mB of one fluid. Connect a Copper Fluid Pipe to the TOP socket. The tank periodically pulls from reachable multiblock Fluid Outputs, so Dirty Water from the Ore Washer can be collected without making every pipe tick. The four inspection windows show the real fluid texture, color and fill level."
     },
     {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Transfer Arm",
+      "recipe": "magneticraft2:mechanical_transfer_arm",
+      "text": "Early item automation stays physical. The Transfer Arm's horizontal base gear meshes with Gear V2 and moves one item per cycle. Its four buttons cycle $(bold)None -> Orange Source -> Blue Destination -> None$(). Place inventories or formed multiblock Item Ports directly beside the selected sides."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Arm filters$()$(br2)Right-click the center filter tray with an item to set a ghost filter; the item is not consumed. With an empty hand, right-click the center to toggle whitelist/blacklist. Sneak-right-click the center with an empty hand to clear it.$(br2)The arm physically carries the extracted item. If the destination fills, it waits with the item in its claw instead of deleting it."
+    },
+    {
       "type": "text",
       "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. Connect the Dirty Fluid Output to a Copper Fluid Tank; otherwise the Washer eventually pauses when its internal waste tank fills.$(br2)Dirty Water is intended for later treatment/recycling rather than permanent disposal."
     },
@@ -174,21 +184,22 @@
     "magneticraft2:mechanical_input_module": 7,
     "magneticraft2:multiblock_item_input": 8,
     "magneticraft2:multiblock_item_output": 8,
-    "magneticraft2:mechanical_sifter": 14,
-    "magneticraft2:cassiterite_ore": 16,
-    "magneticraft2:crushed_cassiterite": 16,
-    "magneticraft2:washed_cassiterite": 16,
-    "magneticraft2:tin_concentrate": 16,
-    "magneticraft2:tin_ingot": 17,
-    "magneticraft2:bronze_charge": 17,
-    "magneticraft2:bronze_ingot": 17,
+    "magneticraft2:mechanical_sifter": 16,
+    "magneticraft2:cassiterite_ore": 18,
+    "magneticraft2:crushed_cassiterite": 18,
+    "magneticraft2:washed_cassiterite": 18,
+    "magneticraft2:tin_concentrate": 18,
+    "magneticraft2:tin_ingot": 19,
+    "magneticraft2:bronze_charge": 19,
+    "magneticraft2:bronze_ingot": 19,
     "magneticraft2:multiblock_fluid_input": 10,
     "magneticraft2:water_pipe": 11,
     "magneticraft2:mechanical_water_pump": 11,
     "magneticraft2:multiblock_fluid_output": 10,
     "magneticraft2:copper_fluid_tank": 12,
     "magneticraft2:primitive_grinder_base": 3,
-    "magneticraft2:primitive_grinder_top": 3
+    "magneticraft2:primitive_grinder_top": 3,
+    "magneticraft2:mechanical_transfer_arm": 13
   },
   "sortnum": 0,
   "read_by_default": true

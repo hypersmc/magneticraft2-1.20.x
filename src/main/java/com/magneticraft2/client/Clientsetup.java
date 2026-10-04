@@ -16,6 +16,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBellowsBloc
 import com.magneticraft2.client.render.blocks.stage.copper.FlywheelBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalOreWasherBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalWaterPumpBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArmBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.CopperFluidTankBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModuleBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
@@ -93,6 +94,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.FLYWHEEL_BE_WOOD.get(), FlywheelBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_ORE_WASHER_BE.get(), MechanicalOreWasherBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_WATER_PUMP_BE.get(), MechanicalWaterPumpBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_TRANSFER_ARM_BE.get(), MechanicalTransferArmBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(), CopperFluidTankBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_INPUT_MODULE_BE.get(), MechanicalInputModuleBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
@@ -124,6 +126,12 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_gear"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_arm"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_button_orange"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_button_blue"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_filter_allow"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_filter_deny"));
 
         for (ResourceLocation resourceLocation : resourceManager.listResources(folderPath, path -> path.toString().endsWith(".json")).keySet()) {
             // Remove the "models/" prefix and ".json" suffix for registering the model

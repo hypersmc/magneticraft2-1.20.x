@@ -207,12 +207,12 @@ public class MechanicalOreWasherBlockEntityRenderer
         );
         renderStoredItem(
                 washer, washer.getOutputStack(),
-                0.34D, 0.46D, 1.50D, 0.27F, 302,
+                0.34D, 0.49D, 1.50D, 0.42F, 302,
                 poseStack, buffer, packedLight, packedOverlay
         );
         renderStoredItem(
                 washer, washer.getByproductStack(),
-                0.66D, 0.46D, 1.50D, 0.25F, 303,
+                0.66D, 0.49D, 1.50D, 0.38F, 303,
                 poseStack, buffer, packedLight, packedOverlay
         );
 
@@ -457,7 +457,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                     0.5D + offsets[i][0],
                     0.82D + offsets[i][1],
                     -0.62D + offsets[i][2],
-                    0.27F,
+                    0.42F,
                     301 + i,
                     poseStack,
                     buffer,
@@ -494,7 +494,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                         ) * 0.012D,
                 -0.60D
                         + feedPhase * 0.34D,
-                0.30F,
+                0.37F,
                 399,
                 poseStack,
                 buffer,
