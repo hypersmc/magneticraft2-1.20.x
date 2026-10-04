@@ -5,6 +5,9 @@ import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -17,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
@@ -126,6 +130,81 @@ public class CrankBlock_wood extends GearBlock {
         }
 
         return rodDirection;
+    }
+
+    @Override
+    public InteractionResult use(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            InteractionHand hand,
+            BlockHitResult hit) {
+        if (!player.getItemInHand(hand).isEmpty()) {
+            return InteractionResult.PASS;
+        }
+
+        if (!level.isClientSide) {
+            Direction.Axis shaftAxis =
+                    state.getValue(FACING).getAxis();
+
+            Direction[] choices =
+                    java.util.Arrays.stream(
+                                    Direction.values()
+                            )
+                            .filter(direction ->
+                                    direction.getAxis()
+                                            != shaftAxis)
+                            .toArray(Direction[]::new);
+
+            Direction current =
+                    state.getValue(
+                            ROD_DIRECTION
+                    );
+
+            int currentIndex = 0;
+            for (int i = 0; i < choices.length; i++) {
+                if (choices[i] == current) {
+                    currentIndex = i;
+                    break;
+                }
+            }
+
+            int step =
+                    player.isShiftKeyDown()
+                            ? -1
+                            : 1;
+
+            int nextIndex =
+                    Math.floorMod(
+                            currentIndex + step,
+                            choices.length
+                    );
+
+            Direction next =
+                    choices[nextIndex];
+
+            level.setBlock(
+                    pos,
+                    state.setValue(
+                            ROD_DIRECTION,
+                            next
+                    ),
+                    Block.UPDATE_CLIENTS
+            );
+
+            player.displayClientMessage(
+                    Component.translatable(
+                            "message.magneticraft2.crank_output",
+                            next.getName()
+                    ),
+                    true
+            );
+        }
+
+        return InteractionResult.sidedSuccess(
+                level.isClientSide
+        );
     }
 
     @Override
