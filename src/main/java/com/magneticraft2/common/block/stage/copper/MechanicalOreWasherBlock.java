@@ -58,13 +58,13 @@ public class MechanicalOreWasherBlock
                     Block.box(22, 5, -6, 25, 12, 23),
                     Block.box(-6, 5, -5, 22, 7, 22),
 
-                    // Four compact uprights and bearing crossbars.
+                    // Four compact uprights and the rear crossbar. The front
+                    // drive bay stays open so the pulley/belt path is visible.
                     Block.box(-8, 7, -4, -5, 25, -1),
                     Block.box(21, 7, -4, 24, 25, -1),
                     Block.box(-8, 7, 18, -5, 25, 21),
                     Block.box(21, 7, 18, 24, 25, 21),
                     Block.box(-8, 22, -4, 24, 25, -1),
-                    Block.box(-8, 22, 18, 24, 25, 21),
 
                     // Low trommel envelope, partially down inside the trough.
                     Block.box(2, 9, -4, 14, 20, 22),

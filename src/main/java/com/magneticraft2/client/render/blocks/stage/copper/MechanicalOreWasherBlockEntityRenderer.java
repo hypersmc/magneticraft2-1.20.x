@@ -46,7 +46,7 @@ public class MechanicalOreWasherBlockEntityRenderer
 
     // Open-belt drive ratio: small input pulley -> larger trommel pulley.
     private static final float DRUM_SPEED_RATIO =
-            2.25F / 3.65F;
+            2.75F / 3.80F;
     private static final ResourceLocation WATER_MODEL =
             new ResourceLocation(
                     "magneticraft2",
@@ -96,8 +96,8 @@ public class MechanicalOreWasherBlockEntityRenderer
                         partialTicks
                 );
 
-        // The visible Gear V2 bearing drives a small upper pulley. Two static
-        // leather belt spans connect it to the larger pulley on the lower drum.
+        // The visible Gear V2 bearing drives a small upper pulley. The static
+        // leather belt converges toward it from the larger lower drum pulley.
         poseStack.pushPose();
         poseStack.translate(
                 0.5D,
