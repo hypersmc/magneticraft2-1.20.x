@@ -115,9 +115,24 @@ public class MechanicalTransferArmBlockEntityRenderer
         Direction destination =
                 arm.getDestinationSide();
 
+        Direction facing =
+                Direction.NORTH;
+        BlockState blockState =
+                arm.getBlockState();
+
+        if (blockState.hasProperty(
+                net.minecraft.world.level.block.DirectionalBlock.FACING
+        )) {
+            facing =
+                    blockState.getValue(
+                            net.minecraft.world.level.block.DirectionalBlock.FACING
+                    );
+        }
+
         if (source != null) {
-            renderDirectionalModel(
+            renderControlButton(
                     ORANGE_BUTTON_MODEL,
+                    facing,
                     source,
                     poseStack,
                     buffer,
@@ -127,8 +142,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         }
 
         if (destination != null) {
-            renderDirectionalModel(
+            renderControlButton(
                     BLUE_BUTTON_MODEL,
+                    facing,
                     destination,
                     poseStack,
                     buffer,
@@ -471,8 +487,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.translate(
                 0.5D,
-                3.55D / 16.0D,
-                0.015D
+                2.48D / 16.0D,
+                -0.035D
         );
 
         poseStack.mulPose(
@@ -482,9 +498,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.28F,
-                0.28F,
-                0.28F
+                0.24F,
+                0.24F,
+                0.24F
         );
 
         Minecraft.getInstance()
@@ -595,9 +611,10 @@ public class MechanicalTransferArmBlockEntityRenderer
         };
     }
 
-    private void renderDirectionalModel(
+    private void renderControlButton(
             ResourceLocation model,
-            Direction direction,
+            Direction facing,
+            Direction configuredSide,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight,
@@ -608,7 +625,26 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(direction)
+                yawFor(facing)
+        );
+
+        double xOffset = 0.0D;
+        double yOffset = 0.0D;
+
+        if (configuredSide == facing.getOpposite()) {
+            yOffset = -2.60D / 16.0D;
+        } else if (configuredSide == facing.getCounterClockWise()) {
+            xOffset = -2.45D / 16.0D;
+            yOffset = -1.30D / 16.0D;
+        } else if (configuredSide == facing.getClockWise()) {
+            xOffset = 2.45D / 16.0D;
+            yOffset = -1.30D / 16.0D;
+        }
+
+        poseStack.translate(
+                xOffset,
+                yOffset,
+                0.0D
         );
 
         renderModel(

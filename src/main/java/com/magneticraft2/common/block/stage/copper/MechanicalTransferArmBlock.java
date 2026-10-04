@@ -26,10 +26,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Copper Age one-item mechanical inserter.
  *
- * Four physical buttons around the top of the base can each be cycled through:
- * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE.
+ * Four buttons on the single front control console can each be cycled through:
+ * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE. Keeping every control
+ * on one face means the arm remains configurable when full blocks touch its
+ * left/right/back sides.
  *
- * The framed filter rack on the front face accepts a ghost filter item.
+ * The framed filter rack below the D-pad accepts a ghost filter item.
  * Empty-hand filter click toggles whitelist/blacklist; shift + empty-hand
  * filter click clears it.
  */
@@ -176,6 +178,12 @@ public class MechanicalTransferArmBlock extends GearBlock {
                         pos,
                         hit
                 );
+        boolean filterHit =
+                isFilterHit(
+                        state,
+                        pos,
+                        hit
+                );
 
         ItemStack held =
                 player.getItemInHand(hand);
@@ -196,7 +204,7 @@ public class MechanicalTransferArmBlock extends GearBlock {
             return InteractionResult.CONSUME;
         }
 
-        if (button == null) {
+        if (filterHit) {
             if (!held.isEmpty()) {
                 ItemStack filter =
                         held.copy();
@@ -249,64 +257,122 @@ public class MechanicalTransferArmBlock extends GearBlock {
         return InteractionResult.PASS;
     }
 
+    private boolean isFilterHit(
+            BlockState state,
+            BlockPos pos,
+            BlockHitResult hit) {
+        Direction facing =
+                state.getValue(FACING);
+
+        if (hit.getDirection() != facing) {
+            return false;
+        }
+
+        double dx =
+                hit.getLocation().x
+                        - pos.getX()
+                        - 0.5D;
+        double dz =
+                hit.getLocation().z
+                        - pos.getZ()
+                        - 0.5D;
+        double localY =
+                hit.getLocation().y
+                        - pos.getY();
+
+        Direction right =
+                facing.getClockWise();
+
+        double lateral =
+                dx * right.getStepX()
+                        + dz * right.getStepZ();
+
+        return Math.abs(lateral)
+                <= 3.10D / 16.0D
+                && localY >= 1.45D / 16.0D
+                && localY <= 3.25D / 16.0D;
+    }
+
     @Nullable
     private Direction getButtonDirection(
             BlockState state,
             BlockPos pos,
             BlockHitResult hit) {
-        double localX =
-                hit.getLocation().x
-                        - pos.getX();
-        double localY =
-                hit.getLocation().y
-                        - pos.getY();
-        double localZ =
-                hit.getLocation().z
-                        - pos.getZ();
-
         Direction facing =
                 state.getValue(FACING);
 
-        // Dedicated filter rack on the FRONT face. Clicking the framed center
-        // is filter interaction, not the forward direction button.
-        if (hit.getDirection() == facing
-                && localY >= 1.7D / 16.0D
-                && localY <= 5.6D / 16.0D) {
-            double lateral =
-                    facing.getAxis()
-                            == Direction.Axis.Z
-                            ? Math.abs(localX - 0.5D)
-                            : Math.abs(localZ - 0.5D);
-
-            if (lateral <= 0.24D) {
-                return null;
-            }
+        // All configuration lives on the one exposed front console. This is
+        // intentional: in real machine lines the arm is often sandwiched
+        // directly between two full inventories/modules, making side buttons
+        // impossible to click.
+        if (hit.getDirection() != facing) {
+            return null;
         }
 
-        // Top face is the intended way to configure the four physical buttons.
-        if (hit.getDirection() == Direction.UP) {
-            double centeredX =
-                    localX - 0.5D;
-            double centeredZ =
-                    localZ - 0.5D;
+        double dx =
+                hit.getLocation().x
+                        - pos.getX()
+                        - 0.5D;
+        double dz =
+                hit.getLocation().z
+                        - pos.getZ()
+                        - 0.5D;
+        double localY =
+                hit.getLocation().y
+                        - pos.getY();
 
-            if (Math.abs(centeredX)
-                    > Math.abs(centeredZ)) {
-                return centeredX > 0.0D
-                        ? Direction.EAST
-                        : Direction.WEST;
-            }
+        Direction right =
+                facing.getClockWise();
 
-            return centeredZ > 0.0D
-                    ? Direction.SOUTH
-                    : Direction.NORTH;
+        double lateral =
+                dx * right.getStepX()
+                        + dz * right.getStepZ();
+
+        // Filter rack: x ~= center, y = 1.55..3.25 pixels.
+        if (Math.abs(lateral)
+                <= 3.10D / 16.0D
+                && localY >= 1.45D / 16.0D
+                && localY <= 3.25D / 16.0D) {
+            return null;
         }
 
-        // Side-face clicks remain a convenience everywhere except the filter.
-        if (hit.getDirection()
-                .getAxis()
-                .isHorizontal()) {
-            return hit.getDirection();
+        // Forward button.
+        if (Math.abs(lateral)
+                <= 1.25D / 16.0D
+                && localY >= 5.95D / 16.0D
+                && localY <= 7.45D / 16.0D) {
+            return facing;
+        }
+
+        // Back button.
+        if (Math.abs(lateral)
+                <= 1.25D / 16.0D
+                && localY >= 3.35D / 16.0D
+                && localY <= 4.80D / 16.0D) {
+            return facing.getOpposite();
+        }
+
+        // Left / right row.
+        if (localY >= 4.65D / 16.0D
+                && localY <= 6.10D / 16.0D) {
+            double leftCenter =
+                    -2.45D / 16.0D;
+            double rightCenter =
+                    2.45D / 16.0D;
+            double halfWidth =
+                    1.20D / 16.0D;
+
+            if (Math.abs(
+                    lateral - leftCenter
+            ) <= halfWidth) {
+                return facing.getCounterClockWise();
+            }
+
+            if (Math.abs(
+                    lateral - rightCenter
+            ) <= halfWidth) {
+                return facing.getClockWise();
+            }
         }
 
         return null;
