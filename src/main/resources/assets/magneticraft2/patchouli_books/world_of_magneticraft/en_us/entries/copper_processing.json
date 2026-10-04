@@ -73,8 +73,8 @@
             "PPP"
           ],
           [
-            "P0P",
-            "C C",
+            "PCP",
+            "C0C",
             "PMP"
           ]
         ],
@@ -86,11 +86,11 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame around the controller, then right-click the controller to form it. The controller is centered in the rear row; the Mechanical Input Bearing is centered at the opposite end."
+      "text": "Build the 3x2x3 frame around the controller, then right-click the controller to form it. The controller is the centre block of the footprint; the Mechanical Input Bearing is one block forward from it at the edge of the structure."
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Connect a shaft to the exposed Mechanical Input Bearing. Place a water source beside either side of the middle section of the formed machine. Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance.$(br2)The formed structure becomes one large trommel instead of trying to squeeze the machine into a single block."
+      "text": "$(bold)Washer operation$()$(br2)Connect a shaft to the exposed Mechanical Input Bearing. The controller is centered in the 3x3 footprint, and the machine extends one block behind and one block ahead of it. Place a water source two blocks to either side of the controller to feed the central trough.$(br2)Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance."
     },
     {
       "type": "patchouli:crafting",
