@@ -1,0 +1,65 @@
+{
+  "name": "Copper Processing",
+  "description": "Turn copper into machine parts and use mechanical power to improve ore yield.",
+  "category": "magneticraft2:copper_workshop",
+  "icon": "magneticraft2:primitive_anvil",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)From metal to machinery$()$(br2)The Copper Age starts by turning your first ingots into manufactured parts. The Primitive Anvil makes Copper Plates, and the Mechanical Grinder is the first machine that rewards building a working rotational network."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Anvil",
+      "recipe": "magneticraft2:primitive_anvil",
+      "text": "Right-click the anvil with a Copper Ingot, then strike it four times with the Primitive Hammer. The workpiece is shown on the anvil and becomes a Copper Plate after the final strike."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Copper Plates$()$(br2)Copper Plates reinforce many Copper Age mechanisms: control blocks, protection devices, the brake and the crank all build on this first metalworking step.$(br2)Use an empty hand on the completed anvil workpiece to pick it up."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Grinder",
+      "recipe": "magneticraft2:primitive_grinder_base",
+      "recipe2": "magneticraft2:primitive_grinder_top",
+      "text": "Place the Mechanical Grinder Base and put the Grinder Stone directly above it, then right-click the base to form the two-block machine."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Grinder",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "T"
+          ],
+          [
+            "0"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitive_grinder_bmultiblock",
+          "T": "magneticraft2:primitive_grindertop"
+        },
+        "symmetrical": true
+      },
+      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the stone base. Place a horizontal Wooden Shaft against the visible bearing. The grinder requires at least 20 mechanical speed and 4 torque."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Crushing Chalcocite$()$(br2)Right-click the formed grinder with Chalcocite Ore. With at least 20 speed and 4 torque it runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the drivetrain stops, processing pauses rather than losing progress. Use an empty hand to retrieve output."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why crush it?$()$(br2)Direct Primitive Furnace processing remains valid: one Chalcocite Ore gives one Copper Ingot plus Slag.$(br2)Crushing first improves the same furnace batch to $(bold)two Copper Ingots$() plus Slag. Your mechanical workshop therefore improves resource efficiency instead of existing only as a progression lock."
+    }
+  ],
+  "extra_recipe_mappings": {
+    "magneticraft2:primitive_anvil": 1,
+    "magneticraft2:primitive_grinder_bmultiblock": 3,
+    "magneticraft2:primitive_grindertop": 3
+  },
+  "sortnum": 0,
+  "read_by_default": true
+}
