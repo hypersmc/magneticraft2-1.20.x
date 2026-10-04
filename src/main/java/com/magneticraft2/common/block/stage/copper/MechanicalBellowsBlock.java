@@ -67,7 +67,7 @@ public class MechanicalBellowsBlock extends BaseEntityBlock {
         return defaultBlockState()
                 .setValue(
                         FACING,
-                        context.getClickedFace().getOpposite()
+                        context.getClickedFace()
                 )
                 .setValue(ACTIVE, false);
     }
