@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 Mechanical Ore Washer - west segmented fluid port walls",
+  "credit": "Magneticraft2 Mechanical Ore Washer - west clean fluid ports and supported input bearing",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -1574,150 +1574,142 @@
     },
     {
       "from": [
+        16,
         5,
-        8,
-        -14
+        -9
       ],
       "to": [
-        11,
-        11,
-        -9
+        22,
+        13,
+        -6
       ],
       "faces": {
         "north": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         },
         "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         },
         "south": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         },
         "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         },
         "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         },
         "down": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
+          "texture": "#copper"
         }
       }
     },
     {
       "from": [
-        6,
-        9,
-        -16
+        -8,
+        5,
+        -9
       ],
       "to": [
+        0,
+        13,
+        -6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        16,
+        5,
+        22
+      ],
+      "to": [
+        22,
+        13,
+        25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        -8,
+        5,
+        22
+      ],
+      "to": [
+        0,
+        13,
+        25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper"
+        },
+        "east": {
+          "texture": "#copper"
+        },
+        "south": {
+          "texture": "#copper"
+        },
+        "west": {
+          "texture": "#copper"
+        },
+        "up": {
+          "texture": "#copper"
+        },
+        "down": {
+          "texture": "#copper"
+        }
+      }
+    },
+    {
+      "from": [
+        -11.5,
         10,
-        10.5,
-        -14
-      ],
-      "faces": {
-        "north": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        14,
-        5,
-        -9
+        2
       ],
       "to": [
-        22,
-        13,
-        -6
+        -4.5,
+        19.5,
+        4
       ],
       "faces": {
         "north": {
@@ -1742,14 +1734,14 @@
     },
     {
       "from": [
-        -8,
-        5,
-        -9
+        -11.5,
+        10,
+        12
       ],
       "to": [
-        2,
-        13,
-        -6
+        -4.5,
+        19.5,
+        14
       ],
       "faces": {
         "north": {
@@ -1774,65 +1766,33 @@
     },
     {
       "from": [
-        14,
-        5,
-        22
+        -11.5,
+        10,
+        2
       ],
       "to": [
-        22,
-        13,
-        25
+        -4.5,
+        11.5,
+        14
       ],
       "faces": {
         "north": {
-          "texture": "#copper"
+          "texture": "#wood"
         },
         "east": {
-          "texture": "#copper"
+          "texture": "#wood"
         },
         "south": {
-          "texture": "#copper"
+          "texture": "#wood"
         },
         "west": {
-          "texture": "#copper"
+          "texture": "#wood"
         },
         "up": {
-          "texture": "#copper"
+          "texture": "#wood"
         },
         "down": {
-          "texture": "#copper"
-        }
-      }
-    },
-    {
-      "from": [
-        -8,
-        5,
-        22
-      ],
-      "to": [
-        2,
-        13,
-        25
-      ],
-      "faces": {
-        "north": {
-          "texture": "#copper"
-        },
-        "east": {
-          "texture": "#copper"
-        },
-        "south": {
-          "texture": "#copper"
-        },
-        "west": {
-          "texture": "#copper"
-        },
-        "up": {
-          "texture": "#copper"
-        },
-        "down": {
-          "texture": "#copper"
+          "texture": "#wood"
         }
       }
     }

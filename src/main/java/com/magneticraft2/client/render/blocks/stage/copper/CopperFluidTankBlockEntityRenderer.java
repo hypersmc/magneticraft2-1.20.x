@@ -9,18 +9,26 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * Renders only the liquid visible behind the four inspection windows.
- * The copper frame and glass remain ordinary chunk-rendered block geometry.
+ * Renders the actual stored fluid volume inside the Copper Fluid Tank.
+ *
+ * The baked tank model is only the copper vessel/frame. Its four inspection
+ * openings expose this cuboid directly, so the visible level is the real tank
+ * fill ratio rather than four independent fake window quads.
  */
 public class CopperFluidTankBlockEntityRenderer
         implements BlockEntityRenderer<CopperFluidTankBlockEntity> {
+
+    private static final float MIN_XZ = 3.05F / 16.0F;
+    private static final float MAX_XZ = 12.95F / 16.0F;
+    private static final float BOTTOM = 2.05F / 16.0F;
+    private static final float FULL_TOP = 13.85F / 16.0F;
 
     public CopperFluidTankBlockEntityRenderer(
             BlockEntityRendererProvider.Context context) {
@@ -34,16 +42,13 @@ public class CopperFluidTankBlockEntityRenderer
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        FluidStack fluid =
-                tank.getFluidForRender();
+        FluidStack fluid = tank.getFluidForRender();
 
         if (fluid.isEmpty()) {
             return;
         }
 
-        float fill =
-                tank.getFillRatio();
-
+        float fill = tank.getFillRatio();
         if (fill <= 0.0F) {
             return;
         }
@@ -67,8 +72,7 @@ public class CopperFluidTankBlockEntityRenderer
                         )
                         .apply(texture);
 
-        int tint =
-                clientFluid.getTintColor(fluid);
+        int tint = clientFluid.getTintColor(fluid);
 
         float alpha =
                 ((tint >>> 24) & 0xFF) / 255.0F;
@@ -83,33 +87,17 @@ public class CopperFluidTankBlockEntityRenderer
             alpha = 1.0F;
         }
 
-        float min =
-                3.25F / 16.0F;
-        float max =
-                12.75F / 16.0F;
-        float bottom =
-                3.25F / 16.0F;
+        // Keep the liquid just inside the vessel surfaces. Besides looking like
+        // a real contained volume, the small inset prevents coplanar z-fighting
+        // with the copper frame.
         float top =
-                bottom
-                        + (9.5F / 16.0F)
+                BOTTOM
+                        + (FULL_TOP - BOTTOM)
                         * fill;
 
-        float northZ =
-                1.30F / 16.0F;
-        float southZ =
-                14.70F / 16.0F;
-        float westX =
-                1.30F / 16.0F;
-        float eastX =
-                14.70F / 16.0F;
-
-        float u0 = sprite.getU0();
-        float u1 = sprite.getU1();
-        float v1 = sprite.getV1();
-        float v0 =
-                v1
-                        - (v1 - sprite.getV0())
-                        * fill;
+        if (top <= BOTTOM) {
+            return;
+        }
 
         VertexConsumer consumer =
                 buffer.getBuffer(
@@ -118,58 +106,74 @@ public class CopperFluidTankBlockEntityRenderer
         PoseStack.Pose pose =
                 poseStack.last();
 
-        // North window.
+        float u0 = sprite.getU0();
+        float u1 = sprite.getU1();
+        float v0 = sprite.getV0();
+        float v1 = sprite.getV1();
+        float sideVTop =
+                v1 - (v1 - v0) * fill;
+
+        // Top surface.
         quad(
-                consumer,
-                pose,
-                min, bottom, northZ,
-                max, bottom, northZ,
-                max, top, northZ,
-                min, top, northZ,
+                consumer, pose,
+                MIN_XZ, top, MIN_XZ,
+                MIN_XZ, top, MAX_XZ,
+                MAX_XZ, top, MAX_XZ,
+                MAX_XZ, top, MIN_XZ,
+                0.0F, 1.0F, 0.0F,
+                u0, v0, u1, v1,
+                red, green, blue, alpha,
+                packedLight
+        );
+
+        // North side.
+        quad(
+                consumer, pose,
+                MAX_XZ, BOTTOM, MIN_XZ,
+                MIN_XZ, BOTTOM, MIN_XZ,
+                MIN_XZ, top, MIN_XZ,
+                MAX_XZ, top, MIN_XZ,
                 0.0F, 0.0F, -1.0F,
-                u0, v1, u1, v0,
+                u0, v1, u1, sideVTop,
                 red, green, blue, alpha,
                 packedLight
         );
 
-        // South window.
+        // South side.
         quad(
-                consumer,
-                pose,
-                max, bottom, southZ,
-                min, bottom, southZ,
-                min, top, southZ,
-                max, top, southZ,
+                consumer, pose,
+                MIN_XZ, BOTTOM, MAX_XZ,
+                MAX_XZ, BOTTOM, MAX_XZ,
+                MAX_XZ, top, MAX_XZ,
+                MIN_XZ, top, MAX_XZ,
                 0.0F, 0.0F, 1.0F,
-                u0, v1, u1, v0,
+                u0, v1, u1, sideVTop,
                 red, green, blue, alpha,
                 packedLight
         );
 
-        // West window.
+        // West side.
         quad(
-                consumer,
-                pose,
-                westX, bottom, max,
-                westX, bottom, min,
-                westX, top, min,
-                westX, top, max,
+                consumer, pose,
+                MIN_XZ, BOTTOM, MIN_XZ,
+                MIN_XZ, BOTTOM, MAX_XZ,
+                MIN_XZ, top, MAX_XZ,
+                MIN_XZ, top, MIN_XZ,
                 -1.0F, 0.0F, 0.0F,
-                u0, v1, u1, v0,
+                u0, v1, u1, sideVTop,
                 red, green, blue, alpha,
                 packedLight
         );
 
-        // East window.
+        // East side.
         quad(
-                consumer,
-                pose,
-                eastX, bottom, min,
-                eastX, bottom, max,
-                eastX, top, max,
-                eastX, top, min,
+                consumer, pose,
+                MAX_XZ, BOTTOM, MAX_XZ,
+                MAX_XZ, BOTTOM, MIN_XZ,
+                MAX_XZ, top, MIN_XZ,
+                MAX_XZ, top, MAX_XZ,
                 1.0F, 0.0F, 0.0F,
-                u0, v1, u1, v0,
+                u0, v1, u1, sideVTop,
                 red, green, blue, alpha,
                 packedLight
         );
@@ -183,15 +187,15 @@ public class CopperFluidTankBlockEntityRenderer
             float x2, float y2, float z2,
             float x3, float y3, float z3,
             float nx, float ny, float nz,
-            float u0, float vBottom,
-            float u1, float vTop,
+            float u0, float v0,
+            float u1, float v1,
             float red, float green, float blue, float alpha,
             int packedLight) {
         vertex(
                 consumer, pose,
                 x0, y0, z0,
                 nx, ny, nz,
-                u0, vBottom,
+                u0, v0,
                 red, green, blue, alpha,
                 packedLight
         );
@@ -199,7 +203,7 @@ public class CopperFluidTankBlockEntityRenderer
                 consumer, pose,
                 x1, y1, z1,
                 nx, ny, nz,
-                u1, vBottom,
+                u1, v0,
                 red, green, blue, alpha,
                 packedLight
         );
@@ -207,7 +211,7 @@ public class CopperFluidTankBlockEntityRenderer
                 consumer, pose,
                 x2, y2, z2,
                 nx, ny, nz,
-                u1, vTop,
+                u1, v1,
                 red, green, blue, alpha,
                 packedLight
         );
@@ -215,7 +219,7 @@ public class CopperFluidTankBlockEntityRenderer
                 consumer, pose,
                 x3, y3, z3,
                 nx, ny, nz,
-                u0, vTop,
+                u0, v1,
                 red, green, blue, alpha,
                 packedLight
         );
