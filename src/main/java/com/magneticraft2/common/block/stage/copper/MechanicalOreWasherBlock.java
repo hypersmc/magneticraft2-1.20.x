@@ -61,10 +61,15 @@ public class MechanicalOreWasherBlock extends GearBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction direction = context.getClickedFace();
+        if (direction.getAxis() == Direction.Axis.Y) {
+            direction = context.getHorizontalDirection().getOpposite();
+        }
+
         return validateGearPlacement(
                 context,
                 defaultBlockState()
-                        .setValue(FACING, context.getClickedFace())
+                        .setValue(FACING, direction)
         );
     }
 
