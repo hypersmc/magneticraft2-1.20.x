@@ -38,6 +38,11 @@ public class MechanicalOreWasherBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_ore_washer_rotor"
             );
+    private static final ResourceLocation INPUT_GEAR_MODEL =
+            new ResourceLocation(
+                    "magneticraft2",
+                    "multiblock/mechanical_ore_washer_input_gear"
+            );
     private static final ResourceLocation WATER_MODEL =
             new ResourceLocation(
                     "magneticraft2",
@@ -82,11 +87,14 @@ public class MechanicalOreWasherBlockEntityRenderer
                 facing
         );
 
-        float rotation =
+        float inputRotation =
                 washer.getMechanicalVisualRotationDegrees(
                         partialTicks
                 );
 
+        // The external shaft now visibly drives a small wooden gear on its own
+        // axis. That gear meshes with the lower drum gear instead of making the
+        // trommel appear to receive rotation from empty air.
         poseStack.pushPose();
         poseStack.translate(
                 0.5D,
@@ -95,12 +103,41 @@ public class MechanicalOreWasherBlockEntityRenderer
         );
         poseStack.mulPose(
                 Axis.ZP.rotationDegrees(
-                        rotation
+                        inputRotation
                 )
         );
         poseStack.translate(
                 -0.5D,
                 -1.5D,
+                -0.5D
+        );
+
+        renderModel(
+                INPUT_GEAR_MODEL,
+                RenderType.solid(),
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+        poseStack.popPose();
+
+        // Drum axis is deliberately lower than the input shaft. Meshed gears
+        // reverse direction, so the trommel uses the opposite visual rotation.
+        poseStack.pushPose();
+        poseStack.translate(
+                0.5D,
+                1.21875D,
+                0.5D
+        );
+        poseStack.mulPose(
+                Axis.ZP.rotationDegrees(
+                        -inputRotation
+                )
+        );
+        poseStack.translate(
+                -0.5D,
+                -1.21875D,
                 -0.5D
         );
 
