@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -781,6 +782,12 @@ public class MechanicalOreWasherBlockEntity
     @Override
     public BlockPos getThisPosition() {
         return worldPosition;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(worldPosition)
+                .inflate(3.0D);
     }
 
     @Override
