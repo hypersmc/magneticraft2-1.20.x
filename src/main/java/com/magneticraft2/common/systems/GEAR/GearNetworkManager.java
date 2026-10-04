@@ -1184,15 +1184,6 @@ public class GearNetworkManager {
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
 
-            // One-sided consumers (such as the Mechanical Water Pump) must also
-            // reject the connection when reached from the neighbouring shaft.
-            if (neighborBlockEntity instanceof GearBlockEntity neighborGear
-                    && !neighborGear.acceptsShaftConnection(
-                            direction.getOpposite()
-                    )) {
-                continue;
-            }
-
             // A shaft beside an open inline disconnect must not connect into it
             // from the neighbor side either.
             if (isOpenInlineDisconnect(neighborBlockEntity)) {
@@ -1224,6 +1215,15 @@ public class GearNetworkManager {
                                 ? ConnectionKind.SHAFT
                                 : ConnectionKind.RIGHT_ANGLE
                 ));
+                continue;
+            }
+
+            // Ordinary axial components may expose fewer than two shaft faces.
+            // Keep this after gearbox handling because gearboxes own their port rules.
+            if (neighborBlockEntity instanceof GearBlockEntity neighborGear
+                    && !neighborGear.acceptsShaftConnection(
+                            direction.getOpposite()
+                    )) {
                 continue;
             }
 

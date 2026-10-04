@@ -153,7 +153,7 @@ public class MultiblockFluidInputBlockEntity
                             MultiblockFluidInputBlock.FACING,
                             outward
                     ),
-                    Block.UPDATE_CLIENTS
+                    Block.UPDATE_ALL
             );
         }
     }
@@ -180,7 +180,19 @@ public class MultiblockFluidInputBlockEntity
             @NotNull Capability<T> cap,
             @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            return fluidCapability.cast();
+            BlockState state = getBlockState();
+
+            if (side == null
+                    || (state.hasProperty(
+                            MultiblockFluidInputBlock.FACING
+                    )
+                    && side == state.getValue(
+                            MultiblockFluidInputBlock.FACING
+                    ))) {
+                return fluidCapability.cast();
+            }
+
+            return LazyOptional.empty();
         }
 
         return super.getCapability(cap, side);
