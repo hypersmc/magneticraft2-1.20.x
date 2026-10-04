@@ -1,0 +1,40 @@
+{
+  "textures": {
+    "water": "minecraft:block/light_blue_stained_glass",
+    "particle": "minecraft:block/light_blue_stained_glass"
+  },
+  "elements": [
+    {
+      "from": [
+        -8,
+        6.8,
+        11
+      ],
+      "to": [
+        24,
+        7.25,
+        37
+      ],
+      "faces": {
+        "north": {
+          "texture": "#water"
+        },
+        "east": {
+          "texture": "#water"
+        },
+        "south": {
+          "texture": "#water"
+        },
+        "west": {
+          "texture": "#water"
+        },
+        "up": {
+          "texture": "#water"
+        },
+        "down": {
+          "texture": "#water"
+        }
+      }
+    }
+  ]
+}
