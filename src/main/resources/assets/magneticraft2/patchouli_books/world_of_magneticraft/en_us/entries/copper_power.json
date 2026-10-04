@@ -104,6 +104,34 @@
     {
       "type": "text",
       "text": "$(bold)Using the Crank$()$(br2)The crank has a shaft axis and a perpendicular rod-output direction. Its connecting rod follows a real slider-crank motion, so the slider naturally slows near each end of the stroke.$(br2)The output direction is chosen when placed; sneak while placing to flip it. This is the mechanical interface intended for Bellows and later reciprocating machines."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Bellows",
+      "recipe": "magneticraft2:mechanical_bellows",
+      "text": "The Mechanical Bellows is the first machine that consumes the Crank's reciprocating output instead of accepting shaft rotation directly. It buffers up to 5 air and pushes that air through its copper nozzle into an adjacent Pressure-capability receiver."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Crank -> Bellows$()$(br2)Place the Mechanical Bellows directly on the Crank's rod-output side. The bellows nozzle faces away from the crank; the crank therefore sits behind the bellows and physically compresses it once per revolution.$(br2)Each compression stroke produces one air unit and applies a 3T mechanical load while useful pumping work is available."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Automating the Primitive Furnace$()$(br2)The Stone Age furnace still contains its original Bellows module and air reservoir. Point the Mechanical Bellows nozzle directly into that module. Each crank stroke automatically refills the furnace Bellows, replacing repeated player pumping without rewriting the original multiblock.$(br2)Empty-hand right-click the Mechanical Bellows to see its stored air and whether a valid crank is attached."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wooden Flywheel",
+      "recipe": "magneticraft2:flywheel_wood",
+      "text": "A Flywheel stores rotational inertia while a real source is driving the network. It does not create power and does not fight an active Water Wheel."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Stored inertia$()$(br2)When the real source disappears, a charged Flywheel can temporarily become the source for its connected component. Light loads coast for much longer than heavy loads; asking more than the Flywheel can provide drains it very quickly.$(br2)If several Flywheels share one component, Gear V2 chooses one as the active inertial source while the others retain their own stored motion for later."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)What a Flywheel is for$()$(br2)Use Flywheels to bridge short power interruptions, smooth workshop behavior when a source is disconnected, and keep light mechanisms moving while a Water Wheel or hand source briefly drops out.$(br2)A Flywheel is buffering, not a generator: once the stored RPM is gone, the network stops."
     }
   ],
   "extra_recipe_mappings": {
@@ -121,7 +149,9 @@
     "magneticraft2:clutch_wood": 11,
     "magneticraft2:overload_disconnect_wood": 13,
     "magneticraft2:mechanical_brake_wood": 15,
-    "magneticraft2:crank_wood": 17
+    "magneticraft2:crank_wood": 17,
+    "magneticraft2:mechanical_bellows": 19,
+    "magneticraft2:flywheel_wood": 22
   },
   "sortnum": 1,
   "read_by_default": true
