@@ -58,21 +58,21 @@ public class MechanicalOreWasherBlock
                     Block.box(22, 5, -6, 25, 12, 23),
                     Block.box(-6, 5, -5, 22, 7, 22),
 
-                    // Four uprights and the top frame.
-                    Block.box(-8, 7, -4, -5, 30, -1),
-                    Block.box(21, 7, -4, 24, 30, -1),
-                    Block.box(-8, 7, 18, -5, 30, 21),
-                    Block.box(21, 7, 18, 24, 30, 21),
-                    Block.box(-9, 28, -4, 25, 31, -1),
-                    Block.box(-9, 28, 18, 25, 31, 21),
+                    // Four compact uprights and bearing crossbars.
+                    Block.box(-8, 7, -4, -5, 25, -1),
+                    Block.box(21, 7, -4, 24, 25, -1),
+                    Block.box(-8, 7, 18, -5, 25, 21),
+                    Block.box(21, 7, 18, 24, 25, 21),
+                    Block.box(-8, 22, -4, 24, 25, -1),
+                    Block.box(-8, 22, 18, 24, 25, 21),
 
-                    // Lowered rotating drum envelope.
-                    Block.box(2, 14, -4, 14, 25, 22),
+                    // Low trommel envelope, partially down inside the trough.
+                    Block.box(2, 9, -4, 14, 20, 22),
 
-                    // Feed/discharge throats. The visible item port blocks retain
-                    // their own local collision at the rear/front edge.
-                    Block.box(2, 12, -4, 14, 19, 1),
-                    Block.box(2, 7, 15, 14, 12, 23)
+                    // Stepped feed and discharge paths. The visible item-port
+                    // modules retain their own local collision at the edges.
+                    Block.box(2, 8, -14, 14, 15, -1),
+                    Block.box(2, 7, 16, 14, 12, 26)
             );
 
     public MechanicalOreWasherBlock() {
