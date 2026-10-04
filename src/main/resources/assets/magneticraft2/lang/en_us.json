@@ -118,6 +118,7 @@
   "message.magneticraft2.brake_released": "Mechanical brake released",
   "block.magneticraft2.crank_wood": "Wooden Crank",
   "item.magneticraft2.crank_wood": "Wooden Crank",
+  "message.magneticraft2.crank_output": "Crank output: %s",
   "block.magneticraft2.mechanical_bellows": "Mechanical Bellows",
   "item.magneticraft2.mechanical_bellows": "Mechanical Bellows",
   "message.magneticraft2.mechanical_bellows_status": "Mechanical Bellows: %s/%s air - %s",
