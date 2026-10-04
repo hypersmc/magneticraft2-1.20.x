@@ -314,15 +314,14 @@ public class MechanicalOreWasherBlockEntity
         Direction side =
                 facing.getClockWise();
 
-        BlockPos machineMiddle =
-                worldPosition.relative(facing);
-
-        // The trough is open on both sides. A source placed beside either side
-        // of the centre section supplies the washer.
+        // The controller is now the centre block of the 3x3 footprint, matching
+        // the established multiblock model coordinate envelope (-16..32).
+        // A source two blocks to either side sits just outside the formed frame
+        // and feeds the central trough.
         for (Direction direction :
                 new Direction[]{side, side.getOpposite()}) {
             BlockPos waterPos =
-                    machineMiddle
+                    worldPosition
                             .relative(direction, 2);
 
             if (level.getFluidState(waterPos)
