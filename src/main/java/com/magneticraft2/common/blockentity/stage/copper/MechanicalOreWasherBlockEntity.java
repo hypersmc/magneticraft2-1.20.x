@@ -50,6 +50,7 @@ public class MechanicalOreWasherBlockEntity
     private String blueprintName = "";
     private String replacementModel = "";
     private boolean formed = false;
+    private Direction matchedFacing = Direction.SOUTH;
 
     private int processTime = 0;
     private int totalProcessTime = 160;
@@ -463,12 +464,25 @@ public class MechanicalOreWasherBlockEntity
         if (state.hasProperty(
                 MechanicalOreWasherBlock.IS_FORMED
         )) {
-            level.setBlock(
-                    worldPosition,
+            BlockState formedState =
                     state.setValue(
                             MechanicalOreWasherBlock.IS_FORMED,
                             true
-                    ),
+                    );
+
+            if (formedState.hasProperty(
+                    MechanicalOreWasherBlock.FACING
+            )) {
+                formedState =
+                        formedState.setValue(
+                                MechanicalOreWasherBlock.FACING,
+                                matchedFacing
+                        );
+            }
+
+            level.setBlock(
+                    worldPosition,
+                    formedState,
                     Block.UPDATE_ALL
             );
         }
@@ -483,42 +497,75 @@ public class MechanicalOreWasherBlockEntity
     identifyMultiblockStructure(
             Level world,
             BlockPos pos) {
-        Direction facing =
-                getBlockState().getValue(
-                        MechanicalOreWasherBlock.FACING
-                );
-        String expectedName =
-                MULTIBLOCK_PREFIX
-                        + facing.getName();
-
+        // Match the physical structure first, exactly like the older
+        // Magneticraft multiblocks do. The controller's placement-facing must
+        // not decide which layout is legal; the built structure decides that.
+        //
+        // This is important for Patchouli/Visualize: a player can rotate the
+        // projected structure independently of how the controller block happened
+        // to be facing when it was placed.
         for (Multiblock multiblock :
                 MultiblockRegistry
                         .getRegisteredMultiblocks()
                         .values()) {
             if (!multiblock.getName()
-                    .equals(expectedName)) {
+                    .startsWith(
+                            MULTIBLOCK_PREFIX
+                    )) {
                 continue;
             }
 
             MultiblockStructure structure =
                     multiblock.getStructure();
 
-            if (matchesStructure(
+            if (!matchesStructure(
                     world,
                     pos,
                     structure,
                     multiblock
             )) {
-                blueprintName =
-                        multiblock.getName();
-                replacementModel =
-                        multiblock.getSettings()
-                                .getReplaceWhenFormed();
-                return structure;
+                continue;
             }
+
+            blueprintName =
+                    multiblock.getName();
+            replacementModel =
+                    multiblock.getSettings()
+                            .getReplaceWhenFormed();
+            matchedFacing =
+                    facingFromMultiblockName(
+                            blueprintName
+                    );
+
+            return structure;
         }
 
         return null;
+    }
+
+    private Direction facingFromMultiblockName(
+            String name) {
+        if (name.endsWith("_north")) {
+            return Direction.NORTH;
+        }
+        if (name.endsWith("_east")) {
+            return Direction.EAST;
+        }
+        if (name.endsWith("_west")) {
+            return Direction.WEST;
+        }
+        if (name.endsWith("_south")) {
+            return Direction.SOUTH;
+        }
+
+        Direction current =
+                getBlockState().getValue(
+                        MechanicalOreWasherBlock.FACING
+                );
+
+        return current.getAxis().isHorizontal()
+                ? current
+                : Direction.SOUTH;
     }
 
     @Override
