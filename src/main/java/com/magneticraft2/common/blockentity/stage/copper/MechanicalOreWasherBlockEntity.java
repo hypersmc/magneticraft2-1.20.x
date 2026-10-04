@@ -11,6 +11,7 @@ import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
+import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -31,6 +32,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -788,6 +791,17 @@ public class MechanicalOreWasherBlockEntity
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition)
                 .inflate(3.0D);
+    }
+
+    @Override
+    public @NotNull ModelData getModelData() {
+        return super.getModelData()
+                .derive()
+                .with(
+                        MultiBlockProperties.MODEL_NAME,
+                        replacementModel
+                )
+                .build();
     }
 
     @Override
