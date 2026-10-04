@@ -46,29 +46,33 @@ public class MechanicalOreWasherBlock
     // of claiming the whole 3x2x3 bounding box is solid.
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
-                    // foundation skids and cross ties
-                    Block.box(-14, 0, -15, -11, 3, 31),
-                    Block.box(27, 0, -15, 30, 3, 31),
-                    Block.box(-14, 2, -14, 30, 5, -11),
-                    Block.box(-14, 2, 6, 30, 5, 9),
-                    Block.box(-14, 2, 27, 30, 5, 30),
+                    // Timber base.
+                    Block.box(-10, 0, -12, -7, 3, 28),
+                    Block.box(23, 0, -12, 26, 3, 28),
+                    Block.box(-12, 2, -10, 28, 5, -7),
+                    Block.box(-12, 2, 7, 28, 5, 10),
+                    Block.box(-12, 2, 25, 28, 5, 28),
 
-                    // timber A-frame
-                    Block.box(-13, 3, -9, -10, 27, -6),
-                    Block.box(26, 3, -9, 29, 27, -6),
-                    Block.box(-13, 3, 18, -10, 27, 21),
-                    Block.box(26, 3, 18, 29, 27, 21),
-                    Block.box(-13, 26, -9, 29, 29, -6),
-                    Block.box(-13, 26, 18, 29, 29, 21),
+                    // Shallow trough walls.
+                    Block.box(-9, 5, -6, -6, 12, 23),
+                    Block.box(22, 5, -6, 25, 12, 23),
+                    Block.box(-6, 5, -5, 22, 7, 22),
 
-                    // trough and rotating drum envelope
-                    Block.box(-12, 5, -7, 28, 13, 25),
-                    Block.box(-1, 9, -8, 17, 27, 24),
+                    // Four uprights and the top frame.
+                    Block.box(-8, 7, -4, -5, 30, -1),
+                    Block.box(21, 7, -4, 24, 30, -1),
+                    Block.box(-8, 7, 18, -5, 30, 21),
+                    Block.box(21, 7, 18, 24, 30, 21),
+                    Block.box(-9, 28, -4, 25, 31, -1),
+                    Block.box(-9, 28, 18, 25, 31, 21),
 
-                    // feed and discharge chutes
-                    Block.box(-5, 18, -16, 21, 25, -6),
-                    Block.box(-9, 5, 23, 5, 9, 32),
-                    Block.box(11, 5, 23, 25, 9, 32)
+                    // Centered rotating drum envelope.
+                    Block.box(1, 18, -4, 15, 31, 22),
+
+                    // Feed/discharge throats. The visible item port blocks retain
+                    // their own local collision at the rear/front edge.
+                    Block.box(2, 12, -4, 14, 19, 1),
+                    Block.box(2, 7, 15, 14, 12, 23)
             );
 
     public MechanicalOreWasherBlock() {
