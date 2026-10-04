@@ -9,6 +9,8 @@ import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
 import com.magneticraft2.common.block.stage.copper.GearboxBlock_wood;
 import com.magneticraft2.common.block.stage.copper.CustomGearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.MechanicalBrakeBlock_wood;
+import com.magneticraft2.common.block.stage.copper.CrankBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
@@ -81,6 +83,8 @@ public class BlockRegistry {
     public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
     public static final RegistryObject<ClutchBlock_wood> CLUTCH_WOOD = BLOCKS.register("clutch_wood", ClutchBlock_wood::new);
     public static final RegistryObject<OverloadDisconnectBlock_wood> OVERLOAD_DISCONNECT_WOOD = BLOCKS.register("overload_disconnect_wood", OverloadDisconnectBlock_wood::new);
+    public static final RegistryObject<MechanicalBrakeBlock_wood> MECHANICAL_BRAKE_WOOD = BLOCKS.register("mechanical_brake_wood", MechanicalBrakeBlock_wood::new);
+    public static final RegistryObject<CrankBlock_wood> CRANK_WOOD = BLOCKS.register("crank_wood", CrankBlock_wood::new);
     public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));
     public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
     public static final RegistryObject<ConveyorRollerBlock> CONVEYOR_ROLLER = BLOCKS.register("conveyor_roller", ConveyorRollerBlock::new);
