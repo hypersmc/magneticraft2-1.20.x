@@ -398,10 +398,25 @@ public class MechanicalTransferArmBlockEntity
             return null;
         }
 
+        IItemHandler sided =
+                blockEntity
+                        .getCapability(
+                                ForgeCapabilities.ITEM_HANDLER,
+                                side.getOpposite()
+                        )
+                        .orElse(null);
+
+        if (sided != null) {
+            return sided;
+        }
+
+        // Some inventories/modules expose only an unsided handler. The
+        // multiblock Item Input/Output ports are valid automation targets, so
+        // fall back to the generic capability before declaring the side dead.
         return blockEntity
                 .getCapability(
                         ForgeCapabilities.ITEM_HANDLER,
-                        side.getOpposite()
+                        null
                 )
                 .orElse(null);
     }
@@ -619,12 +634,12 @@ public class MechanicalTransferArmBlockEntity
 
         if (side
                 == forward.getClockWise()) {
-            return "Right";
+            return "Left";
         }
 
         if (side
                 == forward.getCounterClockWise()) {
-            return "Left";
+            return "Right";
         }
 
         return side.getName();

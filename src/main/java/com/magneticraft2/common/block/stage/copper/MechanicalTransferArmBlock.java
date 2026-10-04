@@ -192,12 +192,21 @@ public class MechanicalTransferArmBlock extends GearBlock {
             MechanicalTransferArmBlockEntity.SideRole role =
                     arm.cycleSide(button);
 
+            BlockPos targetPos =
+                    pos.relative(button);
+
+            Component targetName =
+                    level.getBlockState(targetPos)
+                            .getBlock()
+                            .getName();
+
             player.displayClientMessage(
                     Component.literal(
                             arm.getRelativeSideName(button)
                                     + ": "
                                     + role.displayName()
-                    ),
+                                    + " -> "
+                    ).append(targetName),
                     true
             );
 
@@ -365,13 +374,15 @@ public class MechanicalTransferArmBlock extends GearBlock {
             if (Math.abs(
                     lateral - leftCenter
             ) <= halfWidth) {
-                return facing.getCounterClockWise();
+                // From the player's view of the front face, screen-left is
+                // clockwise around the block's outward-facing direction.
+                return facing.getClockWise();
             }
 
             if (Math.abs(
                     lateral - rightCenter
             ) <= halfWidth) {
-                return facing.getClockWise();
+                return facing.getCounterClockWise();
             }
         }
 

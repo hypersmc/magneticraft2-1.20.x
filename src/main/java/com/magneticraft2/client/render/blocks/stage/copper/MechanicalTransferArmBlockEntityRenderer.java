@@ -40,7 +40,7 @@ public class MechanicalTransferArmBlockEntityRenderer
     private static final ResourceLocation GEAR_MODEL =
             new ResourceLocation(
                     "magneticraft2",
-                    "block/gear_small_wood"
+                    "block/gear_medium_wood"
             );
     private static final ResourceLocation TURRET_MODEL =
             model("mechanical_transfer_arm_turret");
@@ -310,12 +310,12 @@ public class MechanicalTransferArmBlockEntityRenderer
             int packedOverlay) {
         poseStack.pushPose();
 
-        // Reuse Magneticraft's existing Small Wooden Gear model rather than a
-        // transfer-arm-specific approximation. Lift it into the exposed base
-        // bearing while keeping its normal 8-tooth silhouette and textures.
+        // Reuse the actual registered 8-tooth Gear V2 wooden gear model.
+        // Its wheel is authored around Y=7..9, so lower it slightly into the
+        // transfer-arm bearing instead of inventing another gear silhouette.
         poseStack.translate(
                 0.0D,
-                2.75D / 16.0D,
+                -1.50D / 16.0D,
                 0.0D
         );
 
@@ -633,10 +633,10 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         if (configuredSide == facing.getOpposite()) {
             yOffset = -2.60D / 16.0D;
-        } else if (configuredSide == facing.getCounterClockWise()) {
+        } else if (configuredSide == facing.getClockWise()) {
             xOffset = -2.45D / 16.0D;
             yOffset = -1.30D / 16.0D;
-        } else if (configuredSide == facing.getClockWise()) {
+        } else if (configuredSide == facing.getCounterClockWise()) {
             xOffset = 2.45D / 16.0D;
             yOffset = -1.30D / 16.0D;
         }
