@@ -123,11 +123,11 @@
       "type": "patchouli:crafting",
       "title": "Mechanical Transfer Arm",
       "recipe": "magneticraft2:mechanical_transfer_arm",
-      "text": "Early item automation stays physical. The Transfer Arm's horizontal base gear meshes with Gear V2 and moves one item per cycle. Its four buttons cycle $(bold)None -> Orange Source -> Blue Destination -> None$(). Place inventories or formed multiblock Item Ports directly beside the selected sides."
+      "text": "Early item automation stays physical. The Transfer Arm's exposed Small Wooden Gear meshes horizontally with Gear V2 and moves one item per cycle. Its four top buttons cycle $(bold)None -> Orange Source -> Blue Destination -> None$(). Place inventories or formed multiblock Item Ports directly beside the selected sides."
     },
     {
       "type": "text",
-      "text": "$(bold)Arm filters$()$(br2)Right-click the center filter tray with an item to set a ghost filter; the item is not consumed. With an empty hand, right-click the center to toggle whitelist/blacklist. Sneak-right-click the center with an empty hand to clear it.$(br2)The arm physically carries the extracted item. If the destination fills, it waits with the item in its claw instead of deleting it."
+      "text": "$(bold)Arm filters$()$(br2)The framed rack on the FRONT face is the filter slot. Right-click it with an item to set a ghost filter; the item is not consumed. Empty-hand click the rack to toggle whitelist/blacklist. Sneak-right-click it with an empty hand to clear it.$(br2)The arm physically carries the extracted item. If the destination fills, it waits with the item in its claw instead of deleting it."
     },
     {
       "type": "text",

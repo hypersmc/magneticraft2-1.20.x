@@ -38,7 +38,10 @@ public class MechanicalTransferArmBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalTransferArmBlockEntity> {
 
     private static final ResourceLocation GEAR_MODEL =
-            model("mechanical_transfer_arm_gear");
+            new ResourceLocation(
+                    "magneticraft2",
+                    "block/gear_small_wood"
+            );
     private static final ResourceLocation TURRET_MODEL =
             model("mechanical_transfer_arm_turret");
     private static final ResourceLocation LOWER_ARM_MODEL =
@@ -291,6 +294,15 @@ public class MechanicalTransferArmBlockEntityRenderer
             int packedOverlay) {
         poseStack.pushPose();
 
+        // Reuse Magneticraft's existing Small Wooden Gear model rather than a
+        // transfer-arm-specific approximation. Lift it into the exposed base
+        // bearing while keeping its normal 8-tooth silhouette and textures.
+        poseStack.translate(
+                0.0D,
+                2.75D / 16.0D,
+                0.0D
+        );
+
         rotateAroundY(
                 poseStack,
                 0.5D,
@@ -415,6 +427,32 @@ public class MechanicalTransferArmBlockEntityRenderer
             return;
         }
 
+        Direction facing =
+                Direction.NORTH;
+        BlockState state =
+                arm.getBlockState();
+
+        if (state.hasProperty(
+                net.minecraft.world.level.block.DirectionalBlock.FACING
+        )) {
+            facing =
+                    state.getValue(
+                            net.minecraft.world.level.block.DirectionalBlock.FACING
+                    );
+        }
+
+        poseStack.pushPose();
+
+        rotateAroundY(
+                poseStack,
+                0.5D,
+                0.5D,
+                yawFor(facing)
+        );
+
+        // The physical filter rack is now on the front face of the stationary
+        // base. The green/red bar sits under it so whitelist/blacklist remains
+        // readable even with a chunky item rendered in the slot.
         renderModel(
                 arm.isBlacklist()
                         ? FILTER_DENY_MODEL
@@ -431,24 +469,22 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.pushPose();
 
-        // The rotating base gear has an open center specifically so this ghost
-        // filter stays readable while the drivetrain spins around it.
         poseStack.translate(
                 0.5D,
-                6.35D / 16.0D,
-                0.5D
+                3.55D / 16.0D,
+                0.015D
         );
 
         poseStack.mulPose(
-                Axis.XP.rotationDegrees(
-                        90.0F
+                Axis.YP.rotationDegrees(
+                        180.0F
                 )
         );
 
         poseStack.scale(
-                0.26F,
-                0.26F,
-                0.26F
+                0.28F,
+                0.28F,
+                0.28F
         );
 
         Minecraft.getInstance()
@@ -464,6 +500,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                         711
                 );
 
+        poseStack.popPose();
         poseStack.popPose();
     }
 

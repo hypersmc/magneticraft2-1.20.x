@@ -29,8 +29,9 @@ import org.jetbrains.annotations.Nullable;
  * Four physical buttons around the top of the base can each be cycled through:
  * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE.
  *
- * The center filter plate accepts a ghost filter item. Empty-hand center click
- * toggles whitelist/blacklist; shift + empty-hand center click clears it.
+ * The framed filter rack on the front face accepts a ghost filter item.
+ * Empty-hand filter click toggles whitelist/blacklist; shift + empty-hand
+ * filter click clears it.
  */
 public class MechanicalTransferArmBlock extends GearBlock {
 
@@ -171,6 +172,7 @@ public class MechanicalTransferArmBlock extends GearBlock {
 
         Direction button =
                 getButtonDirection(
+                        state,
                         pos,
                         hit
                 );
@@ -249,39 +251,65 @@ public class MechanicalTransferArmBlock extends GearBlock {
 
     @Nullable
     private Direction getButtonDirection(
+            BlockState state,
             BlockPos pos,
             BlockHitResult hit) {
+        double localX =
+                hit.getLocation().x
+                        - pos.getX();
+        double localY =
+                hit.getLocation().y
+                        - pos.getY();
+        double localZ =
+                hit.getLocation().z
+                        - pos.getZ();
+
+        Direction facing =
+                state.getValue(FACING);
+
+        // Dedicated filter rack on the FRONT face. Clicking the framed center
+        // is filter interaction, not the forward direction button.
+        if (hit.getDirection() == facing
+                && localY >= 1.7D / 16.0D
+                && localY <= 5.6D / 16.0D) {
+            double lateral =
+                    facing.getAxis()
+                            == Direction.Axis.Z
+                            ? Math.abs(localX - 0.5D)
+                            : Math.abs(localZ - 0.5D);
+
+            if (lateral <= 0.24D) {
+                return null;
+            }
+        }
+
+        // Top face is the intended way to configure the four physical buttons.
+        if (hit.getDirection() == Direction.UP) {
+            double centeredX =
+                    localX - 0.5D;
+            double centeredZ =
+                    localZ - 0.5D;
+
+            if (Math.abs(centeredX)
+                    > Math.abs(centeredZ)) {
+                return centeredX > 0.0D
+                        ? Direction.EAST
+                        : Direction.WEST;
+            }
+
+            return centeredZ > 0.0D
+                    ? Direction.SOUTH
+                    : Direction.NORTH;
+        }
+
+        // Side-face clicks remain a convenience everywhere except the filter.
         if (hit.getDirection()
                 .getAxis()
                 .isHorizontal()) {
             return hit.getDirection();
         }
 
-        double localX =
-                hit.getLocation().x
-                        - pos.getX()
-                        - 0.5D;
-        double localZ =
-                hit.getLocation().z
-                        - pos.getZ()
-                        - 0.5D;
-
-        // The center square is the filter plate rather than a direction button.
-        if (Math.abs(localX) < 0.18D
-                && Math.abs(localZ) < 0.18D) {
-            return null;
-        }
-
-        if (Math.abs(localX)
-                > Math.abs(localZ)) {
-            return localX > 0.0D
-                    ? Direction.EAST
-                    : Direction.WEST;
-        }
-
-        return localZ > 0.0D
-                ? Direction.SOUTH
-                : Direction.NORTH;
+        return null;
     }
 
     @Nullable
