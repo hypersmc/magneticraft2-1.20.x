@@ -54,9 +54,36 @@ public class MechanicalInputModuleBlockEntity
         }
 
         module.serverTickGear();
-        module.markHasEverRotatedIfMoving(
-                module.getServerSpeed()
-        );
+        module.updateRotatingState();
+    }
+
+    private void updateRotatingState() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+
+        markHasEverRotatedIfMoving(getServerSpeed());
+        boolean dynamic =
+                shouldRenderGearWithBlockEntity();
+
+        BlockState state =
+                level.getBlockState(worldPosition);
+
+        if (state.hasProperty(
+                MechanicalInputModuleBlock.ROTATING
+        )
+                && state.getValue(
+                        MechanicalInputModuleBlock.ROTATING
+                ) != dynamic) {
+            level.setBlock(
+                    worldPosition,
+                    state.setValue(
+                            MechanicalInputModuleBlock.ROTATING,
+                            dynamic
+                    ),
+                    Block.UPDATE_CLIENTS
+            );
+        }
     }
 
     public boolean isFormedModule() {

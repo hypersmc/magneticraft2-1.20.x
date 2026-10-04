@@ -38,6 +38,8 @@ import org.jetbrains.annotations.Nullable;
 public class MechanicalInputModuleBlock extends GearBlock {
     public static final BooleanProperty FORMED =
             BooleanProperty.create("formed");
+    public static final BooleanProperty ROTATING =
+            BooleanProperty.create("rotating");
 
     private static final VoxelShape X_SHAPE =
             Shapes.box(0.0D, 0.25D, 0.25D, 1.0D, 0.75D, 0.75D);
@@ -55,6 +57,7 @@ public class MechanicalInputModuleBlock extends GearBlock {
                 stateDefinition.any()
                         .setValue(FACING, Direction.EAST)
                         .setValue(FORMED, false)
+                        .setValue(ROTATING, false)
         );
     }
 
@@ -130,7 +133,7 @@ public class MechanicalInputModuleBlock extends GearBlock {
     @Override
     protected void createBlockStateDefinition(
             StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, FORMED);
+        builder.add(FACING, FORMED, ROTATING);
     }
 
     @Override

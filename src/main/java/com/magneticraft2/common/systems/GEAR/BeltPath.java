@@ -193,6 +193,85 @@ public final class BeltPath {
         );
     }
 
+    /**
+     * Build the same open-belt geometry for render-only pulleys whose centers do not
+     * correspond to real block positions (for example a pulley inside a multiblock).
+     */
+    public static List<Segment> createVisualSegments(
+            Vec3 startCenter,
+            Vec3 endCenter,
+            Direction.Axis axis,
+            double startPulleyRadius,
+            double endPulleyRadius) {
+        if (startCenter == null || endCenter == null || axis == null) {
+            return List.of();
+        }
+
+        Vec3 centerLine = endCenter.subtract(startCenter);
+        double centerDistance = centerLine.length();
+        if (centerDistance < 0.0001D) {
+            return List.of();
+        }
+
+        Vec3 runDirection = centerLine.scale(1.0D / centerDistance);
+        Vec3 axisVector = axisVector(axis);
+        Vec3 sideDirection = axisVector.cross(runDirection);
+        if (sideDirection.lengthSqr() < 0.0001D) {
+            return List.of();
+        }
+        sideDirection = sideDirection.normalize();
+
+        double startRadius = startPulleyRadius + BELT_CLEARANCE;
+        double endRadius = endPulleyRadius + BELT_CLEARANCE;
+        double radiusDifference = startRadius - endRadius;
+        if (Math.abs(radiusDifference) >= centerDistance) {
+            return List.of();
+        }
+
+        double tangentRunComponent = radiusDifference / centerDistance;
+        double tangentSideComponent = Math.sqrt(
+                Math.max(0.0D, 1.0D - tangentRunComponent * tangentRunComponent)
+        );
+
+        Vec3 topRadial = runDirection.scale(tangentRunComponent)
+                .add(sideDirection.scale(tangentSideComponent))
+                .normalize();
+        Vec3 bottomRadial = runDirection.scale(tangentRunComponent)
+                .subtract(sideDirection.scale(tangentSideComponent))
+                .normalize();
+
+        Vec3 startTop = startCenter.add(topRadial.scale(startRadius));
+        Vec3 endTop = endCenter.add(topRadial.scale(endRadius));
+        Vec3 startBottom = startCenter.add(bottomRadial.scale(startRadius));
+        Vec3 endBottom = endCenter.add(bottomRadial.scale(endRadius));
+
+        List<Segment> segments = new ArrayList<>();
+        double distance = 0.0D;
+
+        distance = appendSegment(
+                segments, startTop, endTop, axisVector, topRadial,
+                SegmentType.STRAIGHT, distance
+        );
+        distance = appendArc(
+                segments, endCenter, topRadial, bottomRadial,
+                runDirection, runDirection, sideDirection, axisVector,
+                endRadius, distance
+        );
+        distance = appendSegment(
+                segments, endBottom, startBottom, axisVector, bottomRadial,
+                SegmentType.STRAIGHT, distance
+        );
+        appendArc(
+                segments, startCenter, bottomRadial, topRadial,
+                runDirection.scale(-1.0D), runDirection, sideDirection, axisVector,
+                startRadius, distance
+        );
+
+        return segments.isEmpty()
+                ? List.of()
+                : Collections.unmodifiableList(segments);
+    }
+
     public BlockPos startPulley() {
         return startPulley;
     }

@@ -57,6 +57,10 @@ public class MechanicalOreWasherBlockEntity
     private boolean processing = false;
     private boolean hasWater = false;
 
+    // Client-only visual accumulator for the internal leather drive belt.
+    private double clientBeltTravelDistance = 0.0D;
+    private float lastClientBeltVisualTime = Float.NaN;
+
     public MechanicalOreWasherBlockEntity(
             BlockPos pos,
             BlockState state) {
@@ -270,6 +274,58 @@ public class MechanicalOreWasherBlockEntity
                 : input.getVisualRotationDegrees(
                         partialTicks
                 );
+    }
+
+    public double getMechanicalVisualBeltTravelDistance(
+            float partialTicks,
+            double inputPulleyRadius) {
+        MechanicalInputModuleBlockEntity input =
+                getMechanicalInput();
+
+        if (input == null || level == null) {
+            return clientBeltTravelDistance;
+        }
+
+        float currentVisualTime =
+                level.getGameTime() + partialTicks;
+
+        if (Float.isNaN(lastClientBeltVisualTime)) {
+            lastClientBeltVisualTime = currentVisualTime;
+            return clientBeltTravelDistance;
+        }
+
+        float deltaTicks =
+                currentVisualTime - lastClientBeltVisualTime;
+        lastClientBeltVisualTime = currentVisualTime;
+
+        if (deltaTicks < 0.0F) {
+            deltaTicks = 0.0F;
+        } else if (deltaTicks > 20.0F) {
+            deltaTicks = 20.0F;
+        }
+
+        float rpm =
+                input.isClientOverloaded()
+                        ? 0.0F
+                        : input.getClientSpeed();
+
+        if (Math.abs(rpm) > EPSILON) {
+            double circumference =
+                    Math.PI * 2.0D * inputPulleyRadius;
+            double blocksPerTick =
+                    (rpm / 1200.0D) * circumference;
+
+            clientBeltTravelDistance -=
+                    blocksPerTick
+                            * deltaTicks
+                            * input.getDirectionMultiplier();
+
+            if (Math.abs(clientBeltTravelDistance) > 1024.0D) {
+                clientBeltTravelDistance %= 0.5D;
+            }
+        }
+
+        return clientBeltTravelDistance;
     }
 
     private void setMechanicalLoad(

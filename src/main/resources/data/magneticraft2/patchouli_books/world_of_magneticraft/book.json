@@ -1,7 +1,7 @@
 {
   "name": "World of Magneticraft2",
   "landing_text": "A practical guide to Magneticraft2 progression. Copper Age now grows into real JSON-defined machines: build structures, form them, drive them mechanically, then process ores into Tin and Bronze.",
-  "version": 3.0,
+  "version": 3.1,
   "book_texture": "magneticraft2:textures/book/background.png",
   "model": "magneticraft2:world_of_magneticraft",
   "show_progress": false,
