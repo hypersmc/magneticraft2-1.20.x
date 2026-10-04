@@ -2,16 +2,16 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:copper_ingot"
+      "tag": "forge:ingots/copper"
     },
     {
-      "item": "minecraft:copper_ingot"
+      "tag": "forge:ingots/copper"
     },
     {
-      "item": "minecraft:copper_ingot"
+      "tag": "forge:ingots/copper"
     },
     {
-      "item": "magneticraft2:tin_ingot"
+      "tag": "forge:ingots/tin"
     }
   ],
   "result": {
