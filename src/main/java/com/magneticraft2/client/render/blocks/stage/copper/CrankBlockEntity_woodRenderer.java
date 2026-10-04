@@ -85,6 +85,12 @@ public class CrankBlockEntity_woodRenderer
                 rodDirection
         );
 
+        renderDirectionalFrame(
+                stack,
+                bufferSource,
+                packedLight
+        );
+
         float angleDegrees =
                 crank.getVisualRotationDegrees(
                         partialTicks
@@ -246,7 +252,132 @@ public class CrankBlockEntity_woodRenderer
         );
         stack.popPose();
 
+        double outputEnd = 0.54D;
+        double outputLength =
+                Math.max(
+                        0.02D,
+                        outputEnd - sliderY
+                );
+
+        stack.pushPose();
+        stack.translate(
+                0.0D,
+                sliderY
+                        + outputLength * 0.5D,
+                0.0D
+        );
+        drawBox(
+                stack,
+                copperConsumer,
+                packedLight,
+                0.10D,
+                outputLength,
+                0.10D
+        );
         stack.popPose();
+
+        stack.popPose();
+    }
+
+    private void renderDirectionalFrame(
+            PoseStack stack,
+            MultiBufferSource bufferSource,
+            int packedLight) {
+        // The complete support follows local +Y, which is the selected linear
+        // output direction. The old JSON frame only followed the shaft axis and
+        // could end up 90/180 degrees away from its own moving mechanism.
+        VertexConsumer woodConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                WOOD_TEXTURE
+                        )
+                );
+
+        stack.pushPose();
+        stack.translate(
+                0.0D,
+                -0.43D,
+                0.0D
+        );
+        drawBox(
+                stack,
+                woodConsumer,
+                packedLight,
+                0.94D,
+                0.12D,
+                0.78D
+        );
+        stack.popPose();
+
+        VertexConsumer postConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                SHAFT_TEXTURE
+                        )
+                );
+
+        // Two U-shaped bearing cheeks. They deliberately stay open toward +Y
+        // so the slider/crosshead has a clear path toward the driven machine.
+        for (double x : new double[]{-0.39D, 0.39D}) {
+            for (double z : new double[]{-0.31D, 0.31D}) {
+                stack.pushPose();
+                stack.translate(
+                        x,
+                        -0.08D,
+                        z
+                );
+                drawBox(
+                        stack,
+                        postConsumer,
+                        packedLight,
+                        0.10D,
+                        0.68D,
+                        0.10D
+                );
+                stack.popPose();
+            }
+
+            stack.pushPose();
+            stack.translate(
+                    x,
+                    -0.38D,
+                    0.0D
+            );
+            drawBox(
+                    stack,
+                    postConsumer,
+                    packedLight,
+                    0.10D,
+                    0.10D,
+                    0.72D
+            );
+            stack.popPose();
+        }
+
+        VertexConsumer copperConsumer =
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(
+                                COPPER_TEXTURE
+                        )
+                );
+
+        for (double x : new double[]{-0.405D, 0.405D}) {
+            stack.pushPose();
+            stack.translate(
+                    x,
+                    0.0D,
+                    0.0D
+            );
+            drawBox(
+                    stack,
+                    copperConsumer,
+                    packedLight,
+                    0.09D,
+                    0.25D,
+                    0.25D
+            );
+            stack.popPose();
+        }
     }
 
     private void renderRodBetween(
