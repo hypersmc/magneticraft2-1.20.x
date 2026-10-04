@@ -96,6 +96,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_SHAFT_WOOD = fromBlock(SHAFT_WOOD);
     public static final RegistryObject<Item> ITEM_CLUTCH_WOOD = fromBlock(CLUTCH_WOOD);
     public static final RegistryObject<Item> ITEM_OVERLOAD_DISCONNECT_WOOD = fromBlock(OVERLOAD_DISCONNECT_WOOD);
+    public static final RegistryObject<Item> ITEM_MECHANICAL_BRAKE_WOOD = fromBlock(MECHANICAL_BRAKE_WOOD);
+    public static final RegistryObject<Item> ITEM_CRANK_WOOD = fromBlock(CRANK_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
