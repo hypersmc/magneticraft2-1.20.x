@@ -103,7 +103,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Using the Crank$()$(br2)The crank has a shaft axis and a perpendicular rod-output direction. Its connecting rod follows a real slider-crank motion, so the slider naturally slows near each end of the stroke.$(br2)The output direction is chosen when placed; sneak while placing to flip it. This is the mechanical interface intended for Bellows and later reciprocating machines."
+      "text": "$(bold)Using the Crank$()$(br2)The crank has a shaft axis and a perpendicular rod-output direction. Its connecting rod follows a real slider-crank motion, so the slider naturally slows near each end of the stroke.$(br2)The output direction is chosen when placed. Empty-hand right-click cycles through the four directions perpendicular to the shaft; sneak-right-click cycles backward. This is the mechanical interface for Bellows and later reciprocating machines."
     },
     {
       "type": "patchouli:crafting",
