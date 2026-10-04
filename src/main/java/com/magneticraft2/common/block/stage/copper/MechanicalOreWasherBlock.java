@@ -134,9 +134,10 @@ public class MechanicalOreWasherBlock
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return state.getValue(IS_FORMED)
-                ? RenderShape.INVISIBLE
-                : RenderShape.MODEL;
+        // The formed static body is a normal baked block model. Keeping it in
+        // chunk rendering is dramatically cheaper than resubmitting the entire
+        // multiblock through a BER every frame.
+        return RenderShape.MODEL;
     }
 
     @Override
