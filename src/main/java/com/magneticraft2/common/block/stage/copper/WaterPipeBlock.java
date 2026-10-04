@@ -64,9 +64,9 @@ public class WaterPipeBlock extends Block {
             state = state.setValue(
                     property(direction),
                     canConnect(
-                            level.getBlockState(
-                                    pos.relative(direction)
-                            )
+                            level,
+                            pos,
+                            direction
                     )
             );
         }
@@ -84,15 +84,45 @@ public class WaterPipeBlock extends Block {
             BlockPos neighbourPos) {
         return state.setValue(
                 property(direction),
-                canConnect(neighbour)
+                canConnect(
+                        level,
+                        pos,
+                        direction
+                )
         );
     }
 
-    public static boolean canConnect(BlockState state) {
-        Block block = state.getBlock();
-        return block instanceof WaterPipeBlock
-                || block instanceof MechanicalWaterPumpBlock
-                || block instanceof MultiblockFluidInputBlock;
+    private static boolean canConnect(
+            LevelAccessor level,
+            BlockPos pipePos,
+            Direction direction) {
+        BlockPos neighbourPos =
+                pipePos.relative(direction);
+        BlockState state =
+                level.getBlockState(neighbourPos);
+        Block block =
+                state.getBlock();
+
+        if (block instanceof WaterPipeBlock) {
+            return true;
+        }
+
+        // The pump only exposes fluid on its TOP. A pipe touching any mechanical
+        // side must not pretend it is a valid fluid connection.
+        if (block instanceof MechanicalWaterPumpBlock) {
+            return direction == Direction.DOWN;
+        }
+
+        if (block instanceof MultiblockFluidInputBlock
+                && state.hasProperty(
+                        MultiblockFluidInputBlock.FACING
+                )) {
+            return state.getValue(
+                    MultiblockFluidInputBlock.FACING
+            ) == direction.getOpposite();
+        }
+
+        return false;
     }
 
     public static BooleanProperty property(Direction direction) {

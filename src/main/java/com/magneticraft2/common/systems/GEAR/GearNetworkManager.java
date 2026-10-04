@@ -1171,6 +1171,11 @@ public class GearNetworkManager {
                 continue;
             }
 
+            if (blockEntity instanceof GearBlockEntity currentGear
+                    && !currentGear.acceptsShaftConnection(direction)) {
+                continue;
+            }
+
             BlockPos neighborPos = pos.relative(direction);
             GearNode neighbor = gears.get(neighborPos);
             if (neighbor == null) {
@@ -1178,6 +1183,15 @@ public class GearNetworkManager {
             }
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(neighborPos);
+
+            // One-sided consumers (such as the Mechanical Water Pump) must also
+            // reject the connection when reached from the neighbouring shaft.
+            if (neighborBlockEntity instanceof GearBlockEntity neighborGear
+                    && !neighborGear.acceptsShaftConnection(
+                            direction.getOpposite()
+                    )) {
+                continue;
+            }
 
             // A shaft beside an open inline disconnect must not connect into it
             // from the neighbor side either.

@@ -38,12 +38,13 @@ public class MechanicalWaterPumpBlock extends GearBlock {
     @Override
     public BlockState getStateForPlacement(
             BlockPlaceContext context) {
-        Direction requested =
-                context.getClickedFace();
+        Direction inputFace =
+                context.getClickedFace()
+                        .getOpposite();
 
-        if (requested.getAxis()
+        if (inputFace.getAxis()
                 == Direction.Axis.Y) {
-            requested =
+            inputFace =
                     context.getHorizontalDirection()
                             .getOpposite();
         }
@@ -51,7 +52,7 @@ public class MechanicalWaterPumpBlock extends GearBlock {
         return validateGearPlacement(
                 context,
                 defaultBlockState()
-                        .setValue(FACING, requested)
+                        .setValue(FACING, inputFace)
                         .setValue(ACTIVE, false)
         );
     }

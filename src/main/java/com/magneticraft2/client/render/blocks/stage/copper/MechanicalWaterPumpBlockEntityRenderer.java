@@ -15,17 +15,22 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
 
+/**
+ * Renders the pump's one-sided input shaft and crank wheel.
+ *
+ * The shaft is authored at the exact 6x6 cross-section used by Wooden Shaft,
+ * so it meets the Gear V2 network without the tiny scaled-pulley mismatch.
+ */
 public class MechanicalWaterPumpBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalWaterPumpBlockEntity> {
 
-    private static final ResourceLocation PULLEY_MODEL =
+    private static final ResourceLocation DRIVE_MODEL =
             new ResourceLocation(
                     "magneticraft2",
-                    "block/pulley_small_wood"
+                    "block/mechanical_water_pump_drive"
             );
 
     public MechanicalWaterPumpBlockEntityRenderer(
@@ -46,35 +51,18 @@ public class MechanicalWaterPumpBlockEntityRenderer
             return;
         }
 
-        Direction facing =
+        Direction inputSide =
                 state.getValue(
                         MechanicalWaterPumpBlock.FACING
                 );
 
-        Vec3 outward =
-                Vec3.atLowerCornerOf(
-                        facing.getNormal()
-                ).scale(0.28D);
-
         poseStack.pushPose();
-        poseStack.translate(
-                0.5D + outward.x,
-                0.5D + outward.y,
-                0.5D + outward.z
+        poseStack.translate(0.5D, 0.5D, 0.5D);
+
+        orientPositiveYTo(
+                inputSide,
+                poseStack
         );
-
-        Direction.Axis axis =
-                facing.getAxis();
-
-        if (axis == Direction.Axis.X) {
-            poseStack.mulPose(
-                    Axis.ZP.rotationDegrees(-90.0F)
-            );
-        } else if (axis == Direction.Axis.Z) {
-            poseStack.mulPose(
-                    Axis.XP.rotationDegrees(90.0F)
-            );
-        }
 
         poseStack.mulPose(
                 Axis.YP.rotationDegrees(
@@ -84,21 +72,12 @@ public class MechanicalWaterPumpBlockEntityRenderer
                 )
         );
 
-        poseStack.scale(
-                0.46F,
-                0.46F,
-                0.46F
-        );
-        poseStack.translate(
-                -0.5D,
-                -0.5D,
-                -0.5D
-        );
+        poseStack.translate(-0.5D, -0.5D, -0.5D);
 
         BakedModel model =
                 Minecraft.getInstance()
                         .getModelManager()
-                        .getModel(PULLEY_MODEL);
+                        .getModel(DRIVE_MODEL);
 
         if (model != null) {
             var consumer =
@@ -127,5 +106,29 @@ public class MechanicalWaterPumpBlockEntityRenderer
         }
 
         poseStack.popPose();
+    }
+
+    private void orientPositiveYTo(
+            Direction direction,
+            PoseStack poseStack) {
+        switch (direction) {
+            case DOWN -> poseStack.mulPose(
+                    Axis.XP.rotationDegrees(180.0F)
+            );
+            case NORTH -> poseStack.mulPose(
+                    Axis.XP.rotationDegrees(-90.0F)
+            );
+            case SOUTH -> poseStack.mulPose(
+                    Axis.XP.rotationDegrees(90.0F)
+            );
+            case EAST -> poseStack.mulPose(
+                    Axis.ZP.rotationDegrees(-90.0F)
+            );
+            case WEST -> poseStack.mulPose(
+                    Axis.ZP.rotationDegrees(90.0F)
+            );
+            default -> {
+            }
+        }
     }
 }

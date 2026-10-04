@@ -121,6 +121,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
 
         for (ResourceLocation resourceLocation : resourceManager.listResources(folderPath, path -> path.toString().endsWith(".json")).keySet()) {
             // Remove the "models/" prefix and ".json" suffix for registering the model

@@ -109,7 +109,7 @@
       "type": "patchouli:crafting",
       "title": "Mechanical Water Pump",
       "recipe": "magneticraft2:mechanical_water_pump",
-      "text": "Place the pump directly above a water source. Its top is the pipe outlet; connect a Wooden Shaft to the side pulley. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t."
+      "text": "Place the pump directly above a water source. Its TOP is the only fluid output. Place the pump against the end of a Wooden Shaft: the visible crank-wheel side is the only mechanical input, and power does not pass through the opposite side. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t."
     },
     {
       "type": "text",

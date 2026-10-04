@@ -45,8 +45,7 @@
         "up": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm",
-        "x": 90
+        "model": "magneticraft2:block/water_pipe_arm_up"
       }
     },
     {
@@ -54,8 +53,7 @@
         "down": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm",
-        "x": 270
+        "model": "magneticraft2:block/water_pipe_arm_down"
       }
     }
   ]

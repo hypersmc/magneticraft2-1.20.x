@@ -354,6 +354,25 @@ public class MechanicalWaterPumpBlockEntity
         return true;
     }
 
+    public Direction getMechanicalInputSide() {
+        BlockState state =
+                getBlockState();
+
+        return state.hasProperty(
+                DirectionalBlock.FACING
+        )
+                ? state.getValue(
+                        DirectionalBlock.FACING
+                )
+                : Direction.WEST;
+    }
+
+    @Override
+    public boolean acceptsShaftConnection(
+            Direction side) {
+        return side == getMechanicalInputSide();
+    }
+
     @Override
     public Direction.Axis getGearAxis() {
         BlockState state =

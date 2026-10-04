@@ -83,6 +83,17 @@ public abstract class GearBlockEntity extends BlockEntity {
     }
 
     /**
+     * Whether an adjacent axial shaft is allowed to connect through this face.
+     *
+     * Ordinary shafts accept both ends. Mechanical consumers can override this
+     * to expose a true one-sided input without becoming an inline transmission.
+     */
+    public boolean acceptsShaftConnection(Direction side) {
+        return side != null
+                && side.getAxis() == getGearAxis();
+    }
+
+    /**
      * Whether this node can also participate in external tooth/rim meshing.
      *
      * Most shaft-like nodes return false. Hybrid source components such as Water Wheels
