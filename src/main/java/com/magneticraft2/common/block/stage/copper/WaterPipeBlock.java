@@ -131,6 +131,12 @@ public class WaterPipeBlock extends Block {
             ) == direction.getOpposite();
         }
 
+        // Copper Fluid Tanks intentionally expose one visible pipe socket: TOP.
+        // From the pipe's point of view that means the neighbouring tank is DOWN.
+        if (block instanceof CopperFluidTankBlock) {
+            return direction == Direction.DOWN;
+        }
+
         return false;
     }
 

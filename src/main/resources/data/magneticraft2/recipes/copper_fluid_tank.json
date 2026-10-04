@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "G G",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:copper_fluid_tank",
+    "count": 1
+  }
+}

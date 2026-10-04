@@ -83,6 +83,7 @@ public class CreativeTabRegistry {
                         entries.accept(FluidRegistry.DIRTY_WATER_BUCKET.get());
                         entries.accept(ItemRegistry.ITEM_WATER_PIPE.get());
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_WATER_PUMP.get());
+                        entries.accept(ItemRegistry.ITEM_COPPER_FLUID_TANK.get());
                         entries.accept(ItemRegistry.ITEM_CRUSHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_WASHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_TIN_CONCENTRATE.get());

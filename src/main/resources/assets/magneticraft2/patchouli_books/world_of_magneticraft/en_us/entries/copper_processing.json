@@ -104,7 +104,7 @@
       "title": "Fluid I/O + Pipes",
       "recipe": "magneticraft2:multiblock_fluid_input",
       "recipe2": "magneticraft2:multiblock_fluid_output",
-      "text": "The Washer now has separate fluid ports. Feed clean water into the green-marked Fluid Input. Dirty process water leaves through the brown-marked Fluid Output. Copper Fluid Pipes connect to the outward-facing nozzles and remain passive transport blocks."
+      "text": "The Washer has separate fluid ports. Feed clean water into the green-marked Fluid Input. Dirty process water leaves through the brown-marked Fluid Output. Copper Fluid Pipes are passive transport blocks; connect the output line to a Copper Fluid Tank to collect Dirty Water."
     },
     {
       "type": "patchouli:crafting",
@@ -114,8 +114,14 @@
       "recipe2": "magneticraft2:water_pipe"
     },
     {
+      "type": "patchouli:crafting",
+      "title": "Copper Fluid Tank",
+      "recipe": "magneticraft2:copper_fluid_tank",
+      "text": "The Copper Fluid Tank stores 8000 mB of one fluid. Connect a Copper Fluid Pipe to the TOP socket. The tank periodically pulls from reachable multiblock Fluid Outputs, so Dirty Water from the Ore Washer can be collected without making every pipe tick. The four inspection windows show the real fluid texture, color and fill level."
+    },
+    {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. The machine pauses if either clean water is missing or the Dirty Water tank is full.$(br2)Dirty Water is intentionally recyclable process fluid: later treatment can recover clean water and potentially mineral sludge instead of making washing a permanent water sink."
+      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. Connect the Dirty Fluid Output to a Copper Fluid Tank; otherwise the Washer eventually pauses when its internal waste tank fills.$(br2)Dirty Water is intended for later treatment/recycling rather than permanent disposal."
     },
     {
       "type": "patchouli:crafting",
@@ -179,7 +185,8 @@
     "magneticraft2:multiblock_fluid_input": 10,
     "magneticraft2:water_pipe": 11,
     "magneticraft2:mechanical_water_pump": 11,
-    "magneticraft2:multiblock_fluid_output": 10
+    "magneticraft2:multiblock_fluid_output": 10,
+    "magneticraft2:copper_fluid_tank": 12
   },
   "sortnum": 0,
   "read_by_default": true
