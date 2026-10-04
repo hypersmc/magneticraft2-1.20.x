@@ -86,7 +86,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the 3x2x3 frame around the controller, then right-click the controller to form it. The Washer Controller is the CENTER block of the bottom 3x3 footprint. The Mechanical Input Bearing is the middle block of the front edge."
+      "text": "Build the 3x2x3 frame exactly as shown, then right-click the controller to form it. The Washer Controller is the CENTER block of the bottom 3x3 footprint and the Mechanical Input Bearing sits on one outer edge. You may rotate the whole structure; formation detects its direction from the blocks you built."
     },
     {
       "type": "text",
@@ -120,7 +120,7 @@
         },
         "symmetrical": false
       },
-      "text": "Right-click the controller after the frame is complete. The machine extends forward from the controller. Put a Wooden Crank one block behind the controller with its rod output pointing into the Sifter."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. The complete structure may be rotated in any horizontal direction; the controller adopts the direction of the matching structure. Put a Wooden Crank behind the formed controller with its rod output pointing into the Sifter."
     },
     {
       "type": "text",
