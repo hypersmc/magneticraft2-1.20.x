@@ -24,7 +24,7 @@ public class MechanicalOreWasherBlockEntityRenderer
     private static final ResourceLocation SHAFT_TEXTURE =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
     private static final ResourceLocation WATER_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/water_still.png");
+            new ResourceLocation("minecraft", "textures/block/light_blue_stained_glass.png");
 
     public MechanicalOreWasherBlockEntityRenderer(
             BlockEntityRendererProvider.Context context) {
