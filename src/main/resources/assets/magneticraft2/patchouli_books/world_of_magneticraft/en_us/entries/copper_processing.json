@@ -81,7 +81,7 @@
           ],
           [
             "PIP",
-            "C0C",
+            "F0C",
             "POP"
           ]
         ],
@@ -91,15 +91,29 @@
           "C": "minecraft:copper_block",
           "M": "magneticraft2:mechanical_input_module",
           "I": "magneticraft2:multiblock_item_input",
-          "O": "magneticraft2:multiblock_item_output"
+          "O": "magneticraft2:multiblock_item_output",
+          "F": "magneticraft2:multiblock_fluid_input"
         },
         "symmetrical": false
       },
-      "text": "The controller is the center of the bottom 3x3. Rear-center is the Item Input. Front-center is the Item Output. Directly ABOVE the Item Output is the Mechanical Input Bearing, aligned with the trommel axle. Build the frame and right-click the controller to form it."
+      "text": "The controller is the center of the bottom 3x3. Rear-center is Item Input, front-center is Item Output, and the west-side copper position is replaced by the Fluid Input. Directly ABOVE the Item Output is the Mechanical Input Bearing. Build the frame and right-click the controller to form it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Fluid Input + Pipes",
+      "recipe": "magneticraft2:multiblock_fluid_input",
+      "recipe2": "magneticraft2:water_pipe",
+      "text": "The Fluid Input is a real Forge fluid port and survives formation. Connect Copper Water Pipes to its outward-facing nozzle. Pipes are passive: they do not tick individually."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Water Pump",
+      "recipe": "magneticraft2:mechanical_water_pump",
+      "text": "Place the pump directly above a water source. Its top is the pipe outlet; connect a Wooden Shaft to the side pulley. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t."
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. A stepped hopper carries it directly into the open rear of the low trommel. Washed concentrate and byproduct leave through the front discharge chute into the Item Output.$(br2)Gear V2 enters through the upper front bearing. A standard Magneticraft leather belt links a small input pulley to a larger pulley on the lower drum. Both pulleys and the input shaft visibly rotate with Gear V2, while the slatted copper-banded trommel turns more slowly down in the trough. When the required water source is detected, the trough visibly fills with water.$(br2)Place a water source two blocks to either side of the controller."
+      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The washer now stores up to 4000 mB of water and each washing recipe consumes water when the batch completes. The visible trough level follows the actual tank level.$(br2)Gear V2 enters through the upper front bearing and drives the trommel through the leather-belt pulley reduction."
     },
     {
       "type": "patchouli:crafting",
@@ -152,14 +166,17 @@
     "magneticraft2:mechanical_input_module": 7,
     "magneticraft2:multiblock_item_input": 8,
     "magneticraft2:multiblock_item_output": 8,
-    "magneticraft2:mechanical_sifter": 11,
-    "magneticraft2:cassiterite_ore": 13,
-    "magneticraft2:crushed_cassiterite": 13,
-    "magneticraft2:washed_cassiterite": 13,
-    "magneticraft2:tin_concentrate": 13,
-    "magneticraft2:tin_ingot": 14,
-    "magneticraft2:bronze_charge": 14,
-    "magneticraft2:bronze_ingot": 14
+    "magneticraft2:mechanical_sifter": 13,
+    "magneticraft2:cassiterite_ore": 15,
+    "magneticraft2:crushed_cassiterite": 15,
+    "magneticraft2:washed_cassiterite": 15,
+    "magneticraft2:tin_concentrate": 15,
+    "magneticraft2:tin_ingot": 16,
+    "magneticraft2:bronze_charge": 16,
+    "magneticraft2:bronze_ingot": 16,
+    "magneticraft2:multiblock_fluid_input": 10,
+    "magneticraft2:water_pipe": 10,
+    "magneticraft2:mechanical_water_pump": 11
   },
   "sortnum": 0,
   "read_by_default": true

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCP",
+    "PSP",
+    "PGP"
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "G": {
+      "item": "magneticraft2:pulley_small_wood"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:mechanical_water_pump",
+    "count": 1
+  }
+}

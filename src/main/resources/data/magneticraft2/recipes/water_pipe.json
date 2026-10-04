@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CCC",
+    "   ",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:water_pipe",
+    "count": 8
+  }
+}

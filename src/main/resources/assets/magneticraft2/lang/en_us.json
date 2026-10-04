@@ -213,5 +213,11 @@
   "screen.magneticraft2.custom_gearbox_conflict": "Invalid closed gear loop: rotation directions conflict.",
   "screen.magneticraft2.custom_gearbox_rules": "Green port markers are mechanically connected faces.",
   "message.magneticraft2.custom_gearbox_need_gear": "You need a Medium Wooden Gear for that gearbox cell.",
-  "message.magneticraft2.custom_gearbox_need_shaft": "You need a Wooden Shaft for that gearbox cell."
+  "message.magneticraft2.custom_gearbox_need_shaft": "You need a Wooden Shaft for that gearbox cell.",
+  "block.magneticraft2.multiblock_fluid_input": "Multiblock Fluid Input",
+  "item.magneticraft2.multiblock_fluid_input": "Multiblock Fluid Input",
+  "block.magneticraft2.water_pipe": "Copper Water Pipe",
+  "item.magneticraft2.water_pipe": "Copper Water Pipe",
+  "block.magneticraft2.mechanical_water_pump": "Mechanical Water Pump",
+  "item.magneticraft2.mechanical_water_pump": "Mechanical Water Pump"
 }
