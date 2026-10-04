@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "magneticraft2:block/water_pipe_core"
+        "model": "magneticraft2:block/water_pipe_center"
       }
     },
     {
@@ -10,7 +10,7 @@
         "north": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm"
+        "model": "magneticraft2:block/water_pipe_end"
       }
     },
     {
@@ -18,7 +18,7 @@
         "south": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm",
+        "model": "magneticraft2:block/water_pipe_end",
         "y": 180
       }
     },
@@ -27,7 +27,7 @@
         "east": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm",
+        "model": "magneticraft2:block/water_pipe_end",
         "y": 90
       }
     },
@@ -36,7 +36,7 @@
         "west": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm",
+        "model": "magneticraft2:block/water_pipe_end",
         "y": 270
       }
     },
@@ -45,7 +45,8 @@
         "up": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm_up"
+        "model": "magneticraft2:block/water_pipe_end",
+        "x": 90
       }
     },
     {
@@ -53,7 +54,8 @@
         "down": "true"
       },
       "apply": {
-        "model": "magneticraft2:block/water_pipe_arm_down"
+        "model": "magneticraft2:block/water_pipe_end",
+        "x": 270
       }
     }
   ]
