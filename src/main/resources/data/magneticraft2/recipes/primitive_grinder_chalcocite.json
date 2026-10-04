@@ -1,6 +1,13 @@
 {
   "type": "magneticraft2:primitive_grinder_bmultiblock",
-  "input": {"item": "magneticraft2:chalcocite_ore"},
-  "output": {"item": "magneticraft2:crushed_chalcocite", "count": 1},
-  "crushtime": 160
+  "input": {
+    "item": "magneticraft2:chalcocite_ore"
+  },
+  "output": {
+    "item": "magneticraft2:crushed_chalcocite",
+    "count": 1
+  },
+  "crushtime": 160,
+  "min_speed": 20,
+  "torque": 4
 }
