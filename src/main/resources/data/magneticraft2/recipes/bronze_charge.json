@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:copper_ingot"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    },
+    {
+      "item": "magneticraft2:tin_ingot"
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:bronze_charge",
+    "count": 1
+  }
+}
