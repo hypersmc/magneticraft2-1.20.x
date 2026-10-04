@@ -11,6 +11,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalBrakeBlockEnt
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalBellowsBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
@@ -79,6 +80,7 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
     public static final RegistryObject<BlockEntityType<ConveyorRollerBlockEntity>> CONVEYOR_ROLLER_BE =
             BLOCK_ENTITIES.register("conveyor_roller", () ->
                     BlockEntityType.Builder.of(
