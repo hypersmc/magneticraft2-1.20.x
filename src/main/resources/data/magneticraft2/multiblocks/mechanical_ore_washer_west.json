@@ -15,8 +15,8 @@
         ],
         [
           "MechanicalInput",
-          "Air",
-          "Controller"
+          "Controller",
+          "Copper"
         ],
         [
           "Frame",
