@@ -1,0 +1,52 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "up"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "down"
+      },
+      "apply": {
+        "model": "magneticraft2:block/mechanical_bellows_down"
+      }
+    }
+  ]
+}
