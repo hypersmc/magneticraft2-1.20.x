@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 Mechanical Ore Washer - east output lip aligned with module",
+  "credit": "Magneticraft2 Mechanical Ore Washer - east item output module owns forward lip",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -1302,12 +1302,12 @@
     },
     {
       "from": [
-        20,
+        16,
         9.5,
         1
       ],
       "to": [
-        26,
+        22,
         11,
         15
       ],

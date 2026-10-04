@@ -164,6 +164,7 @@ public class MultiblockItemPortBlockEntity
         }
 
         formedModule = true;
+        updateFacingFromController();
         setChanged();
         sync();
     }
@@ -177,6 +178,51 @@ public class MultiblockItemPortBlockEntity
         formedModule = false;
         setChanged();
         sync();
+    }
+
+    private void updateFacingFromController() {
+        if (level == null || !formedModule) {
+            return;
+        }
+
+        int dx = worldPosition.getX() - controllerX;
+        int dy = worldPosition.getY() - controllerY;
+        int dz = worldPosition.getZ() - controllerZ;
+
+        Direction outward;
+        if (Math.abs(dx) >= Math.abs(dz)
+                && Math.abs(dx) >= Math.abs(dy)
+                && dx != 0) {
+            outward = dx > 0
+                    ? Direction.EAST
+                    : Direction.WEST;
+        } else if (Math.abs(dz) >= Math.abs(dy)
+                && dz != 0) {
+            outward = dz > 0
+                    ? Direction.SOUTH
+                    : Direction.NORTH;
+        } else if (dy != 0) {
+            outward = dy > 0
+                    ? Direction.UP
+                    : Direction.DOWN;
+        } else {
+            return;
+        }
+
+        BlockState state = level.getBlockState(worldPosition);
+
+        if (state.hasProperty(MultiblockItemPortBlock.FACING)
+                && state.getValue(MultiblockItemPortBlock.FACING)
+                != outward) {
+            level.setBlock(
+                    worldPosition,
+                    state.setValue(
+                            MultiblockItemPortBlock.FACING,
+                            outward
+                    ),
+                    Block.UPDATE_ALL
+            );
+        }
     }
 
     @Override
