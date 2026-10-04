@@ -60,8 +60,13 @@ public class MechanicalSifterBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Direction direction = context.getClickedFace();
+        if (direction.getAxis() == Direction.Axis.Y) {
+            direction = context.getHorizontalDirection().getOpposite();
+        }
+
         return defaultBlockState()
-                .setValue(FACING, context.getClickedFace());
+                .setValue(FACING, direction);
     }
 
     @Override
