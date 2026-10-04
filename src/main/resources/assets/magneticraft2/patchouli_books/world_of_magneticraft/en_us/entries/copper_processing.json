@@ -56,19 +56,71 @@
     },
     {
       "type": "patchouli:crafting",
-      "title": "Mechanical Ore Washer",
+      "title": "Ore Washer Controller",
       "recipe": "magneticraft2:mechanical_ore_washer",
-      "text": "The Ore Washer is a rotary trommel for crushed ore. Give its shaft at least the recipe's required speed/torque and keep a water source directly adjacent. The drum separates lighter gangue while producing a cleaner washed mineral."
+      "recipe2": "magneticraft2:mechanical_input_module",
+      "text": "The crafted block is the controller, not the whole machine. The Washer is a 3x2x3 JSON multiblock. It also needs one Mechanical Input Bearing so Gear V2 can enter the formed structure."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Ore Washer",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P P",
+            "PPP"
+          ],
+          [
+            "P0P",
+            "C C",
+            "PMP"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:mechanical_ore_washer",
+          "P": "minecraft:oak_planks",
+          "C": "minecraft:copper_block",
+          "M": "magneticraft2:mechanical_input_module"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the frame around the controller, then right-click the controller to form it. The controller is centered in the rear row; the Mechanical Input Bearing is centered at the opposite end."
     },
     {
       "type": "text",
-      "text": "$(bold)Washer rules$()$(br2)The Washer is a real Gear V2 shaft node, so it can sit directly in a drivetrain. Recipes define their own minimum RPM, torque, processing time and optional byproduct chance.$(br2)Empty-hand right-click removes finished output first, then byproduct, then unprocessed input. The machine also exposes an item capability for later automation."
+      "text": "$(bold)Washer operation$()$(br2)Connect a shaft to the exposed Mechanical Input Bearing. Place a water source beside either side of the middle section of the formed machine. Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance.$(br2)The formed structure becomes one large trommel instead of trying to squeeze the machine into a single block."
     },
     {
       "type": "patchouli:crafting",
-      "title": "Mechanical Sifter",
+      "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is driven by a Crank rather than a shaft. Place it directly on the Crank's linear-output side. The upper and lower screens shake in opposite motion and classify washed material into concentrate and optional gangue."
+      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. Its reciprocating drive comes from a Crank placed directly behind the controller."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Sifter",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "P P",
+            "PPP"
+          ],
+          [
+            "P0P",
+            "CPC"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:mechanical_sifter",
+          "P": "minecraft:oak_planks",
+          "C": "minecraft:copper_block"
+        },
+        "symmetrical": false
+      },
+      "text": "Right-click the controller after the frame is complete. The machine extends forward from the controller. Put a Wooden Crank one block behind the controller with its rod output pointing into the Sifter."
     },
     {
       "type": "text",
@@ -88,14 +140,15 @@
     "magneticraft2:primitive_grinder_bmultiblock": 3,
     "magneticraft2:primitive_grindertop": 3,
     "magneticraft2:mechanical_ore_washer": 7,
-    "magneticraft2:mechanical_sifter": 9,
-    "magneticraft2:cassiterite_ore": 10,
-    "magneticraft2:crushed_cassiterite": 10,
-    "magneticraft2:washed_cassiterite": 10,
-    "magneticraft2:tin_concentrate": 10,
-    "magneticraft2:tin_ingot": 11,
-    "magneticraft2:bronze_charge": 11,
-    "magneticraft2:bronze_ingot": 11
+    "magneticraft2:mechanical_input_module": 7,
+    "magneticraft2:mechanical_sifter": 10,
+    "magneticraft2:cassiterite_ore": 12,
+    "magneticraft2:crushed_cassiterite": 12,
+    "magneticraft2:washed_cassiterite": 12,
+    "magneticraft2:tin_concentrate": 12,
+    "magneticraft2:tin_ingot": 13,
+    "magneticraft2:bronze_charge": 13,
+    "magneticraft2:bronze_ingot": 13
   },
   "sortnum": 0,
   "read_by_default": true
