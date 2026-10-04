@@ -39,10 +39,31 @@ public class MechanicalSifterBlock
     public static final BooleanProperty IS_FORMED =
             BooleanProperty.create("is_formed");
 
+    // Canonical SOUTH collision mirrors the open classifier frame and
+    // moving screen volume rather than using one opaque 3x2x2 cuboid.
     private static final VoxelShape FORMED_SOUTH =
-            Block.box(
-                    -16.0D, 0.0D, 0.0D,
-                    32.0D, 32.0D, 32.0D
+            VoxelShapeUtils.combine(
+                    // foundation
+                    Block.box(-14, 0, 1, -11, 3, 31),
+                    Block.box(27, 0, 1, 30, 3, 31),
+                    Block.box(-14, 2, 1, 30, 5, 4),
+                    Block.box(-14, 2, 28, 30, 5, 31),
+
+                    // uprights/top frame
+                    Block.box(-13, 3, 4, -10, 27, 7),
+                    Block.box(26, 3, 4, 29, 27, 7),
+                    Block.box(-13, 3, 25, -10, 27, 28),
+                    Block.box(26, 3, 25, 29, 27, 28),
+                    Block.box(-13, 26, 4, 29, 29, 28),
+
+                    // screen assemblies and crank guide
+                    Block.box(-8, 10, 7, 24, 21, 27),
+                    Block.box(3, 14, 0, 13, 22, 9),
+
+                    // feed/output chutes
+                    Block.box(-5, 22, 0, 21, 25, 9),
+                    Block.box(-9, 4, 24, 5, 8, 32),
+                    Block.box(11, 4, 24, 25, 8, 32)
             );
 
     public MechanicalSifterBlock() {
@@ -198,6 +219,20 @@ public class MechanicalSifterBlock
     }
 
     @Override
+    public VoxelShape getInteractionShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos) {
+        return state.getValue(IS_FORMED)
+                ? getFormedShape(state)
+                : super.getInteractionShape(
+                        state,
+                        level,
+                        pos
+                );
+    }
+
+    @Override
     public VoxelShape getVisualShape(
             BlockState state,
             BlockGetter level,
@@ -245,17 +280,17 @@ public class MechanicalSifterBlock
 
         return switch (facing) {
             case SOUTH -> FORMED_SOUTH;
-            case NORTH -> VoxelShapeUtils.rotateHorizontal(
+            case NORTH -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.SOUTH
+                    Rotation.CLOCKWISE_180
             );
-            case EAST -> VoxelShapeUtils.rotateHorizontal(
+            case EAST -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.WEST
+                    Rotation.COUNTERCLOCKWISE_90
             );
-            case WEST -> VoxelShapeUtils.rotateHorizontal(
+            case WEST -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.EAST
+                    Rotation.CLOCKWISE_90
             );
             default -> FORMED_SOUTH;
         };
