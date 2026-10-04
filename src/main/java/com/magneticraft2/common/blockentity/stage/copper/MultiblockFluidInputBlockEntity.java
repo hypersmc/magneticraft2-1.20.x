@@ -32,7 +32,7 @@ public class MultiblockFluidInputBlockEntity
     private boolean formedModule;
 
     private LazyOptional<IFluidHandler> fluidCapability =
-            LazyOptional.of(PortFluidHandler::new);
+            LazyOptional.of(() -> new PortFluidHandler());
 
     public MultiblockFluidInputBlockEntity(
             BlockPos pos,
@@ -196,7 +196,7 @@ public class MultiblockFluidInputBlockEntity
     public void reviveCaps() {
         super.reviveCaps();
         fluidCapability =
-                LazyOptional.of(PortFluidHandler::new);
+                LazyOptional.of(() -> new PortFluidHandler());
     }
 
     @Override
