@@ -68,9 +68,16 @@ public class MechanicalOreWasherBlockEntityRenderer
             int packedLight,
             int packedOverlay) {
 
-        if (!washer.isFormed()) {
+        BlockState formedState =
+                washer.getBlockState();
+
+        if (!formedState.hasProperty(MechanicalOreWasherBlock.IS_FORMED)
+                || !formedState.getValue(MechanicalOreWasherBlock.IS_FORMED)) {
             return;
         }
+
+        Direction facing =
+                formedState.getValue(MechanicalOreWasherBlock.FACING);
 
         ModelData modelData =
                 washer.getModelData();
@@ -79,9 +86,13 @@ public class MechanicalOreWasherBlockEntityRenderer
                         MultiBlockProperties.MODEL_NAME
                 );
 
-        if (modelName != null
-                && !modelName.isEmpty()) {
-            renderModel(
+        if (modelName == null || modelName.isEmpty()) {
+            modelName =
+                    "multiblock/mechanical_ore_washer_"
+                            + facing.getName();
+        }
+
+        renderModel(
                     new ResourceLocation(
                             "magneticraft2",
                             modelName
@@ -92,13 +103,6 @@ public class MechanicalOreWasherBlockEntityRenderer
                     packedLight,
                     packedOverlay
             );
-        }
-
-        Direction facing =
-                washer.getBlockState()
-                        .getValue(
-                                MechanicalOreWasherBlock.FACING
-                        );
 
         poseStack.pushPose();
         applySouthFacingTransform(
