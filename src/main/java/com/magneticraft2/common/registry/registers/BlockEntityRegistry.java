@@ -12,6 +12,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalBellowsBlockE
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
@@ -81,6 +82,7 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE = BLOCK_ENTITIES.register("multiblock_item_port", () -> BlockEntityType.Builder.of(MultiblockItemPortBlockEntity::new, BlockRegistry.MULTIBLOCK_ITEM_INPUT.get(), BlockRegistry.MULTIBLOCK_ITEM_OUTPUT.get()).build(null));
     public static final RegistryObject<BlockEntityType<ConveyorRollerBlockEntity>> CONVEYOR_ROLLER_BE =
             BLOCK_ENTITIES.register("conveyor_roller", () ->
                     BlockEntityType.Builder.of(
