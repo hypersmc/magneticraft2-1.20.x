@@ -99,7 +99,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input and extract concentrate/byproduct from the low front Item Output. Gear V2 enters through the upper front bearing, where a visible wooden gear drives a second, lower gear on the trommel axle. The drum therefore sits lower in the trough instead of floating on the input shaft.$(br2)Place a water source two blocks to either side of the controller."
+      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. A stepped hopper carries it directly into the open rear of the low trommel. Washed concentrate and byproduct leave through the front discharge chute into the Item Output.$(br2)Gear V2 enters through the upper front bearing. A small wooden pulley drives a larger pulley on the lower drum with a short leather belt, so the trommel turns more slowly and visibly sits down in the water trough.$(br2)Place a water source two blocks to either side of the controller."
     },
     {
       "type": "patchouli:crafting",
