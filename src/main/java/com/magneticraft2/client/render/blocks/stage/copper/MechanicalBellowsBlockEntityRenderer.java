@@ -98,40 +98,15 @@ public class MechanicalBellowsBlockEntityRenderer
                         )
                 );
 
-        double frontFoldZ = 0.135D;
-        int folds = 5;
+        double frontFoldZ = 0.09D;
 
-        for (int i = 0; i < folds; i++) {
-            double t =
-                    (i + 1.0D)
-                            / (folds + 1.0D);
-
-            double z =
-                    backZ
-                            + (frontFoldZ - backZ)
-                            * t;
-
-            double size =
-                    i % 2 == 0
-                            ? 0.62D
-                            : 0.52D;
-
-            stack.pushPose();
-            stack.translate(
-                    0.0D,
-                    0.0D,
-                    z
-            );
-            drawBox(
-                    stack,
-                    leatherConsumer,
-                    packedLight,
-                    size,
-                    size,
-                    0.045D
-            );
-            stack.popPose();
-        }
+        renderAccordion(
+                stack,
+                leatherConsumer,
+                packedLight,
+                backZ + 0.045D,
+                frontFoldZ
+        );
 
         // Visible push rod from the crank side into the moving back plate.
         double rodBack = -0.50D;
@@ -160,13 +135,203 @@ public class MechanicalBellowsBlockEntityRenderer
                 stack,
                 copperConsumer,
                 packedLight,
-                0.12D,
-                0.12D,
+                0.10D,
+                0.10D,
                 rodLength
         );
         stack.popPose();
 
+        stack.pushPose();
+        stack.translate(
+                0.0D,
+                0.0D,
+                backZ - 0.01D
+        );
+        drawBox(
+                stack,
+                copperConsumer,
+                packedLight,
+                0.18D,
+                0.18D,
+                0.09D
+        );
         stack.popPose();
+
+        stack.popPose();
+    }
+
+    private void renderAccordion(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int packedLight,
+            double backZ,
+            double frontZ) {
+
+        // Real bellows are a hollow concertina, not a stack of solid leather
+        // plates. Alternate wide/narrow square folds and connect each fold with
+        // sloped leather panels so the whole envelope expands and collapses as
+        // one continuous piece.
+        final int nodes = 7;
+        double[] z = new double[nodes];
+        double[] radius = new double[nodes];
+
+        for (int i = 0; i < nodes; i++) {
+            double t = i / (double) (nodes - 1);
+            z[i] = backZ + (frontZ - backZ) * t;
+
+            if (i == 0 || i == nodes - 1) {
+                radius[i] = 0.33D;
+            } else {
+                radius[i] =
+                        i % 2 == 0
+                                ? 0.31D
+                                : 0.255D;
+            }
+        }
+
+        for (int i = 0; i < nodes - 1; i++) {
+            renderAccordionSegment(
+                    stack,
+                    consumer,
+                    packedLight,
+                    z[i],
+                    radius[i],
+                    z[i + 1],
+                    radius[i + 1]
+            );
+        }
+
+        // Dark seams at every fold make the concertina readable even while it
+        // is nearly fully compressed.
+        for (int i = 1; i < nodes - 1; i++) {
+            double r = radius[i];
+
+            for (double sign : new double[]{-1.0D, 1.0D}) {
+                stack.pushPose();
+                stack.translate(
+                        0.0D,
+                        sign * r,
+                        z[i]
+                );
+                drawBox(
+                        stack,
+                        consumer,
+                        packedLight,
+                        r * 2.0D,
+                        0.035D,
+                        0.035D
+                );
+                stack.popPose();
+
+                stack.pushPose();
+                stack.translate(
+                        sign * r,
+                        0.0D,
+                        z[i]
+                );
+                drawBox(
+                        stack,
+                        consumer,
+                        packedLight,
+                        0.035D,
+                        r * 2.0D,
+                        0.035D
+                );
+                stack.popPose();
+            }
+        }
+    }
+
+    private void renderAccordionSegment(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int packedLight,
+            double z0,
+            double r0,
+            double z1,
+            double r1) {
+
+        double dz = z1 - z0;
+        double panelWidth =
+                Math.min(r0, r1) * 2.0D;
+
+        // Top and bottom leather sheets.
+        for (double sign : new double[]{-1.0D, 1.0D}) {
+            double y0 = sign * r0;
+            double y1 = sign * r1;
+            double dy = y1 - y0;
+            double length =
+                    Math.sqrt(
+                            dy * dy + dz * dz
+                    );
+            float angle =
+                    (float) Math.toDegrees(
+                            Math.atan2(
+                                    -dy,
+                                    dz
+                            )
+                    );
+
+            stack.pushPose();
+            stack.translate(
+                    0.0D,
+                    (y0 + y1) * 0.5D,
+                    (z0 + z1) * 0.5D
+            );
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(
+                            angle
+                    )
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    panelWidth,
+                    0.035D,
+                    length + 0.015D
+            );
+            stack.popPose();
+        }
+
+        // Left and right sheets.
+        for (double sign : new double[]{-1.0D, 1.0D}) {
+            double x0 = sign * r0;
+            double x1 = sign * r1;
+            double dx = x1 - x0;
+            double length =
+                    Math.sqrt(
+                            dx * dx + dz * dz
+                    );
+            float angle =
+                    (float) Math.toDegrees(
+                            Math.atan2(
+                                    dx,
+                                    dz
+                            )
+                    );
+
+            stack.pushPose();
+            stack.translate(
+                    (x0 + x1) * 0.5D,
+                    0.0D,
+                    (z0 + z1) * 0.5D
+            );
+            stack.mulPose(
+                    Axis.YP.rotationDegrees(
+                            angle
+                    )
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    packedLight,
+                    0.035D,
+                    panelWidth,
+                    length + 0.015D
+            );
+            stack.popPose();
+        }
     }
 
     private float clamp01(float value) {
