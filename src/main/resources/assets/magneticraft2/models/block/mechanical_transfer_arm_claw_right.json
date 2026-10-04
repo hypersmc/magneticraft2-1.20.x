@@ -1,25 +1,25 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "frame": "minecraft:block/stripped_dark_oak_log",
+    "wood": "minecraft:block/stripped_dark_oak_log",
     "copper": "minecraft:block/copper_block",
     "particle": "minecraft:block/copper_block"
   },
   "elements": [
     {
       "from": [
-        9.4,
-        19.6,
-        6.7
+        9.65,
+        18.25,
+        6.9
       ],
       "to": [
-        11.1,
-        24.7,
-        9.3
+        11.05,
+        22,
+        9.1
       ],
       "faces": {
         "north": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -28,7 +28,7 @@
           ]
         },
         "east": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -37,7 +37,7 @@
           ]
         },
         "south": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -46,7 +46,7 @@
           ]
         },
         "west": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -55,7 +55,7 @@
           ]
         },
         "up": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -64,7 +64,7 @@
           ]
         },
         "down": {
-          "texture": "#frame",
+          "texture": "#wood",
           "uv": [
             0,
             0,
@@ -76,14 +76,14 @@
     },
     {
       "from": [
-        9.1,
-        18.6,
-        6.4
+        9.35,
+        17.45,
+        6.55
       ],
       "to": [
-        11.65,
-        20.5,
-        9.6
+        11.55,
+        18.95,
+        9.45
       ],
       "faces": {
         "north": {

@@ -28,20 +28,19 @@ import java.util.Map;
  * The static baked block is only the heavy plinth. Everything that mechanically
  * moves is drawn here:
  *
- *   base gear -> yawing turret -> shoulder -> elbow/forearm -> wrist -> claw
+ *   exposed Gear V2 wheel -> hollow turntable -> shoulder -> reinforced boom
+ *   -> forked forearm -> compact wrist/claw
  *
- * The arm raises/retracts during the middle of each sweep, then reaches back
- * down at the source/destination. This makes it read as a crude geared robot
- * rather than one rigid crane boom rotating through inventories.
+ * The drive wheel terminates below the hollow turntable; the Transfer Arm never
+ * renders the normal gear block's full-height shaft. The movement timing is
+ * intentionally unchanged: it lifts/retracts during the sweep and reaches down
+ * at the configured source/destination.
  */
 public class MechanicalTransferArmBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalTransferArmBlockEntity> {
 
     private static final ResourceLocation GEAR_MODEL =
-            new ResourceLocation(
-                    "magneticraft2",
-                    "block/gear_medium_wood"
-            );
+            model("mechanical_transfer_arm_drive_gear");
     private static final ResourceLocation TURRET_MODEL =
             model("mechanical_transfer_arm_turret");
     private static final ResourceLocation LOWER_ARM_MODEL =
@@ -66,11 +65,11 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     // Authored model pivots in block-local coordinates.
     private static final double SHOULDER_Y =
-            11.0D / 16.0D;
+            10.65D / 16.0D;
     private static final double ELBOW_Y =
-            20.0D / 16.0D;
+            18.0D / 16.0D;
     private static final double WRIST_Y =
-            30.5D / 16.0D;
+            26.0D / 16.0D;
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -310,9 +309,10 @@ public class MechanicalTransferArmBlockEntityRenderer
             int packedOverlay) {
         poseStack.pushPose();
 
-        // Reuse the actual registered 8-tooth Gear V2 wooden gear model.
-        // Its wheel is authored around Y=7..9, so lower it slightly into the
-        // transfer-arm bearing instead of inventing another gear silhouette.
+        // This model is the existing Gear V2 wooden wheel geometry with only
+        // the stock model's full-height center shaft omitted. The wheel still
+        // uses the same teeth and textures, but now terminates beneath the
+        // hollow transfer-arm turntable.
         poseStack.translate(
                 0.0D,
                 -1.50D / 16.0D,
@@ -398,7 +398,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.translate(
                 0.5D,
-                22.1D / 16.0D,
+                19.8D / 16.0D,
                 0.5D
         );
 
