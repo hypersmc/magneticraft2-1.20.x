@@ -783,7 +783,7 @@ public class MechanicalSifterBlockEntity
     @Override
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition)
-                .inflate(2.5D);
+                .inflate(2.0D);
     }
 
     @Override
