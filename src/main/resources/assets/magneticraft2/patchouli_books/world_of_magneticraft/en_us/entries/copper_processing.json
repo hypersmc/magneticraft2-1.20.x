@@ -88,7 +88,14 @@
     "magneticraft2:primitive_grinder_bmultiblock": 3,
     "magneticraft2:primitive_grindertop": 3,
     "magneticraft2:mechanical_ore_washer": 7,
-    "magneticraft2:mechanical_sifter": 9
+    "magneticraft2:mechanical_sifter": 9,
+    "magneticraft2:cassiterite_ore": 10,
+    "magneticraft2:crushed_cassiterite": 10,
+    "magneticraft2:washed_cassiterite": 10,
+    "magneticraft2:tin_concentrate": 10,
+    "magneticraft2:tin_ingot": 11,
+    "magneticraft2:bronze_charge": 11,
+    "magneticraft2:bronze_ingot": 11
   },
   "sortnum": 0,
   "read_by_default": true
