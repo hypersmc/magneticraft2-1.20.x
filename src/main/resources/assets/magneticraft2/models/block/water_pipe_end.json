@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 fluid pipe connection - restored legacy flange-at-boundary layout",
+  "credit": "Magneticraft2 fluid pipe connection - legacy geometry with corrected directional rotations",
   "parent": "minecraft:block/block",
   "textures": {
     "0": "magneticraft2:block/fluid_pipe",

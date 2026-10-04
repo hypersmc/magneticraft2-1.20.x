@@ -28,7 +28,7 @@
       },
       "apply": {
         "model": "magneticraft2:block/water_pipe_end",
-        "y": 90
+        "y": 270
       }
     },
     {
@@ -37,7 +37,7 @@
       },
       "apply": {
         "model": "magneticraft2:block/water_pipe_end",
-        "y": 270
+        "y": 90
       }
     },
     {
