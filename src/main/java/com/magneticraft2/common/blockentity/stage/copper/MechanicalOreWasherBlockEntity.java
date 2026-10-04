@@ -106,6 +106,22 @@ public class MechanicalOreWasherBlockEntity
     private double clientBeltTravelDistance = 0.0D;
     private float lastClientBeltVisualTime = Float.NaN;
 
+    // Processing is synced only when state changes, not every tick. The client
+    // predicts progress between those sync points for smooth one-way item travel.
+    private float clientProcessSyncTime = Float.NaN;
+    private float clientProcessSyncProgress = 0.0F;
+
+    // The shared base ItemStackHandler only marks the block entity dirty when
+    // automation changes a slot. These snapshots let the Washer detect those
+    // external changes (especially Transfer Arm extraction) and push a visual
+    // update to clients without syncing every tick.
+    private ItemStack lastSyncedInput =
+            ItemStack.EMPTY;
+    private ItemStack lastSyncedOutput =
+            ItemStack.EMPTY;
+    private ItemStack lastSyncedByproduct =
+            ItemStack.EMPTY;
+
     public MechanicalOreWasherBlockEntity(
             BlockPos pos,
             BlockState state) {
@@ -188,6 +204,51 @@ public class MechanicalOreWasherBlockEntity
                 );
     }
 
+    public float getVisualProcessProgress(
+            float partialTicks) {
+        float base =
+                getProcessProgress();
+
+        if (!processing
+                || level == null
+                || !level.isClientSide) {
+            return base;
+        }
+
+        float now =
+                level.getGameTime()
+                        + partialTicks;
+
+        if (Float.isNaN(
+                clientProcessSyncTime)) {
+            clientProcessSyncTime = now;
+            clientProcessSyncProgress = base;
+        }
+
+        float elapsed =
+                Math.max(
+                        0.0F,
+                        now - clientProcessSyncTime
+                );
+
+        float predicted =
+                clientProcessSyncProgress
+                        + elapsed
+                        / Math.max(
+                                1.0F,
+                                totalProcessTime
+                        );
+
+        return Math.max(
+                0.0F,
+                Math.min(
+                        1.0F,
+                        predicted
+                )
+        );
+    }
+
+
     public static <E extends BlockEntity> void serverTick(
             Level level,
             BlockPos pos,
@@ -200,6 +261,80 @@ public class MechanicalOreWasherBlockEntity
         }
 
         washer.tickProcessing();
+        washer.syncInventoryVisualStateIfChanged();
+    }
+
+    private void syncInventoryVisualStateIfChanged() {
+        if (level == null
+                || level.isClientSide
+                || itemHandler == null) {
+            return;
+        }
+
+        ItemStack input =
+                itemHandler.getStackInSlot(0);
+        ItemStack output =
+                itemHandler.getStackInSlot(1);
+        ItemStack byproduct =
+                itemHandler.getStackInSlot(2);
+
+        if (sameVisualStack(
+                input,
+                lastSyncedInput
+        )
+                && sameVisualStack(
+                output,
+                lastSyncedOutput
+        )
+                && sameVisualStack(
+                byproduct,
+                lastSyncedByproduct
+        )) {
+            return;
+        }
+
+        sync();
+    }
+
+    private boolean sameVisualStack(
+            ItemStack first,
+            ItemStack second) {
+        if (first.isEmpty()
+                && second.isEmpty()) {
+            return true;
+        }
+
+        return first.getCount()
+                == second.getCount()
+                && ItemStack.isSameItemSameTags(
+                        first,
+                        second
+                );
+    }
+
+    private void captureInventoryVisualState() {
+        if (itemHandler == null) {
+            lastSyncedInput =
+                    ItemStack.EMPTY;
+            lastSyncedOutput =
+                    ItemStack.EMPTY;
+            lastSyncedByproduct =
+                    ItemStack.EMPTY;
+            return;
+        }
+
+        lastSyncedInput =
+                itemHandler
+                        .getStackInSlot(0)
+                        .copy();
+        lastSyncedOutput =
+                itemHandler
+                        .getStackInSlot(1)
+                        .copy();
+        lastSyncedByproduct =
+                itemHandler
+                        .getStackInSlot(2)
+                        .copy();
     }
 
     private void tickProcessing() {
@@ -802,6 +937,21 @@ public class MechanicalOreWasherBlockEntity
         hasWater =
                 tag.getBoolean("HasWater");
 
+        if (level != null
+                && level.isClientSide) {
+            if (processing) {
+                clientProcessSyncTime =
+                        level.getGameTime();
+                clientProcessSyncProgress =
+                        getProcessProgress();
+            } else {
+                clientProcessSyncTime =
+                        Float.NaN;
+                clientProcessSyncProgress =
+                        getProcessProgress();
+            }
+        }
+
         if (tag.contains("WaterTank")) {
             waterTank.readFromNBT(
                     tag.getCompound("WaterTank")
@@ -991,6 +1141,7 @@ public class MechanicalOreWasherBlockEntity
     @Override
     public CompoundTag sync() {
         setChanged();
+        captureInventoryVisualState();
 
         if (level != null) {
             level.sendBlockUpdated(

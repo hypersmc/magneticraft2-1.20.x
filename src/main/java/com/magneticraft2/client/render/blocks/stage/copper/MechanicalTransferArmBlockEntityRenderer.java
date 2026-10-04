@@ -498,9 +498,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.24F,
-                0.24F,
-                0.24F
+                0.31F,
+                0.31F,
+                0.31F
         );
 
         Minecraft.getInstance()

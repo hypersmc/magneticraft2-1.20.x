@@ -249,12 +249,17 @@ public class MechanicalTransferArmBlock extends GearBlock {
             if (!arm.getFilterStack().isEmpty()) {
                 arm.toggleBlacklist();
 
+                ItemStack filter =
+                        arm.getFilterStack();
+
                 player.displayClientMessage(
                         Component.literal(
-                                "Filter mode: "
+                                "Filter: "
                                         + (arm.isBlacklist()
-                                        ? "BLACKLIST"
-                                        : "WHITELIST")
+                                        ? "BLACKLIST "
+                                        : "WHITELIST ")
+                        ).append(
+                                filter.getHoverName()
                         ),
                         true
                 );

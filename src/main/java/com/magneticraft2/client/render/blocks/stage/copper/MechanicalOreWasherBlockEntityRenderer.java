@@ -431,6 +431,9 @@ public class MechanicalOreWasherBlockEntityRenderer
             return;
         }
 
+        // Only the one workpiece currently being washed moves. Everything else
+        // stays parked on the input tray so a stack no longer looks like it is
+        // wandering back and forth through the machine.
         int stationaryCount =
                 washer.isProcessing()
                         ? Math.max(
@@ -447,10 +450,10 @@ public class MechanicalOreWasherBlockEntityRenderer
 
         double[][] offsets = {
                 {0.00D, 0.000D, 0.00D},
-                {-0.075D, 0.018D, 0.045D},
-                {0.075D, 0.036D, 0.075D},
-                {-0.035D, 0.054D, 0.105D},
-                {0.050D, 0.072D, 0.135D}
+                {-0.085D, 0.020D, 0.020D},
+                {0.085D, 0.040D, 0.020D},
+                {-0.045D, 0.060D, 0.055D},
+                {0.045D, 0.080D, 0.055D}
         };
 
         for (int i = 0; i < visiblePile; i++) {
@@ -458,9 +461,9 @@ public class MechanicalOreWasherBlockEntityRenderer
                     washer,
                     stack,
                     0.5D + offsets[i][0],
-                    0.82D + offsets[i][1],
-                    -0.62D + offsets[i][2],
-                    0.42F,
+                    0.815D + offsets[i][1],
+                    -0.625D + offsets[i][2],
+                    0.40F,
                     301 + i,
                     poseStack,
                     buffer,
@@ -473,30 +476,23 @@ public class MechanicalOreWasherBlockEntityRenderer
             return;
         }
 
-        double visualTime =
-                washer.getLevel() == null
-                        ? partialTicks
-                        : washer.getLevel()
-                        .getGameTime()
-                        + partialTicks;
+        double progress =
+                washer.getVisualProcessProgress(
+                        partialTicks
+                );
 
-        double feedPhase =
-                0.5D
-                        + 0.5D
-                        * Math.sin(
-                                visualTime * 0.24D
-                        );
+        // Smooth the server-tick progress slightly, but never reverse it.
+        progress =
+                progress * progress
+                        * (3.0D - 2.0D * progress);
 
         renderStoredItem(
                 washer,
                 stack,
                 0.5D,
-                0.83D
-                        + Math.sin(
-                                visualTime * 0.50D
-                        ) * 0.012D,
-                -0.60D
-                        + feedPhase * 0.34D,
+                0.825D,
+                -0.605D
+                        + progress * 0.34D,
                 0.37F,
                 399,
                 poseStack,

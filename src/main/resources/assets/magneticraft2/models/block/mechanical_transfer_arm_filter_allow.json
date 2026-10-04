@@ -2,19 +2,20 @@
   "parent": "minecraft:block/block",
   "textures": {
     "indicator": "minecraft:block/lime_terracotta",
+    "dark": "minecraft:block/weathered_copper",
     "particle": "minecraft:block/lime_terracotta"
   },
   "elements": [
     {
       "from": [
-        5.15,
-        1.48,
-        -0.48
+        4.95,
+        1.55,
+        -0.52
       ],
       "to": [
-        10.85,
-        1.68,
-        -0.39
+        11.05,
+        1.78,
+        -0.45
       ],
       "faces": {
         "north": {
@@ -71,6 +72,366 @@
             16
           ]
         }
+      }
+    },
+    {
+      "from": [
+        4.95,
+        3.12,
+        -0.52
+      ],
+      "to": [
+        11.05,
+        3.35,
+        -0.45
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.95,
+        1.78,
+        -0.52
+      ],
+      "to": [
+        5.18,
+        3.12,
+        -0.45
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.82,
+        1.78,
+        -0.52
+      ],
+      "to": [
+        11.05,
+        3.12,
+        -0.45
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.95,
+        2,
+        -0.58
+      ],
+      "to": [
+        11.55,
+        2.28,
+        -0.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      },
+      "rotation": {
+        "origin": [
+          11.2,
+          2.15,
+          -0.54
+        ],
+        "axis": "z",
+        "angle": -45,
+        "rescale": false
+      }
+    },
+    {
+      "from": [
+        11.25,
+        2.18,
+        -0.58
+      ],
+      "to": [
+        12.2,
+        2.46,
+        -0.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      },
+      "rotation": {
+        "origin": [
+          11.55,
+          2.3,
+          -0.54
+        ],
+        "axis": "z",
+        "angle": 45,
+        "rescale": false
       }
     }
   ]
