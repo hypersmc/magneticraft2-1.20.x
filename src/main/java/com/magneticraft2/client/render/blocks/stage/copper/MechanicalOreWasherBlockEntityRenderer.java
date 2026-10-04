@@ -38,11 +38,15 @@ public class MechanicalOreWasherBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_ore_washer_rotor"
             );
-    private static final ResourceLocation INPUT_GEAR_MODEL =
+    private static final ResourceLocation INPUT_PULLEY_MODEL =
             new ResourceLocation(
                     "magneticraft2",
-                    "multiblock/mechanical_ore_washer_input_gear"
+                    "multiblock/mechanical_ore_washer_input_pulley"
             );
+
+    // Open-belt drive ratio: small input pulley -> larger trommel pulley.
+    private static final float DRUM_SPEED_RATIO =
+            2.25F / 3.65F;
     private static final ResourceLocation WATER_MODEL =
             new ResourceLocation(
                     "magneticraft2",
@@ -92,9 +96,8 @@ public class MechanicalOreWasherBlockEntityRenderer
                         partialTicks
                 );
 
-        // The external shaft now visibly drives a small wooden gear on its own
-        // axis. That gear meshes with the lower drum gear instead of making the
-        // trommel appear to receive rotation from empty air.
+        // The visible Gear V2 bearing drives a small upper pulley. Two static
+        // leather belt spans connect it to the larger pulley on the lower drum.
         poseStack.pushPose();
         poseStack.translate(
                 0.5D,
@@ -113,7 +116,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         );
 
         renderModel(
-                INPUT_GEAR_MODEL,
+                INPUT_PULLEY_MODEL,
                 RenderType.solid(),
                 poseStack,
                 buffer,
@@ -122,22 +125,26 @@ public class MechanicalOreWasherBlockEntityRenderer
         );
         poseStack.popPose();
 
-        // Drum axis is deliberately lower than the input shaft. Meshed gears
-        // reverse direction, so the trommel uses the opposite visual rotation.
+        // Open belts keep both pulleys turning in the same direction. The
+        // larger driven pulley slows the trommel so the visual gearing is
+        // understandable instead of looking like a shaft floating in mid-air.
+        float drumRotation =
+                inputRotation * DRUM_SPEED_RATIO;
+
         poseStack.pushPose();
         poseStack.translate(
                 0.5D,
-                1.21875D,
+                0.90625D,
                 0.5D
         );
         poseStack.mulPose(
                 Axis.ZP.rotationDegrees(
-                        -inputRotation
+                        drumRotation
                 )
         );
         poseStack.translate(
                 -0.5D,
-                -1.21875D,
+                -0.90625D,
                 -0.5D
         );
 
@@ -166,9 +173,9 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer,
                 washer.getInputStack(),
                 0.5D,
-                0.78D,
-                -0.5D,
-                0.34F,
+                0.82D,
+                -0.62D,
+                0.32F,
                 301,
                 poseStack,
                 buffer,
@@ -179,10 +186,10 @@ public class MechanicalOreWasherBlockEntityRenderer
         renderStoredItem(
                 washer,
                 washer.getOutputStack(),
-                0.32D,
-                0.56D,
-                1.5D,
-                0.28F,
+                0.34D,
+                0.46D,
+                1.50D,
+                0.27F,
                 302,
                 poseStack,
                 buffer,
@@ -193,10 +200,10 @@ public class MechanicalOreWasherBlockEntityRenderer
         renderStoredItem(
                 washer,
                 washer.getByproductStack(),
-                0.68D,
-                0.56D,
-                1.5D,
-                0.26F,
+                0.66D,
+                0.46D,
+                1.50D,
+                0.25F,
                 303,
                 poseStack,
                 buffer,
