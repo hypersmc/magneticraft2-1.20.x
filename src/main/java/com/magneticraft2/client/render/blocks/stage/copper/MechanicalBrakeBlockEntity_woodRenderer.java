@@ -29,8 +29,8 @@ public class MechanicalBrakeBlockEntity_woodRenderer
 
     private static final ResourceLocation LEATHER_TEXTURE =
             new ResourceLocation(
-                    "minecraft",
-                    "textures/block/brown_wool.png"
+                    "magneticraft2",
+                    "textures/block/leather_belt.png"
             );
 
     private static final ResourceLocation COPPER_TEXTURE =
