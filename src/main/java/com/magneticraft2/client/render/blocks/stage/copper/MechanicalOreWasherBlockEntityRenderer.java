@@ -4,13 +4,18 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBloc
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 
 public class MechanicalOreWasherBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalOreWasherBlockEntity> {
@@ -152,6 +157,40 @@ public class MechanicalOreWasherBlockEntityRenderer
         drawBox(stack, darkWood, packedLight, 0.26D, 0.10D, 0.48D);
         stack.popPose();
 
+        renderItem(
+                washer.getInputStack(),
+                washer,
+                stack,
+                bufferSource,
+                packedLight,
+                -0.38D,
+                0.32D,
+                0.0D,
+                0.30F
+        );
+        renderItem(
+                washer.getOutputStack(),
+                washer,
+                stack,
+                bufferSource,
+                packedLight,
+                0.36D,
+                -0.12D,
+                -0.18D,
+                0.28F
+        );
+        renderItem(
+                washer.getByproductStack(),
+                washer,
+                stack,
+                bufferSource,
+                packedLight,
+                0.36D,
+                -0.12D,
+                0.18D,
+                0.25F
+        );
+
         stack.popPose();
     }
 
@@ -162,6 +201,48 @@ public class MechanicalOreWasherBlockEntityRenderer
             case Y -> stack.mulPose(Axis.ZP.rotationDegrees(90.0F));
             case Z -> stack.mulPose(Axis.YN.rotationDegrees(90.0F));
         }
+    }
+
+    private void renderItem(
+            ItemStack item,
+            net.minecraft.world.level.block.entity.BlockEntity owner,
+            PoseStack stack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            double x,
+            double y,
+            double z,
+            float scale) {
+        if (item == null || item.isEmpty()) {
+            return;
+        }
+
+        ItemRenderer itemRenderer =
+                Minecraft.getInstance().getItemRenderer();
+        BakedModel model =
+                itemRenderer.getModel(
+                        item,
+                        owner.getLevel(),
+                        null,
+                        0
+                );
+
+        stack.pushPose();
+        stack.translate(x, y, z);
+        stack.scale(scale, scale, scale);
+
+        itemRenderer.render(
+                item,
+                ItemDisplayContext.GROUND,
+                false,
+                stack,
+                bufferSource,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                model
+        );
+
+        stack.popPose();
     }
 
     private void drawBox(
