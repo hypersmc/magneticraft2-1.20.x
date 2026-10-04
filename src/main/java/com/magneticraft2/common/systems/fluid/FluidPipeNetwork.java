@@ -35,6 +35,11 @@ public final class FluidPipeNetwork {
             IFluidHandler handler) {
     }
 
+    private record EndpointKey(
+            BlockPos pos,
+            Direction side) {
+    }
+
     public static List<Endpoint> findEndpoints(
             Level level,
             BlockPos firstPipe,
@@ -63,7 +68,7 @@ public final class FluidPipeNetwork {
                 new ArrayDeque<>();
         Set<BlockPos> visited =
                 new HashSet<>();
-        Set<BlockPos> endpointPositions =
+        Set<EndpointKey> endpointKeys =
                 new HashSet<>();
         List<Endpoint> endpoints =
                 new ArrayList<>();
@@ -104,9 +109,15 @@ public final class FluidPipeNetwork {
                     continue;
                 }
 
-                if (!endpointPositions.add(
-                        neighbour.immutable()
-                )) {
+                Direction endpointSide =
+                        direction.getOpposite();
+                EndpointKey key =
+                        new EndpointKey(
+                                neighbour.immutable(),
+                                endpointSide
+                        );
+
+                if (!endpointKeys.add(key)) {
                     continue;
                 }
 
@@ -116,9 +127,6 @@ public final class FluidPipeNetwork {
                 if (blockEntity == null) {
                     continue;
                 }
-
-                Direction endpointSide =
-                        direction.getOpposite();
 
                 blockEntity
                         .getCapability(
