@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -63,7 +63,7 @@ public class CopperFluidTankBlockEntityRenderer
         TextureAtlasSprite sprite =
                 Minecraft.getInstance()
                         .getTextureAtlas(
-                                InventoryMenu.BLOCK_ATLAS
+                                TextureAtlas.LOCATION_BLOCKS
                         )
                         .apply(texture);
 
