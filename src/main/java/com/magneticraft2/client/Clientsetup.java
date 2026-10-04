@@ -11,6 +11,8 @@ import com.magneticraft2.client.render.blocks.stage.copper.CustomGearboxBlockEnt
 import com.magneticraft2.client.render.blocks.stage.copper.MediumGearBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.PulleyBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.OverloadDisconnectBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBrakeBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.copper.CrankBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.stone.PitKilnBlockEntityRenderer;
@@ -78,6 +80,8 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CLUTCH_BE_WOOD.get(), ClutchBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.OVERLOAD_DISCONNECT_BE_WOOD.get(), OverloadDisconnectBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_BRAKE_BE_WOOD.get(), MechanicalBrakeBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.CRANK_BE_WOOD.get(), CrankBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
