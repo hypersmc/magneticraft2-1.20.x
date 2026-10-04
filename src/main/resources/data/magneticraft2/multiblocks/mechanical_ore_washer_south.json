@@ -10,12 +10,12 @@
       "layer1": [
         [
           "Frame",
-          "Controller",
+          "Copper",
           "Frame"
         ],
         [
           "Copper",
-          "Air",
+          "Controller",
           "Copper"
         ],
         [
