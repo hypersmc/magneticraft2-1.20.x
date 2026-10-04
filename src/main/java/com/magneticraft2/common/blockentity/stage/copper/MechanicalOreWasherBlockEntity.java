@@ -474,6 +474,7 @@ public class MechanicalOreWasherBlockEntity
             );
         }
 
+        requestModelDataUpdate();
         sync();
         return controller;
     }
