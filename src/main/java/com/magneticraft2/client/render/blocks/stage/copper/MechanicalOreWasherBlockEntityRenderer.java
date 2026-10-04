@@ -41,17 +41,23 @@ public class MechanicalOreWasherBlockEntityRenderer
     private static final ResourceLocation WATER_STILL =
             new ResourceLocation("minecraft", "block/water_still");
 
-    private static final double INPUT_PULLEY_SCALE = 0.38D;
-    private static final double DRIVEN_PULLEY_SCALE = 0.42D;
+    // Keep the stock Magneticraft pulleys large enough that their rim/spokes
+    // remain readable around the leather belt. At 0.5 scale the small + large
+    // pulley still fit between the input shaft and trommel axle without overlap.
+    private static final double INPUT_PULLEY_SCALE = 0.50D;
+    private static final double DRIVEN_PULLEY_SCALE = 0.50D;
     private static final double INPUT_PULLEY_RADIUS =
             0.43D * INPUT_PULLEY_SCALE;
     private static final double DRIVEN_PULLEY_RADIUS =
             0.69D * DRIVEN_PULLEY_SCALE;
 
+    // Both pulleys live on the real mechanical shaft plane. The formed
+    // Mechanical Input module occupies the SOUTH-side block and its shaft axis
+    // passes through z=1.5 relative to the controller.
     private static final Vec3 INPUT_PULLEY_CENTER =
-            new Vec3(0.5D, 1.5D, 1.1875D);
+            new Vec3(0.5D, 1.5D, 1.5D);
     private static final Vec3 DRIVEN_PULLEY_CENTER =
-            new Vec3(0.5D, 0.90625D, 1.1875D);
+            new Vec3(0.5D, 0.90625D, 1.5D);
 
     private static final List<BeltPath.Segment> INTERNAL_BELT =
             BeltPath.createVisualSegments(

@@ -1,5 +1,5 @@
 {
-  "credit": "Mechanical Ore Washer drum - stock pulley drive rendered separately",
+  "credit": "Mechanical Ore Washer drum - extended axle reaches stock driven pulley",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "shaft": "minecraft:block/stripped_oak_log",
@@ -17,7 +17,7 @@
       "to": [
         9.3,
         15.8,
-        21.5
+        25.5
       ],
       "faces": {
         "north": {
