@@ -2,7 +2,6 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalOreWasherBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
-import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -19,7 +18,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +53,7 @@ public class MechanicalOreWasherBlockEntityRenderer
 
     @Override
     public int getViewDistance() {
-        return 96;
+        return 64;
     }
 
     @Override
@@ -77,31 +75,6 @@ public class MechanicalOreWasherBlockEntityRenderer
 
         Direction facing =
                 formedState.getValue(MechanicalOreWasherBlock.FACING);
-
-        ModelData modelData =
-                washer.getModelData();
-        String modelName =
-                modelData.get(
-                        MultiBlockProperties.MODEL_NAME
-                );
-
-        if (modelName == null || modelName.isEmpty()) {
-            modelName =
-                    "multiblock/mechanical_ore_washer_"
-                            + facing.getName();
-        }
-
-        renderModel(
-                    new ResourceLocation(
-                            "magneticraft2",
-                            modelName
-                    ),
-                    RenderType.solid(),
-                    poseStack,
-                    buffer,
-                    packedLight,
-                    packedOverlay
-            );
 
         poseStack.pushPose();
         applySouthFacingTransform(
