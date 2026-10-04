@@ -50,7 +50,7 @@ public class CopperFluidTankBlock extends BaseEntityBlock {
             return null;
         }
 
-        return BaseEntityBlock.createTickerHelper(
+        return createTickerHelper(
                 type,
                 BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(),
                 CopperFluidTankBlockEntity::serverTick

@@ -144,7 +144,7 @@ public class CopperFluidTankBlockEntity extends BlockEntity {
 
         FluidStack simulated;
 
-        if (fluidTank.isEmpty()) {
+        if (fluidTank.getFluid().isEmpty()) {
             simulated =
                     source.drain(
                             request,
