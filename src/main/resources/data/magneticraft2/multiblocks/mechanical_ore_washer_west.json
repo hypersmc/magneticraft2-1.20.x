@@ -1,0 +1,62 @@
+{
+  "name": "mechanical_ore_washer_west",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "Frame",
+          "Copper",
+          "Frame"
+        ],
+        [
+          "MechanicalInput",
+          "Air",
+          "Controller"
+        ],
+        [
+          "Frame",
+          "Copper",
+          "Frame"
+        ]
+      ],
+      "layer2": [
+        [
+          "Frame",
+          "Frame",
+          "Frame"
+        ],
+        [
+          "Frame",
+          "Air",
+          "Frame"
+        ],
+        [
+          "Frame",
+          "Frame",
+          "Frame"
+        ]
+      ]
+    },
+    "blocks": {
+      "Controller": "magneticraft2:mechanical_ore_washer",
+      "Frame": "minecraft:oak_planks",
+      "Copper": "minecraft:copper_block",
+      "Air": "minecraft:air",
+      "MechanicalInput": "magneticraft2:mechanical_input_module"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/mechanical_ore_washer_west",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": []
+  }
+}
