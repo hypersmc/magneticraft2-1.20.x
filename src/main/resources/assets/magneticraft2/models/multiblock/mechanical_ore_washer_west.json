@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 Mechanical Ore Washer - west output shelf moved as one assembly",
+  "credit": "Magneticraft2 Mechanical Ore Washer - west output chute shifted forward as complete stepped assembly",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -1234,12 +1234,12 @@
     },
     {
       "from": [
-        -10,
+        -15,
         7,
         2
       ],
       "to": [
-        -5,
+        -10,
         10,
         14
       ],
@@ -1370,12 +1370,12 @@
     },
     {
       "from": [
-        -10,
+        -15,
         8.5,
         1
       ],
       "to": [
-        0,
+        -5,
         12.5,
         2.25
       ],
@@ -1438,12 +1438,12 @@
     },
     {
       "from": [
-        -10,
+        -15,
         8.5,
         13.75
       ],
       "to": [
-        0,
+        -5,
         12.5,
         15
       ],
