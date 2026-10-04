@@ -1,10 +1,11 @@
 {
-  "credit": "Mechanical Ore Washer V2.1 slatted trommel and driven pulley",
+  "credit": "Mechanical Ore Washer V2.2 trommel with slim driven pulley",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "shaft": "minecraft:block/stripped_oak_log",
     "copper": "minecraft:block/copper_block",
-    "particle": "minecraft:block/oak_planks"
+    "particle": "minecraft:block/oak_planks",
+    "pulley": "minecraft:block/spruce_planks"
   },
   "elements": [
     {
@@ -2413,14 +2414,14 @@
     },
     {
       "from": [
-        6.35,
-        12.85,
+        6.55,
+        13.05,
         18
       ],
       "to": [
-        9.65,
-        16.15,
-        20.25
+        9.45,
+        15.95,
+        20
       ],
       "faces": {
         "north": {
@@ -2481,18 +2482,18 @@
     },
     {
       "from": [
-        4.4,
-        14,
-        18.1
+        4.35,
+        14.175,
+        18.05
       ],
       "to": [
-        11.6,
-        15,
-        20.15
+        11.65,
+        14.825,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2501,7 +2502,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2510,7 +2511,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2519,7 +2520,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2528,7 +2529,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2537,7 +2538,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2549,18 +2550,18 @@
     },
     {
       "from": [
-        7.5,
-        10.9,
-        18.1
+        7.675,
+        10.85,
+        18.05
       ],
       "to": [
-        8.5,
-        18.1,
-        20.15
+        8.325,
+        18.15,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2569,7 +2570,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2578,7 +2579,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2587,7 +2588,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2596,7 +2597,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2605,7 +2606,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2617,18 +2618,18 @@
     },
     {
       "from": [
-        6.475,
-        17.900000000000002,
-        18.1
+        7.225,
+        18.04,
+        18.05
       ],
       "to": [
-        9.525,
-        18.7,
-        20.15
+        8.775,
+        18.560000000000002,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2637,7 +2638,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2646,7 +2647,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2655,7 +2656,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2664,7 +2665,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2673,7 +2674,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2685,18 +2686,18 @@
     },
     {
       "from": [
-        9.16200576850888,
-        16.78700576850888,
-        18.1
+        9.91200576850888,
+        16.927005768508877,
+        18.05
       ],
       "to": [
-        12.212005768508881,
-        17.587005768508877,
-        20.15
+        11.462005768508881,
+        17.44700576850888,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2705,7 +2706,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2714,7 +2715,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2723,7 +2724,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2732,7 +2733,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2741,7 +2742,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2754,7 +2755,7 @@
         "origin": [
           10.68700576850888,
           17.18700576850888,
-          19.125
+          19.035
         ],
         "axis": "z",
         "angle": -45,
@@ -2763,18 +2764,18 @@
     },
     {
       "from": [
-        11.4,
-        12.975,
-        18.1
+        11.540000000000001,
+        13.725,
+        18.05
       ],
       "to": [
-        12.200000000000001,
-        16.025,
-        20.15
+        12.06,
+        15.275,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2783,7 +2784,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2792,7 +2793,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2801,7 +2802,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2810,7 +2811,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2819,7 +2820,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2831,18 +2832,18 @@
     },
     {
       "from": [
-        9.16200576850888,
-        11.412994231491119,
-        18.1
+        9.91200576850888,
+        11.55299423149112,
+        18.05
       ],
       "to": [
-        12.212005768508881,
-        12.21299423149112,
-        20.15
+        11.462005768508881,
+        12.07299423149112,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2851,7 +2852,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2860,7 +2861,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2869,7 +2870,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2878,7 +2879,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2887,7 +2888,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2900,7 +2901,7 @@
         "origin": [
           10.68700576850888,
           11.81299423149112,
-          19.125
+          19.035
         ],
         "axis": "z",
         "angle": 45,
@@ -2909,18 +2910,18 @@
     },
     {
       "from": [
-        6.475,
-        10.299999999999999,
-        18.1
+        7.225,
+        10.44,
+        18.05
       ],
       "to": [
-        9.525,
-        11.1,
-        20.15
+        8.775,
+        10.959999999999999,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2929,7 +2930,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2938,7 +2939,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2947,7 +2948,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2956,7 +2957,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2965,7 +2966,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2977,18 +2978,18 @@
     },
     {
       "from": [
-        3.7879942314911195,
-        11.412994231491119,
-        18.1
+        4.537994231491119,
+        11.55299423149112,
+        18.05
       ],
       "to": [
-        6.83799423149112,
-        12.21299423149112,
-        20.15
+        6.08799423149112,
+        12.07299423149112,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -2997,7 +2998,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3006,7 +3007,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3015,7 +3016,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3024,7 +3025,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3033,7 +3034,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3046,7 +3047,7 @@
         "origin": [
           5.312994231491119,
           11.81299423149112,
-          19.125
+          19.035
         ],
         "axis": "z",
         "angle": -45,
@@ -3055,18 +3056,18 @@
     },
     {
       "from": [
-        3.8000000000000003,
-        12.975,
-        18.1
+        3.9400000000000004,
+        13.725,
+        18.05
       ],
       "to": [
-        4.6000000000000005,
-        16.025,
-        20.15
+        4.46,
+        15.275,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3075,7 +3076,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3084,7 +3085,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3093,7 +3094,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3102,7 +3103,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3111,7 +3112,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3123,18 +3124,18 @@
     },
     {
       "from": [
-        3.7879942314911195,
-        16.78700576850888,
-        18.1
+        4.537994231491119,
+        16.927005768508877,
+        18.05
       ],
       "to": [
-        6.83799423149112,
-        17.587005768508877,
-        20.15
+        6.08799423149112,
+        17.44700576850888,
+        20.02
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3143,7 +3144,7 @@
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3152,7 +3153,7 @@
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3161,7 +3162,7 @@
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3170,7 +3171,7 @@
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3179,7 +3180,7 @@
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#pulley",
           "uv": [
             0,
             0,
@@ -3192,7 +3193,7 @@
         "origin": [
           5.312994231491119,
           17.18700576850888,
-          19.125
+          19.035
         ],
         "axis": "z",
         "angle": 45,
