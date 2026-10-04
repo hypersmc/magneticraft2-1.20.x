@@ -65,18 +65,12 @@ public class FlywheelBlockEntity_wood
     }
 
     public void setPassiveForExternalDrive() {
-        GearNodeAccess.setSource(
-                getOrCreateGearNode(),
-                false
-        );
+        getOrCreateGearNode().setSource(false);
     }
 
     public void prepareAsInertialSource() {
         if (!hasStoredInertia()) {
-            GearNodeAccess.setSource(
-                    getOrCreateGearNode(),
-                    false
-            );
+            getOrCreateGearNode().setSource(false);
             return;
         }
 
@@ -233,14 +227,4 @@ public class FlywheelBlockEntity_wood
                         : 1;
     }
 
-    /**
-     * Tiny helper only to keep the intent of setPassiveForExternalDrive obvious.
-     */
-    private static final class GearNodeAccess {
-        private static void setSource(
-                com.magneticraft2.common.systems.GEAR.GearNode node,
-                boolean source) {
-            node.setSource(source);
-        }
-    }
 }
