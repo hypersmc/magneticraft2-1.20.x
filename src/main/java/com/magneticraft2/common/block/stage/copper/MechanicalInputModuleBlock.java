@@ -99,9 +99,10 @@ public class MechanicalInputModuleBlock extends GearBlock {
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return state.getValue(FORMED)
-                ? RenderShape.INVISIBLE
-                : RenderShape.MODEL;
+        // Keep the actual shaft/bearing visible after formation. Hiding the
+        // module made the drivetrain appear to connect to an arbitrary spot on
+        // the formed model and made it difficult to tell where power belongs.
+        return RenderShape.MODEL;
     }
 
     @Override
