@@ -208,7 +208,14 @@ public class MechanicalOreWasherBlock
             BlockGetter level,
             BlockPos pos,
             CollisionContext context) {
-        return getFormedShape(state);
+        return state.getValue(IS_FORMED)
+                ? getFormedShape(state)
+                : super.getVisualShape(
+                        state,
+                        level,
+                        pos,
+                        context
+                );
     }
 
     @Override
