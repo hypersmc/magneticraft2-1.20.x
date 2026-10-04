@@ -4,13 +4,18 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEn
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
@@ -122,6 +127,40 @@ public class MechanicalSifterBlockEntityRenderer
         drawBox(stack, copper, packedLight, 0.09D, 0.09D, 0.34D);
         stack.popPose();
 
+        renderItem(
+                sifter.getInputStack(),
+                sifter,
+                stack,
+                bufferSource,
+                packedLight,
+                shake,
+                0.28D,
+                -0.10D,
+                0.27F
+        );
+        renderItem(
+                sifter.getOutputStack(),
+                sifter,
+                stack,
+                bufferSource,
+                packedLight,
+                -0.20D,
+                -0.18D,
+                0.36D,
+                0.25F
+        );
+        renderItem(
+                sifter.getByproductStack(),
+                sifter,
+                stack,
+                bufferSource,
+                packedLight,
+                0.20D,
+                -0.18D,
+                0.36D,
+                0.23F
+        );
+
         stack.popPose();
     }
 
@@ -137,6 +176,48 @@ public class MechanicalSifterBlockEntityRenderer
             case UP -> stack.mulPose(Axis.XN.rotationDegrees(90.0F));
             case DOWN -> stack.mulPose(Axis.XP.rotationDegrees(90.0F));
         }
+    }
+
+    private void renderItem(
+            ItemStack item,
+            net.minecraft.world.level.block.entity.BlockEntity owner,
+            PoseStack stack,
+            MultiBufferSource bufferSource,
+            int packedLight,
+            double x,
+            double y,
+            double z,
+            float scale) {
+        if (item == null || item.isEmpty()) {
+            return;
+        }
+
+        ItemRenderer itemRenderer =
+                Minecraft.getInstance().getItemRenderer();
+        BakedModel model =
+                itemRenderer.getModel(
+                        item,
+                        owner.getLevel(),
+                        null,
+                        0
+                );
+
+        stack.pushPose();
+        stack.translate(x, y, z);
+        stack.scale(scale, scale, scale);
+
+        itemRenderer.render(
+                item,
+                ItemDisplayContext.GROUND,
+                false,
+                stack,
+                bufferSource,
+                packedLight,
+                OverlayTexture.NO_OVERLAY,
+                model
+        );
+
+        stack.popPose();
     }
 
     private void drawBox(
