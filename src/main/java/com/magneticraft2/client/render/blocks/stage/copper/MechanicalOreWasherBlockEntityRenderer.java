@@ -21,7 +21,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Formed Ore Washer renderer.
@@ -44,19 +46,16 @@ public class MechanicalOreWasherBlockEntityRenderer
                     "multiblock/mechanical_ore_washer_water"
             );
 
+    private final Map<ResourceLocation, List<BakedQuad>> quadCache =
+            new HashMap<>();
+
     public MechanicalOreWasherBlockEntityRenderer(
             BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public boolean shouldRenderOffScreen(
-            MechanicalOreWasherBlockEntity blockEntity) {
-        return true;
-    }
-
-    @Override
     public int getViewDistance() {
-        return 256;
+        return 96;
     }
 
     @Override
@@ -118,7 +117,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         poseStack.pushPose();
         poseStack.translate(
                 0.5D,
-                1.125D,
+                1.5D,
                 0.5D
         );
         poseStack.mulPose(
@@ -128,7 +127,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         );
         poseStack.translate(
                 -0.5D,
-                -1.125D,
+                -1.5D,
                 -0.5D
         );
 
@@ -157,8 +156,8 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer,
                 washer.getInputStack(),
                 0.5D,
-                1.72D,
-                -0.68D,
+                0.78D,
+                -0.5D,
                 0.34F,
                 301,
                 poseStack,
@@ -170,10 +169,10 @@ public class MechanicalOreWasherBlockEntityRenderer
         renderStoredItem(
                 washer,
                 washer.getOutputStack(),
-                0.03D,
-                0.36D,
-                1.55D,
-                0.30F,
+                0.32D,
+                0.56D,
+                1.5D,
+                0.28F,
                 302,
                 poseStack,
                 buffer,
@@ -184,10 +183,10 @@ public class MechanicalOreWasherBlockEntityRenderer
         renderStoredItem(
                 washer,
                 washer.getByproductStack(),
-                0.97D,
-                0.36D,
-                1.55D,
-                0.28F,
+                0.68D,
+                0.56D,
+                1.5D,
+                0.26F,
                 303,
                 poseStack,
                 buffer,
@@ -241,25 +240,32 @@ public class MechanicalOreWasherBlockEntityRenderer
             int packedLight,
             int packedOverlay) {
 
-        BakedModel model =
-                Minecraft.getInstance()
-                        .getModelManager()
-                        .getModel(
-                                modelLocation
-                        );
+        List<BakedQuad> quads =
+                quadCache.computeIfAbsent(
+                        modelLocation,
+                        location -> {
+                            BakedModel model =
+                                    Minecraft.getInstance()
+                                            .getModelManager()
+                                            .getModel(location);
 
-        if (model == null) {
+                            if (model == null) {
+                                return List.of();
+                            }
+
+                            return List.copyOf(
+                                    model.getQuads(
+                                            (BlockState) null,
+                                            (Direction) null,
+                                            RandomSource.create(0L)
+                                    )
+                            );
+                        }
+                );
+
+        if (quads.isEmpty()) {
             return;
         }
-
-        RandomSource random =
-                RandomSource.create(0L);
-        List<BakedQuad> quads =
-                model.getQuads(
-                        (BlockState) null,
-                        (Direction) null,
-                        random
-                );
 
         var consumer =
                 buffer.getBuffer(renderType);
