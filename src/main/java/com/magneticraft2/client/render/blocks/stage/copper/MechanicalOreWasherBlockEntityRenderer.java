@@ -205,14 +205,17 @@ public class MechanicalOreWasherBlockEntityRenderer
                 packedLight,
                 packedOverlay
         );
+        // The output shelf sits around Y=11/16 in the formed SOUTH model.
+        // These used to render at Y=0.49, which buried most items inside the
+        // copper/wood chute. Keep both stacks visibly on top of the real tray.
         renderStoredItem(
                 washer, washer.getOutputStack(),
-                0.34D, 0.49D, 1.50D, 0.42F, 302,
+                0.36D, 0.735D, 1.60D, 0.38F, 302,
                 poseStack, buffer, packedLight, packedOverlay
         );
         renderStoredItem(
                 washer, washer.getByproductStack(),
-                0.66D, 0.49D, 1.50D, 0.38F, 303,
+                0.64D, 0.735D, 1.60D, 0.34F, 303,
                 poseStack, buffer, packedLight, packedOverlay
         );
 

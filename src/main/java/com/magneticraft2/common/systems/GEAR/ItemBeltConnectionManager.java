@@ -1165,6 +1165,190 @@ public final class ItemBeltConnectionManager {
     }
 
     /**
+     * Inserts items at a concrete physical belt cell (or roller endpoint).
+     *
+     * This is the logistics-facing API for machines such as the Mechanical
+     * Transfer Arm. Unlike the endpoint-only overload below, it can place an
+     * item directly onto the belt segment the machine is touching.
+     *
+     * @return number of individual items accepted
+     */
+    public static int insertFromAutomationAt(
+            Level level,
+            BlockPos targetPos,
+            ItemStack source,
+            boolean simulate) {
+        if (level == null
+                || level.isClientSide
+                || targetPos == null
+                || source == null
+                || source.isEmpty()) {
+            return 0;
+        }
+
+        ItemBeltConnection connection = null;
+
+        if (level.getBlockEntity(targetPos)
+                instanceof ItemBeltBlockEntity beltCell) {
+            BlockPos start =
+                    beltCell.getStartRoller();
+            BlockPos end =
+                    beltCell.getEndRoller();
+
+            if (start != null && end != null) {
+                if (level.getBlockEntity(start)
+                        instanceof ConveyorRollerBlockEntity startRoller) {
+                    ensureRegistered(startRoller);
+                }
+
+                Map<BeltKey, ItemBeltConnection> map =
+                        CONNECTIONS.get(level);
+
+                if (map != null) {
+                    connection =
+                            map.get(
+                                    BeltKey.of(
+                                            start,
+                                            end
+                                    )
+                            );
+                }
+            }
+        } else if (level.getBlockEntity(targetPos)
+                instanceof ConveyorRollerBlockEntity roller) {
+            ensureRegistered(roller);
+
+            BlockPos partner =
+                    roller.getItemBeltPartner();
+
+            if (partner != null) {
+                Map<BeltKey, ItemBeltConnection> map =
+                        CONNECTIONS.get(level);
+
+                if (map != null) {
+                    connection =
+                            map.get(
+                                    BeltKey.of(
+                                            roller.getBlockPos(),
+                                            partner
+                                    )
+                            );
+                }
+            }
+        }
+
+        if (connection == null
+                || !(level.getBlockEntity(
+                connection.key.start()
+        ) instanceof ConveyorRollerBlockEntity carrier)) {
+            return 0;
+        }
+
+        int available =
+                MAX_TRANSPORTED_ITEMS
+                        - transportedItemCount(
+                        carrier
+                );
+
+        if (available <= 0) {
+            return 0;
+        }
+
+        Projection projection =
+                connection.transportRun.project(
+                        Vec3.atCenterOf(targetPos)
+                );
+
+        double distance =
+                Math.max(
+                        0.12D,
+                        Math.min(
+                                connection.transportRun.length()
+                                        - 0.12D,
+                                projection.distance()
+                        )
+                );
+
+        if (!isTransportSlotFree(
+                carrier,
+                distance,
+                MIN_ITEM_SPACING
+        )) {
+            return 0;
+        }
+
+        int accepted =
+                Math.min(
+                        source.getCount(),
+                        available
+                );
+
+        // A transfer arm currently moves one item per cycle, but keep this API
+        // generic for later stack-capable logistics.
+        accepted =
+                Math.min(
+                        accepted,
+                        MAX_TRANSPORTED_ITEMS
+                );
+
+        if (accepted <= 0) {
+            return 0;
+        }
+
+        if (simulate) {
+            return accepted;
+        }
+
+        int inserted = 0;
+
+        for (int i = 0; i < accepted; i++) {
+            double itemDistance =
+                    distance
+                            + i * MIN_ITEM_SPACING;
+
+            if (itemDistance
+                    > connection.transportRun.length()
+                    - 0.12D) {
+                break;
+            }
+
+            if (!isTransportSlotFree(
+                    carrier,
+                    itemDistance,
+                    MIN_ITEM_SPACING
+            )) {
+                break;
+            }
+
+            ItemStack one =
+                    source.copy();
+            one.setCount(1);
+
+            ConveyorRollerBlockEntity.TransportedItem transported =
+                    new ConveyorRollerBlockEntity.TransportedItem(
+                            one,
+                            itemDistance
+                    );
+
+            transported.setLateralOffset(
+                    clampLateralOffset(
+                            projection.lateralOffset()
+                    )
+            );
+
+            carrier.getTransportedItems()
+                    .add(transported);
+            inserted++;
+        }
+
+        if (inserted > 0) {
+            carrier.syncTransportedItems();
+        }
+
+        return inserted;
+    }
+
+    /**
      * Future machine/logistics insertion hook.
      *
      * World/player-dropped ItemEntities contribute one item. A machine can use this API

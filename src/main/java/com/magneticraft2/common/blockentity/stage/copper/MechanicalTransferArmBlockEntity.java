@@ -4,6 +4,7 @@ import com.magneticraft2.common.blockentity.general.GearBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
+import com.magneticraft2.common.systems.GEAR.ItemBeltConnectionManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -355,6 +356,34 @@ public class MechanicalTransferArmBlockEntity
     private ItemStack insertIntoDestination(
             ItemStack stack,
             boolean simulate) {
+        if (level == null
+                || destinationSide == null) {
+            return stack.copy();
+        }
+
+        BlockPos targetPos =
+                worldPosition.relative(
+                        destinationSide
+                );
+
+        int beltAccepted =
+                ItemBeltConnectionManager
+                        .insertFromAutomationAt(
+                                level,
+                                targetPos,
+                                stack,
+                                simulate
+                        );
+
+        if (beltAccepted > 0) {
+            ItemStack remainder =
+                    stack.copy();
+            remainder.shrink(
+                    beltAccepted
+            );
+            return remainder;
+        }
+
         IItemHandler destination =
                 getHandler(destinationSide);
 
