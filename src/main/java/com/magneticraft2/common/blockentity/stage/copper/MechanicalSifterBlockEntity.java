@@ -2,7 +2,9 @@ package com.magneticraft2.common.blockentity.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
-import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
+import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -18,8 +20,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -42,6 +44,11 @@ public class MechanicalSifterBlockEntity
 
     private static final String MULTIBLOCK_PREFIX =
             "mechanical_sifter_";
+    private static final ResourceLocation RECIPE_MACHINE =
+            new ResourceLocation(
+                    magneticraft2.MOD_ID,
+                    "mechanical_sifter"
+            );
     private static final float EPSILON = 0.01F;
 
     private String blueprintName = "";
@@ -123,7 +130,7 @@ public class MechanicalSifterBlockEntity
             return;
         }
 
-        MechanicalSifterRecipe recipe =
+        MultiblockProcessingRecipe recipe =
                 getMatchingRecipe();
         CrankBlockEntity_wood crank =
                 getConnectedCrank();
@@ -189,7 +196,7 @@ public class MechanicalSifterBlockEntity
 
         itemHandler.extractItem(
                 0,
-                1,
+                recipe.getInputCount(),
                 false
         );
         insertOutput(1, output);
@@ -291,26 +298,13 @@ public class MechanicalSifterBlockEntity
     }
 
     @Nullable
-    private MechanicalSifterRecipe
+    private MultiblockProcessingRecipe
     getMatchingRecipe() {
-        if (level == null
-                || itemHandler
-                        .getStackInSlot(0)
-                        .isEmpty()) {
-            return null;
-        }
-
-        return level.getRecipeManager()
-                .getRecipeFor(
-                        MechanicalSifterRecipe
-                                .Type.INSTANCE,
-                        new SimpleContainer(
-                                itemHandler
-                                        .getStackInSlot(0)
-                        ),
-                        level
-                )
-                .orElse(null);
+        return MultiblockRecipeHandler.findRecipe(
+                level,
+                RECIPE_MACHINE,
+                itemHandler.getStackInSlot(0)
+        );
     }
 
     private boolean canAccept(
@@ -574,14 +568,11 @@ public class MechanicalSifterBlockEntity
         single.setCount(1);
 
         boolean valid =
-                level.getRecipeManager()
-                        .getRecipeFor(
-                                MechanicalSifterRecipe
-                                        .Type.INSTANCE,
-                                new SimpleContainer(single),
-                                level
-                        )
-                        .isPresent();
+                MultiblockRecipeHandler.acceptsInput(
+                        level,
+                        RECIPE_MACHINE,
+                        single
+                );
 
         if (!valid) {
             return;

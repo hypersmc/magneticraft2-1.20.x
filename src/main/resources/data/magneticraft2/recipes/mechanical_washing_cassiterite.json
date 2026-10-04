@@ -1,5 +1,6 @@
 {
-  "type": "magneticraft2:mechanical_ore_washing",
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:mechanical_ore_washer",
   "input": {
     "item": "magneticraft2:crushed_cassiterite"
   },
@@ -13,7 +14,16 @@
   },
   "byproduct_chance": 0.25,
   "process_time": 140,
-  "min_speed": 20,
-  "torque": 3,
-  "water": 250
+  "mechanical": {
+    "min_speed": 20,
+    "torque": 3
+  },
+  "fluid_input": {
+    "fluid": "minecraft:water",
+    "amount": 250
+  },
+  "fluid_output": {
+    "fluid": "magneticraft2:dirty_water",
+    "amount": 250
+  }
 }

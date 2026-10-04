@@ -1,5 +1,6 @@
 {
-  "type": "magneticraft2:mechanical_sifting",
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:mechanical_sifter",
   "input": {
     "item": "magneticraft2:washed_cassiterite"
   },
@@ -13,6 +14,8 @@
   },
   "byproduct_chance": 0.15,
   "process_time": 160,
-  "min_speed": 15,
-  "torque": 2
+  "mechanical": {
+    "min_speed": 15,
+    "torque": 2
+  }
 }
