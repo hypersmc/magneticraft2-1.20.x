@@ -1,0 +1,74 @@
+{
+  "credit": "Magneticraft2 restored fluid pipe west end - explicit geometry",
+  "parent": "minecraft:block/block",
+  "textures": {
+    "0": "magneticraft2:block/fluid_pipe",
+    "particle": "magneticraft2:block/fluid_pipe"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        6,
+        6
+      ],
+      "to": [
+        5,
+        10,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        5,
+        5
+      ],
+      "to": [
+        1,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#0"
+        },
+        "east": {
+          "texture": "#0"
+        },
+        "south": {
+          "texture": "#0"
+        },
+        "west": {
+          "texture": "#0"
+        },
+        "up": {
+          "texture": "#0"
+        },
+        "down": {
+          "texture": "#0"
+        }
+      }
+    }
+  ]
+}
