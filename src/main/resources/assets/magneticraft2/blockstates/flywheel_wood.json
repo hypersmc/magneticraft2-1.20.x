@@ -1,0 +1,52 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame"
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame"
+      }
+    },
+    {
+      "when": {
+        "facing": "up"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame_y"
+      }
+    },
+    {
+      "when": {
+        "facing": "down"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame_y"
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame_z"
+      }
+    },
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/flywheel_wood_frame_z"
+      }
+    }
+  ]
+}
