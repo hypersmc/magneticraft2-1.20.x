@@ -40,7 +40,9 @@ public class MultiblockItemPortBlockEntity
     private boolean formedModule;
 
     private LazyOptional<IItemHandler> itemCapability =
-            LazyOptional.of(PortItemHandler::new);
+            LazyOptional.of(
+                    () -> new PortItemHandler()
+            );
 
     public MultiblockItemPortBlockEntity(
             BlockPos pos,
@@ -221,7 +223,7 @@ public class MultiblockItemPortBlockEntity
         super.reviveCaps();
         itemCapability =
                 LazyOptional.of(
-                        PortItemHandler::new
+                        () -> new PortItemHandler()
                 );
     }
 
