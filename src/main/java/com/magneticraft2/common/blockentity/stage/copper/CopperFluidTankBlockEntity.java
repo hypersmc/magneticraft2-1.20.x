@@ -60,14 +60,12 @@ public class CopperFluidTankBlockEntity extends BlockEntity {
         );
     }
 
-    public static <E extends BlockEntity> void serverTick(
+    public static void serverTick(
             Level level,
             BlockPos pos,
             BlockState state,
-            E blockEntity) {
-        if (level.isClientSide
-                || !(blockEntity
-                instanceof CopperFluidTankBlockEntity tank)) {
+            CopperFluidTankBlockEntity tank) {
+        if (level.isClientSide) {
             return;
         }
 

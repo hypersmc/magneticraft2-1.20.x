@@ -50,21 +50,10 @@ public class CopperFluidTankBlock extends BaseEntityBlock {
             return null;
         }
 
-        return createTickerHelper(
+        return BaseEntityBlock.createTickerHelper(
                 type,
                 BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(),
                 CopperFluidTankBlockEntity::serverTick
         );
-    }
-
-    @Nullable
-    private static <E extends BlockEntity, A extends BlockEntity>
-    BlockEntityTicker<A> createTickerHelper(
-            BlockEntityType<A> actualType,
-            BlockEntityType<E> expectedType,
-            BlockEntityTicker<? super E> ticker) {
-        return expectedType == actualType
-                ? (BlockEntityTicker<A>) ticker
-                : null;
     }
 }
