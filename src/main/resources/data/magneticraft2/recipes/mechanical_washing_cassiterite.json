@@ -1,0 +1,18 @@
+{
+  "type": "magneticraft2:mechanical_ore_washing",
+  "input": {
+    "item": "magneticraft2:crushed_cassiterite"
+  },
+  "output": {
+    "item": "magneticraft2:washed_cassiterite",
+    "count": 1
+  },
+  "byproduct": {
+    "item": "minecraft:gravel",
+    "count": 1
+  },
+  "byproduct_chance": 0.25,
+  "process_time": 140,
+  "min_speed": 20,
+  "torque": 3
+}
