@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PSP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:mechanical_input_module",
+    "count": 1
+  }
+}
