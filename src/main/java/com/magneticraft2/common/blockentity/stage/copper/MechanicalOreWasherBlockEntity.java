@@ -479,14 +479,20 @@ public class MechanicalOreWasherBlockEntity
     identifyMultiblockStructure(
             Level world,
             BlockPos pos) {
+        Direction facing =
+                getBlockState().getValue(
+                        MechanicalOreWasherBlock.FACING
+                );
+        String expectedName =
+                MULTIBLOCK_PREFIX
+                        + facing.getName();
+
         for (Multiblock multiblock :
                 MultiblockRegistry
                         .getRegisteredMultiblocks()
                         .values()) {
             if (!multiblock.getName()
-                    .startsWith(
-                            MULTIBLOCK_PREFIX
-                    )) {
+                    .equals(expectedName)) {
                 continue;
             }
 
