@@ -88,6 +88,12 @@ public class ItemRegistry {
     //Copper
     public static final RegistryObject<Item> ITEM_COPPER_PLATE = ITEMS.register("copper_plate", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_CRUSHED_CHALCOCITE = ITEMS.register("crushed_chalcocite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CRUSHED_CASSITERITE = ITEMS.register("crushed_cassiterite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WASHED_CASSITERITE = ITEMS.register("washed_cassiterite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_TIN_CONCENTRATE = ITEMS.register("tin_concentrate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_TIN_INGOT = ITEMS.register("tin_ingot", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BRONZE_CHARGE = ITEMS.register("bronze_charge", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
@@ -100,6 +106,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_CRANK_WOOD = fromBlock(CRANK_WOOD);
     public static final RegistryObject<Item> ITEM_MECHANICAL_BELLOWS = fromBlock(MECHANICAL_BELLOWS);
     public static final RegistryObject<Item> ITEM_FLYWHEEL_WOOD = fromBlock(FLYWHEEL_WOOD);
+    public static final RegistryObject<Item> ITEM_MECHANICAL_ORE_WASHER = fromBlock(MECHANICAL_ORE_WASHER);
+    public static final RegistryObject<Item> ITEM_MECHANICAL_SIFTER = fromBlock(MECHANICAL_SIFTER);
     public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
