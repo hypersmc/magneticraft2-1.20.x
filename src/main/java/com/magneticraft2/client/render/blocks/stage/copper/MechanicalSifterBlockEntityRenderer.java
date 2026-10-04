@@ -67,9 +67,16 @@ public class MechanicalSifterBlockEntityRenderer
             int packedLight,
             int packedOverlay) {
 
-        if (!sifter.isFormed()) {
+        BlockState formedState =
+                sifter.getBlockState();
+
+        if (!formedState.hasProperty(MechanicalSifterBlock.IS_FORMED)
+                || !formedState.getValue(MechanicalSifterBlock.IS_FORMED)) {
             return;
         }
+
+        Direction facing =
+                formedState.getValue(MechanicalSifterBlock.FACING);
 
         ModelData modelData =
                 sifter.getModelData();
@@ -78,9 +85,13 @@ public class MechanicalSifterBlockEntityRenderer
                         MultiBlockProperties.MODEL_NAME
                 );
 
-        if (modelName != null
-                && !modelName.isEmpty()) {
-            renderModel(
+        if (modelName == null || modelName.isEmpty()) {
+            modelName =
+                    "multiblock/mechanical_sifter_"
+                            + facing.getName();
+        }
+
+        renderModel(
                     new ResourceLocation(
                             "magneticraft2",
                             modelName
@@ -90,13 +101,6 @@ public class MechanicalSifterBlockEntityRenderer
                     packedLight,
                     packedOverlay
             );
-        }
-
-        Direction facing =
-                sifter.getBlockState()
-                        .getValue(
-                                MechanicalSifterBlock.FACING
-                        );
 
         poseStack.pushPose();
         applySouthFacingTransform(
