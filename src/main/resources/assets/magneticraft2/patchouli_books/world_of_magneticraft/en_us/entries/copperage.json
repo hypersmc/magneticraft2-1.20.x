@@ -30,7 +30,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Current Copper workshop$()$(br2)Available now: Primitive Anvil, Wooden Shafts, 8/16-tooth gears, handled gear, Small/Large Water Wheels, Small/Large Pulleys, Leather Drive Belts, Right-Angle Gearbox, Custom Gearbox, Clutch, Overload Disconnect, Mechanical Brake, Wooden Crank, Mechanical Bellows, Wooden Flywheel, Conveyor Rollers, Item Belts and the Mechanical Grinder."
+      "text": "$(bold)Current Copper workshop$()$(br2)Available now: Primitive Anvil, Wooden Shafts/gears, Water Wheels, Pulleys, Leather Drive Belts, Gearboxes, Clutch, Overload Disconnect, Mechanical Brake, Crank, Mechanical Bellows, Flywheel, Conveyor Rollers, Item Belts, Mechanical Grinder, Mechanical Ore Washer and Mechanical Sifter."
     },
     {
       "type": "text",
@@ -38,7 +38,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)The road to Bronze$()$(br2)Cassiterite and Tin remain the final Copper Age metallurgy goal. Tin processing should depend on the mechanical infrastructure learned here.$(br2)Producing the first Bronze will mark the transition into the Bronze Age."
+      "text": "$(bold)The road to Bronze$()$(br2)The Copper Age now ends with a complete Cassiterite beneficiation chain. Grind Cassiterite, wash it with water, classify it in the crank-driven Sifter, smelt Tin Concentrate into Tin, then alloy three Copper with one Tin into a Bronze Charge.$(br2)Firing that charge produces your first Bronze and opens the next age."
     }
   ],
   "sortnum": 2,
