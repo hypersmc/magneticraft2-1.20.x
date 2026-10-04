@@ -320,9 +320,9 @@ public class MechanicalOreWasherBlockEntity
                             * deltaTicks
                             * input.getDirectionMultiplier();
 
-            if (Math.abs(clientBeltTravelDistance) > 1024.0D) {
-                clientBeltTravelDistance %= 0.5D;
-            }
+            // Keep this accumulator genuinely continuous. It now drives both
+            // the tiled belt texture and the driven pulley/drum angle, so a
+            // texture-repeat modulo would create a mechanical phase jump.
         }
 
         return clientBeltTravelDistance;

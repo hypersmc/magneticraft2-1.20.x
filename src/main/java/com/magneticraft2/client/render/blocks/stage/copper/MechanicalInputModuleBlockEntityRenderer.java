@@ -85,7 +85,17 @@ public class MechanicalInputModuleBlockEntityRenderer
         // Shaft uses the exact same Gear V2 angle as the connected network.
         poseStack.pushPose();
         poseStack.translate(0.5D, 0.5D, 0.5D);
-        orientCanonicalYAxisTo(axis, poseStack);
+
+        if (axis == Direction.Axis.X) {
+            poseStack.mulPose(
+                    Axis.ZP.rotationDegrees(-90.0F)
+            );
+        } else if (axis == Direction.Axis.Z) {
+            poseStack.mulPose(
+                    Axis.XP.rotationDegrees(90.0F)
+            );
+        }
+
         poseStack.mulPose(
                 Axis.YP.rotationDegrees(rotation)
         );
