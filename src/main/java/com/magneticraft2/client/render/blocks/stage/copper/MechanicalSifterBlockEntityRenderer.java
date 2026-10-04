@@ -10,24 +10,39 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+/**
+ * Formed 3x2x2 classifier/sifter renderer.
+ */
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
 
-    private static final ResourceLocation WOOD_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/oak_planks.png");
-    private static final ResourceLocation FRAME_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/stripped_spruce_log.png");
-    private static final ResourceLocation COPPER_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/copper_block.png");
-    private static final ResourceLocation MESH_TEXTURE =
-            new ResourceLocation("minecraft", "textures/block/light_gray_wool.png");
+    private static final ResourceLocation WOOD =
+            new ResourceLocation(
+                    "minecraft",
+                    "textures/block/oak_planks.png"
+            );
+    private static final ResourceLocation FRAME =
+            new ResourceLocation(
+                    "minecraft",
+                    "textures/block/stripped_spruce_log.png"
+            );
+    private static final ResourceLocation COPPER =
+            new ResourceLocation(
+                    "minecraft",
+                    "textures/block/copper_block.png"
+            );
+    private static final ResourceLocation MESH =
+            new ResourceLocation(
+                    "minecraft",
+                    "textures/block/light_gray_wool.png"
+            );
 
     public MechanicalSifterBlockEntityRenderer(
             BlockEntityRendererProvider.Context context) {
@@ -42,90 +57,56 @@ public class MechanicalSifterBlockEntityRenderer
             int packedLight,
             int packedOverlay) {
 
-        stack.pushPose();
-        stack.translate(0.5D, 0.5D, 0.5D);
-        orientLocalZToDirection(stack, sifter.getFacing());
-
-        VertexConsumer wood =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(WOOD_TEXTURE)
-                );
-        VertexConsumer frame =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(FRAME_TEXTURE)
-                );
-        VertexConsumer copper =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(COPPER_TEXTURE)
-                );
-        VertexConsumer mesh =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(MESH_TEXTURE)
-                );
-
-        stack.pushPose();
-        stack.translate(0.0D, -0.43D, 0.0D);
-        drawBox(stack, frame, packedLight, 0.92D, 0.12D, 0.88D);
-        stack.popPose();
-
-        for (double x : new double[]{-0.39D, 0.39D}) {
-            for (double z : new double[]{-0.34D, 0.34D}) {
-                stack.pushPose();
-                stack.translate(x, -0.06D, z);
-                drawBox(stack, frame, packedLight, 0.09D, 0.74D, 0.09D);
-                stack.popPose();
-            }
+        if (!sifter.isFormed()) {
+            return;
         }
+
+        stack.pushPose();
+        stack.translate(0.5D, 0.0D, 0.5D);
+        orientLocalZToDirection(
+                stack,
+                sifter.getFacing()
+        );
 
         double shake =
-                sifter.getShakeOffset(partialTicks);
+                sifter.getShakeOffset(
+                        partialTicks
+                );
 
-        // Two stacked screens: coarse upper screen, finer lower screen.
-        for (int tray = 0; tray < 2; tray++) {
-            double y = tray == 0 ? 0.18D : -0.06D;
-            double trayShake = tray == 0 ? shake : -shake * 0.65D;
+        renderFrame(
+                stack,
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(FRAME)
+                ),
+                packedLight
+        );
 
-            stack.pushPose();
-            stack.translate(trayShake, y, 0.0D);
+        renderWood(
+                stack,
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(WOOD)
+                ),
+                packedLight,
+                shake
+        );
 
-            drawBox(stack, wood, packedLight, 0.82D, 0.055D, 0.72D);
+        renderMesh(
+                stack,
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(MESH)
+                ),
+                packedLight,
+                shake
+        );
 
-            stack.pushPose();
-            stack.translate(0.0D, 0.035D, 0.0D);
-            drawBox(stack, mesh, packedLight, 0.69D, 0.018D, 0.59D);
-            stack.popPose();
-
-            for (double z : new double[]{-0.34D, 0.34D}) {
-                stack.pushPose();
-                stack.translate(0.0D, 0.065D, z);
-                drawBox(stack, copper, packedLight, 0.84D, 0.055D, 0.045D);
-                stack.popPose();
-            }
-
-            stack.popPose();
-        }
-
-        // Input hopper at the back.
-        stack.pushPose();
-        stack.translate(0.0D, 0.37D, -0.30D);
-        stack.mulPose(Axis.XP.rotationDegrees(-20.0F));
-        drawBox(stack, wood, packedLight, 0.55D, 0.10D, 0.34D);
-        stack.popPose();
-
-        // Product and gangue chutes split toward the front.
-        for (double x : new double[]{-0.20D, 0.20D}) {
-            stack.pushPose();
-            stack.translate(x, -0.27D, 0.34D);
-            stack.mulPose(Axis.XP.rotationDegrees(-22.0F));
-            drawBox(stack, wood, packedLight, 0.27D, 0.08D, 0.34D);
-            stack.popPose();
-        }
-
-        // Crank pushrod enters from behind and drives the upper tray.
-        stack.pushPose();
-        stack.translate(shake * 0.5D, 0.18D, -0.43D);
-        drawBox(stack, copper, packedLight, 0.09D, 0.09D, 0.34D);
-        stack.popPose();
+        renderCopper(
+                stack,
+                bufferSource.getBuffer(
+                        RenderType.entityCutoutNoCull(COPPER)
+                ),
+                packedLight,
+                shake
+        );
 
         renderItem(
                 sifter.getInputStack(),
@@ -134,9 +115,9 @@ public class MechanicalSifterBlockEntityRenderer
                 bufferSource,
                 packedLight,
                 shake,
-                0.28D,
-                -0.10D,
-                0.27F
+                1.55D,
+                0.36D,
+                0.35F
         );
         renderItem(
                 sifter.getOutputStack(),
@@ -144,10 +125,10 @@ public class MechanicalSifterBlockEntityRenderer
                 stack,
                 bufferSource,
                 packedLight,
-                -0.20D,
-                -0.18D,
-                0.36D,
-                0.25F
+                -0.48D,
+                0.27D,
+                1.68D,
+                0.30F
         );
         renderItem(
                 sifter.getByproductStack(),
@@ -155,13 +136,296 @@ public class MechanicalSifterBlockEntityRenderer
                 stack,
                 bufferSource,
                 packedLight,
-                0.20D,
-                -0.18D,
-                0.36D,
-                0.23F
+                0.48D,
+                0.27D,
+                1.68D,
+                0.28F
         );
 
         stack.popPose();
+    }
+
+    private void renderFrame(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int light) {
+        for (double x : new double[]{-1.20D, 1.20D}) {
+            stack.pushPose();
+            stack.translate(x, 0.11D, 0.82D);
+            drawBox(
+                    stack,
+                    consumer,
+                    light,
+                    0.18D,
+                    0.22D,
+                    1.75D
+            );
+            stack.popPose();
+        }
+
+        for (double z : new double[]{0.08D, 1.58D}) {
+            stack.pushPose();
+            stack.translate(0.0D, 0.15D, z);
+            drawBox(
+                    stack,
+                    consumer,
+                    light,
+                    2.58D,
+                    0.18D,
+                    0.18D
+            );
+            stack.popPose();
+        }
+
+        for (double x : new double[]{-1.08D, 1.08D}) {
+            for (double z : new double[]{0.25D, 1.43D}) {
+                stack.pushPose();
+                stack.translate(x, 0.95D, z);
+                drawBox(
+                        stack,
+                        consumer,
+                        light,
+                        0.15D,
+                        1.55D,
+                        0.15D
+                );
+                stack.popPose();
+            }
+        }
+
+        stack.pushPose();
+        stack.translate(0.0D, 1.68D, 0.82D);
+        drawBox(
+                stack,
+                consumer,
+                light,
+                2.38D,
+                0.15D,
+                1.48D
+        );
+        stack.popPose();
+    }
+
+    private void renderWood(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int light,
+            double shake) {
+        renderTray(
+                stack,
+                consumer,
+                light,
+                shake,
+                1.13D
+        );
+        renderTray(
+                stack,
+                consumer,
+                light,
+                -shake * 0.70D,
+                0.73D
+        );
+
+        // Feed chute.
+        stack.pushPose();
+        stack.translate(0.0D, 1.48D, 0.28D);
+        stack.mulPose(
+                Axis.XP.rotationDegrees(-18.0F)
+        );
+        drawBox(
+                stack,
+                consumer,
+                light,
+                1.45D,
+                0.14D,
+                0.58D
+        );
+        stack.popPose();
+
+        // Product/waste discharge chutes.
+        for (double x : new double[]{-0.48D, 0.48D}) {
+            stack.pushPose();
+            stack.translate(x, 0.30D, 1.68D);
+            stack.mulPose(
+                    Axis.XP.rotationDegrees(20.0F)
+            );
+            drawBox(
+                    stack,
+                    consumer,
+                    light,
+                    0.78D,
+                    0.12D,
+                    0.60D
+            );
+            stack.popPose();
+        }
+    }
+
+    private void renderTray(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int light,
+            double shake,
+            double y) {
+        stack.pushPose();
+        stack.translate(shake, y, 0.93D);
+
+        // Open wooden tray frame instead of one opaque slab.
+        for (double x : new double[]{-0.95D, 0.95D}) {
+            stack.pushPose();
+            stack.translate(x, 0.0D, 0.0D);
+            drawBox(
+                    stack,
+                    consumer,
+                    light,
+                    0.12D,
+                    0.12D,
+                    1.25D
+            );
+            stack.popPose();
+        }
+
+        for (double z : new double[]{-0.57D, 0.57D}) {
+            stack.pushPose();
+            stack.translate(0.0D, 0.0D, z);
+            drawBox(
+                    stack,
+                    consumer,
+                    light,
+                    2.02D,
+                    0.12D,
+                    0.12D
+            );
+            stack.popPose();
+        }
+
+        stack.popPose();
+    }
+
+    private void renderMesh(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int light,
+            double shake) {
+        for (int tray = 0; tray < 2; tray++) {
+            double y =
+                    tray == 0
+                            ? 1.13D
+                            : 0.73D;
+            double offset =
+                    tray == 0
+                            ? shake
+                            : -shake * 0.70D;
+
+            // Cross-hatched mesh lines; no full opaque wool plate.
+            for (int i = -4; i <= 4; i++) {
+                double x = i * 0.20D;
+                stack.pushPose();
+                stack.translate(
+                        offset + x,
+                        y + 0.025D,
+                        0.93D
+                );
+                drawBox(
+                        stack,
+                        consumer,
+                        light,
+                        0.025D,
+                        0.025D,
+                        1.08D
+                );
+                stack.popPose();
+            }
+
+            for (int i = -2; i <= 2; i++) {
+                double z = i * 0.22D;
+                stack.pushPose();
+                stack.translate(
+                        offset,
+                        y + 0.028D,
+                        0.93D + z
+                );
+                drawBox(
+                        stack,
+                        consumer,
+                        light,
+                        1.80D,
+                        0.025D,
+                        0.025D
+                );
+                stack.popPose();
+            }
+        }
+    }
+
+    private void renderCopper(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int light,
+            double shake) {
+        // Rear reciprocating drive rod from the crank.
+        stack.pushPose();
+        stack.translate(
+                shake * 0.5D,
+                1.12D,
+                -0.30D
+        );
+        drawBox(
+                stack,
+                consumer,
+                light,
+                0.12D,
+                0.12D,
+                0.78D
+        );
+        stack.popPose();
+
+        // Crosshead.
+        stack.pushPose();
+        stack.translate(
+                shake,
+                1.12D,
+                0.16D
+        );
+        drawBox(
+                stack,
+                consumer,
+                light,
+                0.42D,
+                0.24D,
+                0.18D
+        );
+        stack.popPose();
+
+        // Copper wear strips on both moving trays.
+        for (int tray = 0; tray < 2; tray++) {
+            double y =
+                    tray == 0
+                            ? 1.18D
+                            : 0.78D;
+            double offset =
+                    tray == 0
+                            ? shake
+                            : -shake * 0.70D;
+
+            for (double x : new double[]{-0.98D, 0.98D}) {
+                stack.pushPose();
+                stack.translate(
+                        offset + x,
+                        y,
+                        0.93D
+                );
+                drawBox(
+                        stack,
+                        consumer,
+                        light,
+                        0.055D,
+                        0.12D,
+                        1.28D
+                );
+                stack.popPose();
+            }
+        }
     }
 
     private void orientLocalZToDirection(
@@ -170,11 +434,17 @@ public class MechanicalSifterBlockEntityRenderer
         switch (direction) {
             case SOUTH -> {
             }
-            case NORTH -> stack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            case EAST -> stack.mulPose(Axis.YP.rotationDegrees(90.0F));
-            case WEST -> stack.mulPose(Axis.YN.rotationDegrees(90.0F));
-            case UP -> stack.mulPose(Axis.XN.rotationDegrees(90.0F));
-            case DOWN -> stack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            case NORTH -> stack.mulPose(
+                    Axis.YP.rotationDegrees(180.0F)
+            );
+            case EAST -> stack.mulPose(
+                    Axis.YP.rotationDegrees(90.0F)
+            );
+            case WEST -> stack.mulPose(
+                    Axis.YN.rotationDegrees(90.0F)
+            );
+            default -> {
+            }
         }
     }
 
@@ -192,10 +462,11 @@ public class MechanicalSifterBlockEntityRenderer
             return;
         }
 
-        ItemRenderer itemRenderer =
-                Minecraft.getInstance().getItemRenderer();
+        ItemRenderer renderer =
+                Minecraft.getInstance()
+                        .getItemRenderer();
         BakedModel model =
-                itemRenderer.getModel(
+                renderer.getModel(
                         item,
                         owner.getLevel(),
                         null,
@@ -204,11 +475,14 @@ public class MechanicalSifterBlockEntityRenderer
 
         stack.pushPose();
         stack.translate(x, y, z);
+        stack.mulPose(
+                Axis.XP.rotationDegrees(90.0F)
+        );
         stack.scale(scale, scale, scale);
 
-        itemRenderer.render(
+        renderer.render(
                 item,
-                ItemDisplayContext.GROUND,
+                ItemDisplayContext.NONE,
                 false,
                 stack,
                 bufferSource,
@@ -223,25 +497,27 @@ public class MechanicalSifterBlockEntityRenderer
     private void drawBox(
             PoseStack stack,
             VertexConsumer consumer,
-            int packedLight,
-            double sizeX,
-            double sizeY,
-            double sizeZ) {
-        double x0=-sizeX*0.5D, x1=sizeX*0.5D;
-        double y0=-sizeY*0.5D, y1=sizeY*0.5D;
-        double z0=-sizeZ*0.5D, z1=sizeZ*0.5D;
+            int light,
+            double sx,
+            double sy,
+            double sz) {
+        double x0=-sx*0.5D, x1=sx*0.5D;
+        double y0=-sy*0.5D, y1=sy*0.5D;
+        double z0=-sz*0.5D, z1=sz*0.5D;
         PoseStack.Pose pose=stack.last();
 
-        quad(consumer,pose,packedLight,x0,y1,z0,x0,y1,z1,x1,y1,z1,x1,y1,z0,0,1,0);
-        quad(consumer,pose,packedLight,x0,y0,z1,x0,y0,z0,x1,y0,z0,x1,y0,z1,0,-1,0);
-        quad(consumer,pose,packedLight,x0,y0,z1,x1,y0,z1,x1,y1,z1,x0,y1,z1,0,0,1);
-        quad(consumer,pose,packedLight,x1,y0,z0,x0,y0,z0,x0,y1,z0,x1,y1,z0,0,0,-1);
-        quad(consumer,pose,packedLight,x1,y0,z1,x1,y0,z0,x1,y1,z0,x1,y1,z1,1,0,0);
-        quad(consumer,pose,packedLight,x0,y0,z0,x0,y0,z1,x0,y1,z1,x0,y1,z0,-1,0,0);
+        quad(consumer,pose,light,x0,y1,z0,x0,y1,z1,x1,y1,z1,x1,y1,z0,0,1,0);
+        quad(consumer,pose,light,x0,y0,z1,x0,y0,z0,x1,y0,z0,x1,y0,z1,0,-1,0);
+        quad(consumer,pose,light,x0,y0,z1,x1,y0,z1,x1,y1,z1,x0,y1,z1,0,0,1);
+        quad(consumer,pose,light,x1,y0,z0,x0,y0,z0,x0,y1,z0,x1,y1,z0,0,0,-1);
+        quad(consumer,pose,light,x1,y0,z1,x1,y0,z0,x1,y1,z0,x1,y1,z1,1,0,0);
+        quad(consumer,pose,light,x0,y0,z0,x0,y0,z1,x0,y1,z1,x0,y1,z0,-1,0,0);
     }
 
     private void quad(
-            VertexConsumer c, PoseStack.Pose p, int light,
+            VertexConsumer c,
+            PoseStack.Pose p,
+            int light,
             double x0,double y0,double z0,
             double x1,double y1,double z1,
             double x2,double y2,double z2,
@@ -254,16 +530,28 @@ public class MechanicalSifterBlockEntityRenderer
     }
 
     private void vertex(
-            VertexConsumer c, PoseStack.Pose p, int light,
+            VertexConsumer c,
+            PoseStack.Pose p,
+            int light,
             double x,double y,double z,
             float u,float v,
             float nx,float ny,float nz) {
-        c.vertex(p.pose(),(float)x,(float)y,(float)z)
+        c.vertex(
+                        p.pose(),
+                        (float)x,
+                        (float)y,
+                        (float)z
+                )
                 .color(1,1,1,1)
                 .uv(u,v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .overlayCoords(
+                        OverlayTexture.NO_OVERLAY
+                )
                 .uv2(light)
-                .normal(p.normal(),nx,ny,nz)
+                .normal(
+                        p.normal(),
+                        nx,ny,nz
+                )
                 .endVertex();
     }
 }
