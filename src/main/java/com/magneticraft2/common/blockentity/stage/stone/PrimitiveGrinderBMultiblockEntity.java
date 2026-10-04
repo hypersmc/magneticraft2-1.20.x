@@ -302,7 +302,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         GearNetworkManager network = GearNetworkManager.getInstance();
 
         if (!formed) {
-            updateMechanicalLoad(level, false);
+            updateMechanicalLoad(level, false, REQUIRED_TORQUE);
             updateMechanicalState(null);
             setCrushing(false);
             return;
@@ -316,7 +316,7 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
         SimpleContainer input = new SimpleContainer(itemHandler.getStackInSlot(0));
         primitive_grinder_multiblockrecipe recipe = getMatchingRecipe(input, level);
         if (recipe == null) {
-            updateMechanicalLoad(level, false);
+            updateMechanicalLoad(level, false, REQUIRED_TORQUE);
             crushtime = 0;
             totalCrushTime = 200;
             setCrushing(false);
@@ -326,14 +326,21 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
 
         ItemStack result = recipe.getResultItem(level.registryAccess()).copy();
         if (!canAcceptOutput(result)) {
-            updateMechanicalLoad(level, false);
+            updateMechanicalLoad(level, false, REQUIRED_TORQUE);
             setCrushing(false);
             return;
         }
 
         // A valid pending job is a real 4T load on the connected shaft. Registering it
         // can overload the complete source network, so refresh the input state afterwards.
-        updateMechanicalLoad(level, true);
+        float requiredTorque = recipe.getTorque();
+        float requiredSpeed = recipe.getMinSpeed();
+
+        updateMechanicalLoad(
+                level,
+                true,
+                requiredTorque
+        );
         mechanicalInput = findConnectedMechanicalInput(level);
         updateMechanicalState(mechanicalInput);
 
@@ -341,7 +348,8 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
                 network.getMechanicalLoadState(level, worldPosition);
 
         if (mechanicalInput == null
-                || mechanicalInput.getSpeed() < MIN_MECHANICAL_SPEED
+                || mechanicalInput.getEffectiveSpeed() < requiredSpeed
+                || mechanicalInput.getTorque() + 0.001F < requiredTorque
                 || !loadState.supplied()) {
             // Progress pauses rather than resetting when the crank stops or the aggregate
             // network demand exceeds what the source/gearing can actually provide.
@@ -398,13 +406,16 @@ public class PrimitiveGrinderBMultiblockEntity extends BaseBlockEntityMagneticra
                 && node.getTorque() >= REQUIRED_TORQUE;
     }
 
-    private void updateMechanicalLoad(Level level, boolean active) {
+    private void updateMechanicalLoad(
+            Level level,
+            boolean active,
+            float torqueDemand) {
         GearNetworkManager network = GearNetworkManager.getInstance();
         network.setMechanicalLoad(
                 level,
                 worldPosition,
                 getMechanicalInputPosition(),
-                REQUIRED_TORQUE,
+                Math.max(0.0F, torqueDemand),
                 active
         );
 
