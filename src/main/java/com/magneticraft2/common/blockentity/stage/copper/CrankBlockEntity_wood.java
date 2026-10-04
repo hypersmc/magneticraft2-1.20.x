@@ -59,20 +59,22 @@ public class CrankBlockEntity_wood extends GearBlockEntity {
         return Direction.UP;
     }
 
+    private static final double CRANK_RADIUS = 0.16D;
+    private static final double CONNECTING_ROD_LENGTH = 0.34D;
+
     /**
      * 0.0 = rod fully retracted, 1.0 = rod fully extended.
+     *
+     * Keep this derived from the exact same slider-crank geometry used by the
+     * renderer. The previous cosine approximation was 180 degrees out of phase:
+     * the rendered crosshead was physically extended while machine logic reported
+     * a fully retracted stroke, making attached Bellows move opposite the rod.
      */
     public float getStrokeProgress(float partialTicks) {
-        double radians = Math.toRadians(
+        return strokeProgressFromDegrees(
                 getVisualRotationDegrees(
                         partialTicks
                 )
-        );
-
-        return (float) (
-                0.5D
-                        - 0.5D
-                        * Math.cos(radians)
         );
     }
 
@@ -81,15 +83,50 @@ public class CrankBlockEntity_wood extends GearBlockEntity {
      * client interpolation used by the renderer.
      */
     public float getServerStrokeProgress() {
-        double radians = Math.toRadians(
+        return strokeProgressFromDegrees(
                 getOrCreateGearNode()
                         .getRotationDegrees()
         );
+    }
 
-        return (float) (
-                0.5D
-                        - 0.5D
-                        * Math.cos(radians)
+    private float strokeProgressFromDegrees(
+            float rotationDegrees) {
+        double radians =
+                Math.toRadians(rotationDegrees);
+
+        double pinY =
+                Math.cos(radians)
+                        * CRANK_RADIUS;
+
+        double pinZ =
+                Math.sin(radians)
+                        * CRANK_RADIUS;
+
+        double sliderY =
+                pinY
+                        + Math.sqrt(
+                                Math.max(
+                                        0.0D,
+                                        CONNECTING_ROD_LENGTH
+                                                * CONNECTING_ROD_LENGTH
+                                                - pinZ * pinZ
+                                )
+                        );
+
+        double minimum =
+                CONNECTING_ROD_LENGTH
+                        - CRANK_RADIUS;
+        double maximum =
+                CONNECTING_ROD_LENGTH
+                        + CRANK_RADIUS;
+
+        return (float) Math.max(
+                0.0D,
+                Math.min(
+                        1.0D,
+                        (sliderY - minimum)
+                                / (maximum - minimum)
+                )
         );
     }
 
