@@ -2,7 +2,6 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
-import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -18,9 +17,10 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Formed Mechanical Sifter renderer.
@@ -43,19 +43,16 @@ public class MechanicalSifterBlockEntityRenderer
                     "multiblock/mechanical_sifter_lower_tray"
             );
 
+    private final Map<ResourceLocation, List<BakedQuad>> quadCache =
+            new HashMap<>();
+
     public MechanicalSifterBlockEntityRenderer(
             BlockEntityRendererProvider.Context context) {
     }
 
     @Override
-    public boolean shouldRenderOffScreen(
-            MechanicalSifterBlockEntity blockEntity) {
-        return true;
-    }
-
-    @Override
     public int getViewDistance() {
-        return 256;
+        return 64;
     }
 
     @Override
@@ -77,30 +74,6 @@ public class MechanicalSifterBlockEntityRenderer
 
         Direction facing =
                 formedState.getValue(MechanicalSifterBlock.FACING);
-
-        ModelData modelData =
-                sifter.getModelData();
-        String modelName =
-                modelData.get(
-                        MultiBlockProperties.MODEL_NAME
-                );
-
-        if (modelName == null || modelName.isEmpty()) {
-            modelName =
-                    "multiblock/mechanical_sifter_"
-                            + facing.getName();
-        }
-
-        renderModel(
-                    new ResourceLocation(
-                            "magneticraft2",
-                            modelName
-                    ),
-                    poseStack,
-                    buffer,
-                    packedLight,
-                    packedOverlay
-            );
 
         poseStack.pushPose();
         applySouthFacingTransform(
@@ -225,25 +198,32 @@ public class MechanicalSifterBlockEntityRenderer
             int packedLight,
             int packedOverlay) {
 
-        BakedModel model =
-                Minecraft.getInstance()
-                        .getModelManager()
-                        .getModel(
-                                modelLocation
-                        );
+        List<BakedQuad> quads =
+                quadCache.computeIfAbsent(
+                        modelLocation,
+                        location -> {
+                            BakedModel model =
+                                    Minecraft.getInstance()
+                                            .getModelManager()
+                                            .getModel(location);
 
-        if (model == null) {
+                            if (model == null) {
+                                return List.of();
+                            }
+
+                            return List.copyOf(
+                                    model.getQuads(
+                                            (BlockState) null,
+                                            (Direction) null,
+                                            RandomSource.create(0L)
+                                    )
+                            );
+                        }
+                );
+
+        if (quads.isEmpty()) {
             return;
         }
-
-        RandomSource random =
-                RandomSource.create(0L);
-        List<BakedQuad> quads =
-                model.getQuads(
-                        (BlockState) null,
-                        (Direction) null,
-                        random
-                );
 
         var consumer =
                 buffer.getBuffer(
