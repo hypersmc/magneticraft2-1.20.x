@@ -1,20 +1,20 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "button": "minecraft:block/orange_concrete",
-    "particle": "minecraft:block/orange_concrete"
+    "button": "minecraft:block/orange_terracotta",
+    "particle": "minecraft:block/orange_terracotta"
   },
   "elements": [
     {
       "from": [
         7,
-        5.43,
-        1
+        2.7,
+        0.12
       ],
       "to": [
         9,
-        5.78,
-        3
+        4.55,
+        0.72
       ],
       "faces": {
         "north": {

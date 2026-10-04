@@ -127,7 +127,12 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_gear"));
-        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_arm"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_turret"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_lower_arm"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_forearm"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_claw_body"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_claw_left"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_claw_right"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_button_orange"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_button_blue"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_filter_allow"));
