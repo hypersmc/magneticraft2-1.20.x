@@ -1,103 +1,46 @@
 {
   "name": "Copper Age",
-  "description": "Turn your first copper into mechanical power and the beginnings of automation.",
+  "description": "Build a real mechanical workshop: metalworking, continuous power, control, logistics and improved ore processing.",
   "category": "magneticraft2:walkthrough",
   "icon": "minecraft:copper_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "$(bold)Welcome to the Copper Age$()$(br2)Your first Copper Ingot ends the Stone Age, but Copper is not just a stronger crafting material. This age is about learning to work metal, transmit rotational power, process ore mechanically, and gradually replace manual labor with machinery.$(br2)Producing your first Bronze will eventually mark the end of the Copper Age."
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Primitive Anvil",
-      "recipe": "magneticraft2:primitive_anvil",
-      "text": "The Primitive Anvil is your first metalworking station. It gives the Primitive Hammer a real job and turns raw ingots into manufactured machine components."
+      "text": "$(bold)Welcome to the Copper Age$()$(br2)Your first Copper Ingot ends the Stone Age. Copper is where Magneticraft2 stops being only primitive survival and starts becoming a mechanical technology mod.$(br2)You will manufacture parts, build rotational power networks, automate item movement and improve ore yield."
     },
     {
       "type": "text",
-      "text": "$(bold)1. Work your first Copper$()$(br2)Right-click the Primitive Anvil with a Copper Ingot to place it on the work surface. The ingot is visible on the anvil while you work.$(br2)Strike it four times with the Primitive Hammer. The finished Copper Plate replaces the ingot visibly on the anvil; use an empty hand to take it."
+      "text": "$(bold)1. Work the metal$()$(br2)Start with the Primitive Anvil. Turn Copper Ingots into Copper Plates, then use those plates to reinforce the first proper control and transmission components.$(br2)See $(l:magneticraft2:copper_processing)Copper Processing$() for the anvil, Mechanical Grinder and the first 2x copper-yield loop."
     },
     {
       "type": "text",
-      "text": "$(bold)2. Mechanical Power$()$(br2)Copper Plates reinforce your first wooden mechanical components. Shafts carry rotation along their axis, while gears move rotation between parallel axes.$(br2)The current wooden gears have 8 and 16 teeth. Changing gear size changes speed and torque rather than creating free power."
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Shafts & Medium Gears",
-      "recipe": "magneticraft2:shaft_wood",
-      "recipe2": "magneticraft2:gear_medium_wood",
-      "text": "Shafts form the backbone of a mechanical line. Medium gears are the smaller 8-tooth gear."
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Large Gears & Handle",
-      "recipe": "magneticraft2:gear_large_wood",
-      "recipe2": "magneticraft2:gear_large_wood_with_handle",
-      "text": "The handled Large Gear is your first mechanical power source. Right-click it to crank the network for a limited time. Ordinary gears are passive transmission components."
+      "text": "$(bold)2. Build a drivetrain$()$(br2)Wooden Shafts and gears teach the core Gear V2 rules. The handled gear provides manual power; Water Wheels provide continuous power; Pulleys and Leather Drive Belts carry rotation across open space; Gearboxes turn and route the network.$(br2)See $(l:magneticraft2:copper_power)Mechanical Power$()."
     },
     {
       "type": "text",
-      "text": "$(bold)Manual Mechanical Era$()$(br2)Early Copper Age machinery is intentionally hand-powered. The handled gear only drives the network for a limited time.$(br2)Build with shafts and gears now; later, continuous mechanical power should feel like a major upgrade rather than just another recipe."
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Mechanical Grinder",
-      "recipe": "magneticraft2:primitive_grinder_base",
-      "recipe2": "magneticraft2:primitive_grinder_top",
-      "text": "The first powered machine is a simple two-block grinder: place the Mechanical Grinder Base and put the Grinder Stone directly above it, then right-click the base to form the multiblock."
-    },
-    {
-      "type": "patchouli:multiblock",
-      "name": "Mechanical Grinder",
-      "enable_visualize": true,
-      "multiblock": {
-        "pattern": [
-          [
-            "T"
-          ],
-          [
-            "0"
-          ]
-        ],
-        "mapping": {
-          "0": "magneticraft2:primitive_grinder_bmultiblock",
-          "T": "magneticraft2:primitive_grindertop"
-        },
-        "symmetrical": true
-      },
-      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the stone base. Place a horizontal Wooden Shaft directly against the small visible bearing so the shaft runs into the machine. The grinder requires at least 20 mechanical speed and 4 torque."
+      "text": "$(bold)3. Control and protect it$()$(br2)Once the workshop grows, power must be controllable. The Clutch gives manual/redstone disconnects, the Overload Disconnect protects the source side automatically, and the Mechanical Brake deliberately applies a heavy load without breaking the drivetrain.$(br2)All three are documented in $(l:magneticraft2:copper_power)Mechanical Power$()."
     },
     {
       "type": "text",
-      "text": "$(bold)3. Crush the ore$()$(br2)Right-click the formed grinder with Chalcocite Ore to load it. Connect a powered horizontal Wooden Shaft to the small bearing on the left side of the stone base. With at least 20 speed and 4 torque, the grinder runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the crank stops, processing pauses instead of losing progress. Use an empty hand on the grinder to retrieve its output."
+      "text": "$(bold)4. Move items$()$(br2)Conveyor Rollers and Item Belts form the first physical logistics system. Runs can be horizontal or exactly 45 degrees, and powered belts hand stacks smoothly from one section to another.$(br2)See $(l:magneticraft2:copper_logistics)Item Logistics$() for placement rules and belt limits."
     },
     {
       "type": "text",
-      "text": "$(bold)Why bother?$()$(br2)Direct Primitive Furnace processing remains valid: one Chalcocite Ore produces one Copper Ingot and Slag.$(br2)Crushing the Chalcocite first improves the same furnace batch to $(bold)two Copper Ingots$() plus Slag. Mechanical processing makes your ore more valuable instead of existing only as a progression lock."
+      "text": "$(bold)5. Convert motion$()$(br2)The Wooden Crank turns rotational motion into a real reciprocating stroke. This is the bridge from simple rotating machinery to mechanisms such as the upcoming mechanical Bellows.$(br2)The crank's placement and linear output are documented in $(l:magneticraft2:copper_power)Mechanical Power$()."
     },
     {
       "type": "text",
-      "text": "$(bold)Next milestone: continuous power$()$(br2)The grinder is currently the first real consumer of the Gear V2 network. The next Copper Age milestone will replace repeated hand cranking with a continuous mechanical source.$(br2)The planned direction is a Water Wheel, followed by a larger mechanical workshop and additional processing."
+      "text": "$(bold)Current Copper workshop$()$(br2)Available now: Primitive Anvil, Wooden Shafts, 8/16-tooth gears, handled gear, Small/Large Water Wheels, Small/Large Pulleys, Leather Drive Belts, Right-Angle Gearbox, Custom Gearbox, Clutch, Overload Disconnect, Mechanical Brake, Wooden Crank, Conveyor Rollers, Item Belts and the Mechanical Grinder."
     },
     {
       "type": "text",
-      "text": "$(bold)Later Copper Age$()$(br2)After continuous power, the age is planned to expand into improved Copper metallurgy, basic item logistics, and a small functioning mechanical factory rather than a checklist of machines."
+      "text": "$(bold)Next milestones$()$(br2)The next planned mechanisms are the Mechanical Bellows and Flywheel. Bellows will be the first major consumer of the crank's reciprocating output; the Flywheel will add rotational inertia/buffering instead of being another magic power source.$(br2)After that, Copper Age can push deeper into ore processing and the road to Tin and Bronze."
     },
     {
       "type": "text",
-      "text": "$(bold)The road to Bronze$()$(br2)Cassiterite and Tin will form the final Copper Age challenge. Tin processing is intended to depend on the mechanical infrastructure learned during this age.$(br2)Combining processed Tin with Copper to produce the first Bronze will eventually mark the transition into the Bronze Age."
+      "text": "$(bold)The road to Bronze$()$(br2)Cassiterite and Tin remain the final Copper Age metallurgy goal. Tin processing should depend on the mechanical infrastructure learned here.$(br2)Producing the first Bronze will mark the transition into the Bronze Age."
     }
   ],
-  "extra_recipe_mappings": {
-    "magneticraft2:primitive_anvil": 1,
-    "magneticraft2:shaft_wood": 4,
-    "magneticraft2:gear_medium_wood": 4,
-    "magneticraft2:gear_large_wood": 5,
-    "magneticraft2:gear_large_wood_with_handle": 5,
-    "magneticraft2:primitive_grinder_bmultiblock": 7,
-    "magneticraft2:primitive_grindertop": 7
-  },
   "sortnum": 2,
   "read_by_default": true
 }
