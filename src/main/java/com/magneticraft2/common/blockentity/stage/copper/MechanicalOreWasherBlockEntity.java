@@ -80,7 +80,11 @@ public class MechanicalOreWasherBlockEntity extends GearBlockEntity {
             return;
         }
 
-        hasWater = findWaterSupply();
+        boolean newHasWater = findWaterSupply();
+        if (hasWater != newHasWater) {
+            hasWater = newHasWater;
+            sync();
+        }
 
         MechanicalOreWasherRecipe recipe =
                 getMatchingRecipe();
