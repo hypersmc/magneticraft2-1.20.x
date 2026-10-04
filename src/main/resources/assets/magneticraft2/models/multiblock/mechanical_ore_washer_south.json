@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 Mechanical Ore Washer - south slim module integration trims",
+  "credit": "Magneticraft2 Mechanical Ore Washer - south output lip aligned with module",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -1304,12 +1304,12 @@
       "from": [
         1,
         9.5,
-        16
+        20
       ],
       "to": [
         15,
         11,
-        22
+        26
       ],
       "faces": {
         "north": {
