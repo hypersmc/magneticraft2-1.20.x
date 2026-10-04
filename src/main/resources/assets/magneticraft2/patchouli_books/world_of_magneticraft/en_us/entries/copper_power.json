@@ -1,0 +1,128 @@
+{
+  "name": "Mechanical Power",
+  "description": "From hand cranks and water wheels to belts, gearboxes, clutches, protection, braking and reciprocating motion.",
+  "category": "magneticraft2:copper_workshop",
+  "icon": "magneticraft2:water_wheel_small",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)Gear V2 basics$()$(br2)Copper Age machines use real rotational networks. $(item)Speed$() is how fast the network turns, $(item)torque$() is how much load it can carry, and machines add mechanical load when they work.$(br2)Gears can trade speed for torque, but they never create free power. If demand exceeds what the source and transmission can supply, the network overloads."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Shafts & Small Gears",
+      "recipe": "magneticraft2:shaft_wood",
+      "recipe2": "magneticraft2:gear_medium_wood",
+      "text": "Wooden Shafts carry rotation along their axis. The 8-tooth Medium Gear moves rotation between parallel axes and is the basic gear used throughout the first workshop."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Large Gears & Handle",
+      "recipe": "magneticraft2:gear_large_wood",
+      "recipe2": "magneticraft2:gear_large_wood_with_handle",
+      "text": "The 16-tooth Large Gear changes the speed/torque ratio. The handled version is your manual source: right-click it to put a limited burst of rotation into the network."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Water Wheels",
+      "recipe": "magneticraft2:water_wheel_small",
+      "recipe2": "magneticraft2:water_wheel_large",
+      "text": "Water Wheels replace repeated hand cranking with continuous power. The Small Water Wheel occupies one block; the Large Water Wheel forms a 3x3 wheel around its axle controller."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Driving a Water Wheel$()$(br2)The wheel reads actual flowing water around its rim, including falling streams. More useful flow gives more usable drive.$(br2)The Small Water Wheel is compact and light-duty. The Large Water Wheel needs a clear 3x3 wheel plane but can provide much more torque. Shafts can connect directly to the axle, and compatible gears can mesh against the visible rim."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wooden Pulleys",
+      "recipe": "magneticraft2:pulley_small_wood",
+      "recipe2": "magneticraft2:pulley_large_wood",
+      "text": "Pulleys let rotational power cross a gap without filling that gap with shafts. Pulley size also participates in the mechanical ratio."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Leather Drive Belt",
+      "recipe": "magneticraft2:leather_belt",
+      "text": "Use Leather Drive Belt on one pulley, then on the second pulley. The pulleys must have parallel axes and lie in the same pulley plane. A mechanical belt span may be up to 8 blocks long."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Drive Belt placement$()$(br2)Mechanical drive belts can run horizontally, diagonally or vertically because they transmit rotation rather than loose items.$(br2)While choosing the second pulley, the construction guide shows the proposed path: $(bold)green$() can be placed, $(bold)amber$() needs more belt segments, and $(bold)red$() is invalid or blocked. Sneak-use a connected pulley with Leather Drive Belt to remove its belt."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Gearboxes",
+      "recipe": "magneticraft2:gearbox_wood",
+      "recipe2": "magneticraft2:custom_gearbox_wood",
+      "text": "The Right-Angle Gearbox turns rotation 90 degrees. The Custom Gearbox is a compact routing block for more complicated shaft directions."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Right-Angle Gearbox$()$(br2)Use this when a drivetrain needs to turn a corner. Its two exposed shaft ports are perpendicular and transmit rotation 1:1 through the internal bevel gears.$(br2)This is much cleaner than forcing every mechanical line to stay on one axis."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Custom Gearbox$()$(br2)Open the gearbox editor to build the internal transmission yourself. Work one NORTH/CENTER/SOUTH layer at a time and place Shaft X/Y/Z or Gear X/Y/Z pieces into the 3x3 grid.$(br2)Click a part, then a cell to place it; right-click a cell to clear it. Active external ports are highlighted. Only physically connected internal layouts transmit power."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wooden Clutch",
+      "recipe": "magneticraft2:clutch_wood",
+      "text": "The Clutch is a deliberate drivetrain disconnect. Empty-hand right-click toggles its manual latch. A redstone signal forces it open; removing the signal restores the previous manual state."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Clutch behavior$()$(br2)An open clutch really splits Gear V2 topology. The source side keeps whatever source still drives it, while the disconnected side coasts down and no longer places load on the old source.$(br2)Use a clutch when you want player or redstone control. Automatic overload protection is a separate block."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Overload Disconnect",
+      "recipe": "magneticraft2:overload_disconnect_wood",
+      "text": "Place an Overload Disconnect upstream of machinery you want to protect. If a downstream load would overload the source, the protector opens first so the input side can keep turning."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Self-resetting protection$()$(br2)The Overload Disconnect retries automatically after a delay. Empty-hand right-click cycles $(bold)1, 2, 5, 10, 30 seconds$(); sneak-right-click cycles backward.$(br2)No menu is needed. If the overload still exists after a retry, it trips again. The top indicator turns red while the protector is open."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Brake",
+      "recipe": "magneticraft2:mechanical_brake_wood",
+      "text": "The Mechanical Brake stays connected to the shaft and applies a heavy mechanical load instead of disconnecting anything. Empty-hand right-click toggles the manual brake; redstone forces the brake on."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Brake vs Clutch$()$(br2)A clutch removes a branch from the drivetrain. A brake fights the drivetrain while remaining connected. The current wooden brake applies a hard 32T load, enough to stall early sources.$(br2)Putting an Overload Disconnect upstream makes the brake a useful protection test: clamp the brake, the protector trips, and the Water Wheel keeps spinning."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wooden Crank",
+      "recipe": "magneticraft2:crank_wood",
+      "text": "The Crank converts shaft rotation into reciprocating linear motion. It still carries 1:1 shaft rotation through its axle, while the visible slider and connecting rod provide a separate linear output."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Using the Crank$()$(br2)The crank has a shaft axis and a perpendicular rod-output direction. Its connecting rod follows a real slider-crank motion, so the slider naturally slows near each end of the stroke.$(br2)The output direction is chosen when placed; sneak while placing to flip it. This is the mechanical interface intended for Bellows and later reciprocating machines."
+    }
+  ],
+  "extra_recipe_mappings": {
+    "magneticraft2:shaft_wood": 1,
+    "magneticraft2:gear_medium_wood": 1,
+    "magneticraft2:gear_large_wood": 2,
+    "magneticraft2:gear_large_wood_with_handle": 2,
+    "magneticraft2:water_wheel_small": 3,
+    "magneticraft2:water_wheel_large": 3,
+    "magneticraft2:pulley_small_wood": 5,
+    "magneticraft2:pulley_large_wood": 5,
+    "magneticraft2:leather_belt": 6,
+    "magneticraft2:gearbox_wood": 8,
+    "magneticraft2:custom_gearbox_wood": 8,
+    "magneticraft2:clutch_wood": 11,
+    "magneticraft2:overload_disconnect_wood": 13,
+    "magneticraft2:mechanical_brake_wood": 15,
+    "magneticraft2:crank_wood": 17
+  },
+  "sortnum": 1,
+  "read_by_default": true
+}
