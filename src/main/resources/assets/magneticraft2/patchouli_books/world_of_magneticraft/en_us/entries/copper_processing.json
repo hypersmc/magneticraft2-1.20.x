@@ -76,13 +76,13 @@
         "pattern": [
           [
             "PPP",
-            "P P",
-            "PMP"
+            "P M",
+            "PPP"
           ],
           [
-            "PIP",
-            "F0D",
-            "POP"
+            "PFP",
+            "I0O",
+            "PDP"
           ]
         ],
         "mapping": {
@@ -97,7 +97,7 @@
         },
         "symmetrical": false
       },
-      "text": "The controller is the center of the bottom 3x3. Rear-center is Item Input, front-center is Item Output, west-side is Clean Fluid Input, and east-side is Dirty Fluid Output. Directly ABOVE the Item Output is the Mechanical Input Bearing. Build the frame and right-click the controller to form it."
+      "text": "The book now matches the real structure coordinates. Relative to the controller: Item Input is REAR, Item Output is FRONT, Clean Fluid Input is LEFT, Dirty Fluid Output is RIGHT, and the Mechanical Input Bearing sits directly ABOVE the Item Output. The Visualize button uses this exact arrangement."
     },
     {
       "type": "patchouli:crafting",

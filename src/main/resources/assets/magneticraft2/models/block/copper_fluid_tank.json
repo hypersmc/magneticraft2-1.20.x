@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "copper": "minecraft:block/copper_block",
-    "glass": "minecraft:block/tinted_glass",
+    "glass": "minecraft:block/glass",
     "particle": "minecraft:block/copper_block"
   },
   "elements": [
@@ -582,5 +582,6 @@
         }
       }
     }
-  ]
+  ],
+  "render_type": "minecraft:cutout"
 }
