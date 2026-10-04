@@ -59,8 +59,8 @@ public class CrankBlockEntity_wood extends GearBlockEntity {
         return Direction.UP;
     }
 
-    private static final double CRANK_RADIUS = 0.16D;
-    private static final double CONNECTING_ROD_LENGTH = 0.34D;
+    private static final double CRANK_RADIUS = 0.12D;
+    private static final double CONNECTING_ROD_LENGTH = 0.48D;
 
     /**
      * 0.0 = rod fully retracted, 1.0 = rod fully extended.
