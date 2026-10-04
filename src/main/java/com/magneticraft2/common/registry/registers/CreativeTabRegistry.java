@@ -75,6 +75,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_FLYWHEEL_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_ORE_WASHER.get());
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_SIFTER.get());
+                        entries.accept(ItemRegistry.ITEM_MECHANICAL_INPUT_MODULE.get());
                         entries.accept(ItemRegistry.ITEM_CRUSHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_WASHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_TIN_CONCENTRATE.get());
