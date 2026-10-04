@@ -123,7 +123,7 @@
       "type": "patchouli:crafting",
       "title": "Mechanical Transfer Arm",
       "recipe": "magneticraft2:mechanical_transfer_arm",
-      "text": "Early item automation stays physical. The Transfer Arm reuses the normal 8-tooth Wooden Gear from Gear V2 and meshes horizontally and moves one item per cycle. All four direction controls are on the FRONT console, so adjacent full blocks do not hide them. Each button cycles $(bold)None -> Orange Source -> Blue Destination -> None$()."
+      "text": "Early item automation stays physical. The Transfer Arm reuses the normal 8-tooth Wooden Gear from Gear V2 and meshes horizontally and moves one item per cycle. A copper chevron on top always points toward the FRONT console. All four direction controls are on that face, so adjacent full blocks do not hide them. Each button cycles $(bold)None -> Orange Source -> Blue Destination -> None$()."
     },
     {
       "type": "text",

@@ -624,7 +624,7 @@ public class MechanicalTransferArmBlockEntity
                         : Direction.NORTH;
 
         if (side == forward) {
-            return "Forward";
+            return "Front";
         }
 
         if (side
