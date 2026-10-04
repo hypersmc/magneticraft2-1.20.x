@@ -53,9 +53,6 @@ public class MechanicalOreWasherBlockEntityRenderer
     private static final Vec3 DRIVEN_PULLEY_CENTER =
             new Vec3(0.5D, 0.90625D, 1.1875D);
 
-    private static final float DRUM_SPEED_RATIO =
-            (float) (INPUT_PULLEY_RADIUS / DRIVEN_PULLEY_RADIUS);
-
     private static final List<BeltPath.Segment> INTERNAL_BELT =
             BeltPath.createVisualSegments(
                     INPUT_PULLEY_CENTER,
@@ -112,8 +109,24 @@ public class MechanicalOreWasherBlockEntityRenderer
         float inputRotation =
                 washer.getMechanicalVisualRotationDegrees(partialTicks)
                         * facingRotationSign;
+
+        // Sample belt travel once for this frame. Unlike the 0..360 Gear V2
+        // display angle, this accumulator is continuous and therefore safe to
+        // convert through a non-1:1 pulley ratio without wrap-around jumps.
+        double beltTravel =
+                washer.getMechanicalVisualBeltTravelDistance(
+                        partialTicks,
+                        INPUT_PULLEY_RADIUS
+                );
+
+        double drivenCircumference =
+                Math.PI * 2.0D * DRIVEN_PULLEY_RADIUS;
+
         float drumRotation =
-                inputRotation * DRUM_SPEED_RATIO;
+                (float) (
+                        (-beltTravel / drivenCircumference)
+                                * 360.0D
+                ) * facingRotationSign;
 
         renderPulley(
                 SMALL_PULLEY_MODEL,
@@ -143,10 +156,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                 buffer,
                 packedLight,
                 Vec3.ZERO,
-                -washer.getMechanicalVisualBeltTravelDistance(
-                        partialTicks,
-                        INPUT_PULLEY_RADIUS
-                ) * facingRotationSign
+                -beltTravel * facingRotationSign
         );
 
         poseStack.pushPose();
