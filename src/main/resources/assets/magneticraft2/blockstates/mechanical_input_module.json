@@ -1,19 +1,19 @@
 {
   "variants": {
     "facing=up,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module"
+      "model": "magneticraft2:block/mechanical_input_module_formed"
     },
     "facing=up,formed=false": {
       "model": "magneticraft2:block/mechanical_input_module"
     },
     "facing=down,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module"
+      "model": "magneticraft2:block/mechanical_input_module_formed"
     },
     "facing=down,formed=false": {
       "model": "magneticraft2:block/mechanical_input_module"
     },
     "facing=north,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_formed",
       "x": 90
     },
     "facing=north,formed=false": {
@@ -21,7 +21,7 @@
       "x": 90
     },
     "facing=south,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_formed",
       "x": 90
     },
     "facing=south,formed=false": {
@@ -29,7 +29,7 @@
       "x": 90
     },
     "facing=east,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_formed",
       "x": 90,
       "y": 90
     },
@@ -39,7 +39,7 @@
       "y": 90
     },
     "facing=west,formed=true": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_formed",
       "x": 90,
       "y": 90
     },
