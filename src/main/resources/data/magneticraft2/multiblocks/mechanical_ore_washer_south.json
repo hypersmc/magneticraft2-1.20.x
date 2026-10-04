@@ -10,7 +10,7 @@
       "layer1": [
         [
           "Frame",
-          "Copper",
+          "ItemInput",
           "Frame"
         ],
         [
@@ -20,7 +20,7 @@
         ],
         [
           "Frame",
-          "MechanicalInput",
+          "ItemOutput",
           "Frame"
         ]
       ],
@@ -37,7 +37,7 @@
         ],
         [
           "Frame",
-          "Frame",
+          "MechanicalInput",
           "Frame"
         ]
       ]
@@ -47,7 +47,9 @@
       "Frame": "minecraft:oak_planks",
       "Copper": "minecraft:copper_block",
       "Air": "minecraft:air",
-      "MechanicalInput": "magneticraft2:mechanical_input_module"
+      "MechanicalInput": "magneticraft2:mechanical_input_module",
+      "ItemInput": "magneticraft2:multiblock_item_input",
+      "ItemOutput": "magneticraft2:multiblock_item_output"
     }
   },
   "settings": {
