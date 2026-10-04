@@ -2,6 +2,8 @@ package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_grinder_multiblockrecipe;
+import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
+import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -26,5 +28,7 @@ public class RecipesRegistry {
     //Recipes after this line
     public static final RegistryObject<RecipeSerializer<primitive_furnace_multiblockrecipe>> primitive_furnace_multiblockrecipe = RECIPE_SERIALIZERS.register("primitive_furnace_multiblock", () -> com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<primitive_grinder_multiblockrecipe>> primitive_grinder_multiblockrecipe = RECIPE_SERIALIZERS.register("primitive_grinder_bmultiblock", () -> com.magneticraft2.common.recipe.stage.stone.primitive_grinder_multiblockrecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<MechanicalOreWasherRecipe>> mechanical_ore_washing = RECIPE_SERIALIZERS.register("mechanical_ore_washing", () -> MechanicalOreWasherRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<MechanicalSifterRecipe>> mechanical_sifting = RECIPE_SERIALIZERS.register("mechanical_sifting", () -> MechanicalSifterRecipe.Serializer.INSTANCE);
 
 }
