@@ -88,9 +88,9 @@ public class MechanicalSifterBlockEntityRenderer
 
         poseStack.pushPose();
         poseStack.translate(
-                shake,
                 0.0D,
-                0.0D
+                0.0D,
+                -shake * 0.65D
         );
         renderModel(
                 UPPER_TRAY,
@@ -103,9 +103,9 @@ public class MechanicalSifterBlockEntityRenderer
 
         poseStack.pushPose();
         poseStack.translate(
-                -shake * 0.70D,
                 0.0D,
-                0.0D
+                0.0D,
+                shake
         );
         renderModel(
                 LOWER_TRAY,
@@ -119,9 +119,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getInputStack(),
-                0.5D + shake,
+                0.5D,
                 1.55D,
-                0.43D,
+                0.43D - shake * 0.65D,
                 0.33F,
                 401,
                 poseStack,
