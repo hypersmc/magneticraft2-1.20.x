@@ -56,9 +56,9 @@ public class MechanicalSifterBlock
                     Block.box(26, 3, 25, 29, 27, 28),
                     Block.box(-13, 26, 4, 29, 29, 28),
 
-                    // screen assemblies and crank guide
-                    Block.box(-8, 10, 7, 24, 21, 27),
-                    Block.box(3, 14, 0, 13, 22, 9),
+                    // screen assemblies and low crank slide bearing
+                    Block.box(-8, 8, 7, 24, 21, 27),
+                    Block.box(3, 5, -3, 13, 12, 10),
 
                     // feed/output chutes
                     Block.box(-5, 22, 0, 21, 25, 9),
