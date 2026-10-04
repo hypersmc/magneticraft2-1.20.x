@@ -4,28 +4,28 @@
       "model": "magneticraft2:block/mechanical_sifter_controller"
     },
     "facing=north,is_formed=true": {
-      "model": "magneticraft2:block/invis"
+      "model": "magneticraft2:multiblock/mechanical_sifter_north"
     },
     "facing=south,is_formed=false": {
       "model": "magneticraft2:block/mechanical_sifter_controller",
       "y": 180
     },
     "facing=south,is_formed=true": {
-      "model": "magneticraft2:block/invis"
+      "model": "magneticraft2:multiblock/mechanical_sifter_south"
     },
     "facing=east,is_formed=false": {
       "model": "magneticraft2:block/mechanical_sifter_controller",
       "y": 90
     },
     "facing=east,is_formed=true": {
-      "model": "magneticraft2:block/invis"
+      "model": "magneticraft2:multiblock/mechanical_sifter_east"
     },
     "facing=west,is_formed=false": {
       "model": "magneticraft2:block/mechanical_sifter_controller",
       "y": 270
     },
     "facing=west,is_formed=true": {
-      "model": "magneticraft2:block/invis"
+      "model": "magneticraft2:multiblock/mechanical_sifter_west"
     }
   }
 }
