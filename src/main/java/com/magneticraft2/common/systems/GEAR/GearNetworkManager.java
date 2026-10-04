@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
@@ -160,6 +161,11 @@ public class GearNetworkManager {
             getConnectionCache(level).clear();
         }
 
+        // Flywheels are passive while a real source is present. If a connected
+        // component loses all non-flywheel sources, one charged flywheel becomes
+        // the temporary inertial source for that component.
+        prepareFlywheelSources(level, gears);
+
         Queue<GearNode> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
         Set<BlockPos> activelyDriven = new HashSet<>();
@@ -283,6 +289,7 @@ public class GearNetworkManager {
         }
 
         applyMechanicalLoads(level, gears);
+        updateFlywheelStorage(level, gears);
 
         // Advance visual/mechanical rotation only after the final overload state for this
         // network tick is known. Advancing before load evaluation made stalled networks
@@ -343,6 +350,228 @@ public class GearNetworkManager {
 
         MechanicalLoad load = getLoadMap(level).get(loadPos);
         return load == null ? MechanicalLoadState.inactive() : load.snapshot();
+    }
+
+    /**
+     * Decide which flywheel, if any, is allowed to act as a source before the
+     * normal source BFS begins.
+     *
+     * A component with an active Water Wheel/hand source always wins over stored
+     * inertia. When no real source exists, the charged flywheel with the highest
+     * stored RPM becomes the temporary source. Other flywheels remain passive,
+     * which avoids two inertial sources fighting each other in the same network.
+     */
+    private void prepareFlywheelSources(
+            Level level,
+            Map<BlockPos, GearNode> gears) {
+        Set<BlockPos> handled =
+                new HashSet<>();
+
+        for (Map.Entry<BlockPos, GearNode> entry :
+                gears.entrySet()) {
+            BlockPos start = entry.getKey();
+
+            if (handled.contains(start)
+                    || !(level.getBlockEntity(start)
+                    instanceof FlywheelBlockEntity_wood)) {
+                continue;
+            }
+
+            Set<BlockPos> component =
+                    collectMechanicalComponent(
+                            level,
+                            gears,
+                            start
+                    );
+
+            handled.addAll(component);
+
+            boolean hasRealSource = false;
+            List<FlywheelBlockEntity_wood> flywheels =
+                    new ArrayList<>();
+
+            for (BlockPos pos : component) {
+                BlockEntity blockEntity =
+                        level.getBlockEntity(pos);
+
+                if (blockEntity
+                        instanceof FlywheelBlockEntity_wood flywheel) {
+                    flywheels.add(flywheel);
+                    continue;
+                }
+
+                GearNode node = gears.get(pos);
+
+                if (node != null
+                        && node.isSource()
+                        && node.getSpeed() > STOP_EPSILON
+                        && !node.isOverloaded()) {
+                    hasRealSource = true;
+                }
+            }
+
+            if (hasRealSource) {
+                for (FlywheelBlockEntity_wood flywheel :
+                        flywheels) {
+                    flywheel.setPassiveForExternalDrive();
+                }
+                continue;
+            }
+
+            FlywheelBlockEntity_wood leader = null;
+
+            for (FlywheelBlockEntity_wood flywheel :
+                    flywheels) {
+                if (!flywheel.hasStoredInertia()) {
+                    flywheel.setPassiveForExternalDrive();
+                    continue;
+                }
+
+                if (leader == null
+                        || flywheel.getStoredSpeed()
+                        > leader.getStoredSpeed()
+                        + STOP_EPSILON
+                        || (Math.abs(
+                                flywheel.getStoredSpeed()
+                                        - leader.getStoredSpeed()
+                        ) <= STOP_EPSILON
+                        && flywheel.getBlockPos().asLong()
+                        < leader.getBlockPos().asLong())) {
+                    leader = flywheel;
+                }
+            }
+
+            for (FlywheelBlockEntity_wood flywheel :
+                    flywheels) {
+                if (flywheel == leader) {
+                    flywheel.prepareAsInertialSource();
+                } else {
+                    flywheel.setPassiveForExternalDrive();
+                }
+            }
+        }
+    }
+
+    private Set<BlockPos> collectMechanicalComponent(
+            Level level,
+            Map<BlockPos, GearNode> gears,
+            BlockPos start) {
+        Set<BlockPos> component =
+                new HashSet<>();
+        Queue<BlockPos> queue =
+                new ArrayDeque<>();
+
+        component.add(start);
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            BlockPos current =
+                    queue.poll();
+
+            for (GearConnection connection :
+                    getConnectedGears(
+                            current,
+                            level
+                    )) {
+                BlockPos neighbor =
+                        connection.neighborPos();
+
+                if (!gears.containsKey(neighbor)
+                        || !component.add(neighbor)) {
+                    continue;
+                }
+
+                queue.add(neighbor);
+            }
+        }
+
+        return component;
+    }
+
+    /**
+     * Charge flywheels from real sources and drain the one currently carrying a
+     * component on stored inertia. Drain rate increases with real mechanical
+     * demand, so a flywheel can bridge a light interruption much longer than it
+     * can run a heavily loaded machine.
+     */
+    private void updateFlywheelStorage(
+            Level level,
+            Map<BlockPos, GearNode> gears) {
+        Map<BlockPos, Float> demandBySource =
+                new HashMap<>();
+
+        for (MechanicalLoad load :
+                getLoadMap(level).values()) {
+            if (!load.active
+                    || load.sourcePos == null
+                    || load.sourceEquivalentDemand
+                    <= TORQUE_EPSILON) {
+                continue;
+            }
+
+            demandBySource.merge(
+                    load.sourcePos,
+                    load.sourceEquivalentDemand,
+                    Float::sum
+            );
+        }
+
+        for (Map.Entry<BlockPos, GearNode> entry :
+                gears.entrySet()) {
+            BlockPos pos = entry.getKey();
+
+            if (!(level.getBlockEntity(pos)
+                    instanceof FlywheelBlockEntity_wood flywheel)) {
+                continue;
+            }
+
+            GearNode node = entry.getValue();
+
+            if (node.isSource()
+                    && pos.equals(node.getSourcePos())) {
+                flywheel.coastTick(
+                        demandBySource.getOrDefault(
+                                pos,
+                                0.0F
+                        ),
+                        node.isOverloaded()
+                );
+                continue;
+            }
+
+            BlockPos sourcePos =
+                    node.getSourcePos();
+
+            if (sourcePos == null
+                    || sourcePos.equals(pos)
+                    || node.getSpeed() <= STOP_EPSILON) {
+                continue;
+            }
+
+            BlockEntity sourceBlockEntity =
+                    level.getBlockEntity(sourcePos);
+
+            // Never recharge one flywheel from another. That would create a
+            // perpetual hand-off of stored energy. Only a real source replenishes
+            // the stored inertia.
+            if (sourceBlockEntity
+                    instanceof FlywheelBlockEntity_wood) {
+                continue;
+            }
+
+            GearNode sourceNode =
+                    gears.get(sourcePos);
+
+            if (sourceNode != null
+                    && sourceNode.isSource()
+                    && sourceNode.getSpeed() > STOP_EPSILON
+                    && !sourceNode.isOverloaded()) {
+                flywheel.captureExternalDrive(
+                        node.getSpeed(),
+                        node.getDirectionMultiplier()
+                );
+            }
+        }
     }
 
     private void applyMechanicalLoads(Level level,
