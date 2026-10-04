@@ -66,8 +66,8 @@ public class MechanicalOreWasherBlock
                     Block.box(-9, 28, -4, 25, 31, -1),
                     Block.box(-9, 28, 18, 25, 31, 21),
 
-                    // Centered rotating drum envelope.
-                    Block.box(1, 18, -4, 15, 31, 22),
+                    // Lowered rotating drum envelope.
+                    Block.box(2, 14, -4, 14, 25, 22),
 
                     // Feed/discharge throats. The visible item port blocks retain
                     // their own local collision at the rear/front edge.
