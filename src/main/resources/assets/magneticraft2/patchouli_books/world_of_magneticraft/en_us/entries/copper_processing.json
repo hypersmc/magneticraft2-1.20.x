@@ -62,6 +62,13 @@
       "text": "The crafted block is the controller, not the whole machine. The Washer is a 3x2x3 JSON multiblock. It also needs one Mechanical Input Bearing so Gear V2 can enter the formed structure."
     },
     {
+      "type": "patchouli:crafting",
+      "title": "Washer I/O Ports",
+      "recipe": "magneticraft2:multiblock_item_input",
+      "recipe2": "magneticraft2:multiblock_item_output",
+      "text": "The Washer now has real automation ports. The tall rear port is INPUT only and forwards into the washer's recipe slot. The low front port is OUTPUT only and exposes both concentrate and byproduct slots for extraction."
+    },
+    {
       "type": "patchouli:multiblock",
       "name": "Mechanical Ore Washer",
       "enable_visualize": true,
@@ -70,27 +77,29 @@
           [
             "PPP",
             "P P",
-            "PPP"
+            "PMP"
           ],
           [
-            "PCP",
+            "PIP",
             "C0C",
-            "PMP"
+            "POP"
           ]
         ],
         "mapping": {
           "0": "magneticraft2:mechanical_ore_washer",
           "P": "minecraft:oak_planks",
           "C": "minecraft:copper_block",
-          "M": "magneticraft2:mechanical_input_module"
+          "M": "magneticraft2:mechanical_input_module",
+          "I": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_output"
         },
         "symmetrical": false
       },
-      "text": "Build the 3x2x3 frame exactly as shown, then right-click the controller to form it. The Washer Controller is the CENTER block of the bottom 3x3 footprint and the Mechanical Input Bearing sits on one outer edge. You may rotate the whole structure; formation detects its direction from the blocks you built."
+      "text": "The controller is the center of the bottom 3x3. Rear-center is the Item Input. Front-center is the Item Output. Directly ABOVE the Item Output is the Mechanical Input Bearing, aligned with the trommel axle. Build the frame and right-click the controller to form it."
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)The Washer is centered on its controller: it occupies one block behind, one block ahead and one block to either side. Connect Gear V2 to the Mechanical Input Bearing on the front edge. Place a water source two blocks to either side of the controller to feed the trough.$(br2)Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance."
+      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input (or insert by hand). Extract washed concentrate/byproduct from the low front Item Output. Connect Gear V2 to the visible bearing directly above that output; its shaft now runs straight into the center of the drum.$(br2)Place a water source two blocks to either side of the controller to feed the trough."
     },
     {
       "type": "patchouli:crafting",
@@ -141,14 +150,16 @@
     "magneticraft2:primitive_grindertop": 3,
     "magneticraft2:mechanical_ore_washer": 7,
     "magneticraft2:mechanical_input_module": 7,
-    "magneticraft2:mechanical_sifter": 10,
-    "magneticraft2:cassiterite_ore": 12,
-    "magneticraft2:crushed_cassiterite": 12,
-    "magneticraft2:washed_cassiterite": 12,
-    "magneticraft2:tin_concentrate": 12,
-    "magneticraft2:tin_ingot": 13,
-    "magneticraft2:bronze_charge": 13,
-    "magneticraft2:bronze_ingot": 13
+    "magneticraft2:multiblock_item_input": 8,
+    "magneticraft2:multiblock_item_output": 8,
+    "magneticraft2:mechanical_sifter": 11,
+    "magneticraft2:cassiterite_ore": 13,
+    "magneticraft2:crushed_cassiterite": 13,
+    "magneticraft2:washed_cassiterite": 13,
+    "magneticraft2:tin_concentrate": 13,
+    "magneticraft2:tin_ingot": 14,
+    "magneticraft2:bronze_charge": 14,
+    "magneticraft2:bronze_ingot": 14
   },
   "sortnum": 0,
   "read_by_default": true
