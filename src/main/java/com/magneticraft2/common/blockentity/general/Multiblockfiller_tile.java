@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -23,6 +24,14 @@ public class Multiblockfiller_tile extends BlockEntity {
     private int Master_X;
     private int Master_Y;
     private int Master_Z;
+
+    /**
+     * getShape/getCollisionShape can be queried many times per rendered frame.
+     * The formed local piece never changes until the structure is destroyed, so
+     * cache it instead of rebuilding/optimizing a VoxelShape on every query.
+     */
+    @Nullable
+    private VoxelShape cachedLocalShape;
     public Multiblockfiller_tile(BlockPos pPos, BlockState pBlockState) {
         super(BlockEntityRegistry.multiblockfillerBlockEntity.get(), pPos, pBlockState);
     }
@@ -60,6 +69,25 @@ public class Multiblockfiller_tile extends BlockEntity {
         this.Master_X = tag.getInt("controller_x");
         this.Master_Y = tag.getInt("controller_y");
         this.Master_Z = tag.getInt("controller_z");
+        this.cachedLocalShape = null;
+    }
+
+    public BlockPos getControllerPos() {
+        return new BlockPos(
+                Master_X,
+                Master_Y,
+                Master_Z
+        );
+    }
+
+    @Nullable
+    public VoxelShape getCachedLocalShape() {
+        return cachedLocalShape;
+    }
+
+    public void setCachedLocalShape(
+            @Nullable VoxelShape shape) {
+        this.cachedLocalShape = shape;
     }
     @Override
     public void load(CompoundTag pTag) {
@@ -67,6 +95,7 @@ public class Multiblockfiller_tile extends BlockEntity {
         this.Master_X = pTag.getInt("controller_x");
         this.Master_Y = pTag.getInt("controller_y");
         this.Master_Z = pTag.getInt("controller_z");
+        this.cachedLocalShape = null;
     }
 
     @Override
