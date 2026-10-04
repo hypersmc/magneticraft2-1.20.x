@@ -81,7 +81,7 @@
           ],
           [
             "PIP",
-            "F0C",
+            "F0D",
             "POP"
           ]
         ],
@@ -92,28 +92,30 @@
           "M": "magneticraft2:mechanical_input_module",
           "I": "magneticraft2:multiblock_item_input",
           "O": "magneticraft2:multiblock_item_output",
-          "F": "magneticraft2:multiblock_fluid_input"
+          "F": "magneticraft2:multiblock_fluid_input",
+          "D": "magneticraft2:multiblock_fluid_output"
         },
         "symmetrical": false
       },
-      "text": "The controller is the center of the bottom 3x3. Rear-center is Item Input, front-center is Item Output, and the west-side copper position is replaced by the Fluid Input. Directly ABOVE the Item Output is the Mechanical Input Bearing. Build the frame and right-click the controller to form it."
+      "text": "The controller is the center of the bottom 3x3. Rear-center is Item Input, front-center is Item Output, west-side is Clean Fluid Input, and east-side is Dirty Fluid Output. Directly ABOVE the Item Output is the Mechanical Input Bearing. Build the frame and right-click the controller to form it."
     },
     {
       "type": "patchouli:crafting",
-      "title": "Fluid Input + Pipes",
+      "title": "Fluid I/O + Pipes",
       "recipe": "magneticraft2:multiblock_fluid_input",
-      "recipe2": "magneticraft2:water_pipe",
-      "text": "The Fluid Input is a real Forge fluid port and survives formation. Connect Copper Water Pipes to its outward-facing nozzle. Pipes are passive: they do not tick individually."
+      "recipe2": "magneticraft2:multiblock_fluid_output",
+      "text": "The Washer now has separate fluid ports. Feed clean water into the green-marked Fluid Input. Dirty process water leaves through the brown-marked Fluid Output. Copper Fluid Pipes connect to the outward-facing nozzles and remain passive transport blocks."
     },
     {
       "type": "patchouli:crafting",
       "title": "Mechanical Water Pump",
       "recipe": "magneticraft2:mechanical_water_pump",
-      "text": "Place the pump directly above a water source. Its TOP is the only fluid output. Place the pump against the end of a Wooden Shaft: the visible crank-wheel side is the only mechanical input, and power does not pass through the opposite side. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t."
+      "text": "Place the pump directly above a water source. Its TOP is the only fluid output. Place the pump against the end of a Wooden Shaft: the visible crank-wheel side is the only mechanical input, and power does not pass through the opposite side. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t.",
+      "recipe2": "magneticraft2:water_pipe"
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The washer now stores up to 4000 mB of water and each washing recipe consumes water when the batch completes. The visible trough level follows the actual tank level.$(br2)Gear V2 enters through the upper front bearing and drives the trommel through the leather-belt pulley reduction."
+      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. The machine pauses if either clean water is missing or the Dirty Water tank is full.$(br2)Dirty Water is intentionally recyclable process fluid: later treatment can recover clean water and potentially mineral sludge instead of making washing a permanent water sink."
     },
     {
       "type": "patchouli:crafting",
@@ -175,8 +177,9 @@
     "magneticraft2:bronze_charge": 16,
     "magneticraft2:bronze_ingot": 16,
     "magneticraft2:multiblock_fluid_input": 10,
-    "magneticraft2:water_pipe": 10,
-    "magneticraft2:mechanical_water_pump": 11
+    "magneticraft2:water_pipe": 11,
+    "magneticraft2:mechanical_water_pump": 11,
+    "magneticraft2:multiblock_fluid_output": 10
   },
   "sortnum": 0,
   "read_by_default": true

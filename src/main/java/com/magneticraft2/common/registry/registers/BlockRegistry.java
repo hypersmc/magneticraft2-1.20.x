@@ -16,6 +16,7 @@ import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalInputModuleBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockItemPortBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidInputBlock;
+import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
 import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalWaterPumpBlock;
 import com.magneticraft2.common.block.stage.copper.FlywheelBlock_wood;
@@ -102,6 +103,7 @@ public class BlockRegistry {
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT = BLOCKS.register("multiblock_item_input", () -> new MultiblockItemPortBlock(false));
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_OUTPUT = BLOCKS.register("multiblock_item_output", () -> new MultiblockItemPortBlock(true));
     public static final RegistryObject<MultiblockFluidInputBlock> MULTIBLOCK_FLUID_INPUT = BLOCKS.register("multiblock_fluid_input", MultiblockFluidInputBlock::new);
+    public static final RegistryObject<MultiblockFluidOutputBlock> MULTIBLOCK_FLUID_OUTPUT = BLOCKS.register("multiblock_fluid_output", MultiblockFluidOutputBlock::new);
     public static final RegistryObject<WaterPipeBlock> WATER_PIPE = BLOCKS.register("water_pipe", WaterPipeBlock::new);
     public static final RegistryObject<MechanicalWaterPumpBlock> MECHANICAL_WATER_PUMP = BLOCKS.register("mechanical_water_pump", MechanicalWaterPumpBlock::new);
     public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));

@@ -260,14 +260,17 @@ public class MechanicalOreWasherBlockEntityRenderer
         float green = ((waterColor >> 8) & 0xFF) / 255.0F;
         float blue = (waterColor & 0xFF) / 255.0F;
 
-        float minX = -5.5F / 16.0F;
-        float maxX = 21.5F / 16.0F;
-        float minZ = -4.5F / 16.0F;
-        float maxZ = 21.5F / 16.0F;
+        // The water belongs in the actual center trough, not across the entire
+        // formed 3x3 footprint. Keeping it inside these walls avoids clipping
+        // through the frame, item ports and side fluid modules.
+        float minX = -1.0F / 16.0F;
+        float maxX = 17.0F / 16.0F;
+        float minZ = -1.0F / 16.0F;
+        float maxZ = 18.0F / 16.0F;
         float fill =
                 washer.getWaterFillRatio();
         float y =
-                (7.25F + 4.40F * fill)
+                (7.50F + 3.10F * fill)
                         / 16.0F;
 
         VertexConsumer consumer =

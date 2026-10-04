@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.FluidRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -65,6 +66,7 @@ public class MechanicalOreWasherBlockEntity
     private boolean hasWater = false;
 
     public static final int WATER_CAPACITY = 4000;
+    public static final int DIRTY_WATER_CAPACITY = 4000;
 
     private final FluidTank waterTank =
             new FluidTank(
@@ -78,8 +80,21 @@ public class MechanicalOreWasherBlockEntity
                 }
             };
 
-    private LazyOptional<IFluidHandler> waterCapability =
-            LazyOptional.of(() -> waterTank);
+    private final FluidTank dirtyWaterTank =
+            new FluidTank(
+                    DIRTY_WATER_CAPACITY,
+                    stack -> stack.getFluid()
+                            == FluidRegistry.DIRTY_WATER.get()
+            ) {
+                @Override
+                protected void onContentsChanged() {
+                    setChanged();
+                    sync();
+                }
+            };
+
+    private LazyOptional<IFluidHandler> fluidCapability =
+            LazyOptional.of(() -> new WasherFluidHandler());
 
     // Client-only visual accumulator for the internal leather drive belt.
     private double clientBeltTravelDistance = 0.0D;
@@ -132,6 +147,14 @@ public class MechanicalOreWasherBlockEntity
                                         / (float) waterTank.getCapacity()
                         )
                 );
+    }
+
+    public int getDirtyWaterAmount() {
+        return dirtyWaterTank.getFluidAmount();
+    }
+
+    public int getDirtyWaterCapacity() {
+        return dirtyWaterTank.getCapacity();
     }
 
     public ItemStack getInputStack() {
@@ -225,6 +248,8 @@ public class MechanicalOreWasherBlockEntity
         boolean canAttempt =
                 waterTank.getFluidAmount()
                         >= recipe.getWaterAmount()
+                        && dirtyWaterTank.getSpace()
+                        >= recipe.getWaterAmount()
                         && inputNode != null
                         && inputNode.getEffectiveSpeed()
                         >= recipe.getMinSpeed()
@@ -269,6 +294,13 @@ public class MechanicalOreWasherBlockEntity
         );
         waterTank.drain(
                 recipe.getWaterAmount(),
+                IFluidHandler.FluidAction.EXECUTE
+        );
+        dirtyWaterTank.fill(
+                new FluidStack(
+                        FluidRegistry.DIRTY_WATER.get(),
+                        recipe.getWaterAmount()
+                ),
                 IFluidHandler.FluidAction.EXECUTE
         );
         insertOutput(1, output);
@@ -766,6 +798,12 @@ public class MechanicalOreWasherBlockEntity
                     waterTank.getFluidAmount() > 0;
         }
 
+        if (tag.contains("DirtyWaterTank")) {
+            dirtyWaterTank.readFromNBT(
+                    tag.getCompound("DirtyWaterTank")
+            );
+        }
+
         MultiblockPersistentData data =
                 loadMultiblockData(tag);
         blueprintName =
@@ -803,6 +841,12 @@ public class MechanicalOreWasherBlockEntity
                         new CompoundTag()
                 )
         );
+        tag.put(
+                "DirtyWaterTank",
+                dirtyWaterTank.writeToNBT(
+                        new CompoundTag()
+                )
+        );
 
         saveMultiblockData(
                 tag,
@@ -812,12 +856,81 @@ public class MechanicalOreWasherBlockEntity
         );
     }
 
+    private final class WasherFluidHandler
+            implements IFluidHandler {
+
+        @Override
+        public int getTanks() {
+            return 2;
+        }
+
+        @Override
+        public @NotNull FluidStack getFluidInTank(int tank) {
+            if (tank == 0) {
+                return waterTank.getFluid();
+            }
+            if (tank == 1) {
+                return dirtyWaterTank.getFluid();
+            }
+            return FluidStack.EMPTY;
+        }
+
+        @Override
+        public int getTankCapacity(int tank) {
+            if (tank == 0) {
+                return waterTank.getCapacity();
+            }
+            if (tank == 1) {
+                return dirtyWaterTank.getCapacity();
+            }
+            return 0;
+        }
+
+        @Override
+        public boolean isFluidValid(
+                int tank,
+                @NotNull FluidStack stack) {
+            return tank == 0
+                    && waterTank.isFluidValid(stack);
+        }
+
+        @Override
+        public int fill(
+                FluidStack resource,
+                FluidAction action) {
+            return waterTank.fill(
+                    resource,
+                    action
+            );
+        }
+
+        @Override
+        public @NotNull FluidStack drain(
+                FluidStack resource,
+                FluidAction action) {
+            return dirtyWaterTank.drain(
+                    resource,
+                    action
+            );
+        }
+
+        @Override
+        public @NotNull FluidStack drain(
+                int maxDrain,
+                FluidAction action) {
+            return dirtyWaterTank.drain(
+                    maxDrain,
+                    action
+            );
+        }
+    }
+
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap,
             @Nullable Direction side) {
         if (cap == ForgeCapabilities.FLUID_HANDLER) {
-            return waterCapability.cast();
+            return fluidCapability.cast();
         }
 
         return super.getCapability(cap, side);
@@ -826,14 +939,14 @@ public class MechanicalOreWasherBlockEntity
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        waterCapability.invalidate();
+        fluidCapability.invalidate();
     }
 
     @Override
     public void reviveCaps() {
         super.reviveCaps();
-        waterCapability =
-                LazyOptional.of(() -> waterTank);
+        fluidCapability =
+                LazyOptional.of(() -> new WasherFluidHandler());
     }
 
     @Override

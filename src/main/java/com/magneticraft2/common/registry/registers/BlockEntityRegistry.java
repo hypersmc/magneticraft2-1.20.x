@@ -14,6 +14,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEn
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidInputBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidOutputBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalWaterPumpBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
@@ -86,6 +87,7 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE = BLOCK_ENTITIES.register("multiblock_item_port", () -> BlockEntityType.Builder.of(MultiblockItemPortBlockEntity::new, BlockRegistry.MULTIBLOCK_ITEM_INPUT.get(), BlockRegistry.MULTIBLOCK_ITEM_OUTPUT.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockFluidInputBlockEntity>> MULTIBLOCK_FLUID_INPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_input", () -> BlockEntityType.Builder.of(MultiblockFluidInputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_INPUT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MultiblockFluidOutputBlockEntity>> MULTIBLOCK_FLUID_OUTPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_output", () -> BlockEntityType.Builder.of(MultiblockFluidOutputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_OUTPUT.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalWaterPumpBlockEntity>> MECHANICAL_WATER_PUMP_BE = BLOCK_ENTITIES.register("mechanical_water_pump", () -> BlockEntityType.Builder.of(MechanicalWaterPumpBlockEntity::new, BlockRegistry.MECHANICAL_WATER_PUMP.get()).build(null));
     public static final RegistryObject<BlockEntityType<ConveyorRollerBlockEntity>> CONVEYOR_ROLLER_BE =
             BLOCK_ENTITIES.register("conveyor_roller", () ->

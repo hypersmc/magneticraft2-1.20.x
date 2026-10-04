@@ -122,6 +122,15 @@ public class WaterPipeBlock extends Block {
             ) == direction.getOpposite();
         }
 
+        if (block instanceof MultiblockFluidOutputBlock
+                && state.hasProperty(
+                        MultiblockFluidOutputBlock.FACING
+                )) {
+            return state.getValue(
+                    MultiblockFluidOutputBlock.FACING
+            ) == direction.getOpposite();
+        }
+
         return false;
     }
 

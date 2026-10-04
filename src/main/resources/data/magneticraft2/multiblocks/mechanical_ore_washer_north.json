@@ -14,7 +14,7 @@
           "Frame"
         ],
         [
-          "Copper",
+          "FluidOutput",
           "Controller",
           "FluidInput"
         ],
@@ -45,12 +45,12 @@
     "blocks": {
       "Controller": "magneticraft2:mechanical_ore_washer",
       "Frame": "minecraft:oak_planks",
-      "Copper": "minecraft:copper_block",
       "Air": "minecraft:air",
       "MechanicalInput": "magneticraft2:mechanical_input_module",
       "ItemInput": "magneticraft2:multiblock_item_input",
       "ItemOutput": "magneticraft2:multiblock_item_output",
-      "FluidInput": "magneticraft2:multiblock_fluid_input"
+      "FluidInput": "magneticraft2:multiblock_fluid_input",
+      "FluidOutput": "magneticraft2:multiblock_fluid_output"
     }
   },
   "settings": {

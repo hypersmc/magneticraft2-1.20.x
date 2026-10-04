@@ -216,8 +216,13 @@
   "message.magneticraft2.custom_gearbox_need_shaft": "You need a Wooden Shaft for that gearbox cell.",
   "block.magneticraft2.multiblock_fluid_input": "Multiblock Fluid Input",
   "item.magneticraft2.multiblock_fluid_input": "Multiblock Fluid Input",
-  "block.magneticraft2.water_pipe": "Copper Water Pipe",
-  "item.magneticraft2.water_pipe": "Copper Water Pipe",
+  "block.magneticraft2.water_pipe": "Copper Fluid Pipe",
+  "item.magneticraft2.water_pipe": "Copper Fluid Pipe",
   "block.magneticraft2.mechanical_water_pump": "Mechanical Water Pump",
-  "item.magneticraft2.mechanical_water_pump": "Mechanical Water Pump"
+  "item.magneticraft2.mechanical_water_pump": "Mechanical Water Pump",
+  "block.magneticraft2.multiblock_fluid_output": "Multiblock Fluid Output",
+  "item.magneticraft2.multiblock_fluid_output": "Multiblock Fluid Output",
+  "fluid.magneticraft2.dirty_water": "Dirty Water",
+  "item.magneticraft2.dirty_water_bucket": "Dirty Water Bucket",
+  "block.magneticraft2.dirty_water": "Dirty Water"
 }
