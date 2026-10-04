@@ -109,6 +109,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_MECHANICAL_ORE_WASHER = fromBlock(MECHANICAL_ORE_WASHER);
     public static final RegistryObject<Item> ITEM_MECHANICAL_SIFTER = fromBlock(MECHANICAL_SIFTER);
     public static final RegistryObject<Item> ITEM_MECHANICAL_INPUT_MODULE = fromBlock(MECHANICAL_INPUT_MODULE);
+    public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_INPUT = fromBlock(MULTIBLOCK_ITEM_INPUT);
+    public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_OUTPUT = fromBlock(MULTIBLOCK_ITEM_OUTPUT);
     public static final RegistryObject<Item> ITEM_PULLEY_SMALL_WOOD = fromBlock(PULLEY_SMALL_WOOD);
     public static final RegistryObject<Item> ITEM_PULLEY_LARGE_WOOD = fromBlock(PULLEY_LARGE_WOOD);
     public static final RegistryObject<Item> ITEM_CONVEYOR_ROLLER = fromBlock(CONVEYOR_ROLLER);
