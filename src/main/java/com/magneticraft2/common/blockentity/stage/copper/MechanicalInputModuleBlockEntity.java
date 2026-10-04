@@ -100,20 +100,70 @@ public class MechanicalInputModuleBlockEntity
         BlockState state =
                 level.getBlockState(worldPosition);
 
-        if (state.hasProperty(
+        if (!state.hasProperty(
                 MechanicalInputModuleBlock.FORMED
-        ) && state.getValue(
-                MechanicalInputModuleBlock.FORMED
-        ) != formed) {
+        )) {
+            return;
+        }
+
+        BlockState updated =
+                state.setValue(
+                        MechanicalInputModuleBlock.FORMED,
+                        formed
+                );
+
+        if (formed
+                && state.hasProperty(DirectionalBlock.FACING)) {
+            Direction structureAxis =
+                    directionFromController();
+
+            if (structureAxis != null) {
+                updated =
+                        updated.setValue(
+                                DirectionalBlock.FACING,
+                                structureAxis
+                        );
+            }
+        }
+
+        if (updated != state) {
             level.setBlock(
                     worldPosition,
-                    state.setValue(
-                            MechanicalInputModuleBlock.FORMED,
-                            formed
-                    ),
+                    updated,
                     Block.UPDATE_CLIENTS
             );
         }
+    }
+
+    @Nullable
+    private Direction directionFromController() {
+        BlockPos controllerPos =
+                new BlockPos(
+                        controllerX,
+                        controllerY,
+                        controllerZ
+                );
+
+        int dx =
+                worldPosition.getX()
+                        - controllerPos.getX();
+        int dz =
+                worldPosition.getZ()
+                        - controllerPos.getZ();
+
+        if (Math.abs(dx) > Math.abs(dz)) {
+            return dx >= 0
+                    ? Direction.EAST
+                    : Direction.WEST;
+        }
+
+        if (dz != 0) {
+            return dz >= 0
+                    ? Direction.SOUTH
+                    : Direction.NORTH;
+        }
+
+        return null;
     }
 
     @Override
