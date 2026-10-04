@@ -42,12 +42,33 @@ public class MechanicalOreWasherBlock
     public static final BooleanProperty IS_FORMED =
             BooleanProperty.create("is_formed");
 
-    // Canonical SOUTH structure: 3 wide, 2 high, 3 long with the controller
-    // centered in the rear row.
+    // Canonical SOUTH collision follows the actual formed machine instead
+    // of claiming the whole 3x2x3 bounding box is solid.
     private static final VoxelShape FORMED_SOUTH =
-            Block.box(
-                    -16.0D, 0.0D, 0.0D,
-                    32.0D, 32.0D, 48.0D
+            VoxelShapeUtils.combine(
+                    // foundation skids and cross ties
+                    Block.box(-14, 0, 1, -11, 3, 47),
+                    Block.box(27, 0, 1, 30, 3, 47),
+                    Block.box(-14, 2, 2, 30, 5, 5),
+                    Block.box(-14, 2, 22, 30, 5, 25),
+                    Block.box(-14, 2, 43, 30, 5, 46),
+
+                    // timber A-frame
+                    Block.box(-13, 3, 7, -10, 27, 10),
+                    Block.box(26, 3, 7, 29, 27, 10),
+                    Block.box(-13, 3, 34, -10, 27, 37),
+                    Block.box(26, 3, 34, 29, 27, 37),
+                    Block.box(-13, 26, 7, 29, 29, 10),
+                    Block.box(-13, 26, 34, 29, 29, 37),
+
+                    // trough and rotating drum envelope
+                    Block.box(-12, 5, 9, 28, 13, 41),
+                    Block.box(-1, 9, 8, 17, 27, 40),
+
+                    // feed and discharge chutes
+                    Block.box(-5, 18, 0, 21, 25, 10),
+                    Block.box(-9, 5, 39, 5, 9, 48),
+                    Block.box(11, 5, 39, 25, 9, 48)
             );
 
     public MechanicalOreWasherBlock() {
@@ -203,6 +224,20 @@ public class MechanicalOreWasherBlock
     }
 
     @Override
+    public VoxelShape getInteractionShape(
+            BlockState state,
+            BlockGetter level,
+            BlockPos pos) {
+        return state.getValue(IS_FORMED)
+                ? getFormedShape(state)
+                : super.getInteractionShape(
+                        state,
+                        level,
+                        pos
+                );
+    }
+
+    @Override
     public VoxelShape getVisualShape(
             BlockState state,
             BlockGetter level,
@@ -250,17 +285,17 @@ public class MechanicalOreWasherBlock
 
         return switch (facing) {
             case SOUTH -> FORMED_SOUTH;
-            case NORTH -> VoxelShapeUtils.rotateHorizontal(
+            case NORTH -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.SOUTH
+                    Rotation.CLOCKWISE_180
             );
-            case EAST -> VoxelShapeUtils.rotateHorizontal(
+            case EAST -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.WEST
+                    Rotation.COUNTERCLOCKWISE_90
             );
-            case WEST -> VoxelShapeUtils.rotateHorizontal(
+            case WEST -> VoxelShapeUtils.rotate(
                     FORMED_SOUTH,
-                    Direction.EAST
+                    Rotation.CLOCKWISE_90
             );
             default -> FORMED_SOUTH;
         };
