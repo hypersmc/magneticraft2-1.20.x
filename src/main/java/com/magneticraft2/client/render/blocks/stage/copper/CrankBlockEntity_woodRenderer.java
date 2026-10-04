@@ -522,6 +522,11 @@ public class CrankBlockEntity_woodRenderer
         vertex(consumer, pose, packedLight,
                 x2, y2, z2, 1.0F, 1.0F,
                 nx, ny, nz);
+        // entityCutoutNoCull is emitted as quads. Repeat the center vertex so
+        // this triangular fan slice is a valid degenerate quad.
+        vertex(consumer, pose, packedLight,
+                x0, y0, z0, 0.5F, 0.5F,
+                nx, ny, nz);
     }
 
     private void quad(
