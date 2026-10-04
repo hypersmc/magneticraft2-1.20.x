@@ -8,6 +8,8 @@ import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEnti
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalBrakeBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalBellowsBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
@@ -71,6 +73,8 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<OverloadDisconnectBlockEntity_wood>> OVERLOAD_DISCONNECT_BE_WOOD = BLOCK_ENTITIES.register("overload_disconnect_wood", () -> BlockEntityType.Builder.of(OverloadDisconnectBlockEntity_wood::new, BlockRegistry.OVERLOAD_DISCONNECT_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalBrakeBlockEntity_wood>> MECHANICAL_BRAKE_BE_WOOD = BLOCK_ENTITIES.register("mechanical_brake_wood", () -> BlockEntityType.Builder.of(MechanicalBrakeBlockEntity_wood::new, BlockRegistry.MECHANICAL_BRAKE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<CrankBlockEntity_wood>> CRANK_BE_WOOD = BLOCK_ENTITIES.register("crank_wood", () -> BlockEntityType.Builder.of(CrankBlockEntity_wood::new, BlockRegistry.CRANK_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalBellowsBlockEntity>> MECHANICAL_BELLOWS_BE = BLOCK_ENTITIES.register("mechanical_bellows", () -> BlockEntityType.Builder.of(MechanicalBellowsBlockEntity::new, BlockRegistry.MECHANICAL_BELLOWS.get()).build(null));
+    public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<ConveyorRollerBlockEntity>> CONVEYOR_ROLLER_BE =
             BLOCK_ENTITIES.register("conveyor_roller", () ->
                     BlockEntityType.Builder.of(
