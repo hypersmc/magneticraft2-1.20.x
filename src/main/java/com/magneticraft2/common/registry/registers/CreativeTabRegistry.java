@@ -78,6 +78,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_INPUT_MODULE.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_INPUT.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_OUTPUT.get());
+                        entries.accept(ItemRegistry.ITEM_MULTIBLOCK_FLUID_INPUT.get());
                         entries.accept(ItemRegistry.ITEM_CRUSHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_WASHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_TIN_CONCENTRATE.get());

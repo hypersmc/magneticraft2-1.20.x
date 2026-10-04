@@ -264,7 +264,11 @@ public class MechanicalOreWasherBlockEntityRenderer
         float maxX = 21.5F / 16.0F;
         float minZ = -4.5F / 16.0F;
         float maxZ = 21.5F / 16.0F;
-        float y = 11.65F / 16.0F;
+        float fill =
+                washer.getWaterFillRatio();
+        float y =
+                (7.25F + 4.40F * fill)
+                        / 16.0F;
 
         VertexConsumer consumer =
                 buffer.getBuffer(RenderType.translucent());

@@ -24,6 +24,7 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
     private final int processTime;
     private final float minSpeed;
     private final float torque;
+    private final int waterAmount;
 
     public MechanicalOreWasherRecipe(
             ResourceLocation id,
@@ -33,7 +34,8 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
             float byproductChance,
             int processTime,
             float minSpeed,
-            float torque) {
+            float torque,
+            int waterAmount) {
         this.id = id;
         this.input = input;
         this.output = output;
@@ -42,6 +44,7 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
         this.processTime = Math.max(1, processTime);
         this.minSpeed = Math.max(0.0F, minSpeed);
         this.torque = Math.max(0.0F, torque);
+        this.waterAmount = Math.max(1, waterAmount);
     }
 
     @Override
@@ -86,6 +89,10 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
 
     public float getTorque() {
         return torque;
+    }
+
+    public int getWaterAmount() {
+        return waterAmount;
     }
 
     @Override
@@ -141,6 +148,9 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
             float torque = json.has("torque")
                     ? json.get("torque").getAsFloat()
                     : 3.0F;
+            int waterAmount = json.has("water")
+                    ? json.get("water").getAsInt()
+                    : 250;
 
             return new MechanicalOreWasherRecipe(
                     id,
@@ -150,7 +160,8 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
                     byproductChance,
                     processTime,
                     minSpeed,
-                    torque
+                    torque,
+                    waterAmount
             );
         }
 
@@ -166,7 +177,8 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
                     buffer.readFloat(),
                     buffer.readInt(),
                     buffer.readFloat(),
-                    buffer.readFloat()
+                    buffer.readFloat(),
+                    buffer.readVarInt()
             );
         }
 
@@ -181,6 +193,7 @@ public class MechanicalOreWasherRecipe implements Recipe<Container> {
             buffer.writeInt(recipe.processTime);
             buffer.writeFloat(recipe.minSpeed);
             buffer.writeFloat(recipe.torque);
+            buffer.writeVarInt(recipe.waterAmount);
         }
 
         private static ItemStack readStack(JsonObject json) {

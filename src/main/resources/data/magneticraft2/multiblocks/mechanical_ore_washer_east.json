@@ -20,7 +20,7 @@
         ],
         [
           "Frame",
-          "Copper",
+          "FluidInput",
           "Frame"
         ]
       ],
@@ -49,7 +49,8 @@
       "Air": "minecraft:air",
       "MechanicalInput": "magneticraft2:mechanical_input_module",
       "ItemInput": "magneticraft2:multiblock_item_input",
-      "ItemOutput": "magneticraft2:multiblock_item_output"
+      "ItemOutput": "magneticraft2:multiblock_item_output",
+      "FluidInput": "magneticraft2:multiblock_fluid_input"
     }
   },
   "settings": {
@@ -57,7 +58,7 @@
     "inventory": true,
     "power": false,
     "fuel": false,
-    "fluid": false,
+    "fluid": true,
     "inputs": [],
     "outputs": []
   }

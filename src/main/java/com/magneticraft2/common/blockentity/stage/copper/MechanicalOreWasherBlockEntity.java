@@ -30,10 +30,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +63,23 @@ public class MechanicalOreWasherBlockEntity
     private int totalProcessTime = 160;
     private boolean processing = false;
     private boolean hasWater = false;
+
+    public static final int WATER_CAPACITY = 4000;
+
+    private final FluidTank waterTank =
+            new FluidTank(
+                    WATER_CAPACITY,
+                    stack -> stack.getFluid() == Fluids.WATER
+            ) {
+                @Override
+                protected void onContentsChanged() {
+                    setChanged();
+                    sync();
+                }
+            };
+
+    private LazyOptional<IFluidHandler> waterCapability =
+            LazyOptional.of(() -> waterTank);
 
     // Client-only visual accumulator for the internal leather drive belt.
     private double clientBeltTravelDistance = 0.0D;
@@ -87,6 +111,27 @@ public class MechanicalOreWasherBlockEntity
 
     public boolean hasWaterSupply() {
         return hasWater;
+    }
+
+    public int getWaterAmount() {
+        return waterTank.getFluidAmount();
+    }
+
+    public int getWaterCapacity() {
+        return waterTank.getCapacity();
+    }
+
+    public float getWaterFillRatio() {
+        return waterTank.getCapacity() <= 0
+                ? 0.0F
+                : Math.max(
+                        0.0F,
+                        Math.min(
+                                1.0F,
+                                waterTank.getFluidAmount()
+                                        / (float) waterTank.getCapacity()
+                        )
+                );
     }
 
     public ItemStack getInputStack() {
@@ -140,7 +185,7 @@ public class MechanicalOreWasherBlockEntity
         }
 
         boolean newWater =
-                findWaterSupply();
+                waterTank.getFluidAmount() > 0;
 
         if (newWater != hasWater) {
             hasWater = newWater;
@@ -178,7 +223,8 @@ public class MechanicalOreWasherBlockEntity
                         : input.getOrCreateGearNode();
 
         boolean canAttempt =
-                hasWater
+                waterTank.getFluidAmount()
+                        >= recipe.getWaterAmount()
                         && inputNode != null
                         && inputNode.getEffectiveSpeed()
                         >= recipe.getMinSpeed()
@@ -220,6 +266,10 @@ public class MechanicalOreWasherBlockEntity
                 0,
                 1,
                 false
+        );
+        waterTank.drain(
+                recipe.getWaterAmount(),
+                IFluidHandler.FluidAction.EXECUTE
         );
         insertOutput(1, output);
 
@@ -356,42 +406,6 @@ public class MechanicalOreWasherBlockEntity
                             worldPosition
                     );
         }
-    }
-
-    private boolean findWaterSupply() {
-        if (level == null) {
-            return false;
-        }
-
-        Direction facing =
-                getBlockState()
-                        .getValue(
-                                MechanicalOreWasherBlock.FACING
-                        );
-        Direction side =
-                facing.getClockWise();
-
-        // The controller is now the centre block of the 3x3 footprint, matching
-        // the established multiblock model coordinate envelope (-16..32).
-        // A source two blocks to either side sits just outside the formed frame
-        // and feeds the central trough.
-        for (Direction direction :
-                new Direction[]{side, side.getOpposite()}) {
-            BlockPos waterPos =
-                    worldPosition
-                            .relative(direction, 2);
-
-            if (level.getFluidState(waterPos)
-                    .isSource()
-                    && level.getFluidState(waterPos)
-                    .is(
-                            net.minecraft.tags.FluidTags.WATER
-                    )) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Nullable
@@ -744,6 +758,14 @@ public class MechanicalOreWasherBlockEntity
         hasWater =
                 tag.getBoolean("HasWater");
 
+        if (tag.contains("WaterTank")) {
+            waterTank.readFromNBT(
+                    tag.getCompound("WaterTank")
+            );
+            hasWater =
+                    waterTank.getFluidAmount() > 0;
+        }
+
         MultiblockPersistentData data =
                 loadMultiblockData(tag);
         blueprintName =
@@ -775,6 +797,12 @@ public class MechanicalOreWasherBlockEntity
                 "HasWater",
                 hasWater
         );
+        tag.put(
+                "WaterTank",
+                waterTank.writeToNBT(
+                        new CompoundTag()
+                )
+        );
 
         saveMultiblockData(
                 tag,
@@ -782,6 +810,30 @@ public class MechanicalOreWasherBlockEntity
                 formed,
                 replacementModel
         );
+    }
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(
+            @NotNull Capability<T> cap,
+            @Nullable Direction side) {
+        if (cap == ForgeCapabilities.FLUID_HANDLER) {
+            return waterCapability.cast();
+        }
+
+        return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        waterCapability.invalidate();
+    }
+
+    @Override
+    public void reviveCaps() {
+        super.reviveCaps();
+        waterCapability =
+                LazyOptional.of(() -> waterTank);
     }
 
     @Override

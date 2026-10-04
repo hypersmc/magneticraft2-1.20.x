@@ -14,5 +14,6 @@
   "byproduct_chance": 0.25,
   "process_time": 140,
   "min_speed": 20,
-  "torque": 3
+  "torque": 3,
+  "water": 250
 }
