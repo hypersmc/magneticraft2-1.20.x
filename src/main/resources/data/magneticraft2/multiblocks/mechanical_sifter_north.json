@@ -1,0 +1,51 @@
+{
+  "name": "mechanical_sifter_north",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      2
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "Copper",
+          "Frame",
+          "Copper"
+        ],
+        [
+          "Frame",
+          "Controller",
+          "Frame"
+        ]
+      ],
+      "layer2": [
+        [
+          "Frame",
+          "Frame",
+          "Frame"
+        ],
+        [
+          "Frame",
+          "Air",
+          "Frame"
+        ]
+      ]
+    },
+    "blocks": {
+      "Controller": "magneticraft2:mechanical_sifter",
+      "Frame": "minecraft:oak_planks",
+      "Copper": "minecraft:copper_block",
+      "Air": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/mechanical_sifter_north",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": []
+  }
+}
