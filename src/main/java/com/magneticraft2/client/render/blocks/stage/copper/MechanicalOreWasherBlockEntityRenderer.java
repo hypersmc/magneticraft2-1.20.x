@@ -98,8 +98,20 @@ public class MechanicalOreWasherBlockEntityRenderer
         poseStack.pushPose();
         applySouthFacingTransform(poseStack, facing);
 
+        // The canonical moving model spins around +Z. Rotating that model to
+        // NORTH/WEST maps the visual axis to -Z/-X, while Gear V2 shaft
+        // renderers intentionally use the positive axis for both facings.
+        // Mirror the angle for those two facings so the internal pulley/drum
+        // stays phase-correct with the physical input shaft.
+        float facingRotationSign =
+                (facing == Direction.NORTH
+                        || facing == Direction.WEST)
+                        ? -1.0F
+                        : 1.0F;
+
         float inputRotation =
-                washer.getMechanicalVisualRotationDegrees(partialTicks);
+                washer.getMechanicalVisualRotationDegrees(partialTicks)
+                        * facingRotationSign;
         float drumRotation =
                 inputRotation * DRUM_SPEED_RATIO;
 
@@ -134,7 +146,7 @@ public class MechanicalOreWasherBlockEntityRenderer
                 -washer.getMechanicalVisualBeltTravelDistance(
                         partialTicks,
                         INPUT_PULLEY_RADIUS
-                )
+                ) * facingRotationSign
         );
 
         poseStack.pushPose();

@@ -40,8 +40,17 @@ public class MechanicalInputModuleBlockEntityRenderer
             int packedOverlay) {
         BlockState state = blockEntity.getBlockState();
 
-        if (!state.hasProperty(MechanicalInputModuleBlock.ROTATING)
-                || !state.getValue(MechanicalInputModuleBlock.ROTATING)) {
+        boolean formed =
+                state.hasProperty(MechanicalInputModuleBlock.FORMED)
+                        && state.getValue(MechanicalInputModuleBlock.FORMED);
+        boolean rotating =
+                state.hasProperty(MechanicalInputModuleBlock.ROTATING)
+                        && state.getValue(MechanicalInputModuleBlock.ROTATING);
+
+        // A formed input module always leaves the shaft to the BER. This avoids
+        // falling back to the full static module model when the network stops,
+        // which produced the oversized copper slab seen on the washer.
+        if (!formed && !rotating) {
             return;
         }
 

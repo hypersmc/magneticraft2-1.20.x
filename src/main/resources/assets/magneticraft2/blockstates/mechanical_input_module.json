@@ -7,7 +7,7 @@
       "model": "magneticraft2:block/mechanical_input_module_housing"
     },
     "facing=up,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module"
+      "model": "magneticraft2:block/mechanical_input_module_housing"
     },
     "facing=up,formed=true,rotating=true": {
       "model": "magneticraft2:block/mechanical_input_module_housing"
@@ -21,7 +21,7 @@
       "x": 180
     },
     "facing=down,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_housing",
       "x": 180
     },
     "facing=down,formed=true,rotating=true": {
@@ -37,7 +37,7 @@
       "x": 90
     },
     "facing=north,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_housing",
       "x": 90
     },
     "facing=north,formed=true,rotating=true": {
@@ -53,7 +53,7 @@
       "x": 270
     },
     "facing=south,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_housing",
       "x": 270
     },
     "facing=south,formed=true,rotating=true": {
@@ -71,7 +71,7 @@
       "y": 90
     },
     "facing=east,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_housing",
       "x": 90,
       "y": 90
     },
@@ -91,7 +91,7 @@
       "y": 270
     },
     "facing=west,formed=true,rotating=false": {
-      "model": "magneticraft2:block/mechanical_input_module",
+      "model": "magneticraft2:block/mechanical_input_module_housing",
       "x": 90,
       "y": 270
     },
