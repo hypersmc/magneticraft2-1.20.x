@@ -86,11 +86,11 @@
         },
         "symmetrical": false
       },
-      "text": "Build the 3x2x3 frame around the controller, then right-click the controller to form it. The controller is the centre block of the footprint; the Mechanical Input Bearing is one block forward from it at the edge of the structure."
+      "text": "Build the 3x2x3 frame around the controller, then right-click the controller to form it. The Washer Controller is the CENTER block of the bottom 3x3 footprint. The Mechanical Input Bearing is the middle block of the front edge."
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Connect a shaft to the exposed Mechanical Input Bearing. The controller is centered in the 3x3 footprint, and the machine extends one block behind and one block ahead of it. Place a water source two blocks to either side of the controller to feed the central trough.$(br2)Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance."
+      "text": "$(bold)Washer operation$()$(br2)The Washer is centered on its controller: it occupies one block behind, one block ahead and one block to either side. Connect Gear V2 to the Mechanical Input Bearing on the front edge. Place a water source two blocks to either side of the controller to feed the trough.$(br2)Recipes define minimum RPM, torque, process time and optional gangue/byproduct chance."
     },
     {
       "type": "patchouli:crafting",
