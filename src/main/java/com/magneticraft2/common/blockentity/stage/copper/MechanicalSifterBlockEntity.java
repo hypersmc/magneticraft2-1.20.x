@@ -425,6 +425,7 @@ public class MechanicalSifterBlockEntity
             );
         }
 
+        requestModelDataUpdate();
         sync();
         return controller;
     }
