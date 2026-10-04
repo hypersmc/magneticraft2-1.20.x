@@ -218,7 +218,7 @@ public class MechanicalBellowsBlockEntityRenderer
                         consumer,
                         packedLight,
                         r * 2.0D,
-                        0.035D,
+                        0.045D,
                         0.035D
                 );
                 stack.popPose();
@@ -233,7 +233,7 @@ public class MechanicalBellowsBlockEntityRenderer
                         stack,
                         consumer,
                         packedLight,
-                        0.035D,
+                        0.045D,
                         r * 2.0D,
                         0.035D
                 );
@@ -252,8 +252,13 @@ public class MechanicalBellowsBlockEntityRenderer
             double r1) {
 
         double dz = z1 - z0;
+        // Use the larger fold radius for the panel span. Using the smaller
+        // radius left the four sloped sheets short at every wide/narrow
+        // transition, creating visible holes straight through the bellows.
+        // A tiny overlap also hides floating-point/raster seams at the corners.
         double panelWidth =
-                Math.min(r0, r1) * 2.0D;
+                Math.max(r0, r1) * 2.0D
+                        + 0.04D;
 
         // Top and bottom leather sheets.
         for (double sign : new double[]{-1.0D, 1.0D}) {
@@ -288,8 +293,8 @@ public class MechanicalBellowsBlockEntityRenderer
                     consumer,
                     packedLight,
                     panelWidth,
-                    0.035D,
-                    length + 0.015D
+                    0.045D,
+                    length + 0.035D
             );
             stack.popPose();
         }
@@ -326,9 +331,9 @@ public class MechanicalBellowsBlockEntityRenderer
                     stack,
                     consumer,
                     packedLight,
-                    0.035D,
+                    0.045D,
                     panelWidth,
-                    length + 0.015D
+                    length + 0.035D
             );
             stack.popPose();
         }
