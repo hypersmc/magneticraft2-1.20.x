@@ -125,9 +125,7 @@ public class MechanicalSifterBlock
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
-        return state.getValue(IS_FORMED)
-                ? RenderShape.INVISIBLE
-                : RenderShape.MODEL;
+        return RenderShape.MODEL;
     }
 
     @Override
