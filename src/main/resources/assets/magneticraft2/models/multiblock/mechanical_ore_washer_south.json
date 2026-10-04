@@ -1,5 +1,5 @@
 {
-  "credit": "Magneticraft2 Mechanical Ore Washer - south item output module owns forward lip",
+  "credit": "Magneticraft2 Mechanical Ore Washer - south output shelf moved as one assembly",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -1168,12 +1168,12 @@
       "from": [
         2,
         9,
-        16
+        21
       ],
       "to": [
         14,
         11,
-        21
+        26
       ],
       "faces": {
         "north": {
@@ -1304,12 +1304,12 @@
       "from": [
         1,
         9.5,
-        16
+        21
       ],
       "to": [
         15,
         11,
-        22
+        27
       ],
       "faces": {
         "north": {

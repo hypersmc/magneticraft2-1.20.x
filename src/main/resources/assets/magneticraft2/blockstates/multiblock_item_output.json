@@ -1,27 +1,7 @@
 {
   "variants": {
-    "facing=north": {
+    "": {
       "model": "magneticraft2:block/multiblock_item_output"
-    },
-    "facing=south": {
-      "model": "magneticraft2:block/multiblock_item_output",
-      "y": 180
-    },
-    "facing=east": {
-      "model": "magneticraft2:block/multiblock_item_output",
-      "y": 90
-    },
-    "facing=west": {
-      "model": "magneticraft2:block/multiblock_item_output",
-      "y": 270
-    },
-    "facing=up": {
-      "model": "magneticraft2:block/multiblock_item_output",
-      "x": 270
-    },
-    "facing=down": {
-      "model": "magneticraft2:block/multiblock_item_output",
-      "x": 90
     }
   }
 }

@@ -3,19 +3,15 @@ package com.magneticraft2.common.block.stage.copper;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -30,9 +26,6 @@ import org.jetbrains.annotations.Nullable;
  * interact with the formed machine.
  */
 public class MultiblockItemPortBlock extends BaseEntityBlock {
-    public static final net.minecraft.world.level.block.state.properties.DirectionProperty FACING =
-            DirectionalBlock.FACING;
-
     private final boolean output;
 
     public MultiblockItemPortBlock(boolean output) {
@@ -40,21 +33,10 @@ public class MultiblockItemPortBlock extends BaseEntityBlock {
                 .strength(3.5F)
                 .noOcclusion());
         this.output = output;
-
-        registerDefaultState(
-                stateDefinition.any()
-                        .setValue(FACING, Direction.NORTH)
-        );
     }
 
     public boolean isOutput() {
         return output;
-    }
-
-    @Override
-    protected void createBlockStateDefinition(
-            StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
     }
 
     @Override
