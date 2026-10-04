@@ -152,8 +152,8 @@ public class FlywheelBlockEntity_woodRenderer
                     woodConsumer,
                     packedLight,
                     0.16D,
-                    0.23D,
-                    0.105D
+                    0.105D,
+                    0.23D
             );
             stack.popPose();
         }
