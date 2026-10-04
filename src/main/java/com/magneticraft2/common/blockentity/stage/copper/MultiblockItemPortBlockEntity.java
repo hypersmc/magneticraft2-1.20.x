@@ -97,6 +97,25 @@ public class MultiblockItemPortBlockEntity
                 : null;
     }
 
+    public ItemStack getInputStackForDisplay() {
+        if (isOutputPort()) {
+            return ItemStack.EMPTY;
+        }
+
+        BaseBlockEntityMagneticraft2 controller =
+                getController();
+
+        if (controller == null
+                || controller.itemHandler == null
+                || controller.itemHandler.getSlots() <= 0) {
+            return ItemStack.EMPTY;
+        }
+
+        return controller.itemHandler
+                .getStackInSlot(0)
+                .copy();
+    }
+
     public boolean insertFromPlayer(ItemStack stack) {
         if (isOutputPort()) {
             return false;

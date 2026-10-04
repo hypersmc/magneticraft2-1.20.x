@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlock
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -83,6 +84,23 @@ public class MultiblockItemPortBlock extends BaseEntityBlock {
                 if (!player.getAbilities().instabuild) {
                     held.shrink(1);
                 }
+
+                ItemStack stored =
+                        port.getInputStackForDisplay();
+
+                if (!stored.isEmpty()) {
+                    player.displayClientMessage(
+                            Component.literal(
+                                    "Input: "
+                                            + stored.getCount()
+                                            + "x "
+                            ).append(
+                                    stored.getHoverName()
+                            ),
+                            true
+                    );
+                }
+
                 return InteractionResult.CONSUME;
             }
         }

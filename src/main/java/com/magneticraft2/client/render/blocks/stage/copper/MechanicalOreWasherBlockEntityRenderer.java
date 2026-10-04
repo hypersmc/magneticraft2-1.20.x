@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -69,6 +70,8 @@ public class MechanicalOreWasherBlockEntityRenderer
             );
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
+            new HashMap<>();
+    private final Map<Long, Long> processingEffectTicks =
             new HashMap<>();
 
     public MechanicalOreWasherBlockEntityRenderer(
@@ -183,16 +186,24 @@ public class MechanicalOreWasherBlockEntityRenderer
         if (washer.hasWaterSupply()) {
             renderWaterSurface(
                     washer,
+                    partialTicks,
                     poseStack,
                     buffer,
                     packedLight
             );
+
+            if (washer.isProcessing()) {
+                spawnProcessingEffects(washer);
+            }
         }
 
-        renderStoredItem(
-                washer, washer.getInputStack(),
-                0.5D, 0.82D, -0.62D, 0.32F, 301,
-                poseStack, buffer, packedLight, packedOverlay
+        renderInputItems(
+                washer,
+                partialTicks,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
         );
         renderStoredItem(
                 washer, washer.getOutputStack(),
@@ -238,6 +249,7 @@ public class MechanicalOreWasherBlockEntityRenderer
 
     private void renderWaterSurface(
             MechanicalOreWasherBlockEntity washer,
+            float partialTicks,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight) {
@@ -272,6 +284,15 @@ public class MechanicalOreWasherBlockEntityRenderer
         float y =
                 (7.50F + 3.10F * fill)
                         / 16.0F;
+
+        if (washer.isProcessing()) {
+            double visualTime =
+                    washer.getLevel().getGameTime()
+                            + partialTicks;
+            y += (float) Math.sin(
+                    visualTime * 0.65D
+            ) * (0.20F / 16.0F);
+        }
 
         VertexConsumer consumer =
                 buffer.getBuffer(RenderType.translucent());
@@ -318,6 +339,168 @@ public class MechanicalOreWasherBlockEntityRenderer
                 .uv2(packedLight)
                 .normal(pose.normal(), 0.0F, 1.0F, 0.0F)
                 .endVertex();
+    }
+
+    private void spawnProcessingEffects(
+            MechanicalOreWasherBlockEntity washer) {
+        if (washer.getLevel() == null) {
+            return;
+        }
+
+        long gameTime =
+                washer.getLevel().getGameTime();
+
+        if (gameTime % 4L != 0L) {
+            return;
+        }
+
+        long key =
+                washer.getBlockPos().asLong();
+        Long previous =
+                processingEffectTicks.get(key);
+
+        if (previous != null
+                && previous == gameTime) {
+            return;
+        }
+
+        processingEffectTicks.put(
+                key,
+                gameTime
+        );
+
+        double y =
+                washer.getBlockPos().getY()
+                        + (8.1D
+                        + 3.1D
+                        * washer.getWaterFillRatio())
+                        / 16.0D;
+
+        for (int i = 0; i < 2; i++) {
+            double x =
+                    washer.getBlockPos().getX()
+                            + 0.5D
+                            + (washer.getLevel()
+                            .random.nextDouble()
+                            - 0.5D) * 0.55D;
+            double z =
+                    washer.getBlockPos().getZ()
+                            + 0.5D
+                            + (washer.getLevel()
+                            .random.nextDouble()
+                            - 0.5D) * 0.55D;
+
+            washer.getLevel().addParticle(
+                    ParticleTypes.SPLASH,
+                    x,
+                    y,
+                    z,
+                    0.0D,
+                    0.025D,
+                    0.0D
+            );
+        }
+
+        washer.getLevel().addParticle(
+                ParticleTypes.BUBBLE_POP,
+                washer.getBlockPos().getX()
+                        + 0.5D,
+                y + 0.02D,
+                washer.getBlockPos().getZ()
+                        + 0.5D,
+                0.0D,
+                0.015D,
+                0.0D
+        );
+    }
+
+    private void renderInputItems(
+            MechanicalOreWasherBlockEntity washer,
+            float partialTicks,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            int packedOverlay) {
+        ItemStack stack =
+                washer.getInputStack();
+
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        int stationaryCount =
+                washer.isProcessing()
+                        ? Math.max(
+                                0,
+                                stack.getCount() - 1
+                        )
+                        : stack.getCount();
+
+        int visiblePile =
+                Math.min(
+                        stationaryCount,
+                        5
+                );
+
+        double[][] offsets = {
+                {0.00D, 0.000D, 0.00D},
+                {-0.075D, 0.018D, 0.045D},
+                {0.075D, 0.036D, 0.075D},
+                {-0.035D, 0.054D, 0.105D},
+                {0.050D, 0.072D, 0.135D}
+        };
+
+        for (int i = 0; i < visiblePile; i++) {
+            renderStoredItem(
+                    washer,
+                    stack,
+                    0.5D + offsets[i][0],
+                    0.82D + offsets[i][1],
+                    -0.62D + offsets[i][2],
+                    0.27F,
+                    301 + i,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    packedOverlay
+            );
+        }
+
+        if (!washer.isProcessing()) {
+            return;
+        }
+
+        double visualTime =
+                washer.getLevel() == null
+                        ? partialTicks
+                        : washer.getLevel()
+                        .getGameTime()
+                        + partialTicks;
+
+        double feedPhase =
+                0.5D
+                        + 0.5D
+                        * Math.sin(
+                                visualTime * 0.24D
+                        );
+
+        renderStoredItem(
+                washer,
+                stack,
+                0.5D,
+                0.83D
+                        + Math.sin(
+                                visualTime * 0.50D
+                        ) * 0.012D,
+                -0.60D
+                        + feedPhase * 0.34D,
+                0.30F,
+                399,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
     }
 
     private void applySouthFacingTransform(
