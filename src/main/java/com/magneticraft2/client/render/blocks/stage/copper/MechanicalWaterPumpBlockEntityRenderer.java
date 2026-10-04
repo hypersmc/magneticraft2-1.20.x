@@ -64,9 +64,12 @@ public class MechanicalWaterPumpBlockEntityRenderer
                 poseStack
         );
 
+        // The dedicated crank model is authored looking back toward the
+        // incoming shaft, so its local positive rotation is visually opposite
+        // Gear V2's shaft convention. Mirror only the rendered crank angle.
         poseStack.mulPose(
                 Axis.YP.rotationDegrees(
-                        pump.getVisualRotationDegrees(
+                        -pump.getVisualRotationDegrees(
                                 partialTicks
                         )
                 )
