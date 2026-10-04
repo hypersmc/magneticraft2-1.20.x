@@ -112,6 +112,14 @@ public class Clientsetup {
         String folderPath = "models/multiblock";
 
         // Get all resources in the multiblock folder
+        // BER-only block models are requested directly from ModelManager by
+        // ResourceLocation. Register them as top-level models so the baked model
+        // lookup cannot fall back to an empty/missing entry.
+        event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
+        event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
+        event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
+
         for (ResourceLocation resourceLocation : resourceManager.listResources(folderPath, path -> path.toString().endsWith(".json")).keySet()) {
             // Remove the "models/" prefix and ".json" suffix for registering the model
             String modelPath = resourceLocation.getPath().substring("models/".length(), resourceLocation.getPath().length() - ".json".length());
