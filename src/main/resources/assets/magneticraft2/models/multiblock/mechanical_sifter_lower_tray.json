@@ -3,7 +3,7 @@
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "copper": "minecraft:block/copper_block",
-    "mesh": "minecraft:block/iron_bars",
+    "mesh": "minecraft:block/light_gray_wool",
     "particle": "minecraft:block/oak_planks"
   },
   "elements": [
