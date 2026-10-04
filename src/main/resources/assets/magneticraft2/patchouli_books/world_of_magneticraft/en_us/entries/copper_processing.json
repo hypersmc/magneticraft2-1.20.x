@@ -53,12 +53,42 @@
     {
       "type": "text",
       "text": "$(bold)Why crush it?$()$(br2)Direct Primitive Furnace processing remains valid: one Chalcocite Ore gives one Copper Ingot plus Slag.$(br2)Crushing first improves the same furnace batch to $(bold)two Copper Ingots$() plus Slag. Your mechanical workshop therefore improves resource efficiency instead of existing only as a progression lock."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Ore Washer",
+      "recipe": "magneticraft2:mechanical_ore_washer",
+      "text": "The Ore Washer is a rotary trommel for crushed ore. Give its shaft at least the recipe's required speed/torque and keep a water source directly adjacent. The drum separates lighter gangue while producing a cleaner washed mineral."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Washer rules$()$(br2)The Washer is a real Gear V2 shaft node, so it can sit directly in a drivetrain. Recipes define their own minimum RPM, torque, processing time and optional byproduct chance.$(br2)Empty-hand right-click removes finished output first, then byproduct, then unprocessed input. The machine also exposes an item capability for later automation."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Sifter",
+      "recipe": "magneticraft2:mechanical_sifter",
+      "text": "The Sifter is driven by a Crank rather than a shaft. Place it directly on the Crank's linear-output side. The upper and lower screens shake in opposite motion and classify washed material into concentrate and optional gangue."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Crank-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)First Bronze$()$(br2)Combine three Copper Ingots with one Tin Ingot to prepare a Bronze Alloy Charge. Fire the charge with coal in the Primitive Furnace to produce four Bronze Ingots.$(br2)Making the first Bronze therefore proves that the Copper workshop can mine, crush, wash, classify and smelt an alloy feedstock."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Data-driven ore processing$()$(br2)Grinding, washing and sifting requirements now live in recipe JSON instead of being hard-coded into each machine. New minerals can define their own speed, torque, time, outputs and byproduct chance without another Java machine class.$(br2)This is the foundation for processing the rest of Magneticraft2's ore catalogue through later ages."
     }
   ],
   "extra_recipe_mappings": {
     "magneticraft2:primitive_anvil": 1,
     "magneticraft2:primitive_grinder_bmultiblock": 3,
-    "magneticraft2:primitive_grindertop": 3
+    "magneticraft2:primitive_grindertop": 3,
+    "magneticraft2:mechanical_ore_washer": 7,
+    "magneticraft2:mechanical_sifter": 9
   },
   "sortnum": 0,
   "read_by_default": true
