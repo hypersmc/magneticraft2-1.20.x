@@ -837,7 +837,7 @@ public class MechanicalOreWasherBlockEntity
     @Override
     public AABB getRenderBoundingBox() {
         return new AABB(worldPosition)
-                .inflate(3.0D);
+                .inflate(2.0D);
     }
 
     @Override
