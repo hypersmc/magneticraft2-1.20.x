@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.WeakHashMap;
 
 /**
@@ -1162,6 +1163,200 @@ public final class ItemBeltConnectionManager {
         return connection == null
                 ? (mechanicalDirection < 0 ? -1 : 1)
                 : transportDirection(connection, mechanicalDirection);
+    }
+
+    /**
+     * Extracts one transported item from the concrete belt cell (or roller)
+     * touched by automation.
+     *
+     * Belt cargo is intentionally not exposed as a fake IItemHandler: items
+     * have physical positions along a continuous moving run. This method lets
+     * machines such as the Mechanical Transfer Arm pick an item only when that
+     * item is actually passing through the block the machine is touching.
+     *
+     * @param filter item predicate supplied by the automation machine
+     * @param simulate when true, reports the item without removing it
+     */
+    public static ItemStack extractForAutomationAt(
+            Level level,
+            BlockPos targetPos,
+            Predicate<ItemStack> filter,
+            boolean simulate) {
+        if (level == null
+                || level.isClientSide
+                || targetPos == null) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemBeltConnection connection = null;
+
+        if (level.getBlockEntity(targetPos)
+                instanceof ItemBeltBlockEntity beltCell) {
+            BlockPos start =
+                    beltCell.getStartRoller();
+            BlockPos end =
+                    beltCell.getEndRoller();
+
+            if (start != null && end != null) {
+                if (level.getBlockEntity(start)
+                        instanceof ConveyorRollerBlockEntity startRoller) {
+                    ensureRegistered(startRoller);
+                }
+
+                Map<BeltKey, ItemBeltConnection> map =
+                        CONNECTIONS.get(level);
+
+                if (map != null) {
+                    connection =
+                            map.get(
+                                    BeltKey.of(
+                                            start,
+                                            end
+                                    )
+                            );
+                }
+            }
+        } else if (level.getBlockEntity(targetPos)
+                instanceof ConveyorRollerBlockEntity roller) {
+            ensureRegistered(roller);
+
+            BlockPos partner =
+                    roller.getItemBeltPartner();
+
+            if (partner != null) {
+                Map<BeltKey, ItemBeltConnection> map =
+                        CONNECTIONS.get(level);
+
+                if (map != null) {
+                    connection =
+                            map.get(
+                                    BeltKey.of(
+                                            roller.getBlockPos(),
+                                            partner
+                                    )
+                            );
+                }
+            }
+        }
+
+        if (connection == null
+                || !(level.getBlockEntity(
+                connection.key.start()
+        ) instanceof ConveyorRollerBlockEntity carrier)
+                || carrier.getTransportedItems().isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+
+        /*
+         * Select by the item's real rendered belt position rather than simply
+         * taking the first item owned by the connection. This matters on long
+         * belts: an arm beside cell 3 must not steal cargo currently at cell 12.
+         */
+        AABB pickupBounds =
+                new AABB(targetPos)
+                        .inflate(0.22D);
+        Vec3 targetCenter =
+                Vec3.atCenterOf(targetPos);
+
+        List<ConveyorRollerBlockEntity.TransportedItem> items =
+                carrier.getTransportedItems();
+
+        int bestIndex = -1;
+        double bestDistanceSqr =
+                Double.MAX_VALUE;
+
+        for (int i = 0; i < items.size(); i++) {
+            ConveyorRollerBlockEntity.TransportedItem transported =
+                    items.get(i);
+
+            ItemStack transportedStack =
+                    transported.getStack();
+
+            if (transportedStack.isEmpty()
+                    || (filter != null
+                    && !filter.test(
+                            transportedStack
+                    ))) {
+                continue;
+            }
+
+            Vec3 beltPosition =
+                    connection.transportRun
+                            .pointAt(
+                                    transported.getDistance()
+                            )
+                            .add(
+                                    connection.transportRun
+                                            .widthDirection()
+                                            .scale(
+                                                    transported
+                                                            .getLateralOffset()
+                                            )
+                            )
+                            .add(
+                                    connection.transportRun
+                                            .surfaceNormal()
+                                            .scale(
+                                                    ITEM_SURFACE_OFFSET
+                                                            + 0.04D
+                                            )
+                            );
+
+            Vec3 itemPosition =
+                    transported.isHandoffActive()
+                            ? transported
+                            .getHandoffOrigin()
+                            .lerp(
+                                    beltPosition,
+                                    transported
+                                            .getHandoffProgress()
+                            )
+                            : beltPosition;
+
+            if (!pickupBounds.contains(
+                    itemPosition
+            )) {
+                continue;
+            }
+
+            double distanceSqr =
+                    itemPosition.distanceToSqr(
+                            targetCenter
+                    );
+
+            if (distanceSqr
+                    < bestDistanceSqr) {
+                bestIndex = i;
+                bestDistanceSqr =
+                        distanceSqr;
+            }
+        }
+
+        if (bestIndex < 0) {
+            return ItemStack.EMPTY;
+        }
+
+        ConveyorRollerBlockEntity.TransportedItem selected =
+                items.get(bestIndex);
+        ItemStack result =
+                selected.getStack().copy();
+        result.setCount(1);
+
+        if (simulate) {
+            return result;
+        }
+
+        ItemStack stored =
+                selected.getStack();
+
+        if (stored.getCount() <= 1) {
+            items.remove(bestIndex);
+        } else {
+            stored.shrink(1);
+        }
+
+        carrier.syncTransportedItems();
+        return result;
     }
 
     /**
