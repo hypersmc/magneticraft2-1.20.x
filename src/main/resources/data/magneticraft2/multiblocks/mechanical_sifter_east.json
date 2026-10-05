@@ -10,7 +10,7 @@
       "layer1": [
         [
           "Frame",
-          "Copper"
+          "ItemOutput"
         ],
         [
           "Controller",
@@ -18,7 +18,7 @@
         ],
         [
           "Frame",
-          "Copper"
+          "ItemInput"
         ]
       ],
       "layer2": [
@@ -40,6 +40,8 @@
       "Controller": "magneticraft2:mechanical_sifter",
       "Frame": "minecraft:oak_planks",
       "Copper": "minecraft:copper_block",
+      "ItemInput": "magneticraft2:multiblock_item_input",
+      "ItemOutput": "magneticraft2:multiblock_item_output",
       "Air": "minecraft:air"
     }
   },
