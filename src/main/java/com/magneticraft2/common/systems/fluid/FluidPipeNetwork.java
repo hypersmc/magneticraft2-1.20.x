@@ -128,21 +128,36 @@ public final class FluidPipeNetwork {
                     continue;
                 }
 
-                blockEntity
-                        .getCapability(
-                                ForgeCapabilities.FLUID_HANDLER,
-                                endpointSide
-                        )
-                        .resolve()
-                        .ifPresent(
-                                handler -> endpoints.add(
-                                        new Endpoint(
-                                                neighbour.immutable(),
-                                                endpointSide,
-                                                handler
-                                        )
+                IFluidHandler handler =
+                        blockEntity
+                                .getCapability(
+                                        ForgeCapabilities.FLUID_HANDLER,
+                                        endpointSide
                                 )
-                        );
+                                .orElse(null);
+
+                // A number of mods expose a valid fluid capability only when
+                // queried unsided. Respect the connected face first, then fall
+                // back to the generic handler just like our item automation.
+                if (handler == null) {
+                    handler =
+                            blockEntity
+                                    .getCapability(
+                                            ForgeCapabilities.FLUID_HANDLER,
+                                            null
+                                    )
+                                    .orElse(null);
+                }
+
+                if (handler != null) {
+                    endpoints.add(
+                            new Endpoint(
+                                    neighbour.immutable(),
+                                    endpointSide,
+                                    handler
+                            )
+                    );
+                }
             }
         }
 
