@@ -129,10 +129,14 @@ public class MechanicalTransferArmBlockEntityRenderer
                     );
         }
 
+        Direction operatorFacing =
+                facing.getOpposite();
+
         if (source != null) {
             renderControlButton(
                     ORANGE_BUTTON_MODEL,
                     facing,
+                    operatorFacing,
                     source,
                     poseStack,
                     buffer,
@@ -145,6 +149,7 @@ public class MechanicalTransferArmBlockEntityRenderer
             renderControlButton(
                     BLUE_BUTTON_MODEL,
                     facing,
+                    operatorFacing,
                     destination,
                     poseStack,
                     buffer,
@@ -155,6 +160,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderFilter(
                 arm,
+                operatorFacing,
                 poseStack,
                 buffer,
                 packedLight,
@@ -164,6 +170,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         renderPanelReadout(
                 arm,
                 facing,
+                operatorFacing,
                 poseStack,
                 buffer,
                 packedLight
@@ -441,6 +448,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderFilter(
             MechanicalTransferArmBlockEntity arm,
+            Direction operatorFacing,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight,
@@ -452,27 +460,13 @@ public class MechanicalTransferArmBlockEntityRenderer
             return;
         }
 
-        Direction facing =
-                Direction.NORTH;
-        BlockState state =
-                arm.getBlockState();
-
-        if (state.hasProperty(
-                net.minecraft.world.level.block.DirectionalBlock.FACING
-        )) {
-            facing =
-                    state.getValue(
-                            net.minecraft.world.level.block.DirectionalBlock.FACING
-                    );
-        }
-
         poseStack.pushPose();
 
         rotateAroundY(
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(facing)
+                yawFor(operatorFacing)
         );
 
         // The physical filter rack is now on the front face of the stationary
@@ -622,7 +616,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderControlButton(
             ResourceLocation model,
-            Direction facing,
+            Direction machineFacing,
+            Direction operatorFacing,
             Direction configuredSide,
             PoseStack poseStack,
             MultiBufferSource buffer,
@@ -634,18 +629,18 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(facing)
+                yawFor(operatorFacing)
         );
 
         double xOffset = 0.0D;
         double yOffset = 0.0D;
 
-        if (configuredSide == facing.getOpposite()) {
+        if (configuredSide == machineFacing.getOpposite()) {
             yOffset = -1.64D / 16.0D;
-        } else if (configuredSide == facing.getClockWise()) {
+        } else if (configuredSide == machineFacing.getCounterClockWise()) {
             xOffset = -2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
-        } else if (configuredSide == facing.getCounterClockWise()) {
+        } else if (configuredSide == machineFacing.getClockWise()) {
             xOffset = 2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
         }
@@ -669,7 +664,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderPanelReadout(
             MechanicalTransferArmBlockEntity arm,
-            Direction facing,
+            Direction machineFacing,
+            Direction operatorFacing,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight) {
@@ -679,7 +675,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(facing)
+                yawFor(operatorFacing)
         );
 
         Direction source =
@@ -689,7 +685,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderPanelButtonText(
                 "F",
-                facing,
+                machineFacing,
                 source,
                 destination,
                 8.0D / 16.0D,
@@ -700,7 +696,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "B",
-                facing.getOpposite(),
+                machineFacing.getOpposite(),
                 source,
                 destination,
                 8.0D / 16.0D,
@@ -711,7 +707,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "L",
-                facing.getClockWise(),
+                machineFacing.getCounterClockWise(),
                 source,
                 destination,
                 5.45D / 16.0D,
@@ -722,7 +718,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "R",
-                facing.getCounterClockWise(),
+                machineFacing.getClockWise(),
                 source,
                 destination,
                 10.55D / 16.0D,
