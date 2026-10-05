@@ -302,9 +302,9 @@ public class MechanicalTransferArmBlock extends GearBlock {
                         + dz * right.getStepZ();
 
         return Math.abs(lateral)
-                <= 3.10D / 16.0D
-                && localY >= 1.45D / 16.0D
-                && localY <= 3.25D / 16.0D;
+                <= 3.20D / 16.0D
+                && localY >= 0.70D / 16.0D
+                && localY <= 2.55D / 16.0D;
     }
 
     @Nullable
@@ -342,37 +342,37 @@ public class MechanicalTransferArmBlock extends GearBlock {
                 dx * right.getStepX()
                         + dz * right.getStepZ();
 
-        // Filter rack: x ~= center, y = 1.55..3.25 pixels.
+        // Filter rack at the bottom of the shortened console.
         if (Math.abs(lateral)
-                <= 3.10D / 16.0D
-                && localY >= 1.45D / 16.0D
-                && localY <= 3.25D / 16.0D) {
+                <= 3.20D / 16.0D
+                && localY >= 0.70D / 16.0D
+                && localY <= 2.55D / 16.0D) {
             return null;
         }
 
-        // Forward button.
+        // Front button.
         if (Math.abs(lateral)
                 <= 1.25D / 16.0D
-                && localY >= 5.95D / 16.0D
-                && localY <= 7.45D / 16.0D) {
+                && localY >= 3.90D / 16.0D
+                && localY <= 5.20D / 16.0D) {
             return facing;
         }
 
         // Back button.
         if (Math.abs(lateral)
                 <= 1.25D / 16.0D
-                && localY >= 3.35D / 16.0D
-                && localY <= 4.80D / 16.0D) {
+                && localY >= 2.25D / 16.0D
+                && localY <= 3.55D / 16.0D) {
             return facing.getOpposite();
         }
 
         // Left / right row.
-        if (localY >= 4.65D / 16.0D
-                && localY <= 6.10D / 16.0D) {
+        if (localY >= 2.85D / 16.0D
+                && localY <= 4.15D / 16.0D) {
             double leftCenter =
-                    -2.45D / 16.0D;
+                    -2.55D / 16.0D;
             double rightCenter =
-                    2.45D / 16.0D;
+                    2.55D / 16.0D;
             double halfWidth =
                     1.20D / 16.0D;
 

@@ -4,6 +4,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalTransferArmBl
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -158,6 +159,14 @@ public class MechanicalTransferArmBlockEntityRenderer
                 buffer,
                 packedLight,
                 packedOverlay
+        );
+
+        renderPanelReadout(
+                arm,
+                facing,
+                poseStack,
+                buffer,
+                packedLight
         );
 
         float progress =
@@ -487,8 +496,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.translate(
                 0.5D,
-                2.48D / 16.0D,
-                -0.035D
+                1.66D / 16.0D,
+                -1.38D / 16.0D
         );
 
         poseStack.mulPose(
@@ -498,9 +507,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.31F,
-                0.31F,
-                0.31F
+                0.38F,
+                0.38F,
+                0.38F
         );
 
         Minecraft.getInstance()
@@ -632,13 +641,13 @@ public class MechanicalTransferArmBlockEntityRenderer
         double yOffset = 0.0D;
 
         if (configuredSide == facing.getOpposite()) {
-            yOffset = -2.60D / 16.0D;
+            yOffset = -1.64D / 16.0D;
         } else if (configuredSide == facing.getClockWise()) {
-            xOffset = -2.45D / 16.0D;
-            yOffset = -1.30D / 16.0D;
+            xOffset = -2.55D / 16.0D;
+            yOffset = -1.04D / 16.0D;
         } else if (configuredSide == facing.getCounterClockWise()) {
-            xOffset = 2.45D / 16.0D;
-            yOffset = -1.30D / 16.0D;
+            xOffset = 2.55D / 16.0D;
+            yOffset = -1.04D / 16.0D;
         }
 
         poseStack.translate(
@@ -653,6 +662,187 @@ public class MechanicalTransferArmBlockEntityRenderer
                 buffer,
                 packedLight,
                 packedOverlay
+        );
+
+        poseStack.popPose();
+    }
+
+    private void renderPanelReadout(
+            MechanicalTransferArmBlockEntity arm,
+            Direction facing,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight) {
+        poseStack.pushPose();
+
+        rotateAroundY(
+                poseStack,
+                0.5D,
+                0.5D,
+                yawFor(facing)
+        );
+
+        Direction source =
+                arm.getSourceSide();
+        Direction destination =
+                arm.getDestinationSide();
+
+        renderPanelButtonText(
+                "F",
+                facing,
+                source,
+                destination,
+                8.0D / 16.0D,
+                4.55D / 16.0D,
+                poseStack,
+                buffer,
+                packedLight
+        );
+        renderPanelButtonText(
+                "B",
+                facing.getOpposite(),
+                source,
+                destination,
+                8.0D / 16.0D,
+                2.90D / 16.0D,
+                poseStack,
+                buffer,
+                packedLight
+        );
+        renderPanelButtonText(
+                "L",
+                facing.getClockWise(),
+                source,
+                destination,
+                5.45D / 16.0D,
+                3.50D / 16.0D,
+                poseStack,
+                buffer,
+                packedLight
+        );
+        renderPanelButtonText(
+                "R",
+                facing.getCounterClockWise(),
+                source,
+                destination,
+                10.55D / 16.0D,
+                3.50D / 16.0D,
+                poseStack,
+                buffer,
+                packedLight
+        );
+
+        ItemStack filter =
+                arm.getFilterStack();
+
+        String filterMode;
+        int filterColor;
+
+        if (filter.isEmpty()) {
+            filterMode = "ANY";
+            filterColor = 0xFFE0D5B8;
+        } else if (arm.isBlacklist()) {
+            filterMode = "BLOCK";
+            filterColor = 0xFFE06060;
+        } else {
+            filterMode = "ALLOW";
+            filterColor = 0xFF70D870;
+        }
+
+        renderFlatPanelText(
+                filterMode,
+                8.0D / 16.0D,
+                0.62D / 16.0D,
+                filterColor,
+                0.0046F,
+                poseStack,
+                buffer,
+                packedLight
+        );
+
+        poseStack.popPose();
+    }
+
+    private void renderPanelButtonText(
+            String idleLabel,
+            Direction side,
+            Direction source,
+            Direction destination,
+            double x,
+            double y,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight) {
+        String label =
+                idleLabel;
+        int color =
+                0xFFE0D5B8;
+
+        if (side == source) {
+            label = "IN";
+            color = 0xFFF09A3E;
+        } else if (side == destination) {
+            label = "OUT";
+            color = 0xFF62A9FF;
+        }
+
+        renderFlatPanelText(
+                label,
+                x,
+                y,
+                color,
+                label.length() > 1
+                        ? 0.0042F
+                        : 0.0052F,
+                poseStack,
+                buffer,
+                packedLight
+        );
+    }
+
+    private void renderFlatPanelText(
+            String text,
+            double x,
+            double y,
+            int color,
+            float scale,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight) {
+        Font font =
+                Minecraft.getInstance().font;
+
+        poseStack.pushPose();
+        poseStack.translate(
+                x,
+                y,
+                -1.42D / 16.0D
+        );
+        poseStack.mulPose(
+                Axis.YP.rotationDegrees(
+                        180.0F
+                )
+        );
+        poseStack.scale(
+                scale,
+                -scale,
+                scale
+        );
+
+        float width =
+                font.width(text);
+
+        font.drawInBatch(
+                text,
+                -width / 2.0F,
+                -font.lineHeight / 2.0F,
+                color,
+                false,
+                poseStack.last().pose(),
+                buffer,
+                Font.DisplayMode.NORMAL,
+                0,
+                packedLight
         );
 
         poseStack.popPose();
