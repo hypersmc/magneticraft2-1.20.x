@@ -1,143 +1,145 @@
 {
-  "parent": "minecraft:block/block",
+  "credit": "Mechanical Transfer Arm simplified right finger",
   "textures": {
-    "wood": "minecraft:block/stripped_dark_oak_log",
-    "copper": "minecraft:block/copper_block",
-    "particle": "minecraft:block/copper_block"
+    "copper": "minecraft:block/cut_copper",
+    "copper_dark": "minecraft:block/exposed_cut_copper",
+    "wood": "minecraft:block/stripped_oak_log",
+    "dark": "minecraft:block/deepslate_tiles",
+    "particle": "minecraft:block/cut_copper"
   },
   "elements": [
     {
       "from": [
-        9.65,
-        18.25,
-        6.9
+        9.6,
+        27.8,
+        6.8
       ],
       "to": [
-        11.05,
-        22,
-        9.1
+        11.35,
+        31.3,
+        9.2
       ],
       "faces": {
         "north": {
-          "texture": "#wood",
+          "texture": "#copper",
           "uv": [
             0,
             0,
-            16,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#wood",
-          "uv": [
-            0,
-            0,
-            16,
-            16
+            1.75,
+            3.5
           ]
         },
         "south": {
-          "texture": "#wood",
+          "texture": "#copper",
           "uv": [
             0,
             0,
-            16,
-            16
+            1.75,
+            3.5
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            2.3999999999999995,
+            3.5
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#copper",
           "uv": [
             0,
             0,
-            16,
-            16
+            2.3999999999999995,
+            3.5
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#copper",
           "uv": [
             0,
             0,
-            16,
-            16
+            1.75,
+            2.3999999999999995
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#copper",
           "uv": [
             0,
             0,
-            16,
-            16
+            1.75,
+            2.3999999999999995
           ]
         }
       }
     },
     {
       "from": [
-        9.35,
-        17.45,
-        6.55
+        9,
+        30.35,
+        6.8
       ],
       "to": [
-        11.55,
-        18.95,
-        9.45
+        11.35,
+        31.8,
+        9.2
       ],
       "faces": {
         "north": {
-          "texture": "#copper",
+          "texture": "#dark",
           "uv": [
             0,
             0,
-            16,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
+            2.3499999999999996,
+            1.4499999999999993
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#dark",
           "uv": [
             0,
             0,
-            16,
-            16
+            2.3499999999999996,
+            1.4499999999999993
+          ]
+        },
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            2.3999999999999995,
+            1.4499999999999993
           ]
         },
         "west": {
-          "texture": "#copper",
+          "texture": "#dark",
           "uv": [
             0,
             0,
-            16,
-            16
+            2.3999999999999995,
+            1.4499999999999993
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#dark",
           "uv": [
             0,
             0,
-            16,
-            16
+            2.3499999999999996,
+            2.3999999999999995
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#dark",
           "uv": [
             0,
             0,
-            16,
-            16
+            2.3499999999999996,
+            2.3999999999999995
           ]
         }
       }
