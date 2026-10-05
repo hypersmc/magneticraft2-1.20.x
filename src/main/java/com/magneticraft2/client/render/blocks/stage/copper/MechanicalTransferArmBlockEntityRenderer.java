@@ -600,10 +600,14 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private float yawFor(
             Direction direction) {
+        // PoseStack's positive Y rotation is opposite the blockstate JSON
+        // convention used by the static model. The arm models are authored
+        // facing NORTH, so EAST must rotate -90 and WEST +90. NORTH/SOUTH hid
+        // this mismatch because 0/180 degrees are identical either way.
         return switch (direction) {
-            case EAST -> 90.0F;
+            case EAST -> -90.0F;
             case SOUTH -> 180.0F;
-            case WEST -> -90.0F;
+            case WEST -> 90.0F;
             default -> 0.0F;
         };
     }
