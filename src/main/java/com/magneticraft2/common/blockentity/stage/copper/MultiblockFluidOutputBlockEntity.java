@@ -2,7 +2,9 @@ package com.magneticraft2.common.blockentity.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
+import com.magneticraft2.common.systems.fluid.FluidPipeNetwork;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -44,6 +46,194 @@ public class MultiblockFluidOutputBlockEntity
                 pos,
                 state
         );
+    }
+
+    public static final int TRANSFER_INTERVAL_TICKS = 5;
+    public static final int MAX_TRANSFER_PER_CYCLE = 250;
+
+    public static <E extends BlockEntity> void serverTick(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            E blockEntity) {
+        if (level.isClientSide
+                || !(blockEntity
+                instanceof MultiblockFluidOutputBlockEntity port)
+                || !port.formedModule) {
+            return;
+        }
+
+        if ((level.getGameTime()
+                + pos.asLong())
+                % TRANSFER_INTERVAL_TICKS != 0L) {
+            return;
+        }
+
+        port.pushToExternal();
+    }
+
+    private void pushToExternal() {
+        if (level == null
+                || !formedModule) {
+            return;
+        }
+
+        IFluidHandler source =
+                getControllerHandler();
+
+        if (source == null) {
+            return;
+        }
+
+        BlockState state =
+                getBlockState();
+
+        if (!state.hasProperty(
+                MultiblockFluidOutputBlock.FACING
+        )) {
+            return;
+        }
+
+        Direction outward =
+                state.getValue(
+                        MultiblockFluidOutputBlock.FACING
+                );
+        BlockPos neighbour =
+                worldPosition.relative(outward);
+
+        if (level.getBlockState(neighbour).is(
+                BlockRegistry.WATER_PIPE.get()
+        )) {
+            for (FluidPipeNetwork.Endpoint endpoint :
+                    FluidPipeNetwork.findEndpoints(
+                            level,
+                            neighbour,
+                            worldPosition
+                    )) {
+                if (pushInto(
+                        source,
+                        endpoint.handler()
+                ) > 0) {
+                    return;
+                }
+            }
+
+            return;
+        }
+
+        IFluidHandler target =
+                getExternalHandler(
+                        neighbour,
+                        outward.getOpposite()
+                );
+
+        if (target != null) {
+            pushInto(
+                    source,
+                    target
+            );
+        }
+    }
+
+    private int pushInto(
+            IFluidHandler source,
+            IFluidHandler target) {
+        FluidStack simulated =
+                source.drain(
+                        MAX_TRANSFER_PER_CYCLE,
+                        IFluidHandler.FluidAction.SIMULATE
+                );
+
+        if (simulated.isEmpty()) {
+            return 0;
+        }
+
+        int accepted =
+                target.fill(
+                        simulated,
+                        IFluidHandler.FluidAction.SIMULATE
+                );
+
+        if (accepted <= 0) {
+            return 0;
+        }
+
+        FluidStack request =
+                simulated.copy();
+        request.setAmount(
+                Math.min(
+                        accepted,
+                        simulated.getAmount()
+                )
+        );
+
+        FluidStack drained =
+                source.drain(
+                        request,
+                        IFluidHandler.FluidAction.EXECUTE
+                );
+
+        if (drained.isEmpty()) {
+            return 0;
+        }
+
+        int filled =
+                target.fill(
+                        drained,
+                        IFluidHandler.FluidAction.EXECUTE
+                );
+
+        if (filled < drained.getAmount()) {
+            FluidStack remainder =
+                    drained.copy();
+            remainder.shrink(filled);
+
+            /*
+             * The target changed between simulation and execution. Put the
+             * unaccepted fluid back into the controller instead of deleting it.
+             */
+            source.fill(
+                    remainder,
+                    IFluidHandler.FluidAction.EXECUTE
+            );
+        }
+
+        return filled;
+    }
+
+    @Nullable
+    private IFluidHandler getExternalHandler(
+            BlockPos pos,
+            Direction side) {
+        if (level == null) {
+            return null;
+        }
+
+        BlockEntity blockEntity =
+                level.getBlockEntity(pos);
+
+        if (blockEntity == null) {
+            return null;
+        }
+
+        IFluidHandler sided =
+                blockEntity
+                        .getCapability(
+                                ForgeCapabilities.FLUID_HANDLER,
+                                side
+                        )
+                        .orElse(null);
+
+        if (sided != null) {
+            return sided;
+        }
+
+        return blockEntity
+                .getCapability(
+                        ForgeCapabilities.FLUID_HANDLER,
+                        null
+                )
+                .orElse(null);
     }
 
     @Nullable
