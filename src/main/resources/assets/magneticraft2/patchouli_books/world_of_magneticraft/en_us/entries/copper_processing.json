@@ -137,7 +137,7 @@
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. Its reciprocating drive comes from a Crank placed directly behind the controller."
+      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. It uses the same Item Input and Item Output modules as the Washer, while its reciprocating drive still comes from a Wooden Crank placed directly behind the controller."
     },
     {
       "type": "patchouli:multiblock",
@@ -151,21 +151,22 @@
           ],
           [
             "P0P",
-            "CPC"
+            "IPO"
           ]
         ],
         "mapping": {
           "0": "magneticraft2:mechanical_sifter",
           "P": "minecraft:oak_planks",
-          "C": "minecraft:copper_block"
+          "I": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_output"
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. Put a Wooden Crank directly behind the controller with its rod output pointing into the low copper slide bearing. The crank now pushes/pulls the lower screen longitudinally; the upper screen moves opposite to classify material."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. Put a Wooden Crank directly behind the controller with its rod output pointing into the low copper slide bearing. The lower and upper screens move opposite each other to classify material."
     },
     {
       "type": "text",
-      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Crank-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot"
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Crank-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot$(br2)The Cassiterite sifting recipe needs at least 15 speed and 2 torque, runs for about eight seconds, and has a 15% chance to produce Flint as a byproduct."
     },
     {
       "type": "text",
