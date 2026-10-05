@@ -12,15 +12,20 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import org.jetbrains.annotations.Nullable;
 
 public class MechanicalTransferArmBlockEntity
@@ -439,15 +444,59 @@ public class MechanicalTransferArmBlockEntity
             return sided;
         }
 
-        // Some inventories/modules expose only an unsided handler. The
-        // multiblock Item Input/Output ports are valid automation targets, so
-        // fall back to the generic capability before declaring the side dead.
-        return blockEntity
-                .getCapability(
-                        ForgeCapabilities.ITEM_HANDLER,
-                        null
-                )
-                .orElse(null);
+        // Some modded inventories expose only an unsided Forge handler.
+        // Prefer that before falling back to vanilla Container wrappers.
+        IItemHandler unsided =
+                blockEntity
+                        .getCapability(
+                                ForgeCapabilities.ITEM_HANDLER,
+                                null
+                        )
+                        .orElse(null);
+
+        if (unsided != null) {
+            return unsided;
+        }
+
+        /*
+         * Vanilla inventories are not required to expose Forge's ITEM_HANDLER
+         * capability. Adapt them here instead of special-casing "chest" as a
+         * transfer target. ChestBlock.getContainer also preserves a double
+         * chest as one logical inventory.
+         */
+        BlockState targetState =
+                level.getBlockState(target);
+
+        if (targetState.getBlock()
+                instanceof ChestBlock chestBlock) {
+            Container chest =
+                    ChestBlock.getContainer(
+                            chestBlock,
+                            targetState,
+                            level,
+                            target,
+                            true
+                    );
+
+            if (chest != null) {
+                return new InvWrapper(chest);
+            }
+        }
+
+        if (blockEntity
+                instanceof WorldlyContainer sidedContainer) {
+            return new SidedInvWrapper(
+                    sidedContainer,
+                    side.getOpposite()
+            );
+        }
+
+        if (blockEntity
+                instanceof Container container) {
+            return new InvWrapper(container);
+        }
+
+        return null;
     }
 
     public SideRole cycleSide(
