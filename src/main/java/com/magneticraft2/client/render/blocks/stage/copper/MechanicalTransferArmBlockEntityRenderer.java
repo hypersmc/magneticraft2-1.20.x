@@ -638,10 +638,11 @@ public class MechanicalTransferArmBlockEntityRenderer
         if (configuredSide == machineFacing.getOpposite()) {
             yOffset = -1.64D / 16.0D;
         } else if (configuredSide == machineFacing.getCounterClockWise()) {
-            xOffset = -2.55D / 16.0D;
+            // Machine-left is screen-left from the rear/operator console.
+            xOffset = 2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
         } else if (configuredSide == machineFacing.getClockWise()) {
-            xOffset = 2.55D / 16.0D;
+            xOffset = -2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
         }
 
@@ -710,7 +711,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 machineFacing.getCounterClockWise(),
                 source,
                 destination,
-                5.45D / 16.0D,
+                10.55D / 16.0D,
                 3.50D / 16.0D,
                 poseStack,
                 buffer,
@@ -721,7 +722,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 machineFacing.getClockWise(),
                 source,
                 destination,
-                10.55D / 16.0D,
+                5.45D / 16.0D,
                 3.50D / 16.0D,
                 poseStack,
                 buffer,
@@ -748,9 +749,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         renderFlatPanelText(
                 filterMode,
                 8.0D / 16.0D,
-                0.62D / 16.0D,
+                1.05D / 16.0D,
                 filterColor,
-                0.0046F,
+                0.0040F,
                 poseStack,
                 buffer,
                 packedLight

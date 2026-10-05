@@ -371,10 +371,13 @@ public class MechanicalTransferArmBlock extends GearBlock {
         // Left / right row.
         if (localY >= 2.85D / 16.0D
                 && localY <= 4.15D / 16.0D) {
+            // operatorSide.getClockWise() points toward screen-left when
+            // the player is standing at the rear console looking into the
+            // machine, so positive lateral is the visible LEFT button.
             double leftCenter =
-                    -2.55D / 16.0D;
-            double rightCenter =
                     2.55D / 16.0D;
+            double rightCenter =
+                    -2.55D / 16.0D;
             double halfWidth =
                     1.20D / 16.0D;
 
