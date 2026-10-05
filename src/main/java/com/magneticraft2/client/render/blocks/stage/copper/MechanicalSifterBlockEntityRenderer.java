@@ -26,8 +26,9 @@ import java.util.Map;
  * Formed Mechanical Sifter renderer.
  *
  * Like the other multiblocks, the complete static frame comes from the
- * replacement model selected in JSON. Only the two moving screen assemblies are
- * rendered separately.
+ * replacement model selected in JSON. The two screens and the reciprocating
+ * crank linkage render separately so the formed machine explains how the
+ * rotational crank becomes a back-and-forth classification motion.
  */
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
@@ -41,6 +42,11 @@ public class MechanicalSifterBlockEntityRenderer
             new ResourceLocation(
                     "magneticraft2",
                     "multiblock/mechanical_sifter_lower_tray"
+            );
+    private static final ResourceLocation LINKAGE =
+            new ResourceLocation(
+                    "magneticraft2",
+                    "multiblock/mechanical_sifter_linkage"
             );
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
@@ -86,6 +92,23 @@ public class MechanicalSifterBlockEntityRenderer
                         partialTicks
                 );
 
+        // The connecting rod/slider follows the lower carriage. The static
+        // copper guide around it makes the crank-to-screen conversion readable.
+        poseStack.pushPose();
+        poseStack.translate(
+                0.0D,
+                0.0D,
+                shake
+        );
+        renderModel(
+                LINKAGE,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+        poseStack.popPose();
+
         poseStack.pushPose();
         poseStack.translate(
                 0.0D,
@@ -118,6 +141,7 @@ public class MechanicalSifterBlockEntityRenderer
 
         renderInputItems(
                 sifter,
+                partialTicks,
                 shake,
                 poseStack,
                 buffer,
@@ -128,10 +152,10 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                0.08D,
-                0.36D,
-                1.74D,
-                0.36F,
+                1.38D,
+                0.48D,
+                1.66D,
+                0.42F,
                 402,
                 poseStack,
                 buffer,
@@ -142,10 +166,10 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.92D,
-                0.36D,
-                1.74D,
-                0.34F,
+                0.30D,
+                0.48D,
+                1.68D,
+                0.38F,
                 403,
                 poseStack,
                 buffer,
@@ -158,6 +182,7 @@ public class MechanicalSifterBlockEntityRenderer
 
     private void renderInputItems(
             MechanicalSifterBlockEntity sifter,
+            float partialTicks,
             double shake,
             PoseStack poseStack,
             MultiBufferSource buffer,
@@ -171,10 +196,9 @@ public class MechanicalSifterBlockEntityRenderer
         }
 
         /*
-         * Keep queued feed readable on the upper screen. During processing one
-         * workpiece is treated as the material currently being classified;
-         * the rest stay as a stable pile instead of collapsing into one small
-         * sprite.
+         * Waiting material lives in the feed hopper, not on the moving sieve.
+         * That makes the feed path visually stable and leaves only the actual
+         * workpiece moving through the classifier.
          */
         int queuedCount =
                 sifter.isProcessing()
@@ -191,9 +215,9 @@ public class MechanicalSifterBlockEntityRenderer
                 );
 
         double[][] offsets = {
-                {-0.16D, 0.000D, -0.020D},
-                {0.16D, 0.018D, 0.015D},
-                {0.00D, 0.036D, 0.070D}
+                {0.000D, 0.000D, 0.000D},
+                {-0.115D, 0.025D, 0.035D},
+                {0.115D, 0.045D, -0.025D}
         };
 
         for (int i = 0;
@@ -202,12 +226,10 @@ public class MechanicalSifterBlockEntityRenderer
             renderStoredItem(
                     sifter,
                     stack,
-                    0.5D + offsets[i][0],
-                    1.59D + offsets[i][1],
-                    0.43D
-                            + offsets[i][2]
-                            - shake * 0.65D,
-                    0.42F,
+                    -0.25D + offsets[i][0],
+                    1.69D + offsets[i][1],
+                    1.47D + offsets[i][2],
+                    0.43F,
                     410 + i,
                     poseStack,
                     buffer,
@@ -220,24 +242,139 @@ public class MechanicalSifterBlockEntityRenderer
             return;
         }
 
+        double progress =
+                Math.max(
+                        0.0D,
+                        Math.min(
+                                1.0D,
+                                sifter.getVisualProcessProgress(
+                                        partialTicks
+                                )
+                        )
+                );
+
+        double x;
+        double y;
+        double z;
+
         /*
-         * The active piece rides the moving upper sieve. A small sideways
-         * component makes the classification action readable without inventing
-         * random positions or allowing the queued pile to wander.
+         * Stage 1: leave the hopper and descend through its throat onto the
+         * coarse upper sieve.
          */
+        if (progress < 0.20D) {
+            double t =
+                    smoothStep(
+                            progress / 0.20D
+                    );
+
+            x = lerp(
+                    -0.25D,
+                    -0.10D,
+                    t
+            );
+            y = lerp(
+                    1.66D,
+                    1.27D,
+                    t
+            );
+            z = lerp(
+                    1.43D,
+                    1.31D,
+                    t
+            );
+        /*
+         * Stage 2: the coarse screen shakes the ore inward across the first
+         * classification surface.
+         */
+        } else if (progress < 0.76D) {
+            double t =
+                    smoothStep(
+                            (progress - 0.20D)
+                                    / 0.56D
+                    );
+
+            x = lerp(
+                    -0.10D,
+                    0.66D,
+                    t
+            );
+            y = 1.27D;
+            z = lerp(
+                    1.31D,
+                    0.79D,
+                    t
+            ) - shake * 0.65D;
+            x += shake * 0.16D;
+        /*
+         * Stage 3: material that passed the coarse screen drops onto the finer
+         * lower deck and travels toward the collection end.
+         */
+        } else {
+            double t =
+                    smoothStep(
+                            (progress - 0.76D)
+                                    / 0.24D
+                    );
+
+            x = lerp(
+                    0.66D,
+                    0.86D,
+                    t
+            );
+            y = lerp(
+                    1.22D,
+                    0.82D,
+                    Math.min(
+                            1.0D,
+                            t * 2.0D
+                    )
+            );
+            z = lerp(
+                    0.79D,
+                    1.43D,
+                    t
+            ) + shake;
+            x -= shake * 0.10D;
+        }
+
         renderStoredItem(
                 sifter,
                 stack,
-                0.5D + shake * 0.34D,
-                1.61D,
-                0.53D - shake * 0.65D,
-                0.45F,
+                x,
+                y,
+                z,
+                0.46F,
                 499,
                 poseStack,
                 buffer,
                 packedLight,
                 packedOverlay
         );
+    }
+
+    private static double smoothStep(
+            double value) {
+        double clamped =
+                Math.max(
+                        0.0D,
+                        Math.min(
+                                1.0D,
+                                value
+                        )
+                );
+
+        return clamped
+                * clamped
+                * (3.0D - 2.0D * clamped);
+    }
+
+    private static double lerp(
+            double from,
+            double to,
+            double progress) {
+        return from
+                + (to - from)
+                * progress;
     }
 
     private void applySouthFacingTransform(
