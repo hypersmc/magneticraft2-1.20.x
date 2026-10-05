@@ -60,6 +60,13 @@ public class MechanicalSifterBlockEntity
     private int totalProcessTime = 140;
     private boolean processing = false;
 
+    private ItemStack lastSyncedInput =
+            ItemStack.EMPTY;
+    private ItemStack lastSyncedOutput =
+            ItemStack.EMPTY;
+    private ItemStack lastSyncedByproduct =
+            ItemStack.EMPTY;
+
     public MechanicalSifterBlockEntity(
             BlockPos pos,
             BlockState state) {
@@ -117,6 +124,80 @@ public class MechanicalSifterBlockEntity
         }
 
         sifter.tickProcessing();
+        sifter.syncInventoryVisualStateIfChanged();
+    }
+
+    private void syncInventoryVisualStateIfChanged() {
+        if (level == null
+                || level.isClientSide
+                || itemHandler == null) {
+            return;
+        }
+
+        ItemStack input =
+                itemHandler.getStackInSlot(0);
+        ItemStack output =
+                itemHandler.getStackInSlot(1);
+        ItemStack byproduct =
+                itemHandler.getStackInSlot(2);
+
+        if (sameVisualStack(
+                input,
+                lastSyncedInput
+        )
+                && sameVisualStack(
+                output,
+                lastSyncedOutput
+        )
+                && sameVisualStack(
+                byproduct,
+                lastSyncedByproduct
+        )) {
+            return;
+        }
+
+        sync();
+    }
+
+    private boolean sameVisualStack(
+            ItemStack first,
+            ItemStack second) {
+        if (first.isEmpty()
+                && second.isEmpty()) {
+            return true;
+        }
+
+        return first.getCount()
+                == second.getCount()
+                && ItemStack.isSameItemSameTags(
+                        first,
+                        second
+                );
+    }
+
+    private void captureInventoryVisualState() {
+        if (itemHandler == null) {
+            lastSyncedInput =
+                    ItemStack.EMPTY;
+            lastSyncedOutput =
+                    ItemStack.EMPTY;
+            lastSyncedByproduct =
+                    ItemStack.EMPTY;
+            return;
+        }
+
+        lastSyncedInput =
+                itemHandler
+                        .getStackInSlot(0)
+                        .copy();
+        lastSyncedOutput =
+                itemHandler
+                        .getStackInSlot(1)
+                        .copy();
+        lastSyncedByproduct =
+                itemHandler
+                        .getStackInSlot(2)
+                        .copy();
     }
 
     private void tickProcessing() {
@@ -688,6 +769,7 @@ public class MechanicalSifterBlockEntity
     @Override
     public CompoundTag sync() {
         setChanged();
+        captureInventoryVisualState();
 
         if (level != null) {
             level.sendBlockUpdated(
