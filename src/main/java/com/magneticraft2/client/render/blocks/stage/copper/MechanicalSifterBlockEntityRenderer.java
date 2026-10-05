@@ -116,14 +116,9 @@ public class MechanicalSifterBlockEntityRenderer
         );
         poseStack.popPose();
 
-        renderStoredItem(
+        renderInputItems(
                 sifter,
-                sifter.getInputStack(),
-                0.5D,
-                1.55D,
-                0.43D - shake * 0.65D,
-                0.33F,
-                401,
+                shake,
                 poseStack,
                 buffer,
                 packedLight,
@@ -133,10 +128,10 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                0.03D,
-                0.30D,
-                1.76D,
-                0.29F,
+                0.08D,
+                0.36D,
+                1.74D,
+                0.36F,
                 402,
                 poseStack,
                 buffer,
@@ -147,10 +142,10 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.97D,
-                0.30D,
-                1.76D,
-                0.27F,
+                0.92D,
+                0.36D,
+                1.74D,
+                0.34F,
                 403,
                 poseStack,
                 buffer,
@@ -159,6 +154,90 @@ public class MechanicalSifterBlockEntityRenderer
         );
 
         poseStack.popPose();
+    }
+
+    private void renderInputItems(
+            MechanicalSifterBlockEntity sifter,
+            double shake,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            int packedOverlay) {
+        ItemStack stack =
+                sifter.getInputStack();
+
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        /*
+         * Keep queued feed readable on the upper screen. During processing one
+         * workpiece is treated as the material currently being classified;
+         * the rest stay as a stable pile instead of collapsing into one small
+         * sprite.
+         */
+        int queuedCount =
+                sifter.isProcessing()
+                        ? Math.max(
+                                0,
+                                stack.getCount() - 1
+                        )
+                        : stack.getCount();
+
+        int visibleQueued =
+                Math.min(
+                        queuedCount,
+                        3
+                );
+
+        double[][] offsets = {
+                {-0.16D, 0.000D, -0.020D},
+                {0.16D, 0.018D, 0.015D},
+                {0.00D, 0.036D, 0.070D}
+        };
+
+        for (int i = 0;
+             i < visibleQueued;
+             i++) {
+            renderStoredItem(
+                    sifter,
+                    stack,
+                    0.5D + offsets[i][0],
+                    1.59D + offsets[i][1],
+                    0.43D
+                            + offsets[i][2]
+                            - shake * 0.65D,
+                    0.42F,
+                    410 + i,
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    packedOverlay
+            );
+        }
+
+        if (!sifter.isProcessing()) {
+            return;
+        }
+
+        /*
+         * The active piece rides the moving upper sieve. A small sideways
+         * component makes the classification action readable without inventing
+         * random positions or allowing the queued pile to wander.
+         */
+        renderStoredItem(
+                sifter,
+                stack,
+                0.5D + shake * 0.34D,
+                1.61D,
+                0.53D - shake * 0.65D,
+                0.45F,
+                499,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
     }
 
     private void applySouthFacingTransform(
