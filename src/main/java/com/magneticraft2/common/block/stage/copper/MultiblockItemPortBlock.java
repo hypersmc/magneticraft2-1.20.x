@@ -105,16 +105,22 @@ public class MultiblockItemPortBlock extends BaseEntityBlock {
             }
         }
 
-        if (output && held.isEmpty()) {
+        if (held.isEmpty()) {
             ItemStack extracted =
-                    port.extractForPlayer();
+                    output
+                            ? port.extractForPlayer()
+                            : port.extractInputForPlayer();
 
             if (!extracted.isEmpty()) {
                 if (!player.getInventory().add(extracted)) {
                     player.drop(extracted, false);
                 }
-                return InteractionResult.CONSUME;
             }
+
+            // The physical port owns empty-hand interaction even when its
+            // mapped slot is empty. Do not let an empty Output port fall
+            // through to a controller interaction that can touch Input.
+            return InteractionResult.CONSUME;
         }
 
         return InteractionResult.PASS;
