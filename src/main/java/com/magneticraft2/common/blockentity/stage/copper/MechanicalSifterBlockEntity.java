@@ -57,8 +57,13 @@ public class MechanicalSifterBlockEntity
     private Direction matchedFacing = Direction.SOUTH;
 
     private int processTime = 0;
-    private int totalProcessTime = 140;
+    private int totalProcessTime = 160;
     private boolean processing = false;
+
+    // Processing state is not network-synced every tick. Predict the visual
+    // progress client-side between start/stop sync points, matching the Washer.
+    private float clientProcessSyncTime = Float.NaN;
+    private float clientProcessSyncProgress = 0.0F;
 
     private ItemStack lastSyncedInput =
             ItemStack.EMPTY;
@@ -110,6 +115,50 @@ public class MechanicalSifterBlockEntity
                                         / (float) totalProcessTime
                         )
                 );
+    }
+
+    public float getVisualProcessProgress(
+            float partialTicks) {
+        float base =
+                getProcessProgress();
+
+        if (!processing
+                || level == null
+                || !level.isClientSide) {
+            return base;
+        }
+
+        float now =
+                level.getGameTime()
+                        + partialTicks;
+
+        if (Float.isNaN(
+                clientProcessSyncTime)) {
+            clientProcessSyncTime = now;
+            clientProcessSyncProgress = base;
+        }
+
+        float elapsed =
+                Math.max(
+                        0.0F,
+                        now - clientProcessSyncTime
+                );
+
+        float predicted =
+                clientProcessSyncProgress
+                        + elapsed
+                        / Math.max(
+                                1.0F,
+                                totalProcessTime
+                        );
+
+        return Math.max(
+                0.0F,
+                Math.min(
+                        1.0F,
+                        predicted
+                )
+        );
     }
 
     public static <E extends BlockEntity> void serverTick(
@@ -219,7 +268,7 @@ public class MechanicalSifterBlockEntity
         if (recipe == null) {
             removeMechanicalLoad();
             processTime = 0;
-            totalProcessTime = 140;
+            totalProcessTime = 160;
             setProcessing(false);
             return;
         }
@@ -699,9 +748,24 @@ public class MechanicalSifterBlockEntity
                                         "TotalProcessTime"
                                 )
                         )
-                        : 140;
+                        : 160;
         processing =
                 tag.getBoolean("Processing");
+
+        if (level != null
+                && level.isClientSide) {
+            if (processing) {
+                clientProcessSyncTime =
+                        level.getGameTime();
+                clientProcessSyncProgress =
+                        getProcessProgress();
+            } else {
+                clientProcessSyncTime =
+                        Float.NaN;
+                clientProcessSyncProgress =
+                        getProcessProgress();
+            }
+        }
 
         MultiblockPersistentData data =
                 loadMultiblockData(tag);
