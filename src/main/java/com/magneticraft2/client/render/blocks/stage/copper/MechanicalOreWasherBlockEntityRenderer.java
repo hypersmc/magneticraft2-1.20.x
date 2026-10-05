@@ -479,27 +479,115 @@ public class MechanicalOreWasherBlockEntityRenderer
             return;
         }
 
-        double progress =
-                washer.getVisualProcessProgress(
-                        partialTicks
+        double processProgress =
+                Math.max(
+                        0.0D,
+                        Math.min(
+                                1.0D,
+                                washer.getVisualProcessProgress(
+                                        partialTicks
+                                )
+                        )
                 );
 
-        // Smooth the server-tick progress slightly, but never reverse it.
-        progress =
-                progress * progress
-                        * (3.0D - 2.0D * progress);
+        /*
+         * One real workpiece leaves the queue and visibly feeds through the
+         * trommel. Do not keep it rendered for the entire recipe: once it has
+         * travelled deep through the drum, the slatted shell/water is assumed
+         * to obscure it until the processed output is created.
+         *
+         * The feed occupies roughly the first 68% of the recipe. That makes
+         * the movement easy to read at normal gameplay distance without making
+         * the ore teleport into the washer as soon as processing begins.
+         */
+        final double feedEnd =
+                0.68D;
 
-        // The active workpiece is deliberately a little smaller than the
-        // waiting pile, but still larger/higher than before so it remains
-        // visible while travelling from the feed tray into the trommel.
-        renderStoredItem(
+        if (processProgress >= feedEnd) {
+            return;
+        }
+
+        double feedProgress =
+                processProgress / feedEnd;
+
+        feedProgress =
+                feedProgress * feedProgress
+                        * (3.0D - 2.0D * feedProgress);
+
+        double x;
+        double y;
+        double z;
+        float scale;
+        float tumble;
+
+        // First slide off the waiting pile and into the mouth of the drum.
+        final double entranceEnd =
+                0.32D;
+
+        if (feedProgress <= entranceEnd) {
+            double entrance =
+                    feedProgress / entranceEnd;
+
+            entrance =
+                    entrance * entrance
+                            * (3.0D - 2.0D * entrance);
+
+            x = 0.5D;
+            y = 0.895D
+                    - 0.085D * entrance;
+            z = -0.545D
+                    + 0.345D * entrance;
+            scale =
+                    (float) (
+                            0.46D
+                                    - 0.03D * entrance
+                    );
+            tumble =
+                    (float) (
+                            entrance * 25.0D
+                    );
+        } else {
+            // Once inside, advance along the drum while orbiting gently around
+            // the center shaft. This is deterministic and applies only to the
+            // single active workpiece, so queued input never "wanders".
+            double inside =
+                    (feedProgress - entranceEnd)
+                            / (1.0D - entranceEnd);
+
+            inside =
+                    inside * inside
+                            * (3.0D - 2.0D * inside);
+
+            double angle =
+                    inside
+                            * Math.PI
+                            * 4.0D;
+
+            x = 0.5D
+                    + Math.sin(angle)
+                    * 0.12D;
+            y = 0.78D
+                    + Math.cos(angle)
+                    * 0.08D;
+            z = -0.20D
+                    + inside
+                    * 1.12D;
+            scale = 0.40F;
+            tumble =
+                    (float) (
+                            25.0D
+                                    + inside * 720.0D
+                    );
+        }
+
+        renderMovingInputItem(
                 washer,
                 stack,
-                0.5D,
-                0.895D,
-                -0.545D
-                        + progress * 0.34D,
-                0.46F,
+                x,
+                y,
+                z,
+                scale,
+                tumble,
                 399,
                 poseStack,
                 buffer,
@@ -573,6 +661,69 @@ public class MechanicalOreWasherBlockEntityRenderer
                     packedOverlay
             );
         }
+    }
+
+    private void renderMovingInputItem(
+            MechanicalOreWasherBlockEntity washer,
+            ItemStack stack,
+            double x,
+            double y,
+            double z,
+            float scale,
+            float tumble,
+            int seed,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            int packedOverlay) {
+        if (stack.isEmpty()) {
+            return;
+        }
+
+        ItemStack display =
+                stack.copy();
+        display.setCount(1);
+
+        poseStack.pushPose();
+        poseStack.translate(
+                x,
+                y,
+                z
+        );
+
+        // World-Z is the canonical trommel axis. Tilting around that axis while
+        // the item orbits the shaft makes the active ore read as tumbling with
+        // the washer instead of merely gliding through it.
+        poseStack.mulPose(
+                Axis.ZP.rotationDegrees(
+                        tumble
+                )
+        );
+        poseStack.mulPose(
+                Axis.XP.rotationDegrees(
+                        90.0F
+                )
+        );
+        poseStack.scale(
+                scale,
+                scale,
+                scale
+        );
+
+        Minecraft.getInstance()
+                .getItemRenderer()
+                .renderStatic(
+                        display,
+                        ItemDisplayContext.NONE,
+                        packedLight,
+                        packedOverlay,
+                        poseStack,
+                        buffer,
+                        washer.getLevel(),
+                        seed
+                );
+
+        poseStack.popPose();
     }
 
     private void renderStoredItem(
