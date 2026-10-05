@@ -6,6 +6,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 public class WaterPipeBlock extends Block {
     public static final BooleanProperty NORTH = BooleanProperty.create("north");
@@ -135,6 +137,31 @@ public class WaterPipeBlock extends Block {
         // From the pipe's point of view that means the neighbouring tank is DOWN.
         if (block instanceof CopperFluidTankBlock) {
             return direction == Direction.DOWN;
+        }
+
+        // Generic Forge interop: render a real pipe arm toward any neighbouring
+        // block entity that exposes a fluid handler on the touching face. Some
+        // mods expose only an unsided handler, so use the same fallback as the
+        // runtime fluid-network discovery.
+        BlockEntity blockEntity =
+                level.getBlockEntity(neighbourPos);
+
+        if (blockEntity != null) {
+            if (blockEntity
+                    .getCapability(
+                            ForgeCapabilities.FLUID_HANDLER,
+                            direction.getOpposite()
+                    )
+                    .isPresent()) {
+                return true;
+            }
+
+            return blockEntity
+                    .getCapability(
+                            ForgeCapabilities.FLUID_HANDLER,
+                            null
+                    )
+                    .isPresent();
         }
 
         return false;
