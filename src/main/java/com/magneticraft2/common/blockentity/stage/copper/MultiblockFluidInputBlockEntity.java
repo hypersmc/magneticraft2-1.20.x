@@ -20,6 +20,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -138,49 +139,13 @@ public class MultiblockFluidInputBlockEntity
     private int pullFrom(
             IFluidHandler source,
             IFluidHandler target) {
-        FluidStack simulated =
-                source.drain(
+        return FluidUtil.tryFluidTransfer(
+                        target,
+                        source,
                         MAX_TRANSFER_PER_CYCLE,
-                        IFluidHandler.FluidAction.SIMULATE
-                );
-
-        if (simulated.isEmpty()) {
-            return 0;
-        }
-
-        int accepted =
-                target.fill(
-                        simulated,
-                        IFluidHandler.FluidAction.SIMULATE
-                );
-
-        if (accepted <= 0) {
-            return 0;
-        }
-
-        FluidStack request =
-                simulated.copy();
-        request.setAmount(
-                Math.min(
-                        accepted,
-                        simulated.getAmount()
+                        true
                 )
-        );
-
-        FluidStack drained =
-                source.drain(
-                        request,
-                        IFluidHandler.FluidAction.EXECUTE
-                );
-
-        if (drained.isEmpty()) {
-            return 0;
-        }
-
-        return target.fill(
-                drained,
-                IFluidHandler.FluidAction.EXECUTE
-        );
+                .getAmount();
     }
 
     @Nullable
