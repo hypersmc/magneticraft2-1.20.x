@@ -431,9 +431,10 @@ public class MechanicalOreWasherBlockEntityRenderer
             return;
         }
 
-        // Only the one workpiece currently being washed moves. Everything else
-        // stays parked on the input tray so a stack no longer looks like it is
-        // wandering back and forth through the machine.
+        // Keep queued material readable as a feed pile rather than rendering a
+        // dense stack of identical sprites on exactly the same patch of tray.
+        // Three larger, stable pieces communicate "there is material here"
+        // better than five small pieces collapsing into one grey blob.
         int stationaryCount =
                 washer.isProcessing()
                         ? Math.max(
@@ -445,15 +446,17 @@ public class MechanicalOreWasherBlockEntityRenderer
         int visiblePile =
                 Math.min(
                         stationaryCount,
-                        5
+                        3
                 );
 
+        // Canonical SOUTH layout: the tray is in front of the washer at
+        // negative Z and the drum/intake is toward positive Z. Keep the pile
+        // slightly toward the intake, spread it across the tray, and lift it
+        // enough that the item silhouettes stay clear of the copper surface.
         double[][] offsets = {
-                {0.00D, 0.000D, 0.00D},
-                {-0.085D, 0.020D, 0.020D},
-                {0.085D, 0.040D, 0.020D},
-                {-0.045D, 0.060D, 0.055D},
-                {0.045D, 0.080D, 0.055D}
+                {0.00D, 0.000D, 0.000D},
+                {-0.155D, 0.018D, -0.010D},
+                {0.155D, 0.032D, 0.035D}
         };
 
         for (int i = 0; i < visiblePile; i++) {
@@ -461,9 +464,9 @@ public class MechanicalOreWasherBlockEntityRenderer
                     washer,
                     stack,
                     0.5D + offsets[i][0],
-                    0.815D + offsets[i][1],
-                    -0.625D + offsets[i][2],
-                    0.40F,
+                    0.885D + offsets[i][1],
+                    -0.565D + offsets[i][2],
+                    0.52F,
                     301 + i,
                     poseStack,
                     buffer,
@@ -486,14 +489,17 @@ public class MechanicalOreWasherBlockEntityRenderer
                 progress * progress
                         * (3.0D - 2.0D * progress);
 
+        // The active workpiece is deliberately a little smaller than the
+        // waiting pile, but still larger/higher than before so it remains
+        // visible while travelling from the feed tray into the trommel.
         renderStoredItem(
                 washer,
                 stack,
                 0.5D,
-                0.825D,
-                -0.605D
+                0.895D,
+                -0.545D
                         + progress * 0.34D,
-                0.37F,
+                0.46F,
                 399,
                 poseStack,
                 buffer,
