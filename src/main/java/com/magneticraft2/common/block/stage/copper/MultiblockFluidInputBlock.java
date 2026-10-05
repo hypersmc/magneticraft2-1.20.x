@@ -2,6 +2,7 @@ package com.magneticraft2.common.block.stage.copper;
 
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidInputBlockEntity;
+import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +13,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -64,6 +67,23 @@ public class MultiblockFluidInputBlock extends BaseEntityBlock {
             BlockPos pos,
             BlockState state) {
         return new MultiblockFluidInputBlockEntity(pos, state);
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level level,
+            BlockState state,
+            BlockEntityType<T> type) {
+        return level.isClientSide
+                ? null
+                : createTickerHelper(
+                        type,
+                        BlockEntityRegistry
+                                .MULTIBLOCK_FLUID_INPUT_BE
+                                .get(),
+                        MultiblockFluidInputBlockEntity::serverTick
+                );
     }
 
     @Override
