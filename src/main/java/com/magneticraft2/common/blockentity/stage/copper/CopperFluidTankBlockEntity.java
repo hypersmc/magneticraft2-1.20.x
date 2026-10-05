@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * Generic 8-bucket Copper Age fluid tank.
  *
  * The tank is the active endpoint for the otherwise-passive pipe network. Every
- * few ticks it can pull fluid from a formed multiblock Fluid Output reachable
+ * few ticks it can pull fluid from any drainable Forge IFluidHandler reachable
  * through the pipe connected to its top socket. It never causes pipes
  * themselves to tick.
  */
@@ -97,16 +97,6 @@ public class CopperFluidTankBlockEntity extends BlockEntity {
                             connectionPos,
                             worldPosition
                     )) {
-                BlockEntity endpointEntity =
-                        level.getBlockEntity(
-                                endpoint.pos()
-                        );
-
-                if (!(endpointEntity
-                        instanceof MultiblockFluidOutputBlockEntity)) {
-                    continue;
-                }
-
                 if (pullFrom(endpoint.handler()) > 0) {
                     return;
                 }
@@ -118,17 +108,29 @@ public class CopperFluidTankBlockEntity extends BlockEntity {
         BlockEntity direct =
                 level.getBlockEntity(connectionPos);
 
-        if (!(direct
-                instanceof MultiblockFluidOutputBlockEntity)) {
+        if (direct == null) {
             return;
         }
 
-        direct.getCapability(
-                        ForgeCapabilities.FLUID_HANDLER,
-                        Direction.DOWN
-                )
-                .resolve()
-                .ifPresent(this::pullFrom);
+        IFluidHandler handler =
+                direct.getCapability(
+                                ForgeCapabilities.FLUID_HANDLER,
+                                Direction.DOWN
+                        )
+                        .orElse(null);
+
+        if (handler == null) {
+            handler =
+                    direct.getCapability(
+                                    ForgeCapabilities.FLUID_HANDLER,
+                                    null
+                            )
+                            .orElse(null);
+        }
+
+        if (handler != null) {
+            pullFrom(handler);
+        }
     }
 
     private int pullFrom(IFluidHandler source) {
