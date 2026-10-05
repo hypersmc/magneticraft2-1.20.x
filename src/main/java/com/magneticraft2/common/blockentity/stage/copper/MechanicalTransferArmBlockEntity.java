@@ -290,6 +290,31 @@ public class MechanicalTransferArmBlockEntity
 
     private ItemStack findExtractableItem(
             boolean simulate) {
+        if (level == null
+                || sourceSide == null) {
+            return ItemStack.EMPTY;
+        }
+
+        /*
+         * Belt cargo is position-based rather than inventory-based. Ask the
+         * belt transport system first so the arm can pick the item actually
+         * passing through the adjacent belt cell.
+         */
+        ItemStack beltItem =
+                ItemBeltConnectionManager
+                        .extractForAutomationAt(
+                                level,
+                                worldPosition.relative(
+                                        sourceSide
+                                ),
+                                this::passesFilter,
+                                simulate
+                        );
+
+        if (!beltItem.isEmpty()) {
+            return beltItem;
+        }
+
         IItemHandler source =
                 getHandler(sourceSide);
 
