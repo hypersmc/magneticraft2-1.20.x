@@ -138,6 +138,28 @@ public class MultiblockItemPortBlockEntity
                 .isEmpty();
     }
 
+    public ItemStack extractInputForPlayer() {
+        if (isOutputPort()) {
+            return ItemStack.EMPTY;
+        }
+
+        BaseBlockEntityMagneticraft2 controller =
+                getController();
+
+        if (controller == null
+                || controller.itemHandler == null
+                || controller.itemHandler.getSlots() <= 0) {
+            return ItemStack.EMPTY;
+        }
+
+        return controller.itemHandler
+                .extractItem(
+                        0,
+                        64,
+                        false
+                );
+    }
+
     public ItemStack extractForPlayer() {
         if (!isOutputPort()) {
             return ItemStack.EMPTY;
