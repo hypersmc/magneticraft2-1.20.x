@@ -662,12 +662,12 @@ public class MechanicalTransferArmBlockEntity
         }
 
         if (side
-                == forward.getCounterClockWise()) {
+                == forward.getClockWise()) {
             return "Left";
         }
 
         if (side
-                == forward.getClockWise()) {
+                == forward.getCounterClockWise()) {
             return "Right";
         }
 

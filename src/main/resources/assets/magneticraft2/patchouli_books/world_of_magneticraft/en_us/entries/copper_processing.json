@@ -123,11 +123,11 @@
       "type": "patchouli:crafting",
       "title": "Mechanical Transfer Arm",
       "recipe": "magneticraft2:mechanical_transfer_arm",
-      "text": "Early item automation stays physical. The top chevron marks the machine's real FRONT. The control console is deliberately on the BACK/operator side so it faces you after placement. Its F/B/L/R buttons show orange IN for the source and blue OUT for the destination."
+      "text": "Early item automation stays physical. The control console is the block's FRONT/FACING side and naturally faces the player after placement. Its F/B/L/R buttons show orange IN for the source and blue OUT for the destination, and Left/Right match the visible buttons from the panel view."
     },
     {
       "type": "text",
-      "text": "$(bold)Arm filters$()$(br2)The lower window on the BACK/operator console is the filter slot. Right-click it with an item to set a ghost filter; the item is not consumed. The panel shows ANY with no filter, ALLOW for whitelist, or BLOCK for blacklist. Empty-hand click toggles ALLOW/BLOCK; sneak-right-click clears it.$(br2)If the destination fills, the arm waits with the item in its claw instead of deleting it."
+      "text": "$(bold)Arm filters$()$(br2)The lower window on the FRONT console is the filter slot. Right-click it with an item to set a ghost filter; the item is not consumed. The panel shows ANY with no filter, ALLOW for whitelist, or BLOCK for blacklist. Empty-hand click toggles ALLOW/BLOCK; sneak-right-click clears it.$(br2)If the destination fills, the arm waits with the item in its claw instead of deleting it."
     },
     {
       "type": "text",

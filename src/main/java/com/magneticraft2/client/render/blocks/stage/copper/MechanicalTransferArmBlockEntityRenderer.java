@@ -129,14 +129,10 @@ public class MechanicalTransferArmBlockEntityRenderer
                     );
         }
 
-        Direction operatorFacing =
-                facing.getOpposite();
-
         if (source != null) {
             renderControlButton(
                     ORANGE_BUTTON_MODEL,
                     facing,
-                    operatorFacing,
                     source,
                     poseStack,
                     buffer,
@@ -149,7 +145,6 @@ public class MechanicalTransferArmBlockEntityRenderer
             renderControlButton(
                     BLUE_BUTTON_MODEL,
                     facing,
-                    operatorFacing,
                     destination,
                     poseStack,
                     buffer,
@@ -160,7 +155,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderFilter(
                 arm,
-                operatorFacing,
+                facing,
                 poseStack,
                 buffer,
                 packedLight,
@@ -170,7 +165,6 @@ public class MechanicalTransferArmBlockEntityRenderer
         renderPanelReadout(
                 arm,
                 facing,
-                operatorFacing,
                 poseStack,
                 buffer,
                 packedLight
@@ -448,7 +442,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderFilter(
             MechanicalTransferArmBlockEntity arm,
-            Direction operatorFacing,
+            Direction facing,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight,
@@ -466,7 +460,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(operatorFacing)
+                yawFor(facing)
         );
 
         // The physical filter rack is now on the front face of the stationary
@@ -616,8 +610,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderControlButton(
             ResourceLocation model,
-            Direction machineFacing,
-            Direction operatorFacing,
+            Direction facing,
             Direction configuredSide,
             PoseStack poseStack,
             MultiBufferSource buffer,
@@ -629,19 +622,19 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(operatorFacing)
+                yawFor(facing)
         );
 
         double xOffset = 0.0D;
         double yOffset = 0.0D;
 
-        if (configuredSide == machineFacing.getOpposite()) {
+        if (configuredSide == facing.getOpposite()) {
             yOffset = -1.64D / 16.0D;
-        } else if (configuredSide == machineFacing.getCounterClockWise()) {
-            // Machine-left is screen-left from the rear/operator console.
+        } else if (configuredSide == facing.getClockWise()) {
+            // Visible panel-left while standing on FACING side.
             xOffset = 2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
-        } else if (configuredSide == machineFacing.getClockWise()) {
+        } else if (configuredSide == facing.getCounterClockWise()) {
             xOffset = -2.55D / 16.0D;
             yOffset = -1.04D / 16.0D;
         }
@@ -665,8 +658,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private void renderPanelReadout(
             MechanicalTransferArmBlockEntity arm,
-            Direction machineFacing,
-            Direction operatorFacing,
+            Direction facing,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight) {
@@ -676,7 +668,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 poseStack,
                 0.5D,
                 0.5D,
-                yawFor(operatorFacing)
+                yawFor(facing)
         );
 
         Direction source =
@@ -686,7 +678,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderPanelButtonText(
                 "F",
-                machineFacing,
+                facing,
                 source,
                 destination,
                 8.0D / 16.0D,
@@ -697,7 +689,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "B",
-                machineFacing.getOpposite(),
+                facing.getOpposite(),
                 source,
                 destination,
                 8.0D / 16.0D,
@@ -708,7 +700,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "L",
-                machineFacing.getCounterClockWise(),
+                facing.getClockWise(),
                 source,
                 destination,
                 10.55D / 16.0D,
@@ -719,7 +711,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
         renderPanelButtonText(
                 "R",
-                machineFacing.getClockWise(),
+                facing.getCounterClockWise(),
                 source,
                 destination,
                 5.45D / 16.0D,

@@ -26,10 +26,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Copper Age one-item mechanical inserter.
  *
- * Four buttons on the rear/operator control console can each be cycled through:
- * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE. FACING remains the
- * machine's real Front; the console intentionally lives on FACING.opposite so
- * the player sees it naturally after placement.
+ * Four buttons on the front control console can each be cycled through:
+ * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE. FACING is the
+ * physical panel side and the side naturally facing the player after placement.
  *
  * The framed filter rack below the D-pad accepts a ghost filter item.
  * Empty-hand filter click toggles whitelist/blacklist; shift + empty-hand
@@ -277,10 +276,8 @@ public class MechanicalTransferArmBlock extends GearBlock {
             BlockHitResult hit) {
         Direction facing =
                 state.getValue(FACING);
-        Direction operatorSide =
-                facing.getOpposite();
 
-        if (hit.getDirection() != operatorSide) {
+        if (hit.getDirection() != facing) {
             return false;
         }
 
@@ -296,8 +293,10 @@ public class MechanicalTransferArmBlock extends GearBlock {
                 hit.getLocation().y
                         - pos.getY();
 
+        // The player stands on the FACING side and looks into the block.
+        // In that view, screen-right is FACING.counterClockWise().
         Direction right =
-                operatorSide.getClockWise();
+                facing.getCounterClockWise();
 
         double lateral =
                 dx * right.getStepX()
@@ -316,12 +315,9 @@ public class MechanicalTransferArmBlock extends GearBlock {
             BlockHitResult hit) {
         Direction facing =
                 state.getValue(FACING);
-        Direction operatorSide =
-                facing.getOpposite();
 
-        // All configuration lives on the one exposed operator console. FACING
-        // still means machine Front; the panel itself is deliberately on Back.
-        if (hit.getDirection() != operatorSide) {
+        // FACING is the one exposed control-panel side.
+        if (hit.getDirection() != facing) {
             return null;
         }
 
@@ -337,8 +333,10 @@ public class MechanicalTransferArmBlock extends GearBlock {
                 hit.getLocation().y
                         - pos.getY();
 
+        // The player stands on the FACING side and looks into the block.
+        // In that view, screen-right is FACING.counterClockWise().
         Direction right =
-                operatorSide.getClockWise();
+                facing.getCounterClockWise();
 
         double lateral =
                 dx * right.getStepX()
@@ -371,26 +369,23 @@ public class MechanicalTransferArmBlock extends GearBlock {
         // Left / right row.
         if (localY >= 2.85D / 16.0D
                 && localY <= 4.15D / 16.0D) {
-            // operatorSide.getClockWise() points toward screen-left when
-            // the player is standing at the rear console looking into the
-            // machine, so positive lateral is the visible LEFT button.
             double leftCenter =
-                    2.55D / 16.0D;
-            double rightCenter =
                     -2.55D / 16.0D;
+            double rightCenter =
+                    2.55D / 16.0D;
             double halfWidth =
                     1.20D / 16.0D;
 
             if (Math.abs(
                     lateral - leftCenter
             ) <= halfWidth) {
-                return facing.getCounterClockWise();
+                return facing.getClockWise();
             }
 
             if (Math.abs(
                     lateral - rightCenter
             ) <= halfWidth) {
-                return facing.getClockWise();
+                return facing.getCounterClockWise();
             }
         }
 
