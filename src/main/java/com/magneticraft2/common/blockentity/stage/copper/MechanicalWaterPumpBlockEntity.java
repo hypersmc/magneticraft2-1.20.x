@@ -220,13 +220,27 @@ public class MechanicalWaterPumpBlockEntity
                 level.getBlockEntity(outputPos);
 
         if (blockEntity != null) {
-            blockEntity
-                    .getCapability(
-                            ForgeCapabilities.FLUID_HANDLER,
-                            Direction.DOWN
-                    )
-                    .resolve()
-                    .ifPresent(result::add);
+            IFluidHandler handler =
+                    blockEntity
+                            .getCapability(
+                                    ForgeCapabilities.FLUID_HANDLER,
+                                    Direction.DOWN
+                            )
+                            .orElse(null);
+
+            if (handler == null) {
+                handler =
+                        blockEntity
+                                .getCapability(
+                                        ForgeCapabilities.FLUID_HANDLER,
+                                        null
+                                )
+                                .orElse(null);
+            }
+
+            if (handler != null) {
+                result.add(handler);
+            }
         }
 
         return result;
