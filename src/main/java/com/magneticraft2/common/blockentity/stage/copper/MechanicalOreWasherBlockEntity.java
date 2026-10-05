@@ -848,15 +848,10 @@ public class MechanicalOreWasherBlockEntity
                         );
             }
 
-            if (extracted.isEmpty()) {
-                extracted =
-                        itemHandler.extractItem(
-                                0,
-                                64,
-                                false
-                        );
-            }
-
+            // Input is intentionally not a fallback here. The formed
+            // machine has a dedicated Item Input module for slot 0; keeping
+            // controller/output interaction restricted to slots 1/2 prevents
+            // the output side from unexpectedly pulling queued raw material.
             if (!extracted.isEmpty()
                     && !player.getInventory()
                     .add(extracted)) {
