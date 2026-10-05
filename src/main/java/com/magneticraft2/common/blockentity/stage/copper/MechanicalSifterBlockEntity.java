@@ -542,15 +542,8 @@ public class MechanicalSifterBlockEntity
                         );
             }
 
-            if (extracted.isEmpty()) {
-                extracted =
-                        itemHandler.extractItem(
-                                0,
-                                64,
-                                false
-                        );
-            }
-
+            // Slot 0 belongs to the dedicated Item Input module. Do
+            // not let controller/output interaction pull raw feed material.
             if (!extracted.isEmpty()
                     && !player.getInventory()
                     .add(extracted)) {
