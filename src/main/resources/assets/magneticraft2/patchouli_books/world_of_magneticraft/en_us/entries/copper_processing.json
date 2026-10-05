@@ -162,7 +162,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. Put a Wooden Crank directly behind the controller with its rod output pointing into the low copper slide bearing. The lower and upper screens move opposite each other to classify material."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. Feed enters the hopper, crosses the coarse upper screen, drops to the finer lower screen, then reaches the product/reject collection area. Put a Wooden Crank directly behind the controller: its visible rod and slider drive the two screens in opposite directions."
     },
     {
       "type": "text",
