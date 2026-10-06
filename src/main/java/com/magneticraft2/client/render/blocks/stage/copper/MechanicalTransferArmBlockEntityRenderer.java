@@ -201,95 +201,69 @@ public class MechanicalTransferArmBlockEntityRenderer
                         : arm.isSourceHigh();
 
         /*
-         * Each transfer leg is deliberately split into three mechanical
-         * phases rather than one continuous arc:
+         * The two-link arm now stays in a readable raised transfer pose.
+         * Actual pickup/drop height is handled by the telescoping wrist below.
          *
-         *  0.00 - 0.22  lift straight away from the current endpoint
-         *  0.22 - 0.78  rotate while the claw is safely raised
-         *  0.78 - 1.00  lower onto the next endpoint
-         *
-         * LOW/HIGH only changes the endpoint reach. The travel pose is shared,
-         * which makes it obvious that the arm first clears the production line
-         * before it turns.
+         * Per leg:
+         *   0.00 - 0.24  retract vertically from current target
+         *   0.24 - 0.76  rotate while fully retracted
+         *   0.76 - 1.00  extend vertically onto next target
          */
-        float liftEnd =
-                0.22F;
-        float lowerStart =
-                0.78F;
+        float retractEnd =
+                0.24F;
+        float extendStart =
+                0.76F;
 
-        float startShoulder =
-                endpointShoulder(
+        float startExtension =
+                endpointExtension(
                         startHigh
                 );
-        float startElbow =
-                endpointElbow(
-                        startHigh
-                );
-        float endShoulder =
-                endpointShoulder(
-                        endHigh
-                );
-        float endElbow =
-                endpointElbow(
+        float endExtension =
+                endpointExtension(
                         endHigh
                 );
 
-        float travelShoulder =
-                -8.0F;
-        float travelElbow =
-                -34.0F;
+        float wristExtension;
 
-        float shoulderPitch;
-        float elbowPitch;
-
-        if (legProgress < liftEnd) {
+        if (legProgress < retractEnd) {
             float t =
                     smoothStep(
                             legProgress
-                                    / liftEnd
+                                    / retractEnd
                     );
 
-            shoulderPitch =
+            wristExtension =
                     Mth.lerp(
                             t,
-                            startShoulder,
-                            travelShoulder
+                            startExtension,
+                            0.0F
                     );
-            elbowPitch =
-                    Mth.lerp(
-                            t,
-                            startElbow,
-                            travelElbow
-                    );
-        } else if (legProgress < lowerStart) {
-            shoulderPitch =
-                    travelShoulder;
-            elbowPitch =
-                    travelElbow;
+        } else if (legProgress < extendStart) {
+            wristExtension = 0.0F;
         } else {
             float t =
                     smoothStep(
                             (legProgress
-                                    - lowerStart)
+                                    - extendStart)
                                     / (1.0F
-                                    - lowerStart)
+                                    - extendStart)
                     );
 
-            shoulderPitch =
+            wristExtension =
                     Mth.lerp(
                             t,
-                            travelShoulder,
-                            endShoulder
-                    );
-            elbowPitch =
-                    Mth.lerp(
-                            t,
-                            travelElbow,
-                            endElbow
+                            0.0F,
+                            endExtension
                     );
         }
 
-        // Keep the claw hanging vertically even while the two links articulate.
+        // Keep the main linkage raised and compact while rotating.
+        float shoulderPitch =
+                -12.0F;
+        float elbowPitch =
+                -42.0F;
+
+        // Keep the claw vertical beneath the forearm.
         float wristPitch =
                 -(shoulderPitch
                         + elbowPitch);
@@ -349,6 +323,16 @@ public class MechanicalTransferArmBlockEntityRenderer
                 WRIST_Y,
                 0.5D,
                 wristPitch
+        );
+
+        /*
+         * Telescoping pickup head. The arm swings while retracted, then the
+         * entire gripper drops straight down onto the configured work height.
+         */
+        poseStack.translate(
+                0.0D,
+                -wristExtension,
+                0.0D
         );
 
         renderModel(
@@ -668,20 +652,17 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
     }
 
-    private float endpointShoulder(
+    private float endpointExtension(
             boolean high) {
-        // HIGH reaches beside the upper arm block. LOW reaches down beside the
-        // controller/base block.
+        /*
+         * Model-space distance expressed in block units.
+         *
+         * HIGH: short placement stroke beside the upper arm block.
+         * LOW: long stroke reaching beside belts/inventories next to the base.
+         */
         return high
-                ? -24.0F
-                : -48.0F;
-    }
-
-    private float endpointElbow(
-            boolean high) {
-        return high
-                ? -48.0F
-                : -72.0F;
+                ? 4.0F / 16.0F
+                : 14.0F / 16.0F;
     }
 
     private float smoothStep(
