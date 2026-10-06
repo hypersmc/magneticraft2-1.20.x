@@ -396,8 +396,14 @@ public class MechanicalTransferArmBlockEntityRenderer
         boolean gripping =
                 !carried.isEmpty();
 
+        float gripAmount =
+                getGripAmount(
+                        progress,
+                        gripping
+                );
+
         renderClawFingers(
-                gripping,
+                gripAmount,
                 poseStack,
                 buffer,
                 packedLight,
@@ -457,18 +463,70 @@ public class MechanicalTransferArmBlockEntityRenderer
         poseStack.popPose();
     }
 
+    private float getGripAmount(
+            float progress,
+            boolean carrying) {
+        /*
+         * The server owns the item immediately at pickup/drop, but the claw
+         * should not visually snap between open and closed in one frame.
+         *
+         * Pickup: close during the first part of the outbound leg.
+         * Drop: stay closed at the destination, then open during the first
+         *       part of the empty return leg.
+         */
+        if (carrying) {
+            if (progress >= 0.5F) {
+                return 1.0F;
+            }
+
+            float outbound =
+                    progress / 0.5F;
+
+            return smoothStep(
+                    Mth.clamp(
+                            outbound / 0.14F,
+                            0.0F,
+                            1.0F
+                    )
+            );
+        }
+
+        if (progress > 0.5F
+                && progress < 1.0F) {
+            float returning =
+                    (progress - 0.5F)
+                            / 0.5F;
+
+            return 1.0F
+                    - smoothStep(
+                    Mth.clamp(
+                            returning / 0.16F,
+                            0.0F,
+                            1.0F
+                    )
+            );
+        }
+
+        return 0.0F;
+    }
+
     private void renderClawFingers(
-            boolean gripping,
+            float gripAmount,
             PoseStack poseStack,
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        // Empty claw opens wide. While carrying an item the fingers close
-        // inward but never overlap the item itself.
+        // Interpolate continuously between fully open and closed.
         double spread =
-                gripping
-                        ? 0.018D
-                        : 0.090D;
+                Mth.lerp(
+                        Mth.clamp(
+                                gripAmount,
+                                0.0F,
+                                1.0F
+                        ),
+                        0.090D,
+                        0.018D
+                );
 
         poseStack.pushPose();
         poseStack.translate(
