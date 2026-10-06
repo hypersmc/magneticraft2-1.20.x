@@ -315,12 +315,6 @@ public class MechanicalTransferArmBlockEntityRenderer
                     ) * t;
         }
 
-        // Keep the main linkage raised and compact while rotating.
-        float shoulderPitch =
-                -12.0F;
-        float elbowPitch =
-                -42.0F;
-
         // Keep the claw vertical beneath the forearm.
         float wristPitch =
                 -(shoulderPitch
