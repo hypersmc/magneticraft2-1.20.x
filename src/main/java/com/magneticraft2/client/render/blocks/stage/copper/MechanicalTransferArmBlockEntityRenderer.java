@@ -419,9 +419,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.38F,
-                0.38F,
-                0.38F
+                0.22F,
+                0.22F,
+                0.22F
         );
 
         Minecraft.getInstance()
@@ -463,9 +463,9 @@ public class MechanicalTransferArmBlockEntityRenderer
                 yawFor(facing)
         );
 
-        // The physical filter rack is now on the front face of the stationary
-        // base. The green/red bar sits under it so whitelist/blacklist remains
-        // readable even with a chunky item rendered in the slot.
+        // One dedicated filter bay sits below the 2x2 direction grid. The
+        // green/red underline communicates mode without layering a pile of
+        // nearly-coplanar decorative bars on the panel.
         renderModel(
                 arm.isBlacklist()
                         ? FILTER_DENY_MODEL
@@ -482,10 +482,12 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.pushPose();
 
+        // Visually this is the right-hand half of the filter bay when viewed
+        // from the operator side. Local model X is mirrored from that view.
         poseStack.translate(
-                0.5D,
-                1.66D / 16.0D,
-                -1.38D / 16.0D
+                5.45D / 16.0D,
+                9.05D / 16.0D,
+                -1.40D / 16.0D
         );
 
         poseStack.mulPose(
@@ -629,18 +631,28 @@ public class MechanicalTransferArmBlockEntityRenderer
                 yawFor(facing)
         );
 
-        double xOffset = 0.0D;
-        double yOffset = 0.0D;
+        // Clean 2x2 operator grid when viewed from the panel:
+        //
+        //   F | B
+        //   L | R
+        //
+        // Local model X appears mirrored from the operator side, so the
+        // visually-left column uses positive X here.
+        double xOffset;
+        double yOffset;
 
-        if (configuredSide == facing.getOpposite()) {
-            yOffset = -1.64D / 16.0D;
+        if (configuredSide == facing) {
+            xOffset = 2.80D / 16.0D;
+            yOffset = 0.0D;
+        } else if (configuredSide == facing.getOpposite()) {
+            xOffset = -2.80D / 16.0D;
+            yOffset = 0.0D;
         } else if (configuredSide == facing.getClockWise()) {
-            // Visible panel-left while standing on FACING side.
-            xOffset = 2.55D / 16.0D;
-            yOffset = -1.04D / 16.0D;
-        } else if (configuredSide == facing.getCounterClockWise()) {
-            xOffset = -2.55D / 16.0D;
-            yOffset = -1.04D / 16.0D;
+            xOffset = 2.80D / 16.0D;
+            yOffset = -2.05D / 16.0D;
+        } else {
+            xOffset = -2.80D / 16.0D;
+            yOffset = -2.05D / 16.0D;
         }
 
         poseStack.translate(
@@ -685,8 +697,8 @@ public class MechanicalTransferArmBlockEntityRenderer
                 facing,
                 source,
                 destination,
-                8.0D / 16.0D,
-                4.55D / 16.0D,
+                10.80D / 16.0D,
+                13.92D / 16.0D,
                 poseStack,
                 buffer,
                 packedLight
@@ -696,8 +708,8 @@ public class MechanicalTransferArmBlockEntityRenderer
                 facing.getOpposite(),
                 source,
                 destination,
-                8.0D / 16.0D,
-                2.90D / 16.0D,
+                5.20D / 16.0D,
+                13.92D / 16.0D,
                 poseStack,
                 buffer,
                 packedLight
@@ -707,8 +719,8 @@ public class MechanicalTransferArmBlockEntityRenderer
                 facing.getClockWise(),
                 source,
                 destination,
-                10.55D / 16.0D,
-                3.50D / 16.0D,
+                10.80D / 16.0D,
+                11.87D / 16.0D,
                 poseStack,
                 buffer,
                 packedLight
@@ -718,8 +730,8 @@ public class MechanicalTransferArmBlockEntityRenderer
                 facing.getCounterClockWise(),
                 source,
                 destination,
-                5.45D / 16.0D,
-                3.50D / 16.0D,
+                5.20D / 16.0D,
+                11.87D / 16.0D,
                 poseStack,
                 buffer,
                 packedLight
@@ -744,8 +756,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderFlatPanelText(
                 filterMode,
-                8.0D / 16.0D,
-                1.05D / 16.0D,
+                10.55D / 16.0D,
+                8.95D / 16.0D,
                 filterColor,
                 0.0040F,
                 poseStack,
@@ -809,7 +821,7 @@ public class MechanicalTransferArmBlockEntityRenderer
         poseStack.translate(
                 x,
                 y,
-                -1.42D / 16.0D
+                -1.36D / 16.0D
         );
         poseStack.mulPose(
                 Axis.YP.rotationDegrees(
