@@ -26,11 +26,12 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Copper Age one-item mechanical inserter.
  *
- * Four buttons on the front control console can each be cycled through:
+ * Four buttons on the front control console are arranged as a clean 2x2
+ * F/B/L/R grid and can each be cycled through:
  * NONE -> SOURCE (orange) -> DESTINATION (blue) -> NONE. FACING is the
  * physical panel side and the side naturally facing the player after placement.
  *
- * The framed filter rack below the D-pad accepts a ghost filter item.
+ * The dedicated filter bay below the direction grid accepts a ghost filter item.
  * Empty-hand filter click toggles whitelist/blacklist; shift + empty-hand
  * filter click clears it.
  */
@@ -303,9 +304,9 @@ public class MechanicalTransferArmBlock extends GearBlock {
                         + dz * right.getStepZ();
 
         return Math.abs(lateral)
-                <= 3.20D / 16.0D
-                && localY >= 0.70D / 16.0D
-                && localY <= 2.55D / 16.0D;
+                <= 4.50D / 16.0D
+                && localY >= 7.65D / 16.0D
+                && localY <= 10.30D / 16.0D;
     }
 
     @Nullable
@@ -342,40 +343,40 @@ public class MechanicalTransferArmBlock extends GearBlock {
                 dx * right.getStepX()
                         + dz * right.getStepZ();
 
-        // Filter rack at the bottom of the shortened console.
+        // Dedicated filter bay below the organized 2x2 direction grid.
         if (Math.abs(lateral)
-                <= 3.20D / 16.0D
-                && localY >= 0.70D / 16.0D
-                && localY <= 2.55D / 16.0D) {
+                <= 4.50D / 16.0D
+                && localY >= 7.65D / 16.0D
+                && localY <= 10.30D / 16.0D) {
             return null;
         }
 
-        // Front button.
-        if (Math.abs(lateral)
-                <= 1.25D / 16.0D
-                && localY >= 3.90D / 16.0D
-                && localY <= 5.20D / 16.0D) {
-            return facing;
+        double leftCenter =
+                -2.80D / 16.0D;
+        double rightCenter =
+                2.80D / 16.0D;
+        double halfWidth =
+                1.65D / 16.0D;
+
+        // Top row, as seen by the player: F | B.
+        if (localY >= 13.00D / 16.0D
+                && localY <= 14.90D / 16.0D) {
+            if (Math.abs(
+                    lateral - leftCenter
+            ) <= halfWidth) {
+                return facing;
+            }
+
+            if (Math.abs(
+                    lateral - rightCenter
+            ) <= halfWidth) {
+                return facing.getOpposite();
+            }
         }
 
-        // Back button.
-        if (Math.abs(lateral)
-                <= 1.25D / 16.0D
-                && localY >= 2.25D / 16.0D
-                && localY <= 3.55D / 16.0D) {
-            return facing.getOpposite();
-        }
-
-        // Left / right row.
-        if (localY >= 2.85D / 16.0D
-                && localY <= 4.15D / 16.0D) {
-            double leftCenter =
-                    -2.55D / 16.0D;
-            double rightCenter =
-                    2.55D / 16.0D;
-            double halfWidth =
-                    1.20D / 16.0D;
-
+        // Bottom row: L | R.
+        if (localY >= 10.90D / 16.0D
+                && localY <= 12.85D / 16.0D) {
             if (Math.abs(
                     lateral - leftCenter
             ) <= halfWidth) {
