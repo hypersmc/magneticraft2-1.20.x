@@ -188,69 +188,106 @@ public class MechanicalTransferArmBlockEntityRenderer
                         ? progress * 2.0F
                         : (progress - 0.5F) * 2.0F;
 
-        float legT =
-                smoothStep(
-                        legProgress
-                );
-
-        boolean sourceHigh =
-                arm.isSourceHigh();
-        boolean destinationHigh =
-                arm.isDestinationHigh();
+        boolean outbound =
+                progress <= 0.5F;
 
         boolean startHigh =
-                progress <= 0.5F
-                        ? sourceHigh
-                        : destinationHigh;
+                outbound
+                        ? arm.isSourceHigh()
+                        : arm.isDestinationHigh();
         boolean endHigh =
-                progress <= 0.5F
-                        ? destinationHigh
-                        : sourceHigh;
+                outbound
+                        ? arm.isDestinationHigh()
+                        : arm.isSourceHigh();
+
+        /*
+         * Each transfer leg is deliberately split into three mechanical
+         * phases rather than one continuous arc:
+         *
+         *  0.00 - 0.22  lift straight away from the current endpoint
+         *  0.22 - 0.78  rotate while the claw is safely raised
+         *  0.78 - 1.00  lower onto the next endpoint
+         *
+         * LOW/HIGH only changes the endpoint reach. The travel pose is shared,
+         * which makes it obvious that the arm first clears the production line
+         * before it turns.
+         */
+        float liftEnd =
+                0.22F;
+        float lowerStart =
+                0.78F;
 
         float startShoulder =
-                startHigh
-                        ? -18.0F
-                        : -36.0F;
-        float endShoulder =
-                endHigh
-                        ? -18.0F
-                        : -36.0F;
+                endpointShoulder(
+                        startHigh
+                );
         float startElbow =
-                startHigh
-                        ? -52.0F
-                        : -70.0F;
+                endpointElbow(
+                        startHigh
+                );
+        float endShoulder =
+                endpointShoulder(
+                        endHigh
+                );
         float endElbow =
-                endHigh
-                        ? -52.0F
-                        : -70.0F;
-
-        // Interpolate between the actual configured endpoint heights. A lift
-        // arc is then added on top so the claw clears nearby belts/machines
-        // instead of dragging straight through the production line.
-        float lift =
-                (float) Math.sin(
-                        Math.PI
-                                * Mth.clamp(
-                                legProgress,
-                                0.0F,
-                                1.0F
-                        )
+                endpointElbow(
+                        endHigh
                 );
 
-        float shoulderPitch =
-                Mth.lerp(
-                        legT,
-                        startShoulder,
-                        endShoulder
-                )
-                        + lift * 15.0F;
-        float elbowPitch =
-                Mth.lerp(
-                        legT,
-                        startElbow,
-                        endElbow
-                )
-                        + lift * 18.0F;
+        float travelShoulder =
+                -8.0F;
+        float travelElbow =
+                -34.0F;
+
+        float shoulderPitch;
+        float elbowPitch;
+
+        if (legProgress < liftEnd) {
+            float t =
+                    smoothStep(
+                            legProgress
+                                    / liftEnd
+                    );
+
+            shoulderPitch =
+                    Mth.lerp(
+                            t,
+                            startShoulder,
+                            travelShoulder
+                    );
+            elbowPitch =
+                    Mth.lerp(
+                            t,
+                            startElbow,
+                            travelElbow
+                    );
+        } else if (legProgress < lowerStart) {
+            shoulderPitch =
+                    travelShoulder;
+            elbowPitch =
+                    travelElbow;
+        } else {
+            float t =
+                    smoothStep(
+                            (legProgress
+                                    - lowerStart)
+                                    / (1.0F
+                                    - lowerStart)
+                    );
+
+            shoulderPitch =
+                    Mth.lerp(
+                            t,
+                            travelShoulder,
+                            endShoulder
+                    );
+            elbowPitch =
+                    Mth.lerp(
+                            t,
+                            travelElbow,
+                            endElbow
+                    );
+        }
 
         // Keep the claw hanging vertically even while the two links articulate.
         float wristPitch =
@@ -588,30 +625,63 @@ public class MechanicalTransferArmBlockEntityRenderer
             destination = source;
         }
 
-        if (progress <= 0.5F) {
-            float t =
-                    smoothStep(
-                            progress * 2.0F
-                    );
+        boolean outbound =
+                progress <= 0.5F;
+        float legProgress =
+                outbound
+                        ? progress * 2.0F
+                        : (progress - 0.5F) * 2.0F;
 
-            return lerpAngle(
-                    yawFor(source),
-                    yawFor(destination),
-                    t
-            );
+        Direction start =
+                outbound
+                        ? source
+                        : destination;
+        Direction end =
+                outbound
+                        ? destination
+                        : source;
+
+        // Rotation happens only while the claw is in the raised travel pose.
+        float rotateStart =
+                0.22F;
+        float rotateEnd =
+                0.78F;
+
+        if (legProgress <= rotateStart) {
+            return yawFor(start);
+        }
+
+        if (legProgress >= rotateEnd) {
+            return yawFor(end);
         }
 
         float t =
                 smoothStep(
-                        (progress - 0.5F)
-                                * 2.0F
+                        (legProgress - rotateStart)
+                                / (rotateEnd - rotateStart)
                 );
 
         return lerpAngle(
-                yawFor(destination),
-                yawFor(source),
+                yawFor(start),
+                yawFor(end),
                 t
         );
+    }
+
+    private float endpointShoulder(
+            boolean high) {
+        // HIGH reaches beside the upper arm block. LOW reaches down beside the
+        // controller/base block.
+        return high
+                ? -24.0F
+                : -48.0F;
+    }
+
+    private float endpointElbow(
+            boolean high) {
+        return high
+                ? -48.0F
+                : -72.0F;
     }
 
     private float smoothStep(
