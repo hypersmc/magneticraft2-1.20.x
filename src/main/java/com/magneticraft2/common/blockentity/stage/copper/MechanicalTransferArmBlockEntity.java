@@ -1029,12 +1029,6 @@ public class MechanicalTransferArmBlockEntity
     }
 
     @Override
-    public AABB getRenderBoundingBox() {
-        return new AABB(worldPosition)
-                .inflate(1.5D, 1.0D, 1.5D);
-    }
-
-    @Override
     public @Nullable Packet<ClientGamePacketListener>
     getUpdatePacket() {
         return ClientboundBlockEntityDataPacket
