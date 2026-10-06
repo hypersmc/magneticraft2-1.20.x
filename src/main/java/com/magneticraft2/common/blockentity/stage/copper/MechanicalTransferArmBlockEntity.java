@@ -40,6 +40,11 @@ public class MechanicalTransferArmBlockEntity
     @Nullable
     private Direction destinationSide;
 
+    // LOW targets the block beside the lower/controller half. HIGH targets the
+    // block beside the upper arm half.
+    private boolean sourceHigh = false;
+    private boolean destinationHigh = false;
+
     private ItemStack filterStack =
             ItemStack.EMPTY;
     private boolean blacklist = false;
@@ -94,7 +99,8 @@ public class MechanicalTransferArmBlockEntity
 
         if (sourceSide == null
                 || destinationSide == null
-                || sourceSide == destinationSide) {
+                || (sourceSide == destinationSide
+                && sourceHigh == destinationHigh)) {
             stopMechanicalLoad();
             setActive(false);
             return;
@@ -304,8 +310,9 @@ public class MechanicalTransferArmBlockEntity
                 ItemBeltConnectionManager
                         .extractForAutomationAt(
                                 level,
-                                worldPosition.relative(
-                                        sourceSide
+                                getTargetPos(
+                                        sourceSide,
+                                        sourceHigh
                                 ),
                                 this::passesFilter,
                                 simulate
@@ -316,7 +323,10 @@ public class MechanicalTransferArmBlockEntity
         }
 
         IItemHandler source =
-                getHandler(sourceSide);
+                getHandler(
+                        sourceSide,
+                        sourceHigh
+                );
 
         if (source == null) {
             return ItemStack.EMPTY;
@@ -392,8 +402,9 @@ public class MechanicalTransferArmBlockEntity
         }
 
         BlockPos targetPos =
-                worldPosition.relative(
-                        destinationSide
+                getTargetPos(
+                        destinationSide,
+                        destinationHigh
                 );
 
         int beltAccepted =
@@ -415,7 +426,10 @@ public class MechanicalTransferArmBlockEntity
         }
 
         IItemHandler destination =
-                getHandler(destinationSide);
+                getHandler(
+                        destinationSide,
+                        destinationHigh
+                );
 
         if (destination == null) {
             return stack.copy();
@@ -441,14 +455,18 @@ public class MechanicalTransferArmBlockEntity
 
     @Nullable
     private IItemHandler getHandler(
-            @Nullable Direction side) {
+            @Nullable Direction side,
+            boolean high) {
         if (level == null
                 || side == null) {
             return null;
         }
 
         BlockPos target =
-                worldPosition.relative(side);
+                getTargetPos(
+                        side,
+                        high
+                );
 
         BlockEntity blockEntity =
                 level.getBlockEntity(target);
@@ -522,6 +540,65 @@ public class MechanicalTransferArmBlockEntity
         }
 
         return null;
+    }
+
+    private BlockPos getTargetPos(
+            Direction side,
+            boolean high) {
+        BlockPos anchor =
+                high
+                        ? worldPosition.above()
+                        : worldPosition;
+
+        return anchor.relative(side);
+    }
+
+    public boolean toggleHeight(
+            Direction side) {
+        if (side == null
+                || !side.getAxis().isHorizontal()
+                || !carriedStack.isEmpty()) {
+            return false;
+        }
+
+        if (side == sourceSide) {
+            sourceHigh = !sourceHigh;
+            cycleProgress = 0.0F;
+            setChanged();
+            sync();
+            return true;
+        }
+
+        if (side == destinationSide) {
+            destinationHigh = !destinationHigh;
+            cycleProgress = 0.0F;
+            setChanged();
+            sync();
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean isSourceHigh() {
+        return sourceHigh;
+    }
+
+    public boolean isDestinationHigh() {
+        return destinationHigh;
+    }
+
+    public boolean isHigh(
+            Direction side) {
+        if (side == sourceSide) {
+            return sourceHigh;
+        }
+
+        if (side == destinationSide) {
+            return destinationHigh;
+        }
+
+        return false;
     }
 
     public SideRole cycleSide(
@@ -817,6 +894,14 @@ public class MechanicalTransferArmBlockEntity
         }
 
         tag.putBoolean(
+                "SourceHigh",
+                sourceHigh
+        );
+        tag.putBoolean(
+                "DestinationHigh",
+                destinationHigh
+        );
+        tag.putBoolean(
                 "Blacklist",
                 blacklist
         );
@@ -865,6 +950,15 @@ public class MechanicalTransferArmBlockEntity
                         )
                 )
                         : ItemStack.EMPTY;
+
+        sourceHigh =
+                tag.getBoolean(
+                        "SourceHigh"
+                );
+        destinationHigh =
+                tag.getBoolean(
+                        "DestinationHigh"
+                );
 
         blacklist =
                 tag.getBoolean(
