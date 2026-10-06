@@ -128,6 +128,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_gear"));
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_turret"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_lower_arm"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_forearm"));
