@@ -618,14 +618,19 @@ public class MechanicalTransferArmBlockEntity
         switch (current) {
             case NONE -> {
                 sourceSide = side;
+                sourceHigh = false;
 
                 if (destinationSide == side) {
                     destinationSide = null;
                 }
             }
             case SOURCE -> {
+                boolean previousSourceHigh =
+                        sourceHigh;
                 sourceSide = null;
                 destinationSide = side;
+                destinationHigh =
+                        previousSourceHigh;
             }
             case DESTINATION ->
                     destinationSide = null;
@@ -834,6 +839,23 @@ public class MechanicalTransferArmBlockEntity
         active = value;
         setChanged();
         sync();
+    }
+
+    @Override
+    public AABB getRenderBoundingBox() {
+        // Two-block machine plus one-block horizontal working envelope.
+        return new AABB(
+                worldPosition.offset(
+                        -1,
+                        0,
+                        -1
+                ),
+                worldPosition.offset(
+                        2,
+                        2,
+                        2
+                )
+        );
     }
 
     @Override
