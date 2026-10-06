@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "wood": "minecraft:block/oak_log",
+    "end": "minecraft:block/oak_log_top",
+    "particle": "minecraft:block/oak_log"
+  },
+  "elements": [
+    {
+      "from": [5, 5.2, 5],
+      "to": [11, 15.35, 11],
+      "faces": {
+        "north": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
+        "east": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
+        "south": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
+        "west": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
+        "up": { "uv": [5, 5, 11, 11], "texture": "#end" },
+        "down": { "uv": [5, 5, 11, 11], "texture": "#end" }
+      }
+    }
+  ],
+  "credit": "Mechanical Transfer Arm shortened drive shaft based on shaft_wood"
+}
