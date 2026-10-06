@@ -445,27 +445,24 @@ public class MechanicalTransferArmBlockEntityRenderer
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        poseStack.pushPose();
+        float rotation =
+                arm.getVisualRotationDegrees(
+                        partialTicks
+                );
 
-        // This model is the existing Gear V2 wooden wheel geometry with only
-        // the stock model's full-height center shaft omitted. The wheel still
-        // uses the same teeth and textures, but now terminates beneath the
-        // hollow transfer-arm turntable.
+        // Gear V2 keeps its small historical vertical offset.
+        poseStack.pushPose();
         poseStack.translate(
                 0.0D,
                 -1.50D / 16.0D,
                 0.0D
         );
-
         rotateAroundY(
                 poseStack,
                 0.5D,
                 0.5D,
-                arm.getVisualRotationDegrees(
-                        partialTicks
-                )
+                rotation
         );
-
         renderModel(
                 GEAR_MODEL,
                 poseStack,
@@ -473,10 +470,17 @@ public class MechanicalTransferArmBlockEntityRenderer
                 packedLight,
                 packedOverlay
         );
+        poseStack.popPose();
 
-        // The shortened vertical shaft is mechanically part of the same drive,
-        // so it rotates with the Gear V2 and disappears into the base bearings
-        // instead of passing through the machine/floor.
+        // The shaft uses the same rotation but no gear-only vertical offset.
+        // It remains captured between the lower and upper bearing collars.
+        poseStack.pushPose();
+        rotateAroundY(
+                poseStack,
+                0.5D,
+                0.5D,
+                rotation
+        );
         renderModel(
                 DRIVE_SHAFT_MODEL,
                 poseStack,
@@ -484,61 +488,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 packedLight,
                 packedOverlay
         );
-
         poseStack.popPose();
-    }
-
-    private float getArmMotionProgress(
-            float progress) {
-        /*
-         * Outbound:
-         *   0.000 - 0.070  hold at source while claw closes
-         *   0.070 - 0.500  perform source -> destination arm motion
-         *
-         * Return:
-         *   0.500 - 0.580  hold at destination while claw opens
-         *   0.580 - 1.000  perform destination -> source arm motion
-         *
-         * These windows mirror the grip timing below, so the arm never starts
-         * moving while a finger animation is still in progress.
-         */
-        final float closeEnd =
-                0.070F;
-        final float openEnd =
-                0.580F;
-
-        if (progress <= closeEnd) {
-            return 0.0F;
-        }
-
-        if (progress < 0.5F) {
-            float t =
-                    (progress - closeEnd)
-                            / (0.5F - closeEnd);
-
-            return 0.5F
-                    * Mth.clamp(
-                    t,
-                    0.0F,
-                    1.0F
-            );
-        }
-
-        if (progress <= openEnd) {
-            return 0.5F;
-        }
-
-        float t =
-                (progress - openEnd)
-                        / (1.0F - openEnd);
-
-        return 0.5F
-                + 0.5F
-                * Mth.clamp(
-                t,
-                0.0F,
-                1.0F
-        );
     }
 
     private float getGripAmount(
