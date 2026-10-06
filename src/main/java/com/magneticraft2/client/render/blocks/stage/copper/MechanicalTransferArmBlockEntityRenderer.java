@@ -51,8 +51,6 @@ public class MechanicalTransferArmBlockEntityRenderer
             model("mechanical_transfer_arm_forearm");
     private static final ResourceLocation CLAW_BODY_MODEL =
             model("mechanical_transfer_arm_claw_body");
-    private static final ResourceLocation WRIST_SLIDER_MODEL =
-            model("mechanical_transfer_arm_wrist_slider");
     private static final ResourceLocation CLAW_LEFT_MODEL =
             model("mechanical_transfer_arm_claw_left");
     private static final ResourceLocation CLAW_RIGHT_MODEL =
@@ -207,18 +205,19 @@ public class MechanicalTransferArmBlockEntityRenderer
          *
          *   0.00 - 0.22  fold inward from the current endpoint
          *   0.22 - 0.62  rotate the base while compact
-         *   0.62 - 0.90  unfold toward the next endpoint
-         *   0.90 - 1.00  small final wrist/drop movement
+         *   0.62 - 0.88  unfold toward the next endpoint
+         *   0.88 - 1.00  settle the whole articulated arm down onto the target
          *
-         * LOW/HIGH are expressed by different shoulder/elbow endpoint poses,
-         * not by translating the complete arm assembly like a drawer.
+         * The gripper never translates independently from the wrist. The final
+         * placement motion comes from the shoulder/elbow joints, keeping every
+         * mechanical part physically connected throughout the cycle.
          */
         float foldEnd =
                 0.22F;
         float rotateEnd =
                 0.62F;
-        float approachEnd =
-                0.90F;
+        float settleStart =
+                0.88F;
 
         float startShoulder =
                 endpointShoulder(
@@ -237,6 +236,13 @@ public class MechanicalTransferArmBlockEntityRenderer
                         endHigh
                 );
 
+        // Approach stops just above the endpoint. The final 12% of the leg
+        // lowers the complete linked mechanism onto the item/inventory.
+        float approachShoulder =
+                endShoulder + 7.0F;
+        float approachElbow =
+                endElbow + 9.0F;
+
         // Compact travel pose keeps the claw close to the column while turning.
         float foldedShoulder =
                 18.0F;
@@ -245,7 +251,6 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         float shoulderPitch;
         float elbowPitch;
-        float wristExtension;
 
         if (legProgress < foldEnd) {
             float t =
@@ -266,19 +271,17 @@ public class MechanicalTransferArmBlockEntityRenderer
                             startElbow,
                             foldedElbow
                     );
-            wristExtension = 0.0F;
         } else if (legProgress < rotateEnd) {
             shoulderPitch =
                     foldedShoulder;
             elbowPitch =
                     foldedElbow;
-            wristExtension = 0.0F;
-        } else if (legProgress < approachEnd) {
+        } else if (legProgress < settleStart) {
             float t =
                     smoothStep(
                             (legProgress
                                     - rotateEnd)
-                                    / (approachEnd
+                                    / (settleStart
                                     - rotateEnd)
                     );
 
@@ -286,33 +289,35 @@ public class MechanicalTransferArmBlockEntityRenderer
                     Mth.lerp(
                             t,
                             foldedShoulder,
-                            endShoulder
+                            approachShoulder
                     );
             elbowPitch =
                     Mth.lerp(
                             t,
                             foldedElbow,
-                            endElbow
+                            approachElbow
                     );
-            wristExtension = 0.0F;
         } else {
-            shoulderPitch =
-                    endShoulder;
-            elbowPitch =
-                    endElbow;
-
             float t =
                     smoothStep(
                             (legProgress
-                                    - approachEnd)
+                                    - settleStart)
                                     / (1.0F
-                                    - approachEnd)
+                                    - settleStart)
                     );
 
-            wristExtension =
-                    endpointExtension(
-                            endHigh
-                    ) * t;
+            shoulderPitch =
+                    Mth.lerp(
+                            t,
+                            approachShoulder,
+                            endShoulder
+                    );
+            elbowPitch =
+                    Mth.lerp(
+                            t,
+                            approachElbow,
+                            endElbow
+                    );
         }
 
         // Keep the claw vertical beneath the forearm.
@@ -375,41 +380,6 @@ public class MechanicalTransferArmBlockEntityRenderer
                 WRIST_Y,
                 0.5D,
                 wristPitch
-        );
-
-        /*
-         * Telescoping pickup head. Stretch a one-pixel inner rod downward from
-         * the wrist pivot, then translate the grabber to the end of that rod.
-         */
-        poseStack.pushPose();
-        poseStack.translate(
-                0.0D,
-                WRIST_Y,
-                0.0D
-        );
-        poseStack.scale(
-                1.0F,
-                1.0F + wristExtension * 16.0F,
-                1.0F
-        );
-        poseStack.translate(
-                0.0D,
-                -WRIST_Y,
-                0.0D
-        );
-        renderModel(
-                WRIST_SLIDER_MODEL,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
-
-        poseStack.translate(
-                0.0D,
-                -wristExtension,
-                0.0D
         );
 
         renderModel(
@@ -743,15 +713,6 @@ public class MechanicalTransferArmBlockEntityRenderer
         return high
                 ? -58.0F
                 : -76.0F;
-    }
-
-    private float endpointExtension(
-            boolean high) {
-        // Final placement stroke only. The articulated links provide the reach;
-        // the wrist merely sets the item down cleanly at the endpoint.
-        return high
-                ? 1.5F / 16.0F
-                : 4.0F / 16.0F;
     }
 
     private float smoothStep(
