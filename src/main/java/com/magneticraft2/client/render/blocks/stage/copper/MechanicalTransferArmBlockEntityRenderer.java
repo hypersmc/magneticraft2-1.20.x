@@ -203,115 +203,116 @@ public class MechanicalTransferArmBlockEntityRenderer
                         : arm.isSourceHigh();
 
         /*
-         * Real pick-and-place sequence for each transfer leg:
+         * Articulated robot-arm sequence for each transfer leg:
          *
-         *   0.00 - 0.16  raise claw from the current target
-         *   0.16 - 0.32  retract the whole arm carriage into its block
-         *   0.32 - 0.68  rotate while completely retracted
-         *   0.68 - 0.84  extend the whole arm carriage toward the new target
-         *   0.84 - 1.00  lower the claw and place/drop
+         *   0.00 - 0.22  fold inward from the current endpoint
+         *   0.22 - 0.62  rotate the base while compact
+         *   0.62 - 0.90  unfold toward the next endpoint
+         *   0.90 - 1.00  small final wrist/drop movement
          *
-         * At both endpoints the carriage is physically outside the upper block
-         * toward the configured side. It only rotates once it has pulled back
-         * into the 1x1 footprint.
+         * LOW/HIGH are expressed by different shoulder/elbow endpoint poses,
+         * not by translating the complete arm assembly like a drawer.
          */
-        float liftEnd =
-                0.16F;
-        float retractEnd =
-                0.32F;
-        float extendStart =
-                0.68F;
-        float lowerStart =
-                0.84F;
+        float foldEnd =
+                0.22F;
+        float rotateEnd =
+                0.62F;
+        float approachEnd =
+                0.90F;
 
-        float startWristExtension =
-                endpointExtension(
+        float startShoulder =
+                endpointShoulder(
                         startHigh
                 );
-        float endWristExtension =
-                endpointExtension(
+        float startElbow =
+                endpointElbow(
+                        startHigh
+                );
+        float endShoulder =
+                endpointShoulder(
+                        endHigh
+                );
+        float endElbow =
+                endpointElbow(
                         endHigh
                 );
 
-        float wristExtension;
-        float carriageExtension;
+        // Compact travel pose keeps the claw close to the column while turning.
+        float foldedShoulder =
+                18.0F;
+        float foldedElbow =
+                -104.0F;
 
-        // Vertical wrist motion.
-        if (legProgress < liftEnd) {
+        float shoulderPitch;
+        float elbowPitch;
+        float wristExtension;
+
+        if (legProgress < foldEnd) {
             float t =
                     smoothStep(
                             legProgress
-                                    / liftEnd
+                                    / foldEnd
                     );
 
-            wristExtension =
+            shoulderPitch =
                     Mth.lerp(
                             t,
-                            startWristExtension,
-                            0.0F
+                            startShoulder,
+                            foldedShoulder
                     );
-        } else if (legProgress < lowerStart) {
+            elbowPitch =
+                    Mth.lerp(
+                            t,
+                            startElbow,
+                            foldedElbow
+                    );
+            wristExtension = 0.0F;
+        } else if (legProgress < rotateEnd) {
+            shoulderPitch =
+                    foldedShoulder;
+            elbowPitch =
+                    foldedElbow;
+            wristExtension = 0.0F;
+        } else if (legProgress < approachEnd) {
+            float t =
+                    smoothStep(
+                            (legProgress
+                                    - rotateEnd)
+                                    / (approachEnd
+                                    - rotateEnd)
+                    );
+
+            shoulderPitch =
+                    Mth.lerp(
+                            t,
+                            foldedShoulder,
+                            endShoulder
+                    );
+            elbowPitch =
+                    Mth.lerp(
+                            t,
+                            foldedElbow,
+                            endElbow
+                    );
             wristExtension = 0.0F;
         } else {
+            shoulderPitch =
+                    endShoulder;
+            elbowPitch =
+                    endElbow;
+
             float t =
                     smoothStep(
                             (legProgress
-                                    - lowerStart)
+                                    - approachEnd)
                                     / (1.0F
-                                    - lowerStart)
+                                    - approachEnd)
                     );
 
             wristExtension =
-                    Mth.lerp(
-                            t,
-                            0.0F,
-                            endWristExtension
-                    );
-        }
-
-        // Horizontal carriage motion. 0.5 blocks is enough to move the upper
-        // assembly visibly beyond the 1x1 column and into the adjacent work cell.
-        final float workExtension =
-                8.0F / 16.0F;
-
-        if (legProgress < liftEnd) {
-            carriageExtension =
-                    workExtension;
-        } else if (legProgress < retractEnd) {
-            float t =
-                    smoothStep(
-                            (legProgress
-                                    - liftEnd)
-                                    / (retractEnd
-                                    - liftEnd)
-                    );
-
-            carriageExtension =
-                    Mth.lerp(
-                            t,
-                            workExtension,
-                            0.0F
-                    );
-        } else if (legProgress < extendStart) {
-            carriageExtension = 0.0F;
-        } else if (legProgress < lowerStart) {
-            float t =
-                    smoothStep(
-                            (legProgress
-                                    - extendStart)
-                                    / (lowerStart
-                                    - extendStart)
-                    );
-
-            carriageExtension =
-                    Mth.lerp(
-                            t,
-                            0.0F,
-                            workExtension
-                    );
-        } else {
-            carriageExtension =
-                    workExtension;
+                    endpointExtension(
+                            endHigh
+                    ) * t;
         }
 
         // Keep the main linkage raised and compact while rotating.
@@ -332,17 +333,6 @@ public class MechanicalTransferArmBlockEntityRenderer
                 0.5D,
                 0.5D,
                 yaw
-        );
-
-        /*
-         * Models are authored facing NORTH, so local -Z is "forward".
-         * Because this happens after yaw rotation, the same translation moves
-         * the complete arm carriage toward Front/Back/Left/Right as needed.
-         */
-        poseStack.translate(
-                0.0D,
-                0.0D,
-                -carriageExtension
         );
 
         renderModel(
@@ -720,9 +710,9 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         // Rotation happens only while the claw is in the raised travel pose.
         float rotateStart =
-                0.32F;
+                0.22F;
         float rotateEnd =
-                0.68F;
+                0.62F;
 
         if (legProgress <= rotateStart) {
             return yawFor(start);
@@ -745,17 +735,29 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
     }
 
+    private float endpointShoulder(
+            boolean high) {
+        // HIGH reaches beside the upper block with a flatter arm.
+        // LOW drops the shoulder farther so the elbow can reach beside the base.
+        return high
+                ? -18.0F
+                : -42.0F;
+    }
+
+    private float endpointElbow(
+            boolean high) {
+        return high
+                ? -58.0F
+                : -76.0F;
+    }
+
     private float endpointExtension(
             boolean high) {
-        /*
-         * Model-space distance expressed in block units.
-         *
-         * HIGH: short placement stroke beside the upper arm block.
-         * LOW: long stroke reaching beside belts/inventories next to the base.
-         */
+        // Final placement stroke only. The articulated links provide the reach;
+        // the wrist merely sets the item down cleanly at the endpoint.
         return high
-                ? 4.0F / 16.0F
-                : 14.0F / 16.0F;
+                ? 1.5F / 16.0F
+                : 4.0F / 16.0F;
     }
 
     private float smoothStep(
