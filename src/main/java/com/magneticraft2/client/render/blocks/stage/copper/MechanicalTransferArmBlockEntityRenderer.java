@@ -491,6 +491,60 @@ public class MechanicalTransferArmBlockEntityRenderer
         poseStack.popPose();
     }
 
+    private float getArmMotionProgress(
+            float progress) {
+        /*
+         * Outbound:
+         *   0.000 - 0.070  hold at source while claw closes
+         *   0.070 - 0.500  perform source -> destination arm motion
+         *
+         * Return:
+         *   0.500 - 0.580  hold at destination while claw opens
+         *   0.580 - 1.000  perform destination -> source arm motion
+         *
+         * Raw cycle progress still drives the fingers. This remapped progress
+         * drives only the articulated arm, keeping it stationary while the
+         * gripper opens/closes.
+         */
+        final float closeEnd =
+                0.070F;
+        final float openEnd =
+                0.580F;
+
+        if (progress <= closeEnd) {
+            return 0.0F;
+        }
+
+        if (progress < 0.5F) {
+            float t =
+                    (progress - closeEnd)
+                            / (0.5F - closeEnd);
+
+            return 0.5F
+                    * Mth.clamp(
+                    t,
+                    0.0F,
+                    1.0F
+            );
+        }
+
+        if (progress <= openEnd) {
+            return 0.5F;
+        }
+
+        float t =
+                (progress - openEnd)
+                        / (1.0F - openEnd);
+
+        return 0.5F
+                + 0.5F
+                * Mth.clamp(
+                t,
+                0.0F,
+                1.0F
+        );
+    }
+
     private float getGripAmount(
             float progress,
             boolean carrying) {
