@@ -188,7 +188,45 @@ public class MechanicalTransferArmBlockEntityRenderer
                         ? progress * 2.0F
                         : (progress - 0.5F) * 2.0F;
 
-        // 0 at source/destination, 1 in the middle of the sweep.
+        float legT =
+                smoothStep(
+                        legProgress
+                );
+
+        boolean sourceHigh =
+                arm.isSourceHigh();
+        boolean destinationHigh =
+                arm.isDestinationHigh();
+
+        boolean startHigh =
+                progress <= 0.5F
+                        ? sourceHigh
+                        : destinationHigh;
+        boolean endHigh =
+                progress <= 0.5F
+                        ? destinationHigh
+                        : sourceHigh;
+
+        float startShoulder =
+                startHigh
+                        ? -18.0F
+                        : -36.0F;
+        float endShoulder =
+                endHigh
+                        ? -18.0F
+                        : -36.0F;
+        float startElbow =
+                startHigh
+                        ? -52.0F
+                        : -70.0F;
+        float endElbow =
+                endHigh
+                        ? -52.0F
+                        : -70.0F;
+
+        // Interpolate between the actual configured endpoint heights. A lift
+        // arc is then added on top so the claw clears nearby belts/machines
+        // instead of dragging straight through the production line.
         float lift =
                 (float) Math.sin(
                         Math.PI
@@ -199,21 +237,20 @@ public class MechanicalTransferArmBlockEntityRenderer
                         )
                 );
 
-        // Endpoint pose totals exactly -90 degrees so the forearm reaches
-        // horizontally into the neighbouring inventory. Mid-sweep it folds up
-        // and retracts so the claw visibly clears the machine before turning.
         float shoulderPitch =
                 Mth.lerp(
-                        lift,
-                        -28.0F,
-                        -12.0F
-                );
+                        legT,
+                        startShoulder,
+                        endShoulder
+                )
+                        + lift * 15.0F;
         float elbowPitch =
                 Mth.lerp(
-                        lift,
-                        -62.0F,
-                        -43.0F
-                );
+                        legT,
+                        startElbow,
+                        endElbow
+                )
+                        + lift * 18.0F;
 
         // Keep the claw hanging vertically even while the two links articulate.
         float wristPitch =
@@ -696,6 +733,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 arm.getDestinationSide();
 
         renderPanelButtonText(
+                arm,
                 "F",
                 facing,
                 source,
@@ -707,6 +745,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 packedLight
         );
         renderPanelButtonText(
+                arm,
                 "B",
                 facing.getOpposite(),
                 source,
@@ -718,6 +757,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 packedLight
         );
         renderPanelButtonText(
+                arm,
                 "L",
                 facing.getClockWise(),
                 source,
@@ -729,6 +769,7 @@ public class MechanicalTransferArmBlockEntityRenderer
                 packedLight
         );
         renderPanelButtonText(
+                arm,
                 "R",
                 facing.getCounterClockWise(),
                 source,
@@ -772,6 +813,7 @@ public class MechanicalTransferArmBlockEntityRenderer
     }
 
     private void renderPanelButtonText(
+            MechanicalTransferArmBlockEntity arm,
             String idleLabel,
             Direction side,
             Direction source,
@@ -797,7 +839,9 @@ public class MechanicalTransferArmBlockEntityRenderer
         renderFlatPanelText(
                 label,
                 x,
-                y,
+                y + (label.length() > 1
+                        ? 0.20D / 16.0D
+                        : 0.0D),
                 color,
                 label.length() > 1
                         ? 0.0042F
@@ -806,6 +850,22 @@ public class MechanicalTransferArmBlockEntityRenderer
                 buffer,
                 packedLight
         );
+
+        if (side == source
+                || side == destination) {
+            renderFlatPanelText(
+                    arm.isHigh(side)
+                            ? "H"
+                            : "L",
+                    x,
+                    y - 0.70D / 16.0D,
+                    color,
+                    0.0030F,
+                    poseStack,
+                    buffer,
+                    packedLight
+            );
+        }
     }
 
     private void renderFlatPanelText(
