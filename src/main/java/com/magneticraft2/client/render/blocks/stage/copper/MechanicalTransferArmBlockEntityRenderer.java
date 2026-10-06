@@ -51,6 +51,8 @@ public class MechanicalTransferArmBlockEntityRenderer
             model("mechanical_transfer_arm_forearm");
     private static final ResourceLocation CLAW_BODY_MODEL =
             model("mechanical_transfer_arm_claw_body");
+    private static final ResourceLocation WRIST_SLIDER_MODEL =
+            model("mechanical_transfer_arm_wrist_slider");
     private static final ResourceLocation CLAW_LEFT_MODEL =
             model("mechanical_transfer_arm_claw_left");
     private static final ResourceLocation CLAW_RIGHT_MODEL =
@@ -326,9 +328,34 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         /*
-         * Telescoping pickup head. The arm swings while retracted, then the
-         * entire gripper drops straight down onto the configured work height.
+         * Telescoping pickup head. Stretch a one-pixel inner rod downward from
+         * the wrist pivot, then translate the grabber to the end of that rod.
          */
+        poseStack.pushPose();
+        poseStack.translate(
+                0.0D,
+                WRIST_Y,
+                0.0D
+        );
+        poseStack.scale(
+                1.0F,
+                1.0F + wristExtension * 16.0F,
+                1.0F
+        );
+        poseStack.translate(
+                0.0D,
+                -WRIST_Y,
+                0.0D
+        );
+        renderModel(
+                WRIST_SLIDER_MODEL,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+        poseStack.popPose();
+
         poseStack.translate(
                 0.0D,
                 -wristExtension,
