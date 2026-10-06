@@ -7,17 +7,73 @@
   },
   "elements": [
     {
-      "from": [6.25, 5.6, 6.25],
-      "to": [9.75, 15.45, 9.75],
+      "from": [
+        6,
+        5.55,
+        6
+      ],
+      "to": [
+        10,
+        17.15,
+        10
+      ],
       "faces": {
-        "north": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
-        "east": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
-        "south": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
-        "west": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
-        "up": { "uv": [0, 0, 3.5, 3.5], "texture": "#end" },
-        "down": { "uv": [0, 0, 3.5, 3.5], "texture": "#end" }
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            11.6
+          ],
+          "texture": "#shaft"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            11.6
+          ],
+          "texture": "#shaft"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            11.6
+          ],
+          "texture": "#shaft"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            11.6
+          ],
+          "texture": "#shaft"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#end"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ],
+          "texture": "#end"
+        }
       }
     }
   ],
-  "credit": "Mechanical Transfer Arm slim center shaft based on original arm support"
+  "credit": "Mechanical Transfer Arm visible 4x4 drive shaft locked into turret bearing"
 }
