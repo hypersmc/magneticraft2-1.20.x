@@ -1,23 +1,23 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "wood": "minecraft:block/oak_log",
-    "end": "minecraft:block/oak_log_top",
-    "particle": "minecraft:block/oak_log"
+    "shaft": "minecraft:block/cut_copper",
+    "end": "minecraft:block/exposed_cut_copper",
+    "particle": "minecraft:block/cut_copper"
   },
   "elements": [
     {
-      "from": [5, 5.2, 5],
-      "to": [11, 15.35, 11],
+      "from": [6.25, 5.6, 6.25],
+      "to": [9.75, 15.45, 9.75],
       "faces": {
-        "north": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
-        "east": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
-        "south": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
-        "west": { "uv": [5, 0, 11, 10.15], "texture": "#wood" },
-        "up": { "uv": [5, 5, 11, 11], "texture": "#end" },
-        "down": { "uv": [5, 5, 11, 11], "texture": "#end" }
+        "north": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
+        "east": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
+        "south": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
+        "west": { "uv": [0, 0, 3.5, 9.85], "texture": "#shaft" },
+        "up": { "uv": [0, 0, 3.5, 3.5], "texture": "#end" },
+        "down": { "uv": [0, 0, 3.5, 3.5], "texture": "#end" }
       }
     }
   ],
-  "credit": "Mechanical Transfer Arm shortened drive shaft based on shaft_wood"
+  "credit": "Mechanical Transfer Arm slim center shaft based on original arm support"
 }
