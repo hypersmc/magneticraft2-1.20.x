@@ -203,60 +203,115 @@ public class MechanicalTransferArmBlockEntityRenderer
                         : arm.isSourceHigh();
 
         /*
-         * The two-link arm now stays in a readable raised transfer pose.
-         * Actual pickup/drop height is handled by the telescoping wrist below.
+         * Real pick-and-place sequence for each transfer leg:
          *
-         * Per leg:
-         *   0.00 - 0.24  retract vertically from current target
-         *   0.24 - 0.76  rotate while fully retracted
-         *   0.76 - 1.00  extend vertically onto next target
+         *   0.00 - 0.16  raise claw from the current target
+         *   0.16 - 0.32  retract the whole arm carriage into its block
+         *   0.32 - 0.68  rotate while completely retracted
+         *   0.68 - 0.84  extend the whole arm carriage toward the new target
+         *   0.84 - 1.00  lower the claw and place/drop
+         *
+         * At both endpoints the carriage is physically outside the upper block
+         * toward the configured side. It only rotates once it has pulled back
+         * into the 1x1 footprint.
          */
+        float liftEnd =
+                0.16F;
         float retractEnd =
-                0.24F;
+                0.32F;
         float extendStart =
-                0.76F;
+                0.68F;
+        float lowerStart =
+                0.84F;
 
-        float startExtension =
+        float startWristExtension =
                 endpointExtension(
                         startHigh
                 );
-        float endExtension =
+        float endWristExtension =
                 endpointExtension(
                         endHigh
                 );
 
         float wristExtension;
+        float carriageExtension;
 
-        if (legProgress < retractEnd) {
+        // Vertical wrist motion.
+        if (legProgress < liftEnd) {
             float t =
                     smoothStep(
                             legProgress
-                                    / retractEnd
+                                    / liftEnd
                     );
 
             wristExtension =
                     Mth.lerp(
                             t,
-                            startExtension,
+                            startWristExtension,
                             0.0F
                     );
-        } else if (legProgress < extendStart) {
+        } else if (legProgress < lowerStart) {
             wristExtension = 0.0F;
         } else {
             float t =
                     smoothStep(
                             (legProgress
-                                    - extendStart)
+                                    - lowerStart)
                                     / (1.0F
-                                    - extendStart)
+                                    - lowerStart)
                     );
 
             wristExtension =
                     Mth.lerp(
                             t,
                             0.0F,
-                            endExtension
+                            endWristExtension
                     );
+        }
+
+        // Horizontal carriage motion. 0.5 blocks is enough to move the upper
+        // assembly visibly beyond the 1x1 column and into the adjacent work cell.
+        final float workExtension =
+                8.0F / 16.0F;
+
+        if (legProgress < liftEnd) {
+            carriageExtension =
+                    workExtension;
+        } else if (legProgress < retractEnd) {
+            float t =
+                    smoothStep(
+                            (legProgress
+                                    - liftEnd)
+                                    / (retractEnd
+                                    - liftEnd)
+                    );
+
+            carriageExtension =
+                    Mth.lerp(
+                            t,
+                            workExtension,
+                            0.0F
+                    );
+        } else if (legProgress < extendStart) {
+            carriageExtension = 0.0F;
+        } else if (legProgress < lowerStart) {
+            float t =
+                    smoothStep(
+                            (legProgress
+                                    - extendStart)
+                                    / (lowerStart
+                                    - extendStart)
+                    );
+
+            carriageExtension =
+                    Mth.lerp(
+                            t,
+                            0.0F,
+                            workExtension
+                    );
+        } else {
+            carriageExtension =
+                    workExtension;
         }
 
         // Keep the main linkage raised and compact while rotating.
@@ -277,6 +332,17 @@ public class MechanicalTransferArmBlockEntityRenderer
                 0.5D,
                 0.5D,
                 yaw
+        );
+
+        /*
+         * Models are authored facing NORTH, so local -Z is "forward".
+         * Because this happens after yaw rotation, the same translation moves
+         * the complete arm carriage toward Front/Back/Left/Right as needed.
+         */
+        poseStack.translate(
+                0.0D,
+                0.0D,
+                -carriageExtension
         );
 
         renderModel(
@@ -654,9 +720,9 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         // Rotation happens only while the claw is in the raised travel pose.
         float rotateStart =
-                0.22F;
+                0.32F;
         float rotateEnd =
-                0.78F;
+                0.68F;
 
         if (legProgress <= rotateStart) {
             return yawFor(start);
