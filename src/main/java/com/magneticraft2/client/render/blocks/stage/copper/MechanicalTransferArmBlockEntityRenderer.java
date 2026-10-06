@@ -26,8 +26,9 @@ import java.util.Map;
 /**
  * Articulated Copper Age transfer arm.
  *
- * The static baked block is only the heavy plinth. Everything that mechanically
- * moves is drawn here:
+ * The lower baked block is the drive/control plinth. A lightweight reserved
+ * upper block makes the machine physically 1x2x1, while everything that
+ * mechanically moves is drawn here:
  *
  *   exposed Gear V2 wheel -> hollow turntable -> shoulder -> reinforced boom
  *   -> forked forearm -> compact wrist/claw
@@ -64,13 +65,15 @@ public class MechanicalTransferArmBlockEntityRenderer
     private static final ResourceLocation FILTER_DENY_MODEL =
             model("mechanical_transfer_arm_filter_deny");
 
-    // Authored model pivots in block-local coordinates.
+    // Authored model pivots in block-local coordinates. The machine is a real
+    // 1x2x1 structure: gear + controls occupy the lower block while these
+    // articulated pivots live in the reserved upper block.
     private static final double SHOULDER_Y =
-            10.65D / 16.0D;
+            18.35D / 16.0D;
     private static final double ELBOW_Y =
-            18.0D / 16.0D;
+            24.0D / 16.0D;
     private static final double WRIST_Y =
-            26.0D / 16.0D;
+            30.1D / 16.0D;
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -408,7 +411,7 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         poseStack.translate(
                 0.5D,
-                19.8D / 16.0D,
+                25.9D / 16.0D,
                 0.5D
         );
 
