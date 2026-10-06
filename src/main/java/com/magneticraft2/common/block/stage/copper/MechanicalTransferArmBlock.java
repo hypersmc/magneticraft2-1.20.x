@@ -3,11 +3,13 @@ package com.magneticraft2.common.block.stage.copper;
 import com.magneticraft2.common.block.general.GearBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalTransferArmBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -52,6 +54,22 @@ public class MechanicalTransferArmBlock extends GearBlock {
     @Override
     public BlockState getStateForPlacement(
             BlockPlaceContext context) {
+        BlockPos pos =
+                context.getClickedPos();
+
+        if (pos.getY()
+                >= context.getLevel()
+                .getMaxBuildHeight() - 1
+                || !context.getLevel()
+                .getBlockState(
+                        pos.above()
+                )
+                .canBeReplaced(
+                        context
+                )) {
+            return null;
+        }
+
         BlockState state =
                 defaultBlockState()
                         .setValue(
@@ -63,6 +81,39 @@ public class MechanicalTransferArmBlock extends GearBlock {
         return validateGearPlacement(
                 context,
                 state
+        );
+    }
+
+    @Override
+    public void setPlacedBy(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            @Nullable LivingEntity placer,
+            ItemStack stack) {
+        super.setPlacedBy(
+                level,
+                pos,
+                state,
+                placer,
+                stack
+        );
+
+        if (level.isClientSide) {
+            return;
+        }
+
+        level.setBlock(
+                pos.above(),
+                BlockRegistry
+                        .MECHANICAL_TRANSFER_ARM_UPPER
+                        .get()
+                        .defaultBlockState()
+                        .setValue(
+                                FACING,
+                                state.getValue(FACING)
+                        ),
+                Block.UPDATE_ALL
         );
     }
 
@@ -144,6 +195,24 @@ public class MechanicalTransferArmBlock extends GearBlock {
                         )
                 );
             }
+        }
+
+        if (!level.isClientSide
+                && !state.is(
+                newState.getBlock()
+        )
+                && level.getBlockState(
+                        pos.above()
+                )
+                .is(
+                        BlockRegistry
+                                .MECHANICAL_TRANSFER_ARM_UPPER
+                                .get()
+                )) {
+            level.removeBlock(
+                    pos.above(),
+                    false
+            );
         }
 
         super.onRemove(
