@@ -524,8 +524,8 @@ public class MechanicalTransferArmBlockEntityRenderer
                                 0.0F,
                                 1.0F
                         ),
-                        0.090D,
-                        0.018D
+                        0.048D,
+                        0.012D
                 );
 
         poseStack.pushPose();
