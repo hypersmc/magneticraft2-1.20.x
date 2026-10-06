@@ -43,6 +43,8 @@ public class MechanicalTransferArmBlockEntityRenderer
 
     private static final ResourceLocation GEAR_MODEL =
             model("mechanical_transfer_arm_drive_gear");
+    private static final ResourceLocation DRIVE_SHAFT_MODEL =
+            model("mechanical_transfer_arm_drive_shaft");
     private static final ResourceLocation TURRET_MODEL =
             model("mechanical_transfer_arm_turret");
     private static final ResourceLocation LOWER_ARM_MODEL =
@@ -466,6 +468,17 @@ public class MechanicalTransferArmBlockEntityRenderer
 
         renderModel(
                 GEAR_MODEL,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+
+        // The shortened vertical shaft is mechanically part of the same drive,
+        // so it rotates with the Gear V2 and disappears into the base bearings
+        // instead of passing through the machine/floor.
+        renderModel(
+                DRIVE_SHAFT_MODEL,
                 poseStack,
                 buffer,
                 packedLight,
