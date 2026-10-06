@@ -177,19 +177,31 @@ public class MechanicalTransferArmBlockEntityRenderer
                 arm.getVisualCycleProgress(
                         partialTicks
                 );
-        float yaw =
-                getArmYaw(
-                        arm,
+
+        /*
+         * Reserve a real stationary dwell at both work endpoints for the
+         * gripper animation. Raw cycle progress still drives the fingers, while
+         * the articulated arm remains completely motionless until closing/opening
+         * has finished.
+         */
+        float motionProgress =
+                getArmMotionProgress(
                         progress
                 );
 
+        float yaw =
+                getArmYaw(
+                        arm,
+                        motionProgress
+                );
+
         float legProgress =
-                progress <= 0.5F
-                        ? progress * 2.0F
-                        : (progress - 0.5F) * 2.0F;
+                motionProgress <= 0.5F
+                        ? motionProgress * 2.0F
+                        : (motionProgress - 0.5F) * 2.0F;
 
         boolean outbound =
-                progress <= 0.5F;
+                motionProgress <= 0.5F;
 
         boolean startHigh =
                 outbound
@@ -461,6 +473,59 @@ public class MechanicalTransferArmBlockEntityRenderer
         );
 
         poseStack.popPose();
+    }
+
+    private float getArmMotionProgress(
+            float progress) {
+        /*
+         * Outbound:
+         *   0.000 - 0.070  hold at source while claw closes
+         *   0.070 - 0.500  perform source -> destination arm motion
+         *
+         * Return:
+         *   0.500 - 0.580  hold at destination while claw opens
+         *   0.580 - 1.000  perform destination -> source arm motion
+         *
+         * These windows mirror the grip timing below, so the arm never starts
+         * moving while a finger animation is still in progress.
+         */
+        final float closeEnd =
+                0.070F;
+        final float openEnd =
+                0.580F;
+
+        if (progress <= closeEnd) {
+            return 0.0F;
+        }
+
+        if (progress < 0.5F) {
+            float t =
+                    (progress - closeEnd)
+                            / (0.5F - closeEnd);
+
+            return 0.5F
+                    * Mth.clamp(
+                    t,
+                    0.0F,
+                    1.0F
+            );
+        }
+
+        if (progress <= openEnd) {
+            return 0.5F;
+        }
+
+        float t =
+                (progress - openEnd)
+                        / (1.0F - openEnd);
+
+        return 0.5F
+                + 0.5F
+                * Mth.clamp(
+                t,
+                0.0F,
+                1.0F
+        );
     }
 
     private float getGripAmount(
