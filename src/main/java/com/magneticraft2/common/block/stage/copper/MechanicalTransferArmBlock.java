@@ -258,11 +258,51 @@ public class MechanicalTransferArmBlock extends GearBlock {
                 player.getItemInHand(hand);
 
         if (button != null && held.isEmpty()) {
+            if (player.isShiftKeyDown()
+                    && arm.toggleHeight(button)) {
+                boolean high =
+                        arm.isHigh(button);
+                BlockPos targetPos =
+                        (high
+                                ? pos.above()
+                                : pos)
+                                .relative(button);
+
+                Component targetName =
+                        level.getBlockState(targetPos)
+                                .getBlock()
+                                .getName();
+
+                player.displayClientMessage(
+                        Component.literal(
+                                arm.getRelativeSideName(button)
+                                        + " "
+                                        + (arm.getRole(button)
+                                        == MechanicalTransferArmBlockEntity.SideRole.SOURCE
+                                        ? "IN"
+                                        : "OUT")
+                                        + ": "
+                                        + (high
+                                        ? "HIGH"
+                                        : "LOW")
+                                        + " -> "
+                        ).append(targetName),
+                        true
+                );
+
+                return InteractionResult.CONSUME;
+            }
+
             MechanicalTransferArmBlockEntity.SideRole role =
                     arm.cycleSide(button);
 
+            boolean high =
+                    arm.isHigh(button);
             BlockPos targetPos =
-                    pos.relative(button);
+                    (high
+                            ? pos.above()
+                            : pos)
+                            .relative(button);
 
             Component targetName =
                     level.getBlockState(targetPos)
@@ -274,6 +314,13 @@ public class MechanicalTransferArmBlock extends GearBlock {
                             arm.getRelativeSideName(button)
                                     + ": "
                                     + role.displayName()
+                                    + (role
+                                    != MechanicalTransferArmBlockEntity.SideRole.NONE
+                                    ? " "
+                                    + (high
+                                    ? "HIGH"
+                                    : "LOW")
+                                    : "")
                                     + " -> "
                     ).append(targetName),
                     true
