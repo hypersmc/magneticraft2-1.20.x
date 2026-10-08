@@ -62,12 +62,6 @@ public class MechanicalOreWasherBlock
                     Block.box(-8, 24, -7, 24, 27, -4),
                     Block.box(-8, 24, 22, 24, 27, 25),
 
-                    // Four supported trough corners matching the visible base.
-                    Block.box(-6, 7, -4, 1, 9, 2),
-                    Block.box(15, 7, -4, 22, 9, 2),
-                    Block.box(-6, 7, 17, 1, 9, 23),
-                    Block.box(15, 7, 17, 22, 9, 23),
-
                     // Trommel / central working envelope.
                     Block.box(2, 9, -4, 14, 20, 22),
 
