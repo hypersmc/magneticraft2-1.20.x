@@ -411,14 +411,16 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         double z1 = sizeZ * 0.5D;
 
         /*
-         * Keep Minecraft's native texel density: one block = one full 16x16
-         * texture. Small mechanical cuboids should therefore use only the
-         * matching fraction of the texture instead of stretching the whole
-         * image over every face.
+         * Do not stretch a whole 16x16 block texture across tiny mechanical
+         * parts, but also do not sample a microscopic 1-2% strip of it.
+         *
+         * Quantise each face to an integer Minecraft texel window and keep a
+         * minimum 2x2 texel patch. This gives small teeth/spokes readable wood
+         * grain without smearing or over-compressing the texture.
          */
-        float uvX = (float) Math.min(1.0D, Math.max(0.001D, sizeX));
-        float uvY = (float) Math.min(1.0D, Math.max(0.001D, sizeY));
-        float uvZ = (float) Math.min(1.0D, Math.max(0.001D, sizeZ));
+        float uvX = texelWindow(sizeX);
+        float uvY = texelWindow(sizeY);
+        float uvZ = texelWindow(sizeZ);
 
         PoseStack.Pose pose = stack.last();
 
@@ -451,6 +453,21 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 x0, y0, z0,  x0, y0, z1,  x0, y1, z1,  x0, y1, z0,
                 -1.0F, 0.0F, 0.0F,
                 uvZ, uvY);
+    }
+
+    private float texelWindow(double blockSize) {
+        int texels =
+                Math.max(
+                        2,
+                        Math.min(
+                                16,
+                                (int) Math.round(
+                                        blockSize * 16.0D
+                                )
+                        )
+                );
+
+        return texels / 16.0F;
     }
 
     private void quad(VertexConsumer consumer,
