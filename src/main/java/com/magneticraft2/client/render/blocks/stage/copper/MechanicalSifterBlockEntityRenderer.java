@@ -48,6 +48,11 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_linkage"
             );
+    private static final ResourceLocation DRIVE_WHEEL =
+            new ResourceLocation(
+                    "magneticraft2",
+                    "block/pulley_large_wood"
+            );
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -92,6 +97,16 @@ public class MechanicalSifterBlockEntityRenderer
                         partialTicks
                 );
 
+        renderDriveWheel(
+                sifter.getDriveRotationDegrees(
+                        partialTicks
+                ),
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+
         // The connecting rod/slider follows the lower carriage. The static
         // copper guide around it makes the crank-to-screen conversion readable.
         poseStack.pushPose();
@@ -113,7 +128,7 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.translate(
                 0.0D,
                 0.0D,
-                -shake * 0.65D
+                shake
         );
         renderModel(
                 UPPER_TRAY,
@@ -128,7 +143,7 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.translate(
                 0.0D,
                 0.0D,
-                shake
+                shake * 0.35D
         );
         renderModel(
                 LOWER_TRAY,
@@ -152,9 +167,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                1.38D,
-                0.48D,
-                1.66D,
+                -0.12D,
+                0.62D,
+                1.78D,
                 0.42F,
                 402,
                 poseStack,
@@ -166,11 +181,57 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.30D,
+                1.00D,
                 0.48D,
-                1.68D,
+                1.78D,
                 0.38F,
                 403,
+                poseStack,
+                buffer,
+                packedLight,
+                packedOverlay
+        );
+
+        poseStack.popPose();
+    }
+
+    private void renderDriveWheel(
+            float rotation,
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            int packedOverlay) {
+        poseStack.pushPose();
+
+        // Right-side crank/flywheel mounted in the rebuilt static support tower.
+        poseStack.translate(
+                1.72D,
+                0.96D,
+                1.06D
+        );
+        poseStack.mulPose(
+                Axis.ZP.rotationDegrees(
+                        rotation
+                )
+        );
+        poseStack.mulPose(
+                Axis.XP.rotationDegrees(
+                        90.0F
+                )
+        );
+        poseStack.scale(
+                0.72F,
+                0.72F,
+                0.72F
+        );
+        poseStack.translate(
+                -0.5D,
+                -0.5D,
+                -0.5D
+        );
+
+        renderModel(
+                DRIVE_WHEEL,
                 poseStack,
                 buffer,
                 packedLight,
@@ -258,83 +319,68 @@ public class MechanicalSifterBlockEntityRenderer
         double z;
 
         /*
-         * Stage 1: leave the hopper and descend through its throat onto the
-         * coarse upper sieve.
+         * Stage 1: fall from the hopper throat onto the upper end of the screen.
+         * Stage 2: travel down the single shaking screen bed.
+         * Stage 3: drop into the fines catch pan/outlet.
          */
-        if (progress < 0.20D) {
+        if (progress < 0.18D) {
             double t =
                     smoothStep(
-                            progress / 0.20D
+                            progress / 0.18D
                     );
 
-            x = lerp(
-                    -0.25D,
-                    -0.10D,
-                    t
-            );
+            x = 0.50D;
             y = lerp(
-                    1.66D,
-                    1.27D,
+                    1.68D,
+                    0.91D,
                     t
             );
             z = lerp(
-                    1.43D,
-                    1.31D,
+                    0.62D,
+                    0.88D,
                     t
             );
-        /*
-         * Stage 2: the coarse screen shakes the ore inward across the first
-         * classification surface.
-         */
-        } else if (progress < 0.76D) {
+        } else if (progress < 0.82D) {
             double t =
                     smoothStep(
-                            (progress - 0.20D)
-                                    / 0.56D
+                            (progress - 0.18D)
+                                    / 0.64D
                     );
 
-            x = lerp(
-                    -0.10D,
-                    0.66D,
-                    t
-            );
-            y = 1.27D;
-            z = lerp(
-                    1.31D,
-                    0.79D,
-                    t
-            ) - shake * 0.65D;
-            x += shake * 0.16D;
-        /*
-         * Stage 3: material that passed the coarse screen drops onto the finer
-         * lower deck and travels toward the collection end.
-         */
-        } else {
-            double t =
-                    smoothStep(
-                            (progress - 0.76D)
-                                    / 0.24D
-                    );
-
-            x = lerp(
-                    0.66D,
-                    0.86D,
-                    t
-            );
+            x = 0.50D
+                    + shake * 0.12D;
             y = lerp(
-                    1.22D,
-                    0.82D,
-                    Math.min(
-                            1.0D,
-                            t * 2.0D
-                    )
+                    0.91D,
+                    0.76D,
+                    t
             );
             z = lerp(
-                    0.79D,
+                    0.88D,
                     1.43D,
                     t
             ) + shake;
-            x -= shake * 0.10D;
+        } else {
+            double t =
+                    smoothStep(
+                            (progress - 0.82D)
+                                    / 0.18D
+                    );
+
+            x = lerp(
+                    0.50D,
+                    0.98D,
+                    t
+            );
+            y = lerp(
+                    0.74D,
+                    0.49D,
+                    t
+            );
+            z = lerp(
+                    1.43D,
+                    1.73D,
+                    t
+            ) + shake * 0.35D;
         }
 
         renderStoredItem(
