@@ -26,14 +26,14 @@ public abstract class GearBlockEntity extends BlockEntity {
     protected GearNode gearNode;
     private boolean hasEverRotated = false;
     private float clientVisualRotationDegrees = 0.0F;
-    private float lastClientVisualTime = Float.NaN;
+    private double lastClientVisualTime = Double.NaN;
     private boolean clientVisualInitialized = false;
 
     // Latest authoritative server angle and the client game time at which it arrived.
     // Rendering never hard-snaps to this after initialization; it continuously integrates
     // local RPM and gently corrects toward the predicted authoritative phase.
     private float clientAuthoritativeRotationDegrees = 0.0F;
-    private float clientAuthoritativeSyncTime = Float.NaN;
+    private double clientAuthoritativeSyncTime = Double.NaN;
 
     public GearBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -245,9 +245,9 @@ public abstract class GearBlockEntity extends BlockEntity {
         node.setSourcePos(sourcePos);
 
         Level currentLevel = getLevel();
-        float currentGameTime = currentLevel == null
-                ? Float.NaN
-                : (float) currentLevel.getGameTime();
+        double currentGameTime = currentLevel == null
+                ? Double.NaN
+                : (double) currentLevel.getGameTime();
 
         clientAuthoritativeRotationDegrees = node.getClientRotationDegrees();
         clientAuthoritativeSyncTime = currentGameTime;
@@ -280,9 +280,11 @@ public abstract class GearBlockEntity extends BlockEntity {
             );
         }
 
-        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
+        double currentVisualTime =
+                (double) currentLevel.getGameTime()
+                        + (double) partialTicks;
 
-        if (!clientVisualInitialized || Float.isNaN(lastClientVisualTime)) {
+        if (!clientVisualInitialized || Double.isNaN(lastClientVisualTime)) {
             clientVisualRotationDegrees = node.getClientRotationDegrees();
             clientAuthoritativeRotationDegrees = node.getClientRotationDegrees();
             clientAuthoritativeSyncTime = currentVisualTime;
@@ -290,7 +292,7 @@ public abstract class GearBlockEntity extends BlockEntity {
             clientVisualInitialized = true;
         }
 
-        float deltaTicks = currentVisualTime - lastClientVisualTime;
+        double deltaTicks = currentVisualTime - lastClientVisualTime;
         lastClientVisualTime = currentVisualTime;
 
         if (deltaTicks < 0.0F) {
@@ -307,7 +309,7 @@ public abstract class GearBlockEntity extends BlockEntity {
             clientVisualRotationDegrees = normalizeVisualDegrees(
                     clientVisualRotationDegrees
                             + degreesPerTick
-                            * deltaTicks
+                            * (float) deltaTicks
                             * node.getDirectionMultiplier()
             );
         }
@@ -316,8 +318,9 @@ public abstract class GearBlockEntity extends BlockEntity {
         // when the packet happened to arrive. Then remove only a fraction of the shortest
         // angular error each rendered frame. This keeps every node phase-locked without
         // the visible 20 Hz packet snapping that caused Water Wheel/gear judder.
-        if (!Float.isNaN(clientAuthoritativeSyncTime)) {
-            float authoritativeElapsed = currentVisualTime - clientAuthoritativeSyncTime;
+        if (!Double.isNaN(clientAuthoritativeSyncTime)) {
+            double authoritativeElapsed =
+                    currentVisualTime - clientAuthoritativeSyncTime;
             if (authoritativeElapsed < 0.0F) {
                 authoritativeElapsed = 0.0F;
             } else if (authoritativeElapsed > 20.0F) {
@@ -327,7 +330,7 @@ public abstract class GearBlockEntity extends BlockEntity {
             float predictedAuthoritative = normalizeVisualDegrees(
                     clientAuthoritativeRotationDegrees
                             + degreesPerTick
-                            * authoritativeElapsed
+                            * (float) authoritativeElapsed
                             * node.getDirectionMultiplier()
             );
 
@@ -338,7 +341,11 @@ public abstract class GearBlockEntity extends BlockEntity {
             // Roughly a quarter of the remaining phase error per game tick. At 60 FPS
             // this is only a few percent per rendered frame, so corrections are invisible
             // but accumulated drift still converges quickly.
-            float correctionFactor = Math.min(1.0F, deltaTicks * 0.25F);
+            float correctionFactor =
+                    (float) Math.min(
+                            1.0D,
+                            deltaTicks * 0.25D
+                    );
             clientVisualRotationDegrees = normalizeVisualDegrees(
                     clientVisualRotationDegrees + phaseError * correctionFactor
             );
