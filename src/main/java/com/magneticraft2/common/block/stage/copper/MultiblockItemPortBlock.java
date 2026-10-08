@@ -96,7 +96,7 @@ public class MultiblockItemPortBlock extends BaseEntityBlock {
         ItemStack held =
                 player.getItemInHand(hand);
 
-        if (!output && !held.isEmpty()) {
+        if (!isOutput() && !held.isEmpty()) {
             ItemStack one = held.copy();
             one.setCount(1);
 
@@ -127,7 +127,7 @@ public class MultiblockItemPortBlock extends BaseEntityBlock {
 
         if (held.isEmpty()) {
             ItemStack extracted =
-                    output
+                    isOutput()
                             ? port.extractForPlayer()
                             : port.extractInputForPlayer();
 
