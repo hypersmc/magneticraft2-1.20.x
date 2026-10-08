@@ -139,7 +139,6 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_button_blue"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_filter_allow"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_filter_deny"));
-        event.register(new ResourceLocation(MOD_ID, "block/mechanical_sifter_drive_wheel"));
 
         for (ResourceLocation resourceLocation : resourceManager.listResources(folderPath, path -> path.toString().endsWith(".json")).keySet()) {
             // Remove the "models/" prefix and ".json" suffix for registering the model
