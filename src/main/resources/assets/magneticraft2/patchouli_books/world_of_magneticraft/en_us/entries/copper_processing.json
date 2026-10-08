@@ -137,7 +137,15 @@
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. It uses the same Item Input and Item Output modules as the Washer. Material enters the formed top hopper and is classified on the shaking screen; the reciprocating drive comes from a Wooden Crank placed directly behind the controller."
+      "text": "The Sifter is a 3x2x2 structure rather than a one-block machine. Its Item Input is part of the upper hopper area, so feed material enters where the formed model actually shows it entering. A Wooden Crank placed directly behind the controller drives the side flywheel and shaking sieve.",
+      "recipe2": "magneticraft2:multiblock_item_input"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Sifter Outputs",
+      "recipe": "magneticraft2:multiblock_item_primary_output",
+      "recipe2": "magneticraft2:multiblock_item_byproduct_output",
+      "text": "The Sifter has two real output ports. The Primary Output exposes only the main recipe result, while the Byproduct Output exposes only the secondary/fines slot. Both use the standard Forge item handler, so belts, transfer arms, hoppers and compatible modded item transport can extract from the correct chute independently."
     },
     {
       "type": "patchouli:multiblock",
@@ -147,24 +155,25 @@
         "pattern": [
           [
             "PP",
-            " P",
+            "IP",
             "PP"
           ],
           [
-            "PI",
+            "PO",
             "0P",
-            "PO"
+            "PB"
           ]
         ],
         "mapping": {
           "0": "magneticraft2:mechanical_sifter",
           "P": "minecraft:oak_planks",
           "I": "magneticraft2:multiblock_item_input",
-          "O": "magneticraft2:multiblock_item_output"
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "B": "magneticraft2:multiblock_item_byproduct_output"
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. The preview is transposed from Magneticraft2's JSON layout into Patchouli's coordinate order, so it now matches the real 3x2x2 structure exactly. Item Input and Item Output sit on the row beside the controller as shown. The formed machine has a top feed hopper, one main shaking screen, a coarse-material outlet and a lower fines chute. Put a Wooden Crank directly behind the controller to drive the visible side wheel/linkage and reciprocating screen."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input becomes the visible hopper/feed point. On the front row, the Primary Output is on the left and the Byproduct Output is on the right. The formed model follows the same flow: hopper -> inclined shaking sieve -> coarse/main tray and lower fines/byproduct chute. Put a Wooden Crank directly behind the controller."
     },
     {
       "type": "text",
@@ -188,13 +197,13 @@
     "magneticraft2:multiblock_item_input": 8,
     "magneticraft2:multiblock_item_output": 8,
     "magneticraft2:mechanical_sifter": 16,
-    "magneticraft2:cassiterite_ore": 18,
-    "magneticraft2:crushed_cassiterite": 18,
-    "magneticraft2:washed_cassiterite": 18,
-    "magneticraft2:tin_concentrate": 18,
+    "magneticraft2:cassiterite_ore": 19,
+    "magneticraft2:crushed_cassiterite": 19,
+    "magneticraft2:washed_cassiterite": 19,
+    "magneticraft2:tin_concentrate": 19,
     "magneticraft2:tin_ingot": 19,
-    "magneticraft2:bronze_charge": 19,
-    "magneticraft2:bronze_ingot": 19,
+    "magneticraft2:bronze_charge": 20,
+    "magneticraft2:bronze_ingot": 20,
     "magneticraft2:multiblock_fluid_input": 10,
     "magneticraft2:water_pipe": 11,
     "magneticraft2:mechanical_water_pump": 11,
@@ -202,7 +211,9 @@
     "magneticraft2:copper_fluid_tank": 12,
     "magneticraft2:primitive_grinder_base": 3,
     "magneticraft2:primitive_grinder_top": 3,
-    "magneticraft2:mechanical_transfer_arm": 13
+    "magneticraft2:mechanical_transfer_arm": 13,
+    "magneticraft2:multiblock_item_primary_output": 17,
+    "magneticraft2:multiblock_item_byproduct_output": 17
   },
   "sortnum": 0,
   "read_by_default": true
