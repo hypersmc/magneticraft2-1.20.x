@@ -62,7 +62,7 @@ public class MechanicalSifterBlockEntity
 
     // Processing state is not network-synced every tick. Predict the visual
     // progress client-side between start/stop sync points, matching the Washer.
-    private float clientProcessSyncTime = Float.NaN;
+    private double clientProcessSyncTime = Double.NaN;
     private float clientProcessSyncProgress = 0.0F;
 
     private ItemStack lastSyncedInput =
@@ -128,29 +128,31 @@ public class MechanicalSifterBlockEntity
             return base;
         }
 
-        float now =
-                level.getGameTime()
-                        + partialTicks;
+        double now =
+                (double) level.getGameTime()
+                        + (double) partialTicks;
 
-        if (Float.isNaN(
+        if (Double.isNaN(
                 clientProcessSyncTime)) {
             clientProcessSyncTime = now;
             clientProcessSyncProgress = base;
         }
 
-        float elapsed =
+        double elapsed =
                 Math.max(
-                        0.0F,
+                        0.0D,
                         now - clientProcessSyncTime
                 );
 
         float predicted =
-                clientProcessSyncProgress
-                        + elapsed
-                        / Math.max(
-                                1.0F,
-                                totalProcessTime
-                        );
+                (float) (
+                        clientProcessSyncProgress
+                                + elapsed
+                                / Math.max(
+                                        1.0D,
+                                        (double) totalProcessTime
+                                )
+                );
 
         return Math.max(
                 0.0F,
@@ -761,7 +763,7 @@ public class MechanicalSifterBlockEntity
                         getProcessProgress();
             } else {
                 clientProcessSyncTime =
-                        Float.NaN;
+                        Double.NaN;
                 clientProcessSyncProgress =
                         getProcessProgress();
             }
