@@ -52,6 +52,9 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_linkage"
             );
+    private static final float SCREEN_TILT_DEGREES =
+            10.0F;
+
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
 
@@ -128,6 +131,26 @@ public class MechanicalSifterBlockEntityRenderer
                 0.0D,
                 shake
         );
+
+        // One coherent inclined sieve: rear/high under the hopper, front/low
+        // toward the coarse discharge. Rotating the complete tray avoids the
+        // staircase look the previous JSON-only slope had.
+        poseStack.translate(
+                0.50D,
+                0.78D,
+                1.20D
+        );
+        poseStack.mulPose(
+                Axis.XP.rotationDegrees(
+                        SCREEN_TILT_DEGREES
+                )
+        );
+        poseStack.translate(
+                -0.50D,
+                -0.78D,
+                -1.20D
+        );
+
         renderModel(
                 UPPER_TRAY,
                 poseStack,
@@ -138,11 +161,6 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.popPose();
 
         poseStack.pushPose();
-        poseStack.translate(
-                0.0D,
-                0.0D,
-                shake * 0.35D
-        );
         renderModel(
                 LOWER_TRAY,
                 poseStack,
@@ -165,9 +183,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                -0.22D,
-                0.52D,
-                1.86D,
+                -0.20D,
+                0.39D,
+                1.78D,
                 0.42F,
                 402,
                 poseStack,
@@ -179,9 +197,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.90D,
-                0.30D,
-                1.86D,
+                0.81D,
+                0.25D,
+                1.70D,
                 0.38F,
                 403,
                 poseStack,
@@ -203,9 +221,18 @@ public class MechanicalSifterBlockEntityRenderer
 
         // Right-side crank/flywheel mounted in the rebuilt support tower.
         poseStack.translate(
-                1.87D,
-                0.96D,
-                1.06D
+                1.88D,
+                0.86D,
+                1.13D
+        );
+
+        // The wheel belongs on the machine's right side, so its face must
+        // point east/west. The old XY-plane wheel faced front/back and read
+        // as a strange blocky assembly from the side.
+        poseStack.mulPose(
+                Axis.YP.rotationDegrees(
+                        90.0F
+                )
         );
         poseStack.mulPose(
                 Axis.ZP.rotationDegrees(
@@ -574,8 +601,8 @@ public class MechanicalSifterBlockEntityRenderer
                     sifter,
                     stack,
                     0.50D + offsets[i][0],
-                    1.70D + offsets[i][1],
-                    0.55D + offsets[i][2],
+                    1.69D + offsets[i][1],
+                    0.43D + offsets[i][2],
                     0.43F,
                     410 + i,
                     poseStack,
