@@ -228,5 +228,9 @@
   "block.magneticraft2.copper_fluid_tank": "Copper Fluid Tank",
   "item.magneticraft2.copper_fluid_tank": "Copper Fluid Tank",
   "block.magneticraft2.mechanical_transfer_arm": "Mechanical Transfer Arm",
-  "item.magneticraft2.mechanical_transfer_arm": "Mechanical Transfer Arm"
+  "item.magneticraft2.mechanical_transfer_arm": "Mechanical Transfer Arm",
+  "block.magneticraft2.multiblock_item_primary_output": "Multiblock Primary Item Output",
+  "item.magneticraft2.multiblock_item_primary_output": "Multiblock Primary Item Output",
+  "block.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
+  "item.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output"
 }
