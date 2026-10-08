@@ -78,6 +78,8 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_INPUT_MODULE.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_INPUT.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_OUTPUT.get());
+                        entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_PRIMARY_OUTPUT.get());
+                        entries.accept(ItemRegistry.ITEM_MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_FLUID_INPUT.get());
                         entries.accept(ItemRegistry.ITEM_MULTIBLOCK_FLUID_OUTPUT.get());
                         entries.accept(FluidRegistry.DIRTY_WATER_BUCKET.get());
