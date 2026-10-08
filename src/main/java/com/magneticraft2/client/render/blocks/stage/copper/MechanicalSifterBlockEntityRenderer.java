@@ -51,7 +51,7 @@ public class MechanicalSifterBlockEntityRenderer
     private static final ResourceLocation DRIVE_WHEEL =
             new ResourceLocation(
                     "magneticraft2",
-                    "multiblock/mechanical_sifter_drive_wheel"
+                    "block/mechanical_sifter_drive_wheel"
             );
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
