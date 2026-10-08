@@ -21,7 +21,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
     private static final ResourceLocation SUPPORT =
-            new ResourceLocation("minecraft", "textures/block/copper_block.png");
+            new ResourceLocation("minecraft", "textures/block/stripped_spruce_log.png");
 
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -392,26 +392,47 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         double z0 = -sizeZ * 0.5D;
         double z1 = sizeZ * 0.5D;
 
+        /*
+         * Keep Minecraft's native texel density: one block = one full 16x16
+         * texture. Small mechanical cuboids should therefore use only the
+         * matching fraction of the texture instead of stretching the whole
+         * image over every face.
+         */
+        float uvX = (float) Math.min(1.0D, Math.max(0.001D, sizeX));
+        float uvY = (float) Math.min(1.0D, Math.max(0.001D, sizeY));
+        float uvZ = (float) Math.min(1.0D, Math.max(0.001D, sizeZ));
+
         PoseStack.Pose pose = stack.last();
 
+        // Top / bottom: X by Z.
         quad(consumer, pose, packedLight,
                 x0, y1, z0,  x0, y1, z1,  x1, y1, z1,  x1, y1, z0,
-                0.0F, 1.0F, 0.0F);
+                0.0F, 1.0F, 0.0F,
+                uvX, uvZ);
         quad(consumer, pose, packedLight,
                 x0, y0, z1,  x0, y0, z0,  x1, y0, z0,  x1, y0, z1,
-                0.0F, -1.0F, 0.0F);
+                0.0F, -1.0F, 0.0F,
+                uvX, uvZ);
+
+        // North / south: X by Y.
         quad(consumer, pose, packedLight,
                 x0, y0, z1,  x1, y0, z1,  x1, y1, z1,  x0, y1, z1,
-                0.0F, 0.0F, 1.0F);
+                0.0F, 0.0F, 1.0F,
+                uvX, uvY);
         quad(consumer, pose, packedLight,
                 x1, y0, z0,  x0, y0, z0,  x0, y1, z0,  x1, y1, z0,
-                0.0F, 0.0F, -1.0F);
+                0.0F, 0.0F, -1.0F,
+                uvX, uvY);
+
+        // East / west: Z by Y.
         quad(consumer, pose, packedLight,
                 x1, y0, z1,  x1, y0, z0,  x1, y1, z0,  x1, y1, z1,
-                1.0F, 0.0F, 0.0F);
+                1.0F, 0.0F, 0.0F,
+                uvZ, uvY);
         quad(consumer, pose, packedLight,
                 x0, y0, z0,  x0, y0, z1,  x0, y1, z1,  x0, y1, z0,
-                -1.0F, 0.0F, 0.0F);
+                -1.0F, 0.0F, 0.0F,
+                uvZ, uvY);
     }
 
     private void quad(VertexConsumer consumer,
@@ -423,11 +444,33 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                       double x3, double y3, double z3,
                       float normalX,
                       float normalY,
-                      float normalZ) {
-        vertex(consumer, pose, packedLight, x0, y0, z0, 0.0F, 0.0F, normalX, normalY, normalZ);
-        vertex(consumer, pose, packedLight, x1, y1, z1, 0.0F, 1.0F, normalX, normalY, normalZ);
-        vertex(consumer, pose, packedLight, x2, y2, z2, 1.0F, 1.0F, normalX, normalY, normalZ);
-        vertex(consumer, pose, packedLight, x3, y3, z3, 1.0F, 0.0F, normalX, normalY, normalZ);
+                      float normalZ,
+                      float maxU,
+                      float maxV) {
+        vertex(
+                consumer, pose, packedLight,
+                x0, y0, z0,
+                0.0F, 0.0F,
+                normalX, normalY, normalZ
+        );
+        vertex(
+                consumer, pose, packedLight,
+                x1, y1, z1,
+                0.0F, maxV,
+                normalX, normalY, normalZ
+        );
+        vertex(
+                consumer, pose, packedLight,
+                x2, y2, z2,
+                maxU, maxV,
+                normalX, normalY, normalZ
+        );
+        vertex(
+                consumer, pose, packedLight,
+                x3, y3, z3,
+                maxU, 0.0F,
+                normalX, normalY, normalZ
+        );
     }
 
     private void vertex(VertexConsumer consumer,
