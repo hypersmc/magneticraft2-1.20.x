@@ -55,23 +55,23 @@ public class MechanicalSifterBlock
                     Block.box(-11, 3, 25, -7, 25, 29),
                     Block.box(24, 3, 25, 28, 25, 29),
 
-                    // Open upper rails and rear hopper.
+                    // Open upper frame and hopper around the real upper input.
                     Block.box(-11, 23, 4, -7, 26, 28),
                     Block.box(24, 23, 4, 28, 26, 28),
                     Block.box(-7, 23, 4, 24, 26, 8),
-                    Block.box(-5, 18, 1, 21, 30, 16),
+                    Block.box(-4, 17, 1, 20, 30, 16),
 
-                    // Sieve carriage / support envelope.
-                    Block.box(-7, 7, 11, 23, 15, 27),
+                    // Main moving sieve envelope.
+                    Block.box(-7, 6, 11, 23, 15, 27),
 
-                    // Coarse output tray at the front-left.
-                    Block.box(-11, 4, 23, 5, 11, 32),
+                    // Front-left primary/coarse guide over its physical port.
+                    Block.box(-15, 9, 20, 0, 15, 30),
 
-                    // Fine collection chute under/right of the sieve.
-                    Block.box(6, 2, 21, 20, 8, 31),
+                    // Front-right byproduct/fines guide over its physical port.
+                    Block.box(16, 7, 20, 31, 13, 30),
 
-                    // Slim right-side drive frame.
-                    Block.box(24, 7, 13, 29, 19, 23)
+                    // Right-side flywheel bearing bracket.
+                    Block.box(25, 9, 15, 30, 17, 23)
             );
 
     public MechanicalSifterBlock() {
