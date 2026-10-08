@@ -43,35 +43,37 @@ public class MechanicalSifterBlock
     // moving screen volume rather than using one opaque 3x2x2 cuboid.
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
-                    // Heavy base frame.
+                    // Rear/base frame. Front corners are occupied by the two
+                    // surviving physical output ports, so the formed shape
+                    // deliberately leaves those blocks clear.
                     Block.box(-12, 0, 0, 28, 3, 4),
-                    Block.box(-12, 0, 28, 28, 3, 32),
-                    Block.box(-12, 0, 4, -8, 3, 28),
-                    Block.box(24, 0, 4, 28, 3, 28),
+                    Block.box(-12, 0, 4, -8, 3, 16),
+                    Block.box(24, 0, 4, 28, 3, 16),
+                    Block.box(0, 0, 15, 16, 3, 32),
 
-                    // Four structural legs.
-                    Block.box(-11, 3, 3, -7, 25, 7),
-                    Block.box(24, 3, 3, 28, 25, 7),
-                    Block.box(-11, 3, 25, -7, 25, 29),
-                    Block.box(24, 3, 25, 28, 25, 29),
+                    // Rear and middle structural posts.
+                    Block.box(-11, 2, 3, -7, 25, 7),
+                    Block.box(24, 2, 3, 28, 25, 7),
+                    Block.box(-11, 2, 11, -7, 25, 16),
+                    Block.box(24, 2, 11, 28, 25, 16),
 
-                    // Open upper frame and hopper around the real upper input.
-                    Block.box(-11, 23, 4, -7, 26, 28),
-                    Block.box(24, 23, 4, 28, 26, 28),
-                    Block.box(-7, 23, 4, 24, 26, 8),
-                    Block.box(-4, 17, 1, 20, 30, 16),
+                    // Open upper frame and hopper envelope around the real
+                    // upper-center Item Input block.
+                    Block.box(-11, 22, 4, -7, 26, 24),
+                    Block.box(24, 22, 4, 28, 26, 24),
+                    Block.box(-8, 22, 4, 25, 26, 8),
+                    Block.box(-4, 13, -4, 20, 30, 20),
 
-                    // Main moving sieve envelope.
-                    Block.box(-7, 6, 11, 23, 15, 27),
+                    // Main inclined sieve / support envelope.
+                    Block.box(-7, 6, 10, 23, 15, 28),
 
-                    // Front-left primary/coarse guide over its physical port.
-                    Block.box(-15, 9, 20, 0, 15, 30),
+                    // Primary and byproduct guides start above the physical
+                    // output port model height.
+                    Block.box(-16, 10, 18, 0, 16, 30),
+                    Block.box(16, 10, 18, 32, 16, 30),
 
-                    // Front-right byproduct/fines guide over its physical port.
-                    Block.box(16, 7, 20, 31, 13, 30),
-
-                    // Right-side flywheel bearing bracket.
-                    Block.box(25, 9, 15, 30, 17, 23)
+                    // Right-side bearing for the visible Large Wooden Gear.
+                    Block.box(24, 9, 9, 30, 18, 16)
             );
 
     public MechanicalSifterBlock() {
