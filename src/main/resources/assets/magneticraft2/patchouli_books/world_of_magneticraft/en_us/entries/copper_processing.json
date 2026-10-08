@@ -146,12 +146,14 @@
       "multiblock": {
         "pattern": [
           [
-            "P P",
-            "PPP"
+            "PP",
+            " P",
+            "PP"
           ],
           [
-            "P0P",
-            "IPO"
+            "PI",
+            "0P",
+            "PO"
           ]
         ],
         "mapping": {
@@ -162,7 +164,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. The formed machine has a top feed hopper, one main shaking screen, a coarse-material outlet and a lower fines chute. Put a Wooden Crank directly behind the controller: its rotation drives the visible side wheel/linkage, which reciprocates the screen carriage."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. The preview is transposed from Magneticraft2's JSON layout into Patchouli's coordinate order, so it now matches the real 3x2x2 structure exactly. Item Input and Item Output sit on the row beside the controller as shown. The formed machine has a top feed hopper, one main shaking screen, a coarse-material outlet and a lower fines chute. Put a Wooden Crank directly behind the controller to drive the visible side wheel/linkage and reciprocating screen."
     },
     {
       "type": "text",
