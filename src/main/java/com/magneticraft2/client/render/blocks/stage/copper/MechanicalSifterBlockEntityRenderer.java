@@ -51,7 +51,7 @@ public class MechanicalSifterBlockEntityRenderer
     private static final ResourceLocation DRIVE_WHEEL =
             new ResourceLocation(
                     "magneticraft2",
-                    "block/pulley_large_wood"
+                    "multiblock/mechanical_sifter_drive_wheel"
             );
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
@@ -214,15 +214,10 @@ public class MechanicalSifterBlockEntityRenderer
                         rotation
                 )
         );
-        poseStack.mulPose(
-                Axis.XP.rotationDegrees(
-                        90.0F
-                )
-        );
         poseStack.scale(
-                0.72F,
-                0.72F,
-                0.72F
+                0.78F,
+                0.78F,
+                0.78F
         );
         poseStack.translate(
                 -0.5D,
