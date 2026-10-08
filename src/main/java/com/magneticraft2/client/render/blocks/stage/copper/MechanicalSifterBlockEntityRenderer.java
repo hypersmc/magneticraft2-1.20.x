@@ -3,6 +3,7 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -10,6 +11,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -48,12 +52,6 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_linkage"
             );
-    private static final ResourceLocation DRIVE_WHEEL =
-            new ResourceLocation(
-                    "magneticraft2",
-                    "block/mechanical_sifter_drive_wheel"
-            );
-
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
 
@@ -203,7 +201,7 @@ public class MechanicalSifterBlockEntityRenderer
             int packedOverlay) {
         poseStack.pushPose();
 
-        // Right-side crank/flywheel mounted in the rebuilt static support tower.
+        // Right-side crank/flywheel mounted in the rebuilt support tower.
         poseStack.translate(
                 1.72D,
                 0.96D,
@@ -214,26 +212,319 @@ public class MechanicalSifterBlockEntityRenderer
                         rotation
                 )
         );
-        poseStack.scale(
-                0.78F,
-                0.78F,
-                0.78F
-        );
-        poseStack.translate(
-                -0.5D,
-                -0.5D,
-                -0.5D
+
+        TextureAtlasSprite wood =
+                Minecraft.getInstance()
+                        .getTextureAtlas(
+                                TextureAtlas.LOCATION_BLOCKS
+                        )
+                        .apply(
+                                new ResourceLocation(
+                                        "minecraft",
+                                        "block/oak_planks"
+                                )
+                        );
+
+        TextureAtlasSprite darkWood =
+                Minecraft.getInstance()
+                        .getTextureAtlas(
+                                TextureAtlas.LOCATION_BLOCKS
+                        )
+                        .apply(
+                                new ResourceLocation(
+                                        "minecraft",
+                                        "block/stripped_spruce_log"
+                                )
+                        );
+
+        TextureAtlasSprite copper =
+                Minecraft.getInstance()
+                        .getTextureAtlas(
+                                TextureAtlas.LOCATION_BLOCKS
+                        )
+                        .apply(
+                                new ResourceLocation(
+                                        "minecraft",
+                                        "block/cut_copper"
+                                )
+                        );
+
+        VertexConsumer consumer =
+                buffer.getBuffer(
+                        RenderType.solid()
+                );
+
+        /*
+         * Draw the drive wheel directly instead of looking up another baked
+         * model. This prevents a missing-model cube from ever replacing the
+         * wheel, and keeps the texture density under our control.
+         *
+         * Local wheel plane is X/Y with a shallow Z thickness.
+         */
+        // Axle.
+        renderWheelBox(
+                poseStack,
+                consumer,
+                packedLight,
+                darkWood,
+                -0.10D, -0.10D, -0.34D,
+                 0.10D,  0.10D,  0.34D
         );
 
-        renderModel(
-                DRIVE_WHEEL,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
+        // Four main rim segments.
+        renderWheelBox(
+                poseStack, consumer, packedLight, wood,
+                -0.34D, 0.22D, -0.11D,
+                 0.34D, 0.36D,  0.11D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, wood,
+                -0.34D, -0.36D, -0.11D,
+                 0.34D, -0.22D,  0.11D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, wood,
+                -0.36D, -0.22D, -0.11D,
+                -0.22D,  0.22D,  0.11D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, wood,
+                 0.22D, -0.22D, -0.11D,
+                 0.36D,  0.22D,  0.11D
+        );
+
+        // Corner blocks round the square rim into an octagonal read.
+        double[][] corners = {
+                {-0.245D,  0.245D},
+                { 0.245D,  0.245D},
+                {-0.245D, -0.245D},
+                { 0.245D, -0.245D}
+        };
+
+        for (double[] corner : corners) {
+            renderWheelBox(
+                    poseStack,
+                    consumer,
+                    packedLight,
+                    wood,
+                    corner[0] - 0.09D,
+                    corner[1] - 0.09D,
+                    -0.11D,
+                    corner[0] + 0.09D,
+                    corner[1] + 0.09D,
+                    0.11D
+            );
+        }
+
+        // Cross spokes.
+        renderWheelBox(
+                poseStack, consumer, packedLight, darkWood,
+                -0.27D, -0.055D, -0.075D,
+                 0.27D,  0.055D,  0.075D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, darkWood,
+                -0.055D, -0.27D, -0.075D,
+                 0.055D,  0.27D,  0.075D
+        );
+
+        // Copper hub.
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                -0.12D, -0.12D, -0.15D,
+                 0.12D,  0.12D,  0.15D
+        );
+
+        // Four copper rim clamps.
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                -0.14D, 0.31D, -0.13D,
+                 0.14D, 0.38D,  0.13D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                -0.14D, -0.38D, -0.13D,
+                 0.14D, -0.31D,  0.13D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                -0.38D, -0.14D, -0.13D,
+                -0.31D,  0.14D,  0.13D
+        );
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                 0.31D, -0.14D, -0.13D,
+                 0.38D,  0.14D,  0.13D
         );
 
         poseStack.popPose();
+    }
+
+    private void renderWheelBox(
+            PoseStack poseStack,
+            VertexConsumer consumer,
+            int packedLight,
+            TextureAtlasSprite sprite,
+            double x0,
+            double y0,
+            double z0,
+            double x1,
+            double y1,
+            double z1) {
+        PoseStack.Pose pose =
+                poseStack.last();
+
+        float uvX =
+                (float) Math.min(
+                        1.0D,
+                        Math.max(
+                                1.0D / 16.0D,
+                                Math.abs(x1 - x0)
+                        )
+                );
+        float uvY =
+                (float) Math.min(
+                        1.0D,
+                        Math.max(
+                                1.0D / 16.0D,
+                                Math.abs(y1 - y0)
+                        )
+                );
+        float uvZ =
+                (float) Math.min(
+                        1.0D,
+                        Math.max(
+                                1.0D / 16.0D,
+                                Math.abs(z1 - z0)
+                        )
+                );
+
+        // +Y / -Y
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x0, y1, z0, x1, y1, z0,
+                x1, y1, z1, x0, y1, z1,
+                0.0F, 1.0F, 0.0F, uvX, uvZ
+        );
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x0, y0, z1, x1, y0, z1,
+                x1, y0, z0, x0, y0, z0,
+                0.0F, -1.0F, 0.0F, uvX, uvZ
+        );
+
+        // +Z / -Z
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x0, y0, z1, x1, y0, z1,
+                x1, y1, z1, x0, y1, z1,
+                0.0F, 0.0F, 1.0F, uvX, uvY
+        );
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x1, y0, z0, x0, y0, z0,
+                x0, y1, z0, x1, y1, z0,
+                0.0F, 0.0F, -1.0F, uvX, uvY
+        );
+
+        // +X / -X
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x1, y0, z1, x1, y0, z0,
+                x1, y1, z0, x1, y1, z1,
+                1.0F, 0.0F, 0.0F, uvZ, uvY
+        );
+        wheelQuad(
+                consumer, pose, sprite, packedLight,
+                x0, y0, z0, x0, y0, z1,
+                x0, y1, z1, x0, y1, z0,
+                -1.0F, 0.0F, 0.0F, uvZ, uvY
+        );
+    }
+
+    private void wheelQuad(
+            VertexConsumer consumer,
+            PoseStack.Pose pose,
+            TextureAtlasSprite sprite,
+            int packedLight,
+            double x0, double y0, double z0,
+            double x1, double y1, double z1,
+            double x2, double y2, double z2,
+            double x3, double y3, double z3,
+            float normalX,
+            float normalY,
+            float normalZ,
+            float uScale,
+            float vScale) {
+        float u0 = sprite.getU0();
+        float v0 = sprite.getV0();
+        float u1 =
+                u0
+                        + (sprite.getU1() - u0)
+                        * uScale;
+        float v1 =
+                v0
+                        + (sprite.getV1() - v0)
+                        * vScale;
+
+        wheelVertex(
+                consumer, pose, packedLight,
+                x0, y0, z0, u0, v0,
+                normalX, normalY, normalZ
+        );
+        wheelVertex(
+                consumer, pose, packedLight,
+                x1, y1, z1, u1, v0,
+                normalX, normalY, normalZ
+        );
+        wheelVertex(
+                consumer, pose, packedLight,
+                x2, y2, z2, u1, v1,
+                normalX, normalY, normalZ
+        );
+        wheelVertex(
+                consumer, pose, packedLight,
+                x3, y3, z3, u0, v1,
+                normalX, normalY, normalZ
+        );
+    }
+
+    private void wheelVertex(
+            VertexConsumer consumer,
+            PoseStack.Pose pose,
+            int packedLight,
+            double x,
+            double y,
+            double z,
+            float u,
+            float v,
+            float normalX,
+            float normalY,
+            float normalZ) {
+        consumer.vertex(
+                        pose.pose(),
+                        (float) x,
+                        (float) y,
+                        (float) z
+                )
+                .color(
+                        1.0F,
+                        1.0F,
+                        1.0F,
+                        1.0F
+                )
+                .uv(u, v)
+                .overlayCoords(
+                        OverlayTexture.NO_OVERLAY
+                )
+                .uv2(packedLight)
+                .normal(
+                        pose.normal(),
+                        normalX,
+                        normalY,
+                        normalZ
+                )
+                .endVertex();
     }
 
     private void renderInputItems(
