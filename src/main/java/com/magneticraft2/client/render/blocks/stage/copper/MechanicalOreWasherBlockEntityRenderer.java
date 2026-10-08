@@ -303,10 +303,12 @@ public class MechanicalOreWasherBlockEntityRenderer
          * Before dirty water exists the right channel remains clean so a newly
          * filled washer still looks like one continuous water bath.
          */
+        // Extend all the way into the four visible trough corners. The old
+        // -1..18 range stopped short at both ends of each side channel.
         float minZ =
-                -1.0F / 16.0F;
+                -5.75F / 16.0F;
         float maxZ =
-                18.0F / 16.0F;
+                23.75F / 16.0F;
 
         float cleanY =
                 (7.50F + 3.10F * cleanFill)
