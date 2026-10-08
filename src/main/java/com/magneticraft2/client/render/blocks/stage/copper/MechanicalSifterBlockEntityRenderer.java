@@ -165,9 +165,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                -0.12D,
-                0.62D,
-                1.78D,
+                -0.22D,
+                0.52D,
+                1.86D,
                 0.42F,
                 402,
                 poseStack,
@@ -179,9 +179,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                1.00D,
-                0.48D,
-                1.78D,
+                0.90D,
+                0.30D,
+                1.86D,
                 0.38F,
                 403,
                 poseStack,
@@ -636,13 +636,13 @@ public class MechanicalSifterBlockEntityRenderer
             x = 0.50D
                     + shake * 0.12D;
             y = lerp(
-                    0.91D,
-                    0.76D,
+                    0.87D,
+                    0.69D,
                     t
             );
             z = lerp(
-                    0.88D,
-                    1.43D,
+                    0.89D,
+                    1.48D,
                     t
             ) + shake;
         } else {
@@ -658,13 +658,13 @@ public class MechanicalSifterBlockEntityRenderer
                     t
             );
             y = lerp(
-                    0.74D,
-                    0.49D,
+                    0.69D,
+                    0.43D,
                     t
             );
             z = lerp(
-                    1.43D,
-                    1.73D,
+                    1.48D,
+                    1.78D,
                     t
             ) + shake * 0.35D;
         }
