@@ -20,6 +20,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
+    private static final ResourceLocation BEARING =
+            new ResourceLocation("minecraft", "textures/block/deepslate_tiles.png");
 
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -38,6 +40,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
         VertexConsumer shaft =
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
+        VertexConsumer bearing =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(BEARING));
 
         Direction input = gearbox.getInputDirection();
         Direction output = gearbox.getOutputDirection();
@@ -48,6 +52,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         renderPortShaft(
                 stack,
                 shaft,
+                bearing,
                 packedLight,
                 input,
                 inputAngle * axisDirectionSign(input)
@@ -55,6 +60,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         renderPortShaft(
                 stack,
                 shaft,
+                bearing,
                 packedLight,
                 output,
                 outputAngle * axisDirectionSign(output)
@@ -88,11 +94,22 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
      */
     private void renderPortShaft(PoseStack stack,
                                  VertexConsumer consumer,
+                                 VertexConsumer bearing,
                                  int packedLight,
                                  Direction port,
                                  float rotation) {
         stack.pushPose();
         orientLocalXToDirection(stack, port);
+
+        // Fixed bearing attached to the gearbox frame. The wooden axle rotates
+        // inside this ring, so the gear no longer looks suspended in open air.
+        renderBearingCollar(
+                stack,
+                bearing,
+                packedLight,
+                0.335D
+        );
+
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
         // Thin internal axle into the gear hub.
@@ -133,6 +150,38 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 0.110D,
                 0.375D
         );
+
+        stack.popPose();
+    }
+
+    private void renderBearingCollar(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int packedLight,
+            double centerX) {
+        // Four bars form a square bearing race around the inner shaft.
+        stack.pushPose();
+        stack.translate(centerX, 0.0D, 0.0D);
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.145D, 0.0D);
+        drawBox(stack, consumer, packedLight, 0.115D, 0.055D, 0.345D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, -0.145D, 0.0D);
+        drawBox(stack, consumer, packedLight, 0.115D, 0.055D, 0.345D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.0D, 0.145D);
+        drawBox(stack, consumer, packedLight, 0.115D, 0.235D, 0.055D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.0D, -0.145D);
+        drawBox(stack, consumer, packedLight, 0.115D, 0.235D, 0.055D);
+        stack.popPose();
 
         stack.popPose();
     }
