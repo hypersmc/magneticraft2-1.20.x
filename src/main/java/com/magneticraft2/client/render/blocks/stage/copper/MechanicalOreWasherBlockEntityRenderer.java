@@ -278,8 +278,11 @@ public class MechanicalOreWasherBlockEntityRenderer
         // The water belongs in the actual center trough, not across the entire
         // formed 3x3 footprint. Keeping it inside these walls avoids clipping
         // through the frame, item ports and side fluid modules.
-        float minX = -1.0F / 16.0F;
-        float maxX = 17.0F / 16.0F;
+        // Fill the whole trough between the side fluid housings. The old
+        // surface was only ~18 px wide, leaving obvious dry strips on both
+        // sides even though the formed basin is much wider.
+        float minX = -5.75F / 16.0F;
+        float maxX = 21.75F / 16.0F;
         float minZ = -1.0F / 16.0F;
         float maxZ = 18.0F / 16.0F;
         float fill =
