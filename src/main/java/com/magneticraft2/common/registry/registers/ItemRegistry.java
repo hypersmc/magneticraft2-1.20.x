@@ -111,6 +111,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_MECHANICAL_INPUT_MODULE = fromBlock(MECHANICAL_INPUT_MODULE);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_INPUT = fromBlock(MULTIBLOCK_ITEM_INPUT);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_OUTPUT = fromBlock(MULTIBLOCK_ITEM_OUTPUT);
+    public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_PRIMARY_OUTPUT = fromBlock(MULTIBLOCK_ITEM_PRIMARY_OUTPUT);
+    public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT = fromBlock(MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_FLUID_INPUT = fromBlock(MULTIBLOCK_FLUID_INPUT);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_FLUID_OUTPUT = fromBlock(MULTIBLOCK_FLUID_OUTPUT);
     public static final RegistryObject<Item> ITEM_WATER_PIPE = fromBlock(WATER_PIPE);
