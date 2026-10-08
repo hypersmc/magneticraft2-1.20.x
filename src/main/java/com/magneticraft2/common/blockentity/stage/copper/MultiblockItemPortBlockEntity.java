@@ -56,11 +56,18 @@ public class MultiblockItemPortBlockEntity
         );
     }
 
+    private MultiblockItemPortBlock.PortMode getPortMode() {
+        if (getBlockState().getBlock()
+                instanceof MultiblockItemPortBlock portBlock) {
+            return portBlock.getPortMode();
+        }
+
+        return MultiblockItemPortBlock.PortMode.INPUT;
+    }
+
     public boolean isOutputPort() {
-        return getBlockState().getBlock()
-                == BlockRegistry
-                        .MULTIBLOCK_ITEM_OUTPUT
-                        .get();
+        return getPortMode()
+                != MultiblockItemPortBlock.PortMode.INPUT;
     }
 
     @Nullable
@@ -173,21 +180,40 @@ public class MultiblockItemPortBlockEntity
             return ItemStack.EMPTY;
         }
 
-        ItemStack primary =
-                controller.itemHandler
-                        .extractItem(
-                                1,
-                                64,
-                                false
-                        );
+        MultiblockItemPortBlock.PortMode mode =
+                getPortMode();
 
-        if (!primary.isEmpty()) {
-            return primary;
+        if (mode
+                == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT) {
+            ItemStack primary =
+                    controller.itemHandler
+                            .extractItem(
+                                    1,
+                                    64,
+                                    false
+                            );
+
+            if (!primary.isEmpty()) {
+                return primary;
+            }
+
+            return controller.itemHandler
+                    .extractItem(
+                            2,
+                            64,
+                            false
+                    );
         }
+
+        int mapped =
+                mode
+                        == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
+                        ? 2
+                        : 1;
 
         return controller.itemHandler
                 .extractItem(
-                        2,
+                        mapped,
                         64,
                         false
                 );
@@ -222,9 +248,12 @@ public class MultiblockItemPortBlockEntity
 
     @Override
     public String getModuleKey() {
-        return isOutputPort()
-                ? "item_output"
-                : "item_input";
+        return switch (getPortMode()) {
+            case INPUT -> "item_input";
+            case COMBINED_OUTPUT -> "item_output";
+            case PRIMARY_OUTPUT -> "item_primary_output";
+            case BYPRODUCT_OUTPUT -> "item_byproduct_output";
+        };
     }
 
     @Override
@@ -350,7 +379,8 @@ public class MultiblockItemPortBlockEntity
 
         @Override
         public int getSlots() {
-            return isOutputPort()
+            return getPortMode()
+                    == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
                     ? 2
                     : 1;
         }
@@ -483,17 +513,33 @@ public class MultiblockItemPortBlockEntity
         }
 
         private int mapSlot(int slot) {
-            if (!isOutputPort()) {
+            MultiblockItemPortBlock.PortMode mode =
+                    getPortMode();
+
+            if (mode
+                    == MultiblockItemPortBlock.PortMode.INPUT) {
                 return slot == 0
                         ? 0
                         : -1;
             }
 
-            return switch (slot) {
-                case 0 -> 1;
-                case 1 -> 2;
-                default -> -1;
-            };
+            if (mode
+                    == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT) {
+                return switch (slot) {
+                    case 0 -> 1;
+                    case 1 -> 2;
+                    default -> -1;
+                };
+            }
+
+            if (slot != 0) {
+                return -1;
+            }
+
+            return mode
+                    == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
+                    ? 2
+                    : 1;
         }
     }
 }
