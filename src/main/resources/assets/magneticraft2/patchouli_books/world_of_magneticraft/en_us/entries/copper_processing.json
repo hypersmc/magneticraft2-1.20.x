@@ -137,7 +137,7 @@
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. It uses the same Item Input and Item Output modules as the Washer, while its reciprocating drive still comes from a Wooden Crank placed directly behind the controller."
+      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. It uses the same Item Input and Item Output modules as the Washer. Material enters the formed top hopper and is classified on the shaking screen; the reciprocating drive comes from a Wooden Crank placed directly behind the controller."
     },
     {
       "type": "patchouli:multiblock",
@@ -162,7 +162,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. Feed enters the hopper, crosses the coarse upper screen, drops to the finer lower screen, then reaches the product/reject collection area. Put a Wooden Crank directly behind the controller: its visible rod and slider drive the two screens in opposite directions."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. The formed machine has a top feed hopper, one main shaking screen, a coarse-material outlet and a lower fines chute. Put a Wooden Crank directly behind the controller: its rotation drives the visible side wheel/linkage, which reciprocates the screen carriage."
     },
     {
       "type": "text",
