@@ -23,7 +23,7 @@ public class CustomGearboxBlockEntity_woodRenderer
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
     private static final ResourceLocation SUPPORT =
-            new ResourceLocation("minecraft", "textures/block/stripped_spruce_log.png");
+            new ResourceLocation("minecraft", "textures/block/oak_planks.png");
 
     private static final double GRID_SPACING = 0.26D;
     private static final double SHAFT_THICKNESS = 0.085D;
@@ -470,9 +470,18 @@ public class CustomGearboxBlockEntity_woodRenderer
             PoseStack stack,
             VertexConsumer consumer,
             int packedLight) {
-        // Fixed wooden bearing with straps tied into the open housing frame.
+        /*
+         * Local +X points toward the active gearbox face.
+         *
+         * This is a real structural cross-member, not a small decorative
+         * collar. It spans from one side of the wooden cage to the other and
+         * carries the bearing at its center, so the shaft/gear assembly has an
+         * obvious physical support path from every normal viewing angle.
+         */
         stack.pushPose();
 
+        // Full-width wooden cross-brace. The static housing rails sit near
+        // +/-0.44 from center, so this visibly terminates inside both rails.
         stack.pushPose();
         stack.translate(0.405D, 0.0D, 0.0D);
         drawBox(
@@ -480,32 +489,48 @@ public class CustomGearboxBlockEntity_woodRenderer
                 consumer,
                 packedLight,
                 0.095D,
-                0.235D,
-                0.235D
+                0.095D,
+                0.875D
         );
         stack.popPose();
 
+        // Thicker center bearing block where the rotating axle passes through
+        // the cross-member.
         stack.pushPose();
-        stack.translate(0.405D, 0.285D, 0.0D);
+        stack.translate(0.405D, 0.0D, 0.0D);
         drawBox(
                 stack,
                 consumer,
                 packedLight,
-                0.085D,
-                0.325D,
-                0.075D
+                0.125D,
+                0.245D,
+                0.245D
         );
         stack.popPose();
 
+        // Small upper/lower cheeks make the bearing read as captured by the
+        // brace rather than pasted onto its front face.
         stack.pushPose();
-        stack.translate(0.405D, -0.285D, 0.0D);
+        stack.translate(0.405D, 0.170D, 0.0D);
         drawBox(
                 stack,
                 consumer,
                 packedLight,
-                0.085D,
-                0.325D,
-                0.075D
+                0.105D,
+                0.095D,
+                0.310D
+        );
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.405D, -0.170D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.105D,
+                0.095D,
+                0.310D
         );
         stack.popPose();
 
