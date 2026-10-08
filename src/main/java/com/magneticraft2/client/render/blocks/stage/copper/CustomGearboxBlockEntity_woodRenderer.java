@@ -22,8 +22,8 @@ public class CustomGearboxBlockEntity_woodRenderer
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
-    private static final ResourceLocation BEARING =
-            new ResourceLocation("minecraft", "textures/block/deepslate_tiles.png");
+    private static final ResourceLocation SUPPORT =
+            new ResourceLocation("minecraft", "textures/block/copper_block.png");
 
     private static final double GRID_SPACING = 0.26D;
     private static final double SHAFT_THICKNESS = 0.085D;
@@ -48,8 +48,8 @@ public class CustomGearboxBlockEntity_woodRenderer
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
         VertexConsumer shaft =
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
-        VertexConsumer bearing =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(BEARING));
+        VertexConsumer support =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(SUPPORT));
 
         float referenceAngle =
                 gearbox.getVisualRotationDegrees(partialTicks);
@@ -116,7 +116,7 @@ public class CustomGearboxBlockEntity_woodRenderer
             renderPortAdapter(
                     stack,
                     shaft,
-                    bearing,
+                    support,
                     packedLight,
                     port,
                     portAngle
@@ -411,16 +411,16 @@ public class CustomGearboxBlockEntity_woodRenderer
      */
     private void renderPortAdapter(PoseStack stack,
                                    VertexConsumer consumer,
-                                   VertexConsumer bearing,
+                                   VertexConsumer support,
                                    int packedLight,
                                    Direction port,
                                    float rotation) {
         stack.pushPose();
         orientLocalXToDirection(stack, port);
 
-        renderPortBearing(
+        renderPortSupport(
                 stack,
-                bearing,
+                support,
                 packedLight
         );
 
@@ -466,31 +466,47 @@ public class CustomGearboxBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private void renderPortBearing(
+    private void renderPortSupport(
             PoseStack stack,
             VertexConsumer consumer,
             int packedLight) {
+        // Fixed copper bearing with straps tied into the open housing frame.
+        stack.pushPose();
+
         stack.pushPose();
         stack.translate(0.405D, 0.0D, 0.0D);
-
-        stack.pushPose();
-        stack.translate(0.0D, 0.145D, 0.0D);
-        drawBox(stack, consumer, packedLight, 0.095D, 0.050D, 0.340D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.095D,
+                0.235D,
+                0.235D
+        );
         stack.popPose();
 
         stack.pushPose();
-        stack.translate(0.0D, -0.145D, 0.0D);
-        drawBox(stack, consumer, packedLight, 0.095D, 0.050D, 0.340D);
+        stack.translate(0.405D, 0.285D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.085D,
+                0.325D,
+                0.075D
+        );
         stack.popPose();
 
         stack.pushPose();
-        stack.translate(0.0D, 0.0D, 0.145D);
-        drawBox(stack, consumer, packedLight, 0.095D, 0.240D, 0.050D);
-        stack.popPose();
-
-        stack.pushPose();
-        stack.translate(0.0D, 0.0D, -0.145D);
-        drawBox(stack, consumer, packedLight, 0.095D, 0.240D, 0.050D);
+        stack.translate(0.405D, -0.285D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.085D,
+                0.325D,
+                0.075D
+        );
         stack.popPose();
 
         stack.popPose();
