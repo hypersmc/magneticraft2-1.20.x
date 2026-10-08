@@ -46,33 +46,39 @@ public class MechanicalOreWasherBlock
     // of claiming the whole 3x2x3 bounding box is solid.
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
-                    // Timber base.
-                    Block.box(-10, 0, -12, -7, 3, 28),
-                    Block.box(23, 0, -12, 26, 3, 28),
-                    Block.box(-12, 2, -10, 28, 5, -7),
+                    // Timber base / lower frame from the authoritative SOUTH model.
+                    Block.box(-10, 0, -13, -7, 3, 29),
+                    Block.box(23, 0, -13, 26, 3, 29),
+                    Block.box(-12, 2, -11, 28, 5, -8),
                     Block.box(-12, 2, 7, 28, 5, 10),
-                    Block.box(-12, 2, 25, 28, 5, 28),
+                    Block.box(-12, 2, 26, 28, 5, 29),
+                    Block.box(-7, 5, -5, 23, 7, 23),
 
-                    // Shallow trough walls.
-                    Block.box(-9, 5, -6, -6, 12, 23),
-                    Block.box(22, 5, -6, 25, 12, 23),
-                    Block.box(-6, 5, -5, 22, 7, 22),
+                    // Updated uprights / top braces.
+                    Block.box(-8, 9, -7, -5, 27, -4),
+                    Block.box(21, 9, -7, 24, 27, -4),
+                    Block.box(-8, 9, 22, -5, 27, 25),
+                    Block.box(21, 9, 22, 24, 27, 25),
+                    Block.box(-8, 24, -7, 24, 27, -4),
+                    Block.box(-8, 24, 22, 24, 27, 25),
 
-                    // Four compact uprights and the rear crossbar. The front
-                    // drive bay stays open so the pulley/belt path is visible.
-                    Block.box(-8, 7, -4, -5, 25, -1),
-                    Block.box(21, 7, -4, 24, 25, -1),
-                    Block.box(-8, 7, 18, -5, 25, 21),
-                    Block.box(21, 7, 18, 24, 25, 21),
-                    Block.box(-8, 22, -4, 24, 25, -1),
-
-                    // Low trommel envelope, partially down inside the trough.
+                    // Trommel / central working envelope.
                     Block.box(2, 9, -4, 14, 20, 22),
 
-                    // Stepped feed and discharge paths. The visible item-port
-                    // modules retain their own local collision at the edges.
-                    Block.box(2, 8, -14, 14, 15, -1),
-                    Block.box(2, 7, 16, 14, 12, 26)
+                    // Updated stepped input chute.
+                    Block.box(2, 8, -14, 14, 10, -10),
+                    Block.box(2, 10, -10, 14, 12, -6),
+                    Block.box(2, 12, -6, 14, 14, -2),
+                    Block.box(1, 9, -14, 15, 15, -1),
+
+                    // Updated output chute moved farther SOUTH.
+                    Block.box(2, 9, 21, 14, 11, 26),
+                    Block.box(2, 7, 26, 14, 10, 31),
+                    Block.box(1, 8, 21, 15, 13, 31),
+
+                    // Side fluid housings.
+                    Block.box(-9, 5, -9, 0, 13, 27),
+                    Block.box(16, 5, -9, 25, 13, 27)
             );
 
     public MechanicalOreWasherBlock() {
