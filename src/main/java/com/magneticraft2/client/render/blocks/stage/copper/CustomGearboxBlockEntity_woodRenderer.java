@@ -22,6 +22,8 @@ public class CustomGearboxBlockEntity_woodRenderer
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
+    private static final ResourceLocation BEARING =
+            new ResourceLocation("minecraft", "textures/block/deepslate_tiles.png");
 
     private static final double GRID_SPACING = 0.26D;
     private static final double SHAFT_THICKNESS = 0.085D;
@@ -46,6 +48,8 @@ public class CustomGearboxBlockEntity_woodRenderer
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
         VertexConsumer shaft =
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
+        VertexConsumer bearing =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(BEARING));
 
         float referenceAngle =
                 gearbox.getVisualRotationDegrees(partialTicks);
@@ -112,6 +116,7 @@ public class CustomGearboxBlockEntity_woodRenderer
             renderPortAdapter(
                     stack,
                     shaft,
+                    bearing,
                     packedLight,
                     port,
                     portAngle
@@ -406,11 +411,19 @@ public class CustomGearboxBlockEntity_woodRenderer
      */
     private void renderPortAdapter(PoseStack stack,
                                    VertexConsumer consumer,
+                                   VertexConsumer bearing,
                                    int packedLight,
                                    Direction port,
                                    float rotation) {
         stack.pushPose();
         orientLocalXToDirection(stack, port);
+
+        renderPortBearing(
+                stack,
+                bearing,
+                packedLight
+        );
+
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
         // The port cell center is 0.26 blocks from the gearbox center. Its
@@ -449,6 +462,36 @@ public class CustomGearboxBlockEntity_woodRenderer
                 0.050D,
                 OUTSIDE_SHAFT_THICKNESS
         );
+
+        stack.popPose();
+    }
+
+    private void renderPortBearing(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int packedLight) {
+        stack.pushPose();
+        stack.translate(0.405D, 0.0D, 0.0D);
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.145D, 0.0D);
+        drawBox(stack, consumer, packedLight, 0.095D, 0.050D, 0.340D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, -0.145D, 0.0D);
+        drawBox(stack, consumer, packedLight, 0.095D, 0.050D, 0.340D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.0D, 0.145D);
+        drawBox(stack, consumer, packedLight, 0.095D, 0.240D, 0.050D);
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.0D, 0.0D, -0.145D);
+        drawBox(stack, consumer, packedLight, 0.095D, 0.240D, 0.050D);
+        stack.popPose();
 
         stack.popPose();
     }
