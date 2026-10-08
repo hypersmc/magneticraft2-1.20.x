@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/block",
-  "credit": "Mechanical Sifter fuller hopper/screen classifier body",
+  "credit": "Mechanical Sifter fuller hopper/screen classifier body - valid -16..32 model bounds",
   "textures": {
     "wood": "minecraft:block/oak_planks",
     "frame": "minecraft:block/stripped_spruce_log",
@@ -2807,7 +2807,7 @@
       "to": [
         5,
         8,
-        34
+        32
       ],
       "faces": {
         "north": {
@@ -2833,7 +2833,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             3
           ]
         },
@@ -2842,7 +2842,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             3
           ]
         },
@@ -2852,7 +2852,7 @@
             0,
             0,
             15,
-            10
+            8
           ]
         },
         "down": {
@@ -2861,7 +2861,7 @@
             0,
             0,
             15,
-            10
+            8
           ]
         }
       }
@@ -2875,7 +2875,7 @@
       "to": [
         -8,
         12,
-        34
+        32
       ],
       "faces": {
         "north": {
@@ -2901,7 +2901,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             7
           ]
         },
@@ -2910,7 +2910,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             7
           ]
         },
@@ -2920,7 +2920,7 @@
             0,
             0,
             3,
-            10
+            8
           ]
         },
         "down": {
@@ -2929,7 +2929,7 @@
             0,
             0,
             3,
-            10
+            8
           ]
         }
       }
@@ -2943,7 +2943,7 @@
       "to": [
         6,
         12,
-        34
+        32
       ],
       "faces": {
         "north": {
@@ -2969,7 +2969,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             7
           ]
         },
@@ -2978,7 +2978,7 @@
           "uv": [
             0,
             0,
-            10,
+            8,
             7
           ]
         },
@@ -2988,7 +2988,7 @@
             0,
             0,
             3,
-            10
+            8
           ]
         },
         "down": {
@@ -2997,7 +2997,7 @@
             0,
             0,
             3,
-            10
+            8
           ]
         }
       }
