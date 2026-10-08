@@ -271,62 +271,154 @@ public class MechanicalOreWasherBlockEntityRenderer
                         washer.getBlockPos()
                 );
 
-        float red = ((waterColor >> 16) & 0xFF) / 255.0F;
-        float green = ((waterColor >> 8) & 0xFF) / 255.0F;
-        float blue = (waterColor & 0xFF) / 255.0F;
+        float cleanRed =
+                ((waterColor >> 16) & 0xFF) / 255.0F;
+        float cleanGreen =
+                ((waterColor >> 8) & 0xFF) / 255.0F;
+        float cleanBlue =
+                (waterColor & 0xFF) / 255.0F;
 
-        // The water belongs in the actual center trough, not across the entire
-        // formed 3x3 footprint. Keeping it inside these walls avoids clipping
-        // through the frame, item ports and side fluid modules.
-        // Fill the whole trough between the side fluid housings. The old
-        // surface was only ~18 px wide, leaving obvious dry strips on both
-        // sides even though the formed basin is much wider.
-        float minX = -5.75F / 16.0F;
-        float maxX = 21.75F / 16.0F;
-        float minZ = -1.0F / 16.0F;
-        float maxZ = 18.0F / 16.0F;
-        float fill =
+        float cleanFill =
                 washer.getWaterFillRatio();
-        float y =
-                (7.50F + 3.10F * fill)
-                        / 16.0F;
+        float dirtyFill =
+                washer.getDirtyWaterFillRatio();
 
-        if (washer.isProcessing()) {
-            double visualTime =
-                    washer.getLevel().getGameTime()
-                            + partialTicks;
-            y += (float) Math.sin(
-                    visualTime * 0.65D
-            ) * (0.20F / 16.0F);
+        double visualTime =
+                (double) washer.getLevel().getGameTime()
+                        + (double) partialTicks;
+        float ripple =
+                washer.isProcessing()
+                        ? (float) Math.sin(
+                        visualTime * 0.65D
+                ) * (0.20F / 16.0F)
+                        : 0.0F;
+
+        /*
+         * The trommel occupies the middle of the trough. Make the two visible
+         * side channels tell the fluid story:
+         *
+         *   left  = incoming clean water
+         *   right = outgoing dirty water once produced
+         *
+         * Before dirty water exists the right channel remains clean so a newly
+         * filled washer still looks like one continuous water bath.
+         */
+        float minZ =
+                -1.0F / 16.0F;
+        float maxZ =
+                18.0F / 16.0F;
+
+        float cleanY =
+                (7.50F + 3.10F * cleanFill)
+                        / 16.0F
+                        + ripple;
+
+        renderFluidSurface(
+                poseStack,
+                buffer,
+                packedLight,
+                sprite,
+                -5.75F / 16.0F,
+                1.25F / 16.0F,
+                minZ,
+                maxZ,
+                cleanY,
+                cleanRed,
+                cleanGreen,
+                cleanBlue,
+                0.82F
+        );
+
+        if (dirtyFill > 0.001F) {
+            float dirtyY =
+                    (7.50F + 3.10F * dirtyFill)
+                            / 16.0F
+                            + ripple;
+
+            // Warm muddy brown, deliberately distinct from biome water while
+            // still using the vanilla water sprite/animation.
+            renderFluidSurface(
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    sprite,
+                    14.75F / 16.0F,
+                    21.75F / 16.0F,
+                    minZ,
+                    maxZ,
+                    dirtyY,
+                    0.34F,
+                    0.23F,
+                    0.11F,
+                    0.88F
+            );
+        } else {
+            renderFluidSurface(
+                    poseStack,
+                    buffer,
+                    packedLight,
+                    sprite,
+                    14.75F / 16.0F,
+                    21.75F / 16.0F,
+                    minZ,
+                    maxZ,
+                    cleanY,
+                    cleanRed,
+                    cleanGreen,
+                    cleanBlue,
+                    0.82F
+            );
         }
+    }
 
+    private void renderFluidSurface(
+            PoseStack poseStack,
+            MultiBufferSource buffer,
+            int packedLight,
+            TextureAtlasSprite sprite,
+            float minX,
+            float maxX,
+            float minZ,
+            float maxZ,
+            float y,
+            float red,
+            float green,
+            float blue,
+            float alpha) {
         VertexConsumer consumer =
-                buffer.getBuffer(RenderType.translucent());
-        PoseStack.Pose pose = poseStack.last();
+                buffer.getBuffer(
+                        RenderType.translucent()
+                );
+        PoseStack.Pose pose =
+                poseStack.last();
 
-        waterVertex(
+        fluidVertex(
                 consumer, pose, minX, y, minZ,
-                red, green, blue,
-                sprite.getU0(), sprite.getV0(), packedLight
+                red, green, blue, alpha,
+                sprite.getU0(), sprite.getV0(),
+                packedLight
         );
-        waterVertex(
+        fluidVertex(
                 consumer, pose, minX, y, maxZ,
-                red, green, blue,
-                sprite.getU0(), sprite.getV1(), packedLight
+                red, green, blue, alpha,
+                sprite.getU0(), sprite.getV1(),
+                packedLight
         );
-        waterVertex(
+        fluidVertex(
                 consumer, pose, maxX, y, maxZ,
-                red, green, blue,
-                sprite.getU1(), sprite.getV1(), packedLight
+                red, green, blue, alpha,
+                sprite.getU1(), sprite.getV1(),
+                packedLight
         );
-        waterVertex(
+        fluidVertex(
                 consumer, pose, maxX, y, minZ,
-                red, green, blue,
-                sprite.getU1(), sprite.getV0(), packedLight
+                red, green, blue, alpha,
+                sprite.getU1(), sprite.getV0(),
+                packedLight
         );
     }
 
-    private void waterVertex(
+    private void fluidVertex(
             VertexConsumer consumer,
             PoseStack.Pose pose,
             float x,
@@ -335,15 +427,33 @@ public class MechanicalOreWasherBlockEntityRenderer
             float red,
             float green,
             float blue,
+            float alpha,
             float u,
             float v,
             int packedLight) {
-        consumer.vertex(pose.pose(), x, y, z)
-                .color(red, green, blue, 0.82F)
+        consumer.vertex(
+                        pose.pose(),
+                        x,
+                        y,
+                        z
+                )
+                .color(
+                        red,
+                        green,
+                        blue,
+                        alpha
+                )
                 .uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
+                .overlayCoords(
+                        OverlayTexture.NO_OVERLAY
+                )
                 .uv2(packedLight)
-                .normal(pose.normal(), 0.0F, 1.0F, 0.0F)
+                .normal(
+                        pose.normal(),
+                        0.0F,
+                        1.0F,
+                        0.0F
+                )
                 .endVertex();
     }
 
