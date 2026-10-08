@@ -203,7 +203,7 @@ public class MechanicalSifterBlockEntityRenderer
 
         // Right-side crank/flywheel mounted in the rebuilt support tower.
         poseStack.translate(
-                1.72D,
+                1.87D,
                 0.96D,
                 1.06D
         );
