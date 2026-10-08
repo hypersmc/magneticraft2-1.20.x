@@ -65,7 +65,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 oak,
                 packedLight,
                 input,
-                inputAngle,
+                inputAngle * axisDirectionSign(input),
                 false
         );
         renderBevelGear(
@@ -73,7 +73,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 oak,
                 packedLight,
                 output,
-                outputAngle + 22.5F,
+                outputAngle * axisDirectionSign(output) + 22.5F,
                 true
         );
 
