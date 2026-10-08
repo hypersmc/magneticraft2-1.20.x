@@ -183,9 +183,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                -0.20D,
-                0.39D,
-                1.78D,
+                -0.50D,
+                0.72D,
+                1.56D,
                 0.42F,
                 402,
                 poseStack,
@@ -197,9 +197,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.81D,
-                0.25D,
-                1.70D,
+                1.50D,
+                0.72D,
+                1.56D,
                 0.38F,
                 403,
                 poseStack,
@@ -219,16 +219,20 @@ public class MechanicalSifterBlockEntityRenderer
             int packedOverlay) {
         poseStack.pushPose();
 
-        // Right-side crank/flywheel mounted in the rebuilt support tower.
+        /*
+         * Large external side flywheel. The previous small ring read as a
+         * random gear/lump; this deliberately follows the reference machine:
+         * one obvious wooden wheel outside the right frame, a visible axle,
+         * spokes, copper hub and an eccentric crank pin for the linkage.
+         */
         poseStack.translate(
-                1.88D,
-                0.86D,
-                1.13D
+                2.02D,
+                0.98D,
+                1.16D
         );
 
-        // The wheel belongs on the machine's right side, so its face must
-        // point east/west. The old XY-plane wheel faced front/back and read
-        // as a strange blocky assembly from the side.
+        // Local wheel geometry is in X/Y, so rotate it onto the machine's
+        // right side (Y/Z plane, axle along world X).
         poseStack.mulPose(
                 Axis.YP.rotationDegrees(
                         90.0F
@@ -281,107 +285,104 @@ public class MechanicalSifterBlockEntityRenderer
                         RenderType.solid()
                 );
 
-        /*
-         * Draw the drive wheel directly instead of looking up another baked
-         * model. This prevents a missing-model cube from ever replacing the
-         * wheel, and keeps the texture density under our control.
-         *
-         * Local wheel plane is X/Y with a shallow Z thickness.
-         */
-        // Axle.
+        // Axle through the side bearing.
         renderWheelBox(
-                poseStack,
-                consumer,
-                packedLight,
-                darkWood,
-                -0.10D, -0.10D, -0.34D,
-                 0.10D,  0.10D,  0.34D
+                poseStack, consumer, packedLight, darkWood,
+                -0.11D, -0.11D, -0.42D,
+                 0.11D,  0.11D,  0.42D
         );
 
-        // Four main rim segments.
+        // Large octagonal wooden rim.
         renderWheelBox(
                 poseStack, consumer, packedLight, wood,
-                -0.34D, 0.22D, -0.11D,
-                 0.34D, 0.36D,  0.11D
+                -0.38D,  0.42D, -0.12D,
+                 0.38D,  0.56D,  0.12D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, wood,
-                -0.34D, -0.36D, -0.11D,
-                 0.34D, -0.22D,  0.11D
+                -0.38D, -0.56D, -0.12D,
+                 0.38D, -0.42D,  0.12D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, wood,
-                -0.36D, -0.22D, -0.11D,
-                -0.22D,  0.22D,  0.11D
+                -0.56D, -0.38D, -0.12D,
+                -0.42D,  0.38D,  0.12D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, wood,
-                 0.22D, -0.22D, -0.11D,
-                 0.36D,  0.22D,  0.11D
+                 0.42D, -0.38D, -0.12D,
+                 0.56D,  0.38D,  0.12D
         );
 
-        // Corner blocks round the square rim into an octagonal read.
-        double[][] corners = {
-                {-0.245D,  0.245D},
-                { 0.245D,  0.245D},
-                {-0.245D, -0.245D},
-                { 0.245D, -0.245D}
+        double[][] rimCorners = {
+                {-0.405D,  0.405D},
+                { 0.405D,  0.405D},
+                {-0.405D, -0.405D},
+                { 0.405D, -0.405D}
         };
 
-        for (double[] corner : corners) {
+        for (double[] corner : rimCorners) {
             renderWheelBox(
                     poseStack,
                     consumer,
                     packedLight,
                     wood,
-                    corner[0] - 0.09D,
-                    corner[1] - 0.09D,
-                    -0.11D,
-                    corner[0] + 0.09D,
-                    corner[1] + 0.09D,
-                    0.11D
+                    corner[0] - 0.11D,
+                    corner[1] - 0.11D,
+                    -0.12D,
+                    corner[0] + 0.11D,
+                    corner[1] + 0.11D,
+                    0.12D
             );
         }
 
-        // Cross spokes.
+        // Four broad wooden spokes.
         renderWheelBox(
                 poseStack, consumer, packedLight, darkWood,
-                -0.27D, -0.055D, -0.075D,
-                 0.27D,  0.055D,  0.075D
+                -0.43D, -0.055D, -0.085D,
+                 0.43D,  0.055D,  0.085D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, darkWood,
-                -0.055D, -0.27D, -0.075D,
-                 0.055D,  0.27D,  0.075D
+                -0.055D, -0.43D, -0.085D,
+                 0.055D,  0.43D,  0.085D
         );
 
         // Copper hub.
         renderWheelBox(
                 poseStack, consumer, packedLight, copper,
-                -0.12D, -0.12D, -0.15D,
-                 0.12D,  0.12D,  0.15D
+                -0.14D, -0.14D, -0.17D,
+                 0.14D,  0.14D,  0.17D
         );
 
-        // Four copper rim clamps.
+        // Copper rim straps make it read as an early-industrial flywheel,
+        // not a gear with teeth.
         renderWheelBox(
                 poseStack, consumer, packedLight, copper,
-                -0.14D, 0.31D, -0.13D,
-                 0.14D, 0.38D,  0.13D
+                -0.16D,  0.50D, -0.14D,
+                 0.16D,  0.58D,  0.14D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, copper,
-                -0.14D, -0.38D, -0.13D,
-                 0.14D, -0.31D,  0.13D
+                -0.16D, -0.58D, -0.14D,
+                 0.16D, -0.50D,  0.14D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, copper,
-                -0.38D, -0.14D, -0.13D,
-                -0.31D,  0.14D,  0.13D
+                -0.58D, -0.16D, -0.14D,
+                -0.50D,  0.16D,  0.14D
         );
         renderWheelBox(
                 poseStack, consumer, packedLight, copper,
-                 0.31D, -0.14D, -0.13D,
-                 0.38D,  0.14D,  0.13D
+                 0.50D, -0.16D, -0.14D,
+                 0.58D,  0.16D,  0.14D
+        );
+
+        // Eccentric crank pin: visible reason for the connecting rod.
+        renderWheelBox(
+                poseStack, consumer, packedLight, copper,
+                 0.24D, -0.08D, -0.22D,
+                 0.36D,  0.08D,  0.22D
         );
 
         poseStack.popPose();
@@ -601,8 +602,8 @@ public class MechanicalSifterBlockEntityRenderer
                     sifter,
                     stack,
                     0.50D + offsets[i][0],
-                    1.69D + offsets[i][1],
-                    0.43D + offsets[i][2],
+                    1.73D + offsets[i][1],
+                    0.50D + offsets[i][2],
                     0.43F,
                     410 + i,
                     poseStack,
