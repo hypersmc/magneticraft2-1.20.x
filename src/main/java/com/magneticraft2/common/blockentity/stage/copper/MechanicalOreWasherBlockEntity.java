@@ -104,11 +104,11 @@ public class MechanicalOreWasherBlockEntity
 
     // Client-only visual accumulator for the internal leather drive belt.
     private double clientBeltTravelDistance = 0.0D;
-    private float lastClientBeltVisualTime = Float.NaN;
+    private double lastClientBeltVisualTime = Double.NaN;
 
     // Processing is synced only when state changes, not every tick. The client
     // predicts progress between those sync points for smooth one-way item travel.
-    private float clientProcessSyncTime = Float.NaN;
+    private double clientProcessSyncTime = Double.NaN;
     private float clientProcessSyncProgress = 0.0F;
 
     // The shared base ItemStackHandler only marks the block entity dirty when
@@ -215,29 +215,31 @@ public class MechanicalOreWasherBlockEntity
             return base;
         }
 
-        float now =
-                level.getGameTime()
-                        + partialTicks;
+        double now =
+                (double) level.getGameTime()
+                        + (double) partialTicks;
 
-        if (Float.isNaN(
+        if (Double.isNaN(
                 clientProcessSyncTime)) {
             clientProcessSyncTime = now;
             clientProcessSyncProgress = base;
         }
 
-        float elapsed =
+        double elapsed =
                 Math.max(
-                        0.0F,
+                        0.0D,
                         now - clientProcessSyncTime
                 );
 
         float predicted =
-                clientProcessSyncProgress
-                        + elapsed
-                        / Math.max(
-                                1.0F,
-                                totalProcessTime
-                        );
+                (float) (
+                        clientProcessSyncProgress
+                                + elapsed
+                                / Math.max(
+                                        1.0D,
+                                        (double) totalProcessTime
+                                )
+                );
 
         return Math.max(
                 0.0F,
@@ -531,15 +533,16 @@ public class MechanicalOreWasherBlockEntity
             return clientBeltTravelDistance;
         }
 
-        float currentVisualTime =
-                level.getGameTime() + partialTicks;
+        double currentVisualTime =
+                (double) level.getGameTime()
+                        + (double) partialTicks;
 
-        if (Float.isNaN(lastClientBeltVisualTime)) {
+        if (Double.isNaN(lastClientBeltVisualTime)) {
             lastClientBeltVisualTime = currentVisualTime;
             return clientBeltTravelDistance;
         }
 
-        float deltaTicks =
+        double deltaTicks =
                 currentVisualTime - lastClientBeltVisualTime;
         lastClientBeltVisualTime = currentVisualTime;
 
@@ -941,7 +944,7 @@ public class MechanicalOreWasherBlockEntity
                         getProcessProgress();
             } else {
                 clientProcessSyncTime =
-                        Float.NaN;
+                        Double.NaN;
                 clientProcessSyncProgress =
                         getProcessProgress();
             }
