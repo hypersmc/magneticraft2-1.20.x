@@ -179,6 +179,19 @@ public class MechanicalOreWasherBlockEntity
         return dirtyWaterTank.getCapacity();
     }
 
+    public float getDirtyWaterFillRatio() {
+        return dirtyWaterTank.getCapacity() <= 0
+                ? 0.0F
+                : Math.max(
+                        0.0F,
+                        Math.min(
+                                1.0F,
+                                dirtyWaterTank.getFluidAmount()
+                                        / (float) dirtyWaterTank.getCapacity()
+                        )
+                );
+    }
+
     public ItemStack getInputStack() {
         return itemHandler.getStackInSlot(0);
     }
