@@ -15,7 +15,7 @@
       ],
       "to": [
         15,
-        3,
+        3.2,
         15
       ],
       "faces": {
@@ -78,12 +78,12 @@
     {
       "from": [
         2,
-        3,
+        2.8,
         2
       ],
       "to": [
         14,
-        6,
+        6.15,
         14
       ],
       "faces": {
@@ -146,12 +146,12 @@
     {
       "from": [
         1.5,
-        5.5,
+        5.35,
         1.5
       ],
       "to": [
         14.5,
-        7,
+        7.15,
         14.5
       ],
       "faces": {
@@ -214,7 +214,7 @@
     {
       "from": [
         3,
-        7,
+        6.85,
         3
       ],
       "to": [
@@ -280,5 +280,6 @@
       }
     }
   ],
-  "credit": "proportional face UVs to avoid stretched block textures"
+  "credit": "proportional face UVs to avoid stretched block textures; tiny element overlaps remove coplanar z-fighting",
+  "ambientocclusion": false
 }
