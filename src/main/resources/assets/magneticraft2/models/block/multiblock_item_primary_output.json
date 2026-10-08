@@ -1,0 +1,6 @@
+{
+  "parent": "magneticraft2:block/multiblock_item_output",
+  "textures": {
+    "copper": "minecraft:block/cut_copper"
+  }
+}
