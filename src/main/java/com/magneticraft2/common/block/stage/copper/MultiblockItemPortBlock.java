@@ -27,17 +27,37 @@ import org.jetbrains.annotations.Nullable;
  * interact with the formed machine.
  */
 public class MultiblockItemPortBlock extends BaseEntityBlock {
-    private final boolean output;
+
+    public enum PortMode {
+        INPUT,
+        COMBINED_OUTPUT,
+        PRIMARY_OUTPUT,
+        BYPRODUCT_OUTPUT
+    }
+
+    private final PortMode mode;
 
     public MultiblockItemPortBlock(boolean output) {
+        this(
+                output
+                        ? PortMode.COMBINED_OUTPUT
+                        : PortMode.INPUT
+        );
+    }
+
+    public MultiblockItemPortBlock(PortMode mode) {
         super(BlockBehaviour.Properties.of()
                 .strength(3.5F)
                 .noOcclusion());
-        this.output = output;
+        this.mode = mode;
+    }
+
+    public PortMode getPortMode() {
+        return mode;
     }
 
     public boolean isOutput() {
-        return output;
+        return mode != PortMode.INPUT;
     }
 
     @Override
