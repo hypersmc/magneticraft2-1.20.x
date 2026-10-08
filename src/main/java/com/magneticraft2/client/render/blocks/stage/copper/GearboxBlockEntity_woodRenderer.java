@@ -20,8 +20,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
-    private static final ResourceLocation BEARING =
-            new ResourceLocation("minecraft", "textures/block/deepslate_tiles.png");
+    private static final ResourceLocation SUPPORT =
+            new ResourceLocation("minecraft", "textures/block/copper_block.png");
 
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -40,8 +40,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
         VertexConsumer shaft =
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
-        VertexConsumer bearing =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(BEARING));
+        VertexConsumer support =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(SUPPORT));
 
         Direction input = gearbox.getInputDirection();
         Direction output = gearbox.getOutputDirection();
@@ -52,7 +52,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         renderPortShaft(
                 stack,
                 shaft,
-                bearing,
+                support,
                 packedLight,
                 input,
                 inputAngle * axisDirectionSign(input)
@@ -60,7 +60,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         renderPortShaft(
                 stack,
                 shaft,
-                bearing,
+                support,
                 packedLight,
                 output,
                 outputAngle * axisDirectionSign(output)
@@ -94,7 +94,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
      */
     private void renderPortShaft(PoseStack stack,
                                  VertexConsumer consumer,
-                                 VertexConsumer bearing,
+                                 VertexConsumer support,
                                  int packedLight,
                                  Direction port,
                                  float rotation) {
@@ -105,7 +105,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         // inside this ring, so the gear no longer looks suspended in open air.
         renderBearingCollar(
                 stack,
-                bearing,
+                support,
                 packedLight,
                 0.335D
         );
@@ -154,33 +154,54 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.popPose();
     }
 
-    private void renderBearingCollar(
+    private void renderPortSupport(
             PoseStack stack,
             VertexConsumer consumer,
-            int packedLight,
-            double centerX) {
-        // Four bars form a square bearing race around the inner shaft.
+            int packedLight) {
+        /*
+         * Local +X points toward the gearbox face. Build a fixed center
+         * bearing and two vertical straps that physically reach the cage rails.
+         * The rotating wooden axle passes through the middle.
+         */
         stack.pushPose();
-        stack.translate(centerX, 0.0D, 0.0D);
 
+        // Center bearing block around the axle.
         stack.pushPose();
-        stack.translate(0.0D, 0.145D, 0.0D);
-        drawBox(stack, consumer, packedLight, 0.115D, 0.055D, 0.345D);
+        stack.translate(0.405D, 0.0D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.105D,
+                0.245D,
+                0.245D
+        );
         stack.popPose();
 
+        // Upper strap to the frame.
         stack.pushPose();
-        stack.translate(0.0D, -0.145D, 0.0D);
-        drawBox(stack, consumer, packedLight, 0.115D, 0.055D, 0.345D);
+        stack.translate(0.405D, 0.285D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.095D,
+                0.325D,
+                0.080D
+        );
         stack.popPose();
 
+        // Lower strap to the frame.
         stack.pushPose();
-        stack.translate(0.0D, 0.0D, 0.145D);
-        drawBox(stack, consumer, packedLight, 0.115D, 0.235D, 0.055D);
-        stack.popPose();
-
-        stack.pushPose();
-        stack.translate(0.0D, 0.0D, -0.145D);
-        drawBox(stack, consumer, packedLight, 0.115D, 0.235D, 0.055D);
+        stack.translate(0.405D, -0.285D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.095D,
+                0.325D,
+                0.080D
+        );
         stack.popPose();
 
         stack.popPose();
