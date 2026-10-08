@@ -28,7 +28,9 @@ import org.jetbrains.annotations.Nullable;
  * Item I/O module that forwards directly into the formed controller inventory.
  *
  * Input port -> controller slot 0, insertion only.
- * Output port -> controller slots 1 and 2, extraction only.
+ * Legacy combined output -> controller slots 1 and 2, extraction only.
+ * Primary output -> controller slot 1 only.
+ * Byproduct output -> controller slot 2 only.
  */
 public class MultiblockItemPortBlockEntity
         extends BlockEntity
