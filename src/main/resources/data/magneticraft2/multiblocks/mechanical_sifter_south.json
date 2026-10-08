@@ -14,15 +14,15 @@
           "Frame"
         ],
         [
-          "ItemInput",
+          "PrimaryOutput",
           "Frame",
-          "ItemOutput"
+          "ByproductOutput"
         ]
       ],
       "layer2": [
         [
           "Frame",
-          "Air",
+          "ItemInput",
           "Frame"
         ],
         [
@@ -36,8 +36,8 @@
       "Controller": "magneticraft2:mechanical_sifter",
       "Frame": "minecraft:oak_planks",
       "ItemInput": "magneticraft2:multiblock_item_input",
-      "ItemOutput": "magneticraft2:multiblock_item_output",
-      "Air": "minecraft:air"
+      "PrimaryOutput": "magneticraft2:multiblock_item_primary_output",
+      "ByproductOutput": "magneticraft2:multiblock_item_byproduct_output"
     }
   },
   "settings": {
