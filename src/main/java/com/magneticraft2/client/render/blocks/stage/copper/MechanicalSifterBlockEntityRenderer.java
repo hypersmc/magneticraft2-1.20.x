@@ -107,8 +107,8 @@ public class MechanicalSifterBlockEntityRenderer
                 packedOverlay
         );
 
-        // The connecting rod/slider follows the lower carriage. The static
-        // copper guide around it makes the crank-to-screen conversion readable.
+        // The connecting rod follows the screen carriage so the side drive
+        // visibly explains the reciprocating sieve motion.
         poseStack.pushPose();
         poseStack.translate(
                 0.0D,
@@ -287,9 +287,9 @@ public class MechanicalSifterBlockEntityRenderer
             renderStoredItem(
                     sifter,
                     stack,
-                    -0.25D + offsets[i][0],
-                    1.69D + offsets[i][1],
-                    1.47D + offsets[i][2],
+                    0.50D + offsets[i][0],
+                    1.70D + offsets[i][1],
+                    0.55D + offsets[i][2],
                     0.43F,
                     410 + i,
                     poseStack,
