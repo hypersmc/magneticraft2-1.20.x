@@ -101,53 +101,32 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.pushPose();
         orientLocalXToDirection(stack, port);
 
-        // Fixed bearing attached to the gearbox frame. The wooden axle rotates
-        // inside this ring, so the gear no longer looks suspended in open air.
-        renderBearingCollar(
+        // Fixed support tied into the cage. The wooden axle rotates inside it.
+        renderPortSupport(
                 stack,
                 support,
-                packedLight,
-                0.335D
+                packedLight
         );
 
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
-        // Thin internal axle into the gear hub.
+        // Continuous axle from the gear hub to the outer coupling.
         drawBoxAtLocalX(
                 stack,
                 consumer,
                 packedLight,
-                0.115D,
-                0.160D,
-                0.100D
+                0.265D,
+                0.470D,
+                0.105D
         );
 
-        // Two stepped shoulders make the transition readable instead of hiding
-        // the mechanism inside one oversized square shaft.
+        // Full-size coupling at the block face, matching a normal Wooden Shaft.
         drawBoxAtLocalX(
                 stack,
                 consumer,
                 packedLight,
-                0.225D,
-                0.120D,
-                0.160D
-        );
-        drawBoxAtLocalX(
-                stack,
-                consumer,
-                packedLight,
-                0.325D,
-                0.120D,
-                0.255D
-        );
-
-        // Match the normal Wooden Shaft exactly at the outer block face.
-        drawBoxAtLocalX(
-                stack,
-                consumer,
-                packedLight,
-                0.445D,
-                0.110D,
+                0.455D,
+                0.090D,
                 0.375D
         );
 
