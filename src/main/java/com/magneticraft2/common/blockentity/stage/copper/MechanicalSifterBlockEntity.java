@@ -417,6 +417,18 @@ public class MechanicalSifterBlockEntity
                 : Direction.SOUTH;
     }
 
+    public float getDriveRotationDegrees(
+            float partialTicks) {
+        CrankBlockEntity_wood crank =
+                getConnectedCrank();
+
+        return crank == null
+                ? 0.0F
+                : crank.getVisualRotationDegrees(
+                        partialTicks
+                );
+    }
+
     public float getShakeOffset(
             float partialTicks) {
         CrankBlockEntity_wood crank =
