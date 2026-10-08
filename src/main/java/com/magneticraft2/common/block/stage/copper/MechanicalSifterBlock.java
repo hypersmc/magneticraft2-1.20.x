@@ -43,27 +43,34 @@ public class MechanicalSifterBlock
     // moving screen volume rather than using one opaque 3x2x2 cuboid.
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
-                    // foundation
-                    Block.box(-14, 0, 1, -11, 3, 31),
-                    Block.box(27, 0, 1, 30, 3, 31),
-                    Block.box(-14, 2, 1, 30, 5, 4),
-                    Block.box(-14, 2, 28, 30, 5, 31),
+                    // Base rails and four structural legs.
+                    Block.box(-12, 0, 1, 28, 3, 4),
+                    Block.box(-12, 0, 28, 28, 3, 31),
+                    Block.box(-12, 0, 4, -9, 3, 28),
+                    Block.box(25, 0, 4, 28, 3, 28),
 
-                    // uprights/top frame
-                    Block.box(-13, 3, 4, -10, 27, 7),
-                    Block.box(26, 3, 4, 29, 27, 7),
-                    Block.box(-13, 3, 25, -10, 27, 28),
-                    Block.box(26, 3, 25, 29, 27, 28),
-                    Block.box(-13, 26, 4, 29, 29, 28),
+                    Block.box(-11, 3, 4, -8, 27, 7),
+                    Block.box(24, 3, 4, 27, 27, 7),
+                    Block.box(-11, 3, 24, -8, 27, 27),
+                    Block.box(24, 3, 24, 27, 27, 27),
 
-                    // screen assemblies and low crank slide bearing
-                    Block.box(-8, 8, 7, 24, 21, 27),
-                    Block.box(3, 5, -3, 13, 12, 10),
+                    // Upper frame and hopper.
+                    Block.box(-11, 24, 4, 27, 27, 7),
+                    Block.box(-11, 24, 24, 27, 27, 27),
+                    Block.box(-5, 21, 3, 21, 29, 15),
 
-                    // feed/output chutes
-                    Block.box(-5, 22, 0, 21, 25, 9),
-                    Block.box(-9, 4, 24, 5, 8, 32),
-                    Block.box(11, 4, 24, 25, 8, 32)
+                    // Main moving screen envelope and support rails.
+                    Block.box(-7, 9, 10, 23, 15, 26),
+
+                    // Fine catch tray below the sieve.
+                    Block.box(-3, 6, 13, 19, 10, 28),
+
+                    // Coarse and fine output chutes.
+                    Block.box(-10, 5, 24, 6, 11, 33),
+                    Block.box(8, 3, 22, 24, 10, 33),
+
+                    // Right-side crank/flywheel tower.
+                    Block.box(24, 6, 10, 30, 22, 24)
             );
 
     public MechanicalSifterBlock() {
