@@ -49,28 +49,30 @@ public class MechanicalSifterBlock
                     Block.box(-12, 0, 4, -8, 3, 28),
                     Block.box(24, 0, 4, 28, 3, 28),
 
-                    // Four structural posts.
-                    Block.box(-11, 3, 3, -7, 27, 7),
-                    Block.box(24, 3, 3, 28, 27, 7),
-                    Block.box(-11, 3, 25, -7, 27, 29),
-                    Block.box(24, 3, 25, 28, 27, 29),
+                    // Four structural uprights.
+                    Block.box(-11, 3, 3, -7, 25, 7),
+                    Block.box(24, 3, 3, 28, 25, 7),
+                    Block.box(-11, 3, 25, -7, 25, 29),
+                    Block.box(24, 3, 25, 28, 25, 29),
 
-                    // Upper frame + hopper.
-                    Block.box(-11, 24, 4, 28, 27, 28),
-                    Block.box(-5, 21, 2, 21, 30, 18),
+                    // Open upper rails + rear hopper.
+                    Block.box(-11, 23, 4, -7, 26, 28),
+                    Block.box(24, 23, 4, 28, 26, 28),
+                    Block.box(-7, 23, 4, 24, 26, 8),
+                    Block.box(-5, 19, 1, 21, 30, 18),
 
-                    // Moving screen carriage and support rails.
-                    Block.box(-7, 8, 11, 23, 16, 28),
+                    // Main moving sieve envelope and low support cradle.
+                    Block.box(-7, 8, 11, 23, 15, 28),
 
-                    // Lower fines catch tray.
-                    Block.box(-3, 6, 13, 19, 10, 28),
+                    // Fine collection section.
+                    Block.box(5, 4, 20, 21, 10, 29),
 
-                    // Coarse and fine discharge sections.
-                    Block.box(-11, 5, 24, 6, 12, 34),
-                    Block.box(4, 4, 21, 20, 11, 30),
+                    // Coarse and fine discharge paths.
+                    Block.box(-11, 5, 24, 5, 11, 32),
+                    Block.box(7, 2, 26, 22, 8, 32),
 
                     // Right-side drive tower.
-                    Block.box(23, 6, 10, 30, 22, 24)
+                    Block.box(23, 7, 10, 29, 21, 24)
             );
 
     public MechanicalSifterBlock() {
