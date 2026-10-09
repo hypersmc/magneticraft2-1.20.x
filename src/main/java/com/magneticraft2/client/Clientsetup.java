@@ -122,7 +122,6 @@ public class Clientsetup {
         // ResourceLocation. Register them as top-level models so the baked model
         // lookup cannot fall back to an empty/missing entry.
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
-        event.register(new ResourceLocation(MOD_ID, "block/mechanical_sifter_input_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));

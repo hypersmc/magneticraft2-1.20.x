@@ -190,10 +190,10 @@ public class MechanicalSifterBlockEntityRenderer
             int packedLight, int packedOverlay) {
         // SOUTH-local coordinates: input bearing block is at (1, 0, 0),
         // and its X-oriented shaft centre is exactly (1.5, 0.5, 0.5).
-        // The crank mounts just inboard at X=1.375, on that same axis.
+        // The crank sits outside the bearing block on its machine-facing side\n        // at X=0.925; its short hub meets the shaft at the X=1 block boundary.
         // Only the compact inboard crank moves; the real input-bearing block
         // remains the stationary support for the player's drive network.
-        final double centerX = 1.375D;
+        final double centerX = 0.925D;
         final double centerY = 0.50D;
         final double centerZ = 0.50D;
         final double radius = 0.12D;
