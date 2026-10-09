@@ -190,7 +190,8 @@ public class MechanicalSifterBlockEntityRenderer
             int packedLight, int packedOverlay) {
         // SOUTH-local coordinates: input bearing block is at (1, 0, 0),
         // and its X-oriented shaft centre is exactly (1.5, 0.5, 0.5).
-        // The crank sits outside the bearing block on its machine-facing side\n        // at X=0.925; its short hub meets the shaft at the X=1 block boundary.
+        // The crank sits outside the bearing block on its machine-facing side
+        // at X=0.925; its short hub meets the shaft at the X=1 block boundary.
         // Only the compact inboard crank moves; the real input-bearing block
         // remains the stationary support for the player's drive network.
         final double centerX = 0.925D;
@@ -219,8 +220,11 @@ public class MechanicalSifterBlockEntityRenderer
         renderModel(CONNECTING_ROD, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
 
-        // Exact slider-crank displacement is shared with the sieve in the
-        // block entity. The far rod end and follower now coincide at all angles.
+        // The follower starts at the rod's far pin and has a compact offset
+        // carriage bracket that meets the sieve's near side rail. It moves
+        // with the same shake as the upper tray, never with the rotating crank.
+        // Keeping this linkage at the near edge avoids the stationary rear
+        // support and the output guides.
         poseStack.pushPose();
         poseStack.translate(centerX, centerY, centerZ + length + shake);
         renderModel(FOLLOWER, poseStack, buffer, packedLight, packedOverlay);
