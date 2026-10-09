@@ -95,7 +95,7 @@ public class MechanicalSifterBlockEntityRenderer
                         partialTicks
                 );
 
-        renderDriveWheel(
+        renderDriveGear(
                 sifter.getDriveRotationDegrees(
                         partialTicks
                 ),
