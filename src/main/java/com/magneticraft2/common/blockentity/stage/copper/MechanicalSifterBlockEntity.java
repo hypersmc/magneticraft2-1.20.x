@@ -446,19 +446,17 @@ public class MechanicalSifterBlockEntity
 
     public float getShakeOffset(
             float partialTicks) {
-        float angle =
-                getDriveRotationDegrees(
-                        partialTicks
-                );
-
-        // Eccentric linkage: one full gear revolution produces one complete
-        // back-and-forth sieve stroke. Keep the same +/-0.12 block travel the
-        // previous direct-crank implementation used.
-        return (float) Math.sin(
-                Math.toRadians(
-                        angle
-                )
-        ) * 0.12F;
+        // Exact inline slider-crank motion. The 0.12-block eccentric is
+        // driven by the existing input rotation; the 9/16-block rod keeps
+        // both pivots connected throughout the cycle (no visual stretch).
+        double angle = Math.toRadians(getDriveRotationDegrees(partialTicks));
+        double radius = 0.12D;
+        double length = 9.0D / 16.0D;
+        double offset = radius * Math.sin(angle);
+        double lateral = radius * Math.cos(angle);
+        return (float) (offset
+                + Math.sqrt(length * length - lateral * lateral)
+                - length);
     }
 
     @Nullable

@@ -3,211 +3,142 @@
   "ambientocclusion": false,
   "textures": {
     "wood": "minecraft:block/stripped_spruce_log",
-    "copper": "minecraft:block/cut_copper",
-    "dark": "minecraft:block/spruce_planks",
+    "metal": "minecraft:block/cut_copper",
     "particle": "minecraft:block/spruce_planks"
   },
   "elements": [
     {
       "from": [
-        -1.2,
-        0,
-        -1.1
-      ],
-      "to": [
-        1.2,
-        2,
-        1.1
-      ],
-      "faces": {
-        "north": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        },
-        "south": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        },
-        "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        },
-        "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        },
-        "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        },
-        "down": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            2.4,
-            2.2
-          ]
-        }
-      }
-    },
-    {
-      "from": [
         -0.8,
-        1,
-        -0.8
+        -0.9,
+        -0.9
       ],
       "to": [
         0.8,
         2,
-        0.8
+        0.9
       ],
       "faces": {
         "north": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
             1.6,
-            1.6
+            2.9
           ]
         },
         "south": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
             1.6,
-            1.6
+            2.9
           ]
         },
         "east": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
-            1.6,
-            1.6
+            1.8,
+            2.9
           ]
         },
         "west": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
-            1.6,
-            1.6
+            1.8,
+            2.9
           ]
         },
         "up": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
             1.6,
-            1.6
+            1.8
           ]
         },
         "down": {
-          "texture": "#dark",
+          "texture": "#wood",
           "uv": [
             0,
             0,
             1.6,
-            1.6
+            1.8
           ]
         }
       }
     },
     {
       "from": [
-        -0.95,
-        1.5,
-        -0.95
+        -1.1,
+        1,
+        -1.1
       ],
       "to": [
-        0.95,
+        1.1,
         2.9,
-        0.95
+        1.1
       ],
       "faces": {
         "north": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
+            2.2,
             1.9
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
+            2.2,
             1.9
           ]
         },
         "east": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
+            2.2,
             1.9
           ]
         },
         "west": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
+            2.2,
             1.9
           ]
         },
         "up": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
-            1.9
+            2.2,
+            2.2
           ]
         },
         "down": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            1.9,
-            1.9
+            2.2,
+            2.2
           ]
         }
       }

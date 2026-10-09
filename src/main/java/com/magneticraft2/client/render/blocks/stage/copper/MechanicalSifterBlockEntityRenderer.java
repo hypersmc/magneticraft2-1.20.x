@@ -191,36 +191,39 @@ public class MechanicalSifterBlockEntityRenderer
     private void renderCrankLinkage(float degrees, double shake,
             PoseStack poseStack, MultiBufferSource buffer,
             int packedLight, int packedOverlay) {
+        // SOUTH-local coordinates: the existing input shaft points along X.
+        // Only the compact inboard crank moves; the real input-bearing block
+        // remains the stationary support for the player's drive network.
         final double centerX = 1.315D;
         final double centerY = 0.56D;
         final double centerZ = 0.54D;
-        final double eccentricity = 0.12D;
-        final double rodLength = 0.5625D;
-        double radians = Math.toRadians(degrees);
-        double crankY = centerY + eccentricity * Math.cos(radians);
-        double crankZ = centerZ + eccentricity * Math.sin(radians);
+        final double radius = 0.12D;
+        final double length = 9.0D / 16.0D;
+        double theta = Math.toRadians(degrees);
+        double pinY = centerY + radius * Math.cos(theta);
+        double pinZ = centerZ + radius * Math.sin(theta);
 
-        // The crank arm rotates with the wooden gear, not with the sieve.
+        // Both the crank pin and the solid wooden rod use the same point.
         poseStack.pushPose();
         poseStack.translate(centerX, centerY, centerZ);
         poseStack.mulPose(Axis.XP.rotationDegrees(degrees));
         renderModel(CRANK_ARM, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
 
-        // A fixed-length rod pivots around the moving crank pin. Its far end
-        // rides in the sieve's straight-line follower guide.
-        double angle = Math.atan2(crankY - centerY,
-                Math.sqrt(rodLength * rodLength
-                        - (crankY - centerY) * (crankY - centerY)));
+        // Positive X rotation takes the rod's +Z axis toward -Y.
+        // Hence the positive arcsine here, not an independently animated tilt.
+        double rodAngle = Math.asin((pinY - centerY) / length);
         poseStack.pushPose();
-        poseStack.translate(centerX, crankY, crankZ);
-        poseStack.mulPose(Axis.XP.rotationDegrees((float) Math.toDegrees(angle)));
+        poseStack.translate(centerX, pinY, pinZ);
+        poseStack.mulPose(Axis.XP.rotationDegrees(
+                (float) Math.toDegrees(rodAngle)));
         renderModel(CONNECTING_ROD, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
 
-        // The upright follower is fixed to the moving sieve carriage.
+        // Exact slider-crank displacement is shared with the sieve in the
+        // block entity. The far rod end and follower now coincide at all angles.
         poseStack.pushPose();
-        poseStack.translate(centerX, centerY, 1.10D + shake);
+        poseStack.translate(centerX, centerY, centerZ + length + shake);
         renderModel(FOLLOWER, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
     }
