@@ -2,7 +2,6 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
-import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -27,9 +26,8 @@ import java.util.Map;
  * Formed Mechanical Sifter renderer.
  *
  * Like the other multiblocks, the complete static frame comes from the
- * replacement model selected in JSON. The inclined sieve, Medium Wooden Gear
- * and reciprocating linkage render separately so the formed machine explains
- * how Gear V2 rotation becomes a back-and-forth classification motion.
+ * replacement model selected in JSON. A compact eccentric crank on the
+ * Mechanical Input Bearing drives the reciprocating inclined sieve directly.
  */
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
@@ -94,7 +92,6 @@ public class MechanicalSifterBlockEntityRenderer
                 );
 
         float driveAngle = sifter.getDriveRotationDegrees(partialTicks);
-        renderDriveGear(driveAngle, poseStack, buffer, packedLight, packedOverlay);
         renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
 
         poseStack.pushPose();
@@ -225,80 +222,6 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.pushPose();
         poseStack.translate(centerX, centerY, centerZ + length + shake);
         renderModel(FOLLOWER, poseStack, buffer, packedLight, packedOverlay);
-        poseStack.popPose();
-    }
-
-    private void renderDriveGear(
-            float rotation,
-            PoseStack poseStack,
-            MultiBufferSource buffer,
-            int packedLight,
-            int packedOverlay) {
-        poseStack.pushPose();
-
-        /*
-         * Use Magneticraft2's real Medium Wooden Gear here. This is the machine's
-         * visible drive gear, so it should look exactly like the gear system the
-         * player already builds instead of inventing a separate flywheel style.
-         */
-        poseStack.translate(
-                1.30D,
-                0.56D,
-                0.54D
-        );
-
-        // The real Mechanical Input Bearing is the lower-right block of the
-        // SOUTH structure and uses an X-axis shaft. This Medium Wooden Gear
-        // sits just inside that bearing on the same axle, while the outside
-        // face of the bearing remains clear for the player's shaft/gear network.
-        poseStack.mulPose(
-                Axis.XP.rotationDegrees(
-                        rotation
-                )
-        );
-
-        poseStack.scale(
-                0.78F,
-                0.78F,
-                0.78F
-        );
-        poseStack.translate(
-                -0.5D,
-                -0.5D,
-                -0.5D
-        );
-
-        BlockState gearState =
-                BlockRegistry.GEAR_MEDIUM_WOOD
-                        .get()
-                        .defaultBlockState()
-                        .setValue(
-                                net.minecraft.world.level.block.DirectionalBlock.FACING,
-                                Direction.EAST
-                        )
-                        .setValue(
-                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_up,
-                                false
-                        )
-                        .setValue(
-                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_down,
-                                false
-                        )
-                        .setValue(
-                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.POWERED,
-                                false
-                        );
-
-        Minecraft.getInstance()
-                .getBlockRenderer()
-                .renderSingleBlock(
-                        gearState,
-                        poseStack,
-                        buffer,
-                        packedLight,
-                        packedOverlay
-                );
-
         poseStack.popPose();
     }
 
