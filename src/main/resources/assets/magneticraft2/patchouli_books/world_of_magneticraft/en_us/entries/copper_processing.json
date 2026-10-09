@@ -137,8 +137,8 @@
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is a 3x2x2 structure rather than a one-block machine. Its Item Input is part of the upper hopper area, so feed material enters where the formed model actually shows it entering. A Wooden Crank placed directly behind the controller drives the visible Medium Wooden Gear, linkage and shaking sieve.",
-      "recipe2": "magneticraft2:multiblock_item_input"
+      "text": "The Sifter is a 3x2x2 Gear V2 machine. Its Item Input is part of the upper hopper area, while the lower-right block is a real Mechanical Input Bearing. Connect a Wooden Shaft, gears, a crank-driven network or another Gear V2 source to that bearing. The input shaft turns the visible Medium Wooden Gear and linkage, which shakes the sieve.",
+      "recipe2": "magneticraft2:mechanical_input_module"
     },
     {
       "type": "patchouli:crafting",
@@ -161,7 +161,7 @@
           [
             "PO",
             "0P",
-            "PB"
+            "MB"
           ]
         ],
         "mapping": {
@@ -169,15 +169,16 @@
           "P": "minecraft:oak_planks",
           "I": "magneticraft2:multiblock_item_input",
           "O": "magneticraft2:multiblock_item_primary_output",
-          "B": "magneticraft2:multiblock_item_byproduct_output"
+          "B": "magneticraft2:multiblock_item_byproduct_output",
+          "M": "magneticraft2:mechanical_input_module"
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input becomes the visible hopper/feed point. On the front row, the Primary Output is on the left and the Byproduct Output is on the right. The formed model follows the same flow: hopper -> inclined shaking sieve -> coarse/main tray and lower fines/byproduct chute. Put a Wooden Crank directly behind the controller; it drives the visible Medium Wooden Gear and sieve linkage."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input feeds the hopper. On the front row, Primary Output is on the left and Byproduct Output is on the right. The lower-right Mechanical Input Bearing is the real Gear V2 power connection: attach a shaft or gear network there. Its rotation drives the visible Medium Wooden Gear, linkage and inclined shaking sieve."
     },
     {
       "type": "text",
-      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Crank-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot$(br2)The Cassiterite sifting recipe needs at least 15 speed and 2 torque, runs for about eight seconds, and has a 15% chance to produce Flint as a byproduct."
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Gear V2-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot$(br2)The Cassiterite sifting recipe needs at least 15 speed and 2 torque, runs for about eight seconds, and has a 15% chance to produce Flint as a byproduct."
     },
     {
       "type": "text",
