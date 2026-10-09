@@ -26,9 +26,8 @@ import java.util.Map;
  * Formed Mechanical Sifter renderer.
  *
  * Like the other multiblocks, the complete static frame comes from the
- * replacement model selected in JSON. The two screens and the reciprocating
- * crank linkage render separately so the formed machine explains how the
- * rotational crank becomes a back-and-forth classification motion.
+ * replacement model selected in JSON. A compact eccentric crank on the
+ * Mechanical Input Bearing drives the reciprocating inclined sieve directly.
  */
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
@@ -43,11 +42,17 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_lower_tray"
             );
-    private static final ResourceLocation LINKAGE =
-            new ResourceLocation(
-                    "magneticraft2",
-                    "multiblock/mechanical_sifter_linkage"
-            );
+    // The wooden slide ways are fixed to the lower crossmembers. The copper
+    // slide shoes and their short supports move with the sieve carriage.
+    private static final ResourceLocation GUIDE_RAILS =
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_guide_rails");
+    private static final ResourceLocation SLIDE_SHOES =
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_slide_shoes");
+    private static final ResourceLocation CRANK_ARM = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_crank_arm");
+    private static final ResourceLocation CONNECTING_ROD = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_connecting_rod");
+    private static final ResourceLocation FOLLOWER = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_follower");
+    private static final float SCREEN_TILT_DEGREES =
+            10.0F;
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -92,29 +97,39 @@ public class MechanicalSifterBlockEntityRenderer
                         partialTicks
                 );
 
-        // The connecting rod/slider follows the lower carriage. The static
-        // copper guide around it makes the crank-to-screen conversion readable.
+        float driveAngle = sifter.getDriveRotationDegrees(partialTicks);
+        renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
+
+        // These tracks do NOT shake; their ends land on the existing
+        // stationary lower crossbeams, outside the fines catch pan.
+        renderModel(GUIDE_RAILS, poseStack, buffer, packedLight, packedOverlay);
+
         poseStack.pushPose();
         poseStack.translate(
                 0.0D,
                 0.0D,
                 shake
         );
-        renderModel(
-                LINKAGE,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
 
-        poseStack.pushPose();
+        // One coherent inclined sieve: rear/high under the hopper, front/low
+        // toward the coarse discharge. Rotating the complete tray avoids the
+        // staircase look the previous JSON-only slope had.
         poseStack.translate(
-                0.0D,
-                0.0D,
-                -shake * 0.65D
+                0.50D,
+                0.78D,
+                1.20D
         );
+        poseStack.mulPose(
+                Axis.XP.rotationDegrees(
+                        SCREEN_TILT_DEGREES
+                )
+        );
+        poseStack.translate(
+                -0.50D,
+                -0.78D,
+                -1.20D
+        );
+
         renderModel(
                 UPPER_TRAY,
                 poseStack,
@@ -125,11 +140,6 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.popPose();
 
         poseStack.pushPose();
-        poseStack.translate(
-                0.0D,
-                0.0D,
-                shake
-        );
         renderModel(
                 LOWER_TRAY,
                 poseStack,
@@ -137,6 +147,15 @@ public class MechanicalSifterBlockEntityRenderer
                 packedLight,
                 packedOverlay
         );
+        poseStack.popPose();
+
+        // Unlike the guide rails, the four copper sliding shoes, wooden
+        // uprights and two cross braces ride with the inclined sieve.
+        // The uprights have different heights to meet its rotated underside,
+        // but slide horizontally so they stay seated on level guide rails.
+        poseStack.pushPose();
+        poseStack.translate(0.0D, 0.0D, shake);
+        renderModel(SLIDE_SHOES, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
 
         renderInputItems(
@@ -152,9 +171,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getOutputStack(),
-                1.38D,
-                0.48D,
-                1.66D,
+                -0.50D,
+                0.72D,
+                1.56D,
                 0.42F,
                 402,
                 poseStack,
@@ -166,9 +185,9 @@ public class MechanicalSifterBlockEntityRenderer
         renderStoredItem(
                 sifter,
                 sifter.getByproductStack(),
-                0.30D,
-                0.48D,
-                1.68D,
+                1.50D,
+                0.72D,
+                1.56D,
                 0.38F,
                 403,
                 poseStack,
@@ -180,6 +199,57 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.popPose();
     }
 
+    /**
+     * An eccentric crank drives a rigid, pivoting connecting rod. The follower
+     * shares the sieve's existing stroke and remains attached to its carriage.
+     * All dimensions are in local SOUTH-facing multiblock coordinates.
+     */
+    private void renderCrankLinkage(float degrees, double shake,
+            PoseStack poseStack, MultiBufferSource buffer,
+            int packedLight, int packedOverlay) {
+        // SOUTH-local coordinates: input bearing block is at (1, 0, 0),
+        // and its X-oriented shaft centre is exactly (1.5, 0.5, 0.5).
+        // The crank sits outside the bearing block on its machine-facing side
+        // at X=0.925; its short hub meets the shaft at the X=1 block boundary.
+        // Only the compact inboard crank moves; the real input-bearing block
+        // remains the stationary support for the player's drive network.
+        final double centerX = 0.925D;
+        final double centerY = 0.50D;
+        final double centerZ = 0.50D;
+        final double radius = 0.12D;
+        final double length = 7.0D / 16.0D;
+        double theta = Math.toRadians(degrees);
+        double pinY = centerY + radius * Math.cos(theta);
+        double pinZ = centerZ + radius * Math.sin(theta);
+
+        // Both the crank pin and the solid wooden rod use the same point.
+        poseStack.pushPose();
+        poseStack.translate(centerX, centerY, centerZ);
+        poseStack.mulPose(Axis.XP.rotationDegrees(degrees));
+        renderModel(CRANK_ARM, poseStack, buffer, packedLight, packedOverlay);
+        poseStack.popPose();
+
+        // Positive X rotation takes the rod's +Z axis toward -Y.
+        // Hence the positive arcsine here, not an independently animated tilt.
+        double rodAngle = Math.asin((pinY - centerY) / length);
+        poseStack.pushPose();
+        poseStack.translate(centerX, pinY, pinZ);
+        poseStack.mulPose(Axis.XP.rotationDegrees(
+                (float) Math.toDegrees(rodAngle)));
+        renderModel(CONNECTING_ROD, poseStack, buffer, packedLight, packedOverlay);
+        poseStack.popPose();
+
+        // The follower starts at the rod's far pin and has a compact offset
+        // carriage bracket that meets the sieve's near side rail. It moves
+        // with the same shake as the upper tray, never with the rotating crank.
+        // Keeping this linkage at the near edge avoids the stationary rear
+        // support and the output guides.
+        poseStack.pushPose();
+        poseStack.translate(centerX, centerY, centerZ + length + shake);
+        renderModel(FOLLOWER, poseStack, buffer, packedLight, packedOverlay);
+        poseStack.popPose();
+    }
+
     private void renderInputItems(
             MechanicalSifterBlockEntity sifter,
             float partialTicks,
@@ -188,53 +258,35 @@ public class MechanicalSifterBlockEntityRenderer
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        ItemStack stack =
-                sifter.getInputStack();
-
-        if (stack.isEmpty()) {
+        ItemStack input = sifter.getInputStack();
+        if (input.isEmpty()) {
             return;
         }
 
-        /*
-         * Waiting material lives in the feed hopper, not on the moving sieve.
-         * That makes the feed path visually stable and leaves only the actual
-         * workpiece moving through the classifier.
-         */
-        int queuedCount =
-                sifter.isProcessing()
-                        ? Math.max(
-                                0,
-                                stack.getCount() - 1
-                        )
-                        : stack.getCount();
-
-        int visibleQueued =
-                Math.min(
-                        queuedCount,
-                        3
-                );
+        // Only the batch being worked travels through the machine.
+        // Everything else remains visibly queued inside the fixed hopper.
+        int reserved = sifter.isProcessing()
+                ? sifter.getActiveInputCount()
+                : 0;
+        int visibleQueued = Math.min(
+                3,
+                Math.max(0, input.getCount() - reserved)
+        );
 
         double[][] offsets = {
-                {0.000D, 0.000D, 0.000D},
+                {0.0D, 0.0D, 0.0D},
                 {-0.115D, 0.025D, 0.035D},
                 {0.115D, 0.045D, -0.025D}
         };
 
-        for (int i = 0;
-             i < visibleQueued;
-             i++) {
+        for (int i = 0; i < visibleQueued; i++) {
             renderStoredItem(
-                    sifter,
-                    stack,
-                    -0.25D + offsets[i][0],
-                    1.69D + offsets[i][1],
-                    1.47D + offsets[i][2],
-                    0.43F,
-                    410 + i,
-                    poseStack,
-                    buffer,
-                    packedLight,
-                    packedOverlay
+                    sifter, input,
+                    0.50D + offsets[i][0],
+                    1.73D + offsets[i][1],
+                    0.50D + offsets[i][2],
+                    0.43F, 410 + i,
+                    poseStack, buffer, packedLight, packedOverlay
             );
         }
 
@@ -242,114 +294,68 @@ public class MechanicalSifterBlockEntityRenderer
             return;
         }
 
-        double progress =
-                Math.max(
-                        0.0D,
-                        Math.min(
-                                1.0D,
-                                sifter.getVisualProcessProgress(
-                                        partialTicks
-                                )
-                        )
-                );
+        double progress = Math.max(0.0D, Math.min(
+                1.0D,
+                sifter.getVisualProcessProgress(partialTicks)
+        ));
 
-        double x;
-        double y;
-        double z;
-
-        /*
-         * Stage 1: leave the hopper and descend through its throat onto the
-         * coarse upper sieve.
-         */
-        if (progress < 0.20D) {
-            double t =
-                    smoothStep(
-                            progress / 0.20D
-                    );
-
-            x = lerp(
-                    -0.25D,
-                    -0.10D,
-                    t
-            );
-            y = lerp(
-                    1.66D,
-                    1.27D,
-                    t
-            );
-            z = lerp(
-                    1.43D,
-                    1.31D,
-                    t
-            );
-        /*
-         * Stage 2: the coarse screen shakes the ore inward across the first
-         * classification surface.
-         */
+        if (progress < 0.18D) {
+            // The input drops through the hopper throat onto the sieve.
+            double t = smoothStep(progress / 0.18D);
+            renderStoredItem(sifter, input,
+                    0.50D,
+                    lerp(1.68D, 0.91D, t),
+                    lerp(0.62D, 0.89D, t),
+                    0.43F, 499, poseStack, buffer, packedLight, packedOverlay);
         } else if (progress < 0.76D) {
-            double t =
-                    smoothStep(
-                            (progress - 0.20D)
-                                    / 0.56D
-                    );
-
-            x = lerp(
-                    -0.10D,
-                    0.66D,
-                    t
-            );
-            y = 1.27D;
-            z = lerp(
-                    1.31D,
-                    0.79D,
-                    t
-            ) - shake * 0.65D;
-            x += shake * 0.16D;
-        /*
-         * Stage 3: material that passed the coarse screen drops onto the finer
-         * lower deck and travels toward the collection end.
-         */
+            // A workpiece follows the inclined, shaking mesh, never the
+            // stationary lower collection pan or output chutes.
+            double t = smoothStep((progress - 0.18D) / 0.58D);
+            renderStoredItem(sifter, input,
+                    0.50D + shake * 0.12D,
+                    lerp(0.91D, 0.82D, t),
+                    lerp(0.89D, 1.36D, t) + shake,
+                    0.43F, 499, poseStack, buffer, packedLight, packedOverlay);
         } else {
-            double t =
-                    smoothStep(
-                            (progress - 0.76D)
-                                    / 0.24D
-                    );
+            // The fine primary result falls through the mesh into the
+            // lower catch pan, then crosses to the left Primary Output.
+            // The optional coarse byproduct remains on top of the mesh
+            // and travels to the separate right-hand Byproduct Output.
+            ItemStack primary = sifter.getProcessingPrimaryPreview();
+            if (primary.isEmpty()) {
+                primary = input;
+            }
 
-            x = lerp(
-                    0.66D,
-                    0.86D,
-                    t
-            );
-            y = lerp(
-                    1.22D,
-                    0.82D,
-                    Math.min(
-                            1.0D,
-                            t * 2.0D
-                    )
-            );
-            z = lerp(
-                    0.79D,
-                    1.43D,
-                    t
-            ) + shake;
-            x -= shake * 0.10D;
+            double x;
+            double y;
+            double z;
+            if (progress < 0.91D) {
+                double t = smoothStep((progress - 0.76D) / 0.15D);
+                x = 0.50D;
+                y = lerp(0.82D, 0.46D, t);
+                z = lerp(1.36D, 1.54D, t);
+            } else {
+                double t = smoothStep((progress - 0.91D) / 0.09D);
+                x = lerp(0.50D, -0.42D, t);
+                y = lerp(0.46D, 0.69D, t);
+                z = lerp(1.54D, 1.56D, t);
+            }
+
+            renderStoredItem(sifter, primary,
+                    x, y, z, 0.39F, 500,
+                    poseStack, buffer, packedLight, packedOverlay);
+
+            ItemStack byproduct = sifter.getProcessingByproductPreview();
+            if (!byproduct.isEmpty()) {
+                double t = smoothStep((progress - 0.76D) / 0.24D);
+                renderStoredItem(sifter, byproduct,
+                        lerp(0.50D, 1.45D, t) + shake * (1.0D - t),
+                        lerp(0.82D, 0.72D, t),
+                        lerp(1.36D, 1.56D, t),
+                        0.37F, 501,
+                        poseStack, buffer, packedLight, packedOverlay);
+            }
         }
-
-        renderStoredItem(
-                sifter,
-                stack,
-                x,
-                y,
-                z,
-                0.46F,
-                499,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
     }
 
     private static double smoothStep(

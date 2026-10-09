@@ -26,7 +26,7 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
  * Small temporary client-side gear debug readout.
  * Shows synced visual gear data in the action bar while looking at a gear block.
  */
-@Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+//@Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class GearDebugHud {
     private static int ticksUntilNextMessage = 0;
 

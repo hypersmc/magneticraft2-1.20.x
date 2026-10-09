@@ -7,6 +7,7 @@ import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
+import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * JSON-multiblock controller for the crank-driven Mechanical Sifter.
+ * JSON-multiblock controller for the Gear V2-driven Mechanical Sifter.
  */
 public class MechanicalSifterBlockEntity
         extends BaseBlockEntityMagneticraft2 {
@@ -59,10 +60,14 @@ public class MechanicalSifterBlockEntity
     private int processTime = 0;
     private int totalProcessTime = 160;
     private boolean processing = false;
+    // A batch chooses its optional byproduct once. Never reroll on a stall.
+    @Nullable
+    private ResourceLocation activeRecipeId;
+    private boolean pendingByproduct = false;
 
     // Processing state is not network-synced every tick. Predict the visual
     // progress client-side between start/stop sync points, matching the Washer.
-    private float clientProcessSyncTime = Float.NaN;
+    private double clientProcessSyncTime = Double.NaN;
     private float clientProcessSyncProgress = 0.0F;
 
     private ItemStack lastSyncedInput =
@@ -104,6 +109,33 @@ public class MechanicalSifterBlockEntity
         return itemHandler.getStackInSlot(2);
     }
 
+    /**
+     * Used by the physical Item Input module (manual and automated).
+     * Invalid material must not occupy the one processing input slot.
+     */
+    public boolean acceptsRecipeInput(ItemStack stack) {
+        return MultiblockRecipeHandler.acceptsInput(level, RECIPE_MACHINE, stack);
+    }
+
+    public int getActiveInputCount() {
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? 1 : recipe.getInputCount();
+    }
+
+    public ItemStack getProcessingPrimaryPreview() {
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? ItemStack.EMPTY : recipe.getOutput();
+    }
+
+    public ItemStack getProcessingByproductPreview() {
+        if (!pendingByproduct) {
+            return ItemStack.EMPTY;
+        }
+
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? ItemStack.EMPTY : recipe.getByproduct();
+    }
+
     public float getProcessProgress() {
         return totalProcessTime <= 0
                 ? 0.0F
@@ -128,29 +160,31 @@ public class MechanicalSifterBlockEntity
             return base;
         }
 
-        float now =
-                level.getGameTime()
-                        + partialTicks;
+        double now =
+                (double) level.getGameTime()
+                        + (double) partialTicks;
 
-        if (Float.isNaN(
+        if (Double.isNaN(
                 clientProcessSyncTime)) {
             clientProcessSyncTime = now;
             clientProcessSyncProgress = base;
         }
 
-        float elapsed =
+        double elapsed =
                 Math.max(
-                        0.0F,
+                        0.0D,
                         now - clientProcessSyncTime
                 );
 
         float predicted =
-                clientProcessSyncProgress
-                        + elapsed
-                        / Math.max(
-                                1.0F,
-                                totalProcessTime
-                        );
+                (float) (
+                        clientProcessSyncProgress
+                                + elapsed
+                                / Math.max(
+                                        1.0D,
+                                        (double) totalProcessTime
+                                )
+                );
 
         return Math.max(
                 0.0F,
@@ -255,98 +289,103 @@ public class MechanicalSifterBlockEntity
         }
 
         if (!formed) {
+            clearBatch();
             removeMechanicalLoad();
             setProcessing(false);
             return;
         }
 
-        MultiblockProcessingRecipe recipe =
-                getMatchingRecipe();
-        CrankBlockEntity_wood crank =
-                getConnectedCrank();
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        MechanicalInputModuleBlockEntity input = getMechanicalInput();
 
         if (recipe == null) {
+            clearBatch();
             removeMechanicalLoad();
-            processTime = 0;
-            totalProcessTime = 160;
             setProcessing(false);
             return;
+        }
+
+        // Changing the recipe or returning after a completed batch starts a
+        // new one. A stalled batch keeps its progress and result selection.
+        if (!recipe.getId().equals(activeRecipeId)) {
+            activeRecipeId = recipe.getId();
+            processTime = 0;
+            totalProcessTime = recipe.getProcessTime();
+            ItemStack possibleByproduct = recipe.getByproduct();
+            pendingByproduct = !possibleByproduct.isEmpty()
+                    && level.random.nextFloat() < recipe.getByproductChance();
+            setChanged();
         }
 
         ItemStack output = recipe.getOutput();
         ItemStack byproduct = recipe.getByproduct();
 
+        // Only reserve the secondary port if THIS batch will use it.
+        // A full byproduct slot must not block batches producing no waste.
         if (!canAccept(1, output)
-                || (!byproduct.isEmpty()
-                && !canAccept(2, byproduct))) {
+                || (pendingByproduct && !canAccept(2, byproduct))) {
             removeMechanicalLoad();
             setProcessing(false);
             return;
         }
 
-        boolean canAttempt =
-                crank != null
-                        && crank.getOrCreateGearNode()
-                        .getEffectiveSpeed()
-                        >= recipe.getMinSpeed()
-                        && crank.getOrCreateGearNode()
-                        .getTorque()
-                        + EPSILON
-                        >= recipe.getTorque();
+        GearNode inputNode = input == null
+                ? null
+                : input.getOrCreateGearNode();
 
-        setMechanicalLoad(
-                crank,
-                recipe.getTorque(),
-                canAttempt
-        );
+        boolean canAttempt = inputNode != null
+                && inputNode.getEffectiveSpeed() >= recipe.getMinSpeed()
+                && inputNode.getTorque() + EPSILON >= recipe.getTorque();
+
+        setMechanicalLoad(input, recipe.getTorque(), canAttempt);
 
         GearNetworkManager.MechanicalLoadState loadState =
                 GearNetworkManager.getInstance()
-                        .getMechanicalLoadState(
-                                level,
-                                worldPosition
-                        );
+                        .getMechanicalLoadState(level, worldPosition);
 
-        if (!canAttempt
-                || !loadState.supplied()) {
+        if (!canAttempt || !loadState.supplied()) {
             setProcessing(false);
             return;
         }
 
-        totalProcessTime =
-                recipe.getProcessTime();
         setProcessing(true);
         processTime++;
         setChanged();
 
-        if (processTime
-                < totalProcessTime) {
+        if (processTime < totalProcessTime) {
             return;
         }
 
-        itemHandler.extractItem(
-                0,
-                recipe.getInputCount(),
-                false
-        );
+        // The output slots have already been checked for capacity; perform
+        // the recipe exactly once, with no rerolls or item loss on overflow.
+        itemHandler.extractItem(0, recipe.getInputCount(), false);
         insertOutput(1, output);
-
-        if (!byproduct.isEmpty()
-                && level.random.nextFloat()
-                < recipe.getByproductChance()) {
-            insertOutput(
-                    2,
-                    byproduct
-            );
+        if (pendingByproduct) {
+            insertOutput(2, byproduct);
         }
 
+        activeRecipeId = null;
+        pendingByproduct = false;
         processTime = 0;
-        setProcessing(false);
+        processing = false;
         sync();
     }
 
+    private void clearBatch() {
+        if (processTime == 0 && activeRecipeId == null
+                && !pendingByproduct) {
+            return;
+        }
+
+        processTime = 0;
+        totalProcessTime = 160;
+        activeRecipeId = null;
+        pendingByproduct = false;
+        setChanged();
+    }
+
     private void setMechanicalLoad(
-            @Nullable CrankBlockEntity_wood crank,
+            @Nullable MechanicalInputModuleBlockEntity input,
             float torque,
             boolean active) {
         if (level == null) {
@@ -357,11 +396,11 @@ public class MechanicalSifterBlockEntity
                 .setMechanicalLoad(
                         level,
                         worldPosition,
-                        crank == null
+                        input == null
                                 ? worldPosition
-                                : crank.getBlockPos(),
+                                : input.getBlockPos(),
                         Math.max(0.0F, torque),
-                        active && crank != null
+                        active && input != null
                 );
     }
 
@@ -376,31 +415,42 @@ public class MechanicalSifterBlockEntity
     }
 
     @Nullable
-    public CrankBlockEntity_wood
-    getConnectedCrank() {
-        if (level == null || !formed) {
+    public MechanicalInputModuleBlockEntity
+    getMechanicalInput() {
+        if (level == null
+                || !formed) {
             return null;
         }
 
-        Direction facing =
-                getFacing();
+        BlockPos inputPos = null;
 
-        BlockPos crankPos =
-                worldPosition.relative(
-                        facing.getOpposite()
-                );
-
-        BlockEntity blockEntity =
-                level.getBlockEntity(crankPos);
-
-        if (blockEntity
-                instanceof CrankBlockEntity_wood crank
-                && crank.getRodOutputPos()
-                .equals(worldPosition)) {
-            return crank;
+        if (getMultiblockController() != null) {
+            inputPos =
+                    getMultiblockController()
+                            .getmodulePos(
+                                    "mechanical_input"
+                            );
         }
 
-        return null;
+        // The client does not always reconstruct the full MultiblockController
+        // object immediately after chunk load. The Sifter's Gear V2 input is
+        // structurally fixed on the right side of the matched facing, so this
+        // gives rendering a deterministic fallback without changing gameplay.
+        if (inputPos == null) {
+            inputPos =
+                    worldPosition.relative(
+                            getFacing()
+                                    .getCounterClockWise()
+                    );
+        }
+
+        BlockEntity blockEntity =
+                level.getBlockEntity(inputPos);
+
+        return blockEntity
+                instanceof MechanicalInputModuleBlockEntity input
+                ? input
+                : null;
     }
 
     public Direction getFacing() {
@@ -415,16 +465,31 @@ public class MechanicalSifterBlockEntity
                 : Direction.SOUTH;
     }
 
+    public float getDriveRotationDegrees(
+            float partialTicks) {
+        MechanicalInputModuleBlockEntity input =
+                getMechanicalInput();
+
+        return input == null
+                ? 0.0F
+                : input.getVisualRotationDegrees(
+                        partialTicks
+                );
+    }
+
     public float getShakeOffset(
             float partialTicks) {
-        CrankBlockEntity_wood crank =
-                getConnectedCrank();
-
-        return crank == null
-                ? 0.0F
-                : (crank.getStrokeProgress(
-                        partialTicks
-                ) - 0.5F) * 0.24F;
+        // Exact inline slider-crank motion. The 0.12-block eccentric is
+        // driven by the existing input rotation; the 7/16-block rod keeps
+        // both pivots connected throughout the cycle (no visual stretch).
+        double angle = Math.toRadians(getDriveRotationDegrees(partialTicks));
+        double radius = 0.12D;
+        double length = 7.0D / 16.0D;
+        double offset = radius * Math.sin(angle);
+        double lateral = radius * Math.cos(angle);
+        return (float) (offset
+                + Math.sqrt(length * length - lateral * lateral)
+                - length);
     }
 
     @Nullable
@@ -751,6 +816,10 @@ public class MechanicalSifterBlockEntity
                         : 160;
         processing =
                 tag.getBoolean("Processing");
+        activeRecipeId = tag.contains("ActiveRecipe")
+                ? ResourceLocation.tryParse(tag.getString("ActiveRecipe"))
+                : null;
+        pendingByproduct = tag.getBoolean("PendingByproduct");
 
         if (level != null
                 && level.isClientSide) {
@@ -761,7 +830,7 @@ public class MechanicalSifterBlockEntity
                         getProcessProgress();
             } else {
                 clientProcessSyncTime =
-                        Float.NaN;
+                        Double.NaN;
                 clientProcessSyncProgress =
                         getProcessProgress();
             }
@@ -794,6 +863,10 @@ public class MechanicalSifterBlockEntity
                 "Processing",
                 processing
         );
+        if (activeRecipeId != null) {
+            tag.putString("ActiveRecipe", activeRecipeId.toString());
+        }
+        tag.putBoolean("PendingByproduct", pendingByproduct);
 
         saveMultiblockData(
                 tag,

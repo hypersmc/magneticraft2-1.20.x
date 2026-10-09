@@ -17,7 +17,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)2. Primitive tools$()$(br2)Pebbles and sticks make your first tools. Craft a $(item)Stone Knife$() and a $(item)Primitive Hammer$().$(br2)The Fire Starter is your Stone Age ignition source. Hold right-click on the block you want to ignite until the full ignition action completes. Flint and Steel is intentionally a later steel-age tool."
+      "text": "$(bold)2. Primitive tools$()$(br2)Pebbles and sticks make your first tools. Craft a $(item)Stone Knife$() and a $(item)Primitive Hammer$().$(br2)Aim your Fire Starter at the Pit Kiln and hold right-click for about three seconds until it ignites automatically. Releasing early cancels the attempt; precise timing is no longer required. Flint and Steel belongs to later progression."
     },
     {
       "type": "patchouli:crafting",
@@ -62,7 +62,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)4. Firing the kiln$()$(br2)Add $(item)4 Wheat$() to the Pit Kiln, then $(item)8 Logs$(). Any one log type can be used for the whole batch.$(br2)The kiln has room for four clay items total. Clay Pots become Ceramic Pots, while Clay Balls become Bricks.$(br2)When the kiln is loaded, hold the Fire Starter on it until it ignites."
+      "text": "$(bold)4. Firing the kiln$()$(br2)Add $(item)4 Wheat$() and then $(item)8 Logs$() of the same type. Load up to four clay items: Clay Pots become Ceramic Pots and Clay Balls become Bricks.$(br2)Hold the Fire Starter on the loaded kiln for about three seconds. Flames and smoke remain visible during the entire firing cycle. The kiln extinguishes once, drops the fired products, and clears itself when finished."
     },
     {
       "type": "text",
@@ -83,7 +83,33 @@
       "type": "patchouli:crafting",
       "title": "Primitive Storage",
       "recipe": "magneticraft2:primitive_storage_cellar",
-      "text": "Craft the controller first, then use the required Coarse Dirt and Oak Logs to assemble the cellar around it."
+      "text": "Craft the controller first, then use Coarse Dirt and Oak Logs to assemble the cellar. The next page shows the complete structure with a Visualize button."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Primitive Storage Cellar",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "DDD",
+            "DL0",
+            "DDD"
+          ],
+          [
+            "DDD",
+            "DDL",
+            "DDD"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitivestoragecellar_multiblock",
+          "D": "minecraft:coarse_dirt",
+          "L": "minecraft:oak_log"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the cellar as shown: 15 Coarse Dirt, 2 Oak Logs and the controller in the upper layer. The two Oak Logs form a vertical support beside the controller. Patchouli lists the upper layer first; this visualization matches the registered WEST layout. Use Visualize to project the blocks, then right-click the controller to form the cellar."
     },
     {
       "type": "text",
@@ -123,7 +149,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)7. Smelting by hand$()$(br2)The Primitive Furnace has no GUI. Put Coal into the rear fuel area, place the ore into the middle input area, and collect products from the front.$(br2)Right-click the Bellows to pump air. It stores up to five charges, and each completed smelt consumes one charge."
+      "text": "$(bold)7. Smelting by hand$()$(br2)The Primitive Furnace has no GUI. Put Coal into the rear fuel area and ore into the middle input area, then collect products from the two front positions.$(br2)Use an empty hand on either input area to retrieve accidentally inserted Coal or ore. Right-click the Bellows to pump air. It stores up to five charges, and each smelt consumes one charge."
     },
     {
       "type": "text",
@@ -139,8 +165,8 @@
     "minecraft:packed_mud": 9,
     "minecraft:mud_bricks": 9,
     "magneticraft2:primitivestoragecellar_multiblock": 11,
-    "magneticraft2:primitivefurnace_multiblock_nogui": 13,
-    "magneticraft2:bellows_multiblock_module": 13
+    "magneticraft2:primitivefurnace_multiblock_nogui": 14,
+    "magneticraft2:bellows_multiblock_module": 14
   },
   "sortnum": 1,
   "read_by_default": true

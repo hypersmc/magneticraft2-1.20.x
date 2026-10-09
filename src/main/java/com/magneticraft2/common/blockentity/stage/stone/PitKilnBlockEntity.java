@@ -1,7 +1,6 @@
 package com.magneticraft2.common.blockentity.stage.stone;
 
 import com.magneticraft2.common.block.stage.stone.PitKilnBlock;
-import com.magneticraft2.common.registry.FinalRegistry;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
@@ -13,11 +12,9 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -90,20 +87,13 @@ public class PitKilnBlockEntity extends BlockEntity {
         load(parentNBTTagCompound);
     }
     public CompoundTag sync() {
-        level.sendBlockUpdated( worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL );
-        CompoundTag tag = super.getUpdateTag();
-        loadClientData(tag);
-        return null;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(),
+                    getBlockState(), Block.UPDATE_CLIENTS);
+        }
+        return getUpdateTag();
     }
-    private void loadClientData(CompoundTag tag) {
-        tag.putBoolean("IsBurning", isBurning);
-        tag.putInt("BurnTime", burnTime);
-        tag.putInt("TotalTime", totalTime);
-
-        // Save the clay items to NBT
-        tag.put("inv", itemHandler.serializeNBT());
-    }
-
 
     /**
      * Dear maintainer:
@@ -113,47 +103,35 @@ public class PitKilnBlockEntity extends BlockEntity {
      * total_hours_wasted_here = 18
      **/
     public boolean activate(BlockState state, Level world, BlockPos pos) {
-        this.level = world;
-
-        if (isBurning) {
+        if (world.isClientSide || isBurning) {
             return false;
         }
 
-        BlockEntity foundEntity = world.getBlockEntity(pos);
-        if (!(foundEntity instanceof PitKilnBlockEntity blockEntity)) {
-            return false;
-        }
-
-        LazyOptional<IItemHandler> optionalHandler = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, null);
-        IItemHandler itemHandler = optionalHandler.orElse(null);
-        if (itemHandler == null) {
-            return false;
-        }
-
-        ItemStack slot0 = itemHandler.getStackInSlot(0);
-        ItemStack slot1 = itemHandler.getStackInSlot(1);
-
-        boolean hasLogs = slot0.is(ItemTags.LOGS) && slot0.getCount() >= 8;
-        boolean hasWheat = slot1.is(Items.WHEAT) && slot1.getCount() >= 4;
-
-        if (!hasLogs || !hasWheat) {
+        ItemStack logs = itemHandler.getStackInSlot(0);
+        ItemStack wheat = itemHandler.getStackInSlot(1);
+        if (!logs.is(ItemTags.LOGS) || logs.getCount() < 8
+                || !wheat.is(Items.WHEAT) || wheat.getCount() < 4) {
             return false;
         }
 
         itemHandler.extractItem(0, 8, false);
         itemHandler.extractItem(1, 4, false);
 
-        BlockState newState = state
-                .setValue(PitKilnBlock.LOG_COUNT, getLogCount())
-                .setValue(PitKilnBlock.WHEAT_COUNT, getWheatCount())
-                .setValue(PitKilnBlock.ACTIVATED, true);
-
-        level.setBlock(pos, newState, 3);
-
         isBurning = true;
-        burnTime = Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get();
-        world.playSound(null, pos, SoundEvents.FIRE_AMBIENT, SoundSource.BLOCKS, 1.0F, 1.0F);
-        setChanged();
+        totalTime = 0;
+        burnTime = Math.max(1, Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get());
+
+        // Keep the loaded logs/straw visually present while the batch fires.
+        // The physical vanilla FIRE block is deliberately not placed; it can
+        // go out naturally, spread, or grief the blocks surrounding the pit.
+        BlockState burningState = state
+                .setValue(PitKilnBlock.LOG_COUNT, 8)
+                .setValue(PitKilnBlock.WHEAT_COUNT, 4)
+                .setValue(PitKilnBlock.ACTIVATED, true);
+        world.setBlock(pos, burningState, Block.UPDATE_ALL);
+        world.playSound(null, pos, SoundEvents.FIRE_AMBIENT,
+                SoundSource.BLOCKS, 0.8F, 1.0F);
+        sync();
         return true;
     }
 
@@ -167,86 +145,73 @@ public class PitKilnBlockEntity extends BlockEntity {
      * @param estate The current block state of the block entity.
      * @param e The block entity being ticked, expected to be an instance of {@link PitKilnBlockEntity}.
      */
-    public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {
-        PitKilnBlockEntity entity = (PitKilnBlockEntity) e.getLevel().getBlockEntity(pos);
-        if (!level.isClientSide()) {
-            entity.sync();
-            if (entity.isBurning) {
-                // Decrease the burn time and increase the total time
-                if (entity.burnTime > 0) {
-                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()){
-                        LOGGER.info(entity.burnTime);
-                    }
-                    entity.burnTime--;
-                }
-                entity.totalTime++;
-                if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()){
-                    LOGGER.info(entity.totalTime);
-                }
-
-                // Update the fire and smoke based on the burn time
-                if (entity.burnTime >= 0 && entity.totalTime <= Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get() + 2) {
-                    BlockPos upPos = pos.above();
-                    BlockState upState = level.getBlockState(upPos);
-
-                    if (upState.getBlock() == Blocks.FIRE) {
-                        level.setBlockAndUpdate(upPos, Blocks.FIRE.defaultBlockState());
-                    }
-                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-                        LOGGER.info("finished");
-                    }
-                    SoundEvent soundEvent = SoundEvents.FIRE_EXTINGUISH;
-                    level.playSound(null, pos, soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
-
-                    // Wait for the sound to finish playing
-                    level.getBlockTicks().willTickThisTick(pos, level.getBlockState(pos).getBlock());
-
-                    // Continue with the code execution after the sound has finished playing
-                    return;
-                }
-
-                // Check if the firing process is complete
-                if (entity.totalTime >= Magneticraft2ConfigCommon.GENERAL.PitKilnTime.get() + 2) {
-                    if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-                        LOGGER.info("finished2");
-                    }
-
-                    BlockPos upPos = pos.above();
-                    BlockState upState = level.getBlockState(upPos);
-                    if (upState.getBlock() == Blocks.FIRE) {
-                        level.setBlockAndUpdate(upPos, Blocks.AIR.defaultBlockState());
-                    }
-                    entity.burnTime = 0;
-                    entity.totalTime = 0;
-                    entity.isBurning = false;
-                    BlockState currentState = level.getBlockState(pos);
-                    BlockState newState = currentState.setValue(PitKilnBlock.LOG_COUNT, entity.getLogCount()).setValue(PitKilnBlock.WHEAT_COUNT, entity.getWheatCount()).setValue(PitKilnBlock.ACTIVATED, false);
-                    level.setBlock(pos, newState, 3);
-                    //Convert clay to ceramic
-                    for (int i = 2; i <= 5; i++) {
-                        if (!entity.itemHandler.getStackInSlot(i).isEmpty()) {
-                            ItemEntity itemEntity = new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), entity.convertClayToCeramic(entity.itemHandler.getStackInSlot(i)).getItem().getDefaultInstance());
-                            level.addFreshEntity(itemEntity);
-                            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-                                LOGGER.info("Item that should have been dropped: " + entity.convertClayToCeramic(entity.itemHandler.getStackInSlot(i)));
-                            }
-                            entity.itemHandler.setStackInSlot(i, ItemStack.EMPTY);
-                            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-                                LOGGER.info("ran for slot: " + i);
-                            }
-                        }
-                    }
-                    if (entity.itemHandler.getStackInSlot(2).isEmpty() && entity.itemHandler.getStackInSlot(3).isEmpty() && entity.itemHandler.getStackInSlot(4).isEmpty() && entity.itemHandler.getStackInSlot(5).isEmpty()) {
-                        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3);
-                    }
-                }
-            }
-            if (level.getBlockState(pos).getBlock() == BlockRegistry.PitKilnblock.get()) {
-                BlockState currentState = level.getBlockState(pos);
-                BlockState newState = currentState.setValue(PitKilnBlock.LOG_COUNT, entity.getLogCount()).setValue(PitKilnBlock.WHEAT_COUNT, entity.getWheatCount());
-                level.setBlock(pos, newState, 3);
-            }
+    public static <E extends BlockEntity> void serverTick(
+            Level level, BlockPos pos, BlockState state, E blockEntity) {
+        if (level.isClientSide || !(blockEntity instanceof PitKilnBlockEntity kiln)
+                || !state.is(BlockRegistry.PitKilnblock.get())) {
+            return;
         }
+
+        if (!kiln.isBurning) {
+            // Inventory-related model changes only need a block state update
+            // when the actual wheat/log counts have changed.
+            int logs = Math.min(8, kiln.getLogCount());
+            int wheat = Math.min(4, kiln.getWheatCount());
+            if (state.getValue(PitKilnBlock.LOG_COUNT) != logs
+                    || state.getValue(PitKilnBlock.WHEAT_COUNT) != wheat
+                    || state.getValue(PitKilnBlock.ACTIVATED)) {
+                level.setBlock(pos, state
+                        .setValue(PitKilnBlock.LOG_COUNT, logs)
+                        .setValue(PitKilnBlock.WHEAT_COUNT, wheat)
+                        .setValue(PitKilnBlock.ACTIVATED, false),
+                        Block.UPDATE_ALL);
+            }
+            return;
+        }
+
+        kiln.totalTime++;
+        kiln.burnTime--;
+        kiln.setChanged();
+
+        if (kiln.burnTime > 0) {
+            // Occasional crackle, not an extinguish sound EVERY server tick.
+            if (kiln.totalTime % 100 == 0) {
+                level.playSound(null, pos, SoundEvents.FIRE_AMBIENT,
+                        SoundSource.BLOCKS, 0.55F,
+                        0.9F + level.random.nextFloat() * 0.2F);
+            }
+            return;
+        }
+
+        kiln.isBurning = false;
+        kiln.burnTime = 0;
+        kiln.totalTime = 0;
+
+        // Finish exactly once and preserve each input's stack count.
+        for (int slot = 2; slot <= 5; slot++) {
+            ItemStack contents = kiln.itemHandler.getStackInSlot(slot);
+            if (contents.isEmpty()) {
+                continue;
+            }
+
+            ItemStack result = kiln.convertClayToCeramic(contents);
+            if (result.isEmpty()) {
+                result = contents.copy(); // Do not destroy unexpected contents.
+            } else {
+                result.setCount(contents.getCount());
+            }
+            Block.popResource(level, pos.above(), result);
+            kiln.itemHandler.setStackInSlot(slot, ItemStack.EMPTY);
+        }
+
+        // Clean up an old-version fire if one is still present above the kiln.
+        if (level.getBlockState(pos.above()).is(Blocks.FIRE)) {
+            level.removeBlock(pos.above(), false);
+        }
+
+        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH,
+                SoundSource.BLOCKS, 0.9F, 1.0F);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
     }
 
     @Override
@@ -278,7 +243,7 @@ public class PitKilnBlockEntity extends BlockEntity {
 
             @Override
             protected void onContentsChanged(int slot) {
-                setChanged();
+                sync(); // Inventory changes must reach the client without per-tick spam.
             }
 
             @Override

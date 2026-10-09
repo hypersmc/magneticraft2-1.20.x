@@ -22,6 +22,8 @@ public class CustomGearboxBlockEntity_woodRenderer
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
     private static final ResourceLocation SHAFT =
             new ResourceLocation("minecraft", "textures/block/stripped_oak_log.png");
+    private static final ResourceLocation SUPPORT =
+            new ResourceLocation("minecraft", "textures/block/oak_planks.png");
 
     private static final double GRID_SPACING = 0.26D;
     private static final double SHAFT_THICKNESS = 0.085D;
@@ -46,6 +48,8 @@ public class CustomGearboxBlockEntity_woodRenderer
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
         VertexConsumer shaft =
                 bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
+        VertexConsumer support =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(SUPPORT));
 
         float referenceAngle =
                 gearbox.getVisualRotationDegrees(partialTicks);
@@ -112,6 +116,7 @@ public class CustomGearboxBlockEntity_woodRenderer
             renderPortAdapter(
                     stack,
                     shaft,
+                    support,
                     packedLight,
                     port,
                     portAngle
@@ -406,11 +411,19 @@ public class CustomGearboxBlockEntity_woodRenderer
      */
     private void renderPortAdapter(PoseStack stack,
                                    VertexConsumer consumer,
+                                   VertexConsumer support,
                                    int packedLight,
                                    Direction port,
                                    float rotation) {
         stack.pushPose();
         orientLocalXToDirection(stack, port);
+
+        renderPortSupport(
+                stack,
+                support,
+                packedLight
+        );
+
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
         // The port cell center is 0.26 blocks from the gearbox center. Its
@@ -449,6 +462,77 @@ public class CustomGearboxBlockEntity_woodRenderer
                 0.050D,
                 OUTSIDE_SHAFT_THICKNESS
         );
+
+        stack.popPose();
+    }
+
+    private void renderPortSupport(
+            PoseStack stack,
+            VertexConsumer consumer,
+            int packedLight) {
+        /*
+         * Local +X points toward the active gearbox face.
+         *
+         * This is a real structural cross-member, not a small decorative
+         * collar. It spans from one side of the wooden cage to the other and
+         * carries the bearing at its center, so the shaft/gear assembly has an
+         * obvious physical support path from every normal viewing angle.
+         */
+        stack.pushPose();
+
+        // Full-width wooden cross-brace. The static housing rails sit near
+        // +/-0.44 from center, so this visibly terminates inside both rails.
+        stack.pushPose();
+        stack.translate(0.405D, 0.0D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.095D,
+                0.095D,
+                0.875D
+        );
+        stack.popPose();
+
+        // Thicker center bearing block where the rotating axle passes through
+        // the cross-member.
+        stack.pushPose();
+        stack.translate(0.405D, 0.0D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.125D,
+                0.245D,
+                0.245D
+        );
+        stack.popPose();
+
+        // Small upper/lower cheeks make the bearing read as captured by the
+        // brace rather than pasted onto its front face.
+        stack.pushPose();
+        stack.translate(0.405D, 0.170D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.105D,
+                0.095D,
+                0.310D
+        );
+        stack.popPose();
+
+        stack.pushPose();
+        stack.translate(0.405D, -0.170D, 0.0D);
+        drawBox(
+                stack,
+                consumer,
+                packedLight,
+                0.105D,
+                0.095D,
+                0.310D
+        );
+        stack.popPose();
 
         stack.popPose();
     }
@@ -525,82 +609,100 @@ public class CustomGearboxBlockEntity_woodRenderer
         double z0 = -sizeZ * 0.5D;
         double z1 = sizeZ * 0.5D;
 
+        /*
+         * Do not stretch a whole 16x16 block texture across tiny mechanical
+         * parts, but also do not sample a microscopic 1-2% strip of it.
+         *
+         * Quantise each face to an integer Minecraft texel window and keep a
+         * minimum 2x2 texel patch. This gives small teeth/spokes readable wood
+         * grain without smearing or over-compressing the texture.
+         */
+        float uvX = texelWindow(sizeX);
+        float uvY = texelWindow(sizeY);
+        float uvZ = texelWindow(sizeZ);
+
         PoseStack.Pose pose = stack.last();
 
+        // Top / bottom: X by Z.
         quad(consumer, pose, packedLight,
-                x0, y1, z0, x0, y1, z1,
-                x1, y1, z1, x1, y1, z0,
-                0.0F, 1.0F, 0.0F);
+                x0, y1, z0,  x0, y1, z1,  x1, y1, z1,  x1, y1, z0,
+                0.0F, 1.0F, 0.0F,
+                uvX, uvZ);
         quad(consumer, pose, packedLight,
-                x0, y0, z1, x0, y0, z0,
-                x1, y0, z0, x1, y0, z1,
-                0.0F, -1.0F, 0.0F);
+                x0, y0, z1,  x0, y0, z0,  x1, y0, z0,  x1, y0, z1,
+                0.0F, -1.0F, 0.0F,
+                uvX, uvZ);
+
+        // North / south: X by Y.
         quad(consumer, pose, packedLight,
-                x0, y0, z1, x1, y0, z1,
-                x1, y1, z1, x0, y1, z1,
-                0.0F, 0.0F, 1.0F);
+                x0, y0, z1,  x1, y0, z1,  x1, y1, z1,  x0, y1, z1,
+                0.0F, 0.0F, 1.0F,
+                uvX, uvY);
         quad(consumer, pose, packedLight,
-                x1, y0, z0, x0, y0, z0,
-                x0, y1, z0, x1, y1, z0,
-                0.0F, 0.0F, -1.0F);
+                x1, y0, z0,  x0, y0, z0,  x0, y1, z0,  x1, y1, z0,
+                0.0F, 0.0F, -1.0F,
+                uvX, uvY);
+
+        // East / west: Z by Y.
         quad(consumer, pose, packedLight,
-                x1, y0, z1, x1, y0, z0,
-                x1, y1, z0, x1, y1, z1,
-                1.0F, 0.0F, 0.0F);
+                x1, y0, z1,  x1, y0, z0,  x1, y1, z0,  x1, y1, z1,
+                1.0F, 0.0F, 0.0F,
+                uvZ, uvY);
         quad(consumer, pose, packedLight,
-                x0, y0, z0, x0, y0, z1,
-                x0, y1, z1, x0, y1, z0,
-                -1.0F, 0.0F, 0.0F);
+                x0, y0, z0,  x0, y0, z1,  x0, y1, z1,  x0, y1, z0,
+                -1.0F, 0.0F, 0.0F,
+                uvZ, uvY);
+    }
+
+    private float texelWindow(double blockSize) {
+        int texels =
+                Math.max(
+                        2,
+                        Math.min(
+                                16,
+                                (int) Math.round(
+                                        blockSize * 16.0D
+                                )
+                        )
+                );
+
+        return texels / 16.0F;
     }
 
     private void quad(VertexConsumer consumer,
                       PoseStack.Pose pose,
                       int packedLight,
-                      double x0,
-                      double y0,
-                      double z0,
-                      double x1,
-                      double y1,
-                      double z1,
-                      double x2,
-                      double y2,
-                      double z2,
-                      double x3,
-                      double y3,
-                      double z3,
+                      double x0, double y0, double z0,
+                      double x1, double y1, double z1,
+                      double x2, double y2, double z2,
+                      double x3, double y3, double z3,
                       float normalX,
                       float normalY,
-                      float normalZ) {
+                      float normalZ,
+                      float maxU,
+                      float maxV) {
         vertex(
-                consumer,
-                pose,
-                packedLight,
+                consumer, pose, packedLight,
                 x0, y0, z0,
                 0.0F, 0.0F,
                 normalX, normalY, normalZ
         );
         vertex(
-                consumer,
-                pose,
-                packedLight,
+                consumer, pose, packedLight,
                 x1, y1, z1,
-                0.0F, 1.0F,
+                0.0F, maxV,
                 normalX, normalY, normalZ
         );
         vertex(
-                consumer,
-                pose,
-                packedLight,
+                consumer, pose, packedLight,
                 x2, y2, z2,
-                1.0F, 1.0F,
+                maxU, maxV,
                 normalX, normalY, normalZ
         );
         vertex(
-                consumer,
-                pose,
-                packedLight,
+                consumer, pose, packedLight,
                 x3, y3, z3,
-                1.0F, 0.0F,
+                maxU, 0.0F,
                 normalX, normalY, normalZ
         );
     }

@@ -35,14 +35,14 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
     private BlockPos itemBeltPartner;
 
     private double clientBeltTravelDistance = 0.0D;
-    private float lastClientBeltVisualTime = Float.NaN;
+    private double lastClientBeltVisualTime = Double.NaN;
 
     // Items on a belt are no longer loose ItemEntities being shoved every tick. The
     // canonical roller owns their stack + exact distance along the carrying run, similar
     // to Create's transported-item concept. The renderer places the stack directly on
     // the moving belt surface.
     private final List<TransportedItem> transportedItems = new ArrayList<>();
-    private float clientTransportSyncTime = Float.NaN;
+    private double clientTransportSyncTime = Double.NaN;
 
     public ConveyorRollerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), pos, state);
@@ -105,13 +105,16 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
             return clientBeltTravelDistance;
         }
 
-        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
-        if (Float.isNaN(lastClientBeltVisualTime)) {
+        double currentVisualTime =
+                (double) currentLevel.getGameTime()
+                        + (double) partialTicks;
+        if (Double.isNaN(lastClientBeltVisualTime)) {
             lastClientBeltVisualTime = currentVisualTime;
             return clientBeltTravelDistance;
         }
 
-        float deltaTicks = currentVisualTime - lastClientBeltVisualTime;
+        double deltaTicks =
+                currentVisualTime - lastClientBeltVisualTime;
         lastClientBeltVisualTime = currentVisualTime;
 
         if (deltaTicks < 0.0F) {
@@ -124,7 +127,10 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         if (Math.abs(rpm) > VISUAL_STOP_EPSILON) {
             double circumference = Math.PI * 2.0D * ROLLER_RADIUS;
             double blocksPerTick = (rpm / 1200.0D) * circumference;
-            clientBeltTravelDistance += blocksPerTick * deltaTicks * getDirectionMultiplier();
+            clientBeltTravelDistance +=
+                    blocksPerTick
+                            * deltaTicks
+                            * getDirectionMultiplier();
 
             if (Math.abs(clientBeltTravelDistance) > 1024.0D) {
                 clientBeltTravelDistance %= 1.0D;
@@ -157,11 +163,14 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
     public double getClientTransportDistance(TransportedItem transportedItem, float partialTicks) {
         double distance = transportedItem.getDistance();
         Level currentLevel = getLevel();
-        if (currentLevel == null || Float.isNaN(clientTransportSyncTime)) {
+        if (currentLevel == null || Double.isNaN(clientTransportSyncTime)) {
             return distance;
         }
 
-        float elapsed = (currentLevel.getGameTime() + partialTicks) - clientTransportSyncTime;
+        double elapsed =
+                ((double) currentLevel.getGameTime()
+                        + (double) partialTicks)
+                        - clientTransportSyncTime;
         if (elapsed < 0.0F) {
             elapsed = 0.0F;
         } else if (elapsed > 10.0F) {
@@ -200,14 +209,23 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         double progress = transportedItem.getHandoffProgress();
         Level currentLevel = getLevel();
         if (currentLevel == null
-                || Float.isNaN(clientTransportSyncTime)
+                || Double.isNaN(clientTransportSyncTime)
                 || transportedItem.isStalled()) {
             return progress;
         }
 
-        float elapsed = (currentLevel.getGameTime() + partialTicks)
-                - clientTransportSyncTime;
-        elapsed = Math.max(0.0F, Math.min(10.0F, elapsed));
+        double elapsed =
+                ((double) currentLevel.getGameTime()
+                        + (double) partialTicks)
+                        - clientTransportSyncTime;
+        elapsed =
+                Math.max(
+                        0.0D,
+                        Math.min(
+                                10.0D,
+                                elapsed
+                        )
+                );
 
         float rpm = isClientOverloaded() ? 0.0F : getClientSpeed();
         if (Math.abs(rpm) <= VISUAL_STOP_EPSILON) {
@@ -399,7 +417,8 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         }
 
         if (level != null && level.isClientSide) {
-            clientTransportSyncTime = (float) level.getGameTime();
+            clientTransportSyncTime =
+                    (double) level.getGameTime();
         }
 
         if (level != null

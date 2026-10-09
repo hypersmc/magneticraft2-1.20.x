@@ -131,13 +131,21 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. Connect the Dirty Fluid Output to a Copper Fluid Tank; otherwise the Washer eventually pauses when its internal waste tank fills.$(br2)Dirty Water is intended for later treatment/recycling rather than permanent disposal."
+      "text": "$(bold)Washer operation$()$(br2)Feed Crushed Cassiterite into the Item Input. Each batch uses 250 mB clean water and produces 250 mB Dirty Water, one Washed Cassiterite, and a 25% chance of Gravel.$(br2)Collect Dirty Water from its separate fluid output or the Washer will pause when the waste tank fills. Send Washed Cassiterite to the Mechanical Sifter for Tin Concentrate; optional Gravel can also be sifted into Sand."
     },
     {
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is also a structure rather than a one-block machine. Build the 3x2x2 frame and form it from the controller. It uses the same Item Input and Item Output modules as the Washer, while its reciprocating drive still comes from a Wooden Crank placed directly behind the controller."
+      "text": "The Sifter is a 3x2x2 Gear V2 machine. Its Item Input is part of the upper hopper area, while the lower-right block is a real Mechanical Input Bearing. Connect a Wooden Shaft, gears, a crank-driven network or another Gear V2 source to that bearing. The input shaft turns the visible Medium Wooden Gear and linkage, which shakes the sieve.",
+      "recipe2": "magneticraft2:mechanical_input_module"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Sifter Outputs",
+      "recipe": "magneticraft2:multiblock_item_primary_output",
+      "recipe2": "magneticraft2:multiblock_item_byproduct_output",
+      "text": "The Sifter has two independent item outputs. Primary Output receives Tin Concentrate when processing Washed Cassiterite, or Sand when processing Gravel. Byproduct Output receives the chance-based Flint from either recipe.$(br2)Each port exposes only its own slot to hoppers, transfer arms and other Forge item handlers."
     },
     {
       "type": "patchouli:multiblock",
@@ -146,31 +154,35 @@
       "multiblock": {
         "pattern": [
           [
-            "P P",
-            "PPP"
+            "PP",
+            "IP",
+            "PP"
           ],
           [
-            "P0P",
-            "IPO"
+            "PO",
+            "0P",
+            "MB"
           ]
         ],
         "mapping": {
           "0": "magneticraft2:mechanical_sifter",
           "P": "minecraft:oak_planks",
           "I": "magneticraft2:multiblock_item_input",
-          "O": "magneticraft2:multiblock_item_output"
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "B": "magneticraft2:multiblock_item_byproduct_output",
+          "M": "magneticraft2:mechanical_input_module"
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. Viewed from the controller/front side, Item Input is the left front corner and Item Output is the right front corner. Feed enters the hopper, crosses the coarse upper screen, drops to the finer lower screen, then reaches the product/reject collection area. Put a Wooden Crank directly behind the controller: its visible rod and slider drive the two screens in opposite directions."
+      "text": "Build the frame as shown and right-click the controller to form it. Feed Washed Cassiterite into the upper Item Input to make Tin Concentrate. The lower-right Mechanical Input Bearing takes Gear V2 power, shaking the sieve through its crank linkage.$(br2)The left front port is Primary Output, the right front port is Byproduct Output. Gravel is an additional recipe for Sand and occasional Flint."
     },
     {
       "type": "text",
-      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Crank-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot$(br2)The Cassiterite sifting recipe needs at least 15 speed and 2 torque, runs for about eight seconds, and has a 15% chance to produce Flint as a byproduct."
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)1. Mechanical Grinder: Cassiterite Ore -> Crushed Cassiterite.$(br)2. Ore Washer: Crushed Cassiterite + 250 mB Water -> Washed Cassiterite + 250 mB Dirty Water (25% chance of Gravel).$(br)3. Mechanical Sifter: Washed Cassiterite -> Tin Concentrate (15% chance of Flint).$(br)4. Primitive Furnace: Tin Concentrate + Coal -> Tin Ingot + Slag.$(br2)The Sifter needs at least 15 speed and 2 torque, and takes 160 ticks per batch."
     },
     {
       "type": "text",
-      "text": "$(bold)First Bronze$()$(br2)Combine three Copper Ingots with one Tin Ingot to prepare a Bronze Alloy Charge. Fire the charge with coal in the Primitive Furnace to produce four Bronze Ingots.$(br2)Making the first Bronze therefore proves that the Copper workshop can mine, crush, wash, classify and smelt an alloy feedstock."
+      "text": "$(bold)First Bronze$()$(br2)Make Tin Concentrate in the Mechanical Sifter, then fire it with Coal in the Primitive Furnace to obtain Tin. Combine three Copper Ingots with one Tin Ingot into a Bronze Alloy Charge, and fire that with Coal for four Bronze Ingots.$(br2)Optional recovery: sift the Washer's Gravel into Sand with a 25% chance of Flint. It does not replace the Cassiterite-to-Tin Concentrate recipe."
     },
     {
       "type": "text",
@@ -186,13 +198,13 @@
     "magneticraft2:multiblock_item_input": 8,
     "magneticraft2:multiblock_item_output": 8,
     "magneticraft2:mechanical_sifter": 16,
-    "magneticraft2:cassiterite_ore": 18,
-    "magneticraft2:crushed_cassiterite": 18,
-    "magneticraft2:washed_cassiterite": 18,
-    "magneticraft2:tin_concentrate": 18,
+    "magneticraft2:cassiterite_ore": 19,
+    "magneticraft2:crushed_cassiterite": 19,
+    "magneticraft2:washed_cassiterite": 19,
+    "magneticraft2:tin_concentrate": 19,
     "magneticraft2:tin_ingot": 19,
-    "magneticraft2:bronze_charge": 19,
-    "magneticraft2:bronze_ingot": 19,
+    "magneticraft2:bronze_charge": 20,
+    "magneticraft2:bronze_ingot": 20,
     "magneticraft2:multiblock_fluid_input": 10,
     "magneticraft2:water_pipe": 11,
     "magneticraft2:mechanical_water_pump": 11,
@@ -200,7 +212,9 @@
     "magneticraft2:copper_fluid_tank": 12,
     "magneticraft2:primitive_grinder_base": 3,
     "magneticraft2:primitive_grinder_top": 3,
-    "magneticraft2:mechanical_transfer_arm": 13
+    "magneticraft2:mechanical_transfer_arm": 13,
+    "magneticraft2:multiblock_item_primary_output": 17,
+    "magneticraft2:multiblock_item_byproduct_output": 17
   },
   "sortnum": 0,
   "read_by_default": true

@@ -87,7 +87,17 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
-    public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE = BLOCK_ENTITIES.register("multiblock_item_port", () -> BlockEntityType.Builder.of(MultiblockItemPortBlockEntity::new, BlockRegistry.MULTIBLOCK_ITEM_INPUT.get(), BlockRegistry.MULTIBLOCK_ITEM_OUTPUT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE =
+            BLOCK_ENTITIES.register(
+                    "multiblock_item_port",
+                    () -> BlockEntityType.Builder.of(
+                            MultiblockItemPortBlockEntity::new,
+                            BlockRegistry.MULTIBLOCK_ITEM_INPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_OUTPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_PRIMARY_OUTPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT.get()
+                    ).build(null)
+            );
     public static final RegistryObject<BlockEntityType<MultiblockFluidInputBlockEntity>> MULTIBLOCK_FLUID_INPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_input", () -> BlockEntityType.Builder.of(MultiblockFluidInputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_INPUT.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockFluidOutputBlockEntity>> MULTIBLOCK_FLUID_OUTPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_output", () -> BlockEntityType.Builder.of(MultiblockFluidOutputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_OUTPUT.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalWaterPumpBlockEntity>> MECHANICAL_WATER_PUMP_BE = BLOCK_ENTITIES.register("mechanical_water_pump", () -> BlockEntityType.Builder.of(MechanicalWaterPumpBlockEntity::new, BlockRegistry.MECHANICAL_WATER_PUMP.get()).build(null));

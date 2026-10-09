@@ -1,90 +1,227 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "credit": "Compact offset joint to the moving sieve; no large overlapping wooden bracket",
   "textures": {
-    "wood": "minecraft:block/oak_planks",
-    "copper": "minecraft:block/copper_block",
-    "dark": "minecraft:block/stripped_spruce_log",
-    "particle": "minecraft:block/oak_planks"
+    "wood": "minecraft:block/stripped_spruce_log",
+    "metal": "minecraft:block/cut_copper",
+    "particle": "minecraft:block/spruce_planks"
   },
   "elements": [
     {
       "from": [
-        2,
-        1,
-        2
+        -0.7,
+        -0.7,
+        -0.7
       ],
       "to": [
-        14,
-        3.2,
-        14
+        0.7,
+        0.7,
+        0.7
       ],
       "faces": {
         "north": {
-          "texture": "#dark",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            12,
-            2
-          ]
-        },
-        "east": {
-          "texture": "#dark",
-          "uv": [
-            0,
-            0,
-            12,
-            2
+            1.4,
+            1.4
           ]
         },
         "south": {
-          "texture": "#dark",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            12,
-            2
+            1.4,
+            1.4
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.4
           ]
         },
         "west": {
-          "texture": "#dark",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            12,
-            2
+            1.4,
+            1.4
           ]
         },
         "up": {
-          "texture": "#dark",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            12,
-            12
+            1.4,
+            1.4
           ]
         },
         "down": {
-          "texture": "#dark",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            12,
-            12
+            1.4,
+            1.4
           ]
         }
       }
     },
     {
       "from": [
+        -0.55,
+        0.4,
+        0.5
+      ],
+      "to": [
+        0.55,
+        1.2,
+        2.6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1.1,
+            0.7999999999999999
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1.1,
+            0.7999999999999999
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            2.1,
+            0.7999999999999999
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            2.1,
+            0.7999999999999999
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1.1,
+            2.1
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1.1,
+            2.1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        -0.55,
+        0.9,
+        1.85
+      ],
+      "to": [
+        4.45,
+        1.8,
+        2.85
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            5,
+            0.9
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            5,
+            0.9
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1,
+            0.9
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            5,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.35,
+        0.9,
+        1.85
+      ],
+      "to": [
+        4.45,
         3,
-        2.8,
-        3
-      ],
-      "to": [
-        13,
-        10.15,
-        13
+        2.85
       ],
       "faces": {
         "north": {
@@ -92,17 +229,8 @@
           "uv": [
             0,
             0,
-            10,
-            7
-          ]
-        },
-        "east": {
-          "texture": "#wood",
-          "uv": [
-            0,
-            0,
-            10,
-            7
+            1.1,
+            2.1
           ]
         },
         "south": {
@@ -110,8 +238,17 @@
           "uv": [
             0,
             0,
-            10,
-            7
+            1.1,
+            2.1
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            1,
+            2.1
           ]
         },
         "west": {
@@ -119,8 +256,8 @@
           "uv": [
             0,
             0,
-            10,
-            7
+            1,
+            2.1
           ]
         },
         "up": {
@@ -128,8 +265,8 @@
           "uv": [
             0,
             0,
-            10,
-            10
+            1.1,
+            1
           ]
         },
         "down": {
@@ -137,217 +274,79 @@
           "uv": [
             0,
             0,
-            10,
-            10
+            1.1,
+            1
           ]
         }
       }
     },
     {
       "from": [
-        1.5,
-        8.85,
-        1.5
+        3.15,
+        2.35,
+        1.65
       ],
       "to": [
-        14.5,
-        11.15,
-        14.5
+        4.65,
+        3.35,
+        3.05
       ],
       "faces": {
         "north": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            13,
-            2
-          ]
-        },
-        "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            13,
-            2
+            1.5000000000000004,
+            1
           ]
         },
         "south": {
-          "texture": "#copper",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            13,
-            2
-          ]
-        },
-        "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            13,
-            2
-          ]
-        },
-        "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            13,
-            13
-          ]
-        },
-        "down": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            13,
-            13
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        2.5,
-        10.85,
-        2.5
-      ],
-      "to": [
-        13.5,
-        13.15,
-        13.5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#wood",
-          "uv": [
-            0,
-            0,
-            11,
-            2
+            1.5000000000000004,
+            1
           ]
         },
         "east": {
-          "texture": "#wood",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            11,
-            2
-          ]
-        },
-        "south": {
-          "texture": "#wood",
-          "uv": [
-            0,
-            0,
-            11,
-            2
+            1.4,
+            1
           ]
         },
         "west": {
-          "texture": "#wood",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            11,
-            2
+            1.4,
+            1
           ]
         },
         "up": {
-          "texture": "#wood",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            11,
-            11
+            1.5000000000000004,
+            1.4
           ]
         },
         "down": {
-          "texture": "#wood",
+          "texture": "#metal",
           "uv": [
             0,
             0,
-            11,
-            11
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        12.85,
-        4
-      ],
-      "to": [
-        12,
-        15,
-        12
-      ],
-      "faces": {
-        "north": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "east": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "south": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ]
-        },
-        "down": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            8,
-            8
+            1.5000000000000004,
+            1.4
           ]
         }
       }
     }
-  ],
-  "credit": "proportional face UVs to avoid stretched block textures; tiny element overlaps remove coplanar z-fighting",
-  "ambientocclusion": false
+  ]
 }
