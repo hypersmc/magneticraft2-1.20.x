@@ -38,7 +38,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)The road to Bronze$()$(br2)Grind Cassiterite, wash it with water, then smelt Washed Cassiterite directly with Coal for Tin. Each wash also makes Gravel and Dirty Water. Recover Sand and occasional Flint from the Gravel using the crank-driven Mechanical Sifter.$(br2)Combine three Copper with one Tin for Bronze Charge; fire it in the Primitive Furnace to reach Bronze Age."
+      "text": "$(bold)The road to Bronze$()$(br2)Grind Cassiterite Ore, wash the crushed ore with water, sift the Washed Cassiterite into Tin Concentrate, and smelt that with Coal to get Tin.$(br2)Each wash also produces Dirty Water and can yield Gravel. The same Sifter can turn the Gravel into Sand with a chance of Flint.$(br2)Combine three Copper Ingots with one Tin Ingot to make Bronze Charge; fire it in the Primitive Furnace to reach Bronze Age."
     }
   ],
   "sortnum": 2,

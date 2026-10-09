@@ -12,7 +12,7 @@
     "item": "minecraft:gravel",
     "count": 1
   },
-  "byproduct_chance": 1,
+  "byproduct_chance": 0.25,
   "process_time": 140,
   "mechanical": {
     "min_speed": 20,

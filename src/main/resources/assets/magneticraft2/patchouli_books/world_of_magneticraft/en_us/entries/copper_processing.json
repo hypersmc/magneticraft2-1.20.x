@@ -131,7 +131,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed Crushed Cassiterite through the Item Input. Each batch uses 250 mB clean water and produces 250 mB Dirty Water, one Washed Cassiterite and one Gravel. Collect Dirty Water through its separate fluid port, or the Washer pauses when its 4000 mB waste tank fills.$(br2)Send Washed Cassiterite to the Primitive Furnace with Coal for Tin. Feed the Gravel into the Mechanical Sifter for secondary recovery."
+      "text": "$(bold)Washer operation$()$(br2)Feed Crushed Cassiterite into the Item Input. Each batch uses 250 mB clean water and produces 250 mB Dirty Water, one Washed Cassiterite, and a 25% chance of Gravel.$(br2)Collect Dirty Water from its separate fluid output or the Washer will pause when the waste tank fills. Send Washed Cassiterite to the Mechanical Sifter for Tin Concentrate; optional Gravel can also be sifted into Sand."
     },
     {
       "type": "patchouli:crafting",
@@ -145,7 +145,7 @@
       "title": "Sifter Outputs",
       "recipe": "magneticraft2:multiblock_item_primary_output",
       "recipe2": "magneticraft2:multiblock_item_byproduct_output",
-      "text": "The Sifter has two real output ports. The left Primary Output holds the fine material recovered through the mesh (Sand from Gravel). The right Byproduct Output holds any separately recovered coarse material (a chance of Flint). Both ports expose their own slot to hoppers, Mechanical Transfer Arms and other item handlers, without mixing products."
+      "text": "The Sifter has two independent item outputs. Primary Output receives Tin Concentrate when processing Washed Cassiterite, or Sand when processing Gravel. Byproduct Output receives the chance-based Flint from either recipe.$(br2)Each port exposes only its own slot to hoppers, transfer arms and other Forge item handlers."
     },
     {
       "type": "patchouli:multiblock",
@@ -174,15 +174,15 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click its controller to form it. Feed Gravel into the upper Item Input. The lower-right Mechanical Input Bearing accepts Gear V2 rotational power and shakes the sieve through its crank linkage. The left front port is the Primary Output (Sand), and the right front port is the chance-based Byproduct Output (Flint). Watch the workpiece fall from the hopper, shake across the mesh and separate into the two chutes."
+      "text": "Build the frame as shown and right-click the controller to form it. Feed Washed Cassiterite into the upper Item Input to make Tin Concentrate. The lower-right Mechanical Input Bearing takes Gear V2 power, shaking the sieve through its crank linkage.$(br2)The left front port is Primary Output, the right front port is Byproduct Output. Gravel is an additional recipe for Sand and occasional Flint."
     },
     {
       "type": "text",
-      "text": "$(bold)Cassiterite -> Tin (and recovery)$()$(br2)1. Grind Cassiterite Ore into Crushed Cassiterite.$(br)2. Wash the crushed ore with 250 mB water to obtain Washed Cassiterite, Gravel and Dirty Water.$(br)3. Smelt Washed Cassiterite with Coal in the Primitive Furnace to obtain Tin.$(br2)The Sifter is a useful side process, not a required Tin gate: it separates the Washer's Gravel into Sand with a 25% chance of Flint. It needs 15 speed, 2 torque and 160 ticks per batch."
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)1. Mechanical Grinder: Cassiterite Ore -> Crushed Cassiterite.$(br)2. Ore Washer: Crushed Cassiterite + 250 mB Water -> Washed Cassiterite + 250 mB Dirty Water (25% chance of Gravel).$(br)3. Mechanical Sifter: Washed Cassiterite -> Tin Concentrate (15% chance of Flint).$(br)4. Primitive Furnace: Tin Concentrate + Coal -> Tin Ingot + Slag.$(br2)The Sifter needs at least 15 speed and 2 torque, and takes 160 ticks per batch."
     },
     {
       "type": "text",
-      "text": "$(bold)First Bronze$()$(br2)Smelt Washed Cassiterite with Coal for Tin, and combine three Copper Ingots with one Tin Ingot to prepare a Bronze Alloy Charge. Fire the charge with Coal in the Primitive Furnace for four Bronze Ingots.$(br2)Sifting leftover Gravel recovers extra Sand and occasional Flint; it improves material use without locking Tin production behind an optional machine."
+      "text": "$(bold)First Bronze$()$(br2)Make Tin Concentrate in the Mechanical Sifter, then fire it with Coal in the Primitive Furnace to obtain Tin. Combine three Copper Ingots with one Tin Ingot into a Bronze Alloy Charge, and fire that with Coal for four Bronze Ingots.$(br2)Optional recovery: sift the Washer's Gravel into Sand with a 25% chance of Flint. It does not replace the Cassiterite-to-Tin Concentrate recipe."
     },
     {
       "type": "text",

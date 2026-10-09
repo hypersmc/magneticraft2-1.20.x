@@ -10,7 +10,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Tin production$()$(br2)Cassiterite Ore -> Crushed Cassiterite -> Washed Cassiterite -> Tin Concentrate -> Tin Ingot.$(br2)If you cannot make Tin yet, return to the Copper Workshop chapters and complete the Ore Washer and Mechanical Sifter."
+      "text": "$(bold)Tin production$()$(br2)Cassiterite Ore -> Crushed Cassiterite -> Washed Cassiterite -> Tin Concentrate -> Tin Ingot.$(br2)The Washer requires clean water and produces Dirty Water. The Gear V2-driven Sifter is required to refine Washed Cassiterite into Tin Concentrate. It can also optionally sift any Gravel into Sand and Flint.$(br2)If you cannot make Tin yet, complete the Grinder, Washer and Sifter chapters of the Copper Workshop."
     },
     {
       "type": "text",
