@@ -233,5 +233,10 @@
   "item.magneticraft2.multiblock_item_primary_output": "Multiblock Primary Item Output",
   "block.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
   "item.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
-  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition."
+  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition.",
+  "jei.magneticraft2.multiblock_processing": "Multiblock Processing",
+  "jei.magneticraft2.chance": "Chance: %s%%",
+  "jei.magneticraft2.time": "Time: %s",
+  "jei.magneticraft2.min_speed": "Minimum Speed: %s RPM",
+  "jei.magneticraft2.torque": "Torque: %s"
 }
