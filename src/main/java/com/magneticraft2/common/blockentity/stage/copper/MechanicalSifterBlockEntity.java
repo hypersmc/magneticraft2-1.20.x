@@ -447,11 +447,11 @@ public class MechanicalSifterBlockEntity
     public float getShakeOffset(
             float partialTicks) {
         // Exact inline slider-crank motion. The 0.12-block eccentric is
-        // driven by the existing input rotation; the 9/16-block rod keeps
+        // driven by the existing input rotation; the 7/16-block rod keeps
         // both pivots connected throughout the cycle (no visual stretch).
         double angle = Math.toRadians(getDriveRotationDegrees(partialTicks));
         double radius = 0.12D;
-        double length = 9.0D / 16.0D;
+        double length = 7.0D / 16.0D;
         double offset = radius * Math.sin(angle);
         double lateral = radius * Math.cos(angle);
         return (float) (offset

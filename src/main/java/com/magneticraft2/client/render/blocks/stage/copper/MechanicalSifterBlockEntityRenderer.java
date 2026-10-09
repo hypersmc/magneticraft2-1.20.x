@@ -191,11 +191,11 @@ public class MechanicalSifterBlockEntityRenderer
         // SOUTH-local coordinates: the existing input shaft points along X.
         // Only the compact inboard crank moves; the real input-bearing block
         // remains the stationary support for the player's drive network.
-        final double centerX = 1.315D;
+        final double centerX = 1.12D;
         final double centerY = 0.56D;
-        final double centerZ = 0.54D;
+        final double centerZ = 0.56D;
         final double radius = 0.12D;
-        final double length = 9.0D / 16.0D;
+        final double length = 7.0D / 16.0D;
         double theta = Math.toRadians(degrees);
         double pinY = centerY + radius * Math.cos(theta);
         double pinZ = centerZ + radius * Math.sin(theta);
