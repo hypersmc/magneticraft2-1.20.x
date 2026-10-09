@@ -137,7 +137,7 @@
       "type": "patchouli:crafting",
       "title": "Sifter Controller",
       "recipe": "magneticraft2:mechanical_sifter",
-      "text": "The Sifter is a 3x2x2 structure rather than a one-block machine. Its Item Input is part of the upper hopper area, so feed material enters where the formed model actually shows it entering. A Wooden Crank placed directly behind the controller drives the visible Large Wooden Gear, linkage and shaking sieve.",
+      "text": "The Sifter is a 3x2x2 structure rather than a one-block machine. Its Item Input is part of the upper hopper area, so feed material enters where the formed model actually shows it entering. A Wooden Crank placed directly behind the controller drives the visible Medium Wooden Gear, linkage and shaking sieve.",
       "recipe2": "magneticraft2:multiblock_item_input"
     },
     {
@@ -173,7 +173,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input becomes the visible hopper/feed point. On the front row, the Primary Output is on the left and the Byproduct Output is on the right. The formed model follows the same flow: hopper -> inclined shaking sieve -> coarse/main tray and lower fines/byproduct chute. Put a Wooden Crank directly behind the controller; it drives the visible Large Wooden Gear and sieve linkage."
+      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input becomes the visible hopper/feed point. On the front row, the Primary Output is on the left and the Byproduct Output is on the right. The formed model follows the same flow: hopper -> inclined shaking sieve -> coarse/main tray and lower fines/byproduct chute. Put a Wooden Crank directly behind the controller; it drives the visible Medium Wooden Gear and sieve linkage."
     },
     {
       "type": "text",
