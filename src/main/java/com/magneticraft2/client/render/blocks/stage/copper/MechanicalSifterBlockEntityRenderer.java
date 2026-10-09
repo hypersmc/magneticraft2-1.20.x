@@ -188,12 +188,12 @@ public class MechanicalSifterBlockEntityRenderer
     private void renderCrankLinkage(float degrees, double shake,
             PoseStack poseStack, MultiBufferSource buffer,
             int packedLight, int packedOverlay) {
-        // SOUTH-local coordinates: the existing input shaft points along X.
+        // SOUTH-local coordinates: input bearing block is at (1, 0, 0),\n        // and its X-oriented shaft centre is exactly (1.5, 0.5, 0.5).\n        // The crank mounts just inboard at X=1.375, on that same axis.
         // Only the compact inboard crank moves; the real input-bearing block
         // remains the stationary support for the player's drive network.
-        final double centerX = 1.12D;
-        final double centerY = 0.56D;
-        final double centerZ = 0.56D;
+        final double centerX = 1.375D;
+        final double centerY = 0.50D;
+        final double centerZ = 0.50D;
         final double radius = 0.12D;
         final double length = 7.0D / 16.0D;
         double theta = Math.toRadians(degrees);

@@ -34,7 +34,7 @@ public class MechanicalInputModuleBlockEntityRenderer
 
     private static final ResourceLocation SHAFT_MODEL =
             new ResourceLocation("magneticraft2", "block/shaft_wood");
-    private static final ResourceLocation HOUSING_MODEL =
+    private static final ResourceLocation SIFTER_SHAFT_MODEL =\n            new ResourceLocation("magneticraft2", "block/mechanical_sifter_input_shaft");\n    private static final ResourceLocation HOUSING_MODEL =
             new ResourceLocation("magneticraft2", "block/mechanical_input_module_housing");
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
@@ -109,6 +109,27 @@ public class MechanicalInputModuleBlockEntityRenderer
                 packedOverlay
         );
         poseStack.popPose();
+    }
+
+    private boolean isSifterInput(MechanicalInputModuleBlockEntity input) {
+        var level = input.getLevel();
+        if (level == null) return false;
+        var pos = input.getBlockPos();
+        // Match the actual controller location instead of modifying the
+        // appearance of unrelated machines using this reusable module.
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            var candidate = pos.relative(direction);
+            var state = level.getBlockState(candidate);
+            if (state.getBlock() instanceof
+                    com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock
+                    && state.hasProperty(
+                            com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock.IS_FORMED)
+                    && state.getValue(
+                            com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock.IS_FORMED)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
