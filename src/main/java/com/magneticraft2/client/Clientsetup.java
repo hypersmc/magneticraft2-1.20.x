@@ -130,6 +130,8 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_connecting_rod"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_follower"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_guide_rails"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_slide_shoes"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_gear"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_turret"));

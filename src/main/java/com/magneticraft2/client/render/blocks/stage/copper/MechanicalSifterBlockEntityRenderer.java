@@ -42,6 +42,12 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_lower_tray"
             );
+    // The wooden slide ways are fixed to the lower crossmembers. The copper
+    // slide shoes and their short supports move with the sieve carriage.
+    private static final ResourceLocation GUIDE_RAILS =
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_guide_rails");
+    private static final ResourceLocation SLIDE_SHOES =
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_slide_shoes");
     private static final ResourceLocation CRANK_ARM = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_crank_arm");
     private static final ResourceLocation CONNECTING_ROD = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_connecting_rod");
     private static final ResourceLocation FOLLOWER = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_follower");
@@ -94,6 +100,10 @@ public class MechanicalSifterBlockEntityRenderer
         float driveAngle = sifter.getDriveRotationDegrees(partialTicks);
         renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
 
+        // These tracks do NOT shake; their ends land on the existing
+        // stationary lower crossbeams, outside the fines catch pan.
+        renderModel(GUIDE_RAILS, poseStack, buffer, packedLight, packedOverlay);
+
         poseStack.pushPose();
         poseStack.translate(
                 0.0D,
@@ -137,6 +147,15 @@ public class MechanicalSifterBlockEntityRenderer
                 packedLight,
                 packedOverlay
         );
+        poseStack.popPose();
+
+        // Unlike the guide rails, the four copper sliding shoes, wooden
+        // uprights and two cross braces ride with the inclined sieve.
+        // The uprights have different heights to meet its rotated underside,
+        // but slide horizontally so they stay seated on level guide rails.
+        poseStack.pushPose();
+        poseStack.translate(0.0D, 0.0D, shake);
+        renderModel(SLIDE_SHOES, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
 
         renderInputItems(

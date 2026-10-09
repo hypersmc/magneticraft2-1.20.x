@@ -1,0 +1,148 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "credit": "Stationary twin wooden slide ways for the Mechanical Sifter; ends land on the existing lower frame crossmembers.",
+  "textures": {
+    "wood": "minecraft:block/stripped_spruce_log",
+    "copper": "minecraft:block/cut_copper",
+    "particle": "minecraft:block/stripped_spruce_log"
+  },
+  "elements": [
+    {
+      "from": [
+        1.6,
+        8.8,
+        12
+      ],
+      "to": [
+        2.45,
+        10,
+        26.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            1.2
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            1.2
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            14.25,
+            1.2
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            14.25,
+            1.2
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            14.25
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            14.25
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13.55,
+        8.8,
+        12
+      ],
+      "to": [
+        14.4,
+        10,
+        26.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            1.2
+          ]
+        },
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            1.2
+          ]
+        },
+        "east": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            14.25,
+            1.2
+          ]
+        },
+        "west": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            14.25,
+            1.2
+          ]
+        },
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            14.25
+          ]
+        },
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            0,
+            0.85,
+            14.25
+          ]
+        }
+      }
+    }
+  ]
+}
