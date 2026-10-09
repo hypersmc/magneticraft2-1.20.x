@@ -44,11 +44,9 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_lower_tray"
             );
-    private static final ResourceLocation LINKAGE =
-            new ResourceLocation(
-                    "magneticraft2",
-                    "multiblock/mechanical_sifter_linkage"
-            );
+    private static final ResourceLocation CRANK_ARM = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_crank_arm");
+    private static final ResourceLocation CONNECTING_ROD = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_connecting_rod");
+    private static final ResourceLocation FOLLOWER = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_follower");
     private static final float SCREEN_TILT_DEGREES =
             10.0F;
 
@@ -95,32 +93,9 @@ public class MechanicalSifterBlockEntityRenderer
                         partialTicks
                 );
 
-        renderDriveGear(
-                sifter.getDriveRotationDegrees(
-                        partialTicks
-                ),
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-
-        // The connecting rod follows the screen carriage so the side drive
-        // visibly explains the reciprocating sieve motion.
-        poseStack.pushPose();
-        poseStack.translate(
-                0.0D,
-                0.0D,
-                shake
-        );
-        renderModel(
-                LINKAGE,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
+        float driveAngle = sifter.getDriveRotationDegrees(partialTicks);
+        renderDriveGear(driveAngle, poseStack, buffer, packedLight, packedOverlay);
+        renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
 
         poseStack.pushPose();
         poseStack.translate(
@@ -205,6 +180,48 @@ public class MechanicalSifterBlockEntityRenderer
                 packedOverlay
         );
 
+        poseStack.popPose();
+    }
+
+    /**
+     * An eccentric crank drives a rigid, pivoting connecting rod. The follower
+     * shares the sieve's existing stroke and remains attached to its carriage.
+     * All dimensions are in local SOUTH-facing multiblock coordinates.
+     */
+    private void renderCrankLinkage(float degrees, double shake,
+            PoseStack poseStack, MultiBufferSource buffer,
+            int packedLight, int packedOverlay) {
+        final double centerX = 1.315D;
+        final double centerY = 0.56D;
+        final double centerZ = 0.54D;
+        final double eccentricity = 0.12D;
+        final double rodLength = 0.5625D;
+        double radians = Math.toRadians(degrees);
+        double crankY = centerY + eccentricity * Math.cos(radians);
+        double crankZ = centerZ + eccentricity * Math.sin(radians);
+
+        // The crank arm rotates with the wooden gear, not with the sieve.
+        poseStack.pushPose();
+        poseStack.translate(centerX, centerY, centerZ);
+        poseStack.mulPose(Axis.XP.rotationDegrees(degrees));
+        renderModel(CRANK_ARM, poseStack, buffer, packedLight, packedOverlay);
+        poseStack.popPose();
+
+        // A fixed-length rod pivots around the moving crank pin. Its far end
+        // rides in the sieve's straight-line follower guide.
+        double angle = Math.atan2(crankY - centerY,
+                Math.sqrt(rodLength * rodLength
+                        - (crankY - centerY) * (crankY - centerY)));
+        poseStack.pushPose();
+        poseStack.translate(centerX, crankY, crankZ);
+        poseStack.mulPose(Axis.XP.rotationDegrees((float) Math.toDegrees(angle)));
+        renderModel(CONNECTING_ROD, poseStack, buffer, packedLight, packedOverlay);
+        poseStack.popPose();
+
+        // The upright follower is fixed to the moving sieve carriage.
+        poseStack.pushPose();
+        poseStack.translate(centerX, centerY, 1.10D + shake);
+        renderModel(FOLLOWER, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
     }
 
