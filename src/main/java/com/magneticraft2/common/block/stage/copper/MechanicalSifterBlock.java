@@ -31,7 +31,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Controller for the 3x2x2 crank-driven Mechanical Sifter multiblock.
+ * Controller for the 3x2x2 Gear V2-driven Mechanical Sifter multiblock.
  */
 public class MechanicalSifterBlock
         extends BaseBlockMagneticraft2 {
@@ -43,37 +43,39 @@ public class MechanicalSifterBlock
     // moving screen volume rather than using one opaque 3x2x2 cuboid.
     private static final VoxelShape FORMED_SOUTH =
             VoxelShapeUtils.combine(
-                    // Rear/base frame. Front corners are occupied by the two
-                    // surviving physical output ports, so the formed shape
-                    // deliberately leaves those blocks clear.
-                    Block.box(-12, 0, 0, 28, 3, 4),
+                    // Base/frame deliberately leaves the lower-right block
+                    // clear for the real Mechanical Input Bearing.
+                    Block.box(-12, 0, 0, 16, 3, 4),
                     Block.box(-12, 0, 4, -8, 3, 16),
-                    Block.box(24, 0, 4, 28, 3, 16),
                     Block.box(0, 0, 15, 16, 3, 32),
 
-                    // Rear and middle structural posts.
+                    // Left-side structure.
                     Block.box(-11, 2, 3, -7, 25, 7),
-                    Block.box(24, 2, 3, 28, 25, 7),
                     Block.box(-11, 2, 11, -7, 25, 16),
-                    Block.box(24, 2, 11, 28, 25, 16),
 
-                    // Open upper frame and hopper envelope around the real
-                    // upper-center Item Input block.
+                    // Right posts continue only above the Mechanical Input
+                    // module's 0..16 vertical block volume.
+                    Block.box(24, 16, 3, 28, 25, 7),
+                    Block.box(24, 16, 11, 28, 25, 16),
+
+                    // Open upper frame.
                     Block.box(-11, 22, 4, -7, 26, 24),
                     Block.box(24, 22, 4, 28, 26, 24),
                     Block.box(-8, 22, 4, 25, 26, 8),
-                    Block.box(-4, 13, -4, 20, 30, 20),
 
-                    // Main inclined sieve / support envelope.
-                    Block.box(-7, 6, 10, 23, 15, 28),
+                    // Hopper surrounds the upper Item Input while leaving the
+                    // lower-right Gear V2 module volume unobstructed.
+                    Block.box(-4, 13, -4, 16, 30, 20),
+                    Block.box(16, 16, -4, 20, 30, 20),
 
-                    // Primary and byproduct guides start above the physical
-                    // output port model height.
+                    // Inclined sieve envelope, split so it does not cover the
+                    // Mechanical Input block at x=16..32, z=0..16, y=0..16.
+                    Block.box(-7, 6, 10, 16, 15, 28),
+                    Block.box(16, 6, 16, 23, 15, 28),
+
+                    // Primary/byproduct guides sit in front of the bearing.
                     Block.box(-16, 10, 18, 0, 16, 30),
-                    Block.box(16, 10, 18, 32, 16, 30),
-
-                    // Right-side bearing for the visible Large Wooden Gear.
-                    Block.box(24, 9, 9, 30, 18, 16)
+                    Block.box(16, 10, 18, 32, 16, 30)
             );
 
     public MechanicalSifterBlock() {
