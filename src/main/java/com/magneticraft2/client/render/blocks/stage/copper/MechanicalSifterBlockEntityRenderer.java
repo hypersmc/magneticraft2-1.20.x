@@ -217,14 +217,14 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.pushPose();
 
         /*
-         * Use Magneticraft2's real Large Wooden Gear here. This is the machine's
+         * Use Magneticraft2's real Medium Wooden Gear here. This is the machine's
          * visible drive gear, so it should look exactly like the gear system the
          * player already builds instead of inventing a separate flywheel style.
          */
         poseStack.translate(
-                2.05D,
-                1.00D,
-                0.96D
+                1.76D,
+                0.91D,
+                0.94D
         );
 
         // The actual Large Gear state faces EAST, giving it an X-axis axle on
@@ -237,9 +237,9 @@ public class MechanicalSifterBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.72F,
-                0.72F,
-                0.72F
+                0.92F,
+                0.92F,
+                0.92F
         );
         poseStack.translate(
                 -0.5D,
@@ -248,7 +248,7 @@ public class MechanicalSifterBlockEntityRenderer
         );
 
         BlockState gearState =
-                BlockRegistry.GEAR_LARGE_WOOD
+                BlockRegistry.GEAR_MEDIUM_WOOD
                         .get()
                         .defaultBlockState()
                         .setValue(
@@ -256,15 +256,15 @@ public class MechanicalSifterBlockEntityRenderer
                                 Direction.EAST
                         )
                         .setValue(
-                                com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood.VERTICAL_FACING_up,
+                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_up,
                                 false
                         )
                         .setValue(
-                                com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood.VERTICAL_FACING_down,
+                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.VERTICAL_FACING_down,
                                 false
                         )
                         .setValue(
-                                com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood.POWERED,
+                                com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood.POWERED,
                                 false
                         );
 
