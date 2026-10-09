@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCP",
+    "SGS",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "G": {
+      "item": "magneticraft2:gear_medium_wood"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:mechanical_transfer_arm",
+    "count": 1
+  }
+}

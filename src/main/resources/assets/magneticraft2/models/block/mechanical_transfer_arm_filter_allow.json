@@ -1,0 +1,77 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "indicator": "minecraft:block/lime_terracotta",
+    "particle": "minecraft:block/lime_terracotta"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        7.72,
+        -1.18
+      ],
+      "to": [
+        12,
+        8.05,
+        -1.04
+      ],
+      "faces": {
+        "north": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            8,
+            0.33000000000000096
+          ]
+        },
+        "south": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            8,
+            0.33000000000000096
+          ]
+        },
+        "east": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            0.1399999999999999,
+            0.33000000000000096
+          ]
+        },
+        "west": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            0.1399999999999999,
+            0.33000000000000096
+          ]
+        },
+        "up": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            8,
+            0.1399999999999999
+          ]
+        },
+        "down": {
+          "texture": "#indicator",
+          "uv": [
+            0,
+            0,
+            8,
+            0.1399999999999999
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "Item Logistics",
+  "description": "Move loose items through the Copper Age workshop with powered conveyor rollers and Item Belts.",
+  "category": "magneticraft2:copper_workshop",
+  "icon": "magneticraft2:conveyor_roller",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)Physical item transport$()$(br2)Item Belts are separate from Leather Drive Belts. Drive belts move $(italic)power$(); Item Belts move actual item stacks through the world.$(br2)Each run is built between two Conveyor Rollers and participates in the Gear V2 mechanical network."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Conveyor Rollers",
+      "recipe": "magneticraft2:conveyor_roller",
+      "text": "Conveyor Rollers are the powered endpoints of an Item Belt. Their wooden drums rotate with the mechanical network and support the belt surface."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Item Belt",
+      "recipe": "magneticraft2:item_belt",
+      "text": "Use Item Belt on the first Conveyor Roller, then on the second. The required belt segments are consumed automatically and the physical belt blocks are created between the endpoints."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Allowed belt geometry$()$(br2)Item Belts may run $(bold)horizontally$() or at exactly $(bold)45 degrees$() upward/downward. A straight vertical Item Belt is intentionally not allowed: loose items have no buckets or cleats to make them climb a wall.$(br2)A run may span up to 16 blocks."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Placement guide$()$(br2)Selecting the first roller shows a construction guide toward the second endpoint. $(bold)Green$() means the route can be built, $(bold)amber$() means the geometry is valid but you need more belt segments, and $(bold)red$() means the route is invalid or obstructed.$(br2)Sneak-use a connected roller with Item Belt to remove the run."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Handoffs$()$(br2)Items stay on the belt surface and hand off smoothly between connected runs. Their lateral position is preserved where possible, so entering one side of a belt does not magically snap every stack to the center.$(br2)For true vertical logistics, use a future bucket/cleated lift rather than pretending a flat belt can carry loose items straight upward."
+    }
+  ],
+  "extra_recipe_mappings": {
+    "magneticraft2:conveyor_roller": 1,
+    "magneticraft2:item_belt": 2
+  },
+  "sortnum": 2,
+  "read_by_default": true
+}

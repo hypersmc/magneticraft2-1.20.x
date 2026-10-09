@@ -4,7 +4,6 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 import com.magneticraft2.common.blockentity.general.Multiblockfiller_tile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -58,17 +57,20 @@ public class Multiblockfiller extends BaseEntityBlock {
         }
 
         if (!pLevel.isClientSide) {
-            // Get the filler block's BlockEntity and read its NBT data
-            BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
-            CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
-            if (tag != null && tag.contains("controller_x") && tag.contains("controller_y") && tag.contains("controller_z")) {
-                // Retrieve the controller position from the NBT data
-                BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
-                BlockEntity controllerEntity = pLevel.getBlockEntity(controllerPos);
+            BlockEntity blockEntity =
+                    pLevel.getBlockEntity(pPos);
+
+            if (blockEntity
+                    instanceof Multiblockfiller_tile filler) {
+                BlockPos controllerPos =
+                        filler.getControllerPos();
+                BlockEntity controllerEntity =
+                        pLevel.getBlockEntity(
+                                controllerPos
+                        );
                 Block bl = pLevel.getBlockState(controllerPos).getBlock();
                 // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
                 if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
-                    blockEntity.saveWithoutMetadata();
                     if ((multiblockController).menuProvider != null) {
                         NetworkHooks.openScreen((ServerPlayer) pPlayer, (multiblockController).menuProvider, controllerPos);
                     }
@@ -86,14 +88,17 @@ public class Multiblockfiller extends BaseEntityBlock {
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         if (!level.isClientSide) {
-            // Get the filler block's BlockEntity and read its NBT data
-            BlockEntity blockEntity = level.getBlockEntity(pos);
-            CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
+            BlockEntity blockEntity =
+                    level.getBlockEntity(pos);
 
-            if (tag != null && tag.contains("controller_x") && tag.contains("controller_y") && tag.contains("controller_z")) {
-                // Retrieve the controller position from the NBT data
-                BlockPos controllerPos = new BlockPos(tag.getInt("controller_x"), tag.getInt("controller_y"), tag.getInt("controller_z"));
-                BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
+            if (blockEntity
+                    instanceof Multiblockfiller_tile filler) {
+                BlockPos controllerPos =
+                        filler.getControllerPos();
+                BlockEntity controllerEntity =
+                        level.getBlockEntity(
+                                controllerPos
+                        );
 
                 // Check if the BlockEntity at the controller position is an instance of BaseBlockEntityMagneticraft2
                 if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
@@ -125,44 +130,75 @@ public class Multiblockfiller extends BaseEntityBlock {
     }
 
     @Nullable
-    private VoxelShape getLocalMultiblockShape(BlockGetter level, BlockPos pos, CollisionContext context) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        CompoundTag tag = blockEntity != null ? blockEntity.saveWithoutMetadata() : null;
+    private VoxelShape getLocalMultiblockShape(
+            BlockGetter level,
+            BlockPos pos,
+            CollisionContext context) {
+        BlockEntity blockEntity =
+                level.getBlockEntity(pos);
 
-        if (tag == null
-                || !tag.contains("controller_x")
-                || !tag.contains("controller_y")
-                || !tag.contains("controller_z")) {
+        if (!(blockEntity
+                instanceof Multiblockfiller_tile filler)) {
             return null;
         }
 
-        BlockPos controllerPos = new BlockPos(
-                tag.getInt("controller_x"),
-                tag.getInt("controller_y"),
-                tag.getInt("controller_z")
-        );
-        BlockEntity controllerEntity = level.getBlockEntity(controllerPos);
-        if (!(controllerEntity instanceof BaseBlockEntityMagneticraft2)) {
+        VoxelShape cached =
+                filler.getCachedLocalShape();
+
+        if (cached != null) {
+            return cached;
+        }
+
+        BlockPos controllerPos =
+                filler.getControllerPos();
+        BlockEntity controllerEntity =
+                level.getBlockEntity(controllerPos);
+
+        if (!(controllerEntity
+                instanceof BaseBlockEntityMagneticraft2)) {
             return null;
         }
 
-        BlockState controllerState = level.getBlockState(controllerPos);
+        BlockState controllerState =
+                level.getBlockState(controllerPos);
+
         if (!isControllerFormed(controllerState)) {
             return null;
         }
 
-        Block controllerBlock = controllerState.getBlock();
-        VoxelShape controllerShape = controllerBlock.getVisualShape(controllerState, level, controllerPos, context);
+        Block controllerBlock =
+                controllerState.getBlock();
+        VoxelShape controllerShape =
+                controllerBlock.getVisualShape(
+                        controllerState,
+                        level,
+                        controllerPos,
+                        context
+                );
 
-        double dx = controllerPos.getX() - pos.getX();
-        double dy = controllerPos.getY() - pos.getY();
-        double dz = controllerPos.getZ() - pos.getZ();
+        double dx =
+                controllerPos.getX()
+                        - pos.getX();
+        double dy =
+                controllerPos.getY()
+                        - pos.getY();
+        double dz =
+                controllerPos.getZ()
+                        - pos.getZ();
 
-        return Shapes.join(
-                controllerShape.move(dx, dy, dz),
-                Shapes.block(),
-                BooleanOp.AND
-        ).optimize();
+        VoxelShape local =
+                Shapes.join(
+                        controllerShape.move(
+                                dx,
+                                dy,
+                                dz
+                        ),
+                        Shapes.block(),
+                        BooleanOp.AND
+                ).optimize();
+
+        filler.setCachedLocalShape(local);
+        return local;
     }
 
     private boolean isControllerFormed(BlockState state) {

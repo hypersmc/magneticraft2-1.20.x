@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class PrimitiveGrinderTop extends BaseBlockMagneticraft2 {
 
     public PrimitiveGrinderTop() {
-        super(Properties.of().noOcclusion().requiresCorrectToolForDrops());
+        super(Properties.of().noOcclusion().strength(3.5F).requiresCorrectToolForDrops());
     }
 
     @Override

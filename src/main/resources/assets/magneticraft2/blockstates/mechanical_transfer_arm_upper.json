@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    },
+    "facing=up": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    },
+    "facing=down": {
+      "model": "magneticraft2:block/mechanical_transfer_arm_upper"
+    }
+  }
+}

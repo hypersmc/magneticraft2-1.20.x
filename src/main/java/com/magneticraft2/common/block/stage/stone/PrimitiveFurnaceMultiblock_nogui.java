@@ -295,20 +295,28 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
         ItemStack heldItem = pPlayer.getItemInHand(pHand);
 
         switch (zone) {
-            case SMELTABLE_INPUT -> insertOne(itemHandler, 0, heldItem, pPlayer, furnaceEntity);
+            case SMELTABLE_INPUT -> {
+                if (heldItem.isEmpty()) {
+                    extractStack(itemHandler, 0, pPlayer, furnaceEntity);
+                } else {
+                    insertOne(itemHandler, 0, heldItem, pPlayer, furnaceEntity);
+                }
+            }
             case FUEL_INPUT -> {
-                if (heldItem.is(Items.COAL)) {
+                if (heldItem.isEmpty()) {
+                    extractStack(itemHandler, 1, pPlayer, furnaceEntity);
+                } else if (heldItem.is(Items.COAL)) {
                     insertOne(itemHandler, 1, heldItem, pPlayer, furnaceEntity);
                 }
             }
             case PRIMARY_OUTPUT -> {
                 if (heldItem.isEmpty()) {
-                    extractOutput(itemHandler, 2, pPlayer, furnaceEntity);
+                    extractStack(itemHandler, 2, pPlayer, furnaceEntity);
                 }
             }
             case SECONDARY_OUTPUT -> {
                 if (heldItem.isEmpty()) {
-                    extractOutput(itemHandler, 3, pPlayer, furnaceEntity);
+                    extractStack(itemHandler, 3, pPlayer, furnaceEntity);
                 }
             }
             case NONE -> {
@@ -355,7 +363,7 @@ public class PrimitiveFurnaceMultiblock_nogui extends BaseBlockMagneticraft2 {
         furnaceEntity.sync();
     }
 
-    private void extractOutput(IItemHandler itemHandler,
+    private void extractStack(IItemHandler itemHandler,
                                int slot,
                                Player player,
                                PrimitiveFurnaceMultiblockEntity_nogui furnaceEntity) {

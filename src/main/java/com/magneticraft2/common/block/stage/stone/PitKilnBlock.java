@@ -4,6 +4,8 @@ import com.magneticraft2.common.blockentity.stage.stone.PitKilnBlockEntity;
 import com.magneticraft2.common.registry.FinalRegistry;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -76,6 +78,28 @@ public class PitKilnBlock  extends BaseEntityBlock {
     @Override
     public RenderShape getRenderShape(BlockState pState) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos,
+                            RandomSource random) {
+        if (!state.getValue(ACTIVATED)) {
+            return;
+        }
+
+        // A kiln's firing animation belongs to its active state, not a vanilla
+        // fire block that may naturally extinguish before processing finishes.
+        double x = pos.getX() + 0.25D + random.nextDouble() * 0.5D;
+        double z = pos.getZ() + 0.25D + random.nextDouble() * 0.5D;
+        if (random.nextInt(3) == 0) {
+            level.addParticle(ParticleTypes.FLAME,
+                    x, pos.getY() + 0.88D + random.nextDouble() * 0.22D, z,
+                    0.0D, 0.018D, 0.0D);
+        }
+        if (random.nextInt(5) == 0) {
+            level.addParticle(ParticleTypes.CAMPFIRE_COSY_SMOKE,
+                    x, pos.getY() + 1.05D, z, 0.0D, 0.035D, 0.0D);
+        }
     }
 
     @Override

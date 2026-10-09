@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "magneticraft2:gear_medium_wood",
+    "magneticraft2:gear_large_wood",
+    "magneticraft2:gear_large_wood_with_handle",
+    "magneticraft2:shaft_wood",
+    "magneticraft2:primitivestoragecellar_multiblock",
+    "magneticraft2:bellows_multiblock_module"
+  ]
+}

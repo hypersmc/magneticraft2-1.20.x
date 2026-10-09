@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "magneticraft2:multiblock_fluid_input"
+    },
+    {
+      "item": "magneticraft2:copper_plate"
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:multiblock_fluid_output",
+    "count": 1
+  }
+}

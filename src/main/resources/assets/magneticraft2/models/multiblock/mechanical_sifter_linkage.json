@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "credit": "Mechanical Sifter linkage from sieve carriage to internal Medium Wooden Gear",
+  "textures": {
+    "wood": "minecraft:block/oak_planks",
+    "frame": "minecraft:block/stripped_spruce_log",
+    "copper": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/spruce_planks",
+    "screen": "minecraft:block/iron_bars",
+    "particle": "minecraft:block/oak_planks"
+  },
+  "elements": [
+    {
+      "from": [
+        18.5,
+        11,
+        16
+      ],
+      "to": [
+        21.5,
+        14.2,
+        19.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3,
+            3.1999999999999993
+          ]
+        },
+        "south": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3,
+            3.1999999999999993
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1999999999999993,
+            3.1999999999999993
+          ]
+        },
+        "west": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1999999999999993,
+            3.1999999999999993
+          ]
+        },
+        "up": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3,
+            3.1999999999999993
+          ]
+        },
+        "down": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3,
+            3.1999999999999993
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        19.4,
+        11.8,
+        9.2
+      ],
+      "to": [
+        21.1,
+        13.4,
+        17.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            1.7000000000000028,
+            1.5999999999999996
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            1.7000000000000028,
+            1.5999999999999996
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            8,
+            1.5999999999999996
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            8,
+            1.5999999999999996
+          ]
+        },
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            1.7000000000000028,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            1.7000000000000028,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        18.7,
+        10.6,
+        7.6
+      ],
+      "to": [
+        21.8,
+        14.1,
+        10.7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1000000000000014,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1000000000000014,
+            3.5
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.0999999999999996,
+            3.5
+          ]
+        },
+        "west": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.0999999999999996,
+            3.5
+          ]
+        },
+        "up": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1000000000000014,
+            3.0999999999999996
+          ]
+        },
+        "down": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            3.1000000000000014,
+            3.0999999999999996
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "credit": "Mechanical Transfer Arm left jaw - clean gripping pad",
+  "textures": {
+    "copper": "minecraft:block/cut_copper",
+    "copper_dark": "minecraft:block/exposed_cut_copper",
+    "dark": "minecraft:block/deepslate_tiles",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        4.95,
+        26,
+        6.85
+      ],
+      "to": [
+        6.4,
+        31.05,
+        9.15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            5.050000000000001
+          ]
+        },
+        "south": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            5.050000000000001
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            5.050000000000001
+          ]
+        },
+        "west": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            2.3000000000000007,
+            5.050000000000001
+          ]
+        },
+        "up": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            2.3000000000000007
+          ]
+        },
+        "down": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            2.3000000000000007
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5.2,
+        24.85,
+        6.9
+      ],
+      "to": [
+        6.65,
+        26,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            1.1499999999999986
+          ]
+        },
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            1.1499999999999986
+          ]
+        },
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            2.1999999999999993,
+            1.1499999999999986
+          ]
+        },
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            2.1999999999999993,
+            1.1499999999999986
+          ]
+        },
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            2.1999999999999993
+          ]
+        },
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            1.4500000000000002,
+            2.1999999999999993
+          ]
+        }
+      }
+    }
+  ]
+}

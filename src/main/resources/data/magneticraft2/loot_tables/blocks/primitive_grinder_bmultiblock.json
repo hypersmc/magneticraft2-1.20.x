@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:block",
+  "pools": [{
+    "rolls": 1,
+    "entries": [{"type": "minecraft:item", "name": "magneticraft2:primitive_grinder_bmultiblock"}],
+    "conditions": [{"condition": "minecraft:survives_explosion"}]
+  }]
+}

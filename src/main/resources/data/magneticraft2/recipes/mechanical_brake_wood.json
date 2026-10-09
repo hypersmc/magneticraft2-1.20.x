@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LPL",
+    "SWS",
+    "LPL"
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:mechanical_brake_wood",
+    "count": 1
+  }
+}

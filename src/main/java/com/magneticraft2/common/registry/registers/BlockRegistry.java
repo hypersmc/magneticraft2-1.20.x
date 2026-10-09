@@ -5,8 +5,32 @@ import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
+import com.magneticraft2.common.block.stage.copper.GearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.CustomGearboxBlock_wood;
+import com.magneticraft2.common.block.stage.copper.MechanicalBrakeBlock_wood;
+import com.magneticraft2.common.block.stage.copper.MechanicalBellowsBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalOreWasherBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalInputModuleBlock;
+import com.magneticraft2.common.block.stage.copper.MultiblockItemPortBlock;
+import com.magneticraft2.common.block.stage.copper.MultiblockFluidInputBlock;
+import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
+import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalWaterPumpBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmBlock;
+import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmUpperBlock;
+import com.magneticraft2.common.block.stage.copper.CopperFluidTankBlock;
+import com.magneticraft2.common.block.stage.copper.FlywheelBlock_wood;
+import com.magneticraft2.common.block.stage.copper.CrankBlock_wood;
+import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
+import com.magneticraft2.common.block.stage.copper.PulleyBlock_wood;
+import com.magneticraft2.common.block.stage.copper.OverloadDisconnectBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
+import com.magneticraft2.common.block.stage.copper.WaterWheelBlock;
+import com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock;
 import com.magneticraft2.common.block.stage.stone.*;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -70,6 +94,63 @@ public class BlockRegistry {
     public static final RegistryObject<LargeGearBlock_wood> GEAR_LARGE_WOOD = BLOCKS.register("gear_large_wood", LargeGearBlock_wood::new);
     public static final RegistryObject<LargeGearWithHandleBlock_wood> GEAR_LARGE_WITH_HANDLE_WOOD = BLOCKS.register("gear_large_wood_with_handle", LargeGearWithHandleBlock_wood::new);
     public static final RegistryObject<ShaftBlock_wood> SHAFT_WOOD = BLOCKS.register("shaft_wood", ShaftBlock_wood::new);
+    public static final RegistryObject<ClutchBlock_wood> CLUTCH_WOOD = BLOCKS.register("clutch_wood", ClutchBlock_wood::new);
+    public static final RegistryObject<OverloadDisconnectBlock_wood> OVERLOAD_DISCONNECT_WOOD = BLOCKS.register("overload_disconnect_wood", OverloadDisconnectBlock_wood::new);
+    public static final RegistryObject<MechanicalBrakeBlock_wood> MECHANICAL_BRAKE_WOOD = BLOCKS.register("mechanical_brake_wood", MechanicalBrakeBlock_wood::new);
+    public static final RegistryObject<CrankBlock_wood> CRANK_WOOD = BLOCKS.register("crank_wood", CrankBlock_wood::new);
+    public static final RegistryObject<MechanicalBellowsBlock> MECHANICAL_BELLOWS = BLOCKS.register("mechanical_bellows", MechanicalBellowsBlock::new);
+    public static final RegistryObject<FlywheelBlock_wood> FLYWHEEL_WOOD = BLOCKS.register("flywheel_wood", FlywheelBlock_wood::new);
+    public static final RegistryObject<MechanicalOreWasherBlock> MECHANICAL_ORE_WASHER = BLOCKS.register("mechanical_ore_washer", MechanicalOreWasherBlock::new);
+    public static final RegistryObject<MechanicalSifterBlock> MECHANICAL_SIFTER = BLOCKS.register("mechanical_sifter", MechanicalSifterBlock::new);
+    public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
+    public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
+            BLOCKS.register(
+                    "multiblock_item_input",
+                    () -> new MultiblockItemPortBlock(
+                            MultiblockItemPortBlock.PortMode.INPUT
+                    )
+            );
+    public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_OUTPUT =
+            BLOCKS.register(
+                    "multiblock_item_output",
+                    () -> new MultiblockItemPortBlock(
+                            MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
+                    )
+            );
+    public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_PRIMARY_OUTPUT =
+            BLOCKS.register(
+                    "multiblock_item_primary_output",
+                    () -> new MultiblockItemPortBlock(
+                            MultiblockItemPortBlock.PortMode.PRIMARY_OUTPUT
+                    )
+            );
+    public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT =
+            BLOCKS.register(
+                    "multiblock_item_byproduct_output",
+                    () -> new MultiblockItemPortBlock(
+                            MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
+                    )
+            );
+    public static final RegistryObject<MultiblockFluidInputBlock> MULTIBLOCK_FLUID_INPUT = BLOCKS.register("multiblock_fluid_input", MultiblockFluidInputBlock::new);
+    public static final RegistryObject<MultiblockFluidOutputBlock> MULTIBLOCK_FLUID_OUTPUT = BLOCKS.register("multiblock_fluid_output", MultiblockFluidOutputBlock::new);
+    public static final RegistryObject<WaterPipeBlock> WATER_PIPE = BLOCKS.register("water_pipe", WaterPipeBlock::new);
+    public static final RegistryObject<MechanicalWaterPumpBlock> MECHANICAL_WATER_PUMP = BLOCKS.register("mechanical_water_pump", MechanicalWaterPumpBlock::new);
+    public static final RegistryObject<MechanicalTransferArmBlock> MECHANICAL_TRANSFER_ARM = BLOCKS.register("mechanical_transfer_arm", MechanicalTransferArmBlock::new);
+    public static final RegistryObject<MechanicalTransferArmUpperBlock> MECHANICAL_TRANSFER_ARM_UPPER =
+            registerBlockWithoutBlockItem(
+                    "mechanical_transfer_arm_upper",
+                    MechanicalTransferArmUpperBlock::new
+            );
+    public static final RegistryObject<CopperFluidTankBlock> COPPER_FLUID_TANK = BLOCKS.register("copper_fluid_tank", CopperFluidTankBlock::new);
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_SMALL_WOOD = BLOCKS.register("pulley_small_wood", () -> new PulleyBlock_wood(8));
+    public static final RegistryObject<PulleyBlock_wood> PULLEY_LARGE_WOOD = BLOCKS.register("pulley_large_wood", () -> new PulleyBlock_wood(16));
+    public static final RegistryObject<ConveyorRollerBlock> CONVEYOR_ROLLER = BLOCKS.register("conveyor_roller", ConveyorRollerBlock::new);
+    public static final RegistryObject<GearboxBlock_wood> GEARBOX_WOOD = BLOCKS.register("gearbox_wood", GearboxBlock_wood::new);
+    public static final RegistryObject<CustomGearboxBlock_wood> CUSTOM_GEARBOX_WOOD = BLOCKS.register("custom_gearbox_wood", CustomGearboxBlock_wood::new);
+    public static final RegistryObject<ItemBeltBlock> ITEM_BELT_BLOCK = registerBlockWithoutBlockItem("item_belt_block", ItemBeltBlock::new);
+    public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_SMALL = BLOCKS.register("water_wheel_small", () -> new WaterWheelBlock(false));
+    public static final RegistryObject<WaterWheelBlock> WATER_WHEEL_LARGE = BLOCKS.register("water_wheel_large", () -> new WaterWheelBlock(true));
+    public static final RegistryObject<WaterWheelFillerBlock> WATER_WHEEL_FILLER = registerBlockWithoutBlockItem("water_wheel_filler", WaterWheelFillerBlock::new);
 
 
 

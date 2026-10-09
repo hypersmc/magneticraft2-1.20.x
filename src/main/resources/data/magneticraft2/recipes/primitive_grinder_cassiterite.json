@@ -1,0 +1,13 @@
+{
+  "type": "magneticraft2:primitive_grinder_bmultiblock",
+  "input": {
+    "item": "magneticraft2:cassiterite_ore"
+  },
+  "output": {
+    "item": "magneticraft2:crushed_cassiterite",
+    "count": 1
+  },
+  "crushtime": 180,
+  "min_speed": 20,
+  "torque": 4
+}

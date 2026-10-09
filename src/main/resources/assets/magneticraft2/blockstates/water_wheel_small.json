@@ -1,0 +1,42 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "active": "false",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_small"
+      }
+    },
+    {
+      "when": {
+        "active": "false",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_small"
+      }
+    },
+    {
+      "when": {
+        "active": "false",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_small",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "active": "false",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_wheel_small",
+        "y": 90
+      }
+    }
+  ]
+}

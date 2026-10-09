@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "GPG",
+    "SPS",
+    "PPP"
+  ],
+  "key": {
+    "G": {
+      "item": "magneticraft2:gear_medium_wood"
+    },
+    "S": {
+      "item": "magneticraft2:shaft_wood"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:gearbox_wood",
+    "count": 1
+  }
+}

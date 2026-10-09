@@ -1,10 +1,20 @@
 package com.magneticraft2.common.block.stage.stone;
 
+import com.magneticraft2.common.blockentity.stage.stone.Primitive_anvilEntity;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -86,8 +96,71 @@ public class Primitive_anvilBlock extends BaseEntityBlock {
     }
 
     @Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, net.minecraft.world.phys.BlockHitResult hit) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof Primitive_anvilEntity anvil)) {
+            return InteractionResult.PASS;
+        }
+
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+
+        ItemStack held = player.getItemInHand(hand);
+
+        if (anvil.isEmpty() && held.is(Items.COPPER_INGOT)) {
+            if (anvil.insertOne(held)) {
+                if (!player.getAbilities().instabuild) {
+                    held.shrink(1);
+                }
+                level.setBlock(pos, state.setValue(ACTIVATED, true), Block.UPDATE_ALL);
+                level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.45F, 0.8F);
+                return InteractionResult.CONSUME;
+            }
+        }
+
+        if (held.is(ItemRegistry.item_stone_hammer.get()) && anvil.hasCopperIngot()) {
+            boolean completed = anvil.hammerCopper();
+            if (!player.getAbilities().instabuild) {
+                held.hurtAndBreak(1, player, p -> p.broadcastBreakEvent(hand));
+            }
+            level.playSound(
+                    null,
+                    pos,
+                    completed ? SoundEvents.ANVIL_USE : SoundEvents.ANVIL_HIT,
+                    SoundSource.BLOCKS,
+                    completed ? 0.8F : 0.55F,
+                    completed ? 1.15F : 1.35F
+            );
+            return InteractionResult.CONSUME;
+        }
+
+        if (held.isEmpty() && !anvil.isEmpty()) {
+            ItemStack result = anvil.takeStoredItem();
+            if (!player.getInventory().add(result)) {
+                player.drop(result, false);
+            }
+            level.setBlock(pos, state.setValue(ACTIVATED, false), Block.UPDATE_ALL);
+            return InteractionResult.CONSUME;
+        }
+
+        return InteractionResult.PASS;
+    }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof Primitive_anvilEntity anvil) {
+                anvil.dropStoredItem(level);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return null;
+        return new Primitive_anvilEntity(blockPos, blockState);
     }
 
 

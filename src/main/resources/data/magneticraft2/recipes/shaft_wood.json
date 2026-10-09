@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": ["L", "L"],
+  "key": {
+    "L": {"tag": "minecraft:logs"}
+  },
+  "result": {"item": "magneticraft2:shaft_wood", "count": 4}
+}

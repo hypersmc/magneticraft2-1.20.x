@@ -26,7 +26,14 @@ public abstract class GearBlockEntity extends BlockEntity {
     protected GearNode gearNode;
     private boolean hasEverRotated = false;
     private float clientVisualRotationDegrees = 0.0F;
-    private float lastClientVisualTime = Float.NaN;
+    private double lastClientVisualTime = Double.NaN;
+    private boolean clientVisualInitialized = false;
+
+    // Latest authoritative server angle and the client game time at which it arrived.
+    // Rendering never hard-snaps to this after initialization; it continuously integrates
+    // local RPM and gently corrects toward the predicted authoritative phase.
+    private float clientAuthoritativeRotationDegrees = 0.0F;
+    private double clientAuthoritativeSyncTime = Double.NaN;
 
     public GearBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -73,6 +80,28 @@ public abstract class GearBlockEntity extends BlockEntity {
      */
     public boolean isShaftLike() {
         return false;
+    }
+
+    /**
+     * Whether an adjacent axial shaft is allowed to connect through this face.
+     *
+     * Ordinary shafts accept both ends. Mechanical consumers can override this
+     * to expose a true one-sided input without becoming an inline transmission.
+     */
+    public boolean acceptsShaftConnection(Direction side) {
+        return side != null
+                && side.getAxis() == getGearAxis();
+    }
+
+    /**
+     * Whether this node can also participate in external tooth/rim meshing.
+     *
+     * Most shaft-like nodes return false. Hybrid source components such as Water Wheels
+     * can override this so they still accept shafts on the axle while also driving a
+     * gear placed against the wheel rim.
+     */
+    public boolean supportsExternalGearMesh() {
+        return !isShaftLike();
     }
 
     /**
@@ -210,11 +239,25 @@ public abstract class GearBlockEntity extends BlockEntity {
 
     public void syncGearState(float speed, float torque, float maxTorque, boolean overloaded, float meshPhaseDegrees, float rotationDegrees, int directionMultiplier, BlockPos sourcePos) {
         GearNode node = getOrCreateGearNode();
+
         node.updateClientData(speed, torque, maxTorque, overloaded, meshPhaseDegrees, rotationDegrees);
         node.setDirectionMultiplier(directionMultiplier);
         node.setSourcePos(sourcePos);
-        clientVisualRotationDegrees = node.getClientRotationDegrees();
-        lastClientVisualTime = Float.NaN;
+
+        Level currentLevel = getLevel();
+        double currentGameTime = currentLevel == null
+                ? Double.NaN
+                : (double) currentLevel.getGameTime();
+
+        clientAuthoritativeRotationDegrees = node.getClientRotationDegrees();
+        clientAuthoritativeSyncTime = currentGameTime;
+
+        if (!clientVisualInitialized) {
+            clientVisualRotationDegrees = clientAuthoritativeRotationDegrees;
+            lastClientVisualTime = currentGameTime;
+            clientVisualInitialized = true;
+        }
+
         markHasEverRotatedIfMoving(speed);
     }
 
@@ -230,39 +273,92 @@ public abstract class GearBlockEntity extends BlockEntity {
     public float getVisualRotationDegrees(float partialTicks) {
         Level currentLevel = getLevel();
         GearNode node = getOrCreateGearNode();
+
         if (currentLevel == null) {
-            return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+            return normalizeVisualDegrees(
+                    clientVisualRotationDegrees + node.getClientMeshPhaseDegrees()
+            );
         }
 
-        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
-        if (Float.isNaN(lastClientVisualTime)) {
+        double currentVisualTime =
+                (double) currentLevel.getGameTime()
+                        + (double) partialTicks;
+
+        if (!clientVisualInitialized || Double.isNaN(lastClientVisualTime)) {
             clientVisualRotationDegrees = node.getClientRotationDegrees();
+            clientAuthoritativeRotationDegrees = node.getClientRotationDegrees();
+            clientAuthoritativeSyncTime = currentVisualTime;
             lastClientVisualTime = currentVisualTime;
-            return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+            clientVisualInitialized = true;
         }
 
-        float deltaTicks = currentVisualTime - lastClientVisualTime;
+        double deltaTicks = currentVisualTime - lastClientVisualTime;
         lastClientVisualTime = currentVisualTime;
 
         if (deltaTicks < 0.0F) {
             deltaTicks = 0.0F;
-        }
-        if (deltaTicks > 20.0F) {
-            // Avoid huge jumps if the chunk/renderer was not visible for a while.
-            deltaTicks = 20.0F;
+        } else if (deltaTicks > 2.0F) {
+            // A render/chunk pause should not turn into one giant visual jump.
+            deltaTicks = 2.0F;
         }
 
-        float rpm = node.getClientSpeed();
+        float rpm = node.isClientOverloaded() ? 0.0F : node.getClientSpeed();
+        float degreesPerTick = rpm * 360.0F / 1200.0F;
+
         if (rpm > VISUAL_STOP_EPSILON) {
-            float degreesPerTick = rpm * 360.0F / 1200.0F;
-            clientVisualRotationDegrees += degreesPerTick * deltaTicks * node.getDirectionMultiplier();
-            clientVisualRotationDegrees %= 360.0F;
-            if (clientVisualRotationDegrees < 0.0F) {
-                clientVisualRotationDegrees += 360.0F;
-            }
+            clientVisualRotationDegrees = normalizeVisualDegrees(
+                    clientVisualRotationDegrees
+                            + degreesPerTick
+                            * (float) deltaTicks
+                            * node.getDirectionMultiplier()
+            );
         }
 
-        return normalizeVisualDegrees(clientVisualRotationDegrees + node.getClientMeshPhaseDegrees());
+        // Predict where the authoritative server phase should be *now*, not where it was
+        // when the packet happened to arrive. Then remove only a fraction of the shortest
+        // angular error each rendered frame. This keeps every node phase-locked without
+        // the visible 20 Hz packet snapping that caused Water Wheel/gear judder.
+        if (!Double.isNaN(clientAuthoritativeSyncTime)) {
+            double authoritativeElapsed =
+                    currentVisualTime - clientAuthoritativeSyncTime;
+            if (authoritativeElapsed < 0.0F) {
+                authoritativeElapsed = 0.0F;
+            } else if (authoritativeElapsed > 20.0F) {
+                authoritativeElapsed = 20.0F;
+            }
+
+            float predictedAuthoritative = normalizeVisualDegrees(
+                    clientAuthoritativeRotationDegrees
+                            + degreesPerTick
+                            * (float) authoritativeElapsed
+                            * node.getDirectionMultiplier()
+            );
+
+            float phaseError = shortestVisualAngle(
+                    predictedAuthoritative - clientVisualRotationDegrees
+            );
+
+            // Roughly a quarter of the remaining phase error per game tick. At 60 FPS
+            // this is only a few percent per rendered frame, so corrections are invisible
+            // but accumulated drift still converges quickly.
+            float correctionFactor =
+                    (float) Math.min(
+                            1.0D,
+                            deltaTicks * 0.25D
+                    );
+            clientVisualRotationDegrees = normalizeVisualDegrees(
+                    clientVisualRotationDegrees + phaseError * correctionFactor
+            );
+        }
+
+        return normalizeVisualDegrees(
+                clientVisualRotationDegrees + node.getClientMeshPhaseDegrees()
+        );
+    }
+
+    private float shortestVisualAngle(float degrees) {
+        float wrapped = normalizeVisualDegrees(degrees);
+        return wrapped > 180.0F ? wrapped - 360.0F : wrapped;
     }
 
     private float normalizeVisualDegrees(float degrees) {

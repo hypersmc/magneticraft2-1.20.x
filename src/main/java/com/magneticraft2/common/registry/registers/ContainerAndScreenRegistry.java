@@ -1,9 +1,11 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.client.gui.container.blueprintmaker.blueprintmaker_container;
+import com.magneticraft2.client.gui.container.gearbox.CustomGearboxMenu;
 import com.magneticraft2.client.gui.container.primitivefurnace.primitivefurnace_container;
 import com.magneticraft2.client.gui.container.projector.Projector_container;
 import com.magneticraft2.client.gui.screen.blueprintmaker.blueprintmaker_screen;
+import com.magneticraft2.client.gui.screen.gearbox.CustomGearboxScreen;
 import com.magneticraft2.client.gui.screen.primitivefurnace.primitivefurnace_screen;
 import com.magneticraft2.client.gui.screen.projector.Projector_screen;
 import com.magneticraft2.common.magneticraft2;
@@ -54,10 +56,25 @@ public class ContainerAndScreenRegistry {
         return new primitivefurnace_container(windowId, world, pos, inv,inv.player);
     })))));
 
+    public static final RegistryObject<MenuType<CustomGearboxMenu>> CUSTOM_GEARBOX_MENU =
+            CONTAINERS.register("custom_gearbox_wood", () ->
+                    IForgeMenuType.create((windowId, inv, data) -> {
+                        BlockPos pos = data.readBlockPos();
+                        Level world = inv.player.getCommandSenderWorld();
+                        return new CustomGearboxMenu(
+                                windowId,
+                                world,
+                                pos,
+                                inv,
+                                inv.player
+                        );
+                    }));
+
 
     public static void Screen(final FMLClientSetupEvent event) {
         MenuScreens.register(Projector_container.get(), Projector_screen::new);
         MenuScreens.register(Blueprintmaker_container.get(), blueprintmaker_screen::new);
         MenuScreens.register(Primitivefurnace_container.get(), primitivefurnace_screen::new);
+        MenuScreens.register(CUSTOM_GEARBOX_MENU.get(), CustomGearboxScreen::new);
     }
 }

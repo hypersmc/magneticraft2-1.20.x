@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PCP",
+    "LBL",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "B": {
+      "item": "magneticraft2:bellows_multiblock_module"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:mechanical_bellows",
+    "count": 1
+  }
+}

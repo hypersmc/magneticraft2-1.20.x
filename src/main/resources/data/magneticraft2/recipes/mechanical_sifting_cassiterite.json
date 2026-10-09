@@ -1,0 +1,21 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:mechanical_sifter",
+  "input": {
+    "item": "magneticraft2:washed_cassiterite"
+  },
+  "output": {
+    "item": "magneticraft2:tin_concentrate",
+    "count": 1
+  },
+  "byproduct": {
+    "item": "minecraft:flint",
+    "count": 1
+  },
+  "byproduct_chance": 0.15,
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 15,
+    "torque": 2
+  }
+}

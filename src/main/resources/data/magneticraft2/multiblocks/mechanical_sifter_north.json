@@ -1,0 +1,53 @@
+{
+  "name": "mechanical_sifter_north",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      2
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "ByproductOutput",
+          "Frame",
+          "PrimaryOutput"
+        ],
+        [
+          "MechanicalInput",
+          "Controller",
+          "Frame"
+        ]
+      ],
+      "layer2": [
+        [
+          "Frame",
+          "Frame",
+          "Frame"
+        ],
+        [
+          "Frame",
+          "ItemInput",
+          "Frame"
+        ]
+      ]
+    },
+    "blocks": {
+      "Controller": "magneticraft2:mechanical_sifter",
+      "Frame": "minecraft:oak_planks",
+      "ItemInput": "magneticraft2:multiblock_item_input",
+      "PrimaryOutput": "magneticraft2:multiblock_item_primary_output",
+      "ByproductOutput": "magneticraft2:multiblock_item_byproduct_output",
+      "MechanicalInput": "magneticraft2:mechanical_input_module"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/mechanical_sifter_north",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": []
+  }
+}

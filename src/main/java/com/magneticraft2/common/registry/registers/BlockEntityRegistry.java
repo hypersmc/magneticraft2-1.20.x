@@ -3,8 +3,29 @@ package com.magneticraft2.common.registry.registers;
 import com.magneticraft2.common.blockentity.general.*;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalBrakeBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalBellowsBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidInputBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidOutputBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalWaterPumpBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalTransferArmBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.CopperFluidTankBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.*;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -57,5 +78,73 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<LargeGearBlockEntity_wood>> GEAR_LARGE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood", () -> BlockEntityType.Builder.of(LargeGearBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearWithHandleBlockEntity_wood>> GEAR_LARGE_WITH_HANDLE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood_with_handle", () -> BlockEntityType.Builder.of(LargeGearWithHandleBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WITH_HANDLE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<ShaftBlockEntity_wood>> SHAFT_BE_WOOD = BLOCK_ENTITIES.register("shaft_wood", () -> BlockEntityType.Builder.of(ShaftBlockEntity_wood::new, BlockRegistry.SHAFT_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<ClutchBlockEntity_wood>> CLUTCH_BE_WOOD = BLOCK_ENTITIES.register("clutch_wood", () -> BlockEntityType.Builder.of(ClutchBlockEntity_wood::new, BlockRegistry.CLUTCH_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<OverloadDisconnectBlockEntity_wood>> OVERLOAD_DISCONNECT_BE_WOOD = BLOCK_ENTITIES.register("overload_disconnect_wood", () -> BlockEntityType.Builder.of(OverloadDisconnectBlockEntity_wood::new, BlockRegistry.OVERLOAD_DISCONNECT_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalBrakeBlockEntity_wood>> MECHANICAL_BRAKE_BE_WOOD = BLOCK_ENTITIES.register("mechanical_brake_wood", () -> BlockEntityType.Builder.of(MechanicalBrakeBlockEntity_wood::new, BlockRegistry.MECHANICAL_BRAKE_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CrankBlockEntity_wood>> CRANK_BE_WOOD = BLOCK_ENTITIES.register("crank_wood", () -> BlockEntityType.Builder.of(CrankBlockEntity_wood::new, BlockRegistry.CRANK_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalBellowsBlockEntity>> MECHANICAL_BELLOWS_BE = BLOCK_ENTITIES.register("mechanical_bellows", () -> BlockEntityType.Builder.of(MechanicalBellowsBlockEntity::new, BlockRegistry.MECHANICAL_BELLOWS.get()).build(null));
+    public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE =
+            BLOCK_ENTITIES.register(
+                    "multiblock_item_port",
+                    () -> BlockEntityType.Builder.of(
+                            MultiblockItemPortBlockEntity::new,
+                            BlockRegistry.MULTIBLOCK_ITEM_INPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_OUTPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_PRIMARY_OUTPUT.get(),
+                            BlockRegistry.MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT.get()
+                    ).build(null)
+            );
+    public static final RegistryObject<BlockEntityType<MultiblockFluidInputBlockEntity>> MULTIBLOCK_FLUID_INPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_input", () -> BlockEntityType.Builder.of(MultiblockFluidInputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_INPUT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MultiblockFluidOutputBlockEntity>> MULTIBLOCK_FLUID_OUTPUT_BE = BLOCK_ENTITIES.register("multiblock_fluid_output", () -> BlockEntityType.Builder.of(MultiblockFluidOutputBlockEntity::new, BlockRegistry.MULTIBLOCK_FLUID_OUTPUT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalWaterPumpBlockEntity>> MECHANICAL_WATER_PUMP_BE = BLOCK_ENTITIES.register("mechanical_water_pump", () -> BlockEntityType.Builder.of(MechanicalWaterPumpBlockEntity::new, BlockRegistry.MECHANICAL_WATER_PUMP.get()).build(null));
+    public static final RegistryObject<BlockEntityType<MechanicalTransferArmBlockEntity>> MECHANICAL_TRANSFER_ARM_BE = BLOCK_ENTITIES.register("mechanical_transfer_arm", () -> BlockEntityType.Builder.of(MechanicalTransferArmBlockEntity::new, BlockRegistry.MECHANICAL_TRANSFER_ARM.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CopperFluidTankBlockEntity>> COPPER_FLUID_TANK_BE = BLOCK_ENTITIES.register("copper_fluid_tank", () -> BlockEntityType.Builder.of(CopperFluidTankBlockEntity::new, BlockRegistry.COPPER_FLUID_TANK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<ConveyorRollerBlockEntity>> CONVEYOR_ROLLER_BE =
+            BLOCK_ENTITIES.register("conveyor_roller", () ->
+                    BlockEntityType.Builder.of(
+                            ConveyorRollerBlockEntity::new,
+                            BlockRegistry.CONVEYOR_ROLLER.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<GearboxBlockEntity_wood>> GEARBOX_BE_WOOD =
+            BLOCK_ENTITIES.register("gearbox_wood", () ->
+                    BlockEntityType.Builder.of(
+                            GearboxBlockEntity_wood::new,
+                            BlockRegistry.GEARBOX_WOOD.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<CustomGearboxBlockEntity_wood>> CUSTOM_GEARBOX_BE_WOOD =
+            BLOCK_ENTITIES.register("custom_gearbox_wood", () ->
+                    BlockEntityType.Builder.of(
+                            CustomGearboxBlockEntity_wood::new,
+                            BlockRegistry.CUSTOM_GEARBOX_WOOD.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<ItemBeltBlockEntity>> ITEM_BELT_BE =
+            BLOCK_ENTITIES.register("item_belt_block", () ->
+                    BlockEntityType.Builder.of(
+                            ItemBeltBlockEntity::new,
+                            BlockRegistry.ITEM_BELT_BLOCK.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<WaterWheelBlockEntity>> WATER_WHEEL_BE =
+            BLOCK_ENTITIES.register("water_wheel", () ->
+                    BlockEntityType.Builder.of(
+                            WaterWheelBlockEntity::new,
+                            BlockRegistry.WATER_WHEEL_SMALL.get(),
+                            BlockRegistry.WATER_WHEEL_LARGE.get()
+                    ).build(null));
+
+    public static final RegistryObject<BlockEntityType<PulleyBlockEntity_wood>> PULLEY_BE_WOOD = BLOCK_ENTITIES.register(
+            "pulley_wood",
+            () -> BlockEntityType.Builder.of(
+                    PulleyBlockEntity_wood::new,
+                    BlockRegistry.PULLEY_SMALL_WOOD.get(),
+                    BlockRegistry.PULLEY_LARGE_WOOD.get()
+            ).build(null));
 
 }

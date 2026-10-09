@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -27,13 +28,17 @@ import org.jetbrains.annotations.Nullable;
  * side-mesh with gears. Machines can later attach to this same shaft node type.
  */
 public class ShaftBlock_wood extends GearBlock {
+    public static final BooleanProperty ROTATING = BooleanProperty.create("rotating");
+
     private static final VoxelShape Y_AXIS_SHAPE = Shapes.box(0.3125, 0.0, 0.3125, 0.6875, 1.0, 0.6875);
     private static final VoxelShape X_AXIS_SHAPE = Shapes.box(0.0, 0.3125, 0.3125, 1.0, 0.6875, 0.6875);
     private static final VoxelShape Z_AXIS_SHAPE = Shapes.box(0.3125, 0.3125, 0.0, 0.6875, 0.6875, 1.0);
 
     public ShaftBlock_wood() {
         super(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.UP));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.UP)
+                .setValue(ROTATING, false));
     }
 
     @Override
@@ -43,7 +48,9 @@ public class ShaftBlock_wood extends GearBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockState placementState = this.defaultBlockState().setValue(FACING, context.getClickedFace());
+        BlockState placementState = this.defaultBlockState()
+                .setValue(FACING, context.getClickedFace())
+                .setValue(ROTATING, false);
         return validateGearPlacement(context, placementState);
     }
 
@@ -76,7 +83,7 @@ public class ShaftBlock_wood extends GearBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ROTATING);
     }
 
     @Nullable

@@ -1,0 +1,221 @@
+{
+  "name": "Copper Processing",
+  "description": "Turn copper into machine parts and use mechanical power to improve ore yield.",
+  "category": "magneticraft2:copper_workshop",
+  "icon": "magneticraft2:primitive_anvil",
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)From metal to machinery$()$(br2)The Copper Age starts by turning your first ingots into manufactured parts. The Primitive Anvil makes Copper Plates, and the Mechanical Grinder is the first machine that rewards building a working rotational network."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Primitive Anvil",
+      "recipe": "magneticraft2:primitive_anvil",
+      "text": "Right-click the anvil with a Copper Ingot, then strike it four times with the Primitive Hammer. The workpiece is shown on the anvil and becomes a Copper Plate after the final strike."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Copper Plates$()$(br2)Copper Plates reinforce many Copper Age mechanisms: control blocks, protection devices, the brake and the crank all build on this first metalworking step.$(br2)Use an empty hand on the completed anvil workpiece to pick it up."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Grinder",
+      "recipe": "magneticraft2:primitive_grinder_base",
+      "recipe2": "magneticraft2:primitive_grinder_top",
+      "text": "Place the Mechanical Grinder Base and put the Grinder Stone directly above it, then right-click the base to form the two-block machine."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Grinder",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "T"
+          ],
+          [
+            "0"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:primitive_grinder_bmultiblock",
+          "T": "magneticraft2:primitive_grindertop"
+        },
+        "symmetrical": true
+      },
+      "text": "The Grinder Stone sits directly above the base. Mechanical input is on the LEFT side of the stone base. Place a horizontal Wooden Shaft against the visible bearing. The grinder requires at least 20 mechanical speed and 4 torque."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Crushing Chalcocite$()$(br2)Right-click the formed grinder with Chalcocite Ore. With at least 20 speed and 4 torque it runs for about eight seconds and produces Crushed Chalcocite.$(br2)If the drivetrain stops, processing pauses rather than losing progress. Use an empty hand to retrieve output."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why crush it?$()$(br2)Direct Primitive Furnace processing remains valid: one Chalcocite Ore gives one Copper Ingot plus Slag.$(br2)Crushing first improves the same furnace batch to $(bold)two Copper Ingots$() plus Slag. Your mechanical workshop therefore improves resource efficiency instead of existing only as a progression lock."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Ore Washer Controller",
+      "recipe": "magneticraft2:mechanical_ore_washer",
+      "recipe2": "magneticraft2:mechanical_input_module",
+      "text": "The crafted block is the controller, not the whole machine. The Washer is a 3x2x3 JSON multiblock. It also needs one Mechanical Input Bearing so Gear V2 can enter the formed structure."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Washer I/O Ports",
+      "recipe": "magneticraft2:multiblock_item_input",
+      "recipe2": "magneticraft2:multiblock_item_output",
+      "text": "The Washer now has real automation ports. The tall rear port is INPUT only and forwards into the washer's recipe slot. The low front port is OUTPUT only and exposes both concentrate and byproduct slots for extraction."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Ore Washer",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P M",
+            "PPP"
+          ],
+          [
+            "PFP",
+            "I0O",
+            "PDP"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:mechanical_ore_washer",
+          "P": "minecraft:oak_planks",
+          "C": "minecraft:copper_block",
+          "M": "magneticraft2:mechanical_input_module",
+          "I": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_output",
+          "F": "magneticraft2:multiblock_fluid_input",
+          "D": "magneticraft2:multiblock_fluid_output"
+        },
+        "symmetrical": false
+      },
+      "text": "The book now matches the real structure coordinates. Relative to the controller: Item Input is REAR, Item Output is FRONT, Clean Fluid Input is LEFT, Dirty Fluid Output is RIGHT, and the Mechanical Input Bearing sits directly ABOVE the Item Output. The Visualize button uses this exact arrangement."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Fluid I/O + Pipes",
+      "recipe": "magneticraft2:multiblock_fluid_input",
+      "recipe2": "magneticraft2:multiblock_fluid_output",
+      "text": "The Washer has separate fluid ports. Feed clean water into the green-marked Fluid Input. Dirty process water leaves through the brown-marked Fluid Output. Copper Fluid Pipes are passive transport blocks; connect the output line to a Copper Fluid Tank to collect Dirty Water."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Water Pump",
+      "recipe": "magneticraft2:mechanical_water_pump",
+      "text": "Place the pump directly above a water source. Its TOP is the only fluid output. Place the pump against the end of a Wooden Shaft: the visible crank-wheel side is the only mechanical input, and power does not pass through the opposite side. It needs at least 15 RPM and 2 torque. Faster rotation increases flow up to 200 mB/t.",
+      "recipe2": "magneticraft2:water_pipe"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Copper Fluid Tank",
+      "recipe": "magneticraft2:copper_fluid_tank",
+      "text": "The Copper Fluid Tank stores 8000 mB of one fluid. Connect a Copper Fluid Pipe to the TOP socket. The tank periodically pulls from reachable multiblock Fluid Outputs, so Dirty Water from the Ore Washer can be collected without making every pipe tick. The four inspection windows show the real fluid texture, color and fill level."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Transfer Arm",
+      "recipe": "magneticraft2:mechanical_transfer_arm",
+      "text": "Early item automation stays physical. The control console is the block's FRONT/FACING side and naturally faces the player after placement. Its F/B/L/R buttons show orange IN for the source and blue OUT for the destination, and Left/Right match the visible buttons from the panel view."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Arm filters$()$(br2)The lower window on the FRONT console is the filter slot. Right-click it with an item to set a ghost filter; the item is not consumed. The panel shows ANY with no filter, ALLOW for whitelist, or BLOCK for blacklist. Empty-hand click toggles ALLOW/BLOCK; sneak-right-click clears it.$(br2)If the destination fills, the arm waits with the item in its claw instead of deleting it."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Washer operation$()$(br2)Feed Crushed Cassiterite into the Item Input. Each batch uses 250 mB clean water and produces 250 mB Dirty Water, one Washed Cassiterite, and a 25% chance of Gravel.$(br2)Collect Dirty Water from its separate fluid output or the Washer will pause when the waste tank fills. Send Washed Cassiterite to the Mechanical Sifter for Tin Concentrate; optional Gravel can also be sifted into Sand."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Sifter Controller",
+      "recipe": "magneticraft2:mechanical_sifter",
+      "text": "The Sifter is a 3x2x2 Gear V2 machine. Its Item Input is part of the upper hopper area, while the lower-right block is a real Mechanical Input Bearing. Connect a Wooden Shaft, gears, a crank-driven network or another Gear V2 source to that bearing. The input shaft turns the visible Medium Wooden Gear and linkage, which shakes the sieve.",
+      "recipe2": "magneticraft2:mechanical_input_module"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Sifter Outputs",
+      "recipe": "magneticraft2:multiblock_item_primary_output",
+      "recipe2": "magneticraft2:multiblock_item_byproduct_output",
+      "text": "The Sifter has two independent item outputs. Primary Output receives Tin Concentrate when processing Washed Cassiterite, or Sand when processing Gravel. Byproduct Output receives the chance-based Flint from either recipe.$(br2)Each port exposes only its own slot to hoppers, transfer arms and other Forge item handlers."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Sifter",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PP",
+            "IP",
+            "PP"
+          ],
+          [
+            "PO",
+            "0P",
+            "MB"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:mechanical_sifter",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "B": "magneticraft2:multiblock_item_byproduct_output",
+          "M": "magneticraft2:mechanical_input_module"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the frame as shown and right-click the controller to form it. Feed Washed Cassiterite into the upper Item Input to make Tin Concentrate. The lower-right Mechanical Input Bearing takes Gear V2 power, shaking the sieve through its crank linkage.$(br2)The left front port is Primary Output, the right front port is Byproduct Output. Gravel is an additional recipe for Sand and occasional Flint."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Cassiterite -> Tin$()$(br2)1. Mechanical Grinder: Cassiterite Ore -> Crushed Cassiterite.$(br)2. Ore Washer: Crushed Cassiterite + 250 mB Water -> Washed Cassiterite + 250 mB Dirty Water (25% chance of Gravel).$(br)3. Mechanical Sifter: Washed Cassiterite -> Tin Concentrate (15% chance of Flint).$(br)4. Primitive Furnace: Tin Concentrate + Coal -> Tin Ingot + Slag.$(br2)The Sifter needs at least 15 speed and 2 torque, and takes 160 ticks per batch."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)First Bronze$()$(br2)Make Tin Concentrate in the Mechanical Sifter, then fire it with Coal in the Primitive Furnace to obtain Tin. Combine three Copper Ingots with one Tin Ingot into a Bronze Alloy Charge, and fire that with Coal for four Bronze Ingots.$(br2)Optional recovery: sift the Washer's Gravel into Sand with a 25% chance of Flint. It does not replace the Cassiterite-to-Tin Concentrate recipe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Data-driven ore processing$()$(br2)Grinding, washing and sifting requirements now live in recipe JSON instead of being hard-coded into each machine. New minerals can define their own speed, torque, time, outputs and byproduct chance without another Java machine class.$(br2)This is the foundation for processing the rest of Magneticraft2's ore catalogue through later ages."
+    }
+  ],
+  "extra_recipe_mappings": {
+    "magneticraft2:primitive_anvil": 1,
+    "magneticraft2:primitive_grinder_bmultiblock": 3,
+    "magneticraft2:primitive_grindertop": 3,
+    "magneticraft2:mechanical_ore_washer": 7,
+    "magneticraft2:mechanical_input_module": 7,
+    "magneticraft2:multiblock_item_input": 8,
+    "magneticraft2:multiblock_item_output": 8,
+    "magneticraft2:mechanical_sifter": 16,
+    "magneticraft2:cassiterite_ore": 19,
+    "magneticraft2:crushed_cassiterite": 19,
+    "magneticraft2:washed_cassiterite": 19,
+    "magneticraft2:tin_concentrate": 19,
+    "magneticraft2:tin_ingot": 19,
+    "magneticraft2:bronze_charge": 20,
+    "magneticraft2:bronze_ingot": 20,
+    "magneticraft2:multiblock_fluid_input": 10,
+    "magneticraft2:water_pipe": 11,
+    "magneticraft2:mechanical_water_pump": 11,
+    "magneticraft2:multiblock_fluid_output": 10,
+    "magneticraft2:copper_fluid_tank": 12,
+    "magneticraft2:primitive_grinder_base": 3,
+    "magneticraft2:primitive_grinder_top": 3,
+    "magneticraft2:mechanical_transfer_arm": 13,
+    "magneticraft2:multiblock_item_primary_output": 17,
+    "magneticraft2:multiblock_item_byproduct_output": 17
+  },
+  "sortnum": 0,
+  "read_by_default": true
+}

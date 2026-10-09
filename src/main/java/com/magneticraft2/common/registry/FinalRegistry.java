@@ -30,6 +30,7 @@ public class FinalRegistry {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
         CreativeTabRegistry.init(bus);
         RecipesRegistry.init(bus);
+        FluidRegistry.init(bus);
         BlockRegistry.init(bus);
         ItemRegistry.init(bus);
         BlockEntityRegistry.init(bus);

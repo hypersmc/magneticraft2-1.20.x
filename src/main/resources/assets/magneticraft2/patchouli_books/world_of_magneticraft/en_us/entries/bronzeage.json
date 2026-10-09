@@ -1,12 +1,20 @@
 {
   "name": "Bronze Age",
-  "description": "",
+  "description": "Bronze begins when the mature Copper workshop can turn Cassiterite into Tin and alloy it with Copper.",
   "category": "magneticraft2:walkthrough",
-  "icon": "magneticraft2:cassiterite_ore",
+  "icon": "magneticraft2:bronze_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Bronze Age progression will follow the Copper Age."
+      "text": "$(bold)Entering the Bronze Age$()$(br2)Bronze is no longer an arbitrary crafting unlock. The transition starts with Cassiterite and requires the full Copper Age processing chain: grinding, water washing, crank-driven sifting and furnace smelting."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Tin production$()$(br2)Cassiterite Ore -> Crushed Cassiterite -> Washed Cassiterite -> Tin Concentrate -> Tin Ingot.$(br2)The Washer requires clean water and produces Dirty Water. The Gear V2-driven Sifter is required to refine Washed Cassiterite into Tin Concentrate. It can also optionally sift any Gravel into Sand and Flint.$(br2)If you cannot make Tin yet, complete the Grinder, Washer and Sifter chapters of the Copper Workshop."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze alloy$()$(br2)Prepare one Bronze Alloy Charge from three Copper Ingots and one Tin Ingot, then fire it with coal in the Primitive Furnace. One charge produces four Bronze Ingots and Slag.$(br2)Bronze machinery and tools will build from this point."
     }
   ],
   "sortnum": 3,

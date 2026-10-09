@@ -1,12 +1,44 @@
 {
   "name": "Copper Age",
-  "description": "The next stage after primitive copper production.",
+  "description": "Build a real mechanical workshop: metalworking, continuous power, control, logistics and improved ore processing.",
   "category": "magneticraft2:walkthrough",
   "icon": "minecraft:copper_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Producing your first Copper Ingot in the Primitive Furnace brings you into the Copper Age. The full Copper Age progression is still being rebuilt; the Stone Age test currently ends at this transition."
+      "text": "$(bold)Welcome to the Copper Age$()$(br2)Your first Copper Ingot ends the Stone Age. Copper is where Magneticraft2 stops being only primitive survival and starts becoming a mechanical technology mod.$(br2)You will manufacture parts, build rotational power networks, automate item movement and improve ore yield."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)1. Work the metal$()$(br2)Start with the Primitive Anvil. Turn Copper Ingots into Copper Plates, then use those plates to reinforce the first proper control and transmission components.$(br2)See $(l:magneticraft2:copper_processing)Copper Processing$() for the anvil, Mechanical Grinder and the first 2x copper-yield loop."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)2. Build a drivetrain$()$(br2)Wooden Shafts and gears teach the core Gear V2 rules. The handled gear provides manual power; Water Wheels provide continuous power; Pulleys and Leather Drive Belts carry rotation across open space; Gearboxes turn and route the network.$(br2)See $(l:magneticraft2:copper_power)Mechanical Power$()."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)3. Control and protect it$()$(br2)Once the workshop grows, power must be controllable. The Clutch gives manual/redstone disconnects, the Overload Disconnect protects the source side automatically, and the Mechanical Brake deliberately applies a heavy load without breaking the drivetrain.$(br2)All three are documented in $(l:magneticraft2:copper_power)Mechanical Power$()."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)4. Move items$()$(br2)Conveyor Rollers and Item Belts form the first physical logistics system. Runs can be horizontal or exactly 45 degrees, and powered belts hand stacks smoothly from one section to another.$(br2)See $(l:magneticraft2:copper_logistics)Item Logistics$() for placement rules and belt limits."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)5. Convert motion$()$(br2)The Wooden Crank turns rotational motion into a real reciprocating stroke. This is the bridge from simple rotating machinery to mechanisms such as the upcoming mechanical Bellows.$(br2)The crank's placement and linear output are documented in $(l:magneticraft2:copper_power)Mechanical Power$()."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Current Copper workshop$()$(br2)Available now: Primitive Anvil, Wooden Shafts/gears, Water Wheels, Pulleys, Leather Drive Belts, Gearboxes, Clutch, Overload Disconnect, Mechanical Brake, Crank, Mechanical Bellows, Flywheel, Conveyor Rollers, Item Belts, Mechanical Grinder, Mechanical Ore Washer and Mechanical Sifter."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Next milestones$()$(br2)The Crank, Mechanical Bellows and Flywheel now complete the first Copper Age motion/control chain: rotation can be converted into reciprocating work, air can be pumped automatically, and rotational inertia can be buffered.$(br2)The next major direction is deeper ore processing, Tin/Cassiterite handling and the road to Bronze."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)The road to Bronze$()$(br2)Grind Cassiterite Ore, wash the crushed ore with water, sift the Washed Cassiterite into Tin Concentrate, and smelt that with Coal to get Tin.$(br2)Each wash also produces Dirty Water and can yield Gravel. The same Sifter can turn the Gravel into Sand with a chance of Flint.$(br2)Combine three Copper Ingots with one Tin Ingot to make Bronze Charge; fire it in the Primitive Furnace to reach Bronze Age."
     }
   ],
   "sortnum": 2,
