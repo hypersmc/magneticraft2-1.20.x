@@ -385,19 +385,30 @@ public class MechanicalSifterBlockEntity
     public MechanicalInputModuleBlockEntity
     getMechanicalInput() {
         if (level == null
-                || !formed
-                || getMultiblockController() == null) {
+                || !formed) {
             return null;
         }
 
-        BlockPos inputPos =
-                getMultiblockController()
-                        .getmodulePos(
-                                "mechanical_input"
-                        );
+        BlockPos inputPos = null;
 
+        if (getMultiblockController() != null) {
+            inputPos =
+                    getMultiblockController()
+                            .getmodulePos(
+                                    "mechanical_input"
+                            );
+        }
+
+        // The client does not always reconstruct the full MultiblockController
+        // object immediately after chunk load. The Sifter's Gear V2 input is
+        // structurally fixed on the right side of the matched facing, so this
+        // gives rendering a deterministic fallback without changing gameplay.
         if (inputPos == null) {
-            return null;
+            inputPos =
+                    worldPosition.relative(
+                            getFacing()
+                                    .getCounterClockWise()
+                    );
         }
 
         BlockEntity blockEntity =
@@ -442,7 +453,7 @@ public class MechanicalSifterBlockEntity
 
         // Eccentric linkage: one full gear revolution produces one complete
         // back-and-forth sieve stroke. Keep the same +/-0.12 block travel the
-        // old crank-only implementation used.
+        // previous direct-crank implementation used.
         return (float) Math.sin(
                 Math.toRadians(
                         angle
