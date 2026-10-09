@@ -34,7 +34,9 @@ public class MechanicalInputModuleBlockEntityRenderer
 
     private static final ResourceLocation SHAFT_MODEL =
             new ResourceLocation("magneticraft2", "block/shaft_wood");
-    private static final ResourceLocation SIFTER_SHAFT_MODEL =\n            new ResourceLocation("magneticraft2", "block/mechanical_sifter_input_shaft");\n    private static final ResourceLocation HOUSING_MODEL =
+    private static final ResourceLocation SIFTER_SHAFT_MODEL =
+            new ResourceLocation("magneticraft2", "block/mechanical_sifter_input_shaft");
+    private static final ResourceLocation HOUSING_MODEL =
             new ResourceLocation("magneticraft2", "block/mechanical_input_module_housing");
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
