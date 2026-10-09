@@ -258,53 +258,35 @@ public class MechanicalSifterBlockEntityRenderer
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        ItemStack stack =
-                sifter.getInputStack();
-
-        if (stack.isEmpty()) {
+        ItemStack input = sifter.getInputStack();
+        if (input.isEmpty()) {
             return;
         }
 
-        /*
-         * Waiting material lives in the feed hopper, not on the moving sieve.
-         * That makes the feed path visually stable and leaves only the actual
-         * workpiece moving through the classifier.
-         */
-        int queuedCount =
-                sifter.isProcessing()
-                        ? Math.max(
-                                0,
-                                stack.getCount() - 1
-                        )
-                        : stack.getCount();
-
-        int visibleQueued =
-                Math.min(
-                        queuedCount,
-                        3
-                );
+        // Only the batch being worked travels through the machine.
+        // Everything else remains visibly queued inside the fixed hopper.
+        int reserved = sifter.isProcessing()
+                ? sifter.getActiveInputCount()
+                : 0;
+        int visibleQueued = Math.min(
+                3,
+                Math.max(0, input.getCount() - reserved)
+        );
 
         double[][] offsets = {
-                {0.000D, 0.000D, 0.000D},
+                {0.0D, 0.0D, 0.0D},
                 {-0.115D, 0.025D, 0.035D},
                 {0.115D, 0.045D, -0.025D}
         };
 
-        for (int i = 0;
-             i < visibleQueued;
-             i++) {
+        for (int i = 0; i < visibleQueued; i++) {
             renderStoredItem(
-                    sifter,
-                    stack,
+                    sifter, input,
                     0.50D + offsets[i][0],
                     1.73D + offsets[i][1],
                     0.50D + offsets[i][2],
-                    0.43F,
-                    410 + i,
-                    poseStack,
-                    buffer,
-                    packedLight,
-                    packedOverlay
+                    0.43F, 410 + i,
+                    poseStack, buffer, packedLight, packedOverlay
             );
         }
 
@@ -312,99 +294,68 @@ public class MechanicalSifterBlockEntityRenderer
             return;
         }
 
-        double progress =
-                Math.max(
-                        0.0D,
-                        Math.min(
-                                1.0D,
-                                sifter.getVisualProcessProgress(
-                                        partialTicks
-                                )
-                        )
-                );
+        double progress = Math.max(0.0D, Math.min(
+                1.0D,
+                sifter.getVisualProcessProgress(partialTicks)
+        ));
 
-        double x;
-        double y;
-        double z;
-
-        /*
-         * Stage 1: fall from the hopper throat onto the upper end of the screen.
-         * Stage 2: travel down the single shaking screen bed.
-         * Stage 3: drop into the fines catch pan/outlet.
-         */
         if (progress < 0.18D) {
-            double t =
-                    smoothStep(
-                            progress / 0.18D
-                    );
-
-            x = 0.50D;
-            y = lerp(
-                    1.68D,
-                    0.91D,
-                    t
-            );
-            z = lerp(
-                    0.62D,
-                    0.88D,
-                    t
-            );
-        } else if (progress < 0.82D) {
-            double t =
-                    smoothStep(
-                            (progress - 0.18D)
-                                    / 0.64D
-                    );
-
-            x = 0.50D
-                    + shake * 0.12D;
-            y = lerp(
-                    0.87D,
-                    0.69D,
-                    t
-            );
-            z = lerp(
-                    0.89D,
-                    1.48D,
-                    t
-            ) + shake;
-        } else {
-            double t =
-                    smoothStep(
-                            (progress - 0.82D)
-                                    / 0.18D
-                    );
-
-            x = lerp(
+            // The input drops through the hopper throat onto the sieve.
+            double t = smoothStep(progress / 0.18D);
+            renderStoredItem(sifter, input,
                     0.50D,
-                    0.98D,
-                    t
-            );
-            y = lerp(
-                    0.69D,
-                    0.43D,
-                    t
-            );
-            z = lerp(
-                    1.48D,
-                    1.78D,
-                    t
-            ) + shake * 0.35D;
-        }
+                    lerp(1.68D, 0.91D, t),
+                    lerp(0.62D, 0.89D, t),
+                    0.43F, 499, poseStack, buffer, packedLight, packedOverlay);
+        } else if (progress < 0.76D) {
+            // A workpiece follows the inclined, shaking mesh, never the
+            // stationary lower collection pan or output chutes.
+            double t = smoothStep((progress - 0.18D) / 0.58D);
+            renderStoredItem(sifter, input,
+                    0.50D + shake * 0.12D,
+                    lerp(0.91D, 0.82D, t),
+                    lerp(0.89D, 1.36D, t) + shake,
+                    0.43F, 499, poseStack, buffer, packedLight, packedOverlay);
+        } else {
+            // The fine primary result falls through the mesh into the
+            // lower catch pan, then crosses to the left Primary Output.
+            // The optional coarse byproduct remains on top of the mesh
+            // and travels to the separate right-hand Byproduct Output.
+            ItemStack primary = sifter.getProcessingPrimaryPreview();
+            if (primary.isEmpty()) {
+                primary = input;
+            }
 
-        renderStoredItem(
-                sifter,
-                stack,
-                x,
-                y,
-                z,
-                0.46F,
-                499,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
+            double x;
+            double y;
+            double z;
+            if (progress < 0.91D) {
+                double t = smoothStep((progress - 0.76D) / 0.15D);
+                x = 0.50D;
+                y = lerp(0.82D, 0.46D, t);
+                z = lerp(1.36D, 1.54D, t);
+            } else {
+                double t = smoothStep((progress - 0.91D) / 0.09D);
+                x = lerp(0.50D, -0.42D, t);
+                y = lerp(0.46D, 0.69D, t);
+                z = lerp(1.54D, 1.56D, t);
+            }
+
+            renderStoredItem(sifter, primary,
+                    x, y, z, 0.39F, 500,
+                    poseStack, buffer, packedLight, packedOverlay);
+
+            ItemStack byproduct = sifter.getProcessingByproductPreview();
+            if (!byproduct.isEmpty()) {
+                double t = smoothStep((progress - 0.76D) / 0.24D);
+                renderStoredItem(sifter, byproduct,
+                        lerp(0.50D, 1.45D, t) + shake * (1.0D - t),
+                        lerp(0.82D, 0.72D, t),
+                        lerp(1.36D, 1.56D, t),
+                        0.37F, 501,
+                        poseStack, buffer, packedLight, packedOverlay);
+            }
+        }
     }
 
     private static double smoothStep(

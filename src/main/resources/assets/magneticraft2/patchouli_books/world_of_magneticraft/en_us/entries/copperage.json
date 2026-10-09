@@ -38,7 +38,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)The road to Bronze$()$(br2)The Copper Age now ends with a complete Cassiterite beneficiation chain. Grind Cassiterite, wash it with water, classify it in the crank-driven Sifter, smelt Tin Concentrate into Tin, then alloy three Copper with one Tin into a Bronze Charge.$(br2)Firing that charge produces your first Bronze and opens the next age."
+      "text": "$(bold)The road to Bronze$()$(br2)Grind Cassiterite, wash it with water, then smelt Washed Cassiterite directly with Coal for Tin. Each wash also makes Gravel and Dirty Water. Recover Sand and occasional Flint from the Gravel using the crank-driven Mechanical Sifter.$(br2)Combine three Copper with one Tin for Bronze Charge; fire it in the Primitive Furnace to reach Bronze Age."
     }
   ],
   "sortnum": 2,

@@ -131,7 +131,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Washer operation$()$(br2)Feed crushed ore through the rear Item Input. The Washer stores 4000 mB of clean water and 4000 mB of Dirty Water. Each cassiterite batch consumes 250 mB clean water and produces 250 mB Dirty Water. Connect the Dirty Fluid Output to a Copper Fluid Tank; otherwise the Washer eventually pauses when its internal waste tank fills.$(br2)Dirty Water is intended for later treatment/recycling rather than permanent disposal."
+      "text": "$(bold)Washer operation$()$(br2)Feed Crushed Cassiterite through the Item Input. Each batch uses 250 mB clean water and produces 250 mB Dirty Water, one Washed Cassiterite and one Gravel. Collect Dirty Water through its separate fluid port, or the Washer pauses when its 4000 mB waste tank fills.$(br2)Send Washed Cassiterite to the Primitive Furnace with Coal for Tin. Feed the Gravel into the Mechanical Sifter for secondary recovery."
     },
     {
       "type": "patchouli:crafting",
@@ -145,7 +145,7 @@
       "title": "Sifter Outputs",
       "recipe": "magneticraft2:multiblock_item_primary_output",
       "recipe2": "magneticraft2:multiblock_item_byproduct_output",
-      "text": "The Sifter has two real output ports. The Primary Output exposes only the main recipe result, while the Byproduct Output exposes only the secondary/fines slot. Both use the standard Forge item handler, so belts, transfer arms, hoppers and compatible modded item transport can extract from the correct chute independently."
+      "text": "The Sifter has two real output ports. The left Primary Output holds the fine material recovered through the mesh (Sand from Gravel). The right Byproduct Output holds any separately recovered coarse material (a chance of Flint). Both ports expose their own slot to hoppers, Mechanical Transfer Arms and other item handlers, without mixing products."
     },
     {
       "type": "patchouli:multiblock",
@@ -174,15 +174,15 @@
         },
         "symmetrical": false
       },
-      "text": "Build the frame exactly as shown and right-click the controller to form it. The upper-center Item Input feeds the hopper. On the front row, Primary Output is on the left and Byproduct Output is on the right. The lower-right Mechanical Input Bearing is the real Gear V2 power connection: attach a shaft or gear network there. Its rotation drives the visible Medium Wooden Gear, linkage and inclined shaking sieve."
+      "text": "Build the frame exactly as shown and right-click its controller to form it. Feed Gravel into the upper Item Input. The lower-right Mechanical Input Bearing accepts Gear V2 rotational power and shakes the sieve through its crank linkage. The left front port is the Primary Output (Sand), and the right front port is the chance-based Byproduct Output (Flint). Watch the workpiece fall from the hopper, shake across the mesh and separate into the two chutes."
     },
     {
       "type": "text",
-      "text": "$(bold)Cassiterite -> Tin$()$(br2)Cassiterite now has the first complete beneficiation chain: $(br)1. Mechanical Grinder -> Crushed Cassiterite$(br)2. Ore Washer + water -> Washed Cassiterite$(br)3. Gear V2-driven Sifter -> Tin Concentrate$(br)4. Primitive Furnace + coal -> Tin Ingot$(br2)The Cassiterite sifting recipe needs at least 15 speed and 2 torque, runs for about eight seconds, and has a 15% chance to produce Flint as a byproduct."
+      "text": "$(bold)Cassiterite -> Tin (and recovery)$()$(br2)1. Grind Cassiterite Ore into Crushed Cassiterite.$(br)2. Wash the crushed ore with 250 mB water to obtain Washed Cassiterite, Gravel and Dirty Water.$(br)3. Smelt Washed Cassiterite with Coal in the Primitive Furnace to obtain Tin.$(br2)The Sifter is a useful side process, not a required Tin gate: it separates the Washer's Gravel into Sand with a 25% chance of Flint. It needs 15 speed, 2 torque and 160 ticks per batch."
     },
     {
       "type": "text",
-      "text": "$(bold)First Bronze$()$(br2)Combine three Copper Ingots with one Tin Ingot to prepare a Bronze Alloy Charge. Fire the charge with coal in the Primitive Furnace to produce four Bronze Ingots.$(br2)Making the first Bronze therefore proves that the Copper workshop can mine, crush, wash, classify and smelt an alloy feedstock."
+      "text": "$(bold)First Bronze$()$(br2)Smelt Washed Cassiterite with Coal for Tin, and combine three Copper Ingots with one Tin Ingot to prepare a Bronze Alloy Charge. Fire the charge with Coal in the Primitive Furnace for four Bronze Ingots.$(br2)Sifting leftover Gravel recovers extra Sand and occasional Flint; it improves material use without locking Tin production behind an optional machine."
     },
     {
       "type": "text",
