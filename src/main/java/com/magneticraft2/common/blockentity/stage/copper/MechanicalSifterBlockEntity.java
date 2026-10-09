@@ -7,6 +7,7 @@ import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
+import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * JSON-multiblock controller for the crank-driven Mechanical Sifter.
+ * JSON-multiblock controller for the Gear V2-driven Mechanical Sifter.
  */
 public class MechanicalSifterBlockEntity
         extends BaseBlockEntityMagneticraft2 {
@@ -264,8 +265,8 @@ public class MechanicalSifterBlockEntity
 
         MultiblockProcessingRecipe recipe =
                 getMatchingRecipe();
-        CrankBlockEntity_wood crank =
-                getConnectedCrank();
+        MechanicalInputModuleBlockEntity input =
+                getMechanicalInput();
 
         if (recipe == null) {
             removeMechanicalLoad();
@@ -286,18 +287,21 @@ public class MechanicalSifterBlockEntity
             return;
         }
 
+        GearNode inputNode =
+                input == null
+                        ? null
+                        : input.getOrCreateGearNode();
+
         boolean canAttempt =
-                crank != null
-                        && crank.getOrCreateGearNode()
-                        .getEffectiveSpeed()
+                inputNode != null
+                        && inputNode.getEffectiveSpeed()
                         >= recipe.getMinSpeed()
-                        && crank.getOrCreateGearNode()
-                        .getTorque()
+                        && inputNode.getTorque()
                         + EPSILON
                         >= recipe.getTorque();
 
         setMechanicalLoad(
-                crank,
+                input,
                 recipe.getTorque(),
                 canAttempt
         );
@@ -348,7 +352,7 @@ public class MechanicalSifterBlockEntity
     }
 
     private void setMechanicalLoad(
-            @Nullable CrankBlockEntity_wood crank,
+            @Nullable MechanicalInputModuleBlockEntity input,
             float torque,
             boolean active) {
         if (level == null) {
@@ -359,11 +363,11 @@ public class MechanicalSifterBlockEntity
                 .setMechanicalLoad(
                         level,
                         worldPosition,
-                        crank == null
+                        input == null
                                 ? worldPosition
-                                : crank.getBlockPos(),
+                                : input.getBlockPos(),
                         Math.max(0.0F, torque),
-                        active && crank != null
+                        active && input != null
                 );
     }
 
@@ -378,31 +382,31 @@ public class MechanicalSifterBlockEntity
     }
 
     @Nullable
-    public CrankBlockEntity_wood
-    getConnectedCrank() {
-        if (level == null || !formed) {
+    public MechanicalInputModuleBlockEntity
+    getMechanicalInput() {
+        if (level == null
+                || !formed
+                || getMultiblockController() == null) {
             return null;
         }
 
-        Direction facing =
-                getFacing();
+        BlockPos inputPos =
+                getMultiblockController()
+                        .getmodulePos(
+                                "mechanical_input"
+                        );
 
-        BlockPos crankPos =
-                worldPosition.relative(
-                        facing.getOpposite()
-                );
-
-        BlockEntity blockEntity =
-                level.getBlockEntity(crankPos);
-
-        if (blockEntity
-                instanceof CrankBlockEntity_wood crank
-                && crank.getRodOutputPos()
-                .equals(worldPosition)) {
-            return crank;
+        if (inputPos == null) {
+            return null;
         }
 
-        return null;
+        BlockEntity blockEntity =
+                level.getBlockEntity(inputPos);
+
+        return blockEntity
+                instanceof MechanicalInputModuleBlockEntity input
+                ? input
+                : null;
     }
 
     public Direction getFacing() {
@@ -419,26 +423,31 @@ public class MechanicalSifterBlockEntity
 
     public float getDriveRotationDegrees(
             float partialTicks) {
-        CrankBlockEntity_wood crank =
-                getConnectedCrank();
+        MechanicalInputModuleBlockEntity input =
+                getMechanicalInput();
 
-        return crank == null
+        return input == null
                 ? 0.0F
-                : crank.getVisualRotationDegrees(
+                : input.getVisualRotationDegrees(
                         partialTicks
                 );
     }
 
     public float getShakeOffset(
             float partialTicks) {
-        CrankBlockEntity_wood crank =
-                getConnectedCrank();
-
-        return crank == null
-                ? 0.0F
-                : (crank.getStrokeProgress(
+        float angle =
+                getDriveRotationDegrees(
                         partialTicks
-                ) - 0.5F) * 0.24F;
+                );
+
+        // Eccentric linkage: one full gear revolution produces one complete
+        // back-and-forth sieve stroke. Keep the same +/-0.12 block travel the
+        // old crank-only implementation used.
+        return (float) Math.sin(
+                Math.toRadians(
+                        angle
+                )
+        ) * 0.12F;
     }
 
     @Nullable
