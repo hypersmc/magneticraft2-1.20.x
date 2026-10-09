@@ -27,9 +27,9 @@ import java.util.Map;
  * Formed Mechanical Sifter renderer.
  *
  * Like the other multiblocks, the complete static frame comes from the
- * replacement model selected in JSON. The two screens and the reciprocating
- * crank linkage render separately so the formed machine explains how the
- * rotational crank becomes a back-and-forth classification motion.
+ * replacement model selected in JSON. The inclined sieve, Medium Wooden Gear
+ * and reciprocating linkage render separately so the formed machine explains
+ * how Gear V2 rotation becomes a back-and-forth classification motion.
  */
 public class MechanicalSifterBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalSifterBlockEntity> {
@@ -222,14 +222,15 @@ public class MechanicalSifterBlockEntityRenderer
          * player already builds instead of inventing a separate flywheel style.
          */
         poseStack.translate(
-                1.76D,
-                0.91D,
-                0.94D
+                1.30D,
+                0.56D,
+                0.54D
         );
 
-        // The actual Large Gear state faces EAST, giving it an X-axis axle on
-        // the machine's right side. Rotate the complete block model around that
-        // same X axis using the sifter's mechanical rotation.
+        // The real Mechanical Input Bearing is the lower-right block of the
+        // SOUTH structure and uses an X-axis shaft. This Medium Wooden Gear
+        // sits just inside that bearing on the same axle, while the outside
+        // face of the bearing remains clear for the player's shaft/gear network.
         poseStack.mulPose(
                 Axis.XP.rotationDegrees(
                         rotation
@@ -237,9 +238,9 @@ public class MechanicalSifterBlockEntityRenderer
         );
 
         poseStack.scale(
-                0.92F,
-                0.92F,
-                0.92F
+                0.78F,
+                0.78F,
+                0.78F
         );
         poseStack.translate(
                 -0.5D,
