@@ -125,6 +125,13 @@ public class MultiblockItemPortBlockEntity
                 .copy();
     }
 
+    private boolean acceptsControllerInput(
+            @Nullable BaseBlockEntityMagneticraft2 controller,
+            ItemStack stack) {
+        return !(controller instanceof MechanicalSifterBlockEntity sifter)
+                || sifter.acceptsRecipeInput(stack);
+    }
+
     public boolean insertFromPlayer(ItemStack stack) {
         if (isOutputPort()) {
             return false;
@@ -134,7 +141,8 @@ public class MultiblockItemPortBlockEntity
                 getController();
 
         if (controller == null
-                || controller.itemHandler == null) {
+                || controller.itemHandler == null
+                || !acceptsControllerInput(controller, stack)) {
             return false;
         }
 
@@ -425,7 +433,8 @@ public class MultiblockItemPortBlockEntity
                     getController();
 
             if (controller == null
-                    || controller.itemHandler == null) {
+                    || controller.itemHandler == null
+                    || !acceptsControllerInput(controller, stack)) {
                 return stack;
             }
 
@@ -507,6 +516,7 @@ public class MultiblockItemPortBlockEntity
 
             return controller != null
                     && controller.itemHandler != null
+                    && acceptsControllerInput(controller, stack)
                     && controller.itemHandler
                     .isItemValid(
                             0,

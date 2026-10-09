@@ -2,17 +2,17 @@
   "type": "magneticraft2:multiblock_processing",
   "machine": "magneticraft2:mechanical_sifter",
   "input": {
-    "item": "magneticraft2:washed_cassiterite"
+    "item": "minecraft:gravel"
   },
   "output": {
-    "item": "magneticraft2:tin_concentrate",
+    "item": "minecraft:sand",
     "count": 1
   },
   "byproduct": {
     "item": "minecraft:flint",
     "count": 1
   },
-  "byproduct_chance": 0.15,
+  "byproduct_chance": 0.25,
   "process_time": 160,
   "mechanical": {
     "min_speed": 15,

@@ -60,6 +60,10 @@ public class MechanicalSifterBlockEntity
     private int processTime = 0;
     private int totalProcessTime = 160;
     private boolean processing = false;
+    // A batch chooses its optional byproduct once. Never reroll on a stall.
+    @Nullable
+    private ResourceLocation activeRecipeId;
+    private boolean pendingByproduct = false;
 
     // Processing state is not network-synced every tick. Predict the visual
     // progress client-side between start/stop sync points, matching the Washer.
@@ -103,6 +107,33 @@ public class MechanicalSifterBlockEntity
 
     public ItemStack getByproductStack() {
         return itemHandler.getStackInSlot(2);
+    }
+
+    /**
+     * Used by the physical Item Input module (manual and automated).
+     * Invalid material must not occupy the one processing input slot.
+     */
+    public boolean acceptsRecipeInput(ItemStack stack) {
+        return MultiblockRecipeHandler.acceptsInput(level, RECIPE_MACHINE, stack);
+    }
+
+    public int getActiveInputCount() {
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? 1 : recipe.getInputCount();
+    }
+
+    public ItemStack getProcessingPrimaryPreview() {
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? ItemStack.EMPTY : recipe.getOutput();
+    }
+
+    public ItemStack getProcessingByproductPreview() {
+        if (!pendingByproduct) {
+            return ItemStack.EMPTY;
+        }
+
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        return recipe == null ? ItemStack.EMPTY : recipe.getByproduct();
     }
 
     public float getProcessProgress() {
@@ -258,97 +289,99 @@ public class MechanicalSifterBlockEntity
         }
 
         if (!formed) {
+            clearBatch();
             removeMechanicalLoad();
             setProcessing(false);
             return;
         }
 
-        MultiblockProcessingRecipe recipe =
-                getMatchingRecipe();
-        MechanicalInputModuleBlockEntity input =
-                getMechanicalInput();
+        MultiblockProcessingRecipe recipe = getMatchingRecipe();
+        MechanicalInputModuleBlockEntity input = getMechanicalInput();
 
         if (recipe == null) {
+            clearBatch();
             removeMechanicalLoad();
-            processTime = 0;
-            totalProcessTime = 160;
             setProcessing(false);
             return;
+        }
+
+        // Changing the recipe or returning after a completed batch starts a
+        // new one. A stalled batch keeps its progress and result selection.
+        if (!recipe.getId().equals(activeRecipeId)) {
+            activeRecipeId = recipe.getId();
+            processTime = 0;
+            totalProcessTime = recipe.getProcessTime();
+            ItemStack possibleByproduct = recipe.getByproduct();
+            pendingByproduct = !possibleByproduct.isEmpty()
+                    && level.random.nextFloat() < recipe.getByproductChance();
+            setChanged();
         }
 
         ItemStack output = recipe.getOutput();
         ItemStack byproduct = recipe.getByproduct();
 
+        // Only reserve the secondary port if THIS batch will use it.
+        // A full byproduct slot must not block batches producing no waste.
         if (!canAccept(1, output)
-                || (!byproduct.isEmpty()
-                && !canAccept(2, byproduct))) {
+                || (pendingByproduct && !canAccept(2, byproduct))) {
             removeMechanicalLoad();
             setProcessing(false);
             return;
         }
 
-        GearNode inputNode =
-                input == null
-                        ? null
-                        : input.getOrCreateGearNode();
+        GearNode inputNode = input == null
+                ? null
+                : input.getOrCreateGearNode();
 
-        boolean canAttempt =
-                inputNode != null
-                        && inputNode.getEffectiveSpeed()
-                        >= recipe.getMinSpeed()
-                        && inputNode.getTorque()
-                        + EPSILON
-                        >= recipe.getTorque();
+        boolean canAttempt = inputNode != null
+                && inputNode.getEffectiveSpeed() >= recipe.getMinSpeed()
+                && inputNode.getTorque() + EPSILON >= recipe.getTorque();
 
-        setMechanicalLoad(
-                input,
-                recipe.getTorque(),
-                canAttempt
-        );
+        setMechanicalLoad(input, recipe.getTorque(), canAttempt);
 
         GearNetworkManager.MechanicalLoadState loadState =
                 GearNetworkManager.getInstance()
-                        .getMechanicalLoadState(
-                                level,
-                                worldPosition
-                        );
+                        .getMechanicalLoadState(level, worldPosition);
 
-        if (!canAttempt
-                || !loadState.supplied()) {
+        if (!canAttempt || !loadState.supplied()) {
             setProcessing(false);
             return;
         }
 
-        totalProcessTime =
-                recipe.getProcessTime();
         setProcessing(true);
         processTime++;
         setChanged();
 
-        if (processTime
-                < totalProcessTime) {
+        if (processTime < totalProcessTime) {
             return;
         }
 
-        itemHandler.extractItem(
-                0,
-                recipe.getInputCount(),
-                false
-        );
+        // The output slots have already been checked for capacity; perform
+        // the recipe exactly once, with no rerolls or item loss on overflow.
+        itemHandler.extractItem(0, recipe.getInputCount(), false);
         insertOutput(1, output);
+        if (pendingByproduct) {
+            insertOutput(2, byproduct);
+        }
 
-        if (!byproduct.isEmpty()
-                && level.random.nextFloat()
-                < recipe.getByproductChance()) {
-            insertOutput(
-                    2,
-                    byproduct
-            );
+        activeRecipeId = null;
+        pendingByproduct = false;
+        processTime = 0;
+        processing = false;
+        sync();
+    }
+
+    private void clearBatch() {
+        if (processTime == 0 && activeRecipeId == null
+                && !pendingByproduct) {
+            return;
         }
 
         processTime = 0;
-        setProcessing(false);
-        sync();
+        totalProcessTime = 160;
+        activeRecipeId = null;
+        pendingByproduct = false;
+        setChanged();
     }
 
     private void setMechanicalLoad(
@@ -783,6 +816,10 @@ public class MechanicalSifterBlockEntity
                         : 160;
         processing =
                 tag.getBoolean("Processing");
+        activeRecipeId = tag.contains("ActiveRecipe")
+                ? ResourceLocation.tryParse(tag.getString("ActiveRecipe"))
+                : null;
+        pendingByproduct = tag.getBoolean("PendingByproduct");
 
         if (level != null
                 && level.isClientSide) {
@@ -826,6 +863,10 @@ public class MechanicalSifterBlockEntity
                 "Processing",
                 processing
         );
+        if (activeRecipeId != null) {
+            tag.putString("ActiveRecipe", activeRecipeId.toString());
+        }
+        tag.putBoolean("PendingByproduct", pendingByproduct);
 
         saveMultiblockData(
                 tag,
