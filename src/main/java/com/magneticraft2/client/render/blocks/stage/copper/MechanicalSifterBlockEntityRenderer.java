@@ -208,7 +208,7 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.popPose();
     }
 
-    private void renderDriveWheel(
+    private void renderDriveGear(
             float rotation,
             PoseStack poseStack,
             MultiBufferSource buffer,
