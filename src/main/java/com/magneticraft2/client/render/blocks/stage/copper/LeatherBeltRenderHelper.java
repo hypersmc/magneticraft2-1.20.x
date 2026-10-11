@@ -155,11 +155,13 @@ public final class LeatherBeltRenderHelper {
                     positiveModulo(along, WEAR_PATTERN_LENGTH)
                             / WEAR_SAMPLE_LENGTH + 0.0000001D));
 
-            // Severed sections are physically absent, not transparent faces
-            // over an intact leather strip.
-            boolean snapped = (stage == 4 && (section == 5 || section == 13))
-                    || (stage == 5 && (section == 3 || section == 4
-                    || section == 9 || section == 10 || section == 13));
+            // A belt that still transmits rotation must remain continuous.
+            // Stages 1-4 use partial-width edge tears, never complete gaps.
+            // Only stage 5 (0 remaining cycles) is physically severed.
+            // The Ore Washer also freezes its driven pulley/drum at stage 5.
+            boolean snapped = stage == 5
+                    && (section == 3 || section == 4
+                    || section == 9 || section == 10 || section == 13);
             if (!snapped) {
                 double left = 1.0D;
                 double right = 1.0D;

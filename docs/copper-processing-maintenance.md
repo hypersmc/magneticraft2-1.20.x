@@ -53,7 +53,7 @@ The wear counter also selects **six persistent visual stages**:
 | 50-<75% | 1 | Faded leather, first worn edge | Local discoloration, tiny snapped wires |
 | 25-<50% | 2 | Abrasion marks and frayed sides | Weathered wires and small holes |
 | 10-<25% | 3 | Torn edges, dark stains | Larger ragged openings in the grid |
-| >0-<10% | 4 | Partly severed moving belt | Nearly half the grid torn away |
+| >0-<10% | 4 | Heavily frayed but still continuous moving belt | Nearly half the grid torn away |
 | 0% | 5 | Snapped, stationary belt and stopped driven drum | Mostly missing mesh; processing disabled |
 
 Sifter wear uses baked meshes that keep the **original eight-piece moving
@@ -64,6 +64,9 @@ pristine `mechanical_sifter_upper_tray` model is not edited.
 Washer damage is rendered directly on the **existing** mechanically moving
 leather strip. Its original 0.5-block texture repeat remains intact, and UV
 coordinates are cropped (never stretched or compressed) at the frayed edges.
+**Until the belt reaches 0% life, its entire drive loop stays continuous: no
+missing lengthwise sections while the belt is transmitting rotation.** At 0%,
+the snapped model has true gaps and the driven pulley/drum stop.
 No replacement-item sprites float over machinery.
 
 When life reaches zero, processing pauses without consuming queued items
@@ -93,6 +96,10 @@ not silently implemented rules.
       animating, paused and fully broken. No floating sprites or missing models.
 - [ ] Reload resources while models are damaged; worn meshes must stay baked.
 - [ ] Confirm the moving belt texture does not stretch, distort or jump at seams.
+- [ ] At 1-10% life (visual stage 4) the moving leather belt is badly torn,
+      but has NO complete gaps anywhere around its moving loop.
+- [ ] At 0% life (stage 5) real missing belt sections appear, but the belt
+      itself and driven drum do not continue moving.
 - [ ] Broken Washer stops the downstream pulley/drum but not the upstream shaft.
 - [ ] Worn-out machinery consumes no items or fluid, then resumes after service
       with an intact model/texture.
