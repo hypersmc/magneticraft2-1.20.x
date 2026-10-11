@@ -17,7 +17,30 @@ Minecraft 1.20.1 block model elements must lie within -16..32 model pixels; a si
 - The generic `MultiblockRenderParts.assign` helper is reusable by the next machine; do not hardcode Foundry logic into the filler or the model selector.
 - Missing optional named models in the older geometry loader no longer trigger an unchecked `Optional.get()`.
 
+## Editable machine geometry
+
+The Foundry is now modeled as 99 **named solid volumes** in `tools/multiblock-models/designs/bronze_foundry.json`. These are the editable source, not vanilla item/block models. `build-designs.mjs` extracts only surfaces exposed to air, removes covered faces and coplanar material overlaps, and creates world-aligned UVs. The V2 generator then splits those faces across per-block chunk renderers, preserving the same canonical south-facing model for every orientation.
+
+The geometry uses only texture-correct world-space UV tiles, avoiding both texture stretching and tiny UV-offset hacks. The lower furnace is physically recessed, the upper crucible is open, and the front channel visibly connects to the crucible. Hidden interior faces do not consume vertices.
+
+`--check` detects stale source/controller assets, and the separate V2 `--check` detects stale block-local assets. Both checks are useful after any model adjustment.
+
 ## Usage / development
+
+```bash
+node tools/multiblock-models/build-designs.mjs --self-test
+node tools/multiblock-models/build-designs.mjs --check
+node tools/multiblock-models/generate.mjs --self-test
+node tools/multiblock-models/generate.mjs --check
+
+# When editing designs/bronze_foundry.json:
+node tools/multiblock-models/build-designs.mjs
+node tools/multiblock-models/generate.mjs
+```
+
+Legacy direct models inside sources/ remain supported for machines that are not built from the new design-file approach.
+
+## Original V2 generator usage
 
 ```bash
 node tools/multiblock-models/generate.mjs --self-test

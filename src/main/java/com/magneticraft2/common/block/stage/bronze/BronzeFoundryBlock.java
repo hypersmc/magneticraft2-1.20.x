@@ -30,12 +30,40 @@ import org.jetbrains.annotations.Nullable;
 /** 3x2x3 Foundry shell. The formation blueprint remains datapack JSON. */
 public final class BronzeFoundryBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
-    // Controller at south/front, bottom center; leave central crucible and front access open.
+    // Formed collision is a simplified physical outline, NOT decorative trim.
+    // The deep lower firebox and the upper crucible remain genuinely accessible.
+    // When Voxel V2 arrives this outline can be generated from the same design
+    // instead of being maintained by hand.
     private static final VoxelShape FORMED_SOUTH = VoxelShapeUtils.combine(
-            Block.box(-16, 0, -32, 32, 16, 16),
-            Block.box(-16, 16, -32, 32, 32, -16),
-            Block.box(-16, 16, -16, 0, 32, 16),
-            Block.box(16, 16, -16, 32, 32, 16));
+            // Heavy masonry floor: rear two rows and the outer front buttresses.
+            Block.box(-16, 0, -32, 32, 16, 0),
+            Block.box(-16, 0, 0, 0, 16, 16),
+            Block.box(16, 0, 0, 32, 16, 16),
+            // Carved-out front firebox: threshold, jambs, lintel and deep back.
+            Block.box(0, 0, 0, 16, 3.5, 16),
+            Block.box(0, 3.5, 0, 2.5, 16, 16),
+            Block.box(13.5, 3.5, 0, 16, 16, 16),
+            Block.box(2.5, 14, 0, 13.5, 16, 16),
+            Block.box(2.5, 3.5, 0, 13.5, 14, 2.2),
+            // Waist-high exterior walls; no invisible upper brick box.
+            Block.box(-16, 16, -32, 32, 23, -16),
+            Block.box(-16, 16, -16, 0, 21, 16),
+            Block.box(16, 16, -16, 32, 21, 16),
+            // The four masonry buttresses remain taller than the side walls.
+            Block.box(-16, 21, -32, -11, 30.75, -27),
+            Block.box(27, 21, -32, 32, 30.75, -27),
+            Block.box(-16, 21, 11, -11, 30.75, 16),
+            Block.box(27, 21, 11, 32, 30.75, 16),
+            // Crucible support and thick refractory bowl; hollow from above.
+            Block.box(0, 16, -16, 16, 19, 0),
+            Block.box(0, 19, -16, 3, 30.4, 0),
+            Block.box(13, 19, -16, 16, 30.4, 0),
+            Block.box(3, 19, -16, 13, 30.4, -13),
+            Block.box(3, 19, -3, 13, 30.4, 0),
+            // Connected tapping assembly, not a freestanding floating spout.
+            Block.box(5, 21, 0, 11, 25.5, 23),
+            Block.box(6.5, 16, 11.5, 9.5, 22, 14)
+    );
     private static final VoxelShape FORMED_NORTH =
             VoxelShapeUtils.rotate(FORMED_SOUTH, Rotation.CLOCKWISE_180);
     private static final VoxelShape FORMED_EAST =

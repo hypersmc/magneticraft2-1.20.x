@@ -136,7 +136,7 @@ for(const filename of fs.readdirSync(dir).filter(f=>f.endsWith(".json")).sort())
    JSON.stringify(controller,null,2)+"\n");
  }
  for(const [filepath,contents] of writes){
-  const fixed=contents.replace(/\\\\n$/, "\\n");
+  const fixed=contents;
   if(args.has("--check")){
    if(!fs.existsSync(filepath)||fs.readFileSync(filepath,"utf8")!==fixed){
     console.error("Outdated:",path.relative(root,filepath));errors++;

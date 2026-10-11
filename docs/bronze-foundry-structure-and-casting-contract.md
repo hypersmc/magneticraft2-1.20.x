@@ -16,7 +16,7 @@ B = minecraft:bricks, C = magneticraft2:bronze_foundry
 _ = air, front toward bottom
 ```
 
-**15 Bricks blocks + 1 Controller + 2 air.** There are four genuinely rotated JSON layouts, a model for each facing, and a physical collision shell that leaves the upper chamber and front opening empty. The oven has a recessed unfilled crucible, fired-brick lining, copper braces and a fixed connected front lip. Baked model cuboids are capped at 16px so textures are neither stretched nor compressed.
+**15 Bricks blocks + 1 Controller + 2 air.** There are four genuinely rotated JSON layouts, a model for each facing, and a physical collision shell that leaves the upper chamber and front opening empty. The furnace now has a **recessed lower firebox**, a stepped, visibly empty refractory crucible above, shorter upper walls with corner buttresses, bronze reinforcement, and a physically joined front tapping channel with a valve. Visual geometry is generated from named source volumes and tiled surface panels. Model coordinates and UVs are clipped into legal block-local bounds without stretching or compression.
 
 Recipe: 5 Bricks blocks, 2 Copper Plates, 1 Furnace, 1 Bronze Ingot make the controller. The remaining 15 Bricks blocks are placed in-world. The pre-existing Copper/Tin/Bronze ingot loop remains intact.
 
@@ -44,3 +44,11 @@ The next implementation step is heat + measured molten storage + safe ladle-to-B
 ## Rendering V2 migration (PR #11)
 
 The original oversized Foundry shell was not loadable as one vanilla model; V2 now splits the one canonical south model into 16 controller/filler-local meshes per facing, baked into chunk geometry. Static visuals and local collision survive an unloaded controller chunk. See `docs/multiblock-rendering-v2.md` for the script, limitations and regression checklist. Heat and Casting Basin are still not implemented.
+
+## Foundry visual redesign (PR #11)
+
+The source-of-truth visual volumes are in `tools/multiblock-models/designs/bronze_foundry.json`. Recompile them using `node tools/multiblock-models/build-designs.mjs`, then regenerate the 64 block-local assets with `node tools/multiblock-models/generate.mjs`. Do not edit the generated files directly.
+
+The raised crucible is open and dark when cold, and the tap is presently a static visual (no fuel or molten metal can flow). The large front firebox is hollow, with an inset refractory lining and grate. Upper brickwork forms low retaining walls instead of enclosing the entire second layer; the original 15 Bricks + Controller multiblock layout and crafting requirements have not changed.
+
+The Foundry has a **hand-authored simplified collision outline** that now follows the open firebox and raised hollow crucible rather than its old solid brick bounding box. It is not yet the generalized Voxel V2 implementation. Verify hitting the firebox, reaching the crucible from above, walking near the spout, all four facings, and dismantling after formation.

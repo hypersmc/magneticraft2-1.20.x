@@ -38,7 +38,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze Foundry — structure prototype$()$(br2)The first Foundry uses a 3x2x3 brick shell with an open crucible, copper-braced firebox and a front tapping lip. Build a Foundry controller from Bronze, Copper Plates, Bricks and a Furnace. Heat, melting and pouring will be added after the structure and visual pass."
+      "text": "$(bold)Bronze Foundry — physical prototype$()$(br2)The Foundry is a heavy brick furnace, but not a sealed brick box. Its lower opening is a deep firebox with a metal grate. Above it is a raised, open refractory crucible, supported by low masonry sidewalls and bronze bracing.$(br2)A solid pouring channel leads from the crucible to the front tap and valve. The cold cup remains empty until we implement heating, melting and ladle transfers."
     },
     {
       "type": "patchouli:crafting",
@@ -69,7 +69,7 @@
         },
         "symmetrical": false
       },
-      "text": "Bottom: full 3x3 footprint, except the front-centre is the controller. Upper: Bricks around the back and sides; leave centre and front-middle empty. Fifteen Bricks blocks total. Rotate/Visualize and right-click the controller to form. The machine is not yet a working smelter."
+      "text": "Build the same 3x2x3 foundation: fifteen Bricks blocks and the Foundry Controller. Upper centre and upper front-middle are air. Once formed, the upper bricks become low walls around an open crucible and a front spout. Rotate/Visualize, then right-click to form. Heat and casting are not implemented yet."
     }
   ],
   "sortnum": 3,
