@@ -103,6 +103,14 @@ Bearing Green Sand Mold and melt at least one ingot-equivalent. Right-click the
 Foundry tap with an **empty main hand** to transfer one hot bronze unit directly
 into the Basin and start its normal cooling cycle.
 
+The tapping visual now uses a thin ribbon recessed between the rails, a
+narrow crossed falling stream at the lip, and a receiving molten surface that
+expands across the Basin during the 14-tick pour effect. This replaces the
+previous thick rectangular orange column. The 14-tick effect is visual, not
+a time-based material transfer; the original unit is still transferred exactly
+once on the logical server. Visual state is persisted/synced by the existing
+block entities.
+
 The tap's short-lived glowing ribbon and downward stream are visual only;
 material ownership transfers atomically on the server. Direct pouring requires
 a loaded receiver, a valid unused mold, sufficient molten bronze and the exact
