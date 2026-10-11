@@ -299,5 +299,6 @@
   "message.magneticraft2.basin.invalid": "Use a Green Sand Mold or a hot refractory ladle.",
   "message.magneticraft2.bronze_foundry.direct_no_basin": "Place a Bronze Casting Basin directly beneath the tapping outlet.",
   "message.magneticraft2.bronze_foundry.direct_not_ready": "The Casting Basin needs an unused gear or bearing sand mold.",
-  "message.magneticraft2.bronze_foundry.direct_poured": "One bronze unit poured directly into the Casting Basin."
+  "message.magneticraft2.bronze_foundry.direct_poured": "One bronze unit poured directly into the Casting Basin.",
+  "block.magneticraft2.bronze_mechanical_lathe": "Mechanical Lathe"
 }

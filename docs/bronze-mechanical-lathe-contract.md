@@ -1,6 +1,6 @@
 # Bronze Mechanical Lathe — implementation contract
 
-Status: **design and structure contract only**. This file is the starting point for the next Bronze Age implementation. It does not claim the Lathe is registered, formable or functional yet.
+Status: **structure prototype implemented, source-level only**. The 5×2×3 controller is registered with four rotated JSON blueprints, per-cell baked placeholder models, Voxel V2 collision snapshots, crafting/loot/item resources and a creative tab entry. Formation is intended to be playable; machining, precision items, driven spindle, full authored render volumes, tool carriage and Patchouli/JEI remain unimplemented. Compilation/in-game formation have not been verified.
 
 ## Design
 
@@ -15,7 +15,7 @@ A **5 wide × 2 tall × 3 deep** workshop machine, with the spindle along the fi
 
 The controller should sit at the **lower-front middle**; all rotations are authored from a canonical south-facing design and exported to four matching JSON blueprints. The machine has a low, approachable profile with a hollow upper working area, not a solid 5×2×3 brick box.
 
-## Proposed footprint (not a live blueprint yet)
+## First blueprint footprint (implemented prototype)
 
 South is the service/front side, north is the rear. The two layers shown below are north-to-south rows.
 
@@ -31,11 +31,11 @@ y=1 (working deck, rear -> front)
      H . . . T
      B . . . B
 
-F = foundation (candidate: stone bricks or polished andesite)
-B = machine base or guard (candidate: wooden or bronze-framed housing)
+F = Stone Bricks
+B = Oak Planks rear upper rail, Cut Copper at the two headstock/tailstock posts
 C = Mechanical Lathe controller
-H = headstock/drive assembly
-T = tailstock assembly
+H = Cut Copper placeholder post (future headstock assembly)
+T = Cut Copper placeholder post (future tailstock assembly)
 . = intentionally empty space (no fake full-cube collision)
 ```
 
@@ -75,3 +75,6 @@ First balance values must remain adjustable until live testing. Distinguish stal
 - Dismantle/reload/network detach mid-cycle; material/tool conservation and no ghost/duplicated parts.
 - Check mechanical load propagation and cross-chunk formation (5-wide machine), client FPS and dedicated server.
 - Existing Copper machine performance, Foundry and Casting Basin must remain unchanged.
+
+### Current prototype test
+Build the lower 5×3 platform of Stone Bricks with the Mechanical Lathe controller at lower-front center. Place five Oak Planks along the back top row and one Cut Copper block at each extreme end of the center top row; leave the remaining upper cells air. Right-click the controller to form. Rotate the layout according to the four directional JSON files. Do not expect spinning or machining yet.

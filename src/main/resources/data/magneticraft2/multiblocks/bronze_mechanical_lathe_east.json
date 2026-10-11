@@ -1,0 +1,83 @@
+{
+  "name": "bronze_mechanical_lathe_east",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "L"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "H",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "H",
+          "A"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "L": "magneticraft2:bronze_mechanical_lathe",
+      "P": "minecraft:oak_planks",
+      "H": "minecraft:cut_copper",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_mechanical_lathe_east",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_mechanical_lathe"
+  }
+}
