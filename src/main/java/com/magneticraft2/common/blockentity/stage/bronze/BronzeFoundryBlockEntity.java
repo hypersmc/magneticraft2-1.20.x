@@ -4,6 +4,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
@@ -62,6 +63,10 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
                     .setValue(BronzeFoundryBlock.IS_FORMED, true)
                     .setValue(BronzeFoundryBlock.FACING, matchedFacing), Block.UPDATE_ALL);
         }
+        // The JSON controller uses its own block-local baked model.
+        // Every filler receives its generated part ID and a collision snapshot.
+        MultiblockRenderParts.assign(level, worldPosition, controller,
+                "bronze_foundry", matchedFacing);
         requestModelDataUpdate();
         sync();
         return controller;

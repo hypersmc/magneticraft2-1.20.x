@@ -223,7 +223,9 @@ public class Multiblockfiller extends BaseEntityBlock {
     }
     @Override
     public RenderShape getRenderShape(BlockState pState) {
-        return RenderShape.INVISIBLE;
+        // Legacy fillers still have no model key, so remain visually empty.
+        // V2 fillers provide a baked static model per chunk via ModelData.
+        return RenderShape.MODEL;
     }
 
     @Override
