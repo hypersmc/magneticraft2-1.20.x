@@ -100,37 +100,47 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         pose.popPose();
     }
 
-    /** Small molten ribbon following the existing dark channel, then a falling
-     * stream at its end. All coordinates are local SOUTH-oriented model pixels. */
+    /** A thin glowing surface inside the cast channel and a falling cross-sheet.
+     * The static chute and valve remain entirely baked. */
     private void directPourStream(BronzeFoundryThermalCore thermal, PoseStack pose,
                                   MultiBufferSource source) {
         TextureAtlasSprite sprite = sprite(BRONZE_SURFACE);
         VertexConsumer v = source.getBuffer(RenderType.translucent());
         PoseStack.Pose m = pose.last();
-        float x0 = 7.12F / 16F, x1 = 8.88F / 16F;
-        float z0 = 3.5F / 16F, z1 = 22.9F / 16F;
-        float y = 23.62F / 16F;
         int light = 0x00F000F0;
-        float u0 = sprite.getU(2), u1 = sprite.getU(3.76F);
-        float vv0 = sprite.getV(0), vv1 = sprite.getV(15.5F);
-        // Break the ribbon into segments so UV spans never exceed one tile.
-        for (float zz = z0; zz < z1 - 0.0001F;) {
-            float end = Math.min(z1, zz + 12F / 16F);
-            float ve = sprite.getV((end - zz) * 16F);
-            vertex(v,m,x0,y,zz,u0,vv0,1F,.55F,.15F,1F,light,0,1,0);
-            vertex(v,m,x0,y,end,u0,ve,1F,.55F,.15F,1F,light,0,1,0);
-            vertex(v,m,x1,y,end,u1,ve,1F,.55F,.15F,1F,light,0,1,0);
-            vertex(v,m,x1,y,zz,u1,vv0,1F,.55F,.15F,1F,light,0,1,0);
-            zz = end;
+        float age = 1F - thermal.directPourVisualTicks()
+                / (float) thermal.directPourVisualDuration();
+        float fade = Math.min(1F, Math.min(age * 7F + .2F, (1F-age) * 7F + .2F));
+        float pulse = .07F * (float) Math.sin(age * 40F);
+        float x0 = (7.55F-pulse)/16F, x1 = (8.45F+pulse)/16F;
+        // Channel surface must sit just above the DARK FLOOR (y=23.5),
+        // not inside the rail tops (y=25). Narrow width prevents pipe look.
+        float y = 23.57F/16F;
+        float z0=3.5F/16F,z1=22.5F/16F;
+        for(float z=z0;z<z1-0.0001F;) {
+            float next=Math.min(z1,z+12F/16F);
+            float uv=sprite.getV((next-z)*16F);
+            vertex(v,m,x0,y,z,sprite.getU(3),sprite.getV(0),1F,.52F,.12F,fade,light,0,1,0);
+            vertex(v,m,x0,y,next,sprite.getU(3),uv,1F,.52F,.12F,fade,light,0,1,0);
+            vertex(v,m,x1,y,next,sprite.getU(4),uv,1F,.52F,.12F,fade,light,0,1,0);
+            vertex(v,m,x1,y,z,sprite.getU(4),sprite.getV(0),1F,.52F,.12F,fade,light,0,1,0);
+            z=next;
         }
-        // The receiving basin's open cavity is centered in the adjacent block.
-        // Start under the spout and stop inside the basin, not in the floor.
-        float top = 22.9F / 16F, bottom = 7F / 16F;
-        float z = 24F / 16F;
-        side(v,m,x0,bottom,z,x1,top,z,u0,u1,sprite.getV(0),sprite.getV(15.9F),
-                1F,.55F,.15F,1F,light,0,0,1);
-        side(v,m,x1,bottom,z,x0,top,z,u0,u1,sprite.getV(0),sprite.getV(15.9F),
-                1F,.55F,.15F,1F,light,0,0,-1);
+        // Spout projects into the receiving block. Drop into the basin cavity
+        // with a gently varying ~1-pixel stream, NOT a 2-pixel solid sheet.
+        float cx=8F/16F, cz=23.3F/16F;
+        float half=(.43F+.08F*(float)Math.sin(age*55F))/16F;
+        float top=23.25F/16F, bottom=7.6F/16F;
+        float u0=sprite.getU(5),u1=sprite.getU(6);
+        float vv0=sprite.getV(0),vv1=sprite.getV(15.65F);
+        side(v,m,cx-half,bottom,cz,cx+half,top,cz,u0,u1,vv0,vv1,
+                1F,.57F,.16F,fade,light,0,0,1);
+        side(v,m,cx+half,bottom,cz,cx-half,top,cz,u0,u1,vv0,vv1,
+                1F,.57F,.16F,fade,light,0,0,-1);
+        side(v,m,cx,bottom,cz-half,cx,top,cz+half,u0,u1,vv0,vv1,
+                1F,.57F,.16F,fade,light,1,0,0);
+        side(v,m,cx,bottom,cz+half,cx,top,cz-half,u0,u1,vv0,vv1,
+                1F,.57F,.16F,fade,light,-1,0,0);
     }
 
     /** Two upright crossed flame sheets INSIDE the chamber, behind the grate. */
