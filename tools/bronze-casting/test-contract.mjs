@@ -57,7 +57,9 @@ const models=[
 for(const path of models){
  const model=json(asset+path);
  for(const el of model.elements||[]){
-  for(const v of [...el.from,...el.to])assert(v>=0&&v<=16,path+": element out of bounds");
+  // Vanilla 1.20.1 models allow -16..32 model pixels. The Basin's
+  // visible front fitting projects 0.6px past the nominal 16px block.
+  for(const v of [...el.from,...el.to])assert(v>=-16&&v<=32,path+": element out of bounds");
   const [x,y,z]=el.to.map((v,i)=>v-el.from[i]);
   for(const [side,f] of Object.entries(el.faces)){
    const dims=side==="up"||side==="down"?[x,z]:
