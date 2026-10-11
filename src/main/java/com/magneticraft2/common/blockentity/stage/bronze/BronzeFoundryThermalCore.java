@@ -1,6 +1,8 @@
 package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.nbt.CompoundTag;
@@ -32,6 +34,10 @@ public final class BronzeFoundryThermalCore {
     private int burnTotal;
     /** Persistent phase prevents instant re-solidification after heat is spent melting. */
     private boolean moltenPhase;
+    // Short client-visible pour animation; metal is transferred atomically
+    // before this starts, so no molten units are duplicated in flight.
+    private int directPourVisualTicks;
+    private static final int DIRECT_POUR_VISUAL_DURATION = 14;
 
     public BronzeFoundryThermalCore(BronzeFoundryBlockEntity foundry) {
         this.foundry = foundry;
@@ -41,6 +47,8 @@ public final class BronzeFoundryThermalCore {
     public ItemStack chargeDisplay() { return charge; }
     public int crucibleUnits() { return crucibleUnits; }
     public int burnRemaining() { return burnRemaining; }
+    public int directPourVisualTicks() { return directPourVisualTicks; }
+    public int directPourVisualDuration() { return DIRECT_POUR_VISUAL_DURATION; }
 
     public int crucibleCapacity() {
         return Magneticraft2ConfigCommon.GENERAL.FoundryCrucibleIngotCapacity.get();
@@ -67,6 +75,11 @@ public final class BronzeFoundryThermalCore {
         int heatCost = Magneticraft2ConfigCommon.GENERAL.FoundryHeatCostPerIngot.get();
         boolean changed = false;
         boolean notifyImmediately = false;
+        if (directPourVisualTicks > 0) {
+            directPourVisualTicks--;
+            changed = true;
+            if (directPourVisualTicks == 0) notifyImmediately = true;
+        }
 
         // Ignite a fresh item only when the next melt/reheat actually needs
         // energy. In particular, cooling from 32,000 to 31,998 must NOT burn
@@ -216,10 +229,55 @@ public final class BronzeFoundryThermalCore {
      * transfer one NBT-preserving ingot-equivalent into the player's ladle.
      * A filled (even cold) ladle cannot be overwritten.
      */
+    /**
+     * Outlet ends in the floor-level block immediately ahead of the controller.
+     * Nothing is transferred through unloaded blocks, absent molds or occupied
+     * receivers; both machines mutate only on the logical server.
+     */
+    private boolean directPour(Player player) {
+        Level world = foundry.getLevel();
+        if (world == null || world.isClientSide) return false;
+        Direction facing = foundry.getBlockState().getValue(
+                com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock.FACING);
+        BlockPos basinPos = foundry.getBlockPos().relative(facing);
+        if (!world.hasChunkAt(basinPos)
+                || !(world.getBlockEntity(basinPos) instanceof BronzeCastingBasinBlockEntity basin)) {
+            message(player, "direct_no_basin");
+            return false;
+        }
+        if (!basin.canReceiveBronze()) {
+            message(player, "direct_not_ready");
+            return false;
+        }
+        if (!isPourReady(1) || crucibleTemplate.isEmpty()) {
+            message(player, "not_pourable");
+            return false;
+        }
+        ItemStack unit = crucibleTemplate.copy();
+        unit.setCount(1);
+        if (!basin.receiveBronze(unit)) {
+            message(player, "direct_not_ready");
+            return false;
+        }
+        crucibleUnits--;
+        if (crucibleUnits == 0) {
+            crucibleTemplate = ItemStack.EMPTY;
+            moltenPhase = false;
+        }
+        directPourVisualTicks = DIRECT_POUR_VISUAL_DURATION;
+        foundry.sync();
+        message(player, "direct_poured");
+        return true;
+    }
+
     public void useTap(Player player, ItemStack held) {
         Level world = foundry.getLevel();
         if (world == null || world.isClientSide) return;
 
+        if (held.isEmpty()) {
+            directPour(player);
+            return;
+        }
         if (held.is(ItemRegistry.ITEM_BRONZE_POURING_LADLE.get())) {
             if (BronzePouringLadleItem.hasMetal(held)) {
                 message(player,"ladle_full");
@@ -278,6 +336,7 @@ public final class BronzeFoundryThermalCore {
         moltenPhase = false;
         burnRemaining = 0;
         burnTotal = 0;
+        directPourVisualTicks = 0;
         if (!toDropFuel.isEmpty()) Block.popResource(world, foundry.getBlockPos(), toDropFuel);
         if (!toDropCharge.isEmpty()) Block.popResource(world, foundry.getBlockPos(), toDropCharge);
         if (!toDropCrucible.isEmpty()) Block.popResource(world, foundry.getBlockPos(), toDropCrucible);
@@ -292,6 +351,8 @@ public final class BronzeFoundryThermalCore {
         if (crucibleTemplate.isEmpty()) crucibleUnits = 0;
         if (crucibleUnits == 0) crucibleTemplate = ItemStack.EMPTY;
         moltenPhase = crucibleUnits > 0 && nbt.getBoolean("MoltenPhase");
+        directPourVisualTicks = Math.max(0, Math.min(
+                DIRECT_POUR_VISUAL_DURATION, nbt.getInt("DirectPourVisualTicks")));
         burnTotal = Math.max(0, nbt.getInt("BurnTotal"));
         burnRemaining = Math.max(0, Math.min(burnTotal, nbt.getInt("BurnRemaining")));
     }
@@ -305,5 +366,6 @@ public final class BronzeFoundryThermalCore {
         nbt.putBoolean("MoltenPhase", moltenPhase);
         nbt.putInt("BurnRemaining", burnRemaining);
         nbt.putInt("BurnTotal", burnTotal);
+        nbt.putInt("DirectPourVisualTicks", directPourVisualTicks);
     }
 }
