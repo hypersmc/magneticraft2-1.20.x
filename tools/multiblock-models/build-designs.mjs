@@ -112,6 +112,25 @@ function verifyNoCoplanar(model){
  }
 }
 
+function checkBox(name,c){if(!Array.isArray(c)||c.length!==6||c.some(v=>typeof v!=="number"||!Number.isFinite(v))||c.some((v,i)=>i<3&&!(c[i+3]>v)))throw Error("Invalid voxel box "+name);}
+
+function emitVoxelDesign(id,d){
+ if(!d.voxels)return null;
+ const v=d.voxels; const n=v.collision?.length||0;
+ if(n<1||n>512)throw Error(id+" must specify 1..512 collision boxes");
+ for(const [kind,items] of [["collision",v.collision],["selection",v.selection||v.collision]]){
+  if(!Array.isArray(items)||items.length>512)throw Error(id+" invalid "+kind+" list");
+  items.forEach((box,i)=>checkBox(kind+":"+i,box));
+ }
+ const zones=v.zones||{};
+ if(Object.keys(zones).length>32)throw Error("Too many interaction zones");
+ for(const [name,boxes] of Object.entries(zones)){
+  if(!/^[a-z0-9_]+$/.test(name)||!Array.isArray(boxes)||boxes.length>32)throw Error("Invalid zone: "+name);
+  boxes.forEach((box,i)=>checkBox(name+":"+i,box));
+ }
+ return {format:1,unit:"model_pixels",collision:v.collision,selection:v.selection||v.collision,zones};
+}
+
 const args=new Set(process.argv.slice(2)),root=process.cwd();
 const dir=path.join(root,"tools/multiblock-models/designs");
 const sources=path.join(root,"tools/multiblock-models/sources");
@@ -121,6 +140,18 @@ if(args.has("--self-test")){
          {name:"b",material:"brick",from:[0,0,0],to:[16,16,16]}]};
  const compiled=compile(tiny);verifyNoCoplanar(compiled);
  if(compiled.elements.length!==6)throw Error("Duplicated boxes should leave six outside faces");
+
+ const voxelTest=emitVoxelDesign("example",{voxels:{
+   collision:[[0,0,0,16,16,16]],selection:[[0,0,0,16,16,16]],
+   zones:{input:[[0,1,0,8,10,8]]}
+ }});
+ if(voxelTest.format!==1 || voxelTest.zones.input.length!==1)
+   throw Error("Voxel generation test failed");
+ let rejected=false;
+ try{emitVoxelDesign("invalid",{voxels:{collision:[[0,0,0,0,10,10]]}});}
+ catch(e){rejected=true;}
+ if(!rejected)throw Error("Invalid collision geometry was accepted");
+ console.log("Voxel schema and invalid-bound tests passed");
  console.log("Occluded/coincident-solid faces eliminated");
  process.exit(0);
 }
@@ -129,6 +160,11 @@ for(const filename of fs.readdirSync(dir).filter(f=>f.endsWith(".json")).sort())
  const id=filename.slice(0,-5),design=JSON.parse(fs.readFileSync(path.join(dir,filename),"utf8"));
  const canonical=compile(design);verifyNoCoplanar(canonical);
  const writes=new Map([[path.join(sources,id+".json"),JSON.stringify(canonical,null,2)+"\n"]]);
+ const voxelDef=emitVoxelDesign(id,design);
+ if(voxelDef){
+  writes.set(path.join(root,"src/main/resources/data/magneticraft2/multiblock_voxels",id+".json"),
+   JSON.stringify(voxelDef,null,2)+"\n");
+ }
  if(id==="bronze_foundry"){
   const filtered={...design,boxes:design.boxes.filter(b=>/^(firebox_|grate_|bezel_)/.test(b.name))};
   const controller=clipSingleBlock(compile(filtered));verifyNoCoplanar(controller);
