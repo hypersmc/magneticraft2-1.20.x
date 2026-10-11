@@ -60,6 +60,21 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public ItemStack getOutput(){return output;}
     public boolean isRunning(){return running;}
     public float getProgress(){return machiningTicks/(float)CYCLE_TICKS;}
+    /** Staged feed: 0..15% approach, 15..85% cutting traverse, 85..100% retract. */
+    public float getToolFeed(){
+        if(!running && machiningTicks==0)return 0F;
+        float p=getProgress();
+        if(p<.15F)return p/.15F;
+        if(p<.85F)return 1F;
+        return Math.max(0F,1F-(p-.85F)/.15F);
+    }
+    public float getCutTraverse(){
+        float p=getProgress();
+        return Math.max(0F,Math.min(1F,(p-.15F)/.7F));
+    }
+    public boolean isActivelyCutting(){
+        return running && getProgress()>=.15F && getProgress()<.85F;
+    }
     public float getSpindleRotation(float partialTick){
         if(!running)return 0F;
         MechanicalInputModuleBlockEntity input=getMechanicalInput();
@@ -98,6 +113,16 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         setRunning(true);
         machiningTicks++;
         setChanged();
+        // A restrained shower of chips near the real cutter/workpiece contact.
+        // No particles while stopped, approaching or retracting.
+        if(isActivelyCutting() && machiningTicks%8==0 && level instanceof net.minecraft.server.level.ServerLevel server) {
+            Direction across=matchedFacing.getClockWise();
+            Direction rear=matchedFacing.getOpposite();
+            double px=worldPosition.getX()+.5D + across.getStepX()*.45D + rear.getStepX()*.62D;
+            double pz=worldPosition.getZ()+.5D + across.getStepZ()*.45D + rear.getStepZ()*.62D;
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT,
+                    px, worldPosition.getY()+1.5D, pz, 2, .06D,.04D,.06D,.02D);
+        }
         if(machiningTicks<CYCLE_TICKS){
             if(level.getGameTime()%20==0)sync();
             return;

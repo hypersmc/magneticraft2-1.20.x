@@ -32,25 +32,35 @@ public final class BronzeMechanicalLatheRenderer
         pose.translate(.5D,0,.5D);
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-.5D,0,-.5D);
-        ItemStack stack=lathe.getOutput().isEmpty()?lathe.getWorkpiece():lathe.getOutput();
-        if(!stack.isEmpty()){
+        ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
+        ItemStack mounted=lathe.getOutput().isEmpty()?lathe.getWorkpiece():lathe.getOutput();
+        // The arbor and static chuck clamp this casting at y=22, z=-10
+        // in the canonical model. Its center is aligned to the spindle X axis.
+        if(!mounted.isEmpty()){
             pose.pushPose();
-            pose.translate(.5D,1.375D,-.625D);
+            pose.translate(.50D,1.375D,-.625D);
+            // Item model is cast horizontally; stand it up on the lathe's X axis.
             pose.mulPose(Axis.ZP.rotationDegrees(90F));
-            if(lathe.isRunning()) pose.mulPose(Axis.YP.rotationDegrees(lathe.getSpindleRotation(partial)));
-            pose.scale(.8F,.8F,.8F);
-            ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
-            BakedModel model=renderer.getModel(stack,lathe.getLevel(),null,883);
-            renderer.render(stack,ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
+            if(lathe.isRunning())pose.mulPose(Axis.YP.rotationDegrees(lathe.getSpindleRotation(partial)));
+            pose.scale(.66F,.66F,.66F);
+            BakedModel model=renderer.getModel(mounted,lathe.getLevel(),null,883);
+            renderer.render(mounted,ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
             pose.popPose();
         }
-        if(!lathe.getCutter().isEmpty()){
+        // Cutting insert mounted on the static tool post: a short approach
+        // from the front, controlled traverse while touching the bronze,
+        // then a visible retraction. Idle and stalled machines never advance.
+        ItemStack bit=lathe.getCutter();
+        if(!bit.isEmpty()){
+            float feed=lathe.getToolFeed();
+            float traverse=lathe.getCutTraverse();
             pose.pushPose();
-            pose.translate(.625D,1.53D,-.22D - .09D*lathe.getProgress());
-            pose.scale(.55F,.55F,.55F);
-            ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
-            BakedModel model=renderer.getModel(lathe.getCutter(),lathe.getLevel(),null,884);
-            renderer.render(lathe.getCutter(),ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
+            pose.translate(.625D-.09D*traverse,1.505D,
+                    -.31D-.25D*feed);
+            pose.mulPose(Axis.XP.rotationDegrees(-90F));
+            pose.scale(.38F,.38F,.38F);
+            BakedModel model=renderer.getModel(bit,lathe.getLevel(),null,884);
+            renderer.render(bit,ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
             pose.popPose();
         }
         pose.popPose();
