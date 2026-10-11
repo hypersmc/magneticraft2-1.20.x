@@ -1,6 +1,7 @@
 package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,8 +18,8 @@ import net.minecraftforge.common.ForgeHooks;
  * The crucible stores ingot-equivalents and an input ItemStack template
  * (including quality NBT), NOT Forge fluid/millibuckets. Its phase is derived
  * from the current heat: cooling solidifies the contents in place, and
- * reheating makes them pour-ready again. There is no drain API until the
- * Casting Basin/ladle can commit transfers atomically.
+ * reheating makes them pour-ready again. The only drain is a server-side
+ * ONE-unit transfer into an empty refractory ladle. No ordinary fluid pipes.
  */
 public final class BronzeFoundryThermalCore {
     private static final int FUEL_QUEUE_LIMIT = 16;
@@ -210,8 +211,41 @@ public final class BronzeFoundryThermalCore {
                 isHot() ? "hot" : "cold"), true);
     }
 
-    public void useTap(Player player) {
-        // Intentionally read-only until an actual ladle/basin accepts a batch.
+    /**
+     * The only molten exit. Validate before mutating either side, then
+     * transfer one NBT-preserving ingot-equivalent into the player's ladle.
+     * A filled (even cold) ladle cannot be overwritten.
+     */
+    public void useTap(Player player, ItemStack held) {
+        Level world = foundry.getLevel();
+        if (world == null || world.isClientSide) return;
+
+        if (held.is(ItemRegistry.ITEM_BRONZE_POURING_LADLE.get())) {
+            if (BronzePouringLadleItem.hasMetal(held)) {
+                message(player,"ladle_full");
+                return;
+            }
+            if (!isPourReady(1) || crucibleTemplate.isEmpty()) {
+                message(player,"not_pourable");
+                return;
+            }
+            ItemStack original = crucibleTemplate.copy();
+            original.setCount(1);
+            // NBT is installed into the SAME held stack on the logical server.
+            if (!BronzePouringLadleItem.fill(held, original, world)) {
+                message(player,"not_pourable");
+                return;
+            }
+            crucibleUnits--;
+            if (crucibleUnits == 0) {
+                crucibleTemplate = ItemStack.EMPTY;
+                moltenPhase = false;
+            }
+            foundry.sync();
+            player.getInventory().setChanged();
+            message(player,"ladle_filled");
+            return;
+        }
         player.displayClientMessage(Component.translatable(
                 "message.magneticraft2.bronze_foundry.tap_status",
                 crucibleUnits, crucibleCapacity(), isHot() ? "hot" : "cold"), true);

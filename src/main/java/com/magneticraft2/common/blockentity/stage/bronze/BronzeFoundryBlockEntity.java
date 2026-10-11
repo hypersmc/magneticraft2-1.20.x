@@ -35,7 +35,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Formable Foundry shell. Heating and molten transfer are explicitly NOT active yet. */
+/** JSON-formed Foundry controller. Rendering, voxels and heat stay independent. */
 public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private static final String PREFIX = "bronze_foundry_";
@@ -144,7 +144,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
     protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
                                      Player player, InteractionHand hand, BlockHitResult hit) {
         // Interaction zones are authored independently of collision.
-        // These are feedback-only until the heating/pouring systems exist.
+        // The tap transfers molten units ONLY into a valid empty ladle.
         String zone = MultiblockVoxelProfiles.hitZone(voxelProfileName, matchedFacing,
                 worldPosition, hit.getLocation());
         if (zone == null) {
@@ -157,7 +157,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         switch (zone) {
             case "firebox" -> thermal.useFirebox(player, player.getItemInHand(hand));
             case "crucible" -> thermal.useCrucible(player, player.getItemInHand(hand));
-            case "tap" -> thermal.useTap(player);
+            case "tap" -> thermal.useTap(player, player.getItemInHand(hand));
             default -> player.displayClientMessage(Component.translatable(
                     "message.magneticraft2.bronze_foundry.prototype"), true);
         }
