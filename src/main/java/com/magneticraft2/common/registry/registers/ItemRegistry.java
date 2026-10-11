@@ -8,6 +8,7 @@ import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -107,6 +108,13 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_PATTERN_MAKER = fromBlock(BRONZE_PATTERN_MAKER);
     public static final RegistryObject<Item> ITEM_BRONZE_MOLD_TABLE = fromBlock(BRONZE_MOLD_TABLE);
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY = fromBlock(BRONZE_FOUNDRY);
+    public static final RegistryObject<Item> ITEM_BRONZE_CASTING_BASIN = fromBlock(BRONZE_CASTING_BASIN);
+    public static final RegistryObject<BronzePouringLadleItem> ITEM_BRONZE_POURING_LADLE =
+            ITEMS.register("bronze_pouring_ladle", BronzePouringLadleItem::new);
+    public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_GEAR =
+            ITEMS.register("rough_bronze_gear", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_BEARING =
+            ITEMS.register("rough_bronze_bearing", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_GEAR_SAND_MOLD =
             ITEMS.register("gear_sand_mold", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BEARING_SAND_MOLD =

@@ -29,6 +29,8 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> FoundrySolidificationThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryHeatCostPerIngot;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryCrucibleIngotCapacity;
+        public final ForgeConfigSpec.ConfigValue<Integer> FoundryLadleHotTicks;
+        public final ForgeConfigSpec.ConfigValue<Integer> FoundryCastingCoolTicks;
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -73,6 +75,12 @@ public class Magneticraft2ConfigCommon {
             FoundryCrucibleIngotCapacity = builder
                     .comment("Crucible capacity in bronze ingot-equivalents. Conversion to a fluid unit is not decided.")
                     .defineInRange("crucibleIngots", 8, 1, 64);
+            FoundryLadleHotTicks = builder
+                    .comment("How many loaded-world ticks a ladle remains pourable; if it cools, sneak-use in the air to recover the original bronze ingot")
+                    .defineInRange("ladleHotTicks", 1200, 20, 72000);
+            FoundryCastingCoolTicks = builder
+                    .comment("Loaded server ticks between pouring one bronze unit into a sand mold and obtaining a rough casting")
+                    .defineInRange("castingCoolTicks", 200, 1, 72000);
             builder.pop();
             builder.pop();
         }
