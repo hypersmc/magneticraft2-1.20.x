@@ -136,6 +136,19 @@ public final class BronzeFoundryBlock extends BaseBlockMagneticraft2 {
         return super.onDestroyedByPlayer(state, world, pos, player, harvest, fluid);
     }
 
+    /** Controller shape is local; per-part physics lives on filler proxies. */
+    private VoxelShape voxelShape(BlockState state, BlockGetter world, BlockPos pos,
+                                  boolean selection) {
+        if (world.getBlockEntity(pos) instanceof BronzeFoundryBlockEntity foundry) {
+            VoxelShape stored = selection
+                    ? foundry.getLocalVoxelSelection()
+                    : foundry.getLocalVoxelCollision();
+            if (stored != null) return stored;
+        }
+        // Existing pre-V2 world saves keep the former geometry until re-formed.
+        return formedShape(state);
+    }
+
     private VoxelShape formedShape(BlockState state) {
         return switch (state.getValue(FACING)) {
             case NORTH -> FORMED_NORTH;
@@ -147,24 +160,28 @@ public final class BronzeFoundryBlock extends BaseBlockMagneticraft2 {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return state.getValue(IS_FORMED) ? formedShape(state) : super.getShape(state, world, pos, context);
+        return state.getValue(IS_FORMED) ? voxelShape(state, world, pos, true)
+                : super.getShape(state, world, pos, context);
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter world,
                                         BlockPos pos, CollisionContext context) {
-        return state.getValue(IS_FORMED) ? formedShape(state) : super.getCollisionShape(state, world, pos, context);
+        return state.getValue(IS_FORMED) ? voxelShape(state, world, pos, false)
+                : super.getCollisionShape(state, world, pos, context);
     }
 
     @Override
     public VoxelShape getInteractionShape(BlockState state, BlockGetter world, BlockPos pos) {
-        return state.getValue(IS_FORMED) ? formedShape(state) : super.getInteractionShape(state, world, pos);
+        return state.getValue(IS_FORMED) ? voxelShape(state, world, pos, true)
+                : super.getInteractionShape(state, world, pos);
     }
 
     @Override
     public VoxelShape getVisualShape(BlockState state, BlockGetter world,
                                      BlockPos pos, CollisionContext context) {
-        return state.getValue(IS_FORMED) ? formedShape(state) : super.getVisualShape(state, world, pos, context);
+        return state.getValue(IS_FORMED) ? voxelShape(state, world, pos, false)
+                : super.getVisualShape(state, world, pos, context);
     }
 
     @Override
