@@ -94,6 +94,27 @@ The dynamic Foundry renderer draws the queued fuel and charge as physical items,
 
 No Gradle compile or in-game test has been run in this workspace; these remain acceptance requirements.
 
+## Direct outlet casting (PR #11)
+
+Place the Casting Basin **one block immediately in front of the Foundry's lower
+controller**, at the same floor height. The physical bronze tapping nose
+extends over this block and points into the Basin. Install a valid Gear or
+Bearing Green Sand Mold and melt at least one ingot-equivalent. Right-click the
+Foundry tap with an **empty main hand** to transfer one hot bronze unit directly
+into the Basin and start its normal cooling cycle.
+
+The tap's short-lived glowing ribbon and downward stream are visual only;
+material ownership transfers atomically on the server. Direct pouring requires
+a loaded receiver, a valid unused mold, sufficient molten bronze and the exact
+physical outlet position. Invalid pours change neither side. Quality NBT is
+preserved. A nonempty Refractory Pouring Ladle still follows the original
+portable workflow. The Foundry structure recipe and orientation layout are
+unchanged.
+
+Regression: verify all four directions, absent/occupied/unloaded Basins,
+missing molds, cold metal, multi-unit charges, one-unit conservation,
+cooling/reload/dismantling and that manual ladle casting still works.
+
 ## Manual bronze casting — first end-to-end loop (PR #11)
 
 The first **functional casting** path is intentionally manual, GUI-less and physically constrained:
