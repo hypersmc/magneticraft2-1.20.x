@@ -1,6 +1,6 @@
 # Bronze Foundry — structure and casting contract
 
-**Status:** PR #11 has formed structure, Rendering V2, Voxel V2, and a **first functional heating/melting prototype**. Fuel, persistent HEAT energy, bronze charge and conserved crucible bronze are implemented. **Pouring and Casting Basin remain unavailable**, and the Foundry still requires in-game testing.
+**Status:** PR #11 has formed structure, Rendering V2, Voxel V2, and a **first functional heating/melting prototype**. Fuel, persistent HEAT energy, bronze charge and conserved crucible bronze are implemented. **Manual ladle pouring and Basin cooling are now implemented**, and the Foundry still requires in-game testing.
 
 ## First build
 
@@ -93,3 +93,35 @@ The dynamic Foundry renderer draws the queued fuel and charge as physical items,
 9. Repeat on a dedicated server and all four orientations. Recheck the Foundry voxel/collision and Washer/Sifter regression cases.
 
 No Gradle compile or in-game test has been run in this workspace; these remain acceptance requirements.
+
+## Manual bronze casting — first end-to-end loop (PR #11)
+
+The first **functional casting** path is intentionally manual, GUI-less and physically constrained:
+
+1. Use the Pattern Maker to make a reusable Wooden Gear or Bearing Pattern, and the Mold Table to press a **consumable Green Sand Mold** (one Sand and Clay Ball per mold).
+2. Build a single-block **Bronze Casting Basin** using Bricks and a Copper Plate. Install one gear or bearing mold into the Basin by right-clicking with it. The Basin shows the inserted mold.
+3. Heat Bronze Ingots in the JSON-formed Foundry until at least one stored unit is molten. Right-click the **tapping zone** with an **empty Refractory Pouring Ladle**. One bronze unit is moved into that exact held item, with the source ingot's NBT copied. No ordinary bucket or water pipe can extract molten bronze.
+4. Pour the **hot filled ladle** into the Basin. It verifies installed mold, no current pour/output and ladle heat *before* consuming any contents. The player keeps an empty reusable ladle. One mold is consumed with the pour; a single quality-preserving bronze unit begins cooling.
+5. After the configured cooling interval, the Basin holds **Rough Bronze Gear Casting** or **Rough Bronze Bearing Casting**, not a finished gear/bearing. Collect using an empty hand; the future Mechanical Lathe will perform precision finishing.
+
+**Cold-ladle safety:** Each ladle holds just one unit. Its server-recorded timestamp + dimension are saved on the ItemStack and it remains pourable for the configurable duration (default 1200 ticks, ~60 seconds at 20 TPS). If it cools, sneak-right-click **in air** to recover the original Bronze Ingot with NBT; this empties the ladle. No molten metal survives indefinitely as a transferable inventory fluid.
+
+**Failure/dismantling:** Reject a wrong or missing mold, a cold ladle, a busy Basin or an empty Foundry without consuming any source materials. Break an unpoured Basin to recover its green sand mold. Breaking during cooling returns the original tagged Bronze Ingot, not an impossible partly-finished item; the poured sand mold has been spent. Breaking after cooling drops the rough casting. Saved cooling state and liquid-phase/quality are persistent. Note that lagging/unloaded chunks pause the Basin cooling ticker; no offline auto-completion is implied.
+
+**Balancing knobs** in Common config: `ladleHotTicks` (default 1200) and `castingCoolTicks` (default 200). These are provisional gameplay values, not physical-world cooling constants. Each green sand gear/bearing mold currently takes **one ingot-equivalent**; later metallurgy and wear can extend that contract rather than assuming every output costs a magic recipe.
+
+**Rendering:** The ladle has empty/filled item models. The Basin renders an actual green sand mold, glowing bronze while cooling and a rough output item when ready. The Foundry's corrected renderer puts fuel behind the grate, uses upright crossed fire sprites, centers the solid charge and shows a near-wall liquid surface with four vertical sides. These are render changes only and do not alter the base multiblock layout.
+
+### Casting regression checks
+
+- Craft both new items and Basin; verify the recipes appear in JEI's ordinary crafting categories.
+- Load/melt one ingot, fill an empty ladle from the Foundry's tapping zone; the crucible count must drop exactly 1.
+- Attempt to refill a filled ladle, and attempt pouring into a Basin without a mold or one already cooling; check that ladle metal is not lost.
+- Insert each mold type and pour once; check the correct rough item after cooling. The wooden pattern must remain usable at its own bench.
+- Carry a filled ladle until it is cold; Basin rejects it. Sneak-use in air to return exactly one original tagged ingot.
+- Test quality variants. A tagged ingot must emerge from the Basin as a single rough casting with identical source tags.
+- Break Basin before pour, mid-cooling and after output; confirm exactly one appropriate recovery path and no duplicated metal.
+- Save/reload Foundry, filled ladle and cooling Basin; verify material ownership stays in the correct single container.
+- Try all four Foundry orientations and both Basin orientations, and check that static/cached Foundry geometry and Voxel V2 collision remain unaffected.
+
+**Not implemented yet:** powered lathe finishing, refractory wear, automated ladle transport or a true fluid-safe industrial metal transport network. Manual casting is the intended Bronze Age entry point.

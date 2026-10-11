@@ -78,11 +78,39 @@
     {
       "type": "text",
       "text": "$(bold)First melting test$()$(br2)The molten amount is counted in $(italic)ingot-equivalents$(), not fluid millibuckets. Bronze with different quality metadata cannot mix in one batch. The hot/solidified surface changes visually as the heat level changes.$(br2)For now, the front tap reports stored bronze but cannot pour. The pouring ladle, Casting Basin and final thermal balance still need to be developed. Breaking the test machine returns stored bronze as ingots rather than deleting it."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Pouring and casting$()$(br2)Craft a Refractory Pouring Ladle and a Bronze Casting Basin. The Foundry's tapping valve now transfers $(bold)one$() hot bronze unit into an empty ladle. The ladle retains the source ingot's quality and cools if you carry it too long.$(br2)A cold, filled ladle cannot be poured. Sneak-right-click it in the air to recover the original Bronze Ingot; the ladle can then be reused."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Refractory Pouring Ladle",
+      "recipe": "magneticraft2:bronze_pouring_ladle",
+      "text": "A refractory cup and bronze fitting for safe manual handling. Holds exactly one ingot-equivalent of molten bronze."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Casting Basin",
+      "recipe": "magneticraft2:bronze_casting_basin",
+      "text": "A one-block refractory receiver with a copper rim. It accepts the Green Sand Gear and Bearing Molds made at the Mold Table."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Casting steps$()$(br2)1. Insert a Gear or Bearing Green Sand Mold into an empty Casting Basin.$(br)2. Click the Foundry's tapping valve with an empty ladle while bronze is molten.$(br)3. Right-click the Basin with that filled hot ladle before it cools.$(br)4. Wait for the metal to solidify; collect the resulting Rough Bronze Gear or Bearing Casting with an empty hand.$(br2)One mold and one molten bronze unit are consumed per rough part. Wooden patterns are reusable. These castings still need precision machining on the planned Mechanical Lathe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Material accounting$()$(br2)Bronze quality information is carried from ingot to crucible, ladle and rough casting. The Basin doesn't turn bronze directly into precision machine components.$(br2)Unpoured molds may be removed by sneaking with an empty hand. Breaking a Basin during cooling returns the original bronze ingot-equivalent, but the poured sand mold is lost. Breaking after cooling drops the finished rough casting. No fluid pipes transport molten metal."
     }
   ],
   "sortnum": 3,
   "read_by_default": true,
   "extra_recipe_mappings": {
     "magneticraft2:bronze_foundry": 8
+  },
+  "mappings": {
+    "magneticraft2:bronze_pouring_ladle": 13,
+    "magneticraft2:bronze_casting_basin": 14
   }
 }
