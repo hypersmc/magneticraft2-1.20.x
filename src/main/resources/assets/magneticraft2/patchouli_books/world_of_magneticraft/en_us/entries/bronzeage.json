@@ -97,20 +97,70 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Casting steps$()$(br2)1. Insert a Gear or Bearing Green Sand Mold into an empty Casting Basin.$(br)2. Click the Foundry's tapping valve with an empty ladle while bronze is molten.$(br)3. Right-click the Basin with that filled hot ladle before it cools.$(br)4. Wait for the metal to solidify; collect the resulting Rough Bronze Gear or Bearing Casting with an empty hand.$(br2)One mold and one molten bronze unit are consumed per rough part. Wooden patterns are reusable. These castings still need precision machining on the planned Mechanical Lathe."
+      "text": "$(bold)Casting steps$()$(br2)1. Insert a Gear or Bearing Green Sand Mold into an empty Casting Basin.$(br)2. Either position the Basin directly under the Foundry tap and empty-hand click the valve, or fill a ladle at the valve and right-click the Basin with it.$(br)3. Wait for cooling and collect a Rough Bronze Gear or Bearing Casting.$(br2)Each pour consumes one mold and one molten bronze ingot-equivalent; the wooden pattern remains reusable. Finish rough castings with the Mechanical Lathe."
     },
     {
       "type": "text",
       "text": "$(bold)Material accounting$()$(br2)Bronze quality information is carried from ingot to crucible, ladle and rough casting. The Basin doesn't turn bronze directly into precision machine components.$(br2)Unpoured molds may be removed by sneaking with an empty hand. Breaking a Basin during cooling returns the original bronze ingot-equivalent, but the poured sand mold is lost. Breaking after cooling drops the finished rough casting. No fluid pipes transport molten metal."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Mechanical Lathe$()$(br2)Bronze parts cast in sand molds are rough and must be machined before precision use. Build a 5-wide, 3-deep, 2-high Lathe structure from Stone Bricks, Oak Planks and Cut Copper, with a Gear V2 Mechanical Input Module at the lower rear center. Place the controller at the lower front center. Right-click the controller to form.$(br2)The first structure model is intentionally a functional prototype; complete headstock and moving tool carriage visuals are still in progress."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Controller",
+      "recipe": "magneticraft2:bronze_mechanical_lathe",
+      "text": "Craft the controller, then build the larger 5×2×3 structure shown on the next page. The controller alone cannot turn bronze."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Lathe",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "H___H",
+            "_____"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_lathe",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "H": "minecraft:cut_copper"
+        },
+        "symmetrical": false
+      },
+      "text": "View from the controller-facing side: rear lower center is the Mechanical Input Module. Upper rear row is five Oak Planks; upper middle has Cut Copper at both ends and air between; entire upper front row stays air. The controller is on the lower front middle."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Cutting Tool",
+      "recipe": "magneticraft2:bronze_lathe_cutter",
+      "text": "Install this replaceable Bronze/Flint cutting tool into the formed Lathe. It wears by one use per finished workpiece, never from idle time."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Using the Lathe$()$(br2)Mount a Rough Bronze Gear or Bearing Casting by right-clicking the formed Lathe. Install a cutting tool. Supply at least 12 RPM and 2.5 torque with Gear V2 at the rear input. The first test cycle takes 160 ticks and stalls without sufficient load supply.$(br2)Empty-hand right-click checks progress and collects finished Precision Bronze Gears/Bearings. Sneak-empty-hand retrieves an unfinished casting or installed cutter. Full source material quality survives machining."
     }
   ],
   "sortnum": 3,
   "read_by_default": true,
   "extra_recipe_mappings": {
-    "magneticraft2:bronze_foundry": 8
+    "magneticraft2:bronze_foundry": 8,
+    "magneticraft2:bronze_mechanical_lathe": 18
   },
   "mappings": {
     "magneticraft2:bronze_pouring_ladle": 13,
-    "magneticraft2:bronze_casting_basin": 14
+    "magneticraft2:bronze_casting_basin": 14,
+    "magneticraft2:bronze_lathe_cutter": 20
   }
 }
