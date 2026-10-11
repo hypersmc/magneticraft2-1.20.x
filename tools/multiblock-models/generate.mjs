@@ -19,7 +19,29 @@ function uvAxes(f){return f==="north"||f==="south"?[0,1]:f==="east"||f==="west"?
 
 function faceNormal(f){return {north:[2,-1],east:[0,1],south:[2,1],west:[0,-1],up:[1,1],down:[1,-1]}[f];}
 
+function assertNoCoplanarFaces(id,model){
+ const samePlane=new Map();
+ for(const [idx,element] of model.elements.entries()){
+   for(const face of Object.keys(element.faces||{})){
+     const [axis,sign]=faceNormal(face),[u,v]=uvAxes(face);
+     const plane=sign<0?element.from[axis]:element.to[axis];
+     const key=face+":"+plane.toFixed(5);
+     const rect={id:idx,u0:element.from[u],u1:element.to[u],v0:element.from[v],v1:element.to[v]};
+     const group=samePlane.get(key)||[];
+     for(const previous of group){
+       const width=Math.min(rect.u1,previous.u1)-Math.max(rect.u0,previous.u0);
+       const height=Math.min(rect.v1,previous.v1)-Math.max(rect.v0,previous.v0);
+       if(width>1e-5&&height>1e-5)
+         throw new Error(`${id}: overlapping ${face} faces on plane ${plane} between elements ${previous.id} and ${idx} (area ${(width*height).toFixed(3)}). Move the trim outward or remove the buried face.`);
+     }
+     group.push(rect);
+     samePlane.set(key,group);
+   }
+ }
+}
+
 function generate(id,model,variants){
+ assertNoCoplanarFaces(id,model);
  const output=new Map(),stats={};
  for(const [n,dir] of ["south","west","north","east"].entries()){
   const bp=variants[dir];if(!bp)continue;
@@ -112,6 +134,17 @@ function stressTest(){
 }
 const args=new Set(process.argv.slice(2));
 if(args.has("--self-test")){
+ const intentionallyOverlapping={
+   elements:[
+     {from:[0,0,0],to:[16,16,16],faces:{up:{}}},
+     {from:[0,0,0],to:[16,16,16],faces:{up:{}}}
+   ]
+ };
+ let caught=false;
+ try{assertNoCoplanarFaces("overlap-regression",intentionallyOverlapping);}
+ catch(error){caught=error.message.includes("overlapping up faces");}
+ if(!caught)throw Error("Coplanar regression detection failed");
+ console.log("Coplanar overlap regression check passed");
  console.log("9x5x9 virtual structure:",JSON.stringify(stressTest()));
  process.exit(0);
 }
