@@ -140,7 +140,7 @@ public final class MultiblockVoxelProfiles extends SimpleJsonResourceReloadListe
                 rotatedZones.put(entry.getKey(), entry.getValue().stream()
                         .map(b -> rotate(b, dir)).toList());
             }
-            worldZones.put(dir, Map.copyOf(rotatedZones));
+            worldZones.put(dir, java.util.Collections.unmodifiableMap(rotatedZones));
         }
         return new Profile(collisions, selections, worldZones);
     }
