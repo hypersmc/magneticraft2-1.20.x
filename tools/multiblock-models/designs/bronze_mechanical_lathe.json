@@ -418,62 +418,6 @@
       ]
     },
     {
-      "name": "left_chuck_hub",
-      "material": "iron",
-      "from": [
-        -7,
-        19.5,
-        -13
-      ],
-      "to": [
-        -4,
-        24.5,
-        -7
-      ]
-    },
-    {
-      "name": "left_chuck_face",
-      "material": "metal",
-      "from": [
-        -4,
-        20,
-        -12.5
-      ],
-      "to": [
-        -2.5,
-        24,
-        -7.5
-      ]
-    },
-    {
-      "name": "left_chuck_upper_jaw",
-      "material": "plate",
-      "from": [
-        -3,
-        24,
-        -11
-      ],
-      "to": [
-        -1,
-        25,
-        -9
-      ]
-    },
-    {
-      "name": "left_chuck_lower_jaw",
-      "material": "plate",
-      "from": [
-        -3,
-        19,
-        -11
-      ],
-      "to": [
-        -1,
-        20,
-        -9
-      ]
-    },
-    {
       "name": "right_stock_foot",
       "material": "iron",
       "from": [
