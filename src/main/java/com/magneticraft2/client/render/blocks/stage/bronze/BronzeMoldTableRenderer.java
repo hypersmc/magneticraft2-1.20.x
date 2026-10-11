@@ -6,6 +6,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
@@ -24,9 +26,9 @@ public final class BronzeMoldTableRenderer
                        int overlay) {
         Direction facing = table.getBlockState().getValue(BronzeMoldTableBlock.FACING);
         float yaw = switch (facing) {
-            case EAST -> 90F;
+            case EAST -> -90F;
             case NORTH -> 180F;
-            case WEST -> -90F;
+            case WEST -> 90F;
             default -> 0F;
         };
         pose.pushPose();
@@ -36,7 +38,8 @@ public final class BronzeMoldTableRenderer
 
         ItemStack result = table.getDisplayStack(3);
         if (!result.isEmpty()) {
-            item(table, result, 0.50, 0.86, 0.50, 0.64F, 410,
+            // The 3D mold rests on the 13/16-high sand surface, rather than sinking into it.
+            item(table, result, 0.50, 0.93, 0.50, 0.64F, 410,
                     pose, buffer, light, overlay);
         } else {
             item(table, table.getDisplayStack(0), 0.34, 0.85, 0.41,
@@ -58,11 +61,15 @@ public final class BronzeMoldTableRenderer
         display.setCount(1);
         pose.pushPose();
         pose.translate(x, y, z);
-        pose.mulPose(Axis.XP.rotationDegrees(90F));
+        ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+        BakedModel model = itemRenderer.getModel(display, table.getLevel(), null, seed);
+        if (!model.isGui3d()) {
+            // Generated sprites are upright in XY; 3D molds and patterns are already flat in XZ.
+            pose.mulPose(Axis.XP.rotationDegrees(90F));
+        }
         pose.scale(scale, scale, scale);
-        Minecraft.getInstance().getItemRenderer().renderStatic(
-                display, ItemDisplayContext.NONE, light, overlay,
-                pose, buffer, table.getLevel(), seed);
+        itemRenderer.render(display, ItemDisplayContext.NONE, false,
+                pose, buffer, light, overlay, model);
         pose.popPose();
     }
 }
