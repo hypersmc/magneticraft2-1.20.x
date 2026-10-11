@@ -76,6 +76,14 @@ public final class BronzeMechanicalLatheBlock extends BaseBlockMagneticraft2 {
                 && lathe.getLocalVoxelCollision()!=null) return lathe.getLocalVoxelCollision();
         return super.getCollisionShape(state,world,pos,context);
     }
+    @Override
+    protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.getBlockEntity(pos) instanceof BronzeMechanicalLatheBlockEntity lathe) {
+            lathe.interactable(state, world, pos, player, hand, hit);
+        }
+    }
+
     @Override public @Nullable BlockEntity newBlockEntity(BlockPos pos,BlockState state) {
         return new BronzeMechanicalLatheBlockEntity(pos,state);
     }
