@@ -50,6 +50,29 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     }
     public int getCastType() { return castType; }
 
+    /** Receiver-side preflight shared by manual ladle and fixed outlet. */
+    public boolean canReceiveBronze() {
+        return level != null && !level.isClientSide && !mold.isEmpty()
+                && kind(mold) != 0 && sourceBronze.isEmpty() && result.isEmpty();
+    }
+
+    /**
+     * Install exactly one ingot-equivalent. Caller retains ownership if this
+     * returns false; no source inventory is touched here.
+     */
+    public boolean receiveBronze(ItemStack original) {
+        if (!canReceiveBronze() || original.isEmpty() || original.getCount() != 1) return false;
+        int shape = kind(mold);
+        sourceBronze = original.copy();
+        mold = ItemStack.EMPTY;
+        castType = shape;
+        coolingTicks = Math.max(1, getCoolingDuration());
+        sync();
+        level.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH,
+                SoundSource.BLOCKS, .7F, 1.2F);
+        return true;
+    }
+
     private static int kind(ItemStack stack) {
         if (stack.is(ItemRegistry.ITEM_GEAR_SAND_MOLD.get())) return GEAR;
         if (stack.is(ItemRegistry.ITEM_BEARING_SAND_MOLD.get())) return BEARING;
@@ -97,7 +120,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
 
         if (held.is(ItemRegistry.ITEM_BRONZE_POURING_LADLE.get())) {
             // Check every receiver precondition BEFORE altering the ladle.
-            if (mold.isEmpty() || isCooling() || !result.isEmpty()) {
+            if (!canReceiveBronze()) {
                 message(player,"need_mold");
                 return;
             }
@@ -105,22 +128,19 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
                 message(player,"need_hot_ladle");
                 return;
             }
-            int shape=kind(mold);
-            if (shape==0) { message(player,"need_mold"); return; }
-
-            // Exactly ONE hot ingot-equivalent is removed from the player's
-            // ladle and installed into the saved basin state, on the server.
+            // Receiver conditions were preflighted. Both paths use exactly
+            // the same casting state and preserve the source item's quality.
             ItemStack transferred=BronzePouringLadleItem.takeHot(held,level);
             if (transferred.isEmpty()) { message(player,"need_hot_ladle"); return; }
+            if (!receiveBronze(transferred)) {
+                // Defensive guard: never silently delete a consumed source.
+                ItemStack recovered = new ItemStack(ItemRegistry.ITEM_BRONZE_INGOT.get());
+                if (transferred.hasTag()) recovered.setTag(transferred.getTag().copy());
+                if (!player.getInventory().add(recovered)) player.drop(recovered,false);
+                message(player,"busy");
+                return;
+            }
             player.getInventory().setChanged();
-
-            sourceBronze=transferred;
-            mold=ItemStack.EMPTY;
-            castType=shape;
-            coolingTicks=Math.max(1,getCoolingDuration());
-            sync();
-            level.playSound(null,worldPosition,SoundEvents.LAVA_EXTINGUISH,
-                    SoundSource.BLOCKS,.7F,1.2F);
             message(player,"poured");
             return;
         }
