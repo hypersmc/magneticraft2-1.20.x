@@ -54,6 +54,22 @@ function generate(id,model,variants){
   }
   if(controllers.length!==1)throw Error(`Expected one controller in ${id}_${dir}`);
   const [cx,cy,cz]=controllers[0],hosts=occupied.map(([x,y,z])=>[x-cx,y-cy,z-cz]);
+  // Required-AIR cells may contain physical machinery *after* formation.
+  // These offsets come from the multiblock JSON and must match the server-side
+  // collision proxies; never fill all empty spaces in large structures.
+  const seen=new Set(hosts.map(a=>a.join("_")));
+  for(const anchor of bp.settings?.render_air_anchors||[]){
+    if(!Array.isArray(anchor)||anchor.length!==3||!anchor.every(Number.isInteger))
+      throw Error(id+"/"+dir+": invalid render_air_anchors offset");
+    const [dx,dy,dz]=anchor,[x,y,z]=[cx+dx,cy+dy,cz+dz];
+    if(x<0||x>=w||y<0||y>=h||z<0||z>=d||
+       st.blocks[st.layout[`layer${y+1}`][z][x]]!=="minecraft:air")
+      throw Error(id+"/"+dir+": render_air_anchors must be blueprint AIR cells");
+    const key=anchor.join("_");
+    if(seen.has(key))throw Error(id+"/"+dir+": duplicate air anchor at "+key);
+    seen.add(key);
+    hosts.push(anchor);
+  }
   const pieces=new Map(hosts.map(a=>[a.join("_"),[]]));
   let total=0,borrowed=0;
   for(const el of model.elements){
@@ -148,6 +164,26 @@ function stressTest(){
  }
  return built.stats.south;
 }
+function validateAirAnchorGenerator(){
+  // Enforce the render/collision contract using real Foundry blueprint JSON.
+  const cwd=process.cwd(),id="bronze_foundry";
+  const source=JSON.parse(fs.readFileSync(path.join(cwd,"tools/multiblock-models/sources/"+id+".json"),"utf8"));
+  const entries=Object.fromEntries(["south","west","north","east"].map(dir=>[
+    dir,JSON.parse(fs.readFileSync(path.join(cwd,"src/main/resources/data/magneticraft2/multiblocks/"+id+"_"+dir+".json"),"utf8"))
+  ]));
+  const models=generate(id,source,entries);
+  for(const [dir,info] of Object.entries(models.stats)){
+    if(info.partModels!==18)throw Error(dir+": expected 18 physical render hosts, got "+info.partModels);
+    for(const a of entries[dir].settings.render_air_anchors){
+      const k="part_"+a.join("_")+".json";
+      const full="src/main/resources/assets/magneticraft2/models/multiblock/"+id+"_"+dir+"/"+k;
+      if(!models.files.has(full)||!JSON.parse(models.files.get(full)).elements.length)
+        throw Error(dir+": air anchor "+k+" has no render geometry");
+    }
+  }
+  return models.stats;
+}
+
 const args=new Set(process.argv.slice(2));
 if(args.has("--self-test")){
  const intentionallyOverlapping={
@@ -162,6 +198,7 @@ if(args.has("--self-test")){
  if(!caught)throw Error("Coplanar regression detection failed");
  console.log("Coplanar overlap regression check passed");
  console.log("9x5x9 virtual structure:",JSON.stringify(stressTest()));
+ console.log("Foundry air-anchor render model checks:",JSON.stringify(validateAirAnchorGenerator()));
  process.exit(0);
 }
 const cwd=process.cwd();
