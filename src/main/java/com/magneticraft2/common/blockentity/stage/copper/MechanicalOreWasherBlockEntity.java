@@ -5,6 +5,9 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.systems.maintenance.ReplaceableMachinePart;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.FluidRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
@@ -70,6 +73,11 @@ public class MechanicalOreWasherBlockEntity
     private int totalProcessTime = 160;
     private boolean processing = false;
     private boolean hasWater = false;
+    private final ReplaceableMachinePart driveBelt =
+            new ReplaceableMachinePart(
+                    ItemRegistry.ITEM_LEATHER_BELT::get,
+                    Magneticraft2ConfigCommon.GENERAL.WasherBeltLifetime.get()
+            );
 
     public static final int WATER_CAPACITY = 4000;
     public static final int DIRTY_WATER_CAPACITY = 4000;
@@ -148,6 +156,13 @@ public class MechanicalOreWasherBlockEntity
 
     public boolean hasWaterSupply() {
         return hasWater;
+    }
+    public boolean needsMaintenance() {
+        return driveBelt.needsAttention();
+    }
+
+    public boolean isPartWornOut() {
+        return !driveBelt.canOperate();
     }
 
     public int getWaterAmount() {
@@ -377,6 +392,12 @@ public class MechanicalOreWasherBlockEntity
         MechanicalInputModuleBlockEntity input =
                 getMechanicalInput();
 
+        if (!driveBelt.canOperate()) {
+            removeMechanicalLoad();
+            setProcessing(false);
+            return;
+        }
+
         if (recipe == null) {
             removeMechanicalLoad();
             processTime = 0;
@@ -492,6 +513,7 @@ public class MechanicalOreWasherBlockEntity
             );
         }
 
+        driveBelt.completeBatch();
         processTime = 0;
         setProcessing(false);
         sync();
@@ -844,6 +866,12 @@ public class MechanicalOreWasherBlockEntity
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
+        // Inspect while sneaking with an empty hand; right-click with the
+        // actual part item to service the mechanism.
+        if (driveBelt.handleInteraction(player, hand, () -> sync())) {
+            return;
+        }
+
         ItemStack held =
                 player.getItemInHand(hand);
 
@@ -947,6 +975,7 @@ public class MechanicalOreWasherBlockEntity
                 tag.getBoolean("Processing");
         hasWater =
                 tag.getBoolean("HasWater");
+        driveBelt.load(tag.getCompound("Maintenance"));
 
         if (level != null
                 && level.isClientSide) {
@@ -1008,6 +1037,7 @@ public class MechanicalOreWasherBlockEntity
                 "HasWater",
                 hasWater
         );
+        tag.put("Maintenance", driveBelt.save());
         tag.put(
                 "WaterTank",
                 waterTank.writeToNBT(

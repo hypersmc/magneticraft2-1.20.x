@@ -239,7 +239,7 @@
   "item.magneticraft2.crushed_quartz": "Crushed Quartz",
   "item.magneticraft2.washed_quartz": "Washed Quartz",
   "item.magneticraft2.sifter_mesh": "Copper Sifter Mesh",
-  "message.magneticraft2.machine_part_status": "%s: %s/%s batches remaining. Sneak-right-click with a replacement to service.",
+  "message.magneticraft2.machine_part_status": "%s: %s/%s batches remaining. Right-click with a replacement to service.",
   "message.magneticraft2.machine_part_broken": "%s is worn out. Replace this component to resume processing.",
   "message.magneticraft2.machine_part_installed": "Installed a new %s.",
   "message.magneticraft2.machine_part_fresh": "%s is already in good condition."

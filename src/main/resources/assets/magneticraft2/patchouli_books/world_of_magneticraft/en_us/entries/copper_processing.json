@@ -194,7 +194,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Replaceable machine parts$()$(br2)The Ore Washer's Leather Drive Belt and the Sifter's Copper Mesh wear with each completed processing batch, not while sitting idle. The machines pause when their part wears out; queued resources and outputs remain in place.$(br2)Sneak-right-click the formed controller with an empty hand to inspect the component. When it needs service, sneak-right-click the controller with a replacement Leather Belt or Copper Sifter Mesh to install it. The worn area is also marked on the physical machine. Wear survives world saves.$(br2)Wear rates are configurable: the first defaults are 320 Washer cycles and 256 Sifter cycles."
+      "text": "$(bold)Replaceable machine parts$()$(br2)The Ore Washer's Leather Drive Belt and the Sifter's Copper Mesh wear with each completed processing batch, not while sitting idle. The machines pause when their part wears out; queued resources and outputs remain in place.$(br2)Sneak-right-click the formed controller with an empty hand to inspect the component. When it needs service, right-click the controller normally while holding a replacement Leather Belt or Copper Sifter Mesh to install it. The worn area is also marked on the physical machine. Wear survives world saves.$(br2)Wear rates are configurable: the first defaults are 320 Washer cycles and 256 Sifter cycles."
     }
   ],
   "extra_recipe_mappings": {

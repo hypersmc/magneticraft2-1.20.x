@@ -64,23 +64,23 @@ public final class ReplaceableMachinePart {
     }
 
     /**
-     * Service intentionally requires sneak-right-clicking the controller,
-     * never the material input or output ports. Empty hand inspects the part.
-     * A fresh replacement item is consumed only if wear has actually accrued.
+     * Sneak-right-click with an empty hand to inspect a part; right-click
+     * normally while holding its replacement item to service the machine.
+     * Nothing is extracted from processing item input/output slots.
      */
     public boolean handleInteraction(Player player, InteractionHand hand,
                                      Runnable sync) {
-        if (!player.isShiftKeyDown()) {
-            return false;
-        }
-
         ItemStack held = player.getItemInHand(hand);
         if (held.isEmpty()) {
+            if (!player.isShiftKeyDown()) {
+                return false;
+            }
             showStatus(player);
             return true;
         }
 
-        if (!held.is(replacement.get())) {
+        // Sneaking with held items bypasses ordinary block interaction.
+        if (player.isShiftKeyDown() || !held.is(replacement.get())) {
             return false;
         }
 
