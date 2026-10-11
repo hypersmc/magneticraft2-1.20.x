@@ -73,7 +73,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Heating the Foundry$()$(br2)Right-click the firebox with solid furnace fuel. Right-click the crucible with a Bronze Ingot to load its charge. Empty-hand clicks show heat, stored charge and crucible contents. Sneak-right-click with an empty hand to recover unused fuel or unmelted ingots from the corresponding opening.$(br2)Heat rises while fuel burns and dissipates when idle; cooling solidifies bronze inside the crucible until it is reheated."
+      "text": "$(bold)Heating the Foundry$()$(br2)Right-click the firebox with solid furnace fuel. Right-click the crucible with a Bronze Ingot to load its charge. Empty-hand clicks show heat, stored charge and crucible contents. Sneak-right-click with an empty hand to recover unused fuel or unmelted ingots from the corresponding opening.$(br2)Heat rises while fuel burns and dissipates when idle; cooling below the lower HEAT threshold solidifies bronze inside the crucible; reheating to the melting threshold liquefies it again without consuming another ingot."
     },
     {
       "type": "text",

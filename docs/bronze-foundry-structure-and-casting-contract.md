@@ -70,11 +70,11 @@ The Foundry uses the existing Magneticraft HEAT storage/capability and Forge sol
 - Right-click the **crucible** with a Magneticraft Bronze Ingot to queue one charge. Mixed NBT/quality variants are rejected while another variant is queued or already stored in the crucible.
 - With empty hands, click either opening for status; **sneak-right-click** to retrieve unburned queued fuel or unmelted queued ingots. The hot crucible is not an item slot, and currently has no direct extraction.
 - Fuel adds HEAT energy each server tick; the refractory mass leaks HEAT energy every loaded tick. Only when the threshold and per-ingot energy requirement are met does one solid ingot become one conserved crucible unit. Melting does **not** generate extra bronze.
-- If the HEAT drops below the threshold, the same bronze solidifies in place. It can be reheated; the model darkens instead of depicting cold liquid as lava.
+- If HEAT falls below the separately configurable solidification threshold, the same bronze solidifies in place. Reheating to the higher melting threshold makes it liquid again without inserting or consuming an extra ingot; this phase persists across reloads.
 - A named, server-owned crucible batch retains its originating Bronze Ingot's complete item NBT, including planned quality data. Every unit is an **ingot-equivalent**; its conversion to millibuckets is intentionally undecided.
 - Breaking the prototype returns the remaining queue contents and crucible material as the original ingots, with NBT, so development tests cannot permanently lose metal. Burning fuel is not refunded. State clears *before* drops are spawned to prevent duplicate restoration.
 
-**Initial balance values are configurable**, not approved real-world temperatures. In Common config: heat capacity 32,000 units; fuel gain 32 HEAT/tick; passive loss 2 HEAT/tick; melt readiness 14,000 HEAT; melt cost 2,500 HEAT per ingot; capacity 8 ingot-equivalents. These are test defaults to tune once the Casting Basin and mechanical bellows are attached.
+**Initial balance values are configurable**, not approved real-world temperatures. In Common config: heat capacity 32,000 units; fuel gain 32 HEAT/tick; passive loss 2 HEAT/tick; melt readiness 14,000 HEAT; solidification threshold 7,000 HEAT; melt cost 2,500 HEAT per ingot; capacity 8 ingot-equivalents. These are test defaults to tune once the Casting Basin and mechanical bellows are attached.
 
 The dynamic Foundry renderer draws the queued fuel and charge as physical items, and one textured 8×8-pixel crucible surface. The surface is dark when solidified and warm when melt-ready. There is no new animated gear or large per-frame rebuild.
 
@@ -87,7 +87,7 @@ The dynamic Foundry renderer draws the queued fuel and charge as physical items,
 3. Wait while the server advances fuel burn/HEAT. The ingot must disappear **once** and the crucible amount become 1. No 2× Bronze outcome is allowed.
 4. Click the tap; it should report the amount but give no metal, even if other fluid pipes are adjacent.
 5. Unload and reload while the fuel is burning: the HEAT, remaining fuel, remaining solid charge, quality NBT and crucible count must persist.
-6. Let it cool: the bronze remains stored, turns visually darker, and is no longer pour-ready. Add fuel/charge to reheat if necessary.
+6. Let it cool below the lower threshold: the bronze remains stored and turns visually darker. Add fuel alone to reheat the existing crucible metal (no new ingot required), and verify the phase persists over save/reload.
 7. Test Bronze Ingots with distinct NBT tags; they must not mix in a loaded crucible.
 8. Break either controller or one of its formed proxies; each remaining item and ingot-equivalent must drop exactly once.
 9. Repeat on a dedicated server and all four orientations. Recheck the Foundry voxel/collision and Washer/Sifter regression cases.
