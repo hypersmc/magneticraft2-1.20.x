@@ -187,6 +187,22 @@
     {
       "type": "text",
       "text": "$(bold)Data-driven ore processing$()$(br2)Grinding, washing and sifting requirements now live in recipe JSON instead of being hard-coded into each machine. New minerals can define their own speed, torque, time, outputs and byproduct chance without another Java machine class.$(br2)This is the foundation for processing the rest of Magneticraft2's ore catalogue through later ages."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)More ores for the Copper Workshop$()$(br2)Chalcocite can follow the longer Grinder -> Washer -> Sifter -> Furnace route. Direct furnace smelting yields 1 Copper, crushing yields 2, and fully concentrating yields 3 Copper per ore (plus Slag).$(br2)Quartz Ore (including Deepslate Quartz Ore) can be ground, washed and sifted into 2 Nether Quartz. Both Washer processes use 250 mB water and produce 250 mB Dirty Water. Gravel and Flint remain optional byproducts.$(br2)These are the first additions to the data-driven ore catalogue; other ores will receive appropriate routes as their age-specific metallurgy is developed."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Replaceable machine parts$()$(br2)The Ore Washer uses a Leather Drive Belt; the Sifter uses a Copper Sifter Mesh. These are installed components, separate from ore input/output slots. Every completed batch uses one cycle of life. Idle or blocked machines cause no wear.$(br2)The belt lasts 320 batches and the mesh 256 by default; both are configurable."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Look at the machine$()$(br2)Wear changes the actual moving components. Below 75% life, the belt fades and mesh develops nicks. Below 50%, fraying and holes appear. Below 25%, tears are obvious; below 10%, they become severe.$(br2)At zero life, the part visibly breaks and the machine stops processing. A snapped Washer belt also stops its driven drum, even if the upstream shaft turns."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Service a worn part$()$(br2)Sneak-right-click the formed controller with an empty hand to inspect its component. Right-click normally while holding a Leather Belt or Copper Sifter Mesh to install the replacement.$(br2)The service consumes one spare part in Survival, restores the intact appearance and keeps queued materials and fluid. Wear is saved with the machine."
     }
   ],
   "extra_recipe_mappings": {

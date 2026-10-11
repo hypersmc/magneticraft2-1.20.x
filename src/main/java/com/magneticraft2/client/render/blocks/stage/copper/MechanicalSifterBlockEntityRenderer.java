@@ -37,6 +37,20 @@ public class MechanicalSifterBlockEntityRenderer
                     "magneticraft2",
                     "multiblock/mechanical_sifter_upper_tray"
             );
+    /**
+     * Baked variants preserve the original wooden carriage while removing
+     * increasingly large pieces of the actual wire grid.
+     * Stage 0 is the original pristine model, not a modified approximation.
+     */
+    private static final ResourceLocation[] UPPER_TRAY_BY_WEAR = {
+            UPPER_TRAY,
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_upper_tray_wear_1"),
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_upper_tray_wear_2"),
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_upper_tray_wear_3"),
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_upper_tray_wear_4"),
+            new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_upper_tray_wear_5")
+    };
+
     private static final ResourceLocation LOWER_TRAY =
             new ResourceLocation(
                     "magneticraft2",
@@ -130,8 +144,9 @@ public class MechanicalSifterBlockEntityRenderer
                 -1.20D
         );
 
+        int stage = Math.max(0, Math.min(5, sifter.getPartWearStage()));
         renderModel(
-                UPPER_TRAY,
+                UPPER_TRAY_BY_WEAR[stage],
                 poseStack,
                 buffer,
                 packedLight,

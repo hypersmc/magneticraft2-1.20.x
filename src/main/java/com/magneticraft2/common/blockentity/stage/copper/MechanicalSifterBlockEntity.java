@@ -5,6 +5,9 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.systems.maintenance.ReplaceableMachinePart;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
@@ -64,6 +67,11 @@ public class MechanicalSifterBlockEntity
     @Nullable
     private ResourceLocation activeRecipeId;
     private boolean pendingByproduct = false;
+    private final ReplaceableMachinePart sieveMesh =
+            new ReplaceableMachinePart(
+                    ItemRegistry.ITEM_SIFTER_MESH::get,
+                    Magneticraft2ConfigCommon.GENERAL.SifterMeshLifetime.get()
+            );
 
     // Processing state is not network-synced every tick. Predict the visual
     // progress client-side between start/stop sync points, matching the Washer.
@@ -95,6 +103,17 @@ public class MechanicalSifterBlockEntity
 
     public boolean isProcessing() {
         return processing;
+    }
+    public boolean needsMaintenance() {
+        return sieveMesh.needsAttention();
+    }
+
+    public boolean isPartWornOut() {
+        return !sieveMesh.canOperate();
+    }
+
+    public int getPartWearStage() {
+        return sieveMesh.getVisualWearStage();
     }
 
     public ItemStack getInputStack() {
@@ -298,6 +317,12 @@ public class MechanicalSifterBlockEntity
         MultiblockProcessingRecipe recipe = getMatchingRecipe();
         MechanicalInputModuleBlockEntity input = getMechanicalInput();
 
+        if (!sieveMesh.canOperate()) {
+            removeMechanicalLoad();
+            setProcessing(false);
+            return;
+        }
+
         if (recipe == null) {
             clearBatch();
             removeMechanicalLoad();
@@ -364,6 +389,7 @@ public class MechanicalSifterBlockEntity
             insertOutput(2, byproduct);
         }
 
+        sieveMesh.completeBatch();
         activeRecipeId = null;
         pendingByproduct = false;
         processTime = 0;
@@ -717,6 +743,11 @@ public class MechanicalSifterBlockEntity
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
+        // The installed mesh is separate from the automated item input slots.
+        if (sieveMesh.handleInteraction(player, hand, () -> sync())) {
+            return;
+        }
+
         ItemStack held =
                 player.getItemInHand(hand);
 
@@ -820,6 +851,7 @@ public class MechanicalSifterBlockEntity
                 ? ResourceLocation.tryParse(tag.getString("ActiveRecipe"))
                 : null;
         pendingByproduct = tag.getBoolean("PendingByproduct");
+        sieveMesh.load(tag.getCompound("Maintenance"));
 
         if (level != null
                 && level.isClientSide) {
@@ -867,6 +899,7 @@ public class MechanicalSifterBlockEntity
             tag.putString("ActiveRecipe", activeRecipeId.toString());
         }
         tag.putBoolean("PendingByproduct", pendingByproduct);
+        tag.put("Maintenance", sieveMesh.save());
 
         saveMultiblockData(
                 tag,

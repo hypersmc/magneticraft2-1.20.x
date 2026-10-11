@@ -132,6 +132,13 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_follower"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_guide_rails"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_slide_shoes"));
+        // Render-only damage variants must be baked before block entity rendering.
+        // Do not rely solely on the folder scan: otherwise client reloads can
+        // display the black/magenta missing-model cube.
+        for (int stage = 1; stage <= 5; stage++) {
+            event.register(new ResourceLocation(
+                    MOD_ID, "multiblock/mechanical_sifter_upper_tray_wear_" + stage));
+        }
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_gear"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_drive_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_transfer_arm_turret"));

@@ -5,6 +5,9 @@ import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.systems.maintenance.ReplaceableMachinePart;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.FluidRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
@@ -69,7 +72,16 @@ public class MechanicalOreWasherBlockEntity
     private int processTime = 0;
     private int totalProcessTime = 160;
     private boolean processing = false;
+    // Deterministic per-batch byproduct selection survives blocked outputs.
+    @Nullable
+    private ResourceLocation activeRecipeId;
+    private boolean pendingByproduct = false;
     private boolean hasWater = false;
+    private final ReplaceableMachinePart driveBelt =
+            new ReplaceableMachinePart(
+                    ItemRegistry.ITEM_LEATHER_BELT::get,
+                    Magneticraft2ConfigCommon.GENERAL.WasherBeltLifetime.get()
+            );
 
     public static final int WATER_CAPACITY = 4000;
     public static final int DIRTY_WATER_CAPACITY = 4000;
@@ -148,6 +160,17 @@ public class MechanicalOreWasherBlockEntity
 
     public boolean hasWaterSupply() {
         return hasWater;
+    }
+    public boolean needsMaintenance() {
+        return driveBelt.needsAttention();
+    }
+
+    public boolean isPartWornOut() {
+        return !driveBelt.canOperate();
+    }
+
+    public int getPartWearStage() {
+        return driveBelt.getVisualWearStage();
     }
 
     public int getWaterAmount() {
@@ -358,6 +381,7 @@ public class MechanicalOreWasherBlockEntity
         }
 
         if (!formed) {
+            clearBatch();
             removeMechanicalLoad();
             setProcessing(false);
             return;
@@ -377,20 +401,34 @@ public class MechanicalOreWasherBlockEntity
         MechanicalInputModuleBlockEntity input =
                 getMechanicalInput();
 
-        if (recipe == null) {
+        if (!driveBelt.canOperate()) {
             removeMechanicalLoad();
-            processTime = 0;
-            totalProcessTime = 160;
             setProcessing(false);
             return;
+        }
+
+        if (recipe == null) {
+            clearBatch();
+            removeMechanicalLoad();
+            setProcessing(false);
+            return;
+        }
+
+        if (!recipe.getId().equals(activeRecipeId)) {
+            activeRecipeId = recipe.getId();
+            processTime = 0;
+            totalProcessTime = recipe.getProcessTime();
+            ItemStack optionalOutput = recipe.getByproduct();
+            pendingByproduct = !optionalOutput.isEmpty()
+                    && level.random.nextFloat() < recipe.getByproductChance();
+            setChanged();
         }
 
         ItemStack output = recipe.getOutput();
         ItemStack byproduct = recipe.getByproduct();
 
         if (!canAccept(1, output)
-                || (!byproduct.isEmpty()
-                && !canAccept(2, byproduct))) {
+                || (pendingByproduct && !canAccept(2, byproduct))) {
             removeMechanicalLoad();
             setProcessing(false);
             return;
@@ -483,18 +521,28 @@ public class MechanicalOreWasherBlockEntity
 
         insertOutput(1, output);
 
-        if (!byproduct.isEmpty()
-                && level.random.nextFloat()
-                < recipe.getByproductChance()) {
-            insertOutput(
-                    2,
-                    byproduct
-            );
+        if (pendingByproduct) {
+            insertOutput(2, byproduct);
         }
 
+        driveBelt.completeBatch();
+        activeRecipeId = null;
+        pendingByproduct = false;
         processTime = 0;
         setProcessing(false);
         sync();
+    }
+
+    private void clearBatch() {
+        if (activeRecipeId == null && processTime == 0
+                && !pendingByproduct) {
+            return;
+        }
+        activeRecipeId = null;
+        pendingByproduct = false;
+        processTime = 0;
+        totalProcessTime = 160;
+        setChanged();
     }
 
     @Nullable
@@ -549,6 +597,15 @@ public class MechanicalOreWasherBlockEntity
         double currentVisualTime =
                 (double) level.getGameTime()
                         + (double) partialTicks;
+
+        // A snapped internal belt no longer drives the drum. The external
+        // power shaft and its input pulley may still turn, but the worn belt,
+        // driven pulley and trommel rotor remain stopped until replacement.
+        // Reset the timing anchor to avoid a sudden jump after servicing.
+        if (isPartWornOut()) {
+            lastClientBeltVisualTime = currentVisualTime;
+            return clientBeltTravelDistance;
+        }
 
         if (Double.isNaN(lastClientBeltVisualTime)) {
             lastClientBeltVisualTime = currentVisualTime;
@@ -844,6 +901,12 @@ public class MechanicalOreWasherBlockEntity
             Player player,
             InteractionHand hand,
             BlockHitResult hit) {
+        // Inspect while sneaking with an empty hand; right-click with the
+        // actual part item to service the mechanism.
+        if (driveBelt.handleInteraction(player, hand, () -> sync())) {
+            return;
+        }
+
         ItemStack held =
                 player.getItemInHand(hand);
 
@@ -947,6 +1010,11 @@ public class MechanicalOreWasherBlockEntity
                 tag.getBoolean("Processing");
         hasWater =
                 tag.getBoolean("HasWater");
+        driveBelt.load(tag.getCompound("Maintenance"));
+        activeRecipeId = tag.contains("ActiveRecipe")
+                ? ResourceLocation.tryParse(tag.getString("ActiveRecipe"))
+                : null;
+        pendingByproduct = tag.getBoolean("PendingByproduct");
 
         if (level != null
                 && level.isClientSide) {
@@ -1008,6 +1076,11 @@ public class MechanicalOreWasherBlockEntity
                 "HasWater",
                 hasWater
         );
+        tag.put("Maintenance", driveBelt.save());
+        if (activeRecipeId != null) {
+            tag.putString("ActiveRecipe", activeRecipeId.toString());
+        }
+        tag.putBoolean("PendingByproduct", pendingByproduct);
         tag.put(
                 "WaterTank",
                 waterTank.writeToNBT(
