@@ -57,7 +57,7 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         BronzeFoundryThermalCore thermal = entity.getThermal();
 
         // Fuel is inside the lower, recessed firebox, not placed on the face.
-        renderItem(entity, thermal.fuelDisplay(), 0.5D, 0.32D, 0.70D,
+        renderItem(entity, thermal.fuelDisplay(), 0.5D, 0.60D, 0.70D,
                 0.35F, 780, pose, buffer, packedLight, overlay);
 
         if (thermal.crucibleUnits() > 0) {
