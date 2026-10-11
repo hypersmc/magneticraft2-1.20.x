@@ -196,6 +196,9 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
             jsonObject.addProperty("fluid", multiblockSettings.hasFluid());
             jsonObject.add("inputs", context.serialize(multiblockSettings.getInputs()));
             jsonObject.add("outputs", context.serialize(multiblockSettings.getOutputs()));
+            if (!multiblockSettings.getVoxelProfile().isBlank()) {
+                jsonObject.addProperty("voxel_profile", multiblockSettings.getVoxelProfile());
+            }
             if (!multiblockSettings.getRenderAirAnchors().isEmpty()) {
                 JsonArray anchors = new JsonArray();
                 for (BlockPos anchor : multiblockSettings.getRenderAirAnchors()) {
@@ -236,8 +239,13 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                                 xyz.get(0).getAsInt(), xyz.get(1).getAsInt(), xyz.get(2).getAsInt()));
                     }
                 }
+                String voxelProfile = jsonObject.has("voxel_profile")
+                        ? jsonObject.get("voxel_profile").getAsString() : "";
+                if (!voxelProfile.isEmpty() && ResourceLocation.tryParse(voxelProfile) == null) {
+                    throw new JsonParseException("Invalid voxel_profile resource location: " + voxelProfile);
+                }
                 return new MultiblockSettings(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid,
-                        inputs, outputs, renderAirAnchors);
+                        inputs, outputs, renderAirAnchors, voxelProfile);
             }catch (JsonParseException e) {
                 if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                     LOGGER.info("Error during MultiblockSettings deserialize: " + e.getMessage());

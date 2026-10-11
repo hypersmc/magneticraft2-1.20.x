@@ -14,6 +14,7 @@ import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.Magneticraft2ConfigServer;
 import com.magneticraft2.compatibility.TOP.TOPCompatibility;
 import com.magneticraft2.server.MultiblockAndBlueprintReloadListener;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelProfiles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -95,6 +96,7 @@ public class magneticraft2 {
     @SubscribeEvent
     public void registerReloadListener(@NotNull AddReloadListenerEvent event){
         event.addListener(new MultiblockAndBlueprintReloadListener());
+        event.addListener(new MultiblockVoxelProfiles());
     }
     public void preinit(final FMLCommonSetupEvent event){
         mgc2Network.init();
