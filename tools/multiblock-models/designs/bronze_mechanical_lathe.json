@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "5x2x3 Bronze Lathe refined mechanical geometry. Compact coaxial headstock/chuck and tailstock/quill on shared x-axis (y=22,z=-10). Guided saddle and cutting nose supported by dual bed rails.",
+  "description": "Bronze lathe: structural frame and physically linked rear Gear V2 input to headstock drive. Moving saddle, chuck and cutting insert rendered by BER, excluded from baked V2 solids.",
   "textures": {
     "wood": "minecraft:block/stripped_spruce_log",
     "end": "minecraft:block/spruce_planks",
@@ -600,171 +600,101 @@
       ]
     },
     {
-      "name": "saddle_bridge",
+      "name": "drive_input_bearing",
       "material": "iron",
       "from": [
-        3,
-        17,
-        -17
+        5,
+        11,
+        -28
       ],
       "to": [
+        11,
         17,
-        19,
-        3
+        -22
       ]
     },
     {
-      "name": "saddle_runner_rear",
-      "material": "metal",
+      "name": "drive_vertical_journal",
+      "material": "plate",
       "from": [
-        4,
-        18.5,
-        -17
+        7,
+        16,
+        -26
       ],
       "to": [
+        9,
+        21,
+        -24
+      ]
+    },
+    {
+      "name": "drive_rear_drive_shaft",
+      "material": "iron",
+      "from": [
+        -23,
+        17.5,
+        -25.3
+      ],
+      "to": [
+        8,
+        19.5,
+        -23.3
+      ]
+    },
+    {
+      "name": "drive_rear_shaft_cap",
+      "material": "metal",
+      "from": [
+        -26,
         16,
-        20,
+        -28
+      ],
+      "to": [
+        -20,
+        21,
+        -21
+      ]
+    },
+    {
+      "name": "drive_return_housing",
+      "material": "iron",
+      "from": [
+        -27,
+        15,
+        -24
+      ],
+      "to": [
+        -22,
+        22,
+        -12
+      ]
+    },
+    {
+      "name": "drive_front_belt_guard",
+      "material": "metal",
+      "from": [
+        -27,
+        16,
         -14
-      ]
-    },
-    {
-      "name": "saddle_runner_front",
-      "material": "metal",
-      "from": [
-        4,
-        18.5,
-        -2
       ],
       "to": [
-        16,
+        -22,
         20,
-        1
+        -9
       ]
     },
     {
-      "name": "carriage_cross_slide",
-      "material": "metal",
+      "name": "drive_headstock_coupler",
+      "material": "plate",
       "from": [
-        6,
+        -23,
         19,
-        -5
+        -12
       ],
       "to": [
-        14,
-        21,
-        5
-      ]
-    },
-    {
-      "name": "carriage_dovetail",
-      "material": "iron",
-      "from": [
-        7,
-        21,
-        -5
-      ],
-      "to": [
-        13,
-        22.5,
-        3
-      ]
-    },
-    {
-      "name": "carriage_tool_post",
-      "material": "metal",
-      "from": [
-        8,
-        22.5,
-        -5
-      ],
-      "to": [
-        12,
-        26.5,
-        -1
-      ]
-    },
-    {
-      "name": "carriage_tool_clamp",
-      "material": "plate",
-      "from": [
-        7,
-        26,
-        -6
-      ],
-      "to": [
-        13,
-        27.5,
-        -1
-      ]
-    },
-    {
-      "name": "carriage_tool_nose",
-      "material": "iron",
-      "from": [
-        8.5,
+        -21,
         23,
-        -10
-      ],
-      "to": [
-        11.5,
-        24.2,
-        -5
-      ]
-    },
-    {
-      "name": "carriage_leadscrew_mount",
-      "material": "iron",
-      "from": [
-        8,
-        16,
-        5
-      ],
-      "to": [
-        12,
-        20,
-        8
-      ]
-    },
-    {
-      "name": "carriage_leadscrew",
-      "material": "plate",
-      "from": [
-        9.2,
-        17.6,
-        8
-      ],
-      "to": [
-        10.8,
-        19.2,
-        12
-      ]
-    },
-    {
-      "name": "carriage_handwheel_hub",
-      "material": "metal",
-      "from": [
-        8,
-        16.4,
-        11
-      ],
-      "to": [
-        12,
-        20.4,
-        13
-      ]
-    },
-    {
-      "name": "carriage_handwheel_grip",
-      "material": "wood",
-      "from": [
-        9.3,
-        18.3,
-        12.5
-      ],
-      "to": [
-        10.7,
-        19.7,
-        14
+        -8
       ]
     }
   ]
