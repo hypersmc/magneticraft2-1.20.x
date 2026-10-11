@@ -259,6 +259,7 @@ public final class BronzeFoundryThermalCore {
             message(player, "direct_not_ready");
             return false;
         }
+        basin.startDirectFill();
         crucibleUnits--;
         if (crucibleUnits == 0) {
             crucibleTemplate = ItemStack.EMPTY;
