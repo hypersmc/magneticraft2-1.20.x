@@ -191,6 +191,10 @@
     {
       "type": "text",
       "text": "$(bold)More ores for the Copper Workshop$()$(br2)Chalcocite can follow the longer Grinder -> Washer -> Sifter -> Furnace route. Direct furnace smelting yields 1 Copper, crushing yields 2, and fully concentrating yields 3 Copper per ore (plus Slag).$(br2)Quartz Ore (including Deepslate Quartz Ore) can be ground, washed and sifted into 2 Nether Quartz. Both Washer processes use 250 mB water and produce 250 mB Dirty Water. Gravel and Flint remain optional byproducts.$(br2)These are the first additions to the data-driven ore catalogue; other ores will receive appropriate routes as their age-specific metallurgy is developed."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Replaceable machine parts$()$(br2)The Ore Washer's Leather Drive Belt and the Sifter's Copper Mesh wear with each completed processing batch, not while sitting idle. The machines pause when their part wears out; queued resources and outputs remain in place.$(br2)Sneak-right-click the formed controller with an empty hand to inspect the component. When it needs service, sneak-right-click the controller with a replacement Leather Belt or Copper Sifter Mesh to install it. The worn area is also marked on the physical machine. Wear survives world saves.$(br2)Wear rates are configurable: the first defaults are 320 Washer cycles and 256 Sifter cycles."
     }
   ],
   "extra_recipe_mappings": {

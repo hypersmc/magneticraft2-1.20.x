@@ -19,6 +19,8 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> MaxWireLenght;
         public final ForgeConfigSpec.ConfigValue<Integer> PitKilnTime;
         public final ForgeConfigSpec.ConfigValue<Boolean> DevMode;
+        public final ForgeConfigSpec.ConfigValue<Integer> WasherBeltLifetime;
+        public final ForgeConfigSpec.ConfigValue<Integer> SifterMeshLifetime;
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -33,6 +35,14 @@ public class Magneticraft2ConfigCommon {
                     .comment("Dev mode for the mod. This enables functions that are not intended for the normal end user like debug output from most things in the mod.")
                     .translation("magneticraft2.devmode.config")
                     .define("Dev mode", false);
+            // One wear cycle is one completed recipe, not one server tick.
+            // The values are early balancing defaults and can be tuned per pack.
+            WasherBeltLifetime = builder
+                    .comment("Completed Ore Washer batches before its leather drive belt needs replacing")
+                    .defineInRange("Washer belt batches", 320, 1, Integer.MAX_VALUE);
+            SifterMeshLifetime = builder
+                    .comment("Completed Mechanical Sifter batches before its screen mesh needs replacing")
+                    .defineInRange("Sifter mesh batches", 256, 1, Integer.MAX_VALUE);
             builder.pop();
         }
 
