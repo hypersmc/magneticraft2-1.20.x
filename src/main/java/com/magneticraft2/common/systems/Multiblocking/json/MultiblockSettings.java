@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.Multiblocking.json;
 
 import java.util.List;
+import net.minecraft.core.BlockPos;
 
 /**
  * @author JumpWatch on 10-06-2023
@@ -15,8 +16,16 @@ public class MultiblockSettings {
     private final boolean hasFluid;
     private final List<MultiblockInput> inputs;
     private final List<MultiblockOutput> outputs;
+    /** Controller-relative, opt-in air positions which become V2 proxies after formation. */
+    private final List<BlockPos> renderAirAnchors;
 
     public MultiblockSettings(String replaceWhenFormed, boolean hasInventory, boolean hasPower, boolean hasFuel, boolean hasFluid, List<MultiblockInput> inputs, List<MultiblockOutput> outputs) {
+        this(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid, inputs, outputs, List.of());
+    }
+
+    public MultiblockSettings(String replaceWhenFormed, boolean hasInventory, boolean hasPower, boolean hasFuel, boolean hasFluid,
+                              List<MultiblockInput> inputs, List<MultiblockOutput> outputs, List<BlockPos> renderAirAnchors) {
+        this.renderAirAnchors = List.copyOf(renderAirAnchors);
         this.replaceWhenFormed = replaceWhenFormed;
         this.hasInventory = hasInventory;
         this.hasPower = hasPower;
@@ -52,5 +61,9 @@ public class MultiblockSettings {
 
     public List<MultiblockOutput> getOutputs() {
         return outputs;
+    }
+
+    public List<BlockPos> getRenderAirAnchors() {
+        return renderAirAnchors;
     }
 }

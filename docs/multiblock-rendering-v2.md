@@ -12,6 +12,7 @@ Minecraft 1.20.1 block model elements must lie within -16..32 model pixels; a si
 - Generated models obey vanilla's -16..32 element bounds and each face's UVs stay in the 0..16 atlas tile.
 - The generator rejects **same-facing coplanar faces** in the canonical model before exporting any parts. This detects actual depth fighting early, including overlaid copper trim or repeated brick surfaces. To create a decorative trim, place its visible face slightly proud of the wall and remove buried faces instead of stacking two faces on the same plane.
 - The Foundry prototype's four copper corner braces now project 0.5 model pixels beyond the brick corners and top, while hidden rear faces on the firebox trim and overlapping spout faces are removed. Its collision remains the original brick shell; the small protrusion is decorative.
+- **Collision in required-air structure positions:** a JSON multiblock can opt in to `settings.render_air_anchors` with an array of controller-relative integer offsets `[[dx,dy,dz], ...]`. These cells must be **AIR before formation**, as validated by the ordinary structure blueprint; on formation, the machine replaces only the explicitly named cells with a regular non-occluding filler that stores a block-local collision snapshot and its V2 model ID. The saved original blueprint remains AIR, so dismantling restores each proxy back to AIR without dropping fake items. Other machines are unaffected. This is important for the Foundry's upper crucible/tap cells, where rendered surfaces otherwise had no corresponding block for physical collision.
 - The formed controller blockstate uses its own `part_0_0_0`. Each filler has the same static model selector, with a synchronized/persisted `render_part` key in its existing block entity. Chunk baking renders each filler normally. If its key is empty, the filler stays **invisible** (compatibility with older machines).
 - V2 computes each filler’s **local collision shape once** at formation and saves it in its NBT. Reloading a filler chunk without the master chunk loaded preserves physical collision and the static visual.
 - The generic `MultiblockRenderParts.assign` helper is reusable by the next machine; do not hardcode Foundry logic into the filler or the model selector.
@@ -60,6 +61,15 @@ The included virtual stress case splits a **9x5x9 (405-cell)** structure with a 
 3. **Size versus block entities:** Static visuals can span many chunk meshes, but the existing controller still creates a block entity for every filler. Large production buildings should eventually replace unnecessary per-cell BEs with grouped/chunk-local metadata. Benchmark memory, save time and rebuild cost before promising thousands of fillers.
 4. **Dismantling across unloaded chunks:** Current multiblock lifecycle largely comes from the pre-V2 controller. Delayed dismantling for enormous multiblocks and safe restoration of parts in not-yet-loaded chunks still need dedicated implementation and tests.
 5. **Lighting/interaction/protection:** This first pass reuses existing physical shapes and click forwarding. Validate occlusion, skylight, dynamic part bounds, hitboxes, reloading, and chunk edges in-game before migrating other machines.
+
+## Air collision-anchor regression tests
+
+- Re-form an existing Foundry once after installing this change (previously formed structures did not place the new anchors).
+- Walk onto the pouring channel while looking at it, then rotate your view away and repeat; physics must remain unchanged.
+- Confirm both upper air cells become non-occluding V2 filler blocks **after** formation, with partial/hollow collision matching the crucible and front tapping assembly.
+- Save/reload with the controller chunk temporarily unloaded and confirm the local collision remains stable.
+- Break either the controller or an anchored component; the two positions should return to AIR with no fake item drops.
+- Form each of four facings. Nearby unrelated AIR cells must remain AIR, and all older multiblocks must keep working.
 
 ## Acceptance checklist for the Foundry prototype
 

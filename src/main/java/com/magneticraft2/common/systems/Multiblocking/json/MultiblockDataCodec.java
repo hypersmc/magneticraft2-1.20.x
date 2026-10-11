@@ -3,6 +3,7 @@ package com.magneticraft2.common.systems.Multiblocking.json;
 import com.google.gson.*;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -195,6 +196,17 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
             jsonObject.addProperty("fluid", multiblockSettings.hasFluid());
             jsonObject.add("inputs", context.serialize(multiblockSettings.getInputs()));
             jsonObject.add("outputs", context.serialize(multiblockSettings.getOutputs()));
+            if (!multiblockSettings.getRenderAirAnchors().isEmpty()) {
+                JsonArray anchors = new JsonArray();
+                for (BlockPos anchor : multiblockSettings.getRenderAirAnchors()) {
+                    JsonArray xyz = new JsonArray();
+                    xyz.add(anchor.getX());
+                    xyz.add(anchor.getY());
+                    xyz.add(anchor.getZ());
+                    anchors.add(xyz);
+                }
+                jsonObject.add("render_air_anchors", anchors);
+            }
             return jsonObject;
         }
 
@@ -212,7 +224,20 @@ public class MultiblockDataCodec implements JsonSerializer<MultiblockData>, Json
                 boolean hasFluid = jsonObject.get("fluid").getAsBoolean();
                 List<MultiblockInput> inputs = context.deserialize(jsonObject.get("inputs"), List.class);
                 List<MultiblockOutput> outputs = context.deserialize(jsonObject.get("outputs"), List.class);
-                return new MultiblockSettings(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid, inputs, outputs);
+                // The key is optional: existing Copper/Stone multiblocks remain unchanged.
+                List<BlockPos> renderAirAnchors = new ArrayList<>();
+                if (jsonObject.has("render_air_anchors")) {
+                    for (JsonElement entry : jsonObject.getAsJsonArray("render_air_anchors")) {
+                        if (!entry.isJsonArray() || entry.getAsJsonArray().size() != 3) {
+                            throw new JsonParseException("render_air_anchors entries must be [dx,dy,dz]");
+                        }
+                        JsonArray xyz = entry.getAsJsonArray();
+                        renderAirAnchors.add(new BlockPos(
+                                xyz.get(0).getAsInt(), xyz.get(1).getAsInt(), xyz.get(2).getAsInt()));
+                    }
+                }
+                return new MultiblockSettings(replaceWhenFormed, hasInventory, hasPower, hasFuel, hasFluid,
+                        inputs, outputs, renderAirAnchors);
             }catch (JsonParseException e) {
                 if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                     LOGGER.info("Error during MultiblockSettings deserialize: " + e.getMessage());

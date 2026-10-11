@@ -37,6 +37,8 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
     private String replacementModel = "";
     private boolean formed;
     private Direction matchedFacing = Direction.SOUTH;
+    // Copied from the matching JSON settings only for this formation attempt.
+    private java.util.List<BlockPos> renderAirAnchors = java.util.List.of();
 
     public BronzeFoundryBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), pos, state);
@@ -66,7 +68,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         // The JSON controller uses its own block-local baked model.
         // Every filler receives its generated part ID and a collision snapshot.
         MultiblockRenderParts.assign(level, worldPosition, controller,
-                "bronze_foundry", matchedFacing);
+                "bronze_foundry", matchedFacing, renderAirAnchors);
         requestModelDataUpdate();
         sync();
         return controller;
@@ -81,6 +83,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
             blueprintName = multiblock.getName();
             replacementModel = multiblock.getSettings().getReplaceWhenFormed();
             matchedFacing = facingFromName(blueprintName);
+            renderAirAnchors = multiblock.getSettings().getRenderAirAnchors();
             return structure;
         }
         return null;

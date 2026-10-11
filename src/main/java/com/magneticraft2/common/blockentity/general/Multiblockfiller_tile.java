@@ -48,6 +48,13 @@ public class Multiblockfiller_tile extends BlockEntity {
      * to the client: geometry never travels in packets and is never rebuilt
      * every frame. Collision is stored per local block for chunk independence.
      */
+    public void setV2ModelPart(BlockPos controller, String name, @NotNull VoxelShape localCollision) {
+        Master_X = controller.getX();
+        Master_Y = controller.getY();
+        Master_Z = controller.getZ();
+        setV2ModelPart(name, localCollision);
+    }
+
     public void setV2ModelPart(String name, @NotNull VoxelShape localCollision) {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Multiblock V2 part ID cannot be empty");

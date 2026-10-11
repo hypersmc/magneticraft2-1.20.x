@@ -52,3 +52,7 @@ The source-of-truth visual volumes are in `tools/multiblock-models/designs/bronz
 The raised crucible is open and dark when cold, and the tap is presently a static visual (no fuel or molten metal can flow). The large front firebox is hollow, with an inset refractory lining and grate. Upper brickwork forms low retaining walls instead of enclosing the entire second layer; the original 15 Bricks + Controller multiblock layout and crafting requirements have not changed.
 
 The Foundry has a **hand-authored simplified collision outline** that now follows the open firebox and raised hollow crucible rather than its old solid brick bounding box. It is not yet the generalized Voxel V2 implementation. Verify hitting the firebox, reaching the crucible from above, walking near the spout, all four facings, and dismantling after formation.
+
+## V2 collision anchors for the open crucible/tap
+
+The assembled model extends into the two required-AIR cells of the upper 3×2×3 structure. Before forming they stay AIR and do not change the construction instructions. The JSON `settings.render_air_anchors` now explicitly names those controller-relative locations; they are replaced with non-occluding render/collision proxy blocks **only after formation**. The proxies receive per-block cached collision and model IDs and restore to AIR on dismantle. Re-form Foundries built with older code to install the new anchors. The short overhanging end of the tap outside the 3×2×3 footprint remains decorative until external anchors are supported; do not treat it as a safe walkway.

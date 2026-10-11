@@ -55,6 +55,18 @@
     "fuel": false,
     "fluid": false,
     "inputs": [],
-    "outputs": []
+    "outputs": [],
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ]
+    ]
   }
 }
