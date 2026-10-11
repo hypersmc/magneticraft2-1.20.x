@@ -11,6 +11,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -57,19 +58,31 @@ public final class BronzeMoldTableRenderer
                       PoseStack pose, MultiBufferSource buffer, int light,
                       int overlay) {
         if (stack.isEmpty()) return;
+
         ItemStack display = stack.copy();
         display.setCount(1);
+
         pose.pushPose();
         pose.translate(x, y, z);
+
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         BakedModel model = itemRenderer.getModel(display, table.getLevel(), null, seed);
+
         if (!model.isGui3d()) {
-            // Generated sprites are upright in XY; 3D molds and patterns are already flat in XZ.
+            // Flat/generated items need to be laid down.
             pose.mulPose(Axis.XP.rotationDegrees(90F));
         }
-        pose.scale(scale, scale, scale);
+
+        float effectiveScale = scale;
+        if (display.getItem() instanceof BlockItem) {
+            effectiveScale *= 0.55F; // shrink sand and similar block items
+        }
+
+        pose.scale(effectiveScale, effectiveScale, effectiveScale);
+
         itemRenderer.render(display, ItemDisplayContext.NONE, false,
                 pose, buffer, light, overlay, model);
+
         pose.popPose();
     }
 }
