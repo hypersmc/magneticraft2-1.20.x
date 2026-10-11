@@ -32,6 +32,7 @@ import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
 import com.magneticraft2.common.block.stage.copper.WaterWheelBlock;
 import com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock;
 import com.magneticraft2.common.block.stage.stone.*;
+import com.magneticraft2.common.block.stage.bronze.BronzePatternMakerBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -102,6 +103,8 @@ public class BlockRegistry {
     public static final RegistryObject<FlywheelBlock_wood> FLYWHEEL_WOOD = BLOCKS.register("flywheel_wood", FlywheelBlock_wood::new);
     public static final RegistryObject<MechanicalOreWasherBlock> MECHANICAL_ORE_WASHER = BLOCKS.register("mechanical_ore_washer", MechanicalOreWasherBlock::new);
     public static final RegistryObject<MechanicalSifterBlock> MECHANICAL_SIFTER = BLOCKS.register("mechanical_sifter", MechanicalSifterBlock::new);
+    public static final RegistryObject<BronzePatternMakerBlock> BRONZE_PATTERN_MAKER =
+            BLOCKS.register("bronze_pattern_maker", BronzePatternMakerBlock::new);
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(

@@ -100,6 +100,11 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_TIN_INGOT = ITEMS.register("tin_ingot", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_CHARGE = ITEMS.register("bronze_charge", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WOODEN_GEAR_PATTERN =
+            ITEMS.register("wooden_gear_pattern", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_WOODEN_BEARING_PATTERN =
+            ITEMS.register("wooden_bearing_pattern", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BRONZE_PATTERN_MAKER = fromBlock(BRONZE_PATTERN_MAKER);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);

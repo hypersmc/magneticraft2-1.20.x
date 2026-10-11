@@ -98,6 +98,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_TIN_INGOT.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_CHARGE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_INGOT.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_PATTERN_MAKER.get());
+                        entries.accept(ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get());
+                        entries.accept(ItemRegistry.ITEM_WOODEN_BEARING_PATTERN.get());
                         entries.accept(ItemRegistry.ITEM_PULLEY_SMALL_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_PULLEY_LARGE_WOOD.get());
                         entries.accept(ItemRegistry.ITEM_CONVEYOR_ROLLER.get());

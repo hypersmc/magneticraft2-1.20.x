@@ -15,6 +15,16 @@
     {
       "type": "text",
       "text": "$(bold)Bronze alloy$()$(br2)Prepare one Bronze Alloy Charge from three Copper Ingots and one Tin Ingot, then fire it with coal in the Primitive Furnace. One charge produces four Bronze Ingots and Slag.$(br2)Bronze machinery and tools will build from this point."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Wooden patterns$()$(br2)The Pattern Maker is the first Bronze Age bench. Craft it using your first Bronze Ingot, Copper Plates, and a sturdy wooden frame.$(br2)Place the bench, then sneak-right-click with an empty hand to select a gear or bearing pattern. Right-click the bench with a plank to cut a reusable wooden pattern.$(br2)The cutter and selected pattern are represented on the bench itself."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Pattern Maker",
+      "recipe": "magneticraft2:bronze_pattern_maker",
+      "text": "A single-block workbench for reusable gear and bearing patterns. These patterns will be pressed into molds at the Mold Table before casting."
     }
   ],
   "sortnum": 3,
