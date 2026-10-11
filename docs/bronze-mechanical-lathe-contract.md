@@ -101,3 +101,9 @@ not the final lathe machine model.
 
 Gradle compile, world reload and all four construction directions still
 require actual verification before this milestone can be called finished.
+
+## Sculpted formed model (PR #11)
+
+The first full-cube placeholders have been replaced by 52 authored cuboid volumes for the raised support feet and timber sills, two iron bed rails, bronze headstock with chuck, tailstock and quill, tool saddle and carriage, and front handwheel. Four directional sets of 22 block-local render-part models are committed. This is an intermediate Minecraft-style geometry pass and requires **visual verification in-game**; there are no expensive animated static parts. The mounted workpiece and cutting-tool items remain the only dynamic render elements.
+
+**Generator note:** the authored volume source is `tools/multiblock-models/designs/bronze_mechanical_lathe.json`, but its full design-to-source generator has not yet been run on the committed shape. The 88 part files were generated directly from those volumes for this iteration. Regenerating all models with `build-designs.mjs` and `generate.mjs` may alter them; before doing so, verify consistency and resolve any generator differences rather than accepting unrelated changes blindly.
