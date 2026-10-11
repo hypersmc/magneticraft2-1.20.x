@@ -37,7 +37,7 @@ A JSON multiblock opts in explicitly via `settings.voxel_profile: "magneticraft2
 
 ## Foundry integration
 
-The Foundry has 22 simplified collision boxes and 24 selection boxes, authored separately from its 99 decorative/render solids. The firebox and crucible remain hollow. The tap valve gains a selectable handle without pretending the handle is an entire collision cube.
+The Foundry has 22 simplified collision boxes and 26 selection boxes, authored separately from its 99 decorative/render solids. The firebox and crucible remain hollow. The tap valve's top handle, vertical stem, and lower mounting bracket have independently authored selection-only boxes. Players can target the entire assembly without creating thin, snagging physical collision.
 
 The interaction regions are named `firebox`, `crucible` and `tap`. Right-click currently displays the named region as prototype feedback; it does **not** burn fuel, melt metal or transfer liquid yet. These zones will later let us target the heat source, crucible and tapping assembly without a GUI.
 

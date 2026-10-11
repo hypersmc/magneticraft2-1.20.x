@@ -53,11 +53,16 @@ function relativeCells(blueprint){
 }
 const emptyCrucible=[8,25,-8],emptyFirebox=[8,8,14],tapSupport=[8,23,21];
 const selectableHandle=[14.5,29,12.5];
+const selectableValveStem=[13.0,26.0,12.5], selectableValveBracket=[13.0,23.3,12.5];
 assert(!occupied(profile.collision,emptyCrucible),"Crucible center cannot be solid");
 assert(!occupied(profile.collision,emptyFirebox),"Firebox opening cannot be solid");
 assert(occupied(profile.collision,tapSupport),"Tap nose must have real collision");
 assert(!occupied(profile.collision,selectableHandle),"Valve handle is selection-only");
 assert(occupied(profile.selection,selectableHandle),"Valve handle must be selectable");
+for(const [part,point] of [["valve stem",selectableValveStem],["lower valve bracket",selectableValveBracket]]){
+ assert(!occupied(profile.collision,point),part+" must NOT become solid");
+ assert(occupied(profile.selection,point),part+" must be selectable");
+}
 assert(profile.zones.tap.some(b=>contains(b,tapSupport)));
 assert(profile.zones.crucible.some(b=>contains(b,emptyCrucible)));
 assert(profile.zones.firebox.some(b=>contains(b,emptyFirebox)));
@@ -88,6 +93,11 @@ for(const dir of dirs){
  assert(occupied(rotating,rotatePoint(tapSupport,dir)));
  assert(!occupied(rotating,rotatePoint(selectableHandle,dir)));
  assert(occupied(selected,rotatePoint(selectableHandle,dir)));
+ for(const [part,point] of [["valve stem",selectableValveStem],["lower valve bracket",selectableValveBracket]]){
+   const rotated=rotatePoint(point,dir);
+   assert(!occupied(rotating,rotated),dir+": "+part+" incorrectly solid");
+   assert(occupied(selected,rotated),dir+": "+part+" cannot be targeted");
+ }
 
  // The air proxy must catch the physical metal after the machine forms.
  for(const anchor of anchors){
