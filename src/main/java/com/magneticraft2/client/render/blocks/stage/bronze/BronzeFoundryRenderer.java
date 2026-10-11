@@ -56,12 +56,13 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         if (!entity.isFormed() || !state.hasProperty(BronzeFoundryBlock.FACING)) return;
         Direction facing = state.getValue(BronzeFoundryBlock.FACING);
 
-        // Identical rotations to the static V2 model exporter. The previous
-        // renderer had EAST and WEST reversed.
+        // Match generate.mjs exactly: its canonical SOUTH model rotates
+        // +1 quarter-turn to WEST (x,z -> -z,x). PoseStack/Y+ uses the
+        // opposite sign convention for that same world-space turn.
         float yaw = switch (facing) {
-            case WEST -> 90F;
+            case WEST -> -90F;
             case NORTH -> 180F;
-            case EAST -> -90F;
+            case EAST -> 90F;
             default -> 0F;
         };
         pose.pushPose();
