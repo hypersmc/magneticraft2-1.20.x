@@ -2,6 +2,7 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -157,6 +158,16 @@ public class MechanicalSifterBlockEntityRenderer
         poseStack.translate(0.0D, 0.0D, shake);
         renderModel(SLIDE_SHOES, poseStack, buffer, packedLight, packedOverlay);
         poseStack.popPose();
+
+        // Mesh service cue lies on the actual inclined upper screen.
+        // Only visible when the screen is nearing the end of its working life.
+        if (sifter.needsMaintenance()) {
+            renderStoredItem(
+                    sifter, new ItemStack(ItemRegistry.ITEM_SIFTER_MESH.get()),
+                    0.50D, 0.92D, 1.16D, 0.39F, 951,
+                    poseStack, buffer, packedLight, packedOverlay
+            );
+        }
 
         renderInputItems(
                 sifter,
