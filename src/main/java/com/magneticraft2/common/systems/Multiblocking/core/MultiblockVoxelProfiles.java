@@ -65,6 +65,7 @@ public final class MultiblockVoxelProfiles extends SimpleJsonResourceReloadListe
     }
 
     public static boolean exists(String id) {
+        if (id == null || id.isBlank()) return false;
         ResourceLocation key = ResourceLocation.tryParse(id);
         return key != null && PROFILES.containsKey(key);
     }
@@ -103,6 +104,7 @@ public final class MultiblockVoxelProfiles extends SimpleJsonResourceReloadListe
 
     @Nullable
     private static Profile profile(String id) {
+        if (id == null || id.isBlank()) return null;
         ResourceLocation key = ResourceLocation.tryParse(id);
         return key == null ? null : PROFILES.get(key);
     }
@@ -146,7 +148,7 @@ public final class MultiblockVoxelProfiles extends SimpleJsonResourceReloadListe
     }
 
     private static List<AABB> boxes(@Nullable JsonArray elements, String key, boolean allowEmpty) {
-        if (elements == null || elements.size() > 512 || (!allowEmpty && elements.isEmpty())) {
+        if (elements == null || elements.size() > 512 || (!allowEmpty && elements.size() == 0)) {
             throw new JsonParseException("Invalid box count for " + key);
         }
         List<AABB> boxes = new ArrayList<>(elements.size());

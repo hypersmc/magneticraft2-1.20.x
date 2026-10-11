@@ -51,7 +51,7 @@ function relativeCells(blueprint){
  assert.equal(controller.length,1);
  return {controller:controller[0],solid,dimensions:structure.dimensions};
 }
-const emptyCrucible=[8,25,-8],emptyFirebox=[8,8,8],tapSupport=[8,23,21];
+const emptyCrucible=[8,25,-8],emptyFirebox=[8,8,14],tapSupport=[8,23,21];
 const selectableHandle=[14.5,29,12.5];
 assert(!occupied(profile.collision,emptyCrucible),"Crucible center cannot be solid");
 assert(!occupied(profile.collision,emptyFirebox),"Firebox opening cannot be solid");

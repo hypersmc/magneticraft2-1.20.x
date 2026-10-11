@@ -54,6 +54,10 @@ The generator discovers any canonical `tools/multiblock-models/sources/<machine>
 
 The included virtual stress case splits a **9x5x9 (405-cell)** structure with a 9-block-wide, 9-block-deep continuous surface. It validates atlas UVs and vanilla element coordinate bounds. This is a **generator test**, not evidence that 405 block entities have been benchmarked in-game.
 
+## Voxel V2 integration
+
+The Foundry now opts in to the reusable, server-loaded Voxel V2 format. Geometry is authored alongside the same editable Foundry source, but **collision, selection and interaction zones are independent of render details**. The server compiles directional voxel shapes on data reload, assigns local controller/filler snapshots on formation, and syncs their NBT to clients. See `docs/multiblock-voxels-v2.md` for the format and test instructions.
+
 ## Design limits and future improvements
 
 1. **Static cuboids only in this initial exporter.** Rotated cuboids with Minecraft element rotations must be authored as local static components (or supported in a future clipping implementation), while animated shafts, gears, piston arms and molten surfaces use separately bounded, cached block entity renderers. A dynamically changing part must never force the entire static Foundry to rebuild.
