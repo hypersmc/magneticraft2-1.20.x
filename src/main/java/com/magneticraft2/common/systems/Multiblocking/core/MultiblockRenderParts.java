@@ -78,12 +78,17 @@ public final class MultiblockRenderParts {
             String modelKey = machineId + "_" + facing.getName()
                     + "/part_" + dx + "_" + dy + "_" + dz;
 
-            // Clip the controller's physical outline to the local block.
-            // Air anchor proxies therefore collide only where actual machinery
-            // exists, not across the crucible's deliberately hollow center.
+            // Filled-cell proxies stay strictly local. Required-AIR proxies
+            // additionally support short structural projections across a cell
+            // boundary (the Foundry's tap extends 7/16 of a block past its front).
+            // Collision is STILL intersected with the machine's physical outline:
+            // this never fills an actual hollow chamber with a solid cube.
+            VoxelShape clip = newAnchors.contains(partPos)
+                    ? Shapes.box(-0.5D, 0.0D, -0.5D, 1.5D, 1.0D, 1.5D)
+                    : Shapes.block();
             VoxelShape local = Shapes.join(
                     formedCollision.move(-dx, -dy, -dz),
-                    Shapes.block(),
+                    clip,
                     BooleanOp.AND).optimize();
             filler.setV2ModelPart(master, modelKey, local);
         }
