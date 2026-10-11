@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -77,8 +78,15 @@ public final class BronzeFoundryBlock extends BaseBlockMagneticraft2 {
             return InteractionResult.PASS;
         }
         if (world.isClientSide) return InteractionResult.SUCCESS;
-        if (!foundry.isFormed()) foundry.onRightClick();
-        else foundry.interactable(state, world, pos, player, hand, hit);
+        if (!foundry.isFormed()) {
+            foundry.onRightClick();
+            if (!foundry.isFormed()) {
+                player.displayClientMessage(Component.translatable(
+                        "message.magneticraft2.bronze_foundry.incomplete"), true);
+            }
+        } else {
+            foundry.interactable(state, world, pos, player, hand, hit);
+        }
         return InteractionResult.CONSUME;
     }
 

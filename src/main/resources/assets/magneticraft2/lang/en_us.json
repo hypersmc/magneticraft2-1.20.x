@@ -262,5 +262,6 @@
   "jei.magneticraft2.torque": "Torque: %s",
   "block.magneticraft2.bronze_foundry": "Bronze Foundry",
   "item.magneticraft2.bronze_foundry": "Bronze Foundry",
-  "message.magneticraft2.bronze_foundry.prototype": "Foundry structure formed. Heating and pouring are not implemented yet."
+  "message.magneticraft2.bronze_foundry.prototype": "Foundry structure formed. Heating and pouring are not implemented yet.",
+  "message.magneticraft2.bronze_foundry.incomplete": "Foundry needs 15 Bricks blocks and two empty upper cells. See the Guidebook multiblock preview."
 }
