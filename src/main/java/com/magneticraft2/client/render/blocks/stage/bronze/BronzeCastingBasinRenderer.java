@@ -35,13 +35,19 @@ public final class BronzeCastingBasinRenderer
             // Low, flat surface inside the pan, not a full glowing block.
             TextureAtlasSprite sprite=Minecraft.getInstance()
                     .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(BRONZE);
-            float x0=4.5F/16F,x1=11.5F/16F,z0=4.5F/16F,z1=11.5F/16F,y=7.5F/16F;
+            float progress=1F-basin.getDirectFillTicks()
+                    /(float) BronzeCastingBasinBlockEntity.DIRECT_FILL_DURATION;
+            float extent=basin.getDirectFillTicks()>0
+                    ? 1.25F+2.25F*Math.max(0F,progress) : 3.5F;
+            float x0=(8F-extent)/16F,x1=(8F+extent)/16F;
+            float z0=(8F-extent)/16F,z1=(8F+extent)/16F,y=7.5F/16F;
             VertexConsumer buf=sources.getBuffer(RenderType.translucent());
             PoseStack.Pose m=pose.last();
+            float size=extent*2F;
             quad(buf,m,x0,y,z0,sprite.getU(0),sprite.getV(0));
-            quad(buf,m,x0,y,z1,sprite.getU(0),sprite.getV(7));
-            quad(buf,m,x1,y,z1,sprite.getU(7),sprite.getV(7));
-            quad(buf,m,x1,y,z0,sprite.getU(7),sprite.getV(0));
+            quad(buf,m,x0,y,z1,sprite.getU(0),sprite.getV(size));
+            quad(buf,m,x1,y,z1,sprite.getU(size),sprite.getV(size));
+            quad(buf,m,x1,y,z0,sprite.getU(size),sprite.getV(0));
         } else {
             renderItem(basin,basin.displayMold(),.50D,.59D,.50D,.55F,992,
                     pose,sources,light,overlay);
