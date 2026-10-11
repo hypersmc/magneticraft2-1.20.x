@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "Bronze Mechanical Lathe: formed static sculpted geometry, canonical SOUTH controller at lower front center. Dynamic mounted workpiece and replaceable cutter remain BER.",
+  "description": "5x2x3 Bronze Lathe refined mechanical geometry. Compact coaxial headstock/chuck and tailstock/quill on shared x-axis (y=22,z=-10). Guided saddle and cutting nose supported by dual bed rails.",
   "textures": {
     "wood": "minecraft:block/stripped_spruce_log",
     "end": "minecraft:block/spruce_planks",
@@ -281,12 +281,12 @@
       "name": "lathe_bed_rail_-17",
       "material": "plate",
       "from": [
-        -28,
+        -29,
         13,
         -17
       ],
       "to": [
-        44,
+        45,
         17,
         -14
       ]
@@ -295,12 +295,12 @@
       "name": "lathe_bed_ridge_-17",
       "material": "iron",
       "from": [
-        -28,
+        -29,
         17,
         -16
       ],
       "to": [
-        44,
+        45,
         18.5,
         -15
       ]
@@ -309,12 +309,12 @@
       "name": "lathe_bed_rail_-2",
       "material": "plate",
       "from": [
-        -28,
+        -29,
         13,
         -2
       ],
       "to": [
-        44,
+        45,
         17,
         1
       ]
@@ -323,247 +323,275 @@
       "name": "lathe_bed_ridge_-2",
       "material": "iron",
       "from": [
-        -28,
+        -29,
         17,
         -1
       ],
       "to": [
-        44,
+        45,
         18.5,
         0
       ]
     },
     {
-      "name": "headstock_cast_foot",
+      "name": "left_stock_foot",
       "material": "iron",
       "from": [
         -30,
         12,
-        -22
+        -20
       ],
       "to": [
-        -15,
-        16,
-        4
-      ]
-    },
-    {
-      "name": "headstock_body",
-      "material": "metal",
-      "from": [
-        -30,
-        16,
-        -21
-      ],
-      "to": [
-        -16,
-        28,
-        2
-      ]
-    },
-    {
-      "name": "headstock_face",
-      "material": "iron",
-      "from": [
-        -16,
-        19,
-        -19
-      ],
-      "to": [
-        -14.2,
-        27,
-        0
-      ]
-    },
-    {
-      "name": "headstock_cap",
-      "material": "plate",
-      "from": [
-        -30,
-        28,
-        -21
-      ],
-      "to": [
-        -16,
-        30,
+        -18,
+        17,
         -1
       ]
     },
     {
-      "name": "headstock_front_bearing",
+      "name": "left_stock_main",
       "material": "metal",
       "from": [
-        -16.5,
-        21,
-        -12
+        -30,
+        17,
+        -18
       ],
       "to": [
-        -13.5,
-        27,
-        -6
+        -18,
+        25,
+        -3
       ]
     },
     {
-      "name": "headstock_front_pin",
+      "name": "left_stock_top",
       "material": "plate",
       "from": [
-        -13.5,
-        22,
-        -11
+        -30,
+        25,
+        -18
       ],
       "to": [
-        -8,
-        26,
+        -18,
+        26.5,
+        -3
+      ]
+    },
+    {
+      "name": "left_stock_bearing",
+      "material": "iron",
+      "from": [
+        -18,
+        19,
+        -13
+      ],
+      "to": [
+        -15,
+        25,
         -7
       ]
     },
     {
-      "name": "headstock_spindle",
-      "material": "iron",
+      "name": "left_stock_bearing_inner",
+      "material": "metal",
       "from": [
-        -8,
-        23,
-        -10
+        -15,
+        20,
+        -12
       ],
       "to": [
-        -2,
-        25,
+        -13.5,
+        24,
         -8
       ]
     },
     {
-      "name": "headstock_chuck",
-      "material": "metal",
+      "name": "drive_arbor_left",
+      "material": "plate",
       "from": [
-        -3.4,
+        -13.5,
         21,
-        -12
+        -10.5
       ],
       "to": [
-        0,
-        27,
-        -6
+        -7,
+        23,
+        -9.5
       ]
     },
     {
-      "name": "chuck_jaw_-12",
-      "material": "plate",
+      "name": "left_chuck_hub",
+      "material": "iron",
       "from": [
-        -1,
-        21,
-        -12
+        -7,
+        19.5,
+        -13
       ],
       "to": [
-        2,
-        27,
-        -10.8
-      ]
-    },
-    {
-      "name": "chuck_jaw_-7",
-      "material": "plate",
-      "from": [
-        -1,
-        21,
+        -4,
+        24.5,
         -7
-      ],
-      "to": [
-        2,
-        27,
-        -5.8
       ]
     },
     {
-      "name": "tailstock_slide",
-      "material": "iron",
-      "from": [
-        27,
-        14,
-        -22
-      ],
-      "to": [
-        45,
-        17,
-        4
-      ]
-    },
-    {
-      "name": "tailstock_body",
+      "name": "left_chuck_face",
       "material": "metal",
       "from": [
-        31,
-        17,
-        -20
+        -4,
+        20,
+        -12.5
       ],
       "to": [
-        44,
-        28,
-        2
+        -2.5,
+        24,
+        -7.5
       ]
     },
     {
-      "name": "tailstock_cap",
+      "name": "left_chuck_upper_jaw",
       "material": "plate",
       "from": [
-        31,
-        28,
+        -3,
+        24,
+        -11
+      ],
+      "to": [
+        -1,
+        25,
+        -9
+      ]
+    },
+    {
+      "name": "left_chuck_lower_jaw",
+      "material": "plate",
+      "from": [
+        -3,
+        19,
+        -11
+      ],
+      "to": [
+        -1,
+        20,
+        -9
+      ]
+    },
+    {
+      "name": "right_stock_foot",
+      "material": "iron",
+      "from": [
+        32,
+        12,
         -20
       ],
       "to": [
         44,
-        30,
-        2
+        17,
+        -1
       ]
     },
     {
-      "name": "tailstock_bearing",
+      "name": "right_stock_main",
+      "material": "metal",
+      "from": [
+        34,
+        17,
+        -18
+      ],
+      "to": [
+        44,
+        25,
+        -3
+      ]
+    },
+    {
+      "name": "right_stock_top",
+      "material": "plate",
+      "from": [
+        34,
+        25,
+        -18
+      ],
+      "to": [
+        44,
+        26.5,
+        -3
+      ]
+    },
+    {
+      "name": "right_stock_bearing",
       "material": "iron",
       "from": [
-        29.5,
-        21,
+        32,
+        19,
+        -13
+      ],
+      "to": [
+        34,
+        25,
+        -7
+      ]
+    },
+    {
+      "name": "right_stock_bearing_inner",
+      "material": "metal",
+      "from": [
+        30,
+        20,
         -12
       ],
       "to": [
         32,
-        27,
-        -6
-      ]
-    },
-    {
-      "name": "tailstock_quill",
-      "material": "plate",
-      "from": [
-        23,
-        23,
-        -10
-      ],
-      "to": [
-        31,
-        25,
+        24,
         -8
       ]
     },
     {
-      "name": "tailstock_live_center",
-      "material": "metal",
+      "name": "right_quill",
+      "material": "plate",
       "from": [
-        20,
-        23.5,
-        -9.5
+        25,
+        21,
+        -10.5
       ],
       "to": [
+        30,
         23,
-        24.5,
-        -8.5
+        -9.5
       ]
     },
     {
-      "name": "tailstock_screw",
+      "name": "right_center",
+      "material": "metal",
+      "from": [
+        23,
+        21.65,
+        -10.15
+      ],
+      "to": [
+        25,
+        22.35,
+        -9.85
+      ]
+    },
+    {
+      "name": "right_adjuster",
       "material": "iron",
       "from": [
         44,
-        22,
-        -10
+        21,
+        -10.5
+      ],
+      "to": [
+        47,
+        23,
+        -9.5
+      ]
+    },
+    {
+      "name": "right_adjuster_knob",
+      "material": "metal",
+      "from": [
+        47,
+        20,
+        -12
       ],
       "to": [
         49,
@@ -572,171 +600,171 @@
       ]
     },
     {
-      "name": "tailstock_wheel_hub",
-      "material": "metal",
-      "from": [
-        48,
-        20,
-        -12
-      ],
-      "to": [
-        50,
-        26,
-        -6
-      ]
-    },
-    {
-      "name": "tailstock_wheel_spoke_-15",
-      "material": "plate",
-      "from": [
-        48.5,
-        22.5,
-        -15
-      ],
-      "to": [
-        49.5,
-        23.5,
-        -10
-      ]
-    },
-    {
-      "name": "tailstock_wheel_spoke_-3",
-      "material": "plate",
-      "from": [
-        48.5,
-        22.5,
-        -3
-      ],
-      "to": [
-        49.5,
-        23.5,
-        2
-      ]
-    },
-    {
-      "name": "cross_slide_base",
+      "name": "saddle_bridge",
       "material": "iron",
       "from": [
-        0,
+        3,
         17,
-        -4
+        -17
       ],
       "to": [
+        17,
         19,
-        20,
-        7
+        3
       ]
     },
     {
-      "name": "tool_saddle",
+      "name": "saddle_runner_rear",
       "material": "metal",
       "from": [
-        3,
+        4,
+        18.5,
+        -17
+      ],
+      "to": [
+        16,
         20,
+        -14
+      ]
+    },
+    {
+      "name": "saddle_runner_front",
+      "material": "metal",
+      "from": [
+        4,
+        18.5,
         -2
       ],
       "to": [
         16,
-        23,
-        6
+        20,
+        1
       ]
     },
     {
-      "name": "tool_post",
-      "material": "plate",
+      "name": "carriage_cross_slide",
+      "material": "metal",
+      "from": [
+        6,
+        19,
+        -5
+      ],
+      "to": [
+        14,
+        21,
+        5
+      ]
+    },
+    {
+      "name": "carriage_dovetail",
+      "material": "iron",
       "from": [
         7,
-        23,
-        0
+        21,
+        -5
+      ],
+      "to": [
+        13,
+        22.5,
+        3
+      ]
+    },
+    {
+      "name": "carriage_tool_post",
+      "material": "metal",
+      "from": [
+        8,
+        22.5,
+        -5
       ],
       "to": [
         12,
-        28,
-        4
+        26.5,
+        -1
       ]
     },
     {
-      "name": "tool_holder",
-      "material": "iron",
+      "name": "carriage_tool_clamp",
+      "material": "plate",
       "from": [
-        6,
-        27,
+        7,
+        26,
         -6
       ],
       "to": [
         13,
-        29,
-        4
+        27.5,
+        -1
       ]
     },
     {
-      "name": "tool_ridge",
-      "material": "metal",
+      "name": "carriage_tool_nose",
+      "material": "iron",
       "from": [
-        6,
-        28,
-        -7
+        8.5,
+        23,
+        -10
       ],
       "to": [
-        13,
-        30,
+        11.5,
+        24.2,
         -5
       ]
     },
     {
-      "name": "front_handwheel_rod",
-      "material": "plate",
+      "name": "carriage_leadscrew_mount",
+      "material": "iron",
       "from": [
-        9,
-        18,
-        6
+        8,
+        16,
+        5
       ],
       "to": [
-        11,
-        21,
-        11
+        12,
+        20,
+        8
       ]
     },
     {
-      "name": "front_handwheel",
-      "material": "metal",
+      "name": "carriage_leadscrew",
+      "material": "plate",
       "from": [
-        6,
-        17,
-        10.5
+        9.2,
+        17.6,
+        8
       ],
       "to": [
-        14,
-        23,
+        10.8,
+        19.2,
         12
       ]
     },
     {
-      "name": "side_service_bracket_-26",
+      "name": "carriage_handwheel_hub",
       "material": "metal",
       "from": [
-        -26,
-        11,
-        4
+        8,
+        16.4,
+        11
       ],
       "to": [
-        -22,
-        16,
-        8
+        12,
+        20.4,
+        13
       ]
     },
     {
-      "name": "side_service_bracket_40",
-      "material": "metal",
+      "name": "carriage_handwheel_grip",
+      "material": "wood",
       "from": [
-        40,
-        11,
-        4
+        9.3,
+        18.3,
+        12.5
       ],
       "to": [
-        44,
-        16,
-        8
+        10.7,
+        19.7,
+        14
       ]
     }
   ]

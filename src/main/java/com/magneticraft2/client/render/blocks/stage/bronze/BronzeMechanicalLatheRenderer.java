@@ -35,7 +35,7 @@ public final class BronzeMechanicalLatheRenderer
         ItemStack stack=lathe.getOutput().isEmpty()?lathe.getWorkpiece():lathe.getOutput();
         if(!stack.isEmpty()){
             pose.pushPose();
-            pose.translate(.5D,1.50D,-.5625D);
+            pose.translate(.5D,1.375D,-.625D);
             pose.mulPose(Axis.ZP.rotationDegrees(90F));
             if(lathe.isRunning()) pose.mulPose(Axis.YP.rotationDegrees(lathe.getSpindleRotation(partial)));
             pose.scale(.8F,.8F,.8F);
@@ -46,7 +46,7 @@ public final class BronzeMechanicalLatheRenderer
         }
         if(!lathe.getCutter().isEmpty()){
             pose.pushPose();
-            pose.translate(.59D,1.79D,.18D- .18D*lathe.getProgress());
+            pose.translate(.625D,1.53D,-.22D - .09D*lathe.getProgress());
             pose.scale(.55F,.55F,.55F);
             ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
             BakedModel model=renderer.getModel(lathe.getCutter(),lathe.getLevel(),null,884);
