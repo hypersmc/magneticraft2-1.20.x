@@ -112,6 +112,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
             // ladle and installed into the saved basin state, on the server.
             ItemStack transferred=BronzePouringLadleItem.takeHot(held,level);
             if (transferred.isEmpty()) { message(player,"need_hot_ladle"); return; }
+            player.getInventory().setChanged();
 
             sourceBronze=transferred;
             mold=ItemStack.EMPTY;

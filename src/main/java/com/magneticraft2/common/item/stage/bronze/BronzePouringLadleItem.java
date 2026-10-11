@@ -93,6 +93,7 @@ public final class BronzePouringLadleItem extends Item {
             // Cold ladle recovery: one solid ingot with its exact original NBT.
             ItemStack returnMetal = storedIngot(stack).copy();
             clear(stack);
+            player.getInventory().setChanged();
             if (!player.getInventory().add(returnMetal)) player.drop(returnMetal, false);
             player.displayClientMessage(Component.translatable(
                     "message.magneticraft2.ladle.recovered"), true);
