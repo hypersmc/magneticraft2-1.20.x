@@ -77,6 +77,22 @@ function generate(id,model,variants){
       const f=rotFace(oldFace,n),[axis,sign]=faceNormal(f);
       if(Math.abs((sign<0?b[axis]:b[axis+3])-(sign<0?bounds[axis]:bounds[axis+3]))>EPS)continue;
       const [uAxis,vAxis]=uvAxes(f),dx=b[uAxis+3]-b[uAxis],dy=b[vAxis+3]-b[vAxis];
+      if(model.uvMode==="world"){
+        // New design-source faces have world-aligned, unstretched UVs. Use the
+        // rotated *world* cuboid start, avoiding partial UVs crossing tiles.
+        const [oldU,oldV]=uvAxes(oldFace);
+        const sourceUV=info.uv||[];
+        if(sourceUV.length!==4||
+           Math.abs(sourceUV[2]-sourceUV[0]-(el.to[oldU]-el.from[oldU]))>EPS||
+           Math.abs(sourceUV[3]-sourceUV[1]-(el.to[oldV]-el.from[oldV]))>EPS)
+          throw Error(id+"/"+dir+": source world UVs are stretched on "+oldFace);
+        const wrap=x=>((x%16)+16)%16;
+        const u=wrap(b[uAxis]),v=wrap(b[vAxis]);
+        if(u+dx>16+EPS||v+dy>16+EPS)
+          throw Error(id+"/"+dir+": world UV tile overflow on "+f);
+        faces[f]={...info,uv:[u,v,u+dx,v+dy].map(x=>+x.toFixed(5))};
+        continue;
+      }
       let [u0,v0,u1,v1]=info.uv||[];
       if([u0,v0,u1,v1].some(v=>typeof v!=="number"))throw Error("Missing numeric UV");
       if((oldFace==="up"||oldFace==="down")&&(n%2===1))[u0,v0,u1,v1]=[v0,u0,v1,u1];
