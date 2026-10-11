@@ -266,5 +266,12 @@
   "message.magneticraft2.bronze_foundry.incomplete": "Foundry needs 15 Bricks blocks and two empty upper cells. See the Guidebook multiblock preview.",
   "message.magneticraft2.bronze_foundry.zone.firebox": "Foundry firebox (fuel and heat: not implemented yet)",
   "message.magneticraft2.bronze_foundry.zone.crucible": "Foundry crucible (metal charge: not implemented yet)",
-  "message.magneticraft2.bronze_foundry.zone.tap": "Foundry tapping valve (pouring: not implemented yet)"
+  "message.magneticraft2.bronze_foundry.zone.tap": "Foundry tapping valve (pouring: not implemented yet)",
+  "message.magneticraft2.bronze_foundry.fuel_added": "Solid fuel added to the firebox.",
+  "message.magneticraft2.bronze_foundry.fuel_rejected": "Requires compatible solid furnace fuel; firebox capacity 16.",
+  "message.magneticraft2.bronze_foundry.charge_added": "Bronze ingot added to the crucible charge.",
+  "message.magneticraft2.bronze_foundry.charge_rejected": "Requires Bronze Ingots of the same quality; charge or crucible is full.",
+  "message.magneticraft2.bronze_foundry.firebox_status": "Fuel queued: %s | Burning: %s ticks | Heat: %s/%s",
+  "message.magneticraft2.bronze_foundry.crucible_status": "Bronze charge: %s | Crucible: %s/%s ingots | %s",
+  "message.magneticraft2.bronze_foundry.tap_status": "Crucible: %s/%s ingots (%s). Ladle and Casting Basin not yet built."
 }

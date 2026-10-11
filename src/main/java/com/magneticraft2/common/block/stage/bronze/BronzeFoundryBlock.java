@@ -4,6 +4,7 @@ import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundryBlockEntity;
 import com.magneticraft2.common.utils.VoxelShapeUtils;
+import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -17,6 +18,8 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -187,5 +190,13 @@ public final class BronzeFoundryBlock extends BaseBlockMagneticraft2 {
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new BronzeFoundryBlockEntity(pos, state);
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
+            Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? null
+                : createTickerHelper(type, BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(),
+                        BronzeFoundryBlockEntity::serverTick);
     }
 }

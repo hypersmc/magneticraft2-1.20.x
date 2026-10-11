@@ -3,6 +3,7 @@ package com.magneticraft2.common.blockentity.stage.bronze;
 import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelProfiles;
@@ -47,6 +48,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
     private String voxelProfileName = "";
     @Nullable private VoxelShape localVoxelCollision;
     @Nullable private VoxelShape localVoxelSelection;
+    private final BronzeFoundryThermalCore thermal = new BronzeFoundryThermalCore(this);
 
     @Override
     public void setMultiblockVoxelShapes(VoxelShape collision, VoxelShape selection) {
@@ -69,6 +71,18 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
     }
 
     public boolean isFormed() { return formed; }
+
+    public BronzeFoundryThermalCore getThermal() { return thermal; }
+
+    public static void serverTick(Level world, BlockPos pos, BlockState state, BronzeFoundryBlockEntity be) {
+        if (!world.isClientSide && be.formed) be.thermal.tick(world);
+    }
+
+    @Override
+    public void onDestroy(Level world) {
+        thermal.salvage(world);
+        super.onDestroy(world);
+    }
 
     @Override
     protected @Nullable MultiblockController createMultiblockController() {
@@ -133,11 +147,18 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         // These are feedback-only until the heating/pouring systems exist.
         String zone = MultiblockVoxelProfiles.hitZone(voxelProfileName, matchedFacing,
                 worldPosition, hit.getLocation());
-        if (zone != null) {
+        if (zone == null) {
             player.displayClientMessage(Component.translatable(
-                    "message.magneticraft2.bronze_foundry.zone." + zone), true);
-        } else {
-            player.displayClientMessage(Component.translatable(
+                    "message.magneticraft2.bronze_foundry.prototype"), true);
+            return;
+        }
+        // Both the controller and V2 filler proxies forward the same hit
+        // location; no invisible GUI or camera-dependent state.
+        switch (zone) {
+            case "firebox" -> thermal.useFirebox(player, player.getItemInHand(hand));
+            case "crucible" -> thermal.useCrucible(player, player.getItemInHand(hand));
+            case "tap" -> thermal.useTap(player);
+            default -> player.displayClientMessage(Component.translatable(
                     "message.magneticraft2.bronze_foundry.prototype"), true);
         }
     }
@@ -153,6 +174,7 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         voxelProfileName = tag.getString("v2_voxel_profile");
         localVoxelCollision = MultiblockVoxelNbt.read(tag, "v2_voxel_collision");
         localVoxelSelection = MultiblockVoxelNbt.read(tag, "v2_voxel_selection");
+        thermal.load(tag.getCompound("FoundryThermal"));
     }
 
     @Override
@@ -162,6 +184,9 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
         if (!voxelProfileName.isBlank()) tag.putString("v2_voxel_profile", voxelProfileName);
         MultiblockVoxelNbt.write(tag, "v2_voxel_collision", localVoxelCollision);
         MultiblockVoxelNbt.write(tag, "v2_voxel_selection", localVoxelSelection);
+        CompoundTag thermalData = new CompoundTag();
+        thermal.save(thermalData);
+        tag.put("FoundryThermal", thermalData);
     }
 
     @Override
@@ -192,7 +217,9 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
 
     @Override public int capacityE() { return 0; }
     @Override public int maxtransferE() { return 0; }
-    @Override public int capacityH() { return 0; }
+    @Override public int capacityH() {
+        return Magneticraft2ConfigCommon.GENERAL.FoundryHeatCapacity.get();
+    }
     @Override public int maxtransferH() { return 0; }
     @Override public int capacityW() { return 0; }
     @Override public int maxtransferW() { return 0; }
@@ -204,11 +231,12 @@ public final class BronzeFoundryBlockEntity extends BaseBlockEntityMagneticraft2
 
     @Override public boolean itemcape() { return false; }
     @Override public boolean energycape() { return false; }
-    @Override public boolean heatcape() { return false; }
+    @Override public boolean heatcape() { return true; }
     @Override public boolean wattcape() { return false; }
     @Override public boolean fluidcape() { return false; }
     @Override public boolean pressurecape() { return false; }
 
+    // The first foundry has a solid-fuel firebox; no external heat injection.
     @Override public boolean HeatCanReceive() { return false; }
     @Override public boolean HeatCanSend() { return false; }
     @Override public boolean WattCanReceive() { return false; }
