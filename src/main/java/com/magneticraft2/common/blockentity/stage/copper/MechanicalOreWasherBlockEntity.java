@@ -169,6 +169,10 @@ public class MechanicalOreWasherBlockEntity
         return !driveBelt.canOperate();
     }
 
+    public int getPartWearStage() {
+        return driveBelt.getVisualWearStage();
+    }
+
     public int getWaterAmount() {
         return waterTank.getFluidAmount();
     }

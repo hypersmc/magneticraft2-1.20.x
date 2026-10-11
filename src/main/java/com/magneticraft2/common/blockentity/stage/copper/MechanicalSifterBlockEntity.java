@@ -112,6 +112,10 @@ public class MechanicalSifterBlockEntity
         return !sieveMesh.canOperate();
     }
 
+    public int getPartWearStage() {
+        return sieveMesh.getVisualWearStage();
+    }
+
     public ItemStack getInputStack() {
         return itemHandler.getStackInSlot(0);
     }

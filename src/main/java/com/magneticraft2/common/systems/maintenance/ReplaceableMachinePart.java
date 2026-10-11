@@ -51,6 +51,32 @@ public final class ReplaceableMachinePart {
     }
 
     /**
+     * Six stable visual appearances, 0 = pristine and 5 = broken.
+     * Derived from persisted life so there is no extra client state to sync.
+     * Long arithmetic prevents overflow with large configurable lifetimes.
+     */
+    public int getVisualWearStage() {
+        if (remainingCycles <= 0) {
+            return 5;
+        }
+        long current = 100L * remainingCycles;
+        long maximum = maximumCycles;
+        if (current >= 75L * maximum) {
+            return 0;
+        }
+        if (current >= 50L * maximum) {
+            return 1;
+        }
+        if (current >= 25L * maximum) {
+            return 2;
+        }
+        if (current >= 10L * maximum) {
+            return 3;
+        }
+        return 4;
+    }
+
+    /**
      * @return true if the part crossed the warning threshold or broke
      */
     public boolean completeBatch() {
