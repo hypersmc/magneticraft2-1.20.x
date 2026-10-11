@@ -43,12 +43,36 @@ The counter survives chunk unloads and save/reload. Existing machines without
 maintenance NBT begin with a fresh installed part. Changing the config
 clamps saved counters to the new maximum.
 
-At 10% life or less, a visual part marker appears at the relevant physical
-mechanism. When life reaches zero, processing pauses without consuming queued
-items or water and removes its mechanical load. To check a machine, **sneak-
-right-click its formed controller with an empty hand**. To service it,
-**right-click the controller normally while holding the correct part item**.
-The replacement consumes one item in survival; an unworn part is not wasted.
+### Wear visible on the actual machine
+
+The wear counter also selects **six persistent visual stages**:
+
+| Remaining life | Visual stage | Mechanical Ore Washer | Mechanical Sifter |
+| --- | --- | --- | --- |
+| 75-100% | 0 | Original intact leather belt | Original complete copper screen |
+| 50-<75% | 1 | Faded leather, first worn edge | Local discoloration, tiny snapped wires |
+| 25-<50% | 2 | Abrasion marks and frayed sides | Weathered wires and small holes |
+| 10-<25% | 3 | Torn edges, dark stains | Larger ragged openings in the grid |
+| >0-<10% | 4 | Partly severed moving belt | Nearly half the grid torn away |
+| 0% | 5 | Snapped, stationary belt and stopped driven drum | Mostly missing mesh; processing disabled |
+
+Sifter wear uses baked meshes that keep the **original eight-piece moving
+frame unchanged** and crop UV coordinates when splitting copper bars; worn
+mesh models are registered explicitly for loading/reloading. The original
+pristine `mechanical_sifter_upper_tray` model is not edited.
+
+Washer damage is rendered directly on the **existing** mechanically moving
+leather strip. Its original 0.5-block texture repeat remains intact, and UV
+coordinates are cropped (never stretched or compressed) at the frayed edges.
+No replacement-item sprites float over machinery.
+
+When life reaches zero, processing pauses without consuming queued items
+or water and removes its mechanical load. The Washer input pulley can still
+turn with its upstream Gear V2 shaft, but its broken internal belt no longer
+drives the downstream pulley/drum. To check a machine, **sneak-right-click
+its formed controller with an empty hand**. To service it, **right-click the
+controller normally while holding the correct part item**. The replacement
+consumes one item in survival; an unworn part is not wasted.
 
 The reusable `ReplaceableMachinePart` state machine allows adding multiple
 component types to a later-age machine without affecting its recipe inventory.
@@ -63,8 +87,15 @@ not silently implemented rules.
 - [ ] Both Quartz variants can be ground; normal and deepslate outputs agree.
 - [ ] Chalcocite produces 1/2/3 Copper with direct/crushed/concentrated paths.
 - [ ] Full output tanks/ports stop processing without deleting material.
-- [ ] Low-life cue sits on the belt and sieve, in all four facing directions.
-- [ ] Worn-out machinery consumes no items or fluid, then resumes after service.
+- [ ] Test 0/75/50/25/10% thresholds with the lifetime settings reduced to
+      20-40 cycles so all six stages can be observed without hours of work.
+- [ ] Inspect frayed belt and broken mesh on all four machine facings, while
+      animating, paused and fully broken. No floating sprites or missing models.
+- [ ] Reload resources while models are damaged; worn meshes must stay baked.
+- [ ] Confirm the moving belt texture does not stretch, distort or jump at seams.
+- [ ] Broken Washer stops the downstream pulley/drum but not the upstream shaft.
+- [ ] Worn-out machinery consumes no items or fluid, then resumes after service
+      with an intact model/texture.
 - [ ] An invalid held item doesn't repair the machine or enter the input slot.
 - [ ] Empty-hand inspection and held-item replacement work in Survival/Creative,
       multiplayer and after a save/reload.
