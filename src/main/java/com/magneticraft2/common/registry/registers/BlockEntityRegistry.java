@@ -27,6 +27,7 @@ import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlock
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.*;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMoldTableBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -86,6 +87,10 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMoldTableBlockEntity>> BRONZE_MOLD_TABLE_BE =
+            BLOCK_ENTITIES.register("bronze_mold_table", () ->
+                    BlockEntityType.Builder.of(BronzeMoldTableBlockEntity::new,
+                            BlockRegistry.BRONZE_MOLD_TABLE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE =
             BLOCK_ENTITIES.register(

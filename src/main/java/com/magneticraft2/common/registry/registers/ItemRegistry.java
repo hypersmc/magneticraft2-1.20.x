@@ -105,6 +105,11 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_WOODEN_BEARING_PATTERN =
             ITEMS.register("wooden_bearing_pattern", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_PATTERN_MAKER = fromBlock(BRONZE_PATTERN_MAKER);
+    public static final RegistryObject<Item> ITEM_BRONZE_MOLD_TABLE = fromBlock(BRONZE_MOLD_TABLE);
+    public static final RegistryObject<Item> ITEM_GEAR_SAND_MOLD =
+            ITEMS.register("gear_sand_mold", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BEARING_SAND_MOLD =
+            ITEMS.register("bearing_sand_mold", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);
