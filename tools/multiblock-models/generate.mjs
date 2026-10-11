@@ -115,25 +115,48 @@ if(args.has("--self-test")){
  console.log("9x5x9 virtual structure:",JSON.stringify(stressTest()));
  process.exit(0);
 }
-const id="bronze_foundry";
 const cwd=process.cwd();
-const src=JSON.parse(fs.readFileSync(path.join(cwd,"tools/multiblock-models/sources/bronze_foundry.json"),"utf8"));
+const sourceDir=path.join(cwd,"tools/multiblock-models/sources");
 const dirs=["south","west","north","east"];
-const layouts=Object.fromEntries(dirs.map(dir=>[
- dir,JSON.parse(fs.readFileSync(path.join(cwd,"src/main/resources/data/magneticraft2/multiblocks/bronze_foundry_"+dir+".json"),"utf8"))
-]));
-const built=generate(id,src,layouts);
-let mismatches=0;
-for(const [relative,contents] of built.files){
- const filepath=path.join(cwd,relative);
- if(args.has("--check")){
-  if(!fs.existsSync(filepath)||fs.readFileSync(filepath,"utf8")!==contents){
-   console.error("Mismatch:",relative);mismatches++;
+const ids=fs.readdirSync(sourceDir).filter(name=>name.endsWith(".json"))
+ .map(name=>name.slice(0,-5)).sort();
+if(!ids.length)throw Error("No canonical multiblock models found");
+let errors=0;
+for(const id of ids){
+ const src=JSON.parse(fs.readFileSync(path.join(sourceDir,id+".json"),"utf8"));
+ const layouts=Object.fromEntries(dirs.map(dir=>{
+  const structurePath=path.join(cwd,"src/main/resources/data/magneticraft2/multiblocks/"+id+"_"+dir+".json");
+  if(!fs.existsSync(structurePath))throw Error("Missing directional multiblock JSON: "+structurePath);
+  return [dir,JSON.parse(fs.readFileSync(structurePath,"utf8"))];
+ }));
+ const built=generate(id,src,layouts);
+ const expected=new Set(built.files.keys());
+ for(const dir of dirs){
+  const partDir=path.join(cwd,"src/main/resources/assets/magneticraft2/models/multiblock/"+id+"_"+dir);
+  if(!fs.existsSync(partDir))continue;
+  for(const filename of fs.readdirSync(partDir)){
+   if(!/^part_-?\d+_-?\d+_-?\d+\.json$/.test(filename))continue;
+   const relative=path.relative(cwd,path.join(partDir,filename)).split(path.sep).join("/");
+   if(expected.has(relative))continue;
+   if(args.has("--check")){
+    console.error("Stale generated model:",relative);errors++;
+   }else{
+    fs.unlinkSync(path.join(partDir,filename));
+    console.log("Removed stale model:",relative);
+   }
   }
- }else{
-  fs.mkdirSync(path.dirname(filepath),{recursive:true});
-  fs.writeFileSync(filepath,contents,"utf8");
  }
+ for(const [relative,contents] of built.files){
+  const filepath=path.join(cwd,relative);
+  if(args.has("--check")){
+   if(!fs.existsSync(filepath)||fs.readFileSync(filepath,"utf8")!==contents){
+    console.error("Mismatch:",relative);errors++;
+   }
+  }else{
+   fs.mkdirSync(path.dirname(filepath),{recursive:true});
+   fs.writeFileSync(filepath,contents,"utf8");
+  }
+ }
+ console.log("Generated "+id+":",JSON.stringify(built.stats));
 }
-console.log("Generated models:",JSON.stringify(built.stats));
-if(mismatches)process.exit(1);
+if(errors)process.exit(1);

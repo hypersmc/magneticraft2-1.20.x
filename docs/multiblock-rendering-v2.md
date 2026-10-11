@@ -24,6 +24,8 @@ node tools/multiblock-models/generate.mjs --check
 node tools/multiblock-models/generate.mjs
 ```
 
+The generator discovers any canonical `tools/multiblock-models/sources/<machine>.json` file and expects matching `data/magneticraft2/multiblocks/<machine>_{south,west,north,east}.json` structures. It regenerates every occupied host's model and deletes stale generated part files; `--check` detects both missing/changed and obsolete part files. This allows adding a second machine without modifying the generator itself.
+
 The included virtual stress case splits a **9x5x9 (405-cell)** structure with a 9-block-wide, 9-block-deep continuous surface. It validates atlas UVs and vanilla element coordinate bounds. This is a **generator test**, not evidence that 405 block entities have been benchmarked in-game.
 
 ## Design limits and future improvements

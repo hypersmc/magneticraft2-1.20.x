@@ -129,6 +129,19 @@ public class Multiblockfiller extends BaseEntityBlock {
         return localShape != null ? localShape : super.getCollisionShape(pState, level, pos, pContext);
     }
 
+    @Override
+    public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
+        VoxelShape localShape = getLocalMultiblockShape(level, pos, CollisionContext.empty());
+        return localShape != null ? localShape : super.getInteractionShape(state, level, pos);
+    }
+
+    @Override
+    public VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos,
+                                     CollisionContext context) {
+        VoxelShape localShape = getLocalMultiblockShape(level, pos, context);
+        return localShape != null ? localShape : super.getVisualShape(state, level, pos, context);
+    }
+
     @Nullable
     private VoxelShape getLocalMultiblockShape(
             BlockGetter level,
