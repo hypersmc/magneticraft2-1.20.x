@@ -296,5 +296,8 @@
   "message.magneticraft2.basin.need_hot_ladle": "Requires a hot ladle containing one bronze ingot-equivalent.",
   "message.magneticraft2.basin.poured": "Bronze poured. Wait for the casting to cool and solidify.",
   "message.magneticraft2.basin.cooling": "Casting cooling: %s ticks remaining.",
-  "message.magneticraft2.basin.invalid": "Use a Green Sand Mold or a hot refractory ladle."
+  "message.magneticraft2.basin.invalid": "Use a Green Sand Mold or a hot refractory ladle.",
+  "message.magneticraft2.bronze_foundry.direct_no_basin": "Place a Bronze Casting Basin directly beneath the tapping outlet.",
+  "message.magneticraft2.bronze_foundry.direct_not_ready": "The Casting Basin needs an unused gear or bearing sand mold.",
+  "message.magneticraft2.bronze_foundry.direct_poured": "One bronze unit poured directly into the Casting Basin."
 }
