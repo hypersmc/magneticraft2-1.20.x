@@ -30,6 +30,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFoundryBlockEntity> {
     private static final ResourceLocation BRONZE_SURFACE =
             new ResourceLocation("minecraft", "block/raw_copper_block");
+    private static final ResourceLocation FIRE_SURFACE =
+            new ResourceLocation("minecraft", "block/fire_0");
 
     public BronzeFoundryRenderer(BlockEntityRendererProvider.Context context) { }
 
@@ -60,6 +62,8 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         renderItem(entity, thermal.fuelDisplay(), 0.5D, 0.60D, 0.70D,
                 0.35F, 780, pose, buffer, packedLight, overlay);
 
+        if (thermal.burnRemaining() > 0) fireBed(pose, buffer);
+
         if (thermal.crucibleUnits() > 0) {
             // A cold metallic crust darkens; when reheated the exact same
             // conserved bronze units show a warm liquid surface.
@@ -70,6 +74,22 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         renderItem(entity, thermal.chargeDisplay(), 0.32D, 1.71D, -0.51D,
                 0.34F, 781, pose, buffer, packedLight, overlay);
         pose.popPose();
+    }
+
+    /** Warm texture above the grate while solid fuel is actively burning. */
+    private void fireBed(PoseStack pose, MultiBufferSource sources) {
+        TextureAtlasSprite sprite = Minecraft.getInstance()
+                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+                .apply(FIRE_SURFACE);
+        VertexConsumer consumer = sources.getBuffer(RenderType.translucent());
+        PoseStack.Pose matrix = pose.last();
+        float y = 10.2F / 16F, x0 = 4F/16F, x1 = 12F/16F;
+        float z0 = 9F/16F, z1 = 14F/16F;
+        int glow = 0x00F000F0;
+        vertex(consumer,matrix,x0,y,z0,sprite.getU(0),sprite.getV(0),1F,.60F,.24F,.85F,glow);
+        vertex(consumer,matrix,x0,y,z1,sprite.getU(0),sprite.getV(5),1F,.60F,.24F,.85F,glow);
+        vertex(consumer,matrix,x1,y,z1,sprite.getU(8),sprite.getV(5),1F,.60F,.24F,.85F,glow);
+        vertex(consumer,matrix,x1,y,z0,sprite.getU(8),sprite.getV(0),1F,.60F,.24F,.85F,glow);
     }
 
     private void surface(BronzeFoundryThermalCore thermal, PoseStack pose,
