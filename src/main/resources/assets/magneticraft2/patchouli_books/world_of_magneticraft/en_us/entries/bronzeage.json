@@ -28,7 +28,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)The Mold Table$()$(br2)Insert a wooden gear or bearing pattern, then Sand (or Red Sand) and a Clay Ball.$(br2)With an empty hand, right-click four times to press the mold. Collect the finished Green Sand Mold by right-clicking empty-handed.$(br2)Sneak-right-click with an empty hand to recover the pattern or unused input materials. The wooden pattern is reusable; one Sand and one Clay Ball are consumed per mold. The resulting mold will be used in the Casting Basin."
+      "text": "$(bold)The Mold Table$()$(br2)Insert a wooden gear or bearing pattern, then Sand (or Red Sand) and a Clay Ball.$(br2)With an empty hand, right-click four times to press the mold. Collect the finished Green Sand Mold by right-clicking empty-handed.$(br2)Sneak-right-click with an empty hand to recover the pattern or unused input materials. The wooden pattern is reusable; one Sand and one Clay Ball are consumed per mold. Install the finished mold into a Bronze Casting Basin to receive one ladle of molten bronze."
     },
     {
       "type": "patchouli:crafting",
@@ -77,7 +77,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)First melting test$()$(br2)The molten amount is counted in $(italic)ingot-equivalents$(), not fluid millibuckets. Bronze with different quality metadata cannot mix in one batch. The hot/solidified surface changes visually as the heat level changes.$(br2)For now, the front tap reports stored bronze but cannot pour. The pouring ladle, Casting Basin and final thermal balance still need to be developed. Breaking the test machine returns stored bronze as ingots rather than deleting it."
+      "text": "$(bold)First melting test$()$(br2)The molten amount is counted in $(italic)ingot-equivalents$(), not fluid millibuckets. Bronze with different quality metadata cannot mix in one batch. The hot/solidified surface changes visually as the heat level changes.$(br2)Use an empty Refractory Pouring Ladle at the tapping valve to extract one molten unit, then pour into a Green Sand Mold in the Casting Basin. Breaking the Foundry returns any unpoured bronze as the original ingots; the new casting stations are explained on the following pages."
     },
     {
       "type": "text",
