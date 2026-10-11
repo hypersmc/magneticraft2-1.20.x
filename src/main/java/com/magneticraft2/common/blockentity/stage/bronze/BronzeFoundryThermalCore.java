@@ -29,6 +29,8 @@ public final class BronzeFoundryThermalCore {
     private int crucibleUnits;
     private int burnRemaining;
     private int burnTotal;
+    /** Persistent phase prevents instant re-solidification after heat is spent melting. */
+    private boolean moltenPhase;
 
     public BronzeFoundryThermalCore(BronzeFoundryBlockEntity foundry) {
         this.foundry = foundry;
@@ -43,10 +45,7 @@ public final class BronzeFoundryThermalCore {
         return Magneticraft2ConfigCommon.GENERAL.FoundryCrucibleIngotCapacity.get();
     }
 
-    public boolean isHot() {
-        return foundry.getHeatStorage()
-                >= Magneticraft2ConfigCommon.GENERAL.FoundryMeltThreshold.get();
-    }
+    public boolean isHot() { return crucibleUnits > 0 && moltenPhase; }
 
     public boolean isPourReady(int ingotUnits) {
         return foundry.isFormed() && isHot()
@@ -70,7 +69,7 @@ public final class BronzeFoundryThermalCore {
 
         // Never consume a second fuel while idle, full, or misconfigured.
         if (burnRemaining <= 0 && heat < capacity && threshold <= capacity
-                && canMelt() && !fuel.isEmpty()) {
+                && (canMelt() || crucibleUnits > 0) && !fuel.isEmpty()) {
             int duration = fuelTime(fuel);
             if (duration > 0) {
                 ItemStack next = fuel.copy();
@@ -110,6 +109,21 @@ public final class BronzeFoundryThermalCore {
             charge = next.isEmpty() ? ItemStack.EMPTY : next;
             crucibleUnits++;
             foundry.heatHandler.setHeat(heat - heatCost);
+            heat -= heatCost;
+            moltenPhase = true;
+            changed = true;
+            notifyImmediately = true;
+        }
+
+        // Cooling below the lower threshold solidifies the same bronze in
+        // place. Reheating needs the melt threshold, not merely the holding
+        // threshold, so there is no premature re-liquefaction on reload.
+        int solidifyAt = Magneticraft2ConfigCommon.GENERAL.FoundrySolidificationThreshold.get();
+        boolean nextPhase = moltenPhase;
+        if (crucibleUnits == 0 || heat < solidifyAt) nextPhase = false;
+        else if (heat >= threshold) nextPhase = true;
+        if (moltenPhase != nextPhase) {
+            moltenPhase = nextPhase;
             changed = true;
             notifyImmediately = true;
         }
@@ -223,6 +237,7 @@ public final class BronzeFoundryThermalCore {
         charge = ItemStack.EMPTY;
         crucibleTemplate = ItemStack.EMPTY;
         crucibleUnits = 0;
+        moltenPhase = false;
         burnRemaining = 0;
         burnTotal = 0;
         if (!toDropFuel.isEmpty()) Block.popResource(world, foundry.getBlockPos(), toDropFuel);
@@ -238,6 +253,7 @@ public final class BronzeFoundryThermalCore {
         crucibleUnits = Math.max(0, Math.min(64, nbt.getInt("CrucibleUnits")));
         if (crucibleTemplate.isEmpty()) crucibleUnits = 0;
         if (crucibleUnits == 0) crucibleTemplate = ItemStack.EMPTY;
+        moltenPhase = crucibleUnits > 0 && nbt.getBoolean("MoltenPhase");
         burnTotal = Math.max(0, nbt.getInt("BurnTotal"));
         burnRemaining = Math.max(0, Math.min(burnTotal, nbt.getInt("BurnRemaining")));
     }
@@ -248,6 +264,7 @@ public final class BronzeFoundryThermalCore {
         if (!crucibleTemplate.isEmpty()) nbt.put("CrucibleTemplate",
                 crucibleTemplate.save(new CompoundTag()));
         nbt.putInt("CrucibleUnits", crucibleUnits);
+        nbt.putBoolean("MoltenPhase", moltenPhase);
         nbt.putInt("BurnRemaining", burnRemaining);
         nbt.putInt("BurnTotal", burnTotal);
     }

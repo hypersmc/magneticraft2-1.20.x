@@ -26,6 +26,7 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryHeatPerFuelTick;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryPassiveHeatLoss;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryMeltThreshold;
+        public final ForgeConfigSpec.ConfigValue<Integer> FoundrySolidificationThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryHeatCostPerIngot;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryCrucibleIngotCapacity;
         General(ForgeConfigSpec.Builder builder) {
@@ -63,6 +64,9 @@ public class Magneticraft2ConfigCommon {
             FoundryMeltThreshold = builder
                     .comment("Minimum stored HEAT energy to begin melting a bronze ingot; keep at or below heatCapacity")
                     .defineInRange("meltThreshold", 14000, 1, 1000000);
+            FoundrySolidificationThreshold = builder
+                    .comment("Below this HEAT amount stored molten bronze solidifies in place. Reheating requires the higher melt threshold.")
+                    .defineInRange("solidificationThreshold", 7000, 0, 1000000);
             FoundryHeatCostPerIngot = builder
                     .comment("HEAT energy consumed when one bronze ingot changes from charge to crucible metal")
                     .defineInRange("heatPerIngot", 2500, 1, 1000000);
