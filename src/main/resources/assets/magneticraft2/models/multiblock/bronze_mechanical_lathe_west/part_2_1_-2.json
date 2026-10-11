@@ -1,3 +1,219 @@
 {
-  "parent": "minecraft:block/oak_planks"
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "wood": "minecraft:block/stripped_spruce_log",
+    "end": "minecraft:block/spruce_planks",
+    "metal": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/polished_blackstone",
+    "plate": "minecraft:block/iron_block",
+    "stone": "minecraft:block/stone_bricks",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        4
+      ],
+      "to": [
+        1,
+        1,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#plate",
+          "uv": [
+            4,
+            0,
+            16,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#plate",
+          "uv": [
+            4,
+            0,
+            16,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            4,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            4,
+            1,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        2
+      ],
+      "to": [
+        5,
+        12,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            5,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            5,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            2,
+            0,
+            16,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            2,
+            0,
+            16,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            2,
+            5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            2,
+            5,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        2
+      ],
+      "to": [
+        5,
+        14,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            12,
+            5,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            12,
+            5,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#plate",
+          "uv": [
+            2,
+            12,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#plate",
+          "uv": [
+            2,
+            12,
+            16,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            2,
+            5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#plate",
+          "uv": [
+            0,
+            2,
+            5,
+            16
+          ]
+        }
+      }
+    }
+  ]
 }
