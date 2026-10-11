@@ -72,6 +72,10 @@ public class MechanicalOreWasherBlockEntity
     private int processTime = 0;
     private int totalProcessTime = 160;
     private boolean processing = false;
+    // Deterministic per-batch byproduct selection survives blocked outputs.
+    @Nullable
+    private ResourceLocation activeRecipeId;
+    private boolean pendingByproduct = false;
     private boolean hasWater = false;
     private final ReplaceableMachinePart driveBelt =
             new ReplaceableMachinePart(
@@ -373,6 +377,7 @@ public class MechanicalOreWasherBlockEntity
         }
 
         if (!formed) {
+            clearBatch();
             removeMechanicalLoad();
             setProcessing(false);
             return;
@@ -399,19 +404,27 @@ public class MechanicalOreWasherBlockEntity
         }
 
         if (recipe == null) {
+            clearBatch();
             removeMechanicalLoad();
-            processTime = 0;
-            totalProcessTime = 160;
             setProcessing(false);
             return;
+        }
+
+        if (!recipe.getId().equals(activeRecipeId)) {
+            activeRecipeId = recipe.getId();
+            processTime = 0;
+            totalProcessTime = recipe.getProcessTime();
+            ItemStack optionalOutput = recipe.getByproduct();
+            pendingByproduct = !optionalOutput.isEmpty()
+                    && level.random.nextFloat() < recipe.getByproductChance();
+            setChanged();
         }
 
         ItemStack output = recipe.getOutput();
         ItemStack byproduct = recipe.getByproduct();
 
         if (!canAccept(1, output)
-                || (!byproduct.isEmpty()
-                && !canAccept(2, byproduct))) {
+                || (pendingByproduct && !canAccept(2, byproduct))) {
             removeMechanicalLoad();
             setProcessing(false);
             return;
@@ -504,19 +517,28 @@ public class MechanicalOreWasherBlockEntity
 
         insertOutput(1, output);
 
-        if (!byproduct.isEmpty()
-                && level.random.nextFloat()
-                < recipe.getByproductChance()) {
-            insertOutput(
-                    2,
-                    byproduct
-            );
+        if (pendingByproduct) {
+            insertOutput(2, byproduct);
         }
 
         driveBelt.completeBatch();
+        activeRecipeId = null;
+        pendingByproduct = false;
         processTime = 0;
         setProcessing(false);
         sync();
+    }
+
+    private void clearBatch() {
+        if (activeRecipeId == null && processTime == 0
+                && !pendingByproduct) {
+            return;
+        }
+        activeRecipeId = null;
+        pendingByproduct = false;
+        processTime = 0;
+        totalProcessTime = 160;
+        setChanged();
     }
 
     @Nullable
@@ -976,6 +998,10 @@ public class MechanicalOreWasherBlockEntity
         hasWater =
                 tag.getBoolean("HasWater");
         driveBelt.load(tag.getCompound("Maintenance"));
+        activeRecipeId = tag.contains("ActiveRecipe")
+                ? ResourceLocation.tryParse(tag.getString("ActiveRecipe"))
+                : null;
+        pendingByproduct = tag.getBoolean("PendingByproduct");
 
         if (level != null
                 && level.isClientSide) {
@@ -1038,6 +1064,10 @@ public class MechanicalOreWasherBlockEntity
                 hasWater
         );
         tag.put("Maintenance", driveBelt.save());
+        if (activeRecipeId != null) {
+            tag.putString("ActiveRecipe", activeRecipeId.toString());
+        }
+        tag.putBoolean("PendingByproduct", pendingByproduct);
         tag.put(
                 "WaterTank",
                 waterTank.writeToNBT(
