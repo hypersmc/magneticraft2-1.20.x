@@ -112,6 +112,12 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_CASTING_BASIN = fromBlock(BRONZE_CASTING_BASIN);
     public static final RegistryObject<BronzePouringLadleItem> ITEM_BRONZE_POURING_LADLE =
             ITEMS.register("bronze_pouring_ladle", BronzePouringLadleItem::new);
+    public static final RegistryObject<Item> ITEM_LATHE_CUTTER =
+            ITEMS.register("bronze_lathe_cutter", () -> new Item(new Item.Properties().durability(64)));
+    public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_GEAR =
+            ITEMS.register("precision_bronze_gear", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_BEARING =
+            ITEMS.register("precision_bronze_bearing", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_GEAR =
             ITEMS.register("rough_bronze_gear", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_BEARING =

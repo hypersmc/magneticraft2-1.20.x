@@ -22,6 +22,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModule
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
@@ -112,6 +113,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);

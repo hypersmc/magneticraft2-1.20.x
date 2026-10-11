@@ -15,6 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,9 +56,8 @@ public final class BronzeMechanicalLatheBlock extends BaseBlockMagneticraft2 {
             return InteractionResult.PASS;
         if(world.isClientSide) return InteractionResult.SUCCESS;
         if(!lathe.isFormed()) lathe.onRightClick();
-        player.displayClientMessage(Component.literal(lathe.isFormed()
-                ? "Lathe structure formed. Machining mechanism not installed yet."
-                : "Incomplete Mechanical Lathe: see the Bronze Age construction layout."),true);
+        if(lathe.isFormed())lathe.interactable(state,world,pos,player,hand,hit);
+        else player.displayClientMessage(Component.literal("Incomplete Mechanical Lathe: see Bronze Age construction layout."),true);
         return InteractionResult.CONSUME;
     }
     @Override public boolean onDestroyedByPlayer(BlockState state,Level world,BlockPos pos,
@@ -77,5 +78,11 @@ public final class BronzeMechanicalLatheBlock extends BaseBlockMagneticraft2 {
     }
     @Override public @Nullable BlockEntity newBlockEntity(BlockPos pos,BlockState state) {
         return new BronzeMechanicalLatheBlockEntity(pos,state);
+    }
+    @Override public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
+            Level level,BlockState state,BlockEntityType<T> type){
+        return level.isClientSide?null:createTickerHelper(type,
+                BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(),
+                BronzeMechanicalLatheBlockEntity::serverTick);
     }
 }

@@ -3,6 +3,12 @@ package com.magneticraft2.common.blockentity.stage.bronze;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
+import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
+import com.magneticraft2.common.systems.GEAR.GearNode;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelHost;
@@ -41,6 +47,130 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     private String replacementModel="";
     private String voxelProfileName="";
     private boolean formed;
+    private ItemStack workpiece=ItemStack.EMPTY;
+    private ItemStack cutter=ItemStack.EMPTY;
+    private ItemStack output=ItemStack.EMPTY;
+    private int machiningTicks;
+    private boolean running;
+    private static final int CYCLE_TICKS=160;
+    private static final float MIN_RPM=12F, TORQUE=2.5F;
+
+    public ItemStack getWorkpiece(){return workpiece;}
+    public ItemStack getCutter(){return cutter;}
+    public ItemStack getOutput(){return output;}
+    public boolean isRunning(){return running;}
+    public float getProgress(){return machiningTicks/(float)CYCLE_TICKS;}
+    public float getSpindleRotation(float partialTick){
+        MechanicalInputModuleBlockEntity input=getMechanicalInput();
+        return input==null?0F:input.getVisualRotationDegrees(partialTick);
+    }
+    @Nullable private MechanicalInputModuleBlockEntity getMechanicalInput(){
+        if(level==null||!formed)return null;
+        BlockPos pos=worldPosition.relative(matchedFacing.getOpposite(),2);
+        BlockEntity be=level.getBlockEntity(pos);
+        return be instanceof MechanicalInputModuleBlockEntity input?input:null;
+    }
+    public static void serverTick(Level level,BlockPos pos,BlockState state,BronzeMechanicalLatheBlockEntity lathe){
+        if(!level.isClientSide)lathe.tickMachining();
+    }
+    private void stopLoad(){
+        if(level!=null)GearNetworkManager.getInstance().removeMechanicalLoad(level,worldPosition);
+    }
+    private void tickMachining(){
+        if(level==null)return;
+        boolean hasWork=formed && !workpiece.isEmpty() && output.isEmpty()
+                && !cutter.isEmpty() && cutter.getDamageValue()<cutter.getMaxDamage();
+        MechanicalInputModuleBlockEntity input=hasWork?getMechanicalInput():null;
+        if(!hasWork||input==null){
+            stopLoad();
+            setRunning(false);
+            return;
+        }
+        GearNode node=input.getOrCreateGearNode();
+        boolean canAttempt=node.getEffectiveSpeed()>=MIN_RPM && node.getTorque()+.01F>=TORQUE;
+        GearNetworkManager manager=GearNetworkManager.getInstance();
+        manager.setMechanicalLoad(level,worldPosition,input.getBlockPos(),TORQUE,canAttempt);
+        if(!canAttempt||!manager.getMechanicalLoadState(level,worldPosition).supplied()){
+            setRunning(false);
+            return;
+        }
+        setRunning(true);
+        machiningTicks++;
+        setChanged();
+        if(machiningTicks<CYCLE_TICKS){
+            if(level.getGameTime()%20==0)sync();
+            return;
+        }
+        ItemStack finished=new ItemStack(workpiece.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
+                ?ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get()
+                :ItemRegistry.ITEM_PRECISION_BRONZE_BEARING.get());
+        if(workpiece.hasTag())finished.setTag(workpiece.getTag().copy());
+        output=finished;
+        workpiece=ItemStack.EMPTY;
+        int damage=cutter.getDamageValue()+1;
+        if(damage>=cutter.getMaxDamage())cutter=ItemStack.EMPTY;
+        else cutter.setDamageValue(damage);
+        machiningTicks=0;
+        stopLoad();
+        setRunning(false);
+        sync();
+    }
+    private void setRunning(boolean value){
+        if(running==value)return;
+        running=value;
+        sync();
+    }
+    private static void deliver(Player player,ItemStack stack){
+        if(!stack.isEmpty()&&!player.getInventory().add(stack))player.drop(stack,false);
+    }
+    private void interact(Player player,ItemStack held){
+        if(!formed)return;
+        if(held.isEmpty()){
+            if(!output.isEmpty()){
+                ItemStack collected=output;output=ItemStack.EMPTY;
+                deliver(player,collected);sync();return;
+            }
+            if(player.isShiftKeyDown()){
+                if(!workpiece.isEmpty()){
+                    ItemStack recovered=workpiece;workpiece=ItemStack.EMPTY;
+                    machiningTicks=0;stopLoad();setRunning(false);
+                    deliver(player,recovered);sync();return;
+                }
+                if(!cutter.isEmpty()){
+                    ItemStack recovered=cutter;cutter=ItemStack.EMPTY;
+                    stopLoad();setRunning(false);
+                    deliver(player,recovered);sync();return;
+                }
+            }
+            player.displayClientMessage(Component.literal(
+                    "Lathe: "+(running?"cutting":(!workpiece.isEmpty()?"stalled / waiting for Gear V2 drive":"idle"))+
+                    " | "+machiningTicks+"/"+CYCLE_TICKS+" | tool "+(cutter.isEmpty()?"missing":(cutter.getMaxDamage()-cutter.getDamageValue())+" uses")),true);
+            return;
+        }
+        if(held.is(ItemRegistry.ITEM_LATHE_CUTTER.get())){
+            if(!cutter.isEmpty()){player.displayClientMessage(Component.literal("Remove the installed cutter first."),true);return;}
+            cutter=held.copy();cutter.setCount(1);
+        }else if(held.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
+                ||held.is(ItemRegistry.ITEM_ROUGH_BRONZE_BEARING.get())){
+            if(!workpiece.isEmpty()||!output.isEmpty()){
+                player.displayClientMessage(Component.literal("Remove the previous workpiece/output first."),true);return;
+            }
+            workpiece=held.copy();workpiece.setCount(1);machiningTicks=0;
+        }else return;
+        if(!player.getAbilities().instabuild)held.shrink(1);
+        sync();
+    }
+    @Override public void onDestroy(Level world){
+        stopLoad();
+        if(!world.isClientSide){
+            ItemStack a=workpiece,b=cutter,c=output;
+            workpiece=ItemStack.EMPTY;cutter=ItemStack.EMPTY;output=ItemStack.EMPTY;
+            if(!a.isEmpty())Block.popResource(world,worldPosition,a);
+            if(!b.isEmpty())Block.popResource(world,worldPosition,b);
+            if(!c.isEmpty())Block.popResource(world,worldPosition,c);
+        }
+        super.onDestroy(world);
+    }
     private Direction matchedFacing=Direction.SOUTH;
     @Nullable private VoxelShape collision,selection;
 
@@ -95,10 +225,17 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         return controller;
     }
     @Override protected void interactableNoGui(BlockState state,Level world,BlockPos pos,
-            Player player,InteractionHand hand,BlockHitResult hit) { }
+            Player player,InteractionHand hand,BlockHitResult hit) {
+        interact(player,player.getItemInHand(hand));
+    }
     @Override public void load(CompoundTag tag) {
         super.load(tag);
         MultiblockPersistentData data=loadMultiblockData(tag);
+        workpiece=ItemStack.of(tag.getCompound("LatheWorkpiece"));
+        cutter=ItemStack.of(tag.getCompound("LatheCutter"));
+        output=ItemStack.of(tag.getCompound("LatheOutput"));
+        machiningTicks=Math.max(0,Math.min(CYCLE_TICKS,tag.getInt("LatheProgress")));
+        running=tag.getBoolean("LatheRunning");
         blueprintName=data.blueprintName();
         replacementModel=data.replacementModel();
         formed=data.formed();
@@ -110,6 +247,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     @Override protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         saveMultiblockData(tag,blueprintName,formed,replacementModel);
+        if(!workpiece.isEmpty())tag.put("LatheWorkpiece",workpiece.save(new CompoundTag()));
+        if(!cutter.isEmpty())tag.put("LatheCutter",cutter.save(new CompoundTag()));
+        if(!output.isEmpty())tag.put("LatheOutput",output.save(new CompoundTag()));
+        tag.putInt("LatheProgress",machiningTicks);
+        tag.putBoolean("LatheRunning",running);
         if(!voxelProfileName.isBlank())tag.putString("v2_voxel_profile",voxelProfileName);
         MultiblockVoxelNbt.write(tag,"v2_voxel_collision",collision);
         MultiblockVoxelNbt.write(tag,"v2_voxel_selection",selection);

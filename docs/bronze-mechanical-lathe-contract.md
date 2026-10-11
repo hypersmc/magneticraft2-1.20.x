@@ -1,6 +1,6 @@
 # Bronze Mechanical Lathe — implementation contract
 
-Status: **structure prototype implemented, source-level only**. The 5×2×3 controller is registered with four rotated JSON blueprints, per-cell baked placeholder models, Voxel V2 collision snapshots, crafting/loot/item resources and a creative tab entry. Formation is intended to be playable; machining, precision items, driven spindle, full authored render volumes, tool carriage and Patchouli/JEI remain unimplemented. Compilation/in-game formation have not been verified.
+Status: **structure prototype implemented, source-level only**. The 5×2×3 controller is registered with four rotated JSON blueprints, per-cell baked placeholder models, Voxel V2 collision snapshots, crafting/loot/item resources and a creative tab entry. Formation is intended to be playable; the first Gear V2-driven machining cycle, cutter wear and precision items are implemented in source. Full authored static spindle/headstock geometry, proper Patchouli/JEI and live balance remain incomplete. Compilation/in-game formation have not been verified.
 
 ## Design
 
@@ -78,3 +78,26 @@ First balance values must remain adjustable until live testing. Distinguish stal
 
 ### Current prototype test
 Build the lower 5×3 platform of Stone Bricks with the Mechanical Lathe controller at lower-front center. Place five Oak Planks along the back top row and one Cut Copper block at each extreme end of the center top row; leave the remaining upper cells air. Right-click the controller to form. Rotate the layout according to the four directional JSON files. Do not expect spinning or machining yet.
+
+## Initial machining implementation (unverified)
+
+The lower rear middle Stone Bricks block has been replaced with the existing
+Gear V2 Mechanical Input Module. This is part of the multiblock blueprint:
+place one on the rear-center lower row, correctly connected to the network.
+
+Right-click a formed Lathe with one Rough Bronze Gear/Bearing Casting to mount it.
+Right-click with a Bronze Lathe Cutter to install the tool. An empty-hand click
+reports progress; sneak-empty-hand retrieves unfinished workpiece or cutter.
+A finished component can be collected with an empty hand. One quality-tagged
+rough casting becomes exactly one matching precision bronze part. Each
+completed cut damages the cutter once. An unfinished casting returns on break.
+
+The first fixed test values are 12 RPM minimum, 2.5 torque demand, and 160
+ticks cutting; speed or insufficient load headroom stalls progress without
+manufacturing an output. Gear V2's existing mechanical load manager provides
+the actual network supply verdict. These are not final balance values.
+Dynamic workpiece and cutter display is only a simple, inexpensive first pass,
+not the final lathe machine model.
+
+Gradle compile, world reload and all four construction directions still
+require actual verification before this milestone can be called finished.
