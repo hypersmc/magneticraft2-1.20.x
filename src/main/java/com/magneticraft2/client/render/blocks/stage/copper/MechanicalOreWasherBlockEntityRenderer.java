@@ -3,7 +3,6 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 import com.magneticraft2.common.block.stage.copper.MechanicalOreWasherBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltPath;
-import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -166,7 +165,8 @@ public class MechanicalOreWasherBlockEntityRenderer
                 buffer,
                 packedLight,
                 Vec3.ZERO,
-                -beltTravel * facingRotationSign
+                -beltTravel * facingRotationSign,
+                washer.getPartWearStage()
         );
 
         poseStack.pushPose();
@@ -196,16 +196,6 @@ public class MechanicalOreWasherBlockEntityRenderer
             if (washer.isProcessing()) {
                 spawnProcessingEffects(washer);
             }
-        }
-
-        // Service cue rests against the actual belt/pulley plane, never over
-        // the input or output material trays. Render only near failure.
-        if (washer.needsMaintenance()) {
-            renderStoredItem(
-                    washer, new ItemStack(ItemRegistry.ITEM_LEATHER_BELT.get()),
-                    0.82D, 1.20D, 1.50D, 0.43F, 950,
-                    poseStack, buffer, packedLight, packedOverlay
-            );
         }
 
         renderInputItems(

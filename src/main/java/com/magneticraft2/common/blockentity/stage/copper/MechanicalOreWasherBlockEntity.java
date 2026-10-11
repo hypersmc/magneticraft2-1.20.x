@@ -598,6 +598,15 @@ public class MechanicalOreWasherBlockEntity
                 (double) level.getGameTime()
                         + (double) partialTicks;
 
+        // A snapped internal belt no longer drives the drum. The external
+        // power shaft and its input pulley may still turn, but the worn belt,
+        // driven pulley and trommel rotor remain stopped until replacement.
+        // Reset the timing anchor to avoid a sudden jump after servicing.
+        if (isPartWornOut()) {
+            lastClientBeltVisualTime = currentVisualTime;
+            return clientBeltTravelDistance;
+        }
+
         if (Double.isNaN(lastClientBeltVisualTime)) {
             lastClientBeltVisualTime = currentVisualTime;
             return clientBeltTravelDistance;
