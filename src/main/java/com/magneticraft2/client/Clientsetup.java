@@ -21,6 +21,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.CopperFluidTankBlockE
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModuleBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.CrankBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
@@ -100,6 +101,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_INPUT_MODULE_BE.get(), MechanicalInputModuleBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
