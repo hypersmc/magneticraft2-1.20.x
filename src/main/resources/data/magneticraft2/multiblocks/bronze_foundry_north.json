@@ -1,0 +1,60 @@
+{
+  "name": "bronze_foundry_north",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "B",
+          "C",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "B": "minecraft:bricks",
+      "C": "magneticraft2:bronze_foundry",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_foundry_north",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": []
+  }
+}

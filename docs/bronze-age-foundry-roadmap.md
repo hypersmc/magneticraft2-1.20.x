@@ -2,6 +2,8 @@
 
 Status: development design. The previous Copper Age is the entry point.
 
+**In PR #11:** first Foundry *structure/visual prototype*: 3×2×3 JSON layouts for all facings, new controller, static baked models, collision and Patchouli Visualize. It does **not** yet burn fuel, melt metal or pour castings. See `docs/bronze-foundry-structure-and-casting-contract.md`.
+
 ## Identity and boundaries
 
 The Bronze Age is **casting and precision manufacturing**, not an automatic

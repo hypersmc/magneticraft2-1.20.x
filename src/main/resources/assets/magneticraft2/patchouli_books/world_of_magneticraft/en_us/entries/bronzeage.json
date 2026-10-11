@@ -35,8 +35,46 @@
       "title": "Mold Table",
       "recipe": "magneticraft2:bronze_mold_table",
       "text": "A hand-operated, GUI-less sand molding station. The materials and finished mold are displayed directly on the workbench."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze Foundry — structure prototype$()$(br2)The first Foundry uses a 3x2x3 brick shell with an open crucible, copper-braced firebox and a front tapping lip. Build a Foundry controller from Bronze, Copper Plates, Bricks and a Furnace. Heat, melting and pouring will be added after the structure and visual pass."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Foundry Controller",
+      "recipe": "magneticraft2:bronze_foundry",
+      "text": "This crafts only the controller, not the full machine. Place fifteen Bricks blocks and use Visualize on the next page to guide construction."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Foundry",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "B_B"
+          ],
+          [
+            "BBB",
+            "BBB",
+            "B0B"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_foundry",
+          "B": "minecraft:bricks"
+        },
+        "symmetrical": false
+      },
+      "text": "Bottom: full 3x3 footprint, except the front-centre is the controller. Upper: Bricks around the back and sides; leave centre and front-middle empty. Fifteen Bricks blocks total. Rotate/Visualize and right-click the controller to form. The machine is not yet a working smelter."
     }
   ],
   "sortnum": 3,
-  "read_by_default": true
+  "read_by_default": true,
+  "extra_recipe_mappings": {
+    "magneticraft2:bronze_foundry": 8
+  }
 }

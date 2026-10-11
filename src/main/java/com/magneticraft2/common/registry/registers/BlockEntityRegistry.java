@@ -28,6 +28,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.*;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMoldTableBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundryBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -91,6 +92,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("bronze_mold_table", () ->
                     BlockEntityType.Builder.of(BronzeMoldTableBlockEntity::new,
                             BlockRegistry.BRONZE_MOLD_TABLE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeFoundryBlockEntity>> BRONZE_FOUNDRY_BE =
+            BLOCK_ENTITIES.register("bronze_foundry", () ->
+                    BlockEntityType.Builder.of(BronzeFoundryBlockEntity::new,
+                            BlockRegistry.BRONZE_FOUNDRY.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE =
             BLOCK_ENTITIES.register(

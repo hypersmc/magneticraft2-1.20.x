@@ -102,6 +102,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get());
                         entries.accept(ItemRegistry.ITEM_WOODEN_BEARING_PATTERN.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_MOLD_TABLE.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_FOUNDRY.get());
                         entries.accept(ItemRegistry.ITEM_GEAR_SAND_MOLD.get());
                         entries.accept(ItemRegistry.ITEM_BEARING_SAND_MOLD.get());
                         entries.accept(ItemRegistry.ITEM_PULLEY_SMALL_WOOD.get());
