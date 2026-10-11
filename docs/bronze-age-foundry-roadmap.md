@@ -1,0 +1,70 @@
+# Bronze Age: Foundry and Precision Workshop
+
+Status: development design. The previous Copper Age is the entry point.
+
+## Identity and boundaries
+
+The Bronze Age is **casting and precision manufacturing**, not an automatic
+increase in energy production. Bronze components make heavier, better-aligned
+mechanical systems feasible; they do not create free torque or speed.
+
+All actual **multiblock machines remain JSON-defined** and previewable in
+Patchouli. Normal single-block workstations are fine where they make sense.
+Favor inspectable, physical processes, in-world items and simple interactions
+over mandatory GUIs.
+
+### Entry (already implemented)
+
+Cassiterite -> Crushed Cassiterite -> Washed Cassiterite ->
+Tin Concentrate -> Tin Ingot; 3 Copper + 1 Tin -> Bronze Charge;
+Primitive Furnace + Coal -> 4 Bronze Ingots + Slag.
+
+### Proposed production path (implement by working slices)
+
+1. **Pattern Maker:** work timber into reusable wooden patterns for specific
+   parts (gear, bearing and later other castings).
+2. **Mold Table:** combine a reusable pattern, sand and binder into an
+   actual consumable casting mold. Pattern returned, not magically consumed.
+3. **Foundry:** heat bronze into a measured molten charge using real fuel/heat.
+   Molten metal must be handled physically and cooled safely. Model visibly
+   reflects its state.
+4. **Casting Basin:** receive a matching mold and a molten charge; produce a
+   rough casting after cooling. Wrong mold/material cannot yield a part.
+5. **Mechanical Lathe:** machine rough castings into precise mechanical
+   components using Gear V2 torque/speed, producing shavings as a byproduct.
+6. **Bronze drivetrain upgrade:** bearings, gears and housings raise
+   transmission and load limits without increasing generated power.
+7. **Bloomery:** processed iron ore + heat/fuel + forced air ->
+   iron bloom; working the bloom yields first usable **wrought iron**.
+
+**Bronze Age exit milestone:** the first wrought iron item, after a real
+Bloomery and mechanical/hand finishing chain. The bloom and its refining
+must not be skipped by a plain crafting recipe.
+
+## Still undecided — do not hard-code prematurely
+
+- Quality tier names/thresholds, including existing vanilla Copper quality
+  and the mod's lower quality Copper, and how casting/machining propagates it.
+- Full ore-to-iron mineral routes and exact smelting/fuel ratios.
+- Bronze melting temperatures and other heat system balance.
+- Pattern/mold lifetime and the recoverability of used mold material.
+- Numerical torque/speed capacities of Bronze drive parts.
+
+Parts need separate, visible replaceable-component wear as established in
+Copper (not a generic machine durability bar), but the new parts and their
+exact lifespan are decisions for each machine as implemented.
+
+## Development dependencies
+
+- Branch this age from `feature/copper-ore-processing-maintenance` (PR #10),
+  not from the older `master` that lacks current copper maintenance fixes.
+- Keep the user's Discord Copper test build and `master` untouched.
+- JEI multiblock PR #9 is independent and still needs an integration test.
+- Create age-specific bug fixes separately if public testers report issues.
+- Mark steps as implemented only after source and gameplay checks.
+
+## First milestone
+
+Deliver reusable wooden patterns and real sand molds with a physical
+no-GUI workflow, then build the Foundry/Casting Basin around those item
+contracts. Never treat an unimplemented downstream process as complete.
