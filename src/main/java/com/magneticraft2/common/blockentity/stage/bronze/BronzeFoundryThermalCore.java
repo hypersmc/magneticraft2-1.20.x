@@ -67,8 +67,12 @@ public final class BronzeFoundryThermalCore {
         boolean changed = false;
         boolean notifyImmediately = false;
 
-        // Never consume a second fuel while idle, full, or misconfigured.
-        if (burnRemaining <= 0 && heat < capacity && threshold <= capacity
+        // Ignite a fresh item only when the next melt/reheat actually needs
+        // energy. In particular, cooling from 32,000 to 31,998 must NOT burn
+        // a whole second coal simply to top up an already-hot furnace.
+        int requiredEnergy = Math.max(threshold, heatCost);
+        if (burnRemaining <= 0 && requiredEnergy <= capacity
+                && heat < requiredEnergy
                 && (canMelt() || crucibleUnits > 0) && !fuel.isEmpty()) {
             int duration = fuelTime(fuel);
             if (duration > 0) {
