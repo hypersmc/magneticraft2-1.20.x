@@ -36,6 +36,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     private ItemStack result=ItemStack.EMPTY;
     private int castType;
     private int coolingTicks;
+    private int directFillTicks;
 
     public BronzeCastingBasinBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(),pos,state);
@@ -45,6 +46,8 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     public ItemStack displayOutput() { return result; }
     public boolean isCooling() { return !sourceBronze.isEmpty(); }
     public int getCoolingTicks() { return coolingTicks; }
+    public int getDirectFillTicks() { return directFillTicks; }
+    public static final int DIRECT_FILL_DURATION = 14;
     public int getCoolingDuration() {
         return Magneticraft2ConfigCommon.GENERAL.FoundryCastingCoolTicks.get();
     }
@@ -67,10 +70,18 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         mold = ItemStack.EMPTY;
         castType = shape;
         coolingTicks = Math.max(1, getCoolingDuration());
+        directFillTicks = 0;
         sync();
         level.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH,
                 SoundSource.BLOCKS, .7F, 1.2F);
         return true;
+    }
+
+    /** Only the physically connected outlet starts this visual fill. */
+    public void startDirectFill() {
+        if (sourceBronze.isEmpty()) return;
+        directFillTicks = DIRECT_FILL_DURATION;
+        sync();
     }
 
     private static int kind(ItemStack stack) {
@@ -150,6 +161,10 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     public static void serverTick(Level world, BlockPos pos, BlockState state,
                                   BronzeCastingBasinBlockEntity basin) {
         if (world.isClientSide || basin.sourceBronze.isEmpty()) return;
+        if (basin.directFillTicks>0) {
+            basin.directFillTicks--;
+            if (basin.directFillTicks==0) basin.sync();
+        }
         if (basin.coolingTicks>0) basin.coolingTicks--;
         if (basin.coolingTicks==0) {
             ItemStack created=new ItemStack(basin.castType==GEAR
@@ -188,6 +203,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         sourceBronze=ItemStack.EMPTY;
         castType=0;
         coolingTicks=0;
+        directFillTicks=0;
         // The consumed mold is not refunded when poured; the bronze itself
         // is always returned if the incomplete basin is dismantled.
         if (!a.isEmpty()) Block.popResource(level,worldPosition,a);
@@ -210,6 +226,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         result=ItemStack.of(tag.getCompound("RoughCasting"));
         castType=Math.max(0,Math.min(2,tag.getInt("CastingShape")));
         coolingTicks=Math.max(0,tag.getInt("CoolingTicks"));
+        directFillTicks=Math.max(0,Math.min(DIRECT_FILL_DURATION,tag.getInt("DirectFillTicks")));
     }
 
     @Override
@@ -220,6 +237,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         if (!result.isEmpty())tag.put("RoughCasting",result.save(new CompoundTag()));
         tag.putInt("CastingShape",castType);
         tag.putInt("CoolingTicks",coolingTicks);
+        tag.putInt("DirectFillTicks",directFillTicks);
     }
 
     @Override
