@@ -119,7 +119,7 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public VoxelShape getShape(BlockState pState, BlockGetter level, BlockPos pos, CollisionContext pContext) {
-        VoxelShape localShape = getLocalMultiblockShape(level, pos, pContext);
+        VoxelShape localShape = getLocalSelectionShape(level, pos, pContext);
         return localShape != null ? localShape : super.getShape(pState, level, pos, pContext);
     }
 
@@ -131,7 +131,7 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public VoxelShape getInteractionShape(BlockState state, BlockGetter level, BlockPos pos) {
-        VoxelShape localShape = getLocalMultiblockShape(level, pos, CollisionContext.empty());
+        VoxelShape localShape = getLocalSelectionShape(level, pos, CollisionContext.empty());
         return localShape != null ? localShape : super.getInteractionShape(state, level, pos);
     }
 
@@ -140,6 +140,17 @@ public class Multiblockfiller extends BaseEntityBlock {
                                      CollisionContext context) {
         VoxelShape localShape = getLocalMultiblockShape(level, pos, context);
         return localShape != null ? localShape : super.getVisualShape(state, level, pos, context);
+    }
+
+    /** The selection outline may include a tap/handle without making it solid. */
+    @Nullable
+    private VoxelShape getLocalSelectionShape(BlockGetter level, BlockPos pos,
+                                              CollisionContext context) {
+        if (level.getBlockEntity(pos) instanceof Multiblockfiller_tile filler) {
+            VoxelShape selection = filler.getCachedLocalSelectionShape();
+            if (selection != null) return selection;
+        }
+        return getLocalMultiblockShape(level, pos, context);
     }
 
     @Nullable

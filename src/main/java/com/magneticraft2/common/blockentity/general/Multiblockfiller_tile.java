@@ -1,6 +1,7 @@
 package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelNbt;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -38,6 +39,7 @@ public class Multiblockfiller_tile extends BlockEntity {
     // V2 uses a persisted local snapshot to survive controller chunk unload.
     private boolean hasLocalShapeSnapshot;
     @Nullable private VoxelShape cachedLocalShape;
+    @Nullable private VoxelShape cachedLocalSelectionShape;
 
     public Multiblockfiller_tile(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.multiblockfillerBlockEntity.get(), pos, state);
@@ -49,10 +51,25 @@ public class Multiblockfiller_tile extends BlockEntity {
      * every frame. Collision is stored per local block for chunk independence.
      */
     public void setV2ModelPart(BlockPos controller, String name, @NotNull VoxelShape localCollision) {
+        setV2ModelPart(controller, name, localCollision, localCollision);
+    }
+
+    /** One atomic update so the client never sees half-installed V2 shapes. */
+    public void setV2ModelPart(BlockPos controller, String name,
+                               @NotNull VoxelShape localCollision,
+                               @NotNull VoxelShape localSelection) {
         Master_X = controller.getX();
         Master_Y = controller.getY();
         Master_Z = controller.getZ();
-        setV2ModelPart(name, localCollision);
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Multiblock V2 part ID cannot be empty");
+        }
+        renderPart = name;
+        cachedLocalShape = localCollision.optimize();
+        cachedLocalSelectionShape = localSelection.optimize();
+        hasLocalShapeSnapshot = true;
+        modelDataCache = null;
+        sync();
     }
 
     public void setV2ModelPart(String name, @NotNull VoxelShape localCollision) {
@@ -61,6 +78,7 @@ public class Multiblockfiller_tile extends BlockEntity {
         }
         renderPart = name;
         cachedLocalShape = localCollision.optimize();
+        cachedLocalSelectionShape = localCollision.optimize();
         hasLocalShapeSnapshot = true;
         modelDataCache = null;
         sync();
@@ -121,6 +139,11 @@ public class Multiblockfiller_tile extends BlockEntity {
         return cachedLocalShape;
     }
 
+    @Nullable
+    public VoxelShape getCachedLocalSelectionShape() {
+        return cachedLocalSelectionShape != null ? cachedLocalSelectionShape : cachedLocalShape;
+    }
+
     public void setCachedLocalShape(@Nullable VoxelShape shape) {
         cachedLocalShape = shape;
     }
@@ -135,20 +158,8 @@ public class Multiblockfiller_tile extends BlockEntity {
         modelDataCache = null;
 
         hasLocalShapeSnapshot = tag.contains("local_collision", Tag.TAG_LIST);
-        cachedLocalShape = null;
-        if (hasLocalShapeSnapshot) {
-            VoxelShape shape = Shapes.empty();
-            ListTag list = tag.getList("local_collision", Tag.TAG_COMPOUND);
-            for (int index = 0; index < list.size(); index++) {
-                CompoundTag b = list.getCompound(index);
-                double minX = b.getDouble("minX"), minY = b.getDouble("minY"), minZ = b.getDouble("minZ");
-                double maxX = b.getDouble("maxX"), maxY = b.getDouble("maxY"), maxZ = b.getDouble("maxZ");
-                if (maxX > minX && maxY > minY && maxZ > minZ) {
-                    shape = Shapes.or(shape, Shapes.create(new AABB(minX, minY, minZ, maxX, maxY, maxZ)));
-                }
-            }
-            cachedLocalShape = shape.optimize();
-        }
+        cachedLocalShape = MultiblockVoxelNbt.read(tag, "local_collision");
+        cachedLocalSelectionShape = MultiblockVoxelNbt.read(tag, "local_selection");
         if (level != null && level.isClientSide) {
             requestModelDataUpdate();
         }
@@ -163,19 +174,9 @@ public class Multiblockfiller_tile extends BlockEntity {
         if (!renderPart.isEmpty()) {
             tag.putString("render_part", renderPart);
         }
-        if (hasLocalShapeSnapshot && cachedLocalShape != null) {
-            ListTag boxes = new ListTag();
-            for (AABB aabb : cachedLocalShape.toAabbs()) {
-                CompoundTag b = new CompoundTag();
-                b.putDouble("minX", aabb.minX);
-                b.putDouble("minY", aabb.minY);
-                b.putDouble("minZ", aabb.minZ);
-                b.putDouble("maxX", aabb.maxX);
-                b.putDouble("maxY", aabb.maxY);
-                b.putDouble("maxZ", aabb.maxZ);
-                boxes.add(b);
-            }
-            tag.put("local_collision", boxes);
+        if (hasLocalShapeSnapshot) {
+            MultiblockVoxelNbt.write(tag, "local_collision", cachedLocalShape);
+            MultiblockVoxelNbt.write(tag, "local_selection", cachedLocalSelectionShape);
         }
     }
 }
