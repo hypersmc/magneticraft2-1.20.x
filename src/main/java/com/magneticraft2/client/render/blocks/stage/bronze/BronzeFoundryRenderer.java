@@ -21,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 /**
  * Only changes in-world content: one fuel item, one crucible charge, and
@@ -36,11 +35,6 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
 
     @Override
     public int getViewDistance() { return 64; }
-
-    @Override
-    public AABB getRenderBoundingBox(BronzeFoundryBlockEntity entity) {
-        return new AABB(entity.getBlockPos()).inflate(3.0D);
-    }
 
     @Override
     public void render(BronzeFoundryBlockEntity entity, float partialTick,
