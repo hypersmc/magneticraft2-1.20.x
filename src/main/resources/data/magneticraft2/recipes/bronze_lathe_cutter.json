@@ -1,13 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " I",
-    " SI",
+    " BF",
+    " SB",
     "S  "
   ],
   "key": {
-    "I": {
-      "item": "minecraft:iron_ingot"
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "F": {
+      "item": "minecraft:flint"
     },
     "S": {
       "item": "minecraft:stick"
