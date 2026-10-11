@@ -85,6 +85,9 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         if (thermal.crucibleUnits() > 0) {
             moltenOrSolidSurface(thermal, pose, buffer, packedLight);
         }
+        if (thermal.directPourVisualTicks() > 0) {
+            directPourStream(thermal, pose, buffer);
+        }
 
         // The charge rests flat and CENTERED inside the open crucible. When
         // bronze is already inside, lift the next ingot above the fill surface.
@@ -95,6 +98,39 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         renderItem(entity, thermal.chargeDisplay(), .50D, chargeY, -.50D,
                 .43F, 781, pose, buffer, packedLight, overlay);
         pose.popPose();
+    }
+
+    /** Small molten ribbon following the existing dark channel, then a falling
+     * stream at its end. All coordinates are local SOUTH-oriented model pixels. */
+    private void directPourStream(BronzeFoundryThermalCore thermal, PoseStack pose,
+                                  MultiBufferSource source) {
+        TextureAtlasSprite sprite = sprite(BRONZE_SURFACE);
+        VertexConsumer v = source.getBuffer(RenderType.translucent());
+        PoseStack.Pose m = pose.last();
+        float x0 = 7.12F / 16F, x1 = 8.88F / 16F;
+        float z0 = 3.5F / 16F, z1 = 22.9F / 16F;
+        float y = 23.62F / 16F;
+        int light = 0x00F000F0;
+        float u0 = sprite.getU(2), u1 = sprite.getU(3.76F);
+        float vv0 = sprite.getV(0), vv1 = sprite.getV(15.5F);
+        // Break the ribbon into segments so UV spans never exceed one tile.
+        for (float zz = z0; zz < z1 - 0.0001F;) {
+            float end = Math.min(z1, zz + 12F / 16F);
+            float ve = sprite.getV((end - zz) * 16F);
+            vertex(v,m,x0,y,zz,u0,vv0,1F,.55F,.15F,1F,light,0,1,0);
+            vertex(v,m,x0,y,end,u0,ve,1F,.55F,.15F,1F,light,0,1,0);
+            vertex(v,m,x1,y,end,u1,ve,1F,.55F,.15F,1F,light,0,1,0);
+            vertex(v,m,x1,y,zz,u1,vv0,1F,.55F,.15F,1F,light,0,1,0);
+            zz = end;
+        }
+        // The receiving basin's open cavity is centered in the adjacent block.
+        // Start under the spout and stop inside the basin, not in the floor.
+        float top = 22.9F / 16F, bottom = 7F / 16F;
+        float z = 24F / 16F;
+        side(v,m,x0,bottom,z,x1,top,z,u0,u1,sprite.getV(0),sprite.getV(15.9F),
+                1F,.55F,.15F,1F,light,0,0,1);
+        side(v,m,x1,bottom,z,x0,top,z,u0,u1,sprite.getV(0),sprite.getV(15.9F),
+                1F,.55F,.15F,1F,light,0,0,-1);
     }
 
     /** Two upright crossed flame sheets INSIDE the chamber, behind the grate. */
