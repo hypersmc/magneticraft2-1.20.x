@@ -71,3 +71,8 @@ exact lifespan are decisions for each machine as implemented.
 Deliver reusable wooden patterns and real sand molds with a physical
 no-GUI workflow, then build the Foundry/Casting Basin around those item
 contracts. Never treat an unimplemented downstream process as complete.
+
+
+### Foundry heating prototype (draft PR #11)
+
+A first GUI-less HEAT/fuel/bronze melting pass has been added after the Voxel V2 work. Molten bronze remains one ingot-equivalent per source Bronze Ingot (including NBT/quality metadata), conserved inside the crucible and visually hot/solidified depending on stored heat. There is **no** ladle, actual pour or Casting Basin yet. Initial heat parameters are pack-configurable balance values, not Celsius. See `docs/bronze-foundry-structure-and-casting-contract.md` for tests.

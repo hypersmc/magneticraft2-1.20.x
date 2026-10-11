@@ -1,6 +1,6 @@
 # Bronze Foundry — structure and casting contract
 
-**Status:** PR #11 first in-game **structure/visual prototype**. Formation, facing, model, collision and Patchouli Visualize are included. Fuel, heat, molten bronze and casting are **NOT implemented in this slice**. Right-clicking the formed controller says so.
+**Status:** PR #11 has formed structure, Rendering V2, Voxel V2, and a **first functional heating/melting prototype**. Fuel, persistent HEAT energy, bronze charge and conserved crucible bronze are implemented. **Pouring and Casting Basin remain unavailable**, and the Foundry still requires in-game testing.
 
 ## First build
 
@@ -60,3 +60,36 @@ The assembled model extends into the two required-AIR cells of the upper 3×2×3
 ## Voxel V2 milestone
 
 The Foundry's own physical definition has been extracted from its old `Block.box` implementation into the editable `voxels` data in `tools/multiblock-models/designs/bronze_foundry.json`. An exported server datapack JSON carries 22 collision boxes, separate selection geometry, and named regions for the firebox, crucible and tapping valve. Its block-local cached shapes are saved and synced on formation. Existing formed test machines must be rebuilt/reformed once to populate the new snapshots. See `docs/multiblock-voxels-v2.md`. No heating or actual pouring was added.
+
+
+## First fuel/heat/bronze melt slice
+
+The Foundry uses the existing Magneticraft HEAT storage/capability and Forge solid furnace-fuel burn durations. It does not create RF, Watt or mechanical power. The external HEAT capability is read-only at this stage; physical solid fuel is the heat source. There is no Forge FluidHandler for molten bronze.
+
+- Right-click the **firebox** with a solid furnace fuel to queue one item; an active fuel burns its normal duration. Fuels with a container remainder (e.g. lava buckets) are deliberately rejected until container handling exists.
+- Right-click the **crucible** with a Magneticraft Bronze Ingot to queue one charge. Mixed NBT/quality variants are rejected while another variant is queued or already stored in the crucible.
+- With empty hands, click either opening for status; **sneak-right-click** to retrieve unburned queued fuel or unmelted queued ingots. The hot crucible is not an item slot, and currently has no direct extraction.
+- Fuel adds HEAT energy each server tick; the refractory mass leaks HEAT energy every loaded tick. Only when the threshold and per-ingot energy requirement are met does one solid ingot become one conserved crucible unit. Melting does **not** generate extra bronze.
+- If the HEAT drops below the threshold, the same bronze solidifies in place. It can be reheated; the model darkens instead of depicting cold liquid as lava.
+- A named, server-owned crucible batch retains its originating Bronze Ingot's complete item NBT, including planned quality data. Every unit is an **ingot-equivalent**; its conversion to millibuckets is intentionally undecided.
+- Breaking the prototype returns the remaining queue contents and crucible material as the original ingots, with NBT, so development tests cannot permanently lose metal. Burning fuel is not refunded. State clears *before* drops are spawned to prevent duplicate restoration.
+
+**Initial balance values are configurable**, not approved real-world temperatures. In Common config: heat capacity 32,000 units; fuel gain 32 HEAT/tick; passive loss 2 HEAT/tick; melt readiness 14,000 HEAT; melt cost 2,500 HEAT per ingot; capacity 8 ingot-equivalents. These are test defaults to tune once the Casting Basin and mechanical bellows are attached.
+
+The dynamic Foundry renderer draws the queued fuel and charge as physical items, and one textured 8×8-pixel crucible surface. The surface is dark when solidified and warm when melt-ready. There is no new animated gear or large per-frame rebuild.
+
+**Limitations:** Ladle/basin transfer, material waste/slag, actual degrees Celsius, refractory damage, gas handling and air injection from the Mechanical Bellows are **not** implemented. The tap is status-only and reports the conserved units. A valid output is not available until the Casting Basin exists.
+
+### Focused in-game test
+
+1. Rebuild and restart the client, and **dismantle/reform** the Foundry if the latest voxel selection profiles were not installed.
+2. Right-click the lower firebox with Coal; see fuel inside. Right-click the crucible with one Bronze Ingot; see the input near the cup.
+3. Wait while the server advances fuel burn/HEAT. The ingot must disappear **once** and the crucible amount become 1. No 2× Bronze outcome is allowed.
+4. Click the tap; it should report the amount but give no metal, even if other fluid pipes are adjacent.
+5. Unload and reload while the fuel is burning: the HEAT, remaining fuel, remaining solid charge, quality NBT and crucible count must persist.
+6. Let it cool: the bronze remains stored, turns visually darker, and is no longer pour-ready. Add fuel/charge to reheat if necessary.
+7. Test Bronze Ingots with distinct NBT tags; they must not mix in a loaded crucible.
+8. Break either controller or one of its formed proxies; each remaining item and ingot-equivalent must drop exactly once.
+9. Repeat on a dedicated server and all four orientations. Recheck the Foundry voxel/collision and Washer/Sifter regression cases.
+
+No Gradle compile or in-game test has been run in this workspace; these remain acceptance requirements.
