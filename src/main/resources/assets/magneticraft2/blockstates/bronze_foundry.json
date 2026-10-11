@@ -4,28 +4,28 @@
       "model": "magneticraft2:block/bronze_foundry_controller"
     },
     "facing=south,is_formed=true": {
-      "model": "magneticraft2:multiblock/bronze_foundry_south"
+      "model": "magneticraft2:multiblock/bronze_foundry_south/part_0_0_0"
     },
     "facing=west,is_formed=false": {
       "model": "magneticraft2:block/bronze_foundry_controller",
       "y": 90
     },
     "facing=west,is_formed=true": {
-      "model": "magneticraft2:multiblock/bronze_foundry_west"
+      "model": "magneticraft2:multiblock/bronze_foundry_west/part_0_0_0"
     },
     "facing=north,is_formed=false": {
       "model": "magneticraft2:block/bronze_foundry_controller",
       "y": 180
     },
     "facing=north,is_formed=true": {
-      "model": "magneticraft2:multiblock/bronze_foundry_north"
+      "model": "magneticraft2:multiblock/bronze_foundry_north/part_0_0_0"
     },
     "facing=east,is_formed=false": {
       "model": "magneticraft2:block/bronze_foundry_controller",
       "y": 270
     },
     "facing=east,is_formed=true": {
-      "model": "magneticraft2:multiblock/bronze_foundry_east"
+      "model": "magneticraft2:multiblock/bronze_foundry_east/part_0_0_0"
     }
   }
 }
