@@ -233,5 +233,9 @@
   "item.magneticraft2.multiblock_item_primary_output": "Multiblock Primary Item Output",
   "block.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
   "item.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
-  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition."
+  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition.",
+  "item.magneticraft2.washed_chalcocite": "Washed Chalcocite",
+  "item.magneticraft2.copper_concentrate": "Copper Concentrate",
+  "item.magneticraft2.crushed_quartz": "Crushed Quartz",
+  "item.magneticraft2.washed_quartz": "Washed Quartz"
 }

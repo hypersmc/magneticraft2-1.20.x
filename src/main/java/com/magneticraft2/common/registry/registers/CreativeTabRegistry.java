@@ -89,6 +89,10 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_COPPER_FLUID_TANK.get());
                         entries.accept(ItemRegistry.ITEM_CRUSHED_CASSITERITE.get());
                         entries.accept(ItemRegistry.ITEM_WASHED_CASSITERITE.get());
+                        entries.accept(ItemRegistry.ITEM_WASHED_CHALCOCITE.get());
+                        entries.accept(ItemRegistry.ITEM_COPPER_CONCENTRATE.get());
+                        entries.accept(ItemRegistry.ITEM_CRUSHED_QUARTZ.get());
+                        entries.accept(ItemRegistry.ITEM_WASHED_QUARTZ.get());
                         entries.accept(ItemRegistry.ITEM_TIN_CONCENTRATE.get());
                         entries.accept(ItemRegistry.ITEM_TIN_INGOT.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_CHARGE.get());
