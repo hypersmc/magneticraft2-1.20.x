@@ -24,7 +24,7 @@ Primitive Furnace + Coal -> 4 Bronze Ingots + Slag.
 1. **Pattern Maker:** work timber into reusable wooden patterns for specific
    parts (gear, bearing and later other castings).
 2. **Mold Table:** combine a reusable pattern, sand and binder into an
-   actual consumable casting mold. Pattern returned, not magically consumed.
+   actual consumable casting mold. The pattern stays installed and reusable.
 3. **Foundry:** heat bronze into a measured molten charge using real fuel/heat.
    Molten metal must be handled physically and cooled safely. Model visibly
    reflects its state.
@@ -56,10 +56,11 @@ exact lifespan are decisions for each machine as implemented.
 
 ## Development dependencies
 
-- Branch this age from `feature/copper-ore-processing-maintenance` (PR #10),
-  not from the older `master` that lacks current copper maintenance fixes.
-- Keep the user's Discord Copper test build and `master` untouched.
-- JEI multiblock PR #9 is independent and still needs an integration test.
+- Copper processing/maintenance PR #10 and JEI multiblock PR #9 are both
+  merged into `master`. Bronze PR #11 is rebased directly onto that history.
+- Keep the released Discord Copper build unchanged and avoid merging
+  unfinished Bronze development into `master`.
+- Verify JEI compatibility with the Bronze machine recipes as they are added.
 - Create age-specific bug fixes separately if public testers report issues.
 - Mark steps as implemented only after source and gameplay checks.
 

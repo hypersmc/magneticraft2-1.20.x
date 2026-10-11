@@ -1,7 +1,7 @@
 # Bronze Age: first workshop slice (prototype)
 
-Branch: `feature/bronze-age-foundry`. Depends on
-`feature/copper-ore-processing-maintenance` / PR #10.
+Branch: `feature/bronze-age-foundry` (PR #11), rebased directly onto
+`master` after Copper maintenance PR #10 and JEI support PR #9 merged.
 
 This is **not** the complete Bronze Age. It starts the pattern/mold
 manufacturing flow without pretending molten Bronze, a Foundry, a Casting
