@@ -129,12 +129,14 @@ public class BronzePatternMakerBlock extends HorizontalDirectionalBlock {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (held.isEmpty() && !level.isClientSide) {
-            player.displayClientMessage(Component.translatable(
-                    state.getValue(BEARING_SELECTED)
-                            ? "message.magneticraft2.pattern_maker.bearing_selected"
-                            : "message.magneticraft2.pattern_maker.gear_selected"), true);
-            return InteractionResult.CONSUME;
+        if (held.isEmpty()) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable(
+                        state.getValue(BEARING_SELECTED)
+                                ? "message.magneticraft2.pattern_maker.bearing_selected"
+                                : "message.magneticraft2.pattern_maker.gear_selected"), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
         return InteractionResult.PASS;
