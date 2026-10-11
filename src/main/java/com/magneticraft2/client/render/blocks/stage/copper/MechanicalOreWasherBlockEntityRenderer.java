@@ -165,7 +165,8 @@ public class MechanicalOreWasherBlockEntityRenderer
                 buffer,
                 packedLight,
                 Vec3.ZERO,
-                -beltTravel * facingRotationSign
+                -beltTravel * facingRotationSign,
+                washer.getPartWearStage()
         );
 
         poseStack.pushPose();

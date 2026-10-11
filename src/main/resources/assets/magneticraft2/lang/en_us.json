@@ -233,5 +233,14 @@
   "item.magneticraft2.multiblock_item_primary_output": "Multiblock Primary Item Output",
   "block.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
   "item.magneticraft2.multiblock_item_byproduct_output": "Multiblock Byproduct Item Output",
-  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition."
+  "message.magneticraft2.fire_starter.kiln_not_ready": "Pit Kiln needs 4 Wheat and 8 Logs before ignition.",
+  "item.magneticraft2.washed_chalcocite": "Washed Chalcocite",
+  "item.magneticraft2.copper_concentrate": "Copper Concentrate",
+  "item.magneticraft2.crushed_quartz": "Crushed Quartz",
+  "item.magneticraft2.washed_quartz": "Washed Quartz",
+  "item.magneticraft2.sifter_mesh": "Copper Sifter Mesh",
+  "message.magneticraft2.machine_part_status": "%s: %s/%s batches remaining. Right-click with a replacement to service.",
+  "message.magneticraft2.machine_part_broken": "%s is worn out. Replace this component to resume processing.",
+  "message.magneticraft2.machine_part_installed": "Installed a new %s.",
+  "message.magneticraft2.machine_part_fresh": "%s is already in good condition."
 }
