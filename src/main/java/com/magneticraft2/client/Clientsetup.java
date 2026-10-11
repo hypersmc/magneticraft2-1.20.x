@@ -144,6 +144,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_carriage"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_connecting_rod"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_follower"));

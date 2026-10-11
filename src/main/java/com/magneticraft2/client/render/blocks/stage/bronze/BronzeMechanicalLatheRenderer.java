@@ -5,6 +5,11 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBl
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -15,10 +20,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Only the moving workpiece and installed cutter. Static Lathe geometry is baked into V2 parts. */
+/** Static power train is V2 baked; carriage, drive wheel and workpiece move together
+ * with the actual Gear V2 machine state. */
 public final class BronzeMechanicalLatheRenderer
         implements BlockEntityRenderer<BronzeMechanicalLatheBlockEntity> {
+    private static final ResourceLocation CARRIAGE =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_carriage");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
+
+    private static void model(PoseStack pose,MultiBufferSource source,int light,int overlay,
+                              BakedModel model) {
+        BlockRenderDispatcher blocks=Minecraft.getInstance().getBlockRenderer();
+        blocks.getModelRenderer().renderModel(pose.last(),source.getBuffer(RenderType.cutout()),
+                BlockRegistry.BRONZE_MECHANICAL_LATHE.get().defaultBlockState(),
+                model,1F,1F,1F,light,overlay);
+    }
     @Override public int getViewDistance(){return 64;}
     @Override public void render(BronzeMechanicalLatheBlockEntity lathe,float partial,
             PoseStack pose,MultiBufferSource source,int light,int overlay){
@@ -32,6 +48,31 @@ public final class BronzeMechanicalLatheRenderer
         pose.translate(.5D,0,.5D);
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-.5D,0,-.5D);
+        // Gear V2 enters at the back, passes along the exposed drive shaft to
+        // the left headstock and spins this bronze drive pulley. Its rotation
+        // is tied to the same measured input as the chuck, never to world time.
+        if(lathe.isRunning()){
+            pose.pushPose();
+            pose.translate(-23D/16D,18.5D/16D,-24.3D/16D);
+            pose.mulPose(Axis.ZP.rotationDegrees(lathe.getSpindleRotation(partial)));
+            pose.scale(.65F,.65F,.65F);
+            ItemStack wheel=new ItemStack(BlockRegistry.GEAR_MEDIUM_WOOD.get());
+            ItemRenderer items=Minecraft.getInstance().getItemRenderer();
+            BakedModel wheelModel=items.getModel(wheel,lathe.getLevel(),null,991);
+            items.render(wheel,ItemDisplayContext.NONE,false,pose,source,light,overlay,wheelModel);
+            pose.popPose();
+        }
+        float feed=lathe.getToolFeed();
+        float traverse=lathe.getCutTraverse();
+        // The whole saddle is a single model: base, runners, post and clamp.
+        // Shift it towards the headstock during the cutting pass and advance
+        // radially towards the workpiece. No duplicated baked carriage remains.
+        BakedModel carriage=Minecraft.getInstance().getModelManager().getModel(CARRIAGE);
+        pose.pushPose();
+        pose.translate((2D-6D*traverse)/16D,17D/16D,(-15D-6D*feed)/16D);
+        model(pose,source,light,overlay,carriage);
+        pose.popPose();
+
         ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
         ItemStack mounted=lathe.getOutput().isEmpty()?lathe.getWorkpiece():lathe.getOutput();
         // The arbor and static chuck clamp this casting at y=22, z=-10
@@ -54,8 +95,7 @@ public final class BronzeMechanicalLatheRenderer
         // then a visible retraction. Idle and stalled machines never advance.
         ItemStack bit=lathe.getCutter();
         if(!bit.isEmpty()){
-            float feed=lathe.getToolFeed();
-            float traverse=lathe.getCutTraverse();
+            // Keep the bit attached to the moving saddle rather than to world space.
             pose.pushPose();
             // The tool starts at the saddle (x=10,z=-2), moves towards
             // the spindle radially, then traverses LEFT along the mounted
