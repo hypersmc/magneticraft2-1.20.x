@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
@@ -22,6 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -38,6 +42,16 @@ import org.jetbrains.annotations.Nullable;
 public class BronzePatternMakerBlock extends HorizontalDirectionalBlock {
     public static final BooleanProperty BEARING_SELECTED =
             BooleanProperty.create("bearing_selected");
+
+    // Only the frame and tabletop are solid. The open space between the legs
+    // must not collide like an invisible vanilla cube.
+    private static final VoxelShape WORKBENCH_SHAPE = Shapes.or(
+            Block.box(0, 9, 0, 16, 14, 16),
+            Block.box(1, 0, 1, 4, 9, 4),
+            Block.box(12, 0, 1, 15, 9, 4),
+            Block.box(1, 0, 12, 4, 9, 15),
+            Block.box(12, 0, 12, 15, 9, 15)
+    );
 
     public BronzePatternMakerBlock() {
         super(BlockBehaviour.Properties.of()
@@ -58,6 +72,12 @@ public class BronzePatternMakerBlock extends HorizontalDirectionalBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState().setValue(
                 FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level,
+                               BlockPos pos, CollisionContext context) {
+        return WORKBENCH_SHAPE;
     }
 
     @Override
