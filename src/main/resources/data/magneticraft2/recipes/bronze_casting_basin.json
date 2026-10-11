@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBC",
+    "B B",
+    "BBB"
+  ],
+  "key": {
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_casting_basin"
+  }
+}
