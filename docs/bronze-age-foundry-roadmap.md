@@ -2,7 +2,7 @@
 
 Status: development design. The previous Copper Age is the entry point.
 
-**In PR #11:** first Foundry *structure/visual prototype*: 3×2×3 JSON layouts for all facings, new controller, static baked models, collision and Patchouli Visualize. It does **not** yet burn fuel, melt metal or pour castings. See `docs/bronze-foundry-structure-and-casting-contract.md`.
+**In PR #11:** first Foundry *structure/visual prototype*: 3×2×3 JSON layouts for all facings, new controller, static baked models, collision and Patchouli Visualize. That initial prototype did **not** burn fuel, melt metal or pour castings; later commits in this same draft PR now implement those operations. See `docs/bronze-foundry-structure-and-casting-contract.md`.
 
 ## Identity and boundaries
 
@@ -75,7 +75,7 @@ contracts. Never treat an unimplemented downstream process as complete.
 
 ### Foundry heating prototype (draft PR #11)
 
-A first GUI-less HEAT/fuel/bronze melting pass has been added after the Voxel V2 work. Molten bronze remains one ingot-equivalent per source Bronze Ingot (including NBT/quality metadata), conserved inside the crucible and visually hot/solidified depending on stored heat. There is **no** ladle, actual pour or Casting Basin yet. Initial heat parameters are pack-configurable balance values, not Celsius. See `docs/bronze-foundry-structure-and-casting-contract.md` for tests.
+A first GUI-less HEAT/fuel/bronze melting pass has been added after the Voxel V2 work. Molten bronze remains one ingot-equivalent per source Bronze Ingot (including NBT/quality metadata), conserved inside the crucible and visually hot/solidified depending on stored heat. This was the initial heating milestone; the subsequent casting milestone adds the ladle, pour and Casting Basin. Initial heat parameters are pack-configurable balance values, not Celsius. See `docs/bronze-foundry-structure-and-casting-contract.md` for tests.
 
 ### Casting Basin and refractory ladle (draft PR #11)
 Manual molten transfer is now implemented as one ingot-equivalent per ladle. The Basin consumes Gear/Bearing Green Sand Molds and cools into quality-preserving **rough** bronze parts. Finished precision components still require the Mechanical Lathe. Cooling and ladle lifetime are config-driven, with no generic molten fluid handler. See `docs/bronze-foundry-structure-and-casting-contract.md`.

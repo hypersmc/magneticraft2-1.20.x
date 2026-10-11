@@ -20,7 +20,7 @@ _ = air, front toward bottom
 
 Recipe: 5 Bricks blocks, 2 Copper Plates, 1 Furnace, 1 Bronze Ingot make the controller. The remaining 15 Bricks blocks are placed in-world. The pre-existing Copper/Tin/Bronze ingot loop remains intact.
 
-## Functional design for the following slice (not implemented)
+## Longer-term casting and manufacturing contract (milestone history)
 
 1. **Heat and charge.** Foundry melts already-made Bronze Ingots, not Bronze Alloy Charge and not ore. Use the existing Magneticraft HEAT capability/storage; track fuel energy entering a thermal mass, cooling losses and a melt-readiness threshold. Heating must cost fuel and time, and survive chunk reload without duplicating charge. Plan forced-air upgrades around Copper mechanical Bellows. Final temperatures, heat capacity, fuel efficiency and melting speed are not yet approved: make them configurable rather than inventing real temperatures.
 2. **Visible states.** Discrete, visible fuel chamber and bronze charge zones. Empty crucible is dark; heated molten metal has a distinct fill level and glow. On stalls the metal remains in one recorded state and never consumes a second ingot accidentally.
@@ -38,12 +38,12 @@ Recipe: 5 Bricks blocks, 2 Copper Plates, 1 Furnace, 1 Bronze Ingot make the con
 - Chunk reload and client multiplayer restore formed geometry, and breaking formed/unformed structure does not leave invisible fillers or dupe blocks.
 - Only the Foundry *shell* exists at this stage: it must not silently convert items into castings.
 
-The next implementation step is heat + measured molten storage + safe ladle-to-Basin pouring as a separately testable system.
+The Foundry heating, manual ladle transfer and first sand-mold Basin cooling path have now been implemented. The next manufacturing milestone is the powered Mechanical Lathe; the earlier steps below remain as the design record.
 
 
 ## Rendering V2 migration (PR #11)
 
-The original oversized Foundry shell was not loadable as one vanilla model; V2 now splits the one canonical south model into 16 controller/filler-local meshes per facing, baked into chunk geometry. Static visuals and local collision survive an unloaded controller chunk. See `docs/multiblock-rendering-v2.md` for the script, limitations and regression checklist. Heat and Casting Basin are still not implemented.
+The original oversized Foundry shell was not loadable as one vanilla model; V2 now splits the one canonical south model into 16 controller/filler-local meshes per facing, baked into chunk geometry. Static visuals and local collision survive an unloaded controller chunk. See `docs/multiblock-rendering-v2.md` for the script, limitations and regression checklist. The original V2 model geometry was retained as this milestone evolved; Foundry heating and the manual Casting Basin have subsequently been implemented.
 
 ## Foundry visual redesign (PR #11)
 
@@ -51,7 +51,7 @@ The source-of-truth visual volumes are in `tools/multiblock-models/designs/bronz
 
 The raised crucible is open and dark when cold, and the tap is presently a static visual (no fuel or molten metal can flow). The large front firebox is hollow, with an inset refractory lining and grate. Upper brickwork forms low retaining walls instead of enclosing the entire second layer; the original 15 Bricks + Controller multiblock layout and crafting requirements have not changed.
 
-The Foundry has a **hand-authored simplified collision outline** that now follows the open firebox and raised hollow crucible rather than its old solid brick bounding box. It is not yet the generalized Voxel V2 implementation. Verify hitting the firebox, reaching the crucible from above, walking near the spout, all four facings, and dismantling after formation.
+The Foundry has a **hand-authored simplified collision outline** that now follows the open firebox and raised hollow crucible rather than its old solid brick bounding box. This was the pre-Voxel V2 outline; an independent voxel profile now supplies controller and filler collision and selection. Verify hitting the firebox, reaching the crucible from above, walking near the spout, all four facings, and dismantling after formation.
 
 ## V2 collision anchors for the open crucible/tap
 
@@ -59,7 +59,7 @@ The assembled model extends into the two required-AIR cells of the upper 3×2×3
 
 ## Voxel V2 milestone
 
-The Foundry's own physical definition has been extracted from its old `Block.box` implementation into the editable `voxels` data in `tools/multiblock-models/designs/bronze_foundry.json`. An exported server datapack JSON carries 22 collision boxes, separate selection geometry, and named regions for the firebox, crucible and tapping valve. Its block-local cached shapes are saved and synced on formation. Existing formed test machines must be rebuilt/reformed once to populate the new snapshots. See `docs/multiblock-voxels-v2.md`. No heating or actual pouring was added.
+The Foundry's own physical definition has been extracted from its old `Block.box` implementation into the editable `voxels` data in `tools/multiblock-models/designs/bronze_foundry.json`. An exported server datapack JSON carries 22 collision boxes, separate selection geometry, and named regions for the firebox, crucible and tapping valve. Its block-local cached shapes are saved and synced on formation. Existing formed test machines must be rebuilt/reformed once to populate the new snapshots. See `docs/multiblock-voxels-v2.md`. At this earlier milestone neither heating nor pouring was present; both are now in the current implementation.
 
 
 ## First fuel/heat/bronze melt slice
@@ -68,17 +68,17 @@ The Foundry uses the existing Magneticraft HEAT storage/capability and Forge sol
 
 - Right-click the **firebox** with a solid furnace fuel to queue one item; an active fuel burns its normal duration. Fuels with a container remainder (e.g. lava buckets) are deliberately rejected until container handling exists.
 - Right-click the **crucible** with a Magneticraft Bronze Ingot to queue one charge. Mixed NBT/quality variants are rejected while another variant is queued or already stored in the crucible.
-- With empty hands, click either opening for status; **sneak-right-click** to retrieve unburned queued fuel or unmelted queued ingots. The hot crucible is not an item slot, and currently has no direct extraction.
+- With empty hands, click either opening for status; **sneak-right-click** to retrieve unburned queued fuel or unmelted queued ingots. The hot crucible does not expose an ordinary fluid/item capability. Bronze exits ONLY via an empty refractory ladle at the tapping zone.
 - Fuel adds HEAT energy each server tick; the refractory mass leaks HEAT energy every loaded tick. Only when the threshold and per-ingot energy requirement are met does one solid ingot become one conserved crucible unit. Melting does **not** generate extra bronze.
 - If HEAT falls below the separately configurable solidification threshold, the same bronze solidifies in place. Reheating to the higher melting threshold makes it liquid again without inserting or consuming an extra ingot; this phase persists across reloads.
 - A named, server-owned crucible batch retains its originating Bronze Ingot's complete item NBT, including planned quality data. Every unit is an **ingot-equivalent**; its conversion to millibuckets is intentionally undecided.
 - Breaking the prototype returns the remaining queue contents and crucible material as the original ingots, with NBT, so development tests cannot permanently lose metal. Burning fuel is not refunded. State clears *before* drops are spawned to prevent duplicate restoration.
 
-**Initial balance values are configurable**, not approved real-world temperatures. In Common config: heat capacity 32,000 units; fuel gain 32 HEAT/tick; passive loss 2 HEAT/tick; melt readiness 14,000 HEAT; solidification threshold 7,000 HEAT; melt cost 2,500 HEAT per ingot; capacity 8 ingot-equivalents. These are test defaults to tune once the Casting Basin and mechanical bellows are attached.
+**Initial balance values are configurable**, not approved real-world temperatures. In Common config: heat capacity 32,000 units; fuel gain 32 HEAT/tick; passive loss 2 HEAT/tick; melt readiness 14,000 HEAT; solidification threshold 7,000 HEAT; melt cost 2,500 HEAT per ingot; capacity 8 ingot-equivalents. These are provisional test defaults to tune after the Basin is gameplay-verified and mechanical bellows are added.
 
 The dynamic Foundry renderer draws the queued fuel and charge as physical items, and one textured 8×8-pixel crucible surface. The surface is dark when solidified and warm when melt-ready. There is no new animated gear or large per-frame rebuild.
 
-**Limitations:** Ladle/basin transfer, material waste/slag, actual degrees Celsius, refractory damage, gas handling and air injection from the Mechanical Bellows are **not** implemented. The tap is status-only and reports the conserved units. A valid output is not available until the Casting Basin exists.
+**Limitations:** Manual ladle/Basin transfer IS implemented. Material waste/slag, actual degrees Celsius, refractory damage, gas handling and air injection from the Mechanical Bellows are NOT implemented. The Basin outputs rough castings; precision finishing still requires the planned Mechanical Lathe.
 
 ### Focused in-game test
 
