@@ -40,7 +40,7 @@ import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Initial structural controller. No phantom power or machining is provided. */
+/** JSON-formed Bronze Lathe with Gear V2 load-gated machining and conserved workpieces. */
 public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private String blueprintName="";
@@ -61,6 +61,7 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public boolean isRunning(){return running;}
     public float getProgress(){return machiningTicks/(float)CYCLE_TICKS;}
     public float getSpindleRotation(float partialTick){
+        if(!running)return 0F;
         MechanicalInputModuleBlockEntity input=getMechanicalInput();
         return input==null?0F:input.getVisualRotationDegrees(partialTick);
     }
