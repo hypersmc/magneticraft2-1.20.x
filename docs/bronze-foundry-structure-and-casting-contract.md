@@ -39,3 +39,8 @@ Recipe: 5 Bricks blocks, 2 Copper Plates, 1 Furnace, 1 Bronze Ingot make the con
 - Only the Foundry *shell* exists at this stage: it must not silently convert items into castings.
 
 The next implementation step is heat + measured molten storage + safe ladle-to-Basin pouring as a separately testable system.
+
+
+## Rendering V2 migration (PR #11)
+
+The original oversized Foundry shell was not loadable as one vanilla model; V2 now splits the one canonical south model into 16 controller/filler-local meshes per facing, baked into chunk geometry. Static visuals and local collision survive an unloaded controller chunk. See `docs/multiblock-rendering-v2.md` for the script, limitations and regression checklist. Heat and Casting Basin are still not implemented.

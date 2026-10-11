@@ -1,0 +1,47 @@
+# Multiblock Rendering V2
+
+**Status:** First implementation in draft Bronze Age PR #11. The Bronze Foundry uses this path. Older machines remain on their existing render paths.
+
+## Why the change
+
+Minecraft 1.20.1 block model elements must lie within -16..32 model pixels; a single controller-anchored 3x3+ machine can exceed this and makes larger machines disappear when the controller chunk is culled. V2 represents one formed machine as **static baked models attached to the already-existing controller and filler cells**.
+
+- The multiblock's datapack JSON remains authoritative for structure/formation.
+- A single **south-facing canonical source model**, under `tools/multiblock-models/sources/`, defines the complete static geometry. The source is intentionally NOT in the Minecraft models resource folder (its large coordinates are not vanilla-safe).
+- `node tools/multiblock-models/generate.mjs` clips source elements into block-local geometry, corrects UV dimensions without stretching, rotates all four horizontal facings, and emits ordinary Minecraft models as `assets/magneticraft2/models/multiblock/<machine>_<facing>/part_<dx>_<dy>_<dz>.json`.
+- Generated models obey vanilla's -16..32 element bounds and each face's UVs stay in the 0..16 atlas tile.
+- The formed controller blockstate uses its own `part_0_0_0`. Each filler has the same static model selector, with a synchronized/persisted `render_part` key in its existing block entity. Chunk baking renders each filler normally. If its key is empty, the filler stays **invisible** (compatibility with older machines).
+- V2 computes each filler’s **local collision shape once** at formation and saves it in its NBT. Reloading a filler chunk without the master chunk loaded preserves physical collision and the static visual.
+- The generic `MultiblockRenderParts.assign` helper is reusable by the next machine; do not hardcode Foundry logic into the filler or the model selector.
+- Missing optional named models in the older geometry loader no longer trigger an unchecked `Optional.get()`.
+
+## Usage / development
+
+```bash
+node tools/multiblock-models/generate.mjs --self-test
+node tools/multiblock-models/generate.mjs --check
+# After changing source geometry:
+node tools/multiblock-models/generate.mjs
+```
+
+The included virtual stress case splits a **9x5x9 (405-cell)** structure with a 9-block-wide, 9-block-deep continuous surface. It validates atlas UVs and vanilla element coordinate bounds. This is a **generator test**, not evidence that 405 block entities have been benchmarked in-game.
+
+## Design limits and future improvements
+
+1. **Static cuboids only in this initial exporter.** Rotated cuboids with Minecraft element rotations must be authored as local static components (or supported in a future clipping implementation), while animated shafts, gears, piston arms and molten surfaces use separately bounded, cached block entity renderers. A dynamically changing part must never force the entire static Foundry to rebuild.
+2. **Geometry in an AIR structure cell:** V2 attaches it to the nearest occupied controller/filler within the vanilla -16..32 local coordinate envelope. If no host is close enough, generation fails with a useful message; a render-anchor solution will be needed for very large hollow interiors. This approach may overdraw across a nearby chunk boundary by up to one block; don't mistake it for independent air-cell culling.
+3. **Size versus block entities:** Static visuals can span many chunk meshes, but the existing controller still creates a block entity for every filler. Large production buildings should eventually replace unnecessary per-cell BEs with grouped/chunk-local metadata. Benchmark memory, save time and rebuild cost before promising thousands of fillers.
+4. **Dismantling across unloaded chunks:** Current multiblock lifecycle largely comes from the pre-V2 controller. Delayed dismantling for enormous multiblocks and safe restoration of parts in not-yet-loaded chunks still need dedicated implementation and tests.
+5. **Lighting/interaction/protection:** This first pass reuses existing physical shapes and click forwarding. Validate occlusion, skylight, dynamic part bounds, hitboxes, reloading, and chunk edges in-game before migrating other machines.
+
+## Acceptance checklist for the Foundry prototype
+
+- Build from Patchouli with all four placements; controller and filler models join without gaps.
+- No oversized model errors from `bronze_foundry_<facing>.json` or any `part_*.json` models.
+- Verify textures and UVs (including the front tapping lip); no stretched/compressed faces.
+- Test a chunk border: unload the **controller’s chunk**, leave another part's chunk loaded; static parts and local collision remain.
+- Confirm forming/unforming, break/drops, save/load, server-to-client sync, collision, selection and particle lighting.
+- Verify older Washer and Sifter multiblocks retain their visuals and the original invisible fillers.
+- Do not claim the Foundry is operational: molten bronze, heating and transfer aren't built yet.
+
+V2 is intentionally an incremental renderer migration, not a wholesale rewrite of the JSON multiblock lifecycle.

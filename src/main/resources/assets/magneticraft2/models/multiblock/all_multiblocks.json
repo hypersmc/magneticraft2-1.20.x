@@ -1,6 +1,6 @@
 {
   "loader": "magneticraft2:multiblock",
-  "baseModel": "magneticraft2:models/block/invis.json",
+  "baseModel": "magneticraft2:models/block/multiblock_filler_empty.json",
   "namedModels": {
     "blueprintmb": "magneticraft2:models/multiblock/blueprint_multiblock.json"
   }
