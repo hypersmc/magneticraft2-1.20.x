@@ -15,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Cheap visual placeholder for the real machining spindle and tool carriage. */
+/** Only the moving workpiece and installed cutter. Static Lathe geometry is baked into V2 parts. */
 public final class BronzeMechanicalLatheRenderer
         implements BlockEntityRenderer<BronzeMechanicalLatheBlockEntity> {
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -35,9 +35,9 @@ public final class BronzeMechanicalLatheRenderer
         ItemStack stack=lathe.getOutput().isEmpty()?lathe.getWorkpiece():lathe.getOutput();
         if(!stack.isEmpty()){
             pose.pushPose();
-            pose.translate(.5D,1.51D,-.5D);
+            pose.translate(.5D,1.50D,-.5625D);
             pose.mulPose(Axis.ZP.rotationDegrees(90F));
-            pose.mulPose(Axis.XP.rotationDegrees(lathe.getSpindleRotation(partial)));
+            if(lathe.isRunning()) pose.mulPose(Axis.YP.rotationDegrees(lathe.getSpindleRotation(partial)));
             pose.scale(.8F,.8F,.8F);
             ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
             BakedModel model=renderer.getModel(stack,lathe.getLevel(),null,883);
@@ -46,7 +46,7 @@ public final class BronzeMechanicalLatheRenderer
         }
         if(!lathe.getCutter().isEmpty()){
             pose.pushPose();
-            pose.translate(.5D,1.35D,-.05D- .25D*lathe.getProgress());
+            pose.translate(.59D,1.79D,.18D- .18D*lathe.getProgress());
             pose.scale(.55F,.55F,.55F);
             ItemRenderer renderer=Minecraft.getInstance().getItemRenderer();
             BakedModel model=renderer.getModel(lathe.getCutter(),lathe.getLevel(),null,884);
