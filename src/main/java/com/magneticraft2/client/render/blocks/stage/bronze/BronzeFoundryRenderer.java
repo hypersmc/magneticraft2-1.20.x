@@ -105,7 +105,7 @@ public final class BronzeFoundryRenderer implements BlockEntityRenderer<BronzeFo
         // base of each sheet, with the upper texture towards the top.
         float y0 = 4.3F/16F, y1 = 11.9F/16F;
         float u0 = sprite.getU(1), u1 = sprite.getU(9);
-        float vBottom = sprite.getV(16), vTop = sprite.getV(8.4D);
+        float vBottom = sprite.getV(16), vTop = sprite.getV(8.4F);
         int fullbright = 0x00F000F0;
         float a= .90F, red=1F, green=.72F, blue=.35F;
 

@@ -22,6 +22,10 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModule
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import net.minecraft.client.renderer.item.ItemProperties;
 import com.magneticraft2.client.render.blocks.stage.copper.CrankBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
@@ -71,7 +75,13 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 public class Clientsetup {
     private static final Logger LOGGER = LogManager.getLogger("magneticraft2_clientsetup");
     public static void init(FMLClientSetupEvent e){
-
+        // Built-in item predicate: empty and filled ladles use different
+        // baked models. The server-synced held ItemStack NBT drives the state.
+        e.enqueueWork(() -> ItemProperties.register(
+                ItemRegistry.ITEM_BRONZE_POURING_LADLE.get(),
+                new ResourceLocation(MOD_ID, "filled"),
+                (stack, world, entity, seed) ->
+                        BronzePouringLadleItem.hasMetal(stack) ? 1F : 0F));
     }
     @SubscribeEvent
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
@@ -102,6 +112,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
