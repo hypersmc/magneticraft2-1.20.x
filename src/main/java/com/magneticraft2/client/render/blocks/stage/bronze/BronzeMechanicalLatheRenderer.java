@@ -38,11 +38,13 @@ public final class BronzeMechanicalLatheRenderer
         // in the canonical model. Its center is aligned to the spindle X axis.
         if(!mounted.isEmpty()){
             pose.pushPose();
-            pose.translate(.50D,1.375D,-.625D);
+            // Chuck jaws end at x=-1 model pixel; part center sits 3 pixels
+            // beyond the jaw face, and stays on the real (y=22,z=-10) axis.
+            pose.translate(3D/16D,22D/16D,-10D/16D);
             // Item model is cast horizontally; stand it up on the lathe's X axis.
             pose.mulPose(Axis.ZP.rotationDegrees(90F));
             if(lathe.isRunning())pose.mulPose(Axis.YP.rotationDegrees(lathe.getSpindleRotation(partial)));
-            pose.scale(.66F,.66F,.66F);
+            pose.scale(.52F,.52F,.52F);
             BakedModel model=renderer.getModel(mounted,lathe.getLevel(),null,883);
             renderer.render(mounted,ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
             pose.popPose();
@@ -55,10 +57,14 @@ public final class BronzeMechanicalLatheRenderer
             float feed=lathe.getToolFeed();
             float traverse=lathe.getCutTraverse();
             pose.pushPose();
-            pose.translate(.625D-.09D*traverse,1.505D,
-                    -.31D-.25D*feed);
+            // The tool starts at the saddle (x=10,z=-2), moves towards
+            // the spindle radially, then traverses LEFT along the mounted
+            // casting. It must never travel toward the tailstock instead.
+            double x=(10D - 6D*traverse)/16D;
+            double z=(-2D - 6D*feed)/16D;
+            pose.translate(x,24D/16D,z);
             pose.mulPose(Axis.XP.rotationDegrees(-90F));
-            pose.scale(.38F,.38F,.38F);
+            pose.scale(.28F,.28F,.28F);
             BakedModel model=renderer.getModel(bit,lathe.getLevel(),null,884);
             renderer.render(bit,ItemDisplayContext.NONE,false,pose,source,light,overlay,model);
             pose.popPose();
