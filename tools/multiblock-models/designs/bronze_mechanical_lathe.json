@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "Bronze lathe: structural frame and physically linked rear Gear V2 input to headstock drive. Moving saddle, chuck and cutting insert rendered by BER, excluded from baked V2 solids.",
+  "description": "Bronze lathe static housing: rear-center input at x=8,z=-24 drives enclosed supported horizontal shaft toward left headstock. No oversized decorative hanging gear; no changes to moving saddle.",
   "textures": {
     "wood": "minecraft:block/stripped_spruce_log",
     "end": "minecraft:block/spruce_planks",
@@ -404,20 +404,6 @@
       ]
     },
     {
-      "name": "drive_arbor_left",
-      "material": "plate",
-      "from": [
-        -13.5,
-        21,
-        -10.5
-      ],
-      "to": [
-        -7,
-        23,
-        -9.5
-      ]
-    },
-    {
       "name": "right_stock_foot",
       "material": "iron",
       "from": [
@@ -544,101 +530,101 @@
       ]
     },
     {
-      "name": "drive_input_bearing",
+      "name": "transmission_input_mount",
       "material": "iron",
       "from": [
-        5,
-        11,
-        -28
+        3,
+        12,
+        -29
       ],
       "to": [
-        11,
+        13,
         17,
-        -22
+        -20
       ]
     },
     {
-      "name": "drive_vertical_journal",
-      "material": "plate",
-      "from": [
-        7,
-        16,
-        -26
-      ],
-      "to": [
-        9,
-        21,
-        -24
-      ]
-    },
-    {
-      "name": "drive_rear_drive_shaft",
-      "material": "iron",
-      "from": [
-        -23,
-        17.5,
-        -25.3
-      ],
-      "to": [
-        8,
-        19.5,
-        -23.3
-      ]
-    },
-    {
-      "name": "drive_rear_shaft_cap",
+      "name": "transmission_input_cap",
       "material": "metal",
       "from": [
-        -26,
-        16,
+        4,
+        17,
         -28
       ],
       "to": [
-        -20,
-        21,
+        12,
+        20,
         -21
       ]
     },
     {
-      "name": "drive_return_housing",
+      "name": "transmission_shaft",
+      "material": "plate",
+      "from": [
+        -22,
+        18,
+        -25.5
+      ],
+      "to": [
+        8,
+        20,
+        -23.5
+      ]
+    },
+    {
+      "name": "transmission_shaft_bearing_mid",
       "material": "iron",
       "from": [
-        -27,
-        15,
-        -24
+        -8,
+        15.5,
+        -28
+      ],
+      "to": [
+        -4,
+        22,
+        -21
+      ]
+    },
+    {
+      "name": "transmission_shaft_bearing_left",
+      "material": "metal",
+      "from": [
+        -26,
+        15.5,
+        -28
       ],
       "to": [
         -22,
         22,
-        -12
+        -21
       ]
     },
     {
-      "name": "drive_front_belt_guard",
-      "material": "metal",
+      "name": "transmission_elbow",
+      "material": "iron",
       "from": [
         -27,
         16,
-        -14
-      ],
-      "to": [
-        -22,
-        20,
-        -9
-      ]
-    },
-    {
-      "name": "drive_headstock_coupler",
-      "material": "plate",
-      "from": [
-        -23,
-        19,
-        -12
+        -25
       ],
       "to": [
         -21,
         23,
-        -8
+        -9
+      ]
+    },
+    {
+      "name": "transmission_headstock_stub",
+      "material": "plate",
+      "from": [
+        -24,
+        20.5,
+        -11
+      ],
+      "to": [
+        -18,
+        22.5,
+        -9
       ]
     }
   ]
