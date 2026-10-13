@@ -141,3 +141,11 @@ The drive is still a representational shaft/gear visual rather than an independe
 ## Carriage correction following second video (PR #11)
 
 The moving carriage model has been split into `bronze_mechanical_lathe_carriage` (three lower saddle/runners cuboids) and `bronze_mechanical_lathe_cross_slide` (four upper holder/slide cuboids). Renderer transforms are hierarchical: the lower saddle traverses along the bed's X axis only; the upper slide feeds radially on Z; the cutting bit shares the upper slide's transform. Both models are registered in `Clientsetup` for BER rendering. This corrects the prior problem where the whole saddle shifted across its bed rails during the feed phase. No new voxel geometry or mechanical processing rules were introduced. The headstock drive-wheel mount remains a separate visual issue requiring in-game confirmation before repositioning. Gradle and live rendering verification are outstanding.
+
+## Workpiece-specific cutter feed and input coupling
+
+The resting cutting bit is now withdrawn from the spindle. The cross-slide feeds it **3.5 model pixels for gear castings** and **4.6 model pixels for bearing castings**, rather than using the same oversized stroke for both. Selection is based on the mounted input/output item type, retaining the existing 15/70/15% machining phases and torque gating. The bronze cutting tool remains nested under the cross-slide transform.
+
+The previous oversized `GEAR_MEDIUM_WOOD` item render outside the headstock has been replaced with `bronze_mechanical_lathe_drive_coupling.json`: a short bronze/blackstone coupling rotating concentrically with the rear shaft, using the same Gear V2 angle as the chuck. This is still a visual power-train approximation; the shaft and headstock static geometry are unchanged.
+
+Verify that gear and bearing workpieces have correctly aligned tool contact, and that the small coupling sits against the shaft without clipping the adjacent guard. These changes have not been Gradle-compiled or verified in-game.

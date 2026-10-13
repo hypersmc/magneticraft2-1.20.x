@@ -28,6 +28,8 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_carriage");
     private static final ResourceLocation CROSS_SLIDE =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_cross_slide");
+    private static final ResourceLocation DRIVE_COUPLING =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_drive_coupling");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -55,15 +57,15 @@ public final class BronzeMechanicalLatheRenderer
         float angle=lathe.getSpindleRotation(partial);
         ItemRenderer items=Minecraft.getInstance().getItemRenderer();
 
-        // The rear shaft leads into the LEFT headstock. This wheel stays
-        // mounted even when idle, and rotates only with the Gear V2 input.
+        // Small bronze coupling on the actual rear drive shaft. The old
+        // wooden gear ITEM floated off the housing and had the wrong size.
+        // Rotate the baked coupling around the shaft's X axis.
         pose.pushPose();
         pose.translate(-23D/16D,18.5D/16D,-24.3D/16D);
         pose.mulPose(Axis.XP.rotationDegrees(angle));
-        pose.scale(.65F,.65F,.65F);
-        ItemStack driveGear=new ItemStack(BlockRegistry.GEAR_MEDIUM_WOOD.get());
-        BakedModel driveModel=items.getModel(driveGear,lathe.getLevel(),null,991);
-        items.render(driveGear,ItemDisplayContext.NONE,false,pose,source,light,overlay,driveModel);
+        pose.translate(-.5D,-.5D,-.5D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(DRIVE_COUPLING));
         pose.popPose();
 
         // Spindle/chuck rotates as ONE assembly about the headstock X axis.
@@ -91,6 +93,7 @@ public final class BronzeMechanicalLatheRenderer
 
         float feed=lathe.getToolFeed();
         float traverse=lathe.getCutTraverse();
+        float cutDepth=lathe.getCuttingDepthPixels();
 
         // Bed saddle: longitudinal X travel only, so its runners remain
         // centered on the two guide rails for the entire machining cycle.
@@ -103,13 +106,17 @@ public final class BronzeMechanicalLatheRenderer
         // Cross-slide travels radially toward the spindle, independently of
         // the bed saddle. The cutter shares this transform and stays clamped.
         pose.pushPose();
-        pose.translate(0D,0D,-3D*feed/16D);
+        // Geared castings need less inward travel than narrow bearings.
+        // Only the upper slide feeds in Z; the bed saddle remains on rails.
+        pose.translate(0D,0D,-cutDepth*feed/16D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(CROSS_SLIDE));
         ItemStack bit=lathe.getCutter();
         if(!bit.isEmpty()){
             pose.pushPose();
-            pose.translate(7D/16D,7D/16D,-3D/16D);
+            // Resting bit is withdrawn from the workpiece; the controlled
+            // cross feed brings its edge in rather than cutting through it.
+            pose.translate(7D/16D,7D/16D,1D/16D);
             pose.mulPose(Axis.XP.rotationDegrees(-90F));
             pose.scale(.28F,.28F,.28F);
             BakedModel bitModel=items.getModel(bit,lathe.getLevel(),null,884);

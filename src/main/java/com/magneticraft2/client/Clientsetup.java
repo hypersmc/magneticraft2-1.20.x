@@ -146,6 +146,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_carriage"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_cross_slide"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_chuck"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_connecting_rod"));
