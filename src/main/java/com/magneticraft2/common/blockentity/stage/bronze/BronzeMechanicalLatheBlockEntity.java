@@ -75,6 +75,16 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public boolean isActivelyCutting(){
         return running && getProgress()>=.15F && getProgress()<.85F;
     }
+    /** Bronze gear teeth need a wider tool approach than a compact bearing. */
+    public boolean isGearWorkpiece() {
+        ItemStack mounted = output.isEmpty() ? workpiece : output;
+        return mounted.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
+                || mounted.is(ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get());
+    }
+    /** Travel is fixed in model pixels, shared by the server-side and renderer contracts. */
+    public float getCuttingDepthPixels() {
+        return isGearWorkpiece() ? 3.5F : 4.6F;
+    }
     public float getSpindleRotation(float partialTick){
         if(!running)return 0F;
         MechanicalInputModuleBlockEntity input=getMechanicalInput();
