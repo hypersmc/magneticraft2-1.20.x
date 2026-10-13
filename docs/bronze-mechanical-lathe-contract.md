@@ -149,3 +149,7 @@ The resting cutting bit is now withdrawn from the spindle. The cross-slide feeds
 The previous oversized `GEAR_MEDIUM_WOOD` item render outside the headstock has been replaced with `bronze_mechanical_lathe_drive_coupling.json`: a short bronze/blackstone coupling rotating concentrically with the rear shaft, using the same Gear V2 angle as the chuck. This is still a visual power-train approximation; the shaft and headstock static geometry are unchanged.
 
 Verify that gear and bearing workpieces have correctly aligned tool contact, and that the small coupling sits against the shaft without clipping the adjacent guard. These changes have not been Gradle-compiled or verified in-game.
+
+## Cutting contact and actual drive junction correction
+
+The cutting-phase saddle is now positioned at **x=-3 model pixels** rather than x=+2 and traverses only 2.5 pixels instead of 6. With the cutter offset +7 pixels, the tool's longitudinal contact passes from **x=4 to x=1.5**, directly alongside the chuck-mounted casting near x=3 rather than beginning six pixels away. Cross-feed Z distances remain gear=3.5 and bearing=4.6 pixels, retaining the existing approach/cut/retract state machine. The rear drive coupling has moved from the unsupported far-left x=-23 spot to **x=6, y=18.5, z=-24.3**, adjacent to the rear-center mechanical input bearing (x=5..11) and the exposed shaft terminating at x=8. This is a coordinate correction, not a verified animated bevel gearbox; confirm visually in Minecraft.
