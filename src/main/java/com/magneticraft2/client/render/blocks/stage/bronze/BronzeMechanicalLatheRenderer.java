@@ -26,6 +26,8 @@ public final class BronzeMechanicalLatheRenderer
         implements BlockEntityRenderer<BronzeMechanicalLatheBlockEntity> {
     private static final ResourceLocation CARRIAGE =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_carriage");
+    private static final ResourceLocation CROSS_SLIDE =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_cross_slide");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -87,21 +89,26 @@ public final class BronzeMechanicalLatheRenderer
             pose.popPose();
         }
 
-        // One transform drives BOTH carriage and installed cutter. The saddle
-        // first feeds radially toward the spindle, then traverses left, and
-        // retracts without leaving a separate floating tool behind.
         float feed=lathe.getToolFeed();
         float traverse=lathe.getCutTraverse();
+
+        // Bed saddle: longitudinal X travel only, so its runners remain
+        // centered on the two guide rails for the entire machining cycle.
         pose.pushPose();
-        pose.translate((2D-6D*traverse)/16D,17D/16D,
-                (-6D-3D*feed)/16D);
-        BakedModel carriage=Minecraft.getInstance().getModelManager().getModel(CARRIAGE);
-        model(pose,source,light,overlay,carriage);
+        double saddleX=(2D-6D*traverse)/16D;
+        pose.translate(saddleX,17D/16D,-6D/16D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(CARRIAGE));
+
+        // Cross-slide travels radially toward the spindle, independently of
+        // the bed saddle. The cutter shares this transform and stays clamped.
+        pose.pushPose();
+        pose.translate(0D,0D,-3D*feed/16D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(CROSS_SLIDE));
         ItemStack bit=lathe.getCutter();
         if(!bit.isEmpty()){
             pose.pushPose();
-            // Bit protrudes from the carriage holder toward the chuck axis;
-            // never independently moves relative to its own metal clamp.
             pose.translate(7D/16D,7D/16D,-3D/16D);
             pose.mulPose(Axis.XP.rotationDegrees(-90F));
             pose.scale(.28F,.28F,.28F);
@@ -110,7 +117,8 @@ public final class BronzeMechanicalLatheRenderer
                     pose,source,light,overlay,bitModel);
             pose.popPose();
         }
-        pose.popPose();
+        pose.popPose(); // cross-slide
+        pose.popPose(); // saddle
         pose.popPose();
     }
 }
