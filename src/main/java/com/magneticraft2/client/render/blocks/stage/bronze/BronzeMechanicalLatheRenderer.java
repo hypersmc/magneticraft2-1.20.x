@@ -57,11 +57,11 @@ public final class BronzeMechanicalLatheRenderer
         float angle=lathe.getSpindleRotation(partial);
         ItemRenderer items=Minecraft.getInstance().getItemRenderer();
 
-        // Small bronze coupling on the actual rear drive shaft. The old
-        // wooden gear ITEM floated off the housing and had the wrong size.
+        // Drive coupling at the actual rear-center input and shaft junction.
+        // Previous x=-23 mounting made it look detached from the input.
         // Rotate the baked coupling around the shaft's X axis.
         pose.pushPose();
-        pose.translate(-23D/16D,18.5D/16D,-24.3D/16D);
+        pose.translate(6D/16D,18.5D/16D,-24.3D/16D);
         pose.mulPose(Axis.XP.rotationDegrees(angle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
@@ -98,7 +98,9 @@ public final class BronzeMechanicalLatheRenderer
         // Bed saddle: longitudinal X travel only, so its runners remain
         // centered on the two guide rails for the entire machining cycle.
         pose.pushPose();
-        double saddleX=(2D-6D*traverse)/16D;
+        // Start the tool near the chuck at the beginning of the cutting phase;
+        // traverse only the mounted casting, not the empty bed.
+        double saddleX=(-3D-2.5D*traverse)/16D;
         pose.translate(saddleX,17D/16D,-6D/16D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(CARRIAGE));
