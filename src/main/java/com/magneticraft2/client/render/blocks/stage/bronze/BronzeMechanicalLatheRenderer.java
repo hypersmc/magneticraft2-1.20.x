@@ -28,6 +28,10 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_carriage");
     private static final ResourceLocation CROSS_SLIDE =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_cross_slide");
+    private static final ResourceLocation INPUT_FRAME =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_frame");
+    private static final ResourceLocation INPUT_ROTOR =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_rotor");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -55,9 +59,24 @@ public final class BronzeMechanicalLatheRenderer
         float angle=lathe.getSpindleRotation(partial);
         ItemRenderer items=Minecraft.getInstance().getItemRenderer();
 
-        // Rear input is represented by the baked compact housing and shaft.
-        // No extra BER wheel here: the former coupling was visibly detached.
-        // The existing chuck/workpiece still use Gear V2 angle.
+        // Module cell at (0,0,-2) is NOT a filler. V2's part assignment
+        // skips module BEs, so the frame must be rendered here instead.
+        // The model itself leaves the lower module connection face open.
+        pose.pushPose();
+        pose.translate(0D,0D,-2D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME));
+        // Small bevel-style input rotor, centered above the bearing and
+        // aligned to the static horizontal transmission at y=18.5.
+        pose.pushPose();
+        pose.translate(.5D,18.5D/16D,.5D);
+        pose.mulPose(Axis.YP.rotationDegrees(angle));
+        pose.translate(-.5D,-.5D,-.5D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
+        pose.popPose();
+        pose.popPose();
+
         // Spindle/chuck rotates as ONE assembly about the headstock X axis.
         // The chuck is no longer duplicated in the baked V2 structure.
         pose.pushPose();
