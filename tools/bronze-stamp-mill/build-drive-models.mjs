@@ -2,6 +2,7 @@
 // Authored Stamp Mill drive-only geometry. No changes to accepted machines.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 const designs=(function designs(){
 const b=(material,from,to)=>({material,from:from.map(n=>+n.toFixed(5)),to:to.map(n=>+n.toFixed(5))});
 function gear(axis,phase){
@@ -29,11 +30,24 @@ function gear(axis,phase){
  octRing("dark",13.1,13.38,3.42,.76);
  ring("bronze",10.6,12.2,1.35,.94);
  ring("iron",11.2,11.75,1.55,1.35);
+ // The previous teeth never entered the opposing wheel's tooth gaps.
+ // Three joined, tapered bronze tooth steps project beyond the pitch rim.
+ // The 22.5-degree half-pitch offset on the X wheel lets both gears mesh.
+ const firstToothBox=boxes.length;
  for(let i=0;i<8;i++){
   const a=(i*45+phase)*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
-  for(const[m,r0,r1,h]of [["bronze",3.68,3.86,.10],["iron",3.83,3.95,.035]])
-   add(m,12.06,12.94,8+Math.min(r0*c,r1*c)-h,8+Math.max(r0*c,r1*c)+h,8+Math.min(r0*s,r1*s)-h,8+Math.max(r0*s,r1*s)+h);
+  for(const[m,r0,r1,h,axial0,axial1]of [
+      ["bronze",3.65,4.18,.30,12.30,12.94], // rooted in the bronze rim
+      ["bronze",4.12,4.55,.30,12.30,12.65], // supported flanks
+      ["bronze",4.48,5.20,.25,12.20,12.48]  // narrow interlocking tip
+  ]){
+   add(m,axial0,axial1,
+       8+Math.min(r0*c,r1*c)-h,8+Math.max(r0*c,r1*c)+h,
+       8+Math.min(r0*s,r1*s)-h,8+Math.max(r0*s,r1*s)+h);
+  }
  }
+ // Metadata for source-level meshing tests, omitted by the asset compiler.
+ for(let i=firstToothBox;i<boxes.length;i++)boxes[i].meshTooth=true;
  return boxes;
 }
 function collar(out,x0,x1){
@@ -110,6 +124,10 @@ let panels=[];for(const g of groups.values()){let change=true;while(change){chan
 const elements=panels.map(p=>{const[axis,sign,u,v]=S[p.face],from=[0,0,0],to=[0,0,0];from[u]=p.u0;to[u]=p.u1;from[v]=p.v0;to[v]=p.v1;if(sign>0){from[axis]=p.plane-.0625;to[axis]=p.plane}else{from[axis]=p.plane;to[axis]=p.plane+.0625}return {from,to,faces:{[p.face]:{texture:"#"+p.material,uv:[p.u0,p.v0,p.u1,p.v1]}}}});
 return {parent:"minecraft:block/block",ambientocclusion:false,textures,elements};
 };
+export { designs as stampMillDriveDesigns };
+
+// Imports for collision tests never generate/rewrite resource files.
+if(process.argv[1] && path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
 const check=process.argv.includes("--check");
 let errors=0;
 // End caps at each joint would render two coplanar faces, causing flicker.
@@ -137,3 +155,4 @@ for(const [name,boxes]of Object.entries(designs)){
  console.log(name+": "+boxes.length+" solids -> "+model.elements.length+" visible panels");
 }
 if(errors)process.exit(1);
+}
