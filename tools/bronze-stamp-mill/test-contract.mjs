@@ -200,6 +200,45 @@ assert.ok(lowZ>=rearWall.to[2]-1e-4&&highZ<=frontWall.from[2]+1e-4,
 const hammerBottom=Math.min(...hammer.elements.map(e=>e.from[1]))+24;
 assert.ok(hammerBottom>=floor.to[1]&&hammerBottom-floor.to[1]<=2,
     "Moving shoe must start immediately above the supported crushing floor");
+
+// At rest, a moving stamp/cam/input-housing surface must not be exactly
+// coplanar with a visible V2 static face. This previously caused flickering
+// where the upper sliding yoke touched a crank-support mounting bracket.
+// Animated lift introduces legitimate brief crossings, not parked overlaps.
+const canonical=read("tools/multiblock-models/sources/bronze_stamp_mill.json");
+function surfaces(model,offset){
+  return model.elements.flatMap(el=>Object.keys(el.faces).map(face=>{
+    const [axis,sign,u,v]=faceAxes[face];
+    const from=el.from.map((x,i)=>x+offset[i]);
+    const to=el.to.map((x,i)=>x+offset[i]);
+    return{axis,plane:sign>0?to[axis]:from[axis],u,v,from,to};
+  }));
+}
+const occupiedPlanes=new Map();
+for(const face of surfaces(canonical,[0,0,0])){
+  const k=face.axis+":"+face.plane.toFixed(5);
+  const existing=occupiedPlanes.get(k)||[];
+  existing.push(face);occupiedPlanes.set(k,existing);
+}
+const parkedHammers=read(asset("hammer")),driveCams=read(asset("cam"));
+const inputFrame=read(asset("input_frame"));
+const movingAtRest=[...[-8,8,24].flatMap(station=>[
+  ...surfaces(parkedHammers,[station-8,24,-18]),
+  // Cranks occupy this position at zero phase; test conservative clearance.
+  ...surfaces(driveCams,[station-8,30.5,-18])]),
+  ...surfaces(inputFrame,[0,0,-32])];
+for(const face of movingAtRest){
+  const k=face.axis+":"+face.plane.toFixed(5);
+  for(const fixed of occupiedPlanes.get(k)||[]){
+    const w=Math.min(face.to[face.u],fixed.to[face.u])
+             -Math.max(face.from[face.u],fixed.from[face.u]);
+    const h=Math.min(face.to[face.v],fixed.to[face.v])
+             -Math.max(face.from[face.v],fixed.from[face.v]);
+    assert.ok(w<=1e-5||h<=1e-5,
+      "Parked animated model has coincident faces with V2 static parts at "+k);
+  }
+}
+
 const book=read(root+"/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
 const guide=book.pages.find(page=>page.type==="patchouli:multiblock"&&page.name==="Bronze Stamp Mill");
 assert.ok(guide,"Stamp Mill Patchouli visualize page missing");
