@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "Bronze Stamp Mill with three REAL full-block ore input/tailings/product hoppers at Y=0, central bay Z=-1, under a raised stamping tray. All module cells completely reserved, front open, no floating hoppers.",
+  "description": "5x3x4 Bronze Stamp Mill with physical full-block input, byproduct and product hoppers on a ground-level OPEN south service shelf. Three engineered chutes connect raised stamp tray to accessible ports, no machine geometry inside port/module cells.",
   "textures": {
     "stone": "minecraft:block/stone_bricks",
     "wood": "minecraft:block/stripped_spruce_log",
@@ -837,129 +837,423 @@
       ]
     },
     {
-      "name": "ore_bay_back_rim",
-      "material": "bronze",
+      "name": "service_shelf_crossbar",
+      "material": "wood",
       "from": [
-        -16,
-        16,
-        -16
+        -30,
+        5,
+        12
       ],
       "to": [
-        32,
-        19,
-        -14.8
+        46,
+        11,
+        15.6
       ]
     },
     {
-      "name": "ore_bay_front_rim",
+      "name": "service_shelf_front_trim",
       "material": "bronze",
       "from": [
-        -16,
-        16,
-        -1.2
+        -30,
+        10.8,
+        13.3
       ],
       "to": [
-        32,
-        19,
-        0
+        46,
+        12.3,
+        15.6
       ]
     },
     {
-      "name": "ore_bay_left_rim",
+      "name": "service_shelf_corner_foot_-29",
+      "material": "stone",
+      "from": [
+        -29,
+        0,
+        20
+      ],
+      "to": [
+        -24,
+        5,
+        28
+      ]
+    },
+    {
+      "name": "service_shelf_outer_post_-29",
+      "material": "wood",
+      "from": [
+        -29,
+        5,
+        20
+      ],
+      "to": [
+        -24,
+        42,
+        25
+      ]
+    },
+    {
+      "name": "service_shelf_post_collar_-29",
+      "material": "bronze",
+      "from": [
+        -29.4,
+        17,
+        19.6
+      ],
+      "to": [
+        -23.6,
+        20,
+        25.4
+      ]
+    },
+    {
+      "name": "service_shelf_post_top_collar_-29",
+      "material": "bronze",
+      "from": [
+        -29.4,
+        36,
+        19.6
+      ],
+      "to": [
+        -23.6,
+        39,
+        25.4
+      ]
+    },
+    {
+      "name": "service_shelf_canopy_side_-29",
+      "material": "wood",
+      "from": [
+        -29,
+        39,
+        10
+      ],
+      "to": [
+        -24,
+        43,
+        25
+      ]
+    },
+    {
+      "name": "service_shelf_corner_foot_41",
+      "material": "stone",
+      "from": [
+        41,
+        0,
+        20
+      ],
+      "to": [
+        46,
+        5,
+        28
+      ]
+    },
+    {
+      "name": "service_shelf_outer_post_41",
+      "material": "wood",
+      "from": [
+        41,
+        5,
+        20
+      ],
+      "to": [
+        46,
+        42,
+        25
+      ]
+    },
+    {
+      "name": "service_shelf_post_collar_41",
+      "material": "bronze",
+      "from": [
+        40.6,
+        17,
+        19.6
+      ],
+      "to": [
+        46.4,
+        20,
+        25.4
+      ]
+    },
+    {
+      "name": "service_shelf_post_top_collar_41",
+      "material": "bronze",
+      "from": [
+        40.6,
+        36,
+        19.6
+      ],
+      "to": [
+        46.4,
+        39,
+        25.4
+      ]
+    },
+    {
+      "name": "service_shelf_canopy_side_41",
+      "material": "wood",
+      "from": [
+        41,
+        39,
+        10
+      ],
+      "to": [
+        46,
+        43,
+        25
+      ]
+    },
+    {
+      "name": "service_shelf_canopy_front",
+      "material": "wood",
+      "from": [
+        -30,
+        40,
+        19
+      ],
+      "to": [
+        46,
+        45,
+        25
+      ]
+    },
+    {
+      "name": "service_shelf_canopy_bronze",
+      "material": "bronze",
+      "from": [
+        -30,
+        43.5,
+        22
+      ],
+      "to": [
+        46,
+        46,
+        25
+      ]
+    },
+    {
+      "name": "ore_chute_back_0",
       "material": "dark",
-      "from": [
-        -16,
-        16,
-        -16
-      ],
-      "to": [
-        -14.9,
-        19,
-        0
-      ]
-    },
-    {
-      "name": "ore_bay_right_rim",
-      "material": "dark",
-      "from": [
-        30.9,
-        16,
-        -16
-      ],
-      "to": [
-        32,
-        19,
-        0
-      ]
-    },
-    {
-      "name": "ore_bay_divider_1",
-      "material": "bronze",
-      "from": [
-        -0.65,
-        16,
-        -16
-      ],
-      "to": [
-        0.65,
-        18.3,
-        0
-      ]
-    },
-    {
-      "name": "ore_bay_divider_2",
-      "material": "bronze",
-      "from": [
-        15.35,
-        16,
-        -16
-      ],
-      "to": [
-        16.65,
-        18.3,
-        0
-      ]
-    },
-    {
-      "name": "ore_bay_front_indicator_input",
-      "material": "bronze",
       "from": [
         -13,
-        17,
-        -0.1
+        19.3,
+        -4
       ],
       "to": [
         -3,
-        18.2,
-        0.25
+        20.8,
+        7.9
       ]
     },
     {
-      "name": "ore_bay_front_indicator_tailings",
+      "name": "ore_chute_front_0",
+      "material": "iron",
+      "from": [
+        -13,
+        16.3,
+        8
+      ],
+      "to": [
+        -3,
+        18.8,
+        18.5
+      ]
+    },
+    {
+      "name": "ore_chute_rail_left_0",
+      "material": "bronze",
+      "from": [
+        -14,
+        17,
+        0
+      ],
+      "to": [
+        -13,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "ore_chute_rail_right_0",
+      "material": "bronze",
+      "from": [
+        -3,
+        17,
+        0
+      ],
+      "to": [
+        -2,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "service_hopper_marker_0",
+      "material": "bronze",
+      "from": [
+        -12,
+        16,
+        17
+      ],
+      "to": [
+        -4,
+        17,
+        18
+      ]
+    },
+    {
+      "name": "ore_chute_back_1",
       "material": "dark",
       "from": [
         3,
-        17,
-        -0.1
+        19.3,
+        -4
       ],
       "to": [
         13,
-        18.2,
-        0.25
+        20.8,
+        7.9
       ]
     },
     {
-      "name": "ore_bay_front_indicator_output",
+      "name": "ore_chute_front_1",
       "material": "iron",
       "from": [
-        19,
+        3,
+        16.3,
+        8
+      ],
+      "to": [
+        13,
+        18.8,
+        18.5
+      ]
+    },
+    {
+      "name": "ore_chute_rail_left_1",
+      "material": "bronze",
+      "from": [
+        2,
         17,
-        -0.1
+        0
+      ],
+      "to": [
+        3,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "ore_chute_rail_right_1",
+      "material": "bronze",
+      "from": [
+        13,
+        17,
+        0
+      ],
+      "to": [
+        14,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "service_hopper_marker_1",
+      "material": "dark",
+      "from": [
+        4,
+        16,
+        17
+      ],
+      "to": [
+        12,
+        17,
+        18
+      ]
+    },
+    {
+      "name": "ore_chute_back_2",
+      "material": "dark",
+      "from": [
+        19,
+        19.3,
+        -4
       ],
       "to": [
         29,
-        18.2,
-        0.25
+        20.8,
+        7.9
+      ]
+    },
+    {
+      "name": "ore_chute_front_2",
+      "material": "iron",
+      "from": [
+        19,
+        16.3,
+        8
+      ],
+      "to": [
+        29,
+        18.8,
+        18.5
+      ]
+    },
+    {
+      "name": "ore_chute_rail_left_2",
+      "material": "bronze",
+      "from": [
+        18,
+        17,
+        0
+      ],
+      "to": [
+        19,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "ore_chute_rail_right_2",
+      "material": "bronze",
+      "from": [
+        29,
+        17,
+        0
+      ],
+      "to": [
+        30,
+        21.3,
+        18
+      ]
+    },
+    {
+      "name": "service_hopper_marker_2",
+      "material": "iron",
+      "from": [
+        20,
+        16,
+        17
+      ],
+      "to": [
+        28,
+        17,
+        18
+      ]
+    },
+    {
+      "name": "service_input_feed_screw",
+      "material": "iron",
+      "from": [
+        -9.1,
+        20.8,
+        1
+      ],
+      "to": [
+        -6.9,
+        22.7,
+        15
       ]
     }
   ],
@@ -1326,52 +1620,172 @@
         -6
       ],
       [
-        -16,
-        16,
-        -16,
-        32,
+        -30,
+        5,
+        12,
+        46,
+        11,
+        15.6
+      ],
+      [
+        -29,
+        0,
+        20,
+        -24,
+        5,
+        28
+      ],
+      [
+        -29,
+        5,
+        20,
+        -24,
+        42,
+        25
+      ],
+      [
+        -29,
+        39,
+        10,
+        -24,
+        43,
+        25
+      ],
+      [
+        41,
+        0,
+        20,
+        46,
+        5,
+        28
+      ],
+      [
+        41,
+        5,
+        20,
+        46,
+        42,
+        25
+      ],
+      [
+        41,
+        39,
+        10,
+        46,
+        43,
+        25
+      ],
+      [
+        -30,
+        40,
         19,
-        -14.8
+        46,
+        45,
+        25
       ],
       [
-        -16,
-        16,
-        -1.2,
-        32,
+        -30,
+        43.5,
+        22,
+        46,
+        46,
+        25
+      ],
+      [
+        -13,
+        19.3,
+        -4,
+        -3,
+        20.8,
+        7.9
+      ],
+      [
+        -13,
+        16.3,
+        8,
+        -3,
+        18.8,
+        18.5
+      ],
+      [
+        -14,
+        17,
+        0,
+        -13,
+        21.3,
+        18
+      ],
+      [
+        -3,
+        17,
+        0,
+        -2,
+        21.3,
+        18
+      ],
+      [
+        3,
+        19.3,
+        -4,
+        13,
+        20.8,
+        7.9
+      ],
+      [
+        3,
+        16.3,
+        8,
+        13,
+        18.8,
+        18.5
+      ],
+      [
+        2,
+        17,
+        0,
+        3,
+        21.3,
+        18
+      ],
+      [
+        13,
+        17,
+        0,
+        14,
+        21.3,
+        18
+      ],
+      [
         19,
-        0
+        19.3,
+        -4,
+        29,
+        20.8,
+        7.9
       ],
       [
-        -16,
-        16,
-        -16,
-        -14.9,
         19,
-        0
+        16.3,
+        8,
+        29,
+        18.8,
+        18.5
       ],
       [
-        30.9,
-        16,
-        -16,
-        32,
+        18,
+        17,
+        0,
         19,
-        0
+        21.3,
+        18
       ],
       [
-        -0.65,
-        16,
-        -16,
-        0.65,
-        18.3,
-        0
-      ],
-      [
-        15.35,
-        16,
-        -16,
-        16.65,
-        18.3,
-        0
+        29,
+        17,
+        0,
+        30,
+        21.3,
+        18
       ],
       [
         -14,
@@ -1760,52 +2174,172 @@
         -6
       ],
       [
-        -16,
-        16,
-        -16,
-        32,
+        -30,
+        5,
+        12,
+        46,
+        11,
+        15.6
+      ],
+      [
+        -29,
+        0,
+        20,
+        -24,
+        5,
+        28
+      ],
+      [
+        -29,
+        5,
+        20,
+        -24,
+        42,
+        25
+      ],
+      [
+        -29,
+        39,
+        10,
+        -24,
+        43,
+        25
+      ],
+      [
+        41,
+        0,
+        20,
+        46,
+        5,
+        28
+      ],
+      [
+        41,
+        5,
+        20,
+        46,
+        42,
+        25
+      ],
+      [
+        41,
+        39,
+        10,
+        46,
+        43,
+        25
+      ],
+      [
+        -30,
+        40,
         19,
-        -14.8
+        46,
+        45,
+        25
       ],
       [
-        -16,
-        16,
-        -1.2,
-        32,
+        -30,
+        43.5,
+        22,
+        46,
+        46,
+        25
+      ],
+      [
+        -13,
+        19.3,
+        -4,
+        -3,
+        20.8,
+        7.9
+      ],
+      [
+        -13,
+        16.3,
+        8,
+        -3,
+        18.8,
+        18.5
+      ],
+      [
+        -14,
+        17,
+        0,
+        -13,
+        21.3,
+        18
+      ],
+      [
+        -3,
+        17,
+        0,
+        -2,
+        21.3,
+        18
+      ],
+      [
+        3,
+        19.3,
+        -4,
+        13,
+        20.8,
+        7.9
+      ],
+      [
+        3,
+        16.3,
+        8,
+        13,
+        18.8,
+        18.5
+      ],
+      [
+        2,
+        17,
+        0,
+        3,
+        21.3,
+        18
+      ],
+      [
+        13,
+        17,
+        0,
+        14,
+        21.3,
+        18
+      ],
+      [
         19,
-        0
+        19.3,
+        -4,
+        29,
+        20.8,
+        7.9
       ],
       [
-        -16,
-        16,
-        -16,
-        -14.9,
         19,
-        0
+        16.3,
+        8,
+        29,
+        18.8,
+        18.5
       ],
       [
-        30.9,
-        16,
-        -16,
-        32,
+        18,
+        17,
+        0,
         19,
-        0
+        21.3,
+        18
       ],
       [
-        -0.65,
-        16,
-        -16,
-        0.65,
-        18.3,
-        0
-      ],
-      [
-        15.35,
-        16,
-        -16,
-        16.65,
-        18.3,
-        0
+        29,
+        17,
+        0,
+        30,
+        21.3,
+        18
       ],
       [
         -14,

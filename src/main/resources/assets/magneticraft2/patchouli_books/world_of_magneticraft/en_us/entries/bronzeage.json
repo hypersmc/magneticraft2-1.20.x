@@ -168,25 +168,25 @@
       "multiblock": {
         "pattern": [
           [
-            "BBB",
-            "P_P",
-            "P_P",
-            "P_P",
-            "BBB"
+            "BBBB",
+            "P_PP",
+            "P_PP",
+            "P_PP",
+            "BBBB"
           ],
           [
-            "PBB",
-            "P__",
-            "P__",
-            "P__",
-            "PBB"
+            "PBBB",
+            "P___",
+            "P___",
+            "P___",
+            "PBBB"
           ],
           [
-            "SSS",
-            "SUS",
-            "IY0",
-            "SOS",
-            "SSS"
+            "SSSS",
+            "SSSU",
+            "IS0Y",
+            "SSSO",
+            "SSSS"
           ]
         ],
         "mapping": {
@@ -201,7 +201,7 @@
         },
         "symmetrical": false
       },
-      "text": "Each input/output module is a FULL block. All three go in the BOTTOM middle row, directly underneath the three stamp heads, between the rear Gear V2 bearing and front controller. They remain visible as collection hoppers in a recessed bay. Keep the entire middle and front of layer 2 clear of extra blocks; the framework forms around them. Item input, tailings output, crushed-ore output run left to right from the south side. Build with Visualize bottom-up."
+      "text": "This 5-wide, 4-deep, 3-high Stamp Mill has three complete 1x1 I/O MODULE BLOCKS at GROUND LEVEL in an open service row, one block SOUTH of the controller. Their default wooden/copper ports remain visible for player or conveyor access. Ore input, tailings, and crushed-ore product are left to right from the South. The controller is in the original front-center bottom row and the Gear V2 input sits at the rear center. Nine AIR cells above the moving stamp area and service chutes MUST remain clear. Build exactly as Visualize shows."
     },
     {
       "type": "patchouli:crafting",
