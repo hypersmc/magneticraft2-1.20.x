@@ -179,8 +179,9 @@ for(const part of design.boxes){
   }
 }
 
-const powerModels=["drive_shaft","drive_shaft_tip","drive_input_shaft",
-  "drive_input_spindle","drive_lower_spindle",
+const powerModels=["drive_shaft","drive_shaft_start","drive_shaft_tip",
+  "drive_input_shaft","drive_input_spindle","drive_input_coupler",
+  "drive_lower_spindle",
   "drive_bevel","drive_bevel_x","drive_pulley","drive_belt_straight",
   "drive_belt_upper","drive_belt_wrap",
   "drive_gearbox_frame","drive_cross_bearing","drive_side_lower_mount"];
@@ -244,6 +245,81 @@ assert.ok(touchesFace(middleMount,rearGirder)&&touchesFace(middleMount,frontGird
   "Intermediate bearing must hang from the load frame");
 assert.ok(touchesFace(outerMount,rightBrace),
   "Right-side pulley bearing must attach to the foundation brace");
+
+// Render ownership and real input-module boundary:
+// MechanicalInputModuleBlockEntityRenderer already draws both the wooden
+// rotor AND copper bearing when FORMED. The Stamp Mill must never draw its
+// old duplicate full-cell housing over the real module.
+const millRenderer=fs.readFileSync(
+  "src/main/java/com/magneticraft2/client/render/blocks/stage/bronze/BronzeStampMillRenderer.java","utf8");
+const moduleRenderer=fs.readFileSync(
+  "src/main/java/com/magneticraft2/client/render/blocks/stage/copper/MechanicalInputModuleBlockEntityRenderer.java","utf8");
+assert.ok(moduleRenderer.includes("if (!formed && !rotating)")&&
+          moduleRenderer.includes("SHAFT_MODEL")&&moduleRenderer.includes("HOUSING_MODEL"),
+  "Shared formed input module must continue to own and render its shaft and bearing");
+assert.ok(!millRenderer.includes("getModel(MODULE)")&&
+          !millRenderer.includes("new ResourceLocation(\"magneticraft2\",\"multiblock/bronze_stamp_mill_input_frame\")"),
+  "Stamp Mill must not re-render the already visible functional module");
+
+// The steel extension, its copper transition ring, and the gearbox begin
+// entirely OUTSIDE the rear module's real z=-32..-16 cell.
+const steelExtension=read(asset("drive_input_shaft"));
+const steelStart=Math.min(...steelExtension.elements.map(e=>e.from[2]))-26;
+assert.ok(steelStart>=-16-1e-5,
+  "Stamp Mill must not duplicate the formed module's wooden rotor");
+const coupling=read(asset("drive_input_coupler"));
+const couplerStart=Math.min(...coupling.elements.map(e=>e.from[2]))-24;
+assert.ok(couplerStart>-16,
+  "Copper coupler may not render over the module's wood end cap");
+// Extending steel must fit through the coupler's open square bore.
+const steelBoxes=steelExtension.elements.map(e=>({
+  from:e.from.map((v,i)=>v+[0,0,-26][i]),
+  to:e.to.map((v,i)=>v+[0,0,-26][i])
+}));
+const couplingBoxes=coupling.elements.map(e=>({
+  from:e.from.map((v,i)=>v+[0,0,-24][i]),
+  to:e.to.map((v,i)=>v+[0,0,-24][i])
+}));
+for(const c of couplingBoxes)for(const b of steelBoxes){
+  assert.ok(!c.from.every((v,i)=>Math.min(c.to[i],b.to[i])-Math.max(v,b.from[i])>1e-5),
+    "Copper coupling clips the actual steel drive spindle");
+}
+
+// No duplicate caps on the seams of rotating contiguous shafts.
+const internalCaps={
+  drive_input_shaft:["north","south"],
+  drive_input_spindle:["north"],
+  drive_lower_spindle:["east"],
+  drive_shaft:["west","east"],
+  drive_shaft_start:["east"],
+  drive_shaft_tip:["west"]
+};
+for(const [id,caps]of Object.entries(internalCaps)){
+  const model=read(asset(id));
+  for(const panel of model.elements)for(const cap of caps)
+    assert.ok(!Object.hasOwn(panel.faces,cap),
+      id+" must not draw a coplanar internal shaft-end face: "+cap);
+}
+
+// A near-meshing pitch RIM is essential, not just gear teeth that happen
+// to come within a tiny distance. The visible 3.85px wheel face must be
+// close to the opposite 4.06px axial plane (<0.25px gap).
+for(const [id,axis]of [["drive_bevel",2],["drive_bevel_x",0]]){
+  const model=read(asset(id)),radial=axis===2?0:2;
+  const rims=model.elements.filter(e=>
+    Object.values(e.faces).some(f=>f.texture==="#bronze")&&
+    e.from[axis]>=12.19&&e.to[axis]<=13.11);
+  assert.ok(rims.length>0,id+": missing pitch wheel panels");
+  const outer=Math.max(...rims.flatMap(e=>
+    [e.from[radial],e.to[radial]].map(v=>Math.abs(v-8))));
+  assert.ok(outer>=3.80&&outer<4.02,
+    id+": visible pitch rim too small or extends into the other gear: "+outer);
+  assert.ok(4.06-outer<.26,
+    id+": visually disconnected bevel rims");
+}
+const driveBuilder=fs.readFileSync("tools/bronze-stamp-mill/build-drive-models.mjs","utf8");
+assert.ok(driveBuilder.includes("octRing")&&driveBuilder.includes("removeInternalCaps"),
+  "Powertrain generator must preserve rounded pitch rims and capless splices");
 
 // Each animated model contains *only visible face panels*. This prevents
 // z-fighting where full cuboids previously drew matching internal faces.
@@ -368,6 +444,11 @@ assert.ok(be.includes("MultiblockVoxelNbt.write(")&&
           be.includes("MultiblockVoxelNbt.read("),
     "Voxel V2 snapshot persistence must be symmetrical");
 assert.ok(be.includes("stampShoe.completeBatch()")&&be.includes("setMechanicalLoad("));
+assert.ok(be.includes("getStampInputRotationDegrees(float partialTicks)")&&
+          be.includes("facing == Direction.NORTH || facing == Direction.WEST")&&
+          be.includes("return -getStampInputRotationDegrees(partialTicks)")&&
+          be.includes("getStampCrankRotationDegrees(partialTicks)+120D*hammerIndex"),
+  "Input module, gearbox output and hammer lift phases must agree in all facings");
 const client=fs.readFileSync(javaDir+"client/Clientsetup.java","utf8");
 for(const id of ["hammer","hammer_worn","input_frame","cam"])
   assert.ok(client.includes('"multiblock/bronze_stamp_mill_'+id+'"'),"Unregistered animated model "+id);
@@ -382,21 +463,22 @@ assert.ok(renderer.includes("int[] stations={-8,8,24}")&&
 assert.ok(renderer.includes("INPUT_SHAFT")&&renderer.includes("BEVEL_X")&&
           renderer.includes("BELT_UPPER")&&renderer.includes("BELT_WRAP"),
   "The complete Gear V2 powertrain must be rendered");
-assert.ok(renderer.includes("shaftAngle+120F*i")&&
-          renderer.includes("upperY,lowerZ,Axis.XP,shaftAngle")&&
-          !renderer.includes("Axis.XP,-shaftAngle"),
-  "Cams, upper crank and belt pulleys must share the same rotation direction");
+assert.ok(renderer.includes("driveAngle+120F*i")&&
+          renderer.includes("upperY,lowerZ,Axis.XP,driveAngle")&&
+          !renderer.includes("Axis.XP,shaftAngle"),
+  "All cams, the upper shaft, and both pulleys must share the bevel output phase");
 assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F"),
   "The upper belt half-wrap must remain stationary around its rotating pulley");
-assert.ok(renderer.includes("final float inputAngle=-shaftAngle")&&
+assert.ok(renderer.includes("mill.getStampInputRotationDegrees(partial)")&&
+          renderer.includes("mill.getStampCrankRotationDegrees(partial)")&&
           renderer.includes("BEVEL_Z,")&&renderer.includes("BEVEL_X,")&&
           renderer.includes("inputX,inputY,lowerZ,Axis.ZP,inputAngle")&&
-          renderer.includes("inputX,inputY,lowerZ,Axis.XP,shaftAngle"),
-  "The perpendicular bevel gears need a shared pivot and opposite signed angles");
+          renderer.includes("inputX,inputY,lowerZ,Axis.XP,driveAngle"),
+  "Both bevels need a shared pivot and opposite signed phases");
 assert.ok(renderer.includes("LOWER_SPINDLE,")&&
-          renderer.includes("16D/16D,inputY,lowerZ,Axis.XP,shaftAngle")&&
+          renderer.includes("16D/16D,inputY,lowerZ,Axis.XP,driveAngle")&&
           !renderer.includes("for(int x=16;x<=32;x+=16)"),
-  "Shortened X output must not cross through the Z input spindle");
+  "The X output shaft must terminate at the pinion and use the bevel output phase");
 assert.ok(renderer.includes("GEARBOX_FRAME,")&&
           renderer.includes("CROSS_BEARING,")&&
           renderer.includes("SIDE_LOWER_MOUNT,"),
@@ -404,4 +486,8 @@ assert.ok(renderer.includes("GEARBOX_FRAME,")&&
 
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
 assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
+// Fail if someone edited any bevel model by hand without updating its
+// authored source. This also catches stale shaft cap geometry.
+import {execFileSync} from "node:child_process";
+execFileSync(process.execPath,["tools/bronze-stamp-mill/build-drive-models.mjs","--check"],{stdio:"pipe"});
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
