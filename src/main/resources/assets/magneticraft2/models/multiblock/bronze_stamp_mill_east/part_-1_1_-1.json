@@ -2208,7 +2208,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             0,
             5.8,
@@ -2231,7 +2231,7 @@
       ],
       "faces": {
         "east": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             0,
             5.8,
@@ -2254,7 +2254,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             5.3,
             0,
@@ -2277,7 +2277,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             5.3,
             0,
