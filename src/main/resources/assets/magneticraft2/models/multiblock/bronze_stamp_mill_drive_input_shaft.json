@@ -1,0 +1,290 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "iron": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/polished_blackstone",
+    "belt": "minecraft:block/brown_wool",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        7.2,
+        7.2,
+        0
+      ],
+      "to": [
+        8.8,
+        8.8,
+        0.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            7.2,
+            7.2,
+            8.8,
+            8.8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.2,
+        7.2,
+        15.9375
+      ],
+      "to": [
+        8.8,
+        8.8,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            7.2,
+            7.2,
+            8.8,
+            8.8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.7375,
+        7.2,
+        0
+      ],
+      "to": [
+        8.8,
+        8.8,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            7.2,
+            16,
+            8.8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.2,
+        7.2,
+        0
+      ],
+      "to": [
+        7.2625,
+        8.8,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            7.2,
+            16,
+            8.8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.2,
+        8.7375,
+        0
+      ],
+      "to": [
+        7.7,
+        8.8,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            7.2,
+            0,
+            7.7,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.3,
+        8.7375,
+        0
+      ],
+      "to": [
+        8.8,
+        8.8,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            8.3,
+            0,
+            8.8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.2,
+        7.2,
+        0
+      ],
+      "to": [
+        8.8,
+        7.2625,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            7.2,
+            0,
+            8.8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.7,
+        8.8,
+        0
+      ],
+      "to": [
+        8.3,
+        9.15,
+        0.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            7.7,
+            8.8,
+            8.3,
+            9.15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.7,
+        8.8,
+        15.9375
+      ],
+      "to": [
+        8.3,
+        9.15,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            7.7,
+            8.8,
+            8.3,
+            9.15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.2375,
+        8.8,
+        0
+      ],
+      "to": [
+        8.3,
+        9.15,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            8.8,
+            16,
+            9.15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.7,
+        8.8,
+        0
+      ],
+      "to": [
+        7.7625,
+        9.15,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            8.8,
+            16,
+            9.15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.7,
+        9.0875,
+        0
+      ],
+      "to": [
+        8.3,
+        9.15,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            7.7,
+            0,
+            8.3,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}
