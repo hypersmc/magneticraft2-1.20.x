@@ -58,6 +58,7 @@ for(const dir of dirs){
     (coords[name]??=[]).push([x,y,z]);
     if(type!=="minecraft:air")physical.push([x,y,z]);
   }
+  assert.equal(counts.A,12,"Three stamp AIR cells plus nine service/drive AIR cells");
   assert.equal(counts.C,1);assert.equal(counts.I,1);
   assert.equal(counts.U,1);assert.equal(counts.O,1);assert.equal(counts.Y,1);
   const expected=JSON.stringify(Object.entries(counts).sort());
