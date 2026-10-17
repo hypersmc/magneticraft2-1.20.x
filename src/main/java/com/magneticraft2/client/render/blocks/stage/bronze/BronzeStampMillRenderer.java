@@ -37,6 +37,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
     // X shafts and Z input each have correctly aligned baked geometry.
     private static final ResourceLocation DRIVE_SHAFT =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft");
+    private static final ResourceLocation DRIVE_SHAFT_START =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft_start");
     private static final ResourceLocation SHAFT_TIP =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft_tip");
     private static final ResourceLocation INPUT_SHAFT =
@@ -177,7 +179,9 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Critically, this rotates +shaftAngle just like every eccentric;
         // the former -shaftAngle rendering was visibly backwards.
         for(int x=-16;x<=32;x+=16){
-            part(pose,buffers,light,overlay,DRIVE_SHAFT,
+            // The left exposed end is capped once; shared segment joints
+            // have NO coplanar end faces, avoiding moving axle flicker.
+            part(pose,buffers,light,overlay,x==-16?DRIVE_SHAFT_START:DRIVE_SHAFT,
                     x/16D,upperY,lowerZ,Axis.XP,shaftAngle);
         }
         part(pose,buffers,light,overlay,SHAFT_TIP,
