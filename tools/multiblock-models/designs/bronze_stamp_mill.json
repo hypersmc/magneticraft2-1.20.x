@@ -7,7 +7,8 @@
     "bronze": "minecraft:block/cut_copper",
     "iron": "minecraft:block/iron_block",
     "dark": "minecraft:block/polished_blackstone",
-    "particle": "minecraft:block/cut_copper"
+    "particle": "minecraft:block/cut_copper",
+    "metal": "minecraft:block/iron_block"
   },
   "boxes": [
     {
