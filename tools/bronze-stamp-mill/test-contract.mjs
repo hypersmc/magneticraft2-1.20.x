@@ -326,7 +326,7 @@ assert.ok(driveBuilder.includes("octRing")&&driveBuilder.includes("removeInterna
 const faceAxes={north:[2,-1,0,1],south:[2,1,0,1],
                 east:[0,1,2,1],west:[0,-1,2,1],
                 up:[1,1,0,2],down:[1,-1,0,2]};
-for(const id of ["hammer","hammer_worn","input_frame","cam"]){
+for(const id of ["hammer","hammer_worn","cam"]){
   const model=read(asset(id));
   assert.ok(model.elements?.length>0,"Missing animated part "+id);
   const panels=new Map();
@@ -388,12 +388,12 @@ for(const face of surfaces(canonical,[0,0,0])){
   existing.push(face);occupiedPlanes.set(k,existing);
 }
 const parkedHammers=read(asset("hammer")),driveCams=read(asset("cam"));
-const inputFrame=read(asset("input_frame"));
+// The formed module housing is owned by MechanicalInputModuleBlockEntityRenderer;
+// the Stamp Mill's former input_frame model is no longer a rendered surface.
 const movingAtRest=[...[-8,8,24].flatMap(station=>[
   ...surfaces(parkedHammers,[station-8,24,-18]),
   // Cranks occupy this position at zero phase; test conservative clearance.
-  ...surfaces(driveCams,[station-8,30.5,-18])]),
-  ...surfaces(inputFrame,[0,0,-32])];
+  ...surfaces(driveCams,[station-8,30.5,-18])])];
 for(const face of movingAtRest){
   const k=face.axis+":"+face.plane.toFixed(5);
   for(const fixed of occupiedPlanes.get(k)||[]){
