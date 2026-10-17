@@ -8,18 +8,17 @@ import {stampMillDriveDesigns} from "./build-drive-models.mjs";
 const Z=stampMillDriveDesigns.bronze_stamp_mill_drive_bevel;
 const X=stampMillDriveDesigns.bronze_stamp_mill_drive_bevel_x;
 const za=Z.filter(b=>b.meshTooth),xa=X.filter(b=>b.meshTooth);
-assert.equal(za.length,24,"Eight joined three-step Z teeth");
-assert.equal(xa.length,24,"Eight joined three-step X teeth");
+assert.equal(za.length,16,"Eight joined two-step Z teeth");
+assert.equal(xa.length,16,"Eight joined two-step X teeth");
 
 const intersects=(a,b)=>a.from.every((v,i)=>
   Math.min(a.to[i],b.to[i])-Math.max(v,b.from[i])>1e-5);
 for(const gear of [Z,X]){
   const rim=gear.filter(b=>!b.meshTooth),teeth=gear.filter(b=>b.meshTooth);
   for(let i=0;i<8;i++){
-    const [root,flank,tip]=teeth.slice(i*3,i*3+3);
+    const [root,tip]=teeth.slice(i*2,i*2+2);
     assert.ok(rim.some(b=>intersects(root,b)),"Tooth root is floating at index "+i);
-    assert.ok(intersects(root,flank)&&intersects(flank,tip),
-      "Disconnected three-step tooth at index "+i);
+    assert.ok(intersects(root,tip),"Disconnected compact tooth at index "+i);
   }
 }
 
@@ -28,8 +27,12 @@ function radialTip(boxes,axis){
   return Math.max(...boxes.flatMap(b=>[b.from[r],b.to[r]]
     .flatMap(v=>[b.from[1],b.to[1]].map(y=>Math.hypot(v-8,y-8)))));
 }
-assert.ok(radialTip(za,"z")>5&&radialTip(xa,"x")>5,
-  "Teeth do not extend into the opposing wheel's gaps");
+// Prevent another oversized-spike regression while requiring engagement.
+for(const [teeth,axis]of [[za,"z"],[xa,"x"]]){
+  const radius=radialTip(teeth,axis);
+  assert.ok(radius>4.5&&radius<4.9,
+    "Bevel tip is ineffective or oversized: "+radius);
+}
 
 const dot=(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0);
 const cross=(a,b)=>[
@@ -83,10 +86,10 @@ for(let step=-180;step<=180;step++){
   farthest=Math.max(farthest,phaseGap);
   if(phaseGap<.25)nearPhases++;
 }
-assert.ok(nearest>.02&&nearest<.12,
+assert.ok(nearest>.04&&nearest<.12,
   "Teeth cannot nearly meet without clipping: "+nearest);
-assert.ok(farthest<.80,"Teeth separate too far: "+farthest);
-assert.ok(nearPhases>=50,"Too few phases show engagement: "+nearPhases);
+assert.ok(farthest<.72,"Teeth separate too far: "+farthest);
+assert.ok(nearPhases>=80,"Too few phases show engagement: "+nearPhases);
 console.log("Stamp Mill bevel mesh PASS: "+pairs+" sampled solid pairs, "+
   nearPhases+" engaged phases, tooth gap "+
   nearest.toFixed(3)+".."+farthest.toFixed(3)+" px, zero collisions");

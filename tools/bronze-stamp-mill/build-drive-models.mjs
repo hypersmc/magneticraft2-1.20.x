@@ -12,9 +12,9 @@ function gear(axis,phase){
  // Stepped octagonal pitch rim: makes the wheels visibly meet. The
  // complete rotating cuboid envelope stays within a 4.02-pixel radius.
  const octRing=(m,lo,hi,r,h)=>{
-  const bands=[[-3.85,-3.0,1.15],[-3.0,-2.05,2.55],[-2.05,-1.0,3.42],
+  const bands=[[-3.85,-3.0,1.30],[-3.0,-2.05,2.55],[-2.05,-1.0,3.42],
                [-1.0,1.0,3.85],[1.0,2.05,3.42],[2.05,3.0,2.55],
-               [3.0,3.85,1.15]];
+               [3.0,3.85,1.30]];
   const scale=r/3.85;
   for(const [v0,v1,width] of bands){
    const y0=8+v0*scale,y1=8+v1*scale,w=width*scale;
@@ -26,20 +26,21 @@ function gear(axis,phase){
    }else add(m,lo,hi,8-w,8+w,y0,y1);
   }
  };
- octRing("bronze",12.2,13.1,3.85,.90);
- octRing("dark",13.1,13.38,3.42,.76);
+ // Bring the pitch faces 0.30px closer rather than growing giant teeth.
+ // Octagonal silhouette is retained and tooth roots are firmly embedded.
+ octRing("bronze",11.90,13.1,3.65,.90);
+ octRing("dark",13.1,13.38,3.25,.76);
  ring("bronze",10.6,12.2,1.35,.94);
  ring("iron",11.2,11.75,1.55,1.35);
- // The previous teeth never entered the opposing wheel's tooth gaps.
- // Three joined, tapered bronze tooth steps project beyond the pitch rim.
- // The 22.5-degree half-pitch offset on the X wheel lets both gears mesh.
+ // Two short bronze tooth sections: wide buried root, narrow tip.
+ // Unlike the previous oversized 5.20px spikes, the teeth remain compact.
+ // The X pinion's offset is tuned using a 360-step signed mesh sweep.
  const firstToothBox=boxes.length;
  for(let i=0;i<8;i++){
   const a=(i*45+phase)*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
   for(const[m,r0,r1,h,axial0,axial1]of [
-      ["bronze",3.65,4.18,.30,12.30,12.94], // rooted in the bronze rim
-      ["bronze",4.12,4.55,.30,12.30,12.65], // supported flanks
-      ["bronze",4.48,5.20,.25,12.20,12.48]  // narrow interlocking tip
+      ["bronze",3.45,3.91,.26,11.93,12.90], // buried into octagonal rim
+      ["bronze",3.85,4.45,.20,11.92,12.45]  // restrained engaging tip
   ]){
    add(m,axial0,axial1,
        8+Math.min(r0*c,r1*c)-h,8+Math.max(r0*c,r1*c)+h,
@@ -69,7 +70,7 @@ const side=[];collar(side,5.8,6.9);
 side.push(b("iron",[5.8,10.65,6.4],[6.9,13.6,9.6]),b("bronze",[5.8,12.5,5.65],[6.9,13.6,10.35]));
 return {
  bronze_stamp_mill_drive_bevel:gear("z",0),
- bronze_stamp_mill_drive_bevel_x:gear("x",22.5),
+ bronze_stamp_mill_drive_bevel_x:gear("x",20.5),
  bronze_stamp_mill_drive_input_spindle:[b("iron",[7.3,7.3,8],[8.7,8.7,14.2]),b("bronze",[7.7,8.7,8],[8.3,8.9,14.2])],
  bronze_stamp_mill_drive_lower_spindle:[b("iron",[2.5,7.3,7.3],[16,8.7,8.7]),b("bronze",[2.5,8.7,7.7],[16,8.9,8.3])],
  // This extension begins at the formed module's FRONT FACE (z=-16).
