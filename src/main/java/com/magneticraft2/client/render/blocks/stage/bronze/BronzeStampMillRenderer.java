@@ -33,6 +33,35 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
     private static final ResourceLocation CAM =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_cam");
 
+    private static final ResourceLocation DRIVE_SHAFT =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft");
+    private static final ResourceLocation SHAFT_TIP =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft_tip");
+    private static final ResourceLocation BEVEL =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bevel");
+    private static final ResourceLocation PULLEY =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
+    private static final ResourceLocation BELT_STRAIGHT =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_straight");
+    private static final ResourceLocation BELT_WRAP =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_wrap");
+    private static final ResourceLocation BEARING =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bearing");
+    private static final ResourceLocation COLLAR =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_collar");
+
+    private static void part(PoseStack pose,MultiBufferSource buffers,int light,int overlay,
+                             ResourceLocation model,double x,double y,double z,
+                             Axis axis,float degrees) {
+        pose.pushPose();
+        pose.translate(x,y,z);
+        if(axis!=null)pose.mulPose(axis.rotationDegrees(degrees));
+        pose.translate(-.5D,-.5D,-.5D);
+        renderModel(pose,buffers,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(model));
+        pose.popPose();
+    }
+
     public BronzeStampMillRenderer(BlockEntityRendererProvider.Context context) {}
     private static void renderModel(PoseStack pose,MultiBufferSource buffers,int light,int overlay,BakedModel model) {
         BlockRenderDispatcher blocks=Minecraft.getInstance().getBlockRenderer();
@@ -63,6 +92,51 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         pose.popPose();
 
         float shaftAngle=mill.getDriveRotationDegrees(partial);
+
+        // Physical transmission, from the real rear-center Gear V2 shaft:
+        // rear Z shaft -> bevel pair -> X crossshaft -> right-side twin
+        // pulleys and vertical belt -> upper X crankshaft. Both 1:1 bevel
+        // and pulley stages share Gear V2's speed; the Z axis reverses
+        // direction at the bevel pair. No independent animation clock.
+        // The input rotor and rear bevel live inside the functional input
+        // module at (0,0,-2), without baking static faces into that cell.
+        part(pose,buffers,light,overlay,DRIVE_SHAFT,
+                .5D,.5D,-1.50D,Axis.ZP,shaftAngle);
+        part(pose,buffers,light,overlay,BEVEL,
+                .5D,.5D,-1.125D,Axis.ZP,shaftAngle);
+        part(pose,buffers,light,overlay,BEVEL,
+                .5D,.5D,-.875D,Axis.XP,-shaftAngle);
+        // The transverse drive line follows X beneath the supported trough.
+        // It remains outside all three front-facing functional item ports.
+        for(int station=-1;station<=2;station++){
+            part(pose,buffers,light,overlay,DRIVE_SHAFT,
+                    station+.5D,.5D,-.875D,Axis.XP,-shaftAngle);
+        }
+        // Distinct bearing collar makes the drive actually look attached.
+        part(pose,buffers,light,overlay,COLLAR,
+                2.55D,.5D,-.875D,null,0F);
+        // Right-side belt train: lower pulley on crossshaft, upper pulley
+        // on the crankshaft, with nonrotating taut belt flights.
+        part(pose,buffers,light,overlay,PULLEY,
+                2.97D,.5D,-.625D,Axis.XP,-shaftAngle);
+        part(pose,buffers,light,overlay,PULLEY,
+                2.97D,2.40625D,-.625D,Axis.XP,-shaftAngle);
+        // Belt flights run from the lower pulley to the upper pulley.
+        for(int segment=0;segment<2;segment++){
+            part(pose,buffers,light,overlay,BELT_STRAIGHT,
+                    2.97D,.5D+segment,-.625D,null,0F);
+        }
+        part(pose,buffers,light,overlay,BELT_WRAP,
+                2.97D,.5D,-.625D,Axis.XP,-shaftAngle);
+        part(pose,buffers,light,overlay,BELT_WRAP,
+                2.97D,2.40625D,-.625D,Axis.XP,-shaftAngle);
+        // A continuous rotating shaft is visible between all four
+        // original fixed pillow bearings; unlike the old static mesh.
+        for(int station=-2;station<=2;station++){
+            part(pose,buffers,light,overlay,DRIVE_SHAFT,
+                    station+.5D,2.40625D,-.625D,Axis.XP,-shaftAngle);
+        }
+
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
         BakedModel cam=Minecraft.getInstance().getModelManager().getModel(CAM);
