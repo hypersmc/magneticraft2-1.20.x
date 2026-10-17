@@ -159,7 +159,7 @@
       "type": "patchouli:crafting",
       "title": "Stamp Mill Controller",
       "recipe": "magneticraft2:bronze_stamp_mill",
-      "text": "Craft the Bronze Stamp Mill controller using precision bronze components. The full machine is five blocks wide, three tall and three deep."
+      "text": "Craft the Bronze Stamp Mill controller using precision bronze components. The formed machine is five blocks wide, four deep and three tall, including a front service shelf that holds the full-size input and output blocks."
     },
     {
       "type": "patchouli:multiblock",
