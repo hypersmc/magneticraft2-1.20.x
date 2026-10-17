@@ -36,7 +36,11 @@ for(const direction of dirs){
   for(const [x,y,z] of coords){
    const filename=root+"/assets/magneticraft2/models/multiblock/"+id+"/part_"+(x-cx)+"_"+y+"_"+(z-cz)+".json";
    assert.ok(fs.existsSync(filename),filename);
-   JSON.parse(fs.readFileSync(filename));
+   const part=JSON.parse(fs.readFileSync(filename));
+   // The real module is not a filler; no static Geometry V2 parts can
+   // render there. It is owned exclusively by the formed input BER.
+   if(type==="I")assert.equal(part.elements.length,0,
+     "Input module model part must be empty: "+filename);
   }
  }
  const normalized=[counts.S,counts.L,counts.I,counts.P,counts.H,counts.A];
@@ -45,7 +49,28 @@ for(const direction of dirs){
 }
 const voxel=JSON.parse(fs.readFileSync(root+"/data/magneticraft2/multiblock_voxels/bronze_mechanical_lathe.json"));
 assert.equal(voxel.format,1);
-assert.equal(voxel.collision.length,22);
+const design=JSON.parse(fs.readFileSync("tools/multiblock-models/designs/bronze_mechanical_lathe.json"));
+assert.ok(voxel.collision.length>=1 && voxel.collision.length<=512);
+assert.deepEqual(voxel.collision,design.voxels.collision);
+assert.deepEqual(voxel.selection,design.voxels.selection);
+const moduleBounds={from:[0,0,-32],to:[16,16,-16]};
+assert.ok(design.boxes.every(box=>
+    !box.from.every((a,k)=>Math.min(box.to[k],moduleBounds.to[k])
+                         -Math.max(a,moduleBounds.from[k])>1e-5)),
+    "V2 static solids must not occupy the non-filler input module cell");
+for(const resource of ["input_frame","input_rotor","input_output_rotor","arbor","chuck","carriage","cross_slide"]){
+ const name=root+"/assets/magneticraft2/models/multiblock/bronze_mechanical_lathe_"+resource+".json";
+ const model=JSON.parse(fs.readFileSync(name));
+ assert.ok(model.elements?.length>0,name+" needs nonempty geometry");
+ for(const el of model.elements)for(const face of Object.values(el.faces||{})){
+   if(face.uv)assert.ok(face.uv.every(u=>u>=0&&u<=16),name+" must use native tiled UVs");
+ }
+}
+const clientSetup=fs.readFileSync("src/main/java/com/magneticraft2/client/Clientsetup.java","utf8");
+for(const resource of ["input_frame","input_rotor","input_output_rotor","arbor"]){
+ assert.ok(clientSetup.includes('"multiblock/bronze_mechanical_lathe_'+resource+'"'),
+     resource+" must be registered for BER baking");
+}
 for(const box of voxel.collision)assert.ok(box[3]>box[0]&&box[4]>box[1]&&box[5]>box[2]);
 for(const file of ["bronze_mechanical_lathe","bronze_lathe_cutter"]){
  const recipe=JSON.parse(fs.readFileSync(root+"/data/magneticraft2/recipes/"+file+".json"));
@@ -54,4 +79,5 @@ for(const file of ["bronze_mechanical_lathe","bronze_lathe_cutter"]){
 }
 const book=JSON.parse(fs.readFileSync(root+"/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json"));
 assert.ok(book.pages.some(p=>p.type==="patchouli:multiblock"&&p.name==="Mechanical Lathe"));
-console.log("Bronze Lathe structural contract: 4 orientations, 88 part models, 22 voxel cells, recipes and Patchouli PASS");
+console.log("Bronze Lathe structural contract: 4 orientations, 88 part models, "+
+    voxel.collision.length+" authored voxel boxes, formed gearbox and arbor assets PASS");

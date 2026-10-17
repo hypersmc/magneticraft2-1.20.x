@@ -85,8 +85,10 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public float getCuttingDepthPixels() {
         return isGearWorkpiece() ? 3.5F : 4.6F;
     }
+    /** Follow the actual Gear V2 shaft phase, including powered idle.
+     * The network's visual method freezes when unpowered or overloaded.
+     * Machining progress remains independently load-gated by running. */
     public float getSpindleRotation(float partialTick){
-        if(!running)return 0F;
         MechanicalInputModuleBlockEntity input=getMechanicalInput();
         return input==null?0F:input.getVisualRotationDegrees(partialTick);
     }
