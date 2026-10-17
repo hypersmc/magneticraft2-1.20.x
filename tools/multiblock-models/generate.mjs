@@ -54,6 +54,17 @@ function generate(id,model,variants){
   }
   if(controllers.length!==1)throw Error(`Expected one controller in ${id}_${dir}`);
   const [cx,cy,cz]=controllers[0],hosts=occupied.map(([x,y,z])=>[x-cx,y-cy,z-cz]);
+  // Bronze Stamp Mill I/O ports and Gear V2 input are real full-block
+  // module entities, not fillers. Preserve their entire model space and
+  // let adjacent V2 filler/air hosts carry bordering decorative geometry.
+  // Deliberately scoped to this multiblock; other legacy generators unchanged.
+  const reservedModuleHosts=new Set(id==="bronze_stamp_mill"
+    ? occupied.filter(([x,y,z])=>{
+        const name=st.blocks[st.layout[`layer${y+1}`][z][x]];
+        return name==="magneticraft2:mechanical_input_module"
+          || name.startsWith("magneticraft2:multiblock_item_");
+      }).map(([x,y,z])=>[x-cx,y-cy,z-cz].join("_"))
+    : []);
   // Required-AIR cells may contain physical machinery *after* formation.
   // These offsets come from the multiblock JSON and must match the server-side
   // collision proxies; never fill all empty spaces in large structures.
@@ -84,7 +95,8 @@ function generate(id,model,variants){
     const b=[Math.max(x0,ix*16),Math.max(y0,iy*16),Math.max(z0,iz*16),
       Math.min(x1,(ix+1)*16),Math.min(y1,(iy+1)*16),Math.min(z1,(iz+1)*16)];
     if(Math.min(b[3]-b[0],b[4]-b[1],b[5]-b[2])<=EPS)continue;
-    const candidates=hosts.filter(a=>b.every((v,i)=>v-a[i%3]*16>=-16-EPS&&v-a[i%3]*16<=32+EPS))
+    const candidates=hosts.filter(a=>!reservedModuleHosts.has(a.join("_")) &&
+      b.every((v,i)=>v-a[i%3]*16>=-16-EPS&&v-a[i%3]*16<=32+EPS))
       .sort((a,c)=>a.reduce((s,v,i)=>s+Math.abs(v-cell[i]),0)-c.reduce((s,v,i)=>s+Math.abs(v-cell[i]),0)
         ||a.join("_").localeCompare(c.join("_")));
     if(!candidates.length)throw Error(`No nearby structure host for geometry ${cell} in ${id}_${dir}`);
@@ -128,6 +140,10 @@ function generate(id,model,variants){
     total++;
     if(cell.some((v,i)=>v!==anchor[i]))borrowed++;
    }
+  }
+  for(const host of reservedModuleHosts){
+   if(pieces.get(host)?.length)
+     throw Error(id+"/"+dir+": static render part on full-sized functional module "+host);
   }
   if(!pieces.get("0_0_0")?.length)throw Error("Controller must have visible geometry");
   for(const [key,elements] of pieces){
