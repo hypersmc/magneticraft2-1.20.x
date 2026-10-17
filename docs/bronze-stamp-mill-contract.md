@@ -255,3 +255,58 @@ gear engagement from the underside (stopped and rotating), wooden bearing
 to bronze coupling, all four facings, and belt-to-upper-crank motion.
 The large wheel farther out on the horizontal output shaft is a
 **belt pulley**: it should not mesh directly with the inner bevel pair.
+
+
+## 2026-10-17 — bevel teeth actually interleave (latest in-game follow-up)
+
+The next game screenshot confirmed that the lower bearing, housing and wheel
+placement now look much better, but the wheel teeth were still visibly
+**not interacting**. Their previous geometry had a 4.018-pixel outer
+swept-radius restriction, while the opposing pitch plane began at about
+4.06 pixels from the common Z/X intersection. This *prevented* the teeth
+from entering the opposing tooth gaps by design. A purely static
+non-intersection check was not enough.
+
+**Changes to the two existing moving wheel models only:**
+
+- Keep both gear pivots, the 90-degree shaft intersection, the 8:8 1:1
+  speed ratio, the 22.5-degree half-tooth phase offset, the signed
+  rotation calculation, housing, bearing mounts and adjacent modules.
+- Replace the short decorative gear teeth with eight **three-section
+  bronze flanks** on each wheel: roots embedded in the existing bronze
+  pitch rim (radial 3.65–4.18 model px), flanks (4.12–4.55 px) and
+  narrower protruding tips (4.48–5.20 px). Each section overlaps its
+  predecessor, so there are no floating tooth pieces.
+- The tips now deliberately extend **past** the opposite wheel's
+  4.06-pixel exclusion plane and enter the spaces between its teeth.
+  The other gear's 22.5-degree stagger and counter-rotation are what
+  prevent interference—not an artificial rule forbidding teeth from
+  reaching each other.
+- `build-drive-models.mjs` now exports its authored solid cuboids for
+  regression testing without rewriting any assets when imported.
+  `test-bevel-mesh.mjs` rotates both sets of genuine solid cuboids
+  through the signed motion range (±45 degrees in 0.25-degree samples),
+  checks 15 possible OBB separating axes where bounding boxes approach,
+  requires physical attachment of all 24 tooth segments per gear,
+  verifies the teeth reach into the counterpart's gaps and enforces
+  near-contact without physical collisions.
+- The source-level sweep evaluated **976,144 gear-cuboid pairs**;
+  it found zero detected solid intersections. It recorded tooth-to-tooth
+  AABB gaps of approximately **0.040 to 0.731 model pixels** across sampled
+  phases, with 136 phases having gaps below 0.25 pixels.
+- The Stamp Mill's overall contract now invokes the actual meshing test.
+  The superseded global `radius < 4.06` tests have been removed, since
+  they mathematically made a functioning bevel gear impossible.
+
+This is **a moving-geometry-only change**. No blueprint, Voxel V2,
+Patchouli construction, item module, processing recipe, Gear V2 load,
+machine layout or accepted Mechanical Lathe geometry was changed.
+
+**Verification boundary:** authored geometry and generated model parity
+have been checked, but no `./gradlew build` or in-game render test was
+performed in this change. Review the actual meshing from below with the
+Stamp Mill stopped and rotating, particularly the copper teeth meeting
+near the +X/+Z corner. Check that the new tips are not excessively large,
+do not shimmer or clip through each other, and still look like bronze
+machine gears in the Minecraft art style. Also verify unloaded/loaded
+motion and all four orientations before accepting this design.
