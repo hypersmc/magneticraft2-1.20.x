@@ -201,7 +201,7 @@
         },
         "symmetrical": false
       },
-      "text": "This 5-wide, 4-deep, 3-high Stamp Mill has three complete 1x1 I/O MODULE BLOCKS at GROUND LEVEL in an open service row, one block SOUTH of the controller. Their default wooden/copper ports remain visible for player or conveyor access. Ore input, tailings, and crushed-ore product are left to right from the South. The controller is in the original front-center bottom row and the Gear V2 input sits at the rear center. Nine AIR cells above the moving stamp area and service chutes MUST remain clear. Build exactly as Visualize shows."
+      "text": "This 5-wide, 4-deep, 3-high Stamp Mill has three complete 1x1 I/O MODULE BLOCKS at GROUND LEVEL in an open service row, one block SOUTH of the controller. Their default wooden/copper ports remain visible for player or conveyor access. Ore input, tailings, and crushed-ore product are left to right from the South. The controller is in the original front-center bottom row and the Gear V2 input sits at the rear center. Keep all 12 specified AIR cells clear; nine of these become V2 render proxies when formed. Build exactly as Visualize shows."
     },
     {
       "type": "patchouli:crafting",
