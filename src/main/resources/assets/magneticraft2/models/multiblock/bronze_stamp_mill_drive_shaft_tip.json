@@ -1,0 +1,152 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "iron": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/polished_blackstone",
+    "belt": "minecraft:block/brown_wool",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        8,
+        7.15,
+        7.15
+      ],
+      "to": [
+        10.6,
+        8.85,
+        7.2125
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            8,
+            7.15,
+            10.6,
+            8.85
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        7.15,
+        8.7875
+      ],
+      "to": [
+        10.6,
+        8.85,
+        8.85
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            8,
+            7.15,
+            10.6,
+            8.85
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.5375,
+        7.15,
+        7.15
+      ],
+      "to": [
+        10.6,
+        8.85,
+        8.85
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            7.15,
+            7.15,
+            8.85,
+            8.85
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        7.15,
+        7.15
+      ],
+      "to": [
+        8.0625,
+        8.85,
+        8.85
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            7.15,
+            7.15,
+            8.85,
+            8.85
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        8.7875,
+        7.15
+      ],
+      "to": [
+        10.6,
+        8.85,
+        8.85
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            8,
+            7.15,
+            10.6,
+            8.85
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        7.15,
+        7.15
+      ],
+      "to": [
+        10.6,
+        7.2125,
+        8.85
+      ],
+      "faces": {
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            8,
+            7.15,
+            10.6,
+            8.85
+          ]
+        }
+      }
+    }
+  ]
+}
