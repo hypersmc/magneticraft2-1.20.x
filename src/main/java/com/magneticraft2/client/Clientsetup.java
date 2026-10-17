@@ -160,6 +160,11 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_shaft"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel_x"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_lower_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_gearbox_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_cross_bearing"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_side_lower_mount"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_upper"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_tip"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel"));
