@@ -8,8 +8,7 @@
     "bronze": "minecraft:block/cut_copper",
     "iron": "minecraft:block/iron_block",
     "dark": "minecraft:block/polished_blackstone",
-    "particle": "minecraft:block/cut_copper",
-    "metal": "minecraft:block/iron_block"
+    "particle": "minecraft:block/cut_copper"
   },
   "elements": [
     {
@@ -23324,7 +23323,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -24,
             37.8,
@@ -23347,7 +23346,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -18.65,
             37.8,
@@ -23370,7 +23369,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             1.35,
             37.8,
@@ -23393,7 +23392,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             17.35,
             37.8,
@@ -23416,7 +23415,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             37.35,
             37.8,
@@ -23439,7 +23438,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -24,
             37.8,
@@ -23462,7 +23461,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -18.65,
             37.8,
@@ -23485,7 +23484,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             1.35,
             37.8,
@@ -23508,7 +23507,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             17.35,
             37.8,
@@ -23531,7 +23530,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             37.35,
             37.8,
@@ -23554,7 +23553,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -24,
             -10.7,
@@ -23577,7 +23576,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -18.65,
             -10.7,
@@ -23600,7 +23599,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             1.35,
             -10.7,
@@ -23623,7 +23622,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             17.35,
             -10.7,
@@ -23646,7 +23645,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             37.35,
             -10.7,
@@ -23669,7 +23668,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -24,
             -10.7,
@@ -23692,7 +23691,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             -18.65,
             -10.7,
@@ -23715,7 +23714,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             1.35,
             -10.7,
@@ -23738,7 +23737,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             17.35,
             -10.7,
@@ -23761,7 +23760,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#metal",
+          "texture": "#iron",
           "uv": [
             37.35,
             -10.7,
