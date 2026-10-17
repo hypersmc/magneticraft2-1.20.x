@@ -150,13 +150,70 @@
     {
       "type": "text",
       "text": "$(bold)Using the Lathe$()$(br2)Mount a Rough Bronze Gear or Bearing Casting by right-clicking the formed Lathe. Install a cutting tool. Supply at least 12 RPM and 2.5 torque with Gear V2 at the rear input. The first test cycle takes 160 ticks and stalls without sufficient load supply.$(br2)Empty-hand right-click checks progress and collects finished Precision Bronze Gears/Bearings. Sneak-empty-hand retrieves an unfinished casting or installed cutter. Full source material quality survives machining."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Industrial Ore Breaking$()$(br2)The Stamp Mill does not replace the Copper Grinder: it breaks batches of raw ore much faster, but requires a heavier Gear V2 network and serviceable stamp shoes.$(br2)Crushed ore still goes to the Mechanical Ore Washer and then the Sifter. Your existing Copper production line becomes the foundation of the Bronze factory."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Stamp Mill Controller",
+      "recipe": "magneticraft2:bronze_stamp_mill",
+      "text": "Craft the Bronze Stamp Mill controller using precision bronze components. The full machine is five blocks wide, three tall and three deep."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Stamp Mill",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BPPPB",
+            "B___B",
+            "BPPPB"
+          ],
+          [
+            "PPPPP",
+            "B___B",
+            "BU_OY"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_stamp_mill",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "B": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Build bottom-up and use Visualize for every row. Controller: lower front center. Gear V2 input: lower rear center, two cells behind it. Feed port: middle level front-left. Product port: middle level front-right. Tailings port: far-right front. The three middle air cells on each upper level are deliberate: keep them clear for falling stamps. Right-click the controller to form."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Stamp Shoes",
+      "recipe": "magneticraft2:bronze_stamp_shoe",
+      "text": "The three stamp heads share one replaceable shoe maintenance counter. Each successful two-ore batch consumes one service cycle; a fully worn shoe stops further processing without wasting ore. Right-click with a fresh shoe to service; sneak-right-click empty-handed to inspect wear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Running the Stamp Mill$()$(br2)Feed TWO Chalcocite Ore or TWO Cassiterite Ore to the item input. Gear V2 must supply at least 24 RPM and 6 torque. A 115-tick cycle outputs two units of the corresponding crushed ore; gravel tailings have a 20% chance.$(br2)If the output or tailings port is blocked, the machine waits without consuming more ore. Stop the gears and the cycle pauses. Continue with your existing Washer and Sifter, rather than bypassing separation."
     }
   ],
   "sortnum": 3,
   "read_by_default": true,
   "extra_recipe_mappings": {
     "magneticraft2:bronze_foundry": 8,
-    "magneticraft2:bronze_mechanical_lathe": 18
+    "magneticraft2:bronze_mechanical_lathe": 18,
+    "magneticraft2:bronze_stamp_mill": 23
   },
   "mappings": {
     "magneticraft2:bronze_pouring_ladle": 13,
