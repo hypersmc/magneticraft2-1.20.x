@@ -14,6 +14,39 @@ assert.equal(vox.collision.length,design.voxels.collision.length);
 assert.deepEqual(vox.collision,design.voxels.collision);
 assert.deepEqual(vox.selection,design.voxels.selection);
 assert.ok(vox.collision.length<=512);
+
+// Nondecorative static geometry must have an actual support path to the
+// ground-level sill. Boxes may overlap or share a full supporting face;
+// touching at only an edge or point does not count as a structural joint.
+const touchesFace=(a,b)=>{
+  const overlaps=[0,1,2].map(i=>Math.min(a.to[i],b.to[i])-Math.max(a.from[i],b.from[i]));
+  return overlaps.every(v=>v>=-1e-5)&&overlaps.filter(v=>v>1e-5).length>=2;
+};
+const foundation=design.boxes.find(b=>b.name==="front_sill");
+assert.ok(foundation,"Stamp Mill needs an anchored front sill");
+const supported=new Set([foundation.name]);
+const frontier=[foundation];
+while(frontier.length){
+  const current=frontier.shift();
+  for(const block of design.boxes){
+    if(!supported.has(block.name)&&touchesFace(current,block)){
+      supported.add(block.name);
+      frontier.push(block);
+    }
+  }
+}
+assert.equal(supported.size,design.boxes.length,
+    "Floating static parts: "+design.boxes.filter(b=>!supported.has(b.name)).map(b=>b.name).join(", "));
+for(const id of ["trough_floor","mount_rear_undertray_girder",
+                 "mount_front_undertray_girder","mount_upper_rear_guide_rail",
+                 "mount_upper_front_guide_rail","mount_crank_pillow_16"]){
+  assert.ok(supported.has(id),id+" must be bolted into the load-bearing frame");
+}
+for(const prefix of ["stamp_top_brace_","cam_bearing_"]){
+  assert.ok(design.boxes.every(b=>!b.name.startsWith(prefix)),
+    "Legacy intersecting cam brackets must not return: "+prefix);
+}
+
 const moduleSpace={lo:[0,0,-32],hi:[16,16,-16]};
 assert.ok(design.boxes.every(b=>!b.from.every((v,i)=>
   Math.min(b.to[i],moduleSpace.hi[i])-Math.max(v,moduleSpace.lo[i])>1e-5)),
@@ -120,10 +153,53 @@ for(const ore of ["chalcocite","cassiterite"]){
   assert.equal(p.mechanical.torque,6);
   assert.equal(p.process_time,115);
 }
+
+// Each animated model contains *only visible face panels*. This prevents
+// z-fighting where full cuboids previously drew matching internal faces.
+const faceAxes={north:[2,-1,0,1],south:[2,1,0,1],
+                east:[0,1,2,1],west:[0,-1,2,1],
+                up:[1,1,0,2],down:[1,-1,0,2]};
 for(const id of ["hammer","hammer_worn","input_frame","cam"]){
   const model=read(asset(id));
   assert.ok(model.elements?.length>0,"Missing animated part "+id);
+  const panels=new Map();
+  for(const e of model.elements){
+    assert.ok(e.from.every((v,i)=>v>=-1e-5&&e.to[i]<=16+1e-5&&v<e.to[i]),
+       "Invalid moving part element bounds: "+id);
+    for(const [face,render] of Object.entries(e.faces)){
+      const [axis,sign,u,v]=faceAxes[face];
+      assert.ok(render.uv.every(x=>x>=-1e-5&&x<=16+1e-5),
+          id+": UV outside native atlas tile");
+      assert.ok(Math.abs(render.uv[2]-render.uv[0]-(e.to[u]-e.from[u]))<1e-4
+          &&Math.abs(render.uv[3]-render.uv[1]-(e.to[v]-e.from[v]))<1e-4,
+          id+": stretched texture detected on "+face);
+      const plane=sign>0?e.to[axis]:e.from[axis],key=face+":"+plane.toFixed(5);
+      const neighbors=panels.get(key)||[];
+      for(const prior of neighbors){
+        const dx=Math.min(e.to[u],prior.to[u])-Math.max(e.from[u],prior.from[u]);
+        const dy=Math.min(e.to[v],prior.to[v])-Math.max(e.from[v],prior.from[v]);
+        assert.ok(dx<=1e-5||dy<=1e-5,
+           id+": duplicate coplanar "+face+" faces at "+plane);
+      }
+      neighbors.push(e);panels.set(key,neighbors);
+    }
+  }
 }
+// The resting stamp shoe is just above the crushing plate and its active
+// body fits between the trough walls. The upper sliding yoke is excluded.
+const hammer=read(asset("hammer"));
+const lowerPanels=hammer.elements.filter(e=>e.from[1]<7.93);
+const rearWall=design.boxes.find(b=>b.name==="trough_back");
+const frontWall=design.boxes.find(b=>b.name==="trough_front");
+const floor=design.boxes.find(b=>b.name==="trough_floor");
+assert.ok(lowerPanels.length>0&&rearWall&&frontWall&&floor);
+const lowZ=Math.min(...lowerPanels.map(e=>e.from[2]))-18;
+const highZ=Math.max(...lowerPanels.map(e=>e.to[2]))-18;
+assert.ok(lowZ>=rearWall.to[2]-1e-4&&highZ<=frontWall.from[2]+1e-4,
+    "Stamp shoe collides with the fixed walls: "+lowZ+".."+highZ);
+const hammerBottom=Math.min(...hammer.elements.map(e=>e.from[1]))+24;
+assert.ok(hammerBottom>=floor.to[1]&&hammerBottom-floor.to[1]<=2,
+    "Moving shoe must start immediately above the supported crushing floor");
 const book=read(root+"/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
 const guide=book.pages.find(page=>page.type==="patchouli:multiblock"&&page.name==="Bronze Stamp Mill");
 assert.ok(guide,"Stamp Mill Patchouli visualize page missing");
@@ -172,4 +248,4 @@ assert.ok(renderer.includes("int[] stations={-8,8,24}")&&
   "Stamp heads must track the 3 service channels above the hoppers");
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
 assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
-console.log("Bronze Stamp Mill contract PASS: 4 layouts, V2 parts/voxels, 2 ore recipes, JEI and book");
+console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
