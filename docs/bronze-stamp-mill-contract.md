@@ -310,3 +310,43 @@ near the +X/+Z corner. Check that the new tips are not excessively large,
 do not shimmer or clip through each other, and still look like bronze
 machine gears in the Minecraft art style. Also verify unloaded/loaded
 motion and all four orientations before accepting this design.
+
+
+## 2026-10-17 — rollback of oversized bevel teeth; compact corrective model
+
+The next in-game screenshot showed the previous `5.20px` three-stage tooth
+profiles looked like oversized bronze fingers and visually ruined the
+gearbox that had otherwise been accepted. **The preceding extended-tooth
+description is superseded.** The acceptable frame, bearings, shafts,
+pulleys and input-module rendering are unchanged.
+
+The two bevel-wheel models now use the following authored design:
+
+- Octagonal bronze pitch rims move inward by only `0.30` model pixels,
+  from axial `12.2` to `11.90`; outer rim radius `3.65px` rather
+  than `3.85px`. Rim corner bands are slightly widened so **all eight**
+  tooth roots physically overlap the wheel, including diagonal teeth.
+- Eight **two-stage** bronze teeth per wheel: wider embedded roots
+  (radial `3.45..3.91px`) and narrower compact tips
+  (radial `3.85..4.45px`). There are no extra long third-stage tips.
+- The X pinion's visual tooth offset is `20.5 degrees`. This is a
+  clearance-calibrated angle for the cuboid tooth profiles, not a change
+  to the physical 1:1 speed ratio.
+- The `test-bevel-mesh.mjs` 90-degree signed rotation sweep now
+  requires sixteen connected tooth segments per wheel, tests the
+  complete two-gear solid geometry using separating axes, measures tip
+  proximity, and **rejects oversized teeth** (radial extent must be
+  less than `4.9px`). It also rejects floating roots.
+- Source-level test result: **698,896 rotated solid-pair comparisons**,
+  no detected solid collisions, **185** close phases of 361, sampled
+  tooth gap `0.059..0.688px`. This is not a Minecraft render result.
+
+Only the two bevel JSON assets, their authoring generator and its
+meshing regression have changed. No multiblock rebuild is needed.
+Minecraft appearance and `./gradlew build` remain unverified.
+
+**Next test:** close-up of the same underside view while stopped and moving.
+Specifically check that the copper tips no longer resemble protruding
+fingers, the two pitch wheels still visibly mesh, and there is no flicker.
+If visuals remain unsatisfactory, do not extend these tooth tips again
+without a new gear profile design and a complete in-game review.
