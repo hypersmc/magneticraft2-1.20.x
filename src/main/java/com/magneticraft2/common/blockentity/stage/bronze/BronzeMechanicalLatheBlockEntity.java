@@ -88,9 +88,32 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     /** Follow the actual Gear V2 shaft phase, including powered idle.
      * The network's visual method freezes when unpowered or overloaded.
      * Machining progress remains independently load-gated by running. */
-    public float getSpindleRotation(float partialTick){
+    // Gear V2 input may run while idle; the chuck engages only during
+    // machining and retains the last rotation when it stops.
+    private float previousInputVisualDegrees;
+    private float clutchedSpindleDegrees;
+    private boolean spindlePhaseInitialized;
+
+    public float getInputRotation(float partialTick) {
         MechanicalInputModuleBlockEntity input=getMechanicalInput();
         return input==null?0F:input.getVisualRotationDegrees(partialTick);
+    }
+
+    public float getSpindleRotation(float partialTick) {
+        float drive=getInputRotation(partialTick);
+        if(!spindlePhaseInitialized){
+            previousInputVisualDegrees=drive;
+            spindlePhaseInitialized=true;
+        }
+        float delta=drive-previousInputVisualDegrees;
+        if(delta>180F)delta-=360F;
+        else if(delta<-180F)delta+=360F;
+        previousInputVisualDegrees=drive;
+        if(running){
+            clutchedSpindleDegrees=(clutchedSpindleDegrees+delta)%360F;
+            if(clutchedSpindleDegrees<0F)clutchedSpindleDegrees+=360F;
+        }
+        return clutchedSpindleDegrees;
     }
     @Nullable private MechanicalInputModuleBlockEntity getMechanicalInput(){
         if(level==null||!formed)return null;
