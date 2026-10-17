@@ -189,3 +189,69 @@ the underside gearbox while moving and stopped, right-side pulley/belt
 transfer, top cam/shaft phase, four orientations, resource reloads, and
 close-up Z-fighting. We intentionally did not add extra JSON construction
 blocks just to render gearbox bearings.
+
+
+## 2026-10-17 — real module ownership, visibly meeting pitch wheels (supersedes earlier drive sketches)
+
+The third underside Minecraft screenshot showed **both detached-looking pinions
+and texture flicker at the input shaft**. The earlier bounding-box-only
+regression checks were inadequate: simply avoiding intersection does not
+establish believable contact, and they did not model the separate Mechanical
+Input Module block-entity renderer.
+
+This is the authoritative rendering contract for the Stamp Mill's drive:
+
+1. **Existing real input module**: Its OWN reusable
+   `MechanicalInputModuleBlockEntityRenderer` draws the 6-pixel-wide
+   wooden shaft and copper bearing inside controller offset `(0,0,-2)`,
+   covering model-space z=-32..-16. Do **not** render
+   `bronze_stamp_mill_input_frame` or a second rotor in that block. Its
+   block entity and Gear V2 wiring remain untouched.
+2. **Wood-to-steel transition**: A stationary-looking hollow bronze coupling
+   actually turns with the input and covers the steel extension immediately
+   OUTSIDE the module. The extension spans model z=-16..-10; the spindle
+   continues z=-10..-3.8 through the input bevel. No newly rendered
+   Stamp Mill steel geometry invades z<-16, and no cap face is drawn on
+   the real wooden shaft's front plane.
+3. **Bevel pair at (8,8,-10)**: The input Z pinion and output X pinion
+   have octagonal 3.85px bronze pitch rims and eight staggered teeth.
+   The formerly 2.65px-wide square pitch wheels were misleadingly small:
+   only their isolated tooth tips came close. The enlarged pitch faces
+   now approach the opposite wheel's 4.06px engagement plane with
+   about 0.21px spacing, without crossing it. Conservative full-rotation
+   tooth/cuboid radius is approximately 4.018px, leaving at least
+   0.041px margin before the perpendicular axle's gear.
+4. **Correct rotation phase in every facing**: The shared input module BER
+   rotates around the *positive world X or Z axis*, regardless of the
+   FACING sign. The multiblock's local +Z maps onto that axis for SOUTH
+   and EAST, and against it for NORTH and WEST. Thus
+   `getStampInputRotationDegrees()` corrects the local sign, and
+   `getStampCrankRotationDegrees()` reverses it exactly once through
+   the right-angle bevel pair. The OPEN belt carries the same output
+   phase to the upper shaft; all three 120-degree cams and the
+   animated hammer lift use that output phase.
+5. **No doubled spinning surfaces**: Adjacent Z and X shaft parts have
+   no coincident hidden end caps. The first upper shaft segment has one
+   real visible end cap, and the other segments have open internal joints.
+   This removes another likely cause of flickering along the visible
+   long iron drive axle.
+6. **Physical support**: The wood/bronze gearbox frame, middle bearing
+   and right-hand pulley support remain anchored to the authored load
+   frame without taking space from the three actual item ports or
+   changing Voxel V2 or the 5×3×4 multiblock pattern.
+
+The original input-frame model is retained as an unused resource for now,
+but MUST NOT be called from the formed Stamp Mill renderer.
+
+Generation for new moving drivetrain parts is maintained by
+`node tools/bronze-stamp-mill/build-drive-models.mjs`, with a matching
+`--check` mode. The contract tests cover visual pitch-wheel proximity,
+rotation polarity, module-cell ownership, end-cap removal, and native
+unstretched UVs.
+
+**Still pending**: `./gradlew build` and actual Minecraft verification.
+No client-side render was available for this patch. Inspect the Z-to-X
+gear engagement from the underside (stopped and rotating), wooden bearing
+to bronze coupling, all four facings, and belt-to-upper-crank motion.
+The large wheel farther out on the horizontal output shaft is a
+**belt pulley**: it should not mesh directly with the inner bevel pair.
