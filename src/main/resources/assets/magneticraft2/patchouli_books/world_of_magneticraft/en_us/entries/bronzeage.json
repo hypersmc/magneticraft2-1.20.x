@@ -175,7 +175,7 @@
           [
             "PPPPP",
             "B___B",
-            "BU_OY"
+            "BUYOB"
           ],
           [
             "SSISS",
@@ -195,7 +195,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build bottom-up and use Visualize for every row. Controller: lower front center. Gear V2 input: lower rear center, two cells behind it. Feed port: middle level front-left. Product port: middle level front-right. Tailings port: far-right front. The three middle air cells on each upper level are deliberate: keep them clear for falling stamps. Right-click the controller to form."
+      "text": "Build the structure bottom-up with Visualize. The lower rear-center block is the Gear V2 module; controller at lower front-center. The middle front row contains input, tailings output and primary output ports side by side, between the two bronze corner posts. Leave all upper center air cells open for the three descending stamps. Right-click the controller to form."
     },
     {
       "type": "patchouli:crafting",
