@@ -19,12 +19,36 @@ assert.ok(design.boxes.every(b=>!b.from.every((v,i)=>
   Math.min(b.to[i],moduleSpace.hi[i])-Math.max(v,moduleSpace.lo[i])>1e-5)),
   "Rendering V2 geometry may not occupy the actual non-filler input module cell");
 
+// Design geometry and BOTH voxel outlines must reserve all 4 complete
+// non-filler block volumes, including I/O ports. They aren't decorative
+// 3D blocks we can embed other cuboids through.
+const southLayout=read(root+"/data/magneticraft2/multiblocks/bronze_stamp_mill_south.json");
+const [SW,SH,SD]=southLayout.structure.dimensions;
+const ports=[];
+let control=null;
+for(let y=0;y<SH;y++)for(let z=0;z<SD;z++)for(let x=0;x<SW;x++){
+  const symbol=southLayout.structure.layout["layer"+(y+1)][z][x];
+  if(symbol==="C")control=[x,y,z];
+  if("IUYO".includes(symbol))ports.push({symbol,coord:[x,y,z]});
+}
+assert.ok(control&&ports.length===4);
+for(const p of ports){
+  const lo=p.coord.map((v,i)=>16*(v-control[i])),hi=lo.map(v=>v+16);
+  for(const [listName,list] of [["model",design.boxes.map(b=>[...b.from,...b.to])],
+     ["collision",vox.collision],["selection",vox.selection]]){
+    for(const b of list){
+      const overlap=lo.every((v,i)=>Math.min(b[i+3],hi[i])-Math.max(b[i],v)>1e-5);
+      assert.ok(!overlap,listName+" invades full "+p.symbol+" module cell at "+p.coord);
+    }
+  }
+}
+
 let referenceCount=null;
 for(const dir of dirs){
   const bp=read(root+"/data/magneticraft2/multiblocks/bronze_stamp_mill_"+dir+".json");
   const [w,h,d]=bp.structure.dimensions;
   assert.equal(h,3);
-  assert.equal(w*d,15);
+  assert.equal(w*d,20,"Stamp Mill must have a 5x4 ground footprint (rotated per facing)");
   const counts={},coords={},physical=[];
   for(let y=0;y<h;y++)for(let z=0;z<d;z++)for(let x=0;x<w;x++){
     const name=bp.structure.layout["layer"+(y+1)][z][x];
@@ -43,8 +67,16 @@ for(const dir of dirs){
   assert.equal(Math.abs(cx-ix)+Math.abs(cz-iz),2);
   assert.equal(cy,0);assert.equal(iy,0);
   assert.equal(bp.settings.voxel_profile,"magneticraft2:bronze_stamp_mill");
+  // Module blocks are grounded, exposed to the outside of the footprint
+  // and NOT built as a row of hovering bins above the workshop frame.
+  for(const moduleType of ["U","Y","O"]){
+    const [mx,my,mz]=coords[moduleType][0];
+    assert.equal(my,0,"Service hopper must sit on ground: "+dir);
+    const exterior = mx===0 || mx===w-1 || mz===0 || mz===d-1;
+    assert.ok(exterior,"Service hopper needs an exposed face for item transport: "+dir);
+  }
   const anchors=bp.settings.render_air_anchors;
-  assert.equal(anchors.length,3);
+  assert.equal(anchors.length,9,"Three rows of upper-air cells serve stamp heads and service chutes");
   const actual=new Set(physical.map(([x,y,z])=>[x-cx,y-cy,z-cz].join("_")));
   for(const [x,y,z] of anchors){
     assert.equal(bp.structure.layout["layer"+(y+cy+1)][z+cz][x+cx],"A");
@@ -101,6 +133,7 @@ assert.ok(guide,"Stamp Mill Patchouli visualize page missing");
 // transposes the shape into 3x5 and can reverse the item ports.
 const south=read(root+"/data/magneticraft2/multiblocks/bronze_stamp_mill_south.json");
 const [bookWidth,bookHeight,bookDepth]=south.structure.dimensions;
+assert.deepEqual([bookWidth,bookHeight,bookDepth],[5,3,4]);
 assert.equal(guide.multiblock.pattern.length,bookHeight);
 for(let y=0;y<bookHeight;y++){
   const layer=guide.multiblock.pattern[bookHeight-1-y];
@@ -132,6 +165,10 @@ const client=fs.readFileSync(javaDir+"client/Clientsetup.java","utf8");
 for(const id of ["hammer","hammer_worn","input_frame","cam"])
   assert.ok(client.includes('"multiblock/bronze_stamp_mill_'+id+'"'),"Unregistered animated model "+id);
 assert.ok(client.includes("BRONZE_STAMP_MILL_BE"));
+const renderer=fs.readFileSync(javaDir+"client/render/blocks/stage/bronze/BronzeStampMillRenderer.java","utf8");
+assert.ok(renderer.includes("int[] stations={-8,8,24}")&&
+          renderer.includes("24D/16D+mill.getHammerLift(partial,i)"),
+  "Stamp heads must track the 3 service channels above the hoppers");
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
 assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
 console.log("Bronze Stamp Mill contract PASS: 4 layouts, V2 parts/voxels, 2 ore recipes, JEI and book");
