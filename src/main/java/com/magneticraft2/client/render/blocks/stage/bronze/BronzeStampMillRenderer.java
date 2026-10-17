@@ -45,6 +45,17 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bevel");
     private static final ResourceLocation BEVEL_X =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bevel_x");
+
+    private static final ResourceLocation INPUT_SPINDLE =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_input_spindle");
+    private static final ResourceLocation LOWER_SPINDLE =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_lower_spindle");
+    private static final ResourceLocation GEARBOX_FRAME =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_gearbox_frame");
+    private static final ResourceLocation CROSS_BEARING =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_cross_bearing");
+    private static final ResourceLocation SIDE_LOWER_MOUNT =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_side_lower_mount");
     private static final ResourceLocation PULLEY =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
     private static final ResourceLocation BELT_STRAIGHT =
@@ -95,31 +106,51 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                 Minecraft.getInstance().getModelManager().getModel(MODULE));
         pose.popPose();
 
-        float shaftAngle=mill.getDriveRotationDegrees(partial);
-        // Model space is in controller-relative pixels. The Z input comes
-        // from the real Gear V2 module (x=8,y=8,z=-24). Its visible shaft
-        // runs along Z, through a bevel pair centered under the tray.
-        // A true X-axis shaft then reaches the OUTSIDE of the right frame
-        // at x=47.2px, so the belt never cuts through the ore trough.
+        final float shaftAngle=mill.getDriveRotationDegrees(partial);
+        // All coordinates are in controller-relative model pixels.
+        // Two shaft axes intersect at (8,8,-10), but the actual steel
+        // spindles STOP short of each other and exchange torque through
+        // two 8-tooth bronze bevel wheels in the forward (+X,+Z) quadrant.
+        // Both teeth and gearbox brackets are drawn separately from V2.
         final double inputX=8D/16D, inputY=8D/16D;
         final double lowerZ=-10D/16D, upperY=38.5D/16D;
         final double pulleyX=47.2D/16D;
-        // Opposing bevel rotation, then OPEN belt: both pulleys and the
-        // crankshaft share the same positive phase as all three cams.
+        // At contact: Z rotor approaches from +X, X rotor from +Z.
+        // Opposing signed angular velocities give the SAME contact-point
+        // tangent speed. This is a genuine 90-degree 1:1 meshing pair.
         final float inputAngle=-shaftAngle;
+
+        // Static bronze/wood gearbox is connected to the frame's two
+        // underside girders, with midshaft and side bearing supports.
+        part(pose,buffers,light,overlay,GEARBOX_FRAME,
+                inputX,inputY,lowerZ,null,0F);
+        part(pose,buffers,light,overlay,CROSS_BEARING,
+                25D/16D,inputY,lowerZ,null,0F);
+        part(pose,buffers,light,overlay,SIDE_LOWER_MOUNT,
+                pulleyX,inputY,lowerZ,null,0F);
+
+        // Continuous input shaft: rear module -> X/Z bevel intersection.
+        // The short spindle extends only 6.2px past the theoretical axes,
+        // through the gear's hollow hub. It does not cross the X axle.
         part(pose,buffers,light,overlay,INPUT_SHAFT,
                 inputX,inputY,-18D/16D,Axis.ZP,inputAngle);
+        part(pose,buffers,light,overlay,INPUT_SPINDLE,
+                inputX,inputY,lowerZ,Axis.ZP,inputAngle);
+        // Both gears share the same theoretical axes intersection as
+        // their rotation pivot. Their tooth rings are deliberately
+        // OFFSET along their shafts and meet with small clearance.
         part(pose,buffers,light,overlay,BEVEL_Z,
-                inputX,inputY,-12.5D/16D,Axis.ZP,inputAngle);
+                inputX,inputY,lowerZ,Axis.ZP,inputAngle);
         part(pose,buffers,light,overlay,BEVEL_X,
-                11.5D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+                inputX,inputY,lowerZ,Axis.XP,shaftAngle);
 
-        // The lower crossshaft is below the structural girder (Y=16px).
-        // Segment endpoints meet exactly: [8,24], [24,40], [40,47.2].
-        for(int x=16;x<=32;x+=16){
-            part(pose,buffers,light,overlay,DRIVE_SHAFT,
-                    x/16D,inputY,lowerZ,Axis.XP,shaftAngle);
-        }
+        // X output hub starts at x=10.5px (not x=8), so the perpendicular
+        // input shaft never intersects it. Segments join at x=24 and x=40;
+        // the last tip ends at the outside pulley x=47.2.
+        part(pose,buffers,light,overlay,LOWER_SPINDLE,
+                16D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+        part(pose,buffers,light,overlay,DRIVE_SHAFT,
+                32D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
 
