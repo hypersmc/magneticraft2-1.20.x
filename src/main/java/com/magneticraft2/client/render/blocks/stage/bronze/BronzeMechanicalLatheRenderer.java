@@ -36,6 +36,8 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_output_rotor");
     private static final ResourceLocation ARBOR =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_arbor");
+    private static final ResourceLocation SPINDLE =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_spindle");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -60,6 +62,7 @@ public final class BronzeMechanicalLatheRenderer
         pose.translate(.5D,0,.5D);
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-.5D,0,-.5D);
+        float inputAngle=lathe.getInputRotation(partial);
         float angle=lathe.getSpindleRotation(partial);
         ItemRenderer items=Minecraft.getInstance().getItemRenderer();
 
@@ -73,7 +76,7 @@ public final class BronzeMechanicalLatheRenderer
 
         pose.pushPose();
         pose.translate(.5D, .5D, .5D);
-        pose.mulPose(Axis.ZP.rotationDegrees(angle));
+        pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
@@ -81,29 +84,30 @@ public final class BronzeMechanicalLatheRenderer
 
         pose.pushPose();
         pose.translate(.5D,.5D,.5D);
-        pose.mulPose(Axis.XP.rotationDegrees(-angle));
+        pose.mulPose(Axis.XP.rotationDegrees(-inputAngle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_OUTPUT_ROTOR));
         pose.popPose();
         pose.popPose();
 
-        // Physical headstock chuck at x=-4.5, y=22, z=-10. The arbor is
-        // driven by the exact same transform and extends through the workpiece
-        // bore, unlike the previous item floating just beyond the jaws.
+        // The continuous spindle is seated inside the LEFT headstock bearing;
+        // the clutch stops it in place when machining is idle.
         pose.pushPose();
         pose.translate(-4.5D/16D,22D/16D,-10D/16D);
         pose.mulPose(Axis.XP.rotationDegrees(angle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(CHUCK));
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(SPINDLE));
         pose.popPose();
 
         ItemStack mounted=lathe.getOutput().isEmpty()
                 ?lathe.getWorkpiece():lathe.getOutput();
         if(!mounted.isEmpty()){
-            // Arbor/mandrel and stop collars rotate with the chuck. The gear
-            // or bearing is held on this shaft; no free-floating ring.
+            // Retaining collars appear only with a mounted casting.
+            // The main spindle itself is always rendered with the chuck.
             pose.pushPose();
             pose.translate(-4.5D/16D,22D/16D,-10D/16D);
             pose.mulPose(Axis.XP.rotationDegrees(angle));
