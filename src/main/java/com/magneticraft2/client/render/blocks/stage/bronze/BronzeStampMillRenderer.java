@@ -33,22 +33,26 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
     private static final ResourceLocation CAM =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_cam");
 
+    // Render-only powertrain, mechanically driven by the formed input module.
+    // X shafts and Z input each have correctly aligned baked geometry.
     private static final ResourceLocation DRIVE_SHAFT =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft");
     private static final ResourceLocation SHAFT_TIP =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_shaft_tip");
-    private static final ResourceLocation BEVEL =
+    private static final ResourceLocation INPUT_SHAFT =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_input_shaft");
+    private static final ResourceLocation BEVEL_Z =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bevel");
+    private static final ResourceLocation BEVEL_X =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bevel_x");
     private static final ResourceLocation PULLEY =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
     private static final ResourceLocation BELT_STRAIGHT =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_straight");
+    private static final ResourceLocation BELT_UPPER =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_upper");
     private static final ResourceLocation BELT_WRAP =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_wrap");
-    private static final ResourceLocation BEARING =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_bearing");
-    private static final ResourceLocation COLLAR =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_collar");
 
     private static void part(PoseStack pose,MultiBufferSource buffers,int light,int overlay,
                              ResourceLocation model,double x,double y,double z,
@@ -92,50 +96,61 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         pose.popPose();
 
         float shaftAngle=mill.getDriveRotationDegrees(partial);
+        // Model space is in controller-relative pixels. The Z input comes
+        // from the real Gear V2 module (x=8,y=8,z=-24). Its visible shaft
+        // runs along Z, through a bevel pair centered under the tray.
+        // A true X-axis shaft then reaches the OUTSIDE of the right frame
+        // at x=47.2px, so the belt never cuts through the ore trough.
+        final double inputX=8D/16D, inputY=8D/16D;
+        final double lowerZ=-10D/16D, upperY=38.5D/16D;
+        final double pulleyX=47.2D/16D;
+        // Opposing bevel rotation, then OPEN belt: both pulleys and the
+        // crankshaft share the same positive phase as all three cams.
+        final float inputAngle=-shaftAngle;
+        part(pose,buffers,light,overlay,INPUT_SHAFT,
+                inputX,inputY,-18D/16D,Axis.ZP,inputAngle);
+        part(pose,buffers,light,overlay,BEVEL_Z,
+                inputX,inputY,-12.5D/16D,Axis.ZP,inputAngle);
+        part(pose,buffers,light,overlay,BEVEL_X,
+                11.5D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
 
-        // Physical transmission, from the real rear-center Gear V2 shaft:
-        // rear Z shaft -> bevel pair -> X crossshaft -> right-side twin
-        // pulleys and vertical belt -> upper X crankshaft. Both 1:1 bevel
-        // and pulley stages share Gear V2's speed; the Z axis reverses
-        // direction at the bevel pair. No independent animation clock.
-        // The input rotor and rear bevel live inside the functional input
-        // module at (0,0,-2), without baking static faces into that cell.
-        part(pose,buffers,light,overlay,DRIVE_SHAFT,
-                .5D,.5D,-1.50D,Axis.ZP,shaftAngle);
-        part(pose,buffers,light,overlay,BEVEL,
-                .5D,.5D,-1.125D,Axis.ZP,shaftAngle);
-        part(pose,buffers,light,overlay,BEVEL,
-                .5D,.5D,-.875D,Axis.XP,-shaftAngle);
-        // The transverse drive line follows X beneath the supported trough.
-        // It remains outside all three front-facing functional item ports.
-        for(int station=-1;station<=2;station++){
+        // The lower crossshaft is below the structural girder (Y=16px).
+        // Segment endpoints meet exactly: [8,24], [24,40], [40,47.2].
+        for(int x=16;x<=32;x+=16){
             part(pose,buffers,light,overlay,DRIVE_SHAFT,
-                    station+.5D,.5D,-.875D,Axis.XP,-shaftAngle);
+                    x/16D,inputY,lowerZ,Axis.XP,shaftAngle);
         }
-        // Distinct bearing collar makes the drive actually look attached.
-        part(pose,buffers,light,overlay,COLLAR,
-                2.55D,.5D,-.875D,null,0F);
-        // Right-side belt train: lower pulley on crossshaft, upper pulley
-        // on the crankshaft, with nonrotating taut belt flights.
+        part(pose,buffers,light,overlay,SHAFT_TIP,
+                40D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+
+        // Pulleys share an X axis and turn the SAME way as the top cams.
+        // Straight belt flights and both half-wraps are stationary geometry,
+        // not independently spinning rings. Heights join with no overlap:
+        // 8..24px + 24..38.5px, and the pulley arcs cap the ends.
         part(pose,buffers,light,overlay,PULLEY,
-                2.97D,.5D,-.625D,Axis.XP,-shaftAngle);
+                pulleyX,inputY,lowerZ,Axis.XP,shaftAngle);
         part(pose,buffers,light,overlay,PULLEY,
-                2.97D,2.40625D,-.625D,Axis.XP,-shaftAngle);
-        // Belt flights run from the lower pulley to the upper pulley.
-        for(int segment=0;segment<2;segment++){
-            part(pose,buffers,light,overlay,BELT_STRAIGHT,
-                    2.97D,.5D+segment,-.625D,null,0F);
-        }
+                pulleyX,upperY,lowerZ,Axis.XP,shaftAngle);
+        part(pose,buffers,light,overlay,BELT_STRAIGHT,
+                pulleyX,16D/16D,lowerZ,null,0F);
+        part(pose,buffers,light,overlay,BELT_UPPER,
+                pulleyX,32D/16D,lowerZ,null,0F);
+        // The lower half-round uses the model's upper semicircle flipped.
         part(pose,buffers,light,overlay,BELT_WRAP,
-                2.97D,.5D,-.625D,Axis.XP,-shaftAngle);
+                pulleyX,inputY,lowerZ,Axis.XP,180F);
         part(pose,buffers,light,overlay,BELT_WRAP,
-                2.97D,2.40625D,-.625D,Axis.XP,-shaftAngle);
-        // A continuous rotating shaft is visible between all four
-        // original fixed pillow bearings; unlike the old static mesh.
-        for(int station=-2;station<=2;station++){
+                pulleyX,upperY,lowerZ,null,0F);
+
+        // One continuous drive axis through all four fixed crank pillows.
+        // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
+        // Critically, this rotates +shaftAngle just like every eccentric;
+        // the former -shaftAngle rendering was visibly backwards.
+        for(int x=-16;x<=32;x+=16){
             part(pose,buffers,light,overlay,DRIVE_SHAFT,
-                    station+.5D,2.40625D,-.625D,Axis.XP,-shaftAngle);
+                    x/16D,upperY,lowerZ,Axis.XP,shaftAngle);
         }
+        part(pose,buffers,light,overlay,SHAFT_TIP,
+                40D/16D,upperY,lowerZ,Axis.XP,shaftAngle);
 
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
