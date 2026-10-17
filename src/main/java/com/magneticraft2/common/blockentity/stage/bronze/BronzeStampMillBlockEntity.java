@@ -64,6 +64,7 @@ public class BronzeStampMillBlockEntity
     private boolean formed = false;
     private Direction matchedFacing = Direction.SOUTH;
     private String voxelProfileName = "";
+    private java.util.List<BlockPos> renderAirAnchors=java.util.List.of();
     @Nullable private net.minecraft.world.phys.shapes.VoxelShape collision;
     @Nullable private net.minecraft.world.phys.shapes.VoxelShape selection;
     @Override public void setMultiblockVoxelShapes(
@@ -655,7 +656,7 @@ public class BronzeStampMillBlockEntity
         }
 
         MultiblockRenderParts.assign(level,worldPosition,controller,
-                "bronze_stamp_mill",matchedFacing,java.util.List.of(),voxelProfileName);
+                "bronze_stamp_mill",matchedFacing,renderAirAnchors,voxelProfileName);
         requestModelDataUpdate();
         sync();
         return controller;
@@ -706,6 +707,7 @@ public class BronzeStampMillBlockEntity
                             blueprintName
                     );
             voxelProfileName=multiblock.getSettings().getVoxelProfile();
+            renderAirAnchors=multiblock.getSettings().getRenderAirAnchors();
 
             return structure;
         }
