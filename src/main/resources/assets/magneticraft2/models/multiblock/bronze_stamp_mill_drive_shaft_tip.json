@@ -2,10 +2,9 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "iron": "minecraft:block/iron_block",
     "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
     "dark": "minecraft:block/polished_blackstone",
-    "belt": "minecraft:block/brown_wool",
     "wood": "minecraft:block/stripped_spruce_log",
     "particle": "minecraft:block/cut_copper"
   },
@@ -69,29 +68,6 @@
       ],
       "faces": {
         "east": {
-          "texture": "#iron",
-          "uv": [
-            7.3,
-            7.3,
-            8.7,
-            8.7
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        8,
-        7.3,
-        7.3
-      ],
-      "to": [
-        8.0625,
-        8.7,
-        8.7
-      ],
-      "faces": {
-        "west": {
           "texture": "#iron",
           "uv": [
             7.3,
@@ -230,29 +206,6 @@
       ],
       "faces": {
         "east": {
-          "texture": "#bronze",
-          "uv": [
-            7.7,
-            8.7,
-            8.3,
-            8.9
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        8,
-        8.7,
-        7.7
-      ],
-      "to": [
-        8.0625,
-        8.9,
-        8.3
-      ],
-      "faces": {
-        "west": {
           "texture": "#bronze",
           "uv": [
             7.7,

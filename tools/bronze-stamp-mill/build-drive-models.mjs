@@ -8,15 +8,30 @@ function gear(axis,phase){
  const boxes=[],map=(a,u,v)=>axis==="z"?[u,v,a]:[a,v,u];
  const add=(m,al,ah,ul,uh,vl,vh)=>boxes.push(b(m,map(al,ul,vl),map(ah,uh,vh)));
  const ring=(m,lo,hi,r,h)=>{add(m,lo,hi,8-r,8+r,8+h,8+r);add(m,lo,hi,8-r,8+r,8-r,8-h);add(m,lo,hi,8-r,8-h,8-h,8+h);add(m,lo,hi,8+h,8+r,8-h,8+h)};
- ring("bronze",12.2,13.1,2.65,1.16);
- for(const u of [-1,1])for(const v of [-1,1])
-  add("bronze",12.2,13.1,u<0?5.45:9.15,u<0?6.85:10.55,v<0?5.45:9.15,v<0?6.85:10.55);
- ring("dark",13.1,13.38,2.12,1.10);
+ // Stepped octagonal pitch rim: makes the wheels visibly meet. The
+ // complete rotating cuboid envelope stays within a 4.02-pixel radius.
+ const octRing=(m,lo,hi,r,h)=>{
+  const bands=[[-3.85,-3.0,1.15],[-3.0,-2.05,2.55],[-2.05,-1.0,3.42],
+               [-1.0,1.0,3.85],[1.0,2.05,3.42],[2.05,3.0,2.55],
+               [3.0,3.85,1.15]];
+  const scale=r/3.85;
+  for(const [v0,v1,width] of bands){
+   const y0=8+v0*scale,y1=8+v1*scale,w=width*scale;
+   if(v0===-1&&v1===1){
+    add(m,lo,hi,8-w,8-h,y0,y1);
+    add(m,lo,hi,8+h,8+w,y0,y1);
+    add(m,lo,hi,8-h,8+h,y0,8-h);
+    add(m,lo,hi,8-h,8+h,8+h,y1);
+   }else add(m,lo,hi,8-w,8+w,y0,y1);
+  }
+ };
+ octRing("bronze",12.2,13.1,3.85,.90);
+ octRing("dark",13.1,13.38,3.42,.76);
  ring("bronze",10.6,12.2,1.35,.94);
  ring("iron",11.2,11.75,1.55,1.35);
  for(let i=0;i<8;i++){
   const a=(i*45+phase)*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
-  for(const[m,r0,r1,h]of [["bronze",2.48,3.48,.37],["iron",3.45,3.78,.15]])
+  for(const[m,r0,r1,h]of [["bronze",3.68,3.86,.10],["iron",3.83,3.95,.035]])
    add(m,12.06,12.94,8+Math.min(r0*c,r1*c)-h,8+Math.max(r0*c,r1*c)+h,8+Math.min(r0*s,r1*s)-h,8+Math.max(r0*s,r1*s)+h);
  }
  return boxes;
@@ -43,6 +58,10 @@ return {
  bronze_stamp_mill_drive_bevel_x:gear("x",22.5),
  bronze_stamp_mill_drive_input_spindle:[b("iron",[7.3,7.3,8],[8.7,8.7,14.2]),b("bronze",[7.7,8.7,8],[8.3,8.9,14.2])],
  bronze_stamp_mill_drive_lower_spindle:[b("iron",[2.5,7.3,7.3],[16,8.7,8.7]),b("bronze",[2.5,8.7,7.7],[16,8.9,8.3])],
+ bronze_stamp_mill_drive_input_shaft:[b("iron",[7.3,7.3,0],[8.7,8.7,16]),b("bronze",[7.7,8.7,0],[8.3,8.9,16])],
+ bronze_stamp_mill_drive_shaft:[b("iron",[0,7.3,7.3],[16,8.7,8.7]),b("bronze",[0,8.7,7.7],[16,8.9,8.3])],
+ bronze_stamp_mill_drive_shaft_start:[b("iron",[0,7.3,7.3],[16,8.7,8.7]),b("bronze",[0,8.7,7.7],[16,8.9,8.3])],
+ bronze_stamp_mill_drive_shaft_tip:[b("iron",[8,7.3,7.3],[15.2,8.7,8.7]),b("bronze",[8,8.7,7.7],[15.2,8.9,8.3])],
  bronze_stamp_mill_drive_gearbox_frame:gearbox,
  bronze_stamp_mill_drive_cross_bearing:cross,
  bronze_stamp_mill_drive_side_lower_mount:side
@@ -82,8 +101,25 @@ return {parent:"minecraft:block/block",ambientocclusion:false,textures,elements}
 };
 const check=process.argv.includes("--check");
 let errors=0;
+// End caps at each joint would render two coplanar faces, causing flicker.
+// Keep a single exposed west cap on the first top-shaft segment; every
+// internal splice is open and its adjoining cylindrical faces meet exactly.
+const openEnds={
+ bronze_stamp_mill_drive_input_shaft:["south"],
+ bronze_stamp_mill_drive_input_spindle:["north"],
+ bronze_stamp_mill_drive_lower_spindle:["east"],
+ bronze_stamp_mill_drive_shaft:["west","east"],
+ bronze_stamp_mill_drive_shaft_start:["east"],
+ bronze_stamp_mill_drive_shaft_tip:["west"]
+};
+function removeInternalCaps(model,names){
+ if(!names?.length)return model;
+ return {...model,elements:model.elements.filter(e=>
+   !Object.keys(e.faces).some(face=>names.includes(face)))};
+}
 for(const [name,boxes]of Object.entries(designs)){
- const model=compile(boxes),output=JSON.stringify(model,null,2)+"\n";
+ const model=removeInternalCaps(compile(boxes),openEnds[name]);
+ const output=JSON.stringify(model,null,2)+"\n";
  const file=path.join(process.cwd(),"src/main/resources/assets/magneticraft2/models/multiblock",name+".json");
  if(check){if(!fs.existsSync(file)||fs.readFileSync(file,"utf8")!==output){console.error("Outdated drive model:",name);errors++;}}
  else {fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,output,"utf8");}
