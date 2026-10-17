@@ -69,8 +69,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Each hammer is centered over one complete 1x1 I/O module pocket.
         int[] stations={-8,8,24};
         for(int i=0;i<stations.length;i++) {
-            // Stamp shoe rests one pixel above the raised crushing plate;
-            // the entire 1x1 collection port remains beneath the plate.
+            // The narrow shoe fits BETWEEN the bronze trough lips and
+            // rides inside both vertically anchored guide rails.
             pose.pushPose();
             pose.translate((stations[i]-8D)/16D,
                     24D/16D+mill.getHammerLift(partial,i),
@@ -90,7 +90,9 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         ItemStack feed=mill.getInputStack();
         if(!feed.isEmpty()){
             pose.pushPose();
-            pose.translate(.5D,18D/16D,-10D/16D);
+            // Display incoming ore on top of the actual crushing plate,
+            // not below the tray inside the support frame.
+            pose.translate(.5D,24D/16D,-10D/16D);
             pose.scale(.55F,.55F,.55F);
             BakedModel model=items.getModel(feed,mill.getLevel(),null,721);
             items.render(feed,ItemDisplayContext.GROUND,false,pose,buffers,light,overlay,model);
