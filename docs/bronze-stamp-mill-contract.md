@@ -81,3 +81,26 @@ The moving hammer body was narrowed so that, at rest and during its vertical str
 **Port contract unchanged:** All three item I/O modules remain real, unobstructed 1×1 blocks on the lower south service shelf, and the rear Gear V2 input retains its full cell. The 5×3×4 four-way JSON structures, Pattern/Visualize page, processing recipes, Gear V2 load, wear/persistence and item port implementation are unchanged. The Voxel V2 profile **did change**, so dismantle and reform an existing Stamp Mill after rebuilding to refresh saved voxel snapshots. Regression source checks are implemented; Gradle and Minecraft rendering verification are still required.
 
 A second static/dynamic face audit found the yokes' outer X edges met the fixed crank stands on the same Y=34 plane. The normal and worn models now use narrower **12.2-pixel guide yokes**, retaining a 0.2-pixel lateral clearance to the crank posts. A regression check compares resting hammer, cam and formed input-frame surfaces to the canonical static V2 source; no coplanar cross-model faces are permitted in the parked position. The first in-game pass is still required to validate every animated phase and actual lighting/texture behavior.
+
+
+## 2026-10-17 — visible bevel/belt transmission prototype
+
+An explicit render-only 1:1 drive train was added: the rear Gear V2 input
+rotates a Z-axis input shaft and paired bevel shapes; an X-axis crossshaft
+leads to right-side lower and upper pulleys, a vertical belt and the
+upper camshaft. The machine still reads the *real* Mechanical Input Module
+phase and torque; no extra network node, recipe, blueprint block, item
+port, controller offset or input load is introduced. All moving parts
+derive angles from the same Gear V2 visual rotation value.
+
+The previous undefined `#metal` reference in the static shaft was
+replaced with the existing `#iron` material in the authored design,
+canonical V2 source and 20 affected directional baked parts.
+
+**Not yet verified**: the first in-game review must check the gearbox
+alignment, lower under-tray shaft clearance, belt flight continuity,
+rotating/static upper-shaft overlap, texture tiling, flickering during
+animation, and all four facings. The legacy static upper shaft still
+exists in the V2 structure, so its relationship to the new rotating
+shaft needs a dedicated geometry follow-up. Neither `./gradlew build`
+nor a Minecraft runtime test has been performed for this change.
