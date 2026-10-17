@@ -15,8 +15,215 @@
     {
       "type": "text",
       "text": "$(bold)Bronze alloy$()$(br2)Prepare one Bronze Alloy Charge from three Copper Ingots and one Tin Ingot, then fire it with coal in the Primitive Furnace. One charge produces four Bronze Ingots and Slag.$(br2)Bronze machinery and tools will build from this point."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Wooden patterns$()$(br2)The Pattern Maker is the first Bronze Age bench. Craft it using your first Bronze Ingot, Copper Plates, and a sturdy wooden frame.$(br2)Place the bench, then sneak-right-click with an empty hand to select a gear or bearing pattern. Right-click the bench with a plank to cut a reusable wooden pattern.$(br2)The cutter and selected pattern are represented on the bench itself."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Pattern Maker",
+      "recipe": "magneticraft2:bronze_pattern_maker",
+      "text": "A single-block workbench for reusable gear and bearing patterns. These patterns will be pressed into molds at the Mold Table before casting."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)The Mold Table$()$(br2)Insert a wooden gear or bearing pattern, then Sand (or Red Sand) and a Clay Ball.$(br2)With an empty hand, right-click four times to press the mold. Collect the finished Green Sand Mold by right-clicking empty-handed.$(br2)Sneak-right-click with an empty hand to recover the pattern or unused input materials. The wooden pattern is reusable; one Sand and one Clay Ball are consumed per mold. Install the finished mold into a Bronze Casting Basin to receive one ladle of molten bronze."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mold Table",
+      "recipe": "magneticraft2:bronze_mold_table",
+      "text": "A hand-operated, GUI-less sand molding station. The materials and finished mold are displayed directly on the workbench."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze Foundry$()$(br2)The lower recessed firebox burns solid furnace fuels. The upper refractory crucible accepts Bronze Ingots after you form the structure.$(br2)Fuel warms a persistent brick heat mass. At the configured heat threshold a stored ingot is consumed and one equivalent bronze unit appears in the crucible. Its quality data is retained; unlike an ordinary furnace, the Foundry does not immediately output finished castings."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Foundry Controller",
+      "recipe": "magneticraft2:bronze_foundry",
+      "text": "This crafts only the controller, not the full machine. Place fifteen Bricks blocks and use Visualize on the next page to guide construction."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Foundry",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "B_B"
+          ],
+          [
+            "BBB",
+            "BBB",
+            "B0B"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_foundry",
+          "B": "minecraft:bricks"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the same 3x2x3 foundation: fifteen Bricks blocks and the Foundry Controller, leaving upper centre and upper front-middle air. Right-click the controller to form. Insert fuel by right-clicking the lower firebox, and Bronze Ingots by right-clicking the upper crucible."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Heating the Foundry$()$(br2)Right-click the firebox with solid furnace fuel. Right-click the crucible with a Bronze Ingot to load its charge. Empty-hand clicks show heat, stored charge and crucible contents. Sneak-right-click with an empty hand to recover unused fuel or unmelted ingots from the corresponding opening.$(br2)Heat rises while fuel burns and dissipates when idle; cooling below the lower HEAT threshold solidifies bronze inside the crucible; reheating to the melting threshold liquefies it again without consuming another ingot."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)First melting test$()$(br2)The molten amount is counted in $(italic)ingot-equivalents$(), not fluid millibuckets. Bronze with different quality metadata cannot mix in one batch. The hot/solidified surface changes visually as the heat level changes.$(br2)Use an empty Refractory Pouring Ladle at the tapping valve to extract one molten unit, then pour into a Green Sand Mold in the Casting Basin. Breaking the Foundry returns any unpoured bronze as the original ingots; the new casting stations are explained on the following pages."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Pouring and casting$()$(br2)Craft a Refractory Pouring Ladle and a Bronze Casting Basin. The Foundry's tapping valve now transfers $(bold)one$() hot bronze unit into an empty ladle. The ladle retains the source ingot's quality and cools if you carry it too long.$(br2)A cold, filled ladle cannot be poured. Sneak-right-click it in the air to recover the original Bronze Ingot; the ladle can then be reused."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Refractory Pouring Ladle",
+      "recipe": "magneticraft2:bronze_pouring_ladle",
+      "text": "A refractory cup and bronze fitting for safe manual handling. Holds exactly one ingot-equivalent of molten bronze."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Casting Basin",
+      "recipe": "magneticraft2:bronze_casting_basin",
+      "text": "A one-block refractory receiver with a copper rim. It accepts the Green Sand Gear and Bearing Molds made at the Mold Table."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Casting steps$()$(br2)1. Insert a Gear or Bearing Green Sand Mold into an empty Casting Basin.$(br)2. Either position the Basin directly under the Foundry tap and empty-hand click the valve, or fill a ladle at the valve and right-click the Basin with it.$(br)3. Wait for cooling and collect a Rough Bronze Gear or Bearing Casting.$(br2)Each pour consumes one mold and one molten bronze ingot-equivalent; the wooden pattern remains reusable. Finish rough castings with the Mechanical Lathe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Material accounting$()$(br2)Bronze quality information is carried from ingot to crucible, ladle and rough casting. The Basin doesn't turn bronze directly into precision machine components.$(br2)Unpoured molds may be removed by sneaking with an empty hand. Breaking a Basin during cooling returns the original bronze ingot-equivalent, but the poured sand mold is lost. Breaking after cooling drops the finished rough casting. No fluid pipes transport molten metal."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Mechanical Lathe$()$(br2)Bronze parts cast in sand molds are rough and must be machined before precision use. Build a 5-wide, 3-deep, 2-high Lathe structure from Stone Bricks, Oak Planks and Cut Copper, with a Gear V2 Mechanical Input Module at the lower rear center. Place the controller at the lower front center. Right-click the controller to form.$(br2)The first structure model is intentionally a functional prototype; complete headstock and moving tool carriage visuals are still in progress."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Controller",
+      "recipe": "magneticraft2:bronze_mechanical_lathe",
+      "text": "Craft the controller, then build the larger 5×2×3 structure shown on the next page. The controller alone cannot turn bronze."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Lathe",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "H___H",
+            "_____"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_lathe",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "H": "minecraft:cut_copper"
+        },
+        "symmetrical": false
+      },
+      "text": "View from the controller-facing side: rear lower center is the Mechanical Input Module. Upper rear row is five Oak Planks; upper middle has Cut Copper at both ends and air between; entire upper front row stays air. The controller is on the lower front middle."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Cutting Tool",
+      "recipe": "magneticraft2:bronze_lathe_cutter",
+      "text": "Install this replaceable Bronze/Flint cutting tool into the formed Lathe. It wears by one use per finished workpiece, never from idle time."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Using the Lathe$()$(br2)Mount a Rough Bronze Gear or Bearing Casting by right-clicking the formed Lathe. Install a cutting tool. Supply at least 12 RPM and 2.5 torque with Gear V2 at the rear input. The first test cycle takes 160 ticks and stalls without sufficient load supply.$(br2)Empty-hand right-click checks progress and collects finished Precision Bronze Gears/Bearings. Sneak-empty-hand retrieves an unfinished casting or installed cutter. Full source material quality survives machining."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Industrial Ore Breaking$()$(br2)The Stamp Mill does not replace the Copper Grinder: it breaks batches of raw ore much faster, but requires a heavier Gear V2 network and serviceable stamp shoes.$(br2)Crushed ore still goes to the Mechanical Ore Washer and then the Sifter. Your existing Copper production line becomes the foundation of the Bronze factory."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Stamp Mill Controller",
+      "recipe": "magneticraft2:bronze_stamp_mill",
+      "text": "Craft the Bronze Stamp Mill controller using precision bronze components. The formed machine is five blocks wide, four deep and three tall, including a front service shelf that holds the full-size input and output blocks."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Stamp Mill",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBB",
+            "P_PP",
+            "P_PP",
+            "P_PP",
+            "BBBB"
+          ],
+          [
+            "PBBB",
+            "P___",
+            "P___",
+            "P___",
+            "PBBB"
+          ],
+          [
+            "SSSS",
+            "SSSU",
+            "IS0Y",
+            "SSSO",
+            "SSSS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_stamp_mill",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "B": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "This 5-wide, 4-deep, 3-high Stamp Mill has three complete 1x1 I/O MODULE BLOCKS at GROUND LEVEL in an open service row, one block SOUTH of the controller. Their default wooden/copper ports remain visible for player or conveyor access. Ore input, tailings, and crushed-ore product are left to right from the South. The controller is in the original front-center bottom row and the Gear V2 input sits at the rear center. Keep all 12 specified AIR cells clear; nine of these become V2 render proxies when formed. Build exactly as Visualize shows."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Stamp Shoes",
+      "recipe": "magneticraft2:bronze_stamp_shoe",
+      "text": "The three stamp heads share one replaceable shoe maintenance counter. Each successful two-ore batch consumes one service cycle; a fully worn shoe stops further processing without wasting ore. Right-click with a fresh shoe to service; sneak-right-click empty-handed to inspect wear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Running the Stamp Mill$()$(br2)Feed TWO Chalcocite Ore or TWO Cassiterite Ore to the item input. Gear V2 must supply at least 24 RPM and 6 torque. A 115-tick cycle outputs two units of the corresponding crushed ore; gravel tailings have a 20% chance.$(br2)If the output or tailings port is blocked, the machine waits without consuming more ore. Stop the gears and the cycle pauses. Continue with your existing Washer and Sifter, rather than bypassing separation."
     }
   ],
   "sortnum": 3,
-  "read_by_default": true
+  "read_by_default": true,
+  "extra_recipe_mappings": {
+    "magneticraft2:bronze_foundry": 8,
+    "magneticraft2:bronze_mechanical_lathe": 18,
+    "magneticraft2:bronze_stamp_mill": 23
+  },
+  "mappings": {
+    "magneticraft2:bronze_pouring_ladle": 13,
+    "magneticraft2:bronze_casting_basin": 14,
+    "magneticraft2:bronze_lathe_cutter": 20
+  }
 }

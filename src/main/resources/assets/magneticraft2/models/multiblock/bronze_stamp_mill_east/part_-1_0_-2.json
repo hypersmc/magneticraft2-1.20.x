@@ -1,0 +1,106 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        9,
+        3
+      ],
+      "to": [
+        16,
+        9.0625,
+        8
+      ],
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            3,
+            16,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9,
+        7.9375
+      ],
+      "to": [
+        16,
+        16,
+        8
+      ],
+      "faces": {
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            9,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        9,
+        3
+      ],
+      "to": [
+        16,
+        14,
+        3.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            9,
+            16,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14,
+        3
+      ],
+      "to": [
+        16,
+        16,
+        3.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

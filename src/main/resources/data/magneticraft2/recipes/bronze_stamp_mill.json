@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BPB",
+    "SCS",
+    "BPB"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "P": {
+      "item": "minecraft:oak_planks"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_stamp_mill",
+    "count": 1
+  }
+}
