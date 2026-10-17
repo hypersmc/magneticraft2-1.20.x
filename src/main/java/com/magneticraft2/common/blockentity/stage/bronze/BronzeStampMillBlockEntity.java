@@ -512,10 +512,27 @@ public class BronzeStampMillBlockEntity
                 );
     }
 
+    /**
+     * The formed input module renderer spins about the positive WORLD X/Z
+     * axis. For north/west layouts that axis opposes the mill's local +Z.
+     * This sign change is visual only and leaves Gear V2's load untouched.
+     */
+    public float getStampInputRotationDegrees(float partialTicks) {
+        Direction facing = getFacing();
+        float axisSign = facing == Direction.NORTH || facing == Direction.WEST
+                ? -1F : 1F;
+        return axisSign * getDriveRotationDegrees(partialTicks);
+    }
+
+    /** One bevel reverses the input; the open belt adds no reversal. */
+    public float getStampCrankRotationDegrees(float partialTicks) {
+        return -getStampInputRotationDegrees(partialTicks);
+    }
+
     /** Three independent eccentric stamps, evenly phased by 120 degrees. */
     public float getHammerLift(float partialTicks,int hammerIndex) {
         if(!processing)return 0F;
-        double radians=Math.toRadians(getDriveRotationDegrees(partialTicks)+120D*hammerIndex);
+        double radians=Math.toRadians(getStampCrankRotationDegrees(partialTicks)+120D*hammerIndex);
         return (float)(0.32D*(.5D+.5D*Math.cos(radians)));
     }
 

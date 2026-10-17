@@ -28,8 +28,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer");
     private static final ResourceLocation WORN_HAMMER =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer_worn");
-    private static final ResourceLocation MODULE =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_input_frame");
     private static final ResourceLocation CAM =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_cam");
 
@@ -50,6 +48,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
 
     private static final ResourceLocation INPUT_SPINDLE =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_input_spindle");
+    private static final ResourceLocation INPUT_COUPLER =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_input_coupler");
     private static final ResourceLocation LOWER_SPINDLE =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_lower_spindle");
     private static final ResourceLocation GEARBOX_FRAME =
@@ -100,15 +100,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-.5D,0D,-.5D);
 
-        // The actual formed input module at (0,0,-2) is not a filler.
-        // Render a compact bearing casing right over its hidden block state.
-        pose.pushPose();
-        pose.translate(0D,0D,-2D);
-        renderModel(pose,buffers,light,overlay,
-                Minecraft.getInstance().getModelManager().getModel(MODULE));
-        pose.popPose();
-
-        final float shaftAngle=mill.getDriveRotationDegrees(partial);
+        // The formed input module renders its own wood shaft and bearing.
+        // Only the drive extension OUTSIDE its real 1x1 block is rendered here.
+        final float inputAngle=mill.getStampInputRotationDegrees(partial);
+        final float driveAngle=mill.getStampCrankRotationDegrees(partial);
         // All coordinates are in controller-relative model pixels.
         // Two shaft axes intersect at (8,8,-10), but the actual steel
         // spindles STOP short of each other and exchange torque through
@@ -117,10 +112,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         final double inputX=8D/16D, inputY=8D/16D;
         final double lowerZ=-10D/16D, upperY=38.5D/16D;
         final double pulleyX=47.2D/16D;
-        // At contact: Z rotor approaches from +X, X rotor from +Z.
-        // Opposing signed angular velocities give the SAME contact-point
-        // tangent speed. This is a genuine 90-degree 1:1 meshing pair.
-        final float inputAngle=-shaftAngle;
+        // Input is synchronized with the real module's +world-axis rotor.
+        // At the (+X,+Z) tooth contact, X and Z opposite angular signs
+        // give matching tangential velocities (a true 1:1 bevel drive).
+
 
         // Static bronze/wood gearbox is connected to the frame's two
         // underside girders, with midshaft and side bearing supports.
@@ -131,9 +126,11 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,SIDE_LOWER_MOUNT,
                 pulleyX,inputY,lowerZ,null,0F);
 
-        // Continuous input shaft: rear module -> X/Z bevel intersection.
-        // The short spindle extends only 6.2px past the theoretical axes,
-        // through the gear's hollow hub. It does not cross the X axle.
+        // Wood-to-iron coupling at the front of the ACTUAL module cell.
+        // Its hollow center leaves the thin rotating steel extension clear.
+        part(pose,buffers,light,overlay,INPUT_COUPLER,
+                inputX,inputY,-16D/16D,Axis.ZP,inputAngle);
+        // Steel begins at z=-16, and never occupies the formed input block.
         part(pose,buffers,light,overlay,INPUT_SHAFT,
                 inputX,inputY,-18D/16D,Axis.ZP,inputAngle);
         part(pose,buffers,light,overlay,INPUT_SPINDLE,
@@ -144,26 +141,26 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,BEVEL_Z,
                 inputX,inputY,lowerZ,Axis.ZP,inputAngle);
         part(pose,buffers,light,overlay,BEVEL_X,
-                inputX,inputY,lowerZ,Axis.XP,shaftAngle);
+                inputX,inputY,lowerZ,Axis.XP,driveAngle);
 
         // X output hub starts at x=10.5px (not x=8), so the perpendicular
         // input shaft never intersects it. Segments join at x=24 and x=40;
         // the last tip ends at the outside pulley x=47.2.
         part(pose,buffers,light,overlay,LOWER_SPINDLE,
-                16D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+                16D/16D,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,DRIVE_SHAFT,
-                32D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+                32D/16D,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,SHAFT_TIP,
-                40D/16D,inputY,lowerZ,Axis.XP,shaftAngle);
+                40D/16D,inputY,lowerZ,Axis.XP,driveAngle);
 
         // Pulleys share an X axis and turn the SAME way as the top cams.
         // Straight belt flights and both half-wraps are stationary geometry,
         // not independently spinning rings. Heights join with no overlap:
         // 8..24px + 24..38.5px, and the pulley arcs cap the ends.
         part(pose,buffers,light,overlay,PULLEY,
-                pulleyX,inputY,lowerZ,Axis.XP,shaftAngle);
+                pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
-                pulleyX,upperY,lowerZ,Axis.XP,shaftAngle);
+                pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,BELT_STRAIGHT,
                 pulleyX,16D/16D,lowerZ,null,0F);
         part(pose,buffers,light,overlay,BELT_UPPER,
@@ -176,16 +173,16 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
 
         // One continuous drive axis through all four fixed crank pillows.
         // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
-        // Critically, this rotates +shaftAngle just like every eccentric;
-        // the former -shaftAngle rendering was visibly backwards.
+        // Every upper shaft segment and eccentric uses the signed output
+        // phase of the bevel pair, with no extra reversal in the open belt.
         for(int x=-16;x<=32;x+=16){
             // The left exposed end is capped once; shared segment joints
             // have NO coplanar end faces, avoiding moving axle flicker.
             part(pose,buffers,light,overlay,x==-16?DRIVE_SHAFT_START:DRIVE_SHAFT,
-                    x/16D,upperY,lowerZ,Axis.XP,shaftAngle);
+                    x/16D,upperY,lowerZ,Axis.XP,driveAngle);
         }
         part(pose,buffers,light,overlay,SHAFT_TIP,
-                40D/16D,upperY,lowerZ,Axis.XP,shaftAngle);
+                40D/16D,upperY,lowerZ,Axis.XP,driveAngle);
 
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
@@ -205,7 +202,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             // One crank per stamp station; phase stagger matches hammer travel.
             pose.pushPose();
             pose.translate(stations[i]/16D,38.5D/16D,-10D/16D);
-            pose.mulPose(Axis.XP.rotationDegrees(shaftAngle+120F*i));
+            pose.mulPose(Axis.XP.rotationDegrees(driveAngle+120F*i));
             pose.translate(-.5D,-.5D,-.5D);
             renderModel(pose,buffers,light,overlay,cam);
             pose.popPose();
