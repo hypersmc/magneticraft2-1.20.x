@@ -83,24 +83,56 @@ The moving hammer body was narrowed so that, at rest and during its vertical str
 A second static/dynamic face audit found the yokes' outer X edges met the fixed crank stands on the same Y=34 plane. The normal and worn models now use narrower **12.2-pixel guide yokes**, retaining a 0.2-pixel lateral clearance to the crank posts. A regression check compares resting hammer, cam and formed input-frame surfaces to the canonical static V2 source; no coplanar cross-model faces are permitted in the parked position. The first in-game pass is still required to validate every animated phase and actual lighting/texture behavior.
 
 
-## 2026-10-17 — visible bevel/belt transmission prototype
+## 2026-10-17 — revised gearbox and outer belt drive (post-gameplay screenshot)
 
-An explicit render-only 1:1 drive train was added: the rear Gear V2 input
-rotates a Z-axis input shaft and paired bevel shapes; an X-axis crossshaft
-leads to right-side lower and upper pulleys, a vertical belt and the
-upper camshaft. The machine still reads the *real* Mechanical Input Module
-phase and torque; no extra network node, recipe, blueprint block, item
-port, controller offset or input load is introduced. All moving parts
-derive angles from the same Gear V2 visual rotation value.
+The first transmission prototype was rejected after in-game screenshots showed
+the long upper shaft turning **opposite** to the three eccentric cams, plus
+multiple misaligned and floating pieces beneath the mill. The Z input had been
+drawn with an X-axis shaft asset, the horizontal shaft repeated beyond its
+actual joint positions, and belt half-wrap geometry was mistakenly rotating.
 
-The previous undefined `#metal` reference in the static shaft was
-replaced with the existing `#iron` material in the authored design,
-canonical V2 source and 20 affected directional baked parts.
+The follow-up on PR #11 implements a physically connected **1:1 visual drive
+path** without changing the server-side Gear V2 load or the 5×3×4 blueprint:
 
-**Not yet verified**: the first in-game review must check the gearbox
-alignment, lower under-tray shaft clearance, belt flight continuity,
-rotating/static upper-shaft overlap, texture tiling, flickering during
-animation, and all four facings. The legacy static upper shaft still
-exists in the V2 structure, so its relationship to the new rotating
-shaft needs a dedicated geometry follow-up. Neither `./gradlew build`
-nor a Minecraft runtime test has been performed for this change.
+1. **Input:** the existing rear-center Gear V2 module still provides the real
+   rotational state at controller offset `(0,0,-2)`. Its new Z-aligned spindle
+   extends at `(x=8,y=8,z=-26..-10)` in controller-relative model pixels.
+2. **Lower bevel pair:** a Z-facing bevel centered around `(8,8,-12.5)`
+   engages a separate X-facing bevel around `(11.5,8,-10)`. Only the Z-input
+   spin is reversed for the bevel. The lower crossshaft is actually aligned
+   with the X gear and occupies `x=8..47.2, y=8, z=-10`.
+3. **External belt:** both X-axis pulleys are centered at `x=47.2,z=-10`,
+   with centers at `y=8` and `y=38.5`. Their thinned mounting faces fit
+   entirely within the 5-wide footprint (max local x 47.9475). The belt's two
+   static visible flights meet without overlap at y=24, while its top and
+   bottom half-wraps remain stationary geometry. The **pulleys** rotate.
+4. **Upper crankshaft:** four uninterrupted 16-pixel spindle segments span
+   `x=-24..40`; the end tip continues to `x=47.2`. All four stationary
+   crank pillow blocks support this shaft. Its rotation is `+shaftAngle`,
+   exactly like the three eccentrics (`+120°` relative phases). The
+   original `mount_upper_drive_shaft` static cuboid was removed so there is
+   no second non-moving axle drawn through it.
+
+The updated authoring design has **101 anchored static boxes**. Its canonical
+visible surface model and **179 of 228** V2 directional part files were
+regenerated; the remaining parts are unchanged. No other machine models or
+their Voxel V2 geometry were modified. Both the lower shaft and the belt and
+pulley envelopes have been checked against the entire authored static frame.
+The real input module and all three actual item ports retain their full,
+untouched block volumes. The book's blueprint dimensions and placement have
+not changed.
+
+**Verification status:** source-level checks have been added to
+`tools/bronze-stamp-mill/test-contract.mjs` for the corrected drive layout,
+texture references, native UV proportions, static shaft removal, no physical
+intersections and the positive upper drive phase. The patch has not been
+verified by running `./gradlew build`, nor rendered in Minecraft after this
+correction. The belt's surface does not yet scroll visually; the pulley
+rotation and shaft phase are the meaningful moving elements at this stage.
+
+**Next in-game test:** rebuild/reform the 5×3×4 mill, then inspect the lower
+bevel connection from behind and in spectator mode; the *right outer side*
+belt and its two pulleys; the top shaft and all three cams while driven; the
+stopped state; all four orientations; and any flickering or frame/shaft
+clipping. Pay particular attention to the four crank pillow bearings, the
+underside of the wooden front support, and clearance to adjacent blocks.
