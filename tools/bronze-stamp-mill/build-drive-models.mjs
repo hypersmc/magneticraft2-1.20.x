@@ -58,7 +58,18 @@ return {
  bronze_stamp_mill_drive_bevel_x:gear("x",22.5),
  bronze_stamp_mill_drive_input_spindle:[b("iron",[7.3,7.3,8],[8.7,8.7,14.2]),b("bronze",[7.7,8.7,8],[8.3,8.9,14.2])],
  bronze_stamp_mill_drive_lower_spindle:[b("iron",[2.5,7.3,7.3],[16,8.7,8.7]),b("bronze",[2.5,8.7,7.7],[16,8.9,8.3])],
- bronze_stamp_mill_drive_input_shaft:[b("iron",[7.3,7.3,0],[8.7,8.7,16]),b("bronze",[7.7,8.7,0],[8.3,8.9,16])],
+ // This extension begins at the formed module's FRONT FACE (z=-16).
+ // The actual module BER owns all housing and wooden shaft faces behind it.
+ bronze_stamp_mill_drive_input_shaft:[b("iron",[7.3,7.3,10],[8.7,8.7,16]),b("bronze",[7.7,8.7,10],[8.3,8.9,16])],
+ // Four copper bars surround the steel extension, with a real 2.2px bore.
+ // The near end is recessed by .15px from the wooden module shaft face;
+ // no duplicate coplanar copper/wood surfaces are baked or rendered.
+ bronze_stamp_mill_drive_input_coupler:[
+  b("bronze",[4.85,4.85,8.15],[11.15,6.9,11.5]),
+  b("bronze",[4.85,9.1,8.15],[11.15,11.15,11.5]),
+  b("bronze",[4.85,6.9,8.15],[6.9,9.1,11.5]),
+  b("bronze",[9.1,6.9,8.15],[11.15,9.1,11.5])
+ ],
  bronze_stamp_mill_drive_shaft:[b("iron",[0,7.3,7.3],[16,8.7,8.7]),b("bronze",[0,8.7,7.7],[16,8.9,8.3])],
  bronze_stamp_mill_drive_shaft_start:[b("iron",[0,7.3,7.3],[16,8.7,8.7]),b("bronze",[0,8.7,7.7],[16,8.9,8.3])],
  bronze_stamp_mill_drive_shaft_tip:[b("iron",[8,7.3,7.3],[15.2,8.7,8.7]),b("bronze",[8,8.7,7.7],[15.2,8.9,8.3])],
@@ -105,7 +116,7 @@ let errors=0;
 // Keep a single exposed west cap on the first top-shaft segment; every
 // internal splice is open and its adjoining cylindrical faces meet exactly.
 const openEnds={
- bronze_stamp_mill_drive_input_shaft:["south"],
+ bronze_stamp_mill_drive_input_shaft:["north","south"],
  bronze_stamp_mill_drive_input_spindle:["north"],
  bronze_stamp_mill_drive_lower_spindle:["east"],
  bronze_stamp_mill_drive_shaft:["west","east"],
