@@ -176,16 +176,16 @@
           ],
           [
             "PBB",
-            "P_U",
-            "P_Y",
-            "P_O",
+            "P__",
+            "P__",
+            "P__",
             "PBB"
           ],
           [
             "SSS",
-            "SSS",
-            "IS0",
-            "SSS",
+            "SUS",
+            "IY0",
+            "SOS",
             "SSS"
           ]
         ],
@@ -201,7 +201,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build with Visualize from bottom to top. The five columns of this guide correspond to the machine's 5-block width; the machine is 3 blocks deep and 3 high. For the south layout, the controller is at the lower front center and the Mechanical Input Module is lower rear-center. In the middle front row, the item input, tailings output, and main crushed-ore output stand between the Cut Copper corner posts. Leave the central upper cells empty. The structure's actual blocks determine its facing when you form it; controller placement facing alone does not rotate a mismatched build. If you assembled the previous guide's 3x5 layout, rebuild with this corrected Visualize projection."
+      "text": "Each input/output module is a FULL block. All three go in the BOTTOM middle row, directly underneath the three stamp heads, between the rear Gear V2 bearing and front controller. They remain visible as collection hoppers in a recessed bay. Keep the entire middle and front of layer 2 clear of extra blocks; the framework forms around them. Item input, tailings output, crushed-ore output run left to right from the south side. Build with Visualize bottom-up."
     },
     {
       "type": "patchouli:crafting",
