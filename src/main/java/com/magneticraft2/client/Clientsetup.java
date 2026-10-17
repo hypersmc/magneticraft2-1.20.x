@@ -23,6 +23,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlock
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeStampMillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
@@ -114,6 +115,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get(), BronzeStampMillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
@@ -151,6 +153,9 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_output_rotor"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_arbor"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_cam"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_chuck"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
