@@ -26,6 +26,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public final class BronzeStampMillRenderer implements BlockEntityRenderer<BronzeStampMillBlockEntity> {
     private static final ResourceLocation HAMMER =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer");
+    private static final ResourceLocation WORN_HAMMER =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer_worn");
     private static final ResourceLocation MODULE =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_input_frame");
     private static final ResourceLocation CAM =
@@ -61,7 +63,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         pose.popPose();
 
         float shaftAngle=mill.getDriveRotationDegrees(partial);
-        BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(HAMMER);
+        BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
+                mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
         BakedModel cam=Minecraft.getInstance().getModelManager().getModel(CAM);
         int[] stations={-14,8,30};
         for(int i=0;i<stations.length;i++) {

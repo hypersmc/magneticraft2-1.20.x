@@ -154,6 +154,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_arbor"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_spindle"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_cam"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
