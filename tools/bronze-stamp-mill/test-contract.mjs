@@ -206,26 +206,11 @@ for(const id of powerModels){
   }
 }
 
-// The actual pinions must mesh at the forward (+X,+Z) tooth corner.
-// A full 360-degree sweep is bounded by the radius of *every* model face
-// corner, not just by the position of the visible teeth at rest.
-const sweptRadius=(name,axis)=>{
-  const model=read(asset(name)),u=axis==="z"?0:2;
-  return Math.max(...model.elements.flatMap(e=>
-    [e.from[u],e.to[u]].flatMap(x=>
-      [e.from[1],e.to[1]].map(y=>Math.hypot(x-8,y-8)))));
-};
-const radiusZ=sweptRadius("drive_bevel","z");
-const radiusX=sweptRadius("drive_bevel_x","x");
-assert.ok(radiusZ<4.06&&radiusX<4.06,
-  "Swept bevel tooth envelope clips opposite perpendicular wheel");
-assert.ok(12.06-8-radiusZ>0.04&&12.06-8-radiusX>0.04,
-  "Bevel pair must retain at least 0.04px mesh clearance at every phase");
-
-// Bevel Z gear rotates -angle; X output rotates +angle. Since contact is
-// on the +X radial side of Z and the +Z radial side of X, contact velocities
-// align (omegaZ * radius === -omegaX * radius).
-const incomingSign=-1,outputSign=1,contactRadius=3.8;
+// Genuine bevel-tooth interaction is validated using rotating cuboids.
+// Bounding the whole radial envelope INSIDE the other wheel's plane was
+// the bug: that made meshing geometrically impossible. The separate
+// full-angle mesh regression now enforces actual interleaving and no clipping.
+const incomingSign=-1,outputSign=1,contactRadius=4.0;
 assert.equal(incomingSign*contactRadius,-outputSign*contactRadius,
   "Perpendicular bevels must have matching tooth tangent velocities");
 
@@ -301,21 +286,15 @@ for(const [id,caps]of Object.entries(internalCaps)){
       id+" must not draw a coplanar internal shaft-end face: "+cap);
 }
 
-// A near-meshing pitch RIM is essential, not just gear teeth that happen
-// to come within a tiny distance. The visible 3.85px wheel face must be
-// close to the opposite 4.06px axial plane (<0.25px gap).
-for(const [id,axis]of [["drive_bevel",2],["drive_bevel_x",0]]){
-  const model=read(asset(id)),radial=axis===2?0:2;
-  const rims=model.elements.filter(e=>
-    Object.values(e.faces).some(f=>f.texture==="#bronze")&&
-    e.from[axis]>=12.19&&e.to[axis]<=13.11);
-  assert.ok(rims.length>0,id+": missing pitch wheel panels");
-  const outer=Math.max(...rims.flatMap(e=>
-    [e.from[radial],e.to[radial]].map(v=>Math.abs(v-8))));
-  assert.ok(outer>=3.80&&outer<4.02,
-    id+": visible pitch rim too small or extends into the other gear: "+outer);
-  assert.ok(4.06-outer<.26,
-    id+": visually disconnected bevel rims");
+// The main pitch rims are still compact, but the actual TOOTH FLANKS
+// must cross the old 4.06px exclusion radius to engage the other gear.
+// The imported source model and full-phase SAT test confirm this safely.
+for(const id of ["drive_bevel","drive_bevel_x"]){
+  const model=read(asset(id));
+  assert.ok(model.elements.length>250,"Missing extended bevel tooth panels");
+  assert.ok(model.elements.some(e=>Object.values(e.faces)
+    .some(face=>face.texture==="#bronze")),
+    id+": bronze tooth surfaces missing");
 }
 const driveBuilder=fs.readFileSync("tools/bronze-stamp-mill/build-drive-models.mjs","utf8");
 assert.ok(driveBuilder.includes("octRing")&&driveBuilder.includes("removeInternalCaps"),
@@ -490,4 +469,5 @@ assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
 // authored source. This also catches stale shaft cap geometry.
 import {execFileSync} from "node:child_process";
 execFileSync(process.execPath,["tools/bronze-stamp-mill/build-drive-models.mjs","--check"],{stdio:"pipe"});
+execFileSync(process.execPath,["tools/bronze-stamp-mill/test-bevel-mesh.mjs"],{stdio:"pipe"});
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
