@@ -28,7 +28,7 @@ Status: **approved design direction**, not a claim that the proposed machines ar
 
 | Machine | Suggested footprint | Input -> output / distinct role | Dependency |
 |---|---|---|---|
-| Stamp Mill | 5x3x3 | Raw ore -> crushed fraction, optional waste; large inertia and hammer wear | Bronze bearings, Gear V2 |
+| Stamp Mill | 5x3x4 | Raw ore -> crushed fraction, optional waste; large inertia and hammer wear | Bronze bearings, Gear V2 |
 | Rotary Ore Classifier | 5x3x5 | Classified coarse/fine fraction and tailings | Stamp Mill |
 | Ore Roasting Kiln | 5x3x5 | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | 5x3x5 | Dirty water -> reusable clean water + captured sediment, bounded efficiency | Ore Washer |
