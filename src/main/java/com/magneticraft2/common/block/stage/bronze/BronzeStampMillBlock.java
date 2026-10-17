@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** Formable, JSON-defined 5x3x3 Bronze Lathe structure (machining to follow). */
+/** Formable, JSON-defined 5x3x3 Bronze Stamp Mill with V2 collision and mechanical input. */
 public final class BronzeStampMillBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
@@ -52,35 +52,35 @@ public final class BronzeStampMillBlock extends BaseBlockMagneticraft2 {
     @Override public InteractionResult use(BlockState state,Level world,BlockPos pos,
             Player player,InteractionHand hand,BlockHitResult hit) {
         if(hand!=InteractionHand.MAIN_HAND) return InteractionResult.PASS;
-        if(!(world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity lathe))
+        if(!(world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity mill))
             return InteractionResult.PASS;
         if(world.isClientSide) return InteractionResult.SUCCESS;
-        if(!lathe.isFormed()) lathe.onRightClick();
-        if(lathe.isFormed())lathe.interactable(state,world,pos,player,hand,hit);
+        if(!mill.isFormed()) mill.onRightClick();
+        if(mill.isFormed())mill.interactable(state,world,pos,player,hand,hit);
         else player.displayClientMessage(Component.literal("Incomplete Bronze Stamp Mill: see Bronze Age construction layout."),true);
         return InteractionResult.CONSUME;
     }
     @Override public boolean onDestroyedByPlayer(BlockState state,Level world,BlockPos pos,
             Player player,boolean harvest,FluidState fluid) {
-        if(!world.isClientSide && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity lathe)
-            lathe.onDestroy(world);
+        if(!world.isClientSide && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity mill)
+            mill.onDestroy(world);
         return super.onDestroyedByPlayer(state,world,pos,player,harvest,fluid);
     }
     @Override public VoxelShape getShape(BlockState state,BlockGetter world,BlockPos pos,CollisionContext context) {
-        if(state.getValue(IS_FORMED) && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity lathe
-                && lathe.getLocalVoxelSelection()!=null) return lathe.getLocalVoxelSelection();
+        if(state.getValue(IS_FORMED) && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity mill
+                && mill.getLocalVoxelSelection()!=null) return mill.getLocalVoxelSelection();
         return super.getShape(state,world,pos,context);
     }
     @Override public VoxelShape getCollisionShape(BlockState state,BlockGetter world,BlockPos pos,CollisionContext context) {
-        if(state.getValue(IS_FORMED) && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity lathe
-                && lathe.getLocalVoxelCollision()!=null) return lathe.getLocalVoxelCollision();
+        if(state.getValue(IS_FORMED) && world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity mill
+                && mill.getLocalVoxelCollision()!=null) return mill.getLocalVoxelCollision();
         return super.getCollisionShape(state,world,pos,context);
     }
     @Override
     protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
-        if (world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity lathe) {
-            lathe.interactable(state, world, pos, player, hand, hit);
+        if (world.getBlockEntity(pos) instanceof BronzeStampMillBlockEntity mill) {
+            mill.interactable(state, world, pos, player, hand, hit);
         }
     }
 
