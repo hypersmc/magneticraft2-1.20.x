@@ -180,8 +180,10 @@ for(const part of design.boxes){
 }
 
 const powerModels=["drive_shaft","drive_shaft_tip","drive_input_shaft",
+  "drive_input_spindle","drive_lower_spindle",
   "drive_bevel","drive_bevel_x","drive_pulley","drive_belt_straight",
-  "drive_belt_upper","drive_belt_wrap"];
+  "drive_belt_upper","drive_belt_wrap",
+  "drive_gearbox_frame","drive_cross_bearing","drive_side_lower_mount"];
 for(const id of powerModels){
   const model=read(asset(id));
   assert.ok(model.elements?.length>0,"Missing powertrain model "+id);
@@ -202,6 +204,46 @@ for(const id of powerModels){
     }
   }
 }
+
+// The actual pinions must mesh at the forward (+X,+Z) tooth corner.
+// A full 360-degree sweep is bounded by the radius of *every* model face
+// corner, not just by the position of the visible teeth at rest.
+const sweptRadius=(name,axis)=>{
+  const model=read(asset(name)),u=axis==="z"?0:2;
+  return Math.max(...model.elements.flatMap(e=>
+    [e.from[u],e.to[u]].flatMap(x=>
+      [e.from[1],e.to[1]].map(y=>Math.hypot(x-8,y-8)))));
+};
+const radiusZ=sweptRadius("drive_bevel","z");
+const radiusX=sweptRadius("drive_bevel_x","x");
+assert.ok(radiusZ<4.06&&radiusX<4.06,
+  "Swept bevel tooth envelope clips opposite perpendicular wheel");
+assert.ok(12.06-8-radiusZ>0.04&&12.06-8-radiusX>0.04,
+  "Bevel pair must retain at least 0.04px mesh clearance at every phase");
+
+// Bevel Z gear rotates -angle; X output rotates +angle. Since contact is
+// on the +X radial side of Z and the +Z radial side of X, contact velocities
+// align (omegaZ * radius === -omegaX * radius).
+const incomingSign=-1,outputSign=1,contactRadius=3.8;
+assert.equal(incomingSign*contactRadius,-outputSign*contactRadius,
+  "Perpendicular bevels must have matching tooth tangent velocities");
+
+// Gearbox straps must connect to the actual underside tray girders and
+// the right-side mount must meet the existing right crossbrace.
+const rearGirder=design.boxes.find(b=>b.name==="mount_rear_undertray_girder");
+const frontGirder=design.boxes.find(b=>b.name==="mount_front_undertray_girder");
+const rightBrace=design.boxes.find(b=>b.name==="mount_right_foundation_crossbrace");
+assert.ok(rearGirder&&frontGirder&&rightBrace);
+const rearMount={from:[14.2,2.3,-15.9],to:[15.6,16,-14.6]};
+const frontMount={from:[14.2,2.3,-5.8],to:[15.6,16,-4.5]};
+const middleMount={from:[24.15,14.9,-16.3],to:[25.85,16,-3.7]};
+const outerMount={from:[45,10.65,-11.6],to:[46.1,13.6,-8.4]};
+assert.ok(touchesFace(rearMount,rearGirder)&&touchesFace(frontMount,frontGirder),
+  "Lower input gearbox must hang from BOTH crushing tray girders");
+assert.ok(touchesFace(middleMount,rearGirder)&&touchesFace(middleMount,frontGirder),
+  "Intermediate bearing must hang from the load frame");
+assert.ok(touchesFace(outerMount,rightBrace),
+  "Right-side pulley bearing must attach to the foundation brace");
 
 // Each animated model contains *only visible face panels*. This prevents
 // z-fighting where full cuboids previously drew matching internal faces.
@@ -346,6 +388,20 @@ assert.ok(renderer.includes("shaftAngle+120F*i")&&
   "Cams, upper crank and belt pulleys must share the same rotation direction");
 assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F"),
   "The upper belt half-wrap must remain stationary around its rotating pulley");
+assert.ok(renderer.includes("final float inputAngle=-shaftAngle")&&
+          renderer.includes("BEVEL_Z,")&&renderer.includes("BEVEL_X,")&&
+          renderer.includes("inputX,inputY,lowerZ,Axis.ZP,inputAngle")&&
+          renderer.includes("inputX,inputY,lowerZ,Axis.XP,shaftAngle"),
+  "The perpendicular bevel gears need a shared pivot and opposite signed angles");
+assert.ok(renderer.includes("LOWER_SPINDLE,")&&
+          renderer.includes("16D/16D,inputY,lowerZ,Axis.XP,shaftAngle")&&
+          !renderer.includes("for(int x=16;x<=32;x+=16)"),
+  "Shortened X output must not cross through the Z input spindle");
+assert.ok(renderer.includes("GEARBOX_FRAME,")&&
+          renderer.includes("CROSS_BEARING,")&&
+          renderer.includes("SIDE_LOWER_MOUNT,"),
+  "All drive bearings must render from mounted stationary models");
+
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
 assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
