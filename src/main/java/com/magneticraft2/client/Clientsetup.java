@@ -158,6 +158,9 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_cam"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel_x"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_upper"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_tip"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_pulley"));
