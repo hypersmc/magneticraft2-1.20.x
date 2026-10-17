@@ -1285,20 +1285,6 @@
       ]
     },
     {
-      "name": "mount_upper_drive_shaft",
-      "material": "iron",
-      "from": [
-        -26,
-        37.8,
-        -10.7
-      ],
-      "to": [
-        44,
-        39.2,
-        -9.3
-      ]
-    },
-    {
       "name": "mount_crank_stand_-20",
       "material": "dark",
       "from": [
