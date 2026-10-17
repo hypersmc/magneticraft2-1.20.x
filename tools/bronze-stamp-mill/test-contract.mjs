@@ -163,6 +163,8 @@ assert.ok(!design.boxes.some(b=>b.name==="mount_upper_drive_shaft"),
 // each pulley center, with one uninterrupted lower/upper flight.
 const driveBeltEnvelope={from:[46.55,8,-14.52],to:[47.85,38.5,-5.48]};
 const lowerShaftEnvelope={from:[8,7.05,-10.95],to:[47.2,8.95,-9.05]};
+const lowerPulleyEnvelope={from:[46.3875,3.95,-14.05],to:[47.9475,12.05,-5.95]};
+const upperPulleyEnvelope={from:[46.3875,34.45,-14.05],to:[47.9475,42.55,-5.95]};
 const intersects=(a,b)=>a.from.every((v,i)=>
   Math.min(a.to[i],b.to[i])-Math.max(v,b.from[i])>1e-5);
 for(const part of design.boxes){
@@ -170,6 +172,11 @@ for(const part of design.boxes){
     "Vertical drive belt cuts through static machinery: "+part.name);
   assert.ok(!intersects(lowerShaftEnvelope,part),
     "Lower crossshaft cuts through the workshop: "+part.name);
+  for(const [name,envelope]of [["lower pulley",lowerPulleyEnvelope],
+                                 ["upper pulley",upperPulleyEnvelope]]){
+    assert.ok(!intersects(envelope,part),
+      name+" intersects structural timber or an adjacent module: "+part.name);
+  }
 }
 
 const powerModels=["drive_shaft","drive_shaft_tip","drive_input_shaft",
