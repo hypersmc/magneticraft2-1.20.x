@@ -128,8 +128,11 @@ public class MultiblockItemPortBlockEntity
     private boolean acceptsControllerInput(
             @Nullable BaseBlockEntityMagneticraft2 controller,
             ItemStack stack) {
-        return !(controller instanceof MechanicalSifterBlockEntity sifter)
-                || sifter.acceptsRecipeInput(stack);
+        if(controller instanceof MechanicalSifterBlockEntity sifter)
+            return sifter.acceptsRecipeInput(stack);
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity mill)
+            return mill.acceptsRecipeInput(stack);
+        return true;
     }
 
     public boolean insertFromPlayer(ItemStack stack) {

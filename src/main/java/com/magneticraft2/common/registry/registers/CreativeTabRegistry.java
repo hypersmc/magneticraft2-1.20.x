@@ -104,6 +104,8 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_MOLD_TABLE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FOUNDRY.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_MECHANICAL_LATHE.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_MILL.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_SHOE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_CASTING_BASIN.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_POURING_LADLE.get());
                         entries.accept(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get());

@@ -30,6 +30,7 @@ import com.magneticraft2.common.blockentity.stage.stone.*;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMoldTableBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundryBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeCastingBasinBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -98,6 +99,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("bronze_mechanical_lathe", () ->
                     BlockEntityType.Builder.of(BronzeMechanicalLatheBlockEntity::new,
                             BlockRegistry.BRONZE_MECHANICAL_LATHE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeStampMillBlockEntity>> BRONZE_STAMP_MILL_BE =
+            BLOCK_ENTITIES.register("bronze_stamp_mill", () ->
+                    BlockEntityType.Builder.of(BronzeStampMillBlockEntity::new,
+                            BlockRegistry.BRONZE_STAMP_MILL.get()).build(null));
     public static final RegistryObject<BlockEntityType<BronzeFoundryBlockEntity>> BRONZE_FOUNDRY_BE =
             BLOCK_ENTITIES.register("bronze_foundry", () ->
                     BlockEntityType.Builder.of(BronzeFoundryBlockEntity::new,

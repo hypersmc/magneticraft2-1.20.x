@@ -36,6 +36,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzePatternMakerBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMoldTableBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -113,6 +114,8 @@ public class BlockRegistry {
             BLOCKS.register("bronze_mold_table", BronzeMoldTableBlock::new);
     public static final RegistryObject<BronzeMechanicalLatheBlock> BRONZE_MECHANICAL_LATHE =
             BLOCKS.register("bronze_mechanical_lathe", BronzeMechanicalLatheBlock::new);
+    public static final RegistryObject<BronzeStampMillBlock> BRONZE_STAMP_MILL =
+            BLOCKS.register("bronze_stamp_mill", BronzeStampMillBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
