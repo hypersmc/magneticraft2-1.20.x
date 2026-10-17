@@ -136,3 +136,56 @@ belt and its two pulleys; the top shaft and all three cams while driven; the
 stopped state; all four orientations; and any flickering or frame/shaft
 clipping. Pay particular attention to the four crank pillow bearings, the
 underside of the wooden front support, and clearance to adjacent blocks.
+
+
+## 2026-10-17 — supported, close-meshing 90-degree gearbox revision
+
+A second in-game screenshot showed that the two lower gears still appeared as
+floating, interpenetrating decoration and their apparent rotation did not
+convincingly drive one another. That earlier gearbox stage is **superseded**.
+
+The corrected **renderer-only** powertrain now has a compact bronze/iron
+eight-tooth bevel pair in the *front-right* quadrant of the lower axes
+intersection at model pixel `(8,8,-10)`. Both gears rotate around that
+same intersection but their *wheel bodies* are displaced along different
+axes: the Z pinion is ahead of the intersection, while the X pinion sits
+right of it. Their outer radial teeth meet with a deliberately tiny
+clearance, but the bodies never occupy the same physical volume.
+
+The signed rotation `inputAngle = -shaftAngle` for the Z axis and
+`shaftAngle` for the X axis means **equal tangent velocity at the actual
+(+X,+Z) tooth-contact corner**, which is the correct meshing relationship
+for this arrangement. The X shaft continues at +shaftAngle to both pulleys,
+the upper crankshaft, and the three 120-degree-offset cams.
+
+- The input shaft spans `z=-26..-10`, then a separate short spindle
+  continues to `z=-3.8` through the Z pinion's hollow hub.
+- The X output shaft starts at `x=10.5` (rather than the former `x=8`);
+  it joins the full crossshaft at `x=24` and then the end tip at `x=40`.
+  This stops two perpendicular solid axles from intersecting at the
+  gearbox centre.
+- The open wood/bronze gearbox frame has real skids and upper hangers
+  touching both underside girders. There is also a bearing suspended from
+  the same frame halfway along the lower shaft, plus a bronze side bearing
+  touching the foundation brace immediately before the lower pulley.
+- The pinion teeth have a 22.5-degree modeled offset. Conservatively
+  rotating every tooth around its full axis produces a maximum swept
+  radius of approximately 4.004 pixels for Z and 3.977 pixels for X.
+  Both are less than the 4.06-pixel envelope that would reach the
+  perpendicular gear, preventing the previous visual collisions.
+- `tools/bronze-stamp-mill/build-drive-models.mjs` now maintains all of
+  the new render-only gearbox models; `--check` verifies their generated
+  assets. `tools/bronze-stamp-mill/test-contract.mjs` additionally
+  enforces tooth-clearance, rotation polarity and physical attachment.
+
+**Kept unchanged:** the 5×3×4 blueprint, all actual full-block ports, Gear
+V2 input node and loads, recipes, controller, inventory, guidebook pattern,
+Static V2 source/voxel geometry, and accepted Mechanical Lathe. No
+reformation is required specifically for this BER-only visual revision
+if the last 5×3×4 structure is already formed.
+
+**Still pending:** Gradle build and an actual in-game viewing pass. Test
+the underside gearbox while moving and stopped, right-side pulley/belt
+transfer, top cam/shaft phase, four orientations, resource reloads, and
+close-up Z-fighting. We intentionally did not add extra JSON construction
+blocks just to render gearbox bearings.
