@@ -154,6 +154,48 @@ for(const ore of ["chalcocite","cassiterite"]){
   assert.equal(p.process_time,115);
 }
 
+// The upper crankshaft is animated and must NOT also be baked into V2.
+assert.ok(!design.boxes.some(b=>b.name==="mount_upper_drive_shaft"),
+  "Old fixed crank axle would z-fight with the spinning drive shaft");
+
+// The outside belt line is kept clear of the tray, right-hand uprights and
+// all four full-block module cells. The belt rides a tangent 4.5 pixels from
+// each pulley center, with one uninterrupted lower/upper flight.
+const driveBeltEnvelope={from:[46.55,8,-14.52],to:[47.85,38.5,-5.48]};
+const lowerShaftEnvelope={from:[8,7.05,-10.95],to:[47.2,8.95,-9.05]};
+const intersects=(a,b)=>a.from.every((v,i)=>
+  Math.min(a.to[i],b.to[i])-Math.max(v,b.from[i])>1e-5);
+for(const part of design.boxes){
+  assert.ok(!intersects(driveBeltEnvelope,part),
+    "Vertical drive belt cuts through static machinery: "+part.name);
+  assert.ok(!intersects(lowerShaftEnvelope,part),
+    "Lower crossshaft cuts through the workshop: "+part.name);
+}
+
+const powerModels=["drive_shaft","drive_shaft_tip","drive_input_shaft",
+  "drive_bevel","drive_bevel_x","drive_pulley","drive_belt_straight",
+  "drive_belt_upper","drive_belt_wrap"];
+for(const id of powerModels){
+  const model=read(asset(id));
+  assert.ok(model.elements?.length>0,"Missing powertrain model "+id);
+  for(const element of model.elements){
+    assert.ok(element.from.every((v,i)=>v>=-1e-5&&v<element.to[i]&&element.to[i]<=16+1e-5),
+      id+": invalid moving model cuboid bounds");
+    for(const [face,data]of Object.entries(element.faces)){
+      const axes={north:[0,1],south:[0,1],east:[2,1],west:[2,1],up:[0,2],down:[0,2]}[face];
+      assert.ok(axes&&model.textures[data.texture.slice(1)],
+        id+": unresolved texture "+data.texture);
+      assert.ok(data.uv?.length===4&&data.uv.every(n=>n>=-1e-5&&n<=16+1e-5),
+        id+": invalid native UV tile");
+      assert.ok(Math.abs(data.uv[2]-data.uv[0]-
+          (element.to[axes[0]]-element.from[axes[0]]))<1e-4&&
+        Math.abs(data.uv[3]-data.uv[1]-
+          (element.to[axes[1]]-element.from[axes[1]]))<1e-4,
+        id+": stretched texture on "+face);
+    }
+  }
+}
+
 // Each animated model contains *only visible face panels*. This prevents
 // z-fighting where full cuboids previously drew matching internal faces.
 const faceAxes={north:[2,-1,0,1],south:[2,1,0,1],
@@ -280,11 +322,23 @@ assert.ok(be.includes("stampShoe.completeBatch()")&&be.includes("setMechanicalLo
 const client=fs.readFileSync(javaDir+"client/Clientsetup.java","utf8");
 for(const id of ["hammer","hammer_worn","input_frame","cam"])
   assert.ok(client.includes('"multiblock/bronze_stamp_mill_'+id+'"'),"Unregistered animated model "+id);
+for(const id of powerModels)
+  assert.ok(client.includes('"multiblock/bronze_stamp_mill_'+id+'"'),
+    "Missing baked model registration for "+id);
 assert.ok(client.includes("BRONZE_STAMP_MILL_BE"));
 const renderer=fs.readFileSync(javaDir+"client/render/blocks/stage/bronze/BronzeStampMillRenderer.java","utf8");
 assert.ok(renderer.includes("int[] stations={-8,8,24}")&&
           renderer.includes("24D/16D+mill.getHammerLift(partial,i)"),
   "Stamp heads must track the 3 service channels above the hoppers");
+assert.ok(renderer.includes("INPUT_SHAFT")&&renderer.includes("BEVEL_X")&&
+          renderer.includes("BELT_UPPER")&&renderer.includes("BELT_WRAP"),
+  "The complete Gear V2 powertrain must be rendered");
+assert.ok(renderer.includes("shaftAngle+120F*i")&&
+          renderer.includes("upperY,lowerZ,Axis.XP,shaftAngle")&&
+          !renderer.includes("Axis.XP,-shaftAngle"),
+  "Cams, upper crank and belt pulleys must share the same rotation direction");
+assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F"),
+  "The upper belt half-wrap must remain stationary around its rotating pulley");
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
 assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
