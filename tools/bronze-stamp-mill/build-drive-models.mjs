@@ -42,6 +42,7 @@ return {
  bronze_stamp_mill_drive_bevel:gear("z",0),
  bronze_stamp_mill_drive_bevel_x:gear("x",22.5),
  bronze_stamp_mill_drive_input_spindle:[b("iron",[7.3,7.3,8],[8.7,8.7,14.2]),b("bronze",[7.7,8.7,8],[8.3,8.9,14.2])],
+ bronze_stamp_mill_drive_lower_spindle:[b("iron",[2.5,7.3,7.3],[16,8.7,8.7]),b("bronze",[2.5,8.7,7.7],[16,8.9,8.3])],
  bronze_stamp_mill_drive_gearbox_frame:gearbox,
  bronze_stamp_mill_drive_cross_bearing:cross,
  bronze_stamp_mill_drive_side_lower_mount:side
