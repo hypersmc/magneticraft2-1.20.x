@@ -168,19 +168,25 @@
       "multiblock": {
         "pattern": [
           [
-            "BPPPB",
-            "B___B",
-            "BPPPB"
+            "BBB",
+            "P_P",
+            "P_P",
+            "P_P",
+            "BBB"
           ],
           [
-            "PPPPP",
-            "B___B",
-            "BUYOB"
+            "PBB",
+            "P_U",
+            "P_Y",
+            "P_O",
+            "PBB"
           ],
           [
-            "SSISS",
-            "SSSSS",
-            "SS0SS"
+            "SSS",
+            "SSS",
+            "IS0",
+            "SSS",
+            "SSS"
           ]
         ],
         "mapping": {
@@ -195,7 +201,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the structure bottom-up with Visualize. The lower rear-center block is the Gear V2 module; controller at lower front-center. The middle front row contains input, tailings output and primary output ports side by side, between the two bronze corner posts. Leave all upper center air cells open for the three descending stamps. Right-click the controller to form."
+      "text": "Build with Visualize from bottom to top. The five columns of this guide correspond to the machine's 5-block width; the machine is 3 blocks deep and 3 high. For the south layout, the controller is at the lower front center and the Mechanical Input Module is lower rear-center. In the middle front row, the item input, tailings output, and main crushed-ore output stand between the Cut Copper corner posts. Leave the central upper cells empty. The structure's actual blocks determine its facing when you form it; controller placement facing alone does not rotate a mismatched build. If you assembled the previous guide's 3x5 layout, rebuild with this corrected Visualize projection."
     },
     {
       "type": "patchouli:crafting",
