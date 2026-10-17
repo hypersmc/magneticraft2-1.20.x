@@ -1,49 +1,56 @@
 # Bronze Stamp Mill — implementation contract
 
-Status: **First Bronze II prototype on PR #11**. Source and structural checks only; no local Gradle or client run yet. See [the Bronze Age production plan](bronze-age-production-plan.md) for the full accepted progression.
+Status: **Bronze II prototype on PR #11**, pending Gradle build and in-game verification. See [Bronze industrial plan](bronze-age-production-plan.md) for progression.
 
-## Industrial purpose
+## Purpose
 
-This machine converts **two raw Chalcocite or Cassiterite Ore into two crushed ore items in 115 ticks** with Gear V2 input (minimum 24 RPM, 6 torque). Each batch can independently produce one Gravel tailing at 20%. The existing Mechanical Grinder stays available as a low-power, single-item alternative; Washer and Sifter remain the next required stages. We deliberately do **not** bypass either machine or increase metal yield without material accounting.
+2 Chalcocite Ore or 2 Cassiterite Ore -> 2 corresponding crushed ores (115 ticks; 24 RPM minimum; torque 6). Each batch independently has 20% chance of 1 Gravel tailing. Existing Grinder remains a low-power fallback; ore still proceeds to the existing Washer and Sifter.
 
-## 5×3×3 multiblock
+## Full-size module integration: 5 x 3 x 4
 
-The south blueprint uses a five-wide, three-deep, three-high structure; west/east orientations rotate to 3×3×5. All are in `src/main/resources/data/magneticraft2/multiblocks/bronze_stamp_mill_{south,west,north,east}.json`.
+**All I/O modules occupy complete Minecraft blocks and retain their original, reusable wooden/copper item-port models.** None are fillers or decorative geometry. To avoid floating hoppers and keep item access clear, all three ports now sit side-by-side at **ground level on an open front service shelf**, one block south of the controller. Each has a side/front face exposed to the world for players and transport automation.
 
-South blueprint viewed in top-down rows rear-to-front; bottom layers listed first:
+The former 5x3x3 draft with three ports in the raised front wall is obsolete. A second draft buried the ports inside the stone-brick foundation; that was rejected because they could not be accessed. The authoritative layout is now 5 wide, 4 deep, 3 tall (rotated to 4 wide, 5 deep, 3 tall for east/west). The core Stamp Mill frame retains its original 5x3x3 section and adds a service shelf with a matching bronze/timber canopy and **three physical chutes** linking the crushing trough to the hoppers.
+
+South blueprint, each row is 5 blocks west-to-east, rows appear rear-to-front, and layers are bottom-up:
 
 ```text
-Y=0  S S I S S    S S S S S    S S C S S
-Y=1  P P P P P    B _ _ _ B    B U Y O B
-Y=2  B P P P B    B _ _ _ B    B P P P B
+Y=0   S S I S S    S S S S S    S S C S S    S U Y O S
+Y=1   P P P P P    B _ _ _ B    B _ _ _ B    B _ _ _ B
+Y=2   B P P P B    B _ _ _ B    B P P P B    B P P P B
 ```
 
-Legend: `S` Stone Bricks, `P` Oak Planks, `B` Cut Copper, `C` Stamp Mill Controller, `I` Mechanical Input Module, `U` Item Input, `Y` Byproduct Output, `O` Primary Output, `_` required air. The controller occupies bottom front center. Use the in-game Patchouli **Visualize** page for authoritative placement.
+S = Stone Bricks; P = Oak Planks; B = Cut Copper; C = Stamp Mill Controller; I = Mechanical Input Module; U = Item Input; Y = Byproduct Output; O = Primary Output; _ = AIR. Build by Patchouli **Visualize**, which stores its dimensions transposed relative to the raw JSON. Do not copy JSON Z rows directly into Patchouli's X columns.
 
-### What is rendered where
+Blueprints: `src/main/resources/data/magneticraft2/multiblocks/bronze_stamp_mill_{south,west,north,east}.json`
 
-- `tools/multiblock-models/designs/bronze_stamp_mill.json` is the authoring source with 60 structural cuboids and the Voxel V2 definition.
-- `tools/multiblock-models/sources/bronze_stamp_mill.json` is the occlusion-culled canonical source.
-- 42 block-local render hosts per facing are generated from that source. The Gear V2 module and all three item-port modules remain real BEs and have **empty** static V2 part models, not filler geometry.
-- Three upper AIR cells are opt-in V2 render/voxel proxies; they are explicitly passed from `getRenderAirAnchors()` to `MultiblockRenderParts.assign()`. Do not treat every AIR cell as a proxy.
-- `BronzeStampMillRenderer` is reserved for animated components: three 120-degree-offset stamp heads, drive cams, feed item and the formed input housing. Input module geometry is deliberately not baked over its BE cell.
-- `bronze_stamp_mill_hammer_worn` is a separate wear-marked head model selected from the saved maintenance wear state. Wear is counted only on successful batches.
+### Rendering V2 and physical-port rules
 
-**Do not manually edit the 168 directional V2 part files**. Run `node tools/multiblock-models/build-designs.mjs`, then `node tools/multiblock-models/generate.mjs` after changing the source, inspect diffs and confirm `--check`. The generator touches other machines too, including the accepted Bronze Lathe; review and isolate unrelated changes before committing.
+- Authoring: `tools/multiblock-models/designs/bronze_stamp_mill.json`; canonical occlusion-culled source: `tools/multiblock-models/sources/bronze_stamp_mill.json`.
+- Each facing now owns **57 render hosts**, including 9 explicitly selected AIR anchors that become V2 filler proxies on formation. The three item modules, Gear V2 module and the actual controller are NOT swapped for artificial port meshes; module render parts must remain EMPTY.
+- Every module's complete local AABB is reserved for that module. Neither static V2 boxes nor local Voxel V2 collision/selection may overlap any of the four module spaces. The regression test asserts this for the model and both voxel profiles.
+- Ground-level port models stay visible. Raised structural columns, front canopy and metal transport chutes sit around and ABOVE them; none use the port cell as an attachment/render host. No globally modified I/O models or blockstates.
+- BER handles the independently moving stamp heads, 120-degree-phased cams, loaded ore and Gear V2 input shroud. Stamp heads are now centered over the three crushing channels at X -8, +8, +24 model pixels, with a resting shoe height of 24 pixels above controller ground.
+- `bronze_stamp_mill_hammer_worn.json` visually indicates the shared shoe wear state; only successful batches decrement maintenance.
 
-## Resource, power and state rules
+**Never manually edit the 228 generated V2 part files**. Regenerate from the authored design and isolate diffs to this machine:
+```bash
+node tools/multiblock-models/build-designs.mjs
+node tools/multiblock-models/generate.mjs
+```
+Check output for other machines (especially the accepted Bronze Lathe) before committing. Do not accept stretched UVs or overlapping faces.
 
-- Port #0 accepts only machine-specific recipe inputs (via `MultiblockItemPortBlockEntity.acceptsControllerInput`); primary #1 and tailings #2 are machine outputs.
-- A batch chooses its tailing once and stores this choice in NBT. If a pipe, belt or inventory blocks any reserved result, production **pauses without consuming input** and resumes when space is free. Material is removed at successful completion only.
-- Network load is requested from the real Gear V2 input; if speed or torque is insufficient, the process stalls without advancing its counter. Load is released during idle, broken-maintenance and destruction.
-- Replaceable stamp shoe: 384 successful batches by default. Controller right-click with a fresh shoe repairs it; sneak-empty-hand inspects condition. One part services the whole three-stamp mechanism for this first release; finer per-head wear is a later design candidate.
-- Input, output, byproduct, recipe ID, pending tailing choice, remaining wear and processing progress are persisted in BE NBT. Machine power can fail and recover without item duplication.
-- Recipes are datapack-editable `magneticraft2:multiblock_processing` and are automatically visible in existing generic Multiblock Processing JEI category with the Stamp Mill catalyst.
-- Working machine uses its three visible hammer-head assemblies. Gear rotation is based on actual input speed; it must not be animated by a world-time-only fake motor.
+## Resources and state
 
-## Local acceptance tests
+- Port U connects to controller slot 0 (recipe-validated insertion).
+- Port O connects to slot 1 (primary output; extraction only).
+- Port Y connects to slot 2 (Gravel byproduct; extraction only).
+- A batch reserves both outputs, picks the optional byproduct once, and does not consume ore or wear the shoe until success. Blocked products or inadequate torque/speed pause it.
+- Replaceable Stamp Shoe lasts 384 successful batches. Maintenance and unfinished recipes are saved in NBT.
+- Recipe type `magneticraft2:multiblock_processing`, machine `magneticraft2:bronze_stamp_mill`. Datapacks and JEI category/catalyst stay supported.
+- Gear V2 power and maintenance logic remain unchanged by this visual-layout fix.
 
-From the repo root:
+## Verification commands
 
 ```bash
 ./gradlew build
@@ -52,21 +59,15 @@ node tools/multiblock-models/build-designs.mjs --check
 node tools/multiblock-models/generate.mjs --check
 ```
 
-If generation checks report mismatches, **do not blindly commit regenerated Lathe/Foundry files**; inspect them.
+In-game checklist:
 
-In-game:
+1. Dismantle the previous 5x3x3 version and rebuild this 5x3x4 blueprint. Test all orientations.
+2. Confirm the controller forms the machine and the nine AIR proxy cells are placed without replacing ANY of the four actual modules.
+3. Inspect the **grounded, front-accessible** three port models, the three separate chutes, canopy support and raised crushing tray. Check no invisible barriers, z-fighting, texture distortions or protruding modules.
+4. Insert two raw Chalcocite or Cassiterite through port U; extract crushed output from O and any Gravel tailing from Y. Test item automation from outside the front service row.
+5. Watch hammer shoes travel vertically and strike above the tray without clipping the modules.
+6. Pause/restore Gear V2 power mid-batch, unload/reload chunks, fill either output, and verify no free items or lost progress.
+7. Wear and replace the Stamp Shoe; confirm visual wear changes and correct job inhibition.
+8. Continue crushed ore into Washer and Sifter, checking existing ore yields and fluid/byproducts.
 
-1. Form all four rotated structures, confirming Guidebook preview, controller interaction and empty AIR spaces. Check idle/operating collision and no fake blocks across actual item/module ports.
-2. Power Gear V2 at 24+ RPM, 6+ torque. Feed two Chalcocite Ore and verify exactly two Crushed Chalcocite after 115 ticks; repeat with Cassiterite.
-3. Inspect visual input bearing, all three synchronized-offset stamps, trough, mounted inventory, and performance looking directly at the machine.
-4. Cut power mid-batch, restart and chunk reload; confirm progress and pending Gravel roll are not lost or rerolled.
-5. Fill either output port; confirm no input is consumed before result storage is possible, and production resumes after clearing it.
-6. Wear out shoe over repeated successful batches; confirm the visible worn head, failure to run, status message and restoration with a replacement.
-7. Pipe and belt items to/from the three ports; verify invalid ore never enters and neither output can be used as input.
-8. Process the resulting Crushed Chalcocite/Cassiterite in the existing Washer and Sifter, confirming no duplicate yield and correct dirty-water output.
-
-## Not yet implemented
-
-The Rotary Ore Classifier, ore roasting, settling-water recycling, charcoal retort, refractory kiln, iron bloomery and other Bronze II-IV candidates remain roadmap work. The fully automated crusher -> Washer -> Sifter transfer needs in-game proof, not an assertion based only on code.
-
-**No local `./gradlew build` or Minecraft test was performed when this first prototype was committed.**
+**No `./gradlew build` or Minecraft runtime verification has been performed for this revision.**
