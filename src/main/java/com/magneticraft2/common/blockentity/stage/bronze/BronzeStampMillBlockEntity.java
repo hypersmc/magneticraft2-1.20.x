@@ -2,6 +2,7 @@ package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
+import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
@@ -44,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * JSON-multiblock controller for the Gear V2-driven Mechanical StampMill.
+ * JSON-formed Bronze Stamp Mill with three hammer heads, Gear V2 power and replaceable shoes.
  */
 public class BronzeStampMillBlockEntity
         extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost {
