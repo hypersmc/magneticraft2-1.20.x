@@ -65,9 +65,15 @@ for(const dir of dirs){
       }
     }
   }
-  const module=[ix-cx,iy-cy,iz-cz].join("_");
-  assert.equal(read(root+"/assets/magneticraft2/models/multiblock/bronze_stamp_mill_"+dir+"/part_"+module+".json").elements.length,0,
-    "Mechanical module owns its BER model; no V2 faces are allowed there");
+  // All four real module cells keep their original block entities after
+  // formation and are not converted into filler render hosts.
+  for(const moduleType of ["I","U","Y","O"]){
+    const [mx,my,mz]=coords[moduleType][0];
+    const key=[mx-cx,my-cy,mz-cz].join("_");
+    const part=read(root+"/assets/magneticraft2/models/multiblock/bronze_stamp_mill_"+dir+"/part_"+key+".json");
+    assert.equal(part.elements.length,0,
+      "Non-filler "+moduleType+" must not have static V2 faces in "+dir);
+  }
 }
 for(const ore of ["chalcocite","cassiterite"]){
   const p=read(root+"/data/magneticraft2/recipes/bronze_stamping_"+ore+".json");
@@ -81,7 +87,7 @@ for(const ore of ["chalcocite","cassiterite"]){
   assert.equal(p.mechanical.torque,6);
   assert.equal(p.process_time,115);
 }
-for(const id of ["hammer","input_frame","cam"]){
+for(const id of ["hammer","hammer_worn","input_frame","cam"]){
   const model=read(asset(id));
   assert.ok(model.elements?.length>0,"Missing animated part "+id);
 }
@@ -91,9 +97,15 @@ assert.ok(book.pages.some(page=>page.recipe==="magneticraft2:bronze_stamp_mill")
 const javaDir="src/main/java/com/magneticraft2/";
 const be=fs.readFileSync(javaDir+"common/blockentity/stage/bronze/BronzeStampMillBlockEntity.java","utf8");
 assert.ok(be.includes('MultiblockRenderParts.assign(')&&be.includes('MultiblockRecipeHandler.findRecipe('));
+assert.ok(be.includes("getRenderAirAnchors()")&&
+          be.includes("matchedFacing,renderAirAnchors,voxelProfileName"),
+    "AIR stamp proxies must be formed using the blueprint-specified anchors");
+assert.ok(be.includes("MultiblockVoxelNbt.write(")&&
+          be.includes("MultiblockVoxelNbt.read("),
+    "Voxel V2 snapshot persistence must be symmetrical");
 assert.ok(be.includes("stampShoe.completeBatch()")&&be.includes("setMechanicalLoad("));
 const client=fs.readFileSync(javaDir+"client/Clientsetup.java","utf8");
-for(const id of ["hammer","input_frame","cam"])
+for(const id of ["hammer","hammer_worn","input_frame","cam"])
   assert.ok(client.includes('"multiblock/bronze_stamp_mill_'+id+'"'),"Unregistered animated model "+id);
 assert.ok(client.includes("BRONZE_STAMP_MILL_BE"));
 const jei=fs.readFileSync(javaDir+"compatibility/JEI/MagneticraftJeiPlugin.java","utf8");
