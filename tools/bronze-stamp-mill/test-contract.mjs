@@ -92,7 +92,31 @@ for(const id of ["hammer","hammer_worn","input_frame","cam"]){
   assert.ok(model.elements?.length>0,"Missing animated part "+id);
 }
 const book=read(root+"/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
-assert.ok(book.pages.some(page=>page.type==="patchouli:multiblock"&&page.name==="Bronze Stamp Mill"));
+const guide=book.pages.find(page=>page.type==="patchouli:multiblock"&&page.name==="Bronze Stamp Mill");
+assert.ok(guide,"Stamp Mill Patchouli visualize page missing");
+
+// Patchouli's arrays are [y from top to bottom][x west to east][z north
+// to south]. Our multiblock JSON is [y from bottom][z rows][x entries].
+// Never just copy the blueprint rows into Patchouli: on 5x3 machines that
+// transposes the shape into 3x5 and can reverse the item ports.
+const south=read(root+"/data/magneticraft2/multiblocks/bronze_stamp_mill_south.json");
+const [bookWidth,bookHeight,bookDepth]=south.structure.dimensions;
+assert.equal(guide.multiblock.pattern.length,bookHeight);
+for(let y=0;y<bookHeight;y++){
+  const layer=guide.multiblock.pattern[bookHeight-1-y];
+  assert.equal(layer.length,bookWidth,"Patchouli expects one string per X column");
+  for(let x=0;x<bookWidth;x++){
+    assert.equal(layer[x].length,bookDepth,"Patchouli strings encode Z positions");
+    for(let z=0;z<bookDepth;z++){
+      const char=layer[x][z];
+      const actual=char==="_"?"minecraft:air":guide.multiblock.mapping[char];
+      const expected=south.structure.blocks[south.structure.layout["layer"+(y+1)][z][x]];
+      assert.equal(actual,expected,
+        "Guidebook / JSON mismatch at x="+x+" y="+y+" z="+z);
+    }
+  }
+}
+
 assert.ok(book.pages.some(page=>page.recipe==="magneticraft2:bronze_stamp_mill"));
 const javaDir="src/main/java/com/magneticraft2/";
 const be=fs.readFileSync(javaDir+"common/blockentity/stage/bronze/BronzeStampMillBlockEntity.java","utf8");
