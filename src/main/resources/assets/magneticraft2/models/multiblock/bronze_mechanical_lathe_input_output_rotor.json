@@ -1,0 +1,285 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "bronze": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/polished_blackstone",
+    "metal": "minecraft:block/iron_block",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        7.1,
+        7.1
+      ],
+      "to": [
+        7,
+        8.9,
+        8.9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            7.1,
+            7,
+            8.9
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            7.1,
+            7,
+            8.9
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            7.1,
+            7.1,
+            8.9,
+            8.9
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            7.1,
+            7.1,
+            8.9,
+            8.9
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            7.1,
+            7,
+            8.9
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            7.1,
+            7,
+            8.9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.7,
+        5.5,
+        6.8
+      ],
+      "to": [
+        5.4,
+        10.5,
+        9.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            5.5,
+            5.4,
+            10.5
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            5.5,
+            5.4,
+            10.5
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            6.8,
+            5.5,
+            9.2,
+            10.5
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            6.8,
+            5.5,
+            9.2,
+            10.5
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            6.8,
+            5.4,
+            9.2
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            6.8,
+            5.4,
+            9.2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.7,
+        6.8,
+        5.5
+      ],
+      "to": [
+        5.4,
+        9.2,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            6.8,
+            5.4,
+            9.2
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            6.8,
+            5.4,
+            9.2
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            5.5,
+            6.8,
+            10.5,
+            9.2
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            5.5,
+            6.8,
+            10.5,
+            9.2
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            5.5,
+            5.4,
+            10.5
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            3.7,
+            5.5,
+            5.4,
+            10.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5.4,
+        7.2,
+        7.2
+      ],
+      "to": [
+        7.5,
+        8.8,
+        8.8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            5.4,
+            7.2,
+            7.5,
+            8.8
+          ]
+        },
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            5.4,
+            7.2,
+            7.5,
+            8.8
+          ]
+        },
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            7.2,
+            7.2,
+            8.8,
+            8.8
+          ]
+        },
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            7.2,
+            7.2,
+            8.8,
+            8.8
+          ]
+        },
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            5.4,
+            7.2,
+            7.5,
+            8.8
+          ]
+        },
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            5.4,
+            7.2,
+            7.5,
+            8.8
+          ]
+        }
+      }
+    }
+  ]
+}

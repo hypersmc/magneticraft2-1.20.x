@@ -20,8 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Static power train is V2 baked; carriage, drive wheel and workpiece move together
- * with the actual Gear V2 machine state. */
+/** V2 static frame, formed module gearbox, rotating arbor and cross-fed tool.
+ * All visible drive axes share the current Gear V2 network rotation. */
 public final class BronzeMechanicalLatheRenderer
         implements BlockEntityRenderer<BronzeMechanicalLatheBlockEntity> {
     private static final ResourceLocation CARRIAGE =
@@ -32,6 +32,10 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_frame");
     private static final ResourceLocation INPUT_ROTOR =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_rotor");
+    private static final ResourceLocation INPUT_OUTPUT_ROTOR =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_input_output_rotor");
+    private static final ResourceLocation ARBOR =
+            new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_arbor");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
@@ -59,26 +63,34 @@ public final class BronzeMechanicalLatheRenderer
         float angle=lathe.getSpindleRotation(partial);
         ItemRenderer items=Minecraft.getInstance().getItemRenderer();
 
-        // Module cell at (0,0,-2) is NOT a filler. V2's part assignment
-        // skips module BEs, so the frame must be rendered here instead.
-        // The model itself leaves the lower module connection face open.
+        // The south blueprint places the formed (hidden) Gear V2 module two
+        // cells behind the controller, centered at x=8, y=8, z=-24 pixels.
+        // The two real shaft axes meet INSIDE this gearbox: incoming Z, output X.
         pose.pushPose();
-        pose.translate(0D,0D,-2D);
+        pose.translate(0D, 0D, -2D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME));
-        // Small bevel-style input rotor, centered above the bearing and
-        // aligned to the static horizontal transmission at y=18.5.
+
         pose.pushPose();
-        pose.translate(.5D,18.5D/16D,.5D);
-        pose.mulPose(Axis.YP.rotationDegrees(angle));
+        pose.translate(.5D, .5D, .5D);
+        pose.mulPose(Axis.ZP.rotationDegrees(angle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
         pose.popPose();
+
+        pose.pushPose();
+        pose.translate(.5D,.5D,.5D);
+        pose.mulPose(Axis.XP.rotationDegrees(-angle));
+        pose.translate(-.5D,-.5D,-.5D);
+        model(pose,source,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(INPUT_OUTPUT_ROTOR));
+        pose.popPose();
         pose.popPose();
 
-        // Spindle/chuck rotates as ONE assembly about the headstock X axis.
-        // The chuck is no longer duplicated in the baked V2 structure.
+        // Physical headstock chuck at x=-4.5, y=22, z=-10. The arbor is
+        // driven by the exact same transform and extends through the workpiece
+        // bore, unlike the previous item floating just beyond the jaws.
         pose.pushPose();
         pose.translate(-4.5D/16D,22D/16D,-10D/16D);
         pose.mulPose(Axis.XP.rotationDegrees(angle));
@@ -90,6 +102,15 @@ public final class BronzeMechanicalLatheRenderer
         ItemStack mounted=lathe.getOutput().isEmpty()
                 ?lathe.getWorkpiece():lathe.getOutput();
         if(!mounted.isEmpty()){
+            // Arbor/mandrel and stop collars rotate with the chuck. The gear
+            // or bearing is held on this shaft; no free-floating ring.
+            pose.pushPose();
+            pose.translate(-4.5D/16D,22D/16D,-10D/16D);
+            pose.mulPose(Axis.XP.rotationDegrees(angle));
+            pose.translate(-.5D,-.5D,-.5D);
+            model(pose,source,light,overlay,
+                    Minecraft.getInstance().getModelManager().getModel(ARBOR));
+            pose.popPose();
             pose.pushPose();
             pose.translate(3D/16D,22D/16D,-10D/16D);
             pose.mulPose(Axis.XP.rotationDegrees(angle));
