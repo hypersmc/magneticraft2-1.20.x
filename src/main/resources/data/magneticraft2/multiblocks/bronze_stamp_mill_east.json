@@ -1,0 +1,131 @@
+{
+  "name": "bronze_stamp_mill_east",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "I",
+          "S",
+          "C"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "B",
+          "Y"
+        ],
+        [
+          "P",
+          "A",
+          "O"
+        ],
+        [
+          "P",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "U"
+        ],
+        [
+          "P",
+          "B",
+          "B"
+        ]
+      ],
+      "layer3": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_stamp_mill",
+      "P": "minecraft:oak_planks",
+      "B": "minecraft:cut_copper",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "Y": "magneticraft2:multiblock_item_byproduct_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_stamp_mill_east",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_stamp_mill",
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        1
+      ],
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        -1,
+        1,
+        -1
+      ]
+    ]
+  }
+}
