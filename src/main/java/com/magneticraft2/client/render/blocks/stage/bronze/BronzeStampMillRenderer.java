@@ -66,13 +66,14 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
         BakedModel cam=Minecraft.getInstance().getModelManager().getModel(CAM);
-        int[] stations={-14,8,30};
+        // Each hammer is centered over one complete 1x1 I/O module pocket.
+        int[] stations={-8,8,24};
         for(int i=0;i<stations.length;i++) {
-            // Each stamp head slides vertically between two fixed guide rails.
-            // Its shoe reaches the trough but cannot go through the floor.
+            // Stamp shoe rests one pixel above the raised crushing plate;
+            // the entire 1x1 collection port remains beneath the plate.
             pose.pushPose();
             pose.translate((stations[i]-8D)/16D,
-                    14D/16D+mill.getHammerLift(partial,i),
+                    24D/16D+mill.getHammerLift(partial,i),
                     (-10D-8D)/16D);
             renderModel(pose,buffers,light,overlay,stamp);
             pose.popPose();
