@@ -16,7 +16,7 @@ function gear(axis,phase){
  ring("iron",11.2,11.75,1.55,1.35);
  for(let i=0;i<8;i++){
   const a=(i*45+phase)*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
-  for(const[m,r0,r1,h]of [["bronze",2.48,3.56,.40],["iron",3.52,3.80,.20]])
+  for(const[m,r0,r1,h]of [["bronze",2.48,3.48,.37],["iron",3.45,3.78,.15]])
    add(m,12.06,12.94,8+Math.min(r0*c,r1*c)-h,8+Math.max(r0*c,r1*c)+h,8+Math.min(r0*s,r1*s)-h,8+Math.max(r0*s,r1*s)+h);
  }
  return boxes;
