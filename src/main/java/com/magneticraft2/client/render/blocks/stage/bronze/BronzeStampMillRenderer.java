@@ -177,10 +177,15 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
+        // IMPORTANT: part() first subtracts 0.5 blocks from the MODEL
+        // origin. The first flight has local y=0..16, so its pivot MUST
+        // be world y=16 to occupy y=8..24 (not y=0..16). The second
+        // local y=0..14.5 must pivot at world y=32 to occupy y=24..38.5.
+        // Old regression tests ignored this half-block translation.
         part(pose,buffers,light,overlay,BELT_STRAIGHT,
-                pulleyX,8D/16D,lowerZ,null,0F);
+                pulleyX,16D/16D,lowerZ,null,0F);
         part(pose,buffers,light,overlay,BELT_UPPER,
-                pulleyX,24D/16D,lowerZ,null,0F);
+                pulleyX,32D/16D,lowerZ,null,0F);
         // The lower half-round uses the model's upper semicircle flipped.
         part(pose,buffers,light,overlay,BELT_WRAP,
                 pulleyX,inputY,lowerZ,Axis.XP,180F);
