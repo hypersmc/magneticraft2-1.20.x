@@ -395,3 +395,55 @@ and a Minecraft visual pass have not been performed for this revision.
 The next test should compare the restored dark frame and bronze corner
 posts around the real wooden input shaft with the earlier in-game views,
 both stopped and rotating, checking for missing parts and z-fighting.
+
+
+## 2026-10-18 — continuous leather power belt and visible crushing faces
+
+Full-machine in-game screenshots showed the main frame, item ports and
+three stamps intact after the input-frame restoration. The right-hand
+drive belt, however, was difficult to read. Inspection found a concrete
+renderer placement mistake: the lower belt flight was at y=16..32
+despite the lower pulley centre at y=8; the upper flight was at
+y=32..46.5 despite the upper pulley centre at y=38.5. This left
+an 8px visible gap below and an 8px overshoot above.
+
+**Fixed** the lower flight to y=8..24 and upper to y=24..38.5,
+meeting precisely between the two original pulleys. Removed hidden
+top/bottom end-cap faces at belt junctions to prevent Z-fighting.
+The pulley axle positions, Gear V2 sign/phase, transmission, 90°
+bevel wheels and frame geometry remain unchanged.
+
+A new **opaque 16x16 pixel-art leather** texture at
+`textures/block/bronze_stamp_mill_drive_belt.png` replaces the
+`minecraft:block/brown_wool` placeholder in both flights and wraps.
+Its warm leather tone and single small stitched joint every tile make
+the drive easier to pick out from the dark spruce, without stretching UVs
+or using the transparent leather-belt ITEM icon.
+
+To make the working area legible, each of the three original hammer
+stations now renders a small **wear plate**: dark backing, inset iron
+anvil surface, four bronze rivets, and two short scuff lines. It is
+visually integrated into the EXISTING trough rather than adding new
+inventory slots, drop-offs, module blocks, or construction voxels.
+Its authored range is y=23.05..23.58, above the trough floor at y=23
+and at least 0.42 pixels below the lowest hammer shoe at y=24.
+One baked model (`bronze_stamp_mill_strike_plate.json`) is reused three
+times, with **65 culled/merged visible faces** per instance.
+
+`tools/bronze-stamp-mill/build-strike-plate.mjs` owns the authored
+strike cuboids, and `test-visual-details.mjs` checks floor/hammer
+clearance, no V2 static intersections, native unstretched UVs, no
+coplanar duplicate panels, input/output block avoidance, continuous
+belt endpoints, no internal belt end caps, opaque RGBA pixels, correct
+baked registration and actual renderer placement. Both are invoked
+by the existing Stamp Mill contract.
+
+**Scope preserved:** the 5x3x4 blueprint/guide, Voxel V2 static solids
+and all four actual modules, torque/recipes/Gear V2, input/output,
+gearbox and bearings, upper crank phase, and accepted Mechanical Lathe.
+
+**Verification:** checked against authored geometry and source models.
+Full `./gradlew build` and visual Minecraft testing remain pending.
+Review the right-side leather belt, its lower and upper pulley contact,
+all three visible strike plates (empty/ore loaded), hammer low position,
+and possible FPS impact, especially with several mills in view.
