@@ -1,57 +1,69 @@
 #!/usr/bin/env node
-// Authored visual-only side belt and frame for the Bronze Stamp Mill.
-// Keeps the signed Gear V2 transmission, both pulley centers, and all
-// 5x3x4 blueprint/voxel geometry unchanged.
+// Flat leather transmission for the Bronze Stamp Mill, built as one
+// continuous loop from straight bands and two supported half-wraps.
+// Static blueprint, shafts, speed and accepted Lathe remain untouched.
 import fs from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
-
-const box=(material,from,to)=>({material,from:from.map(n=>+n.toFixed(5)),to:to.map(n=>+n.toFixed(5))});
-// The leather rides just outside the actual 4.05px copper pulley rim.
-// Near side: radial distance 4.08..5.05px rather than a .54px wire.
-const run=length=>[
- box("belt",[7.25,0,2.95],[8.7,length,3.92]),
- box("belt",[7.25,0,12.08],[8.7,length,13.05])
-];
-function wrap(){
- const y=[8,8.72,9.44,10.16,10.88,11.6,12.3,13.05],inner=4.12,outer=5.05,parts=[];
- for(let i=0;i<y.length-1;i++){
-  const low=y[i],high=y[i+1],dy=low-8;
-  const ro=Math.sqrt(Math.max(0,outer*outer-dy*dy));
-  const ri=dy>=inner?0:Math.sqrt(inner*inner-dy*dy);
-  if(ri===0)parts.push(box("belt",[7.25,low,8-ro],[8.7,high,8+ro]));
-  else{
-   parts.push(box("belt",[7.25,low,8-ro],[8.7,high,8-ri]));
-   parts.push(box("belt",[7.25,low,8+ri],[8.7,high,8+ro]));
-  }
- }
- return parts;
-}
-// Dark uprights and bronze ties behind the leather, not decorative spokes.
-// Lower brace meets the existing side bearing; upper brace meets the upper
-// timber bridge. The strap and pulleys stay in front of these braces.
-function guard(upper){
- const low=upper?0:6,high=upper?10.5:16;
- const parts=[
-  box("dark",[6.8,low,1.75],[7.04,high,2.35]),
-  box("dark",[6.8,low,13.65],[7.04,high,14.25])
+export const stampBeltSolids=(function newBeltGeometry(){
+ const r=n=>+n.toFixed(5),box=(material,from,to)=>({material,from:from.map(r),to:to.map(r)});
+ const INNER=4.08,OUTER=5.45,X0=7.13,X1=8.72;
+ const run=height=>[
+   box("belt",[X0,0,8-OUTER],[X1,height,8-INNER]),
+   box("belt",[X0,0,8+INNER],[X1,height,8+OUTER])
  ];
- for(const [y0,y1]of upper?[[4.5,5.15],[10,10.5]]:[[6,6.7],[10.7,11.35]])
-  parts.push(box("bronze",[6.79,y0,1.75],[7.05,y1,14.25]));
- parts.push(upper?
-  box("wood",[6.6,10.42,7],[7.06,11,9]):
-  box("wood",[6.9,4.5,7],[7.06,6.4,9]));
- return parts;
-}
-export const stampBeltSolids={
- bronze_stamp_mill_drive_belt_straight:run(16),
- bronze_stamp_mill_drive_belt_upper:run(14.5),
- bronze_stamp_mill_drive_belt_wrap:wrap(),
- bronze_stamp_mill_drive_belt_guard_lower:guard(false),
- bronze_stamp_mill_drive_belt_guard_upper:guard(true)
-};
-// Same face culling and unit-scale UVs as the current Stamp Mill drive
-// builder, adding only the dedicated opaque leather texture key.
+ // One semicircular leather band over each drum. The lower copy is
+ // rotated 180 degrees by the renderer. Facets are intentionally
+ // coarse enough to look like Minecraft, not stretched rods.
+ const cap=()=>{
+  const cuts=[8,8.70,9.40,10.10,10.80,11.50,12.20,12.90,13.45],out=[];
+  for(let i=0;i<cuts.length-1;i++){
+   const y0=cuts[i],y1=cuts[i+1];
+   const shell=Math.max(.24,Math.sqrt(Math.max(0,OUTER*OUTER-(y1-8)**2)));
+   const hole=y0-8>=INNER?0:Math.sqrt(Math.max(0,INNER*INNER-(y0-8)**2));
+   if(shell<hole+.06)throw Error("A leather half-wrap disconnected at "+y0);
+   if(hole<=.05)out.push(box("belt",[X0,y0,8-shell],[X1,y1,8+shell]));
+   else{
+    out.push(box("belt",[X0,y0,8-shell],[X1,y1,8-hole]));
+    out.push(box("belt",[X0,y0,8+hole],[X1,y1,8+shell]));
+   }
+  }
+  return out;
+ };
+ // Solid copper-rimmed spruce drive drum. It replaces the disconnected
+ // looking exposed spoke/sprocket wheel, NOT its axle, pivot or phase.
+ const drum=()=>{
+  const out=[],cuts=[4.06,4.8,5.6,6.7,8,9.3,10.4,11.2,11.94];
+  for(let i=0;i<cuts.length-1;i++){
+   const y0=cuts[i],y1=cuts[i+1];
+   const radialFar=Math.max(Math.abs(y0-8),Math.abs(y1-8));
+   const radialNear=y0<=8&&y1>=8?0:Math.min(Math.abs(y0-8),Math.abs(y1-8));
+   const outer=Math.sqrt(Math.max(0,3.98**2-radialFar**2));
+   const wood=Math.sqrt(Math.max(0,3.42**2-radialFar**2));
+   const inner=radialNear>=3.20?0:Math.sqrt(Math.max(0,3.20**2-radialNear**2));
+   if(wood>.05)out.push(box("wood",[7.34,y0,8-wood],[8.40,y1,8+wood]));
+   if(outer>.10){
+    if(inner<.04)out.push(box("bronze",[7.22,y0,8-outer],[8.58,y1,8+outer]));
+    else if(inner<outer-.05){
+     out.push(box("bronze",[7.22,y0,8-outer],[8.58,y1,8-inner]));
+     out.push(box("bronze",[7.22,y0,8+inner],[8.58,y1,8+outer]));
+    }
+   }
+  }
+  out.push(box("iron",[8.4,7.11,7.11],[8.65,8.89,8.89]));
+  out.push(box("bronze",[8.6,7.48,7.48],[8.74,8.52,8.52]));
+  for(const [y,z] of [[4.55,8],[11.45,8],[8,4.55],[8,11.45]]){
+   out.push(box("bronze",[8.48,y-.20,z-.20],[8.68,y+.20,z+.20]));
+  }
+  return out;
+ };
+ return{
+  bronze_stamp_mill_drive_belt_straight:run(16),
+  bronze_stamp_mill_drive_belt_upper:run(14.5),
+  bronze_stamp_mill_drive_belt_wrap:cap(),
+  bronze_stamp_mill_drive_pulley:drum()
+ };
+})();
 const compile=function compile(boxes){
 const S={north:[2,-1,0,1],south:[2,1,0,1],west:[0,-1,2,1],east:[0,1,2,1],up:[1,1,0,2],down:[1,-1,0,2]},eps=1e-6,
 textures={bronze:"minecraft:block/cut_copper",iron:"minecraft:block/iron_block",dark:"minecraft:block/polished_blackstone",wood:"minecraft:block/stripped_spruce_log",belt:"magneticraft2:block/bronze_stamp_mill_drive_belt",particle:"minecraft:block/cut_copper"},
@@ -85,36 +97,29 @@ const elements=panels.map(p=>{const[axis,sign,u,v]=S[p.face],from=[0,0,0],to=[0,
 return {parent:"minecraft:block/block",ambientocclusion:false,textures,elements};
 };
 export function buildStampBeltModels(){
- const output={};
- for(const [name,solids]of Object.entries(stampBeltSolids)){
-  const model=compile(solids);
-  model.elements=model.elements.filter(e=>{
-   const face=Object.keys(e.faces)[0];
-   if(name.endsWith("_belt_straight")||name.endsWith("_belt_upper"))
-    return face!=="up"&&face!=="down";
-   if(name.endsWith("_guard_lower"))return face!=="up";
-   if(name.endsWith("_guard_upper"))return face!=="down";
-   return true;
-  });
-  output[name]=model;
- }
- return output;
+  const out={};
+  for(const [name,parts]of Object.entries(stampBeltSolids)){
+    const model=compile(parts);
+    model.elements=model.elements.filter(e=>{
+      const face=Object.keys(e.faces)[0];
+      if(name.endsWith("_belt_straight")||name.endsWith("_belt_upper"))
+        return face!=="up"&&face!=="down";
+      if(name.endsWith("_belt_wrap"))return face!=="down";
+      return true;
+    });
+    out[name]=model;
+  }
+  return out;
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- let failures=0;
- for(const [name,model]of Object.entries(buildStampBeltModels())){
-  const p=path.join("src/main/resources/assets/magneticraft2/models/multiblock",name+".json");
-  const text=JSON.stringify(model,null,2)+"\n";
-  if(process.argv.includes("--check")){
-   if(!fs.existsSync(p)||fs.readFileSync(p,"utf8")!==text){
-    console.error("Stale belt or support model:",p);
-    failures++;
-   }
-  }else{
-   fs.mkdirSync(path.dirname(p),{recursive:true});
-   fs.writeFileSync(p,text,"utf8");
+  let bad=0;
+  for(const [name,model]of Object.entries(buildStampBeltModels())){
+    const file=path.join("src/main/resources/assets/magneticraft2/models/multiblock",name+".json");
+    const expected=JSON.stringify(model,null,2)+"\n";
+    if(process.argv.includes("--check")){
+      if(!fs.existsSync(file)||fs.readFileSync(file,"utf8")!==expected){console.error("Outdated belt/pulley:",name);bad++;}
+    }else{fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,expected,"utf8");}
+    console.log(name+": "+model.elements.length+" visible panels");
   }
-  console.log(name+": "+model.elements.length+" visible panels");
- }
- if(failures)process.exitCode=1;
+  if(bad)process.exitCode=1;
 }

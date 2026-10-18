@@ -72,10 +72,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_upper");
     private static final ResourceLocation BELT_WRAP =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_wrap");
-    private static final ResourceLocation BELT_GUARD_LOWER =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_guard_lower");
-    private static final ResourceLocation BELT_GUARD_UPPER =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_guard_upper");
 
     private static void part(PoseStack pose,MultiBufferSource buffers,int light,int overlay,
                              ResourceLocation model,double x,double y,double z,
@@ -173,10 +169,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,inputY,lowerZ,Axis.XP,driveAngle);
 
-        // Opaque, full-thickness leather belt between both existing
-        // pulleys, held inside a dark-iron and bronze support scaffold.
-        // Flights join at y=24; the outer wrap rides outside the pulley
-        // circumference. This is fixed belt geometry, not spinning rods.
+        // Wide, dark, closed leather loop wrapped over smooth bronze-rimmed
+        // wooden drums. The lower/upper centers (8,38.5) and shaft phases
+        // are unchanged. Leather does not rotate as a rigid pulley mesh;
+        // the two half-rounds remain fixed while both drums spin.
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
@@ -190,12 +186,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                 pulleyX,inputY,lowerZ,Axis.XP,180F);
         part(pose,buffers,light,overlay,BELT_WRAP,
                 pulleyX,upperY,lowerZ,null,0F);
-        // Timber/bronze belt guard is supported by the side bearing and
-        // upper timber bridge. Rendered behind, not touching the belt loop.
-        part(pose,buffers,light,overlay,BELT_GUARD_LOWER,
-                pulleyX,16D/16D,lowerZ,null,0F);
-        part(pose,buffers,light,overlay,BELT_GUARD_UPPER,
-                pulleyX,32D/16D,lowerZ,null,0F);
 
         // One continuous drive axis through all four fixed crank pillows.
         // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
