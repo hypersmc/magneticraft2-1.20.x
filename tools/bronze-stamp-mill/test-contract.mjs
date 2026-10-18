@@ -246,6 +246,52 @@ assert.ok(!millRenderer.includes("getModel(MODULE)")&&
           !millRenderer.includes("new ResourceLocation(\"magneticraft2\",\"multiblock/bronze_stamp_mill_input_frame\")"),
   "Stamp Mill must not re-render the already visible functional module");
 
+// The previously visible decorative input frame must not disappear when
+// replacing its inner bearing with the reusable module's own renderer.
+const originalFrame=read(asset("input_frame"));
+const frameTrim=read(asset("input_frame_detail"));
+assert.equal(originalFrame.elements.length,63,"The accepted input frame is the source of truth");
+assert.equal(frameTrim.elements.length,51,"All outer frame detail and clipped faces must be preserved");
+assert.equal(frameTrim.elements.filter(e=>Object.values(e.faces)[0].texture==="#bronze").length,16,
+  "Lost copper corner uprights from the original input frame");
+assert.equal(frameTrim.elements.filter(e=>Object.values(e.faces)[0].texture==="#dark").length,35,
+  "Lost dark-metal crosspieces from the original input frame");
+assert.equal(frameTrim.elements.filter(e=>originalFrame.elements.slice(0,43)
+  .some(old=>JSON.stringify(old)===JSON.stringify(e))).length,39,
+  "Undisturbed original input-frame faces should be preserved exactly");
+assert.ok(millRenderer.includes("INPUT_FRAME_DETAIL")&&
+          millRenderer.includes("pose.translate(0D,0D,-2D)"),
+  "The formed Stamp Mill must render its outer input decoration at its original cell");
+const housingModel=read(root+"/assets/magneticraft2/models/block/mechanical_input_module_housing.json");
+const woodModel=read(root+"/assets/magneticraft2/models/block/shaft_wood.json");
+// The shared module BER rotates canonical +Y housing/shaft models 90 degrees
+// about +X to the Stamp Mill's local +Z input axis.
+const orientToInputZ=e=>({
+  from:[e.from[0],16-e.to[2],e.from[1]],
+  to:[e.to[0],16-e.from[2],e.to[1]]
+});
+const moduleParts=[...housingModel.elements.map(orientToInputZ),
+                   ...woodModel.elements.map(orientToInputZ)];
+for(const panel of frameTrim.elements){
+  for(const solid of moduleParts){
+    assert.ok(!panel.from.every((v,i)=>
+      Math.min(panel.to[i],solid.to[i])-Math.max(v,solid.from[i])>1e-5),
+      "Decorative frame intersects the real input shaft or bearing");
+  }
+  const nearestX=Math.max(panel.from[0],Math.min(8,panel.to[0]));
+  const nearestY=Math.max(panel.from[1],Math.min(8,panel.to[1]));
+  assert.ok(Math.hypot(nearestX-8,nearestY-8)>Math.sqrt(18)+.01,
+    "Frame decoration clips the 6x6 wooden rotor when it turns 45 degrees");
+  const face=Object.keys(panel.faces)[0],data=panel.faces[face];
+  const axes={north:[0,1],south:[0,1],east:[2,1],west:[2,1],up:[0,2],down:[0,2]}[face];
+  assert.ok(axes&&frameTrim.textures[data.texture.slice(1)],
+    "Decorative frame has unresolved texture");
+  assert.ok(data.uv.every(v=>v>=0&&v<=16)&&
+    Math.abs(data.uv[2]-data.uv[0]-(panel.to[axes[0]]-panel.from[axes[0]]))<1e-5&&
+    Math.abs(data.uv[3]-data.uv[1]-(panel.to[axes[1]]-panel.from[axes[1]]))<1e-5,
+    "Decorative frame UV tiles must not be stretched");
+}
+
 // The steel extension, its copper transition ring, and the gearbox begin
 // entirely OUTSIDE the rear module's real z=-32..-16 cell.
 const steelExtension=read(asset("drive_input_shaft"));
@@ -469,5 +515,6 @@ assert.ok(jei.includes("MultiblockJeiRecipe.BRONZE_STAMP_MILL"));
 // authored source. This also catches stale shaft cap geometry.
 import {execFileSync} from "node:child_process";
 execFileSync(process.execPath,["tools/bronze-stamp-mill/build-drive-models.mjs","--check"],{stdio:"pipe"});
+execFileSync(process.execPath,["tools/bronze-stamp-mill/build-input-frame-detail.mjs","--check"],{stdio:"pipe"});
 execFileSync(process.execPath,["tools/bronze-stamp-mill/test-bevel-mesh.mjs"],{stdio:"pipe"});
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");

@@ -350,3 +350,48 @@ Specifically check that the copper tips no longer resemble protruding
 fingers, the two pitch wheels still visibly mesh, and there is no flicker.
 If visuals remain unsatisfactory, do not extend these tooth tips again
 without a new gear profile design and a complete in-game review.
+
+
+## 2026-10-18 — restore missing input-frame details (accepted machine appearance)
+
+The real issue after earlier render work was **not missing V2 directionals**:
+all 228 directional parts remain, and the only removed V2 cuboid was the
+static upper drive shaft replaced with the animated one. Instead, the
+Stamp Mill-specific `bronze_stamp_mill_input_frame` stopped being drawn in
+the BER when we switched to the reusable Mechanical Input Module's own
+wooden shaft/bearing. The legacy frame still existed on disk but its
+outer dark-metal and bronze details had silently disappeared.
+
+The corrected Stamp Mill now renders a **separate exterior-only frame**
+`bronze_stamp_mill_input_frame_detail.json` at the original input cell
+`(0,0,-2)`. It retains all original outer steel/dark-metal rails, copper
+corner pillars, and upper/lower crosspieces:
+
+- The original input-frame model contains 63 visible panels: 43 outer
+  support/detail panels, and 20 inner shaft-sleeve/collar panels.
+- We preserve the 43 outer faces as authored, except for precisely
+  clipping four rails where they physically cross the real shared-module
+  housing. The final trimmed baked asset has 51 face panels: 39 fully
+  unchanged, with 12 subfaces replacing four conflicting panels.
+- The 20 inner faces remain delegated to the shared module's rotating
+  wooden shaft and bronze bearing; restoring those old faces verbatim
+  would create the same Z-fighting we previously eliminated.
+- Both module assets are inspected in their true Y-to-Z transformed
+  orientation. Source-level checks confirm the new detail intersects
+  neither module housing nor shaft, and clears the **full swept radius**
+  of the rotating square wooden shaft, not just its resting bounds.
+- `tools/bronze-stamp-mill/build-input-frame-detail.mjs` regenerates
+  the detail from the exact legacy asset and shared module models.
+  Its `--check` runs inside the Stamp Mill contract, protecting
+  original frame completeness and native, unstretched UV mapping.
+
+**No changes** to the two bevel gears, their teeth/phase, rotating
+shaft, bearings, belt, existing static V2 frame, construction JSON,
+controller, item modules, gearbox loads, recipes, Patchouli pattern
+or the accepted Mechanical Lathe.
+
+This remains source-level validation. A successful `./gradlew build`
+and a Minecraft visual pass have not been performed for this revision.
+The next test should compare the restored dark frame and bronze corner
+posts around the real wooden input shaft with the earlier in-game views,
+both stopped and rotating, checking for missing parts and z-fighting.

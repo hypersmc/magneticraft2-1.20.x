@@ -30,6 +30,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer_worn");
     private static final ResourceLocation CAM =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_cam");
+    // Only the legacy EXTERIOR trim. The reusable formed input module owns
+    // the moving wood rotor and bronze bearing faces inside this block.
+    private static final ResourceLocation INPUT_FRAME_DETAIL =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_input_frame_detail");
 
     // Render-only powertrain, mechanically driven by the formed input module.
     // X shafts and Z input each have correctly aligned baked geometry.
@@ -99,6 +103,16 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         pose.translate(.5D,0D,.5D);
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-.5D,0D,-.5D);
+
+        // Restore the Stamp Mill's accepted corner posts and dark iron
+        // input-frame rails, clipped to clear the actual module housing.
+        // The real module BER still owns all central bronze bearing and
+        // moving wooden-rotor geometry: no duplicate surfaces.
+        pose.pushPose();
+        pose.translate(0D,0D,-2D);
+        renderModel(pose,buffers,light,overlay,
+                Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME_DETAIL));
+        pose.popPose();
 
         // The formed input module renders its own wood shaft and bearing.
         // Only the drive extension OUTSIDE its real 1x1 block is rendered here.
