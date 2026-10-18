@@ -447,3 +447,49 @@ Full `./gradlew build` and visual Minecraft testing remain pending.
 Review the right-side leather belt, its lower and upper pulley contact,
 all three visible strike plates (empty/ore loaded), hammer low position,
 and possible FPS impact, especially with several mills in view.
+
+## 2026-10-18 — belt visual regression: cords and hanging wheels
+
+Minecraft's actual end-on view of the 2026-10-18 belt update showed an
+unacceptable appearance: two skinny tan cords with exposed standalone
+spoked wheels hanging off the side, despite all prior endpoint/UV tests
+passing. It was a model-design error, not a Gear V2 error.
+
+The belt stays in its **existing exterior location** (x=47.2, z=-10),
+because moving it inside the frame would intersect the real crushing
+trough and timber load-bearing structure. Both rotating pulleys, their
+axes, the upper and lower shafts, and the synchronized hammer timing are
+unchanged.
+
+**Rendering V3 correction (BER-only):**
+
+- The two leather flights now have approximately **0.97px radial
+  thickness**, not 0.54px. Both run from y=8 to 38.5 through a shared
+  seam at y=24. Their rectangular leather width follows the existing
+  pulley axle's 1.5px depth.
+- A matched semicircular leather wrap uses a faceted Minecraft-appropriate
+  radius of **4.12..5.05px**, outside the 4.05px bronze pulley perimeter.
+  The lower wrap still rotates 180 degrees; the upper remains at rest.
+  The new wraps actually overlap the flights at the tangents.
+- Replaced the bright cord-colored texture with a deep brown **opaque
+  16x16 leather tile** with restrained grain and stitch marks. No
+  stretching, texture atlas edits, or transparent pixels.
+- Added two small renderer-only **belt frame segments**: dark-iron
+  uprights and bronze cross ties behind the loop, with short wood anchors
+  to the real lower side-bearing mount and upper structural timber bridge.
+  The bands and pulleys do not touch this stationary structure, and the
+  supports do not invade any authored V2 static cuboids.
+- These are authored in `build-belt-models.mjs`, with generated model
+  parity, 1px belt-thickness check, support-to-frame contact, pulley
+  clearance, nonoverlapping UVs, belt wrap tangency, no double end caps,
+  and a <=200-face visual budget checked in `test-visual-details.mjs`.
+
+Preserved: the 5x3x4 blueprint, all 228 directional V2 fillers,
+controller/recipes/ore output, physical I/O ports, mechanical input module,
+rotating bevel gears, gear ratio, existing pulleys/shafts, the three
+strike plates, and accepted Mechanical Lathe.
+
+**Verification still pending:** `./gradlew build` and actual Minecraft
+render check from the same end-on view. Source geometry tests validate
+collision and assembly constraints, not artistic quality; do not declare
+the new look accepted before another screenshot.
