@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import {inflateSync} from "node:zlib";
 import {stampStrikeBoxes,buildStrikePlate} from "./build-strike-plate.mjs";
 import {stampBeltSolids,buildStampBeltModels} from "./build-belt-models.mjs";
-import {stampMillDriveDesigns} from "./build-drive-models.mjs";
+
 
 const read=p=>JSON.parse(fs.readFileSync(p,"utf8"));
 const base="src/main/resources/";
@@ -61,111 +61,133 @@ for(const x of [-8,8,24])for(const b of stampStrikeBoxes){
  assert.ok(located.from[2]>-16&&located.to[2]<-4,
   "Plate must remain inside the crushing trough, not a module block");
 }
+// The belt lives on two X-axis DRUMS, not sprockets, and must make an
+// unbroken loop in ACTUAL renderer space (local baked model -0.5 blocks).
 const lower=read(asset("drive_belt_straight"));
 const upper=read(asset("drive_belt_upper"));
 const wrap=read(asset("drive_belt_wrap"));
-const guardLower=read(asset("drive_belt_guard_lower"));
-const guardUpper=read(asset("drive_belt_guard_upper"));
-const authoredBelts=buildStampBeltModels();
-for(const [name,expected]of Object.entries(authoredBelts)){
- const actual=read(base+"assets/magneticraft2/models/multiblock/"+name+".json");
- assert.deepEqual(actual,expected,"Belt/support asset does not match authored geometry "+name);
-}
-for(const [name,model]of [["lower",lower],["upper",upper],["wrap",wrap]]){
- assert.equal(model.textures.belt,"magneticraft2:block/bronze_stamp_mill_drive_belt",
-  name+" belt is not using the Stamp Mill's opaque leather material");
- verifyModel(model,name+" leather belt");
-}
-assert.equal(lower.elements.length,8,"Lower flight should contain only outer faces");
-assert.equal(upper.elements.length,8,"Upper flight should contain only outer faces");
-assert.ok(guardLower.elements.length<=50&&guardUpper.elements.length<=50,
- "Exterior wood/iron support must not add an expensive hidden mesh");
-verifyModel(guardLower,"lower mounted guard");
-verifyModel(guardUpper,"upper mounted guard");
-for(const model of [guardLower,guardUpper])assert.ok(
- model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==="#dark"))&&
- model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==="#bronze"))&&
- model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==="#wood")),
- "Guard must have visible dark-iron posts, bronze ties and wooden anchors");
 const pulley=read(asset("drive_pulley"));
-const closestPulleyX=Math.min(...pulley.elements.map(e=>e.from[0]));
-for(const name of ["bronze_stamp_mill_drive_belt_guard_lower",
-                   "bronze_stamp_mill_drive_belt_guard_upper"]){
- const outer=Math.max(...stampBeltSolids[name].map(b=>b.to[0]));
- assert.ok(closestPulleyX-outer>=.10,
-  "Bearing guard clips the spinning pulley: "+name);
-}
-const frontFlight=stampBeltSolids.bronze_stamp_mill_drive_belt_straight;
-assert.equal(frontFlight.length,2,"Exactly two long belt flights should exist");
-for(const flight of frontFlight){
- assert.ok(flight.to[2]-flight.from[2]>=.9&&flight.to[2]-flight.from[2]<=1.1,
-  "Leather must be a visible 1px band, not a 0.54px rope");
-}
-// Recalculate each source box in controller-relative model pixel coordinates.
-const locate=(box,[cx,cy,cz])=>({
- from:box.from.map((v,i)=>v+[cx,cy,cz][i]-8),
- to:box.to.map((v,i)=>v+[cx,cy,cz][i]-8)
-});
-const touch=(a,b)=>{
- const separation=a.from.map((v,i)=>
-  Math.min(a.to[i],b.to[i])-Math.max(v,b.from[i]));
- return separation.every(v=>v>=-1e-5)&&separation.filter(v=>v>1e-5).length>=2;
-};
-const lowBoxes=stampBeltSolids.bronze_stamp_mill_drive_belt_guard_lower
- .map(b=>locate(b,[47.2,16,-10]));
-const highBoxes=stampBeltSolids.bronze_stamp_mill_drive_belt_guard_upper
- .map(b=>locate(b,[47.2,32,-10]));
-const bearingBoxes=stampMillDriveDesigns.bronze_stamp_mill_drive_side_lower_mount
- .map(b=>locate(b,[47.2,8,-10]));
-const bridge=shell.boxes.find(b=>b.name==="mount_right_upper_bridge");
-assert.ok(bridge,"Missing primary upper drive frame brace");
-assert.ok(lowBoxes.some(a=>bearingBoxes.some(b=>touch(a,b))),
- "Lower belt support must touch an actual bearing bracket");
-assert.ok(highBoxes.some(a=>touch(a,bridge)),
- "Upper belt support must meet the upper timber load frame");
-for(const guard of [...lowBoxes,...highBoxes]){
- for(const staticPart of shell.boxes)assert.ok(!overlaps(guard,staticPart),
-  "Guard intrudes into V2 model "+staticPart.name);
-}
-const allBeltSolids=[
- ...stampBeltSolids.bronze_stamp_mill_drive_belt_straight.map(b=>locate(b,[47.2,16,-10])),
- ...stampBeltSolids.bronze_stamp_mill_drive_belt_upper.map(b=>locate(b,[47.2,32,-10])),
- ...stampBeltSolids.bronze_stamp_mill_drive_belt_wrap.map(b=>locate(b,[47.2,8,-10])),
- ...stampBeltSolids.bronze_stamp_mill_drive_belt_wrap.map(b=>locate(b,[47.2,38.5,-10]))
-];
-for(const guard of [...lowBoxes,...highBoxes]){
- for(const strap of allBeltSolids)assert.ok(!overlaps(guard,strap),
-  "Leather strap clips the new wooden guard");
-}
-// The belt wraps must really connect to BOTH straight flights at their
-// tangent y=8 and y=38.5, not merely use the correct overall height.
-const wrapStart=stampBeltSolids.bronze_stamp_mill_drive_belt_wrap
- .filter(b=>Math.abs(b.from[1]-8)<1e-5);
-assert.equal(wrapStart.length,2,"Wrap should have both bottom tangents");
-for(const strap of frontFlight)assert.ok(wrapStart.some(w=>
- Math.min(strap.to[0],w.to[0])-Math.max(strap.from[0],w.from[0])>1e-5&&
- Math.min(strap.to[2],w.to[2])-Math.max(strap.from[2],w.from[2])>.5),
- "The 1px belt flight misses its wheel wrap");
+const builtBelts=buildStampBeltModels();
 const names=["bronze_stamp_mill_drive_belt_straight",
- "bronze_stamp_mill_drive_belt_upper","bronze_stamp_mill_drive_belt_wrap",
- "bronze_stamp_mill_drive_belt_guard_lower",
- "bronze_stamp_mill_drive_belt_guard_upper"];
-const totalBeltFaces=names.reduce((sum,name)=>sum+authoredBelts[name].elements.length,0);
-assert.ok(totalBeltFaces<=200,"Exterior belt exceeded visual face budget: "+totalBeltFaces);
+ "bronze_stamp_mill_drive_belt_upper",
+ "bronze_stamp_mill_drive_belt_wrap",
+ "bronze_stamp_mill_drive_pulley"];
+assert.deepEqual(Object.keys(builtBelts),names,"Obsolete belt guard unexpectedly returned");
+for(const id of names){
+ const expected=builtBelts[id],actual=read(base+"assets/magneticraft2/models/multiblock/"+id+".json");
+ assert.deepEqual(actual,expected,"Baked belt/drum does not match authored source: "+id);
+ verifyModel(actual,id);
+}
+for(const [name,model]of [["lower",lower],["upper",upper],["wrap",wrap]])
+ assert.equal(model.textures.belt,"magneticraft2:block/bronze_stamp_mill_drive_belt",
+   name+" must use the dark opaque leather texture");
+for(const id of ["drive_belt_guard_lower","drive_belt_guard_upper"])
+ assert.ok(!fs.existsSync(asset(id)),"Do not resurrect exposed guard frame: "+id);
+assert.equal(stampBeltSolids.bronze_stamp_mill_drive_belt_straight.length,2,
+ "A flat endless belt should have exactly two straight flights");
+assert.equal(stampBeltSolids.bronze_stamp_mill_drive_belt_upper.length,2);
+assert.equal(lower.elements.length,8);
+assert.equal(upper.elements.length,8);
+assert.ok(wrap.elements.length>=50&&wrap.elements.length<=90,
+ "Minecraft-faceted half-wrap lost, or has excessive geometry");
+assert.ok(pulley.elements.length<=190,
+ "Drum must cost LESS to render than the former spoked wheel");
 
-for(const panel of [...lower.elements,...upper.elements])
- assert.ok(!Object.keys(panel.faces).some(face=>face==="up"||face==="down"),
-  "End caps inside the continuous belt cause seam flicker");
-const ybounds=model=>[
- Math.min(...model.elements.map(e=>e.from[1])),
- Math.max(...model.elements.map(e=>e.to[1]))
+// A smooth wooden drive drum with bronze outer contact, NOT an exposed
+// sprocket-wheel trying to pull loose leather cords.
+for(const metal of ["#iron","#bronze","#wood"])
+ assert.ok(pulley.elements.some(e=>
+   Object.values(e.faces).some(f=>f.texture===metal)),
+   "Missing correct wood/bronze/iron drum material "+metal);
+const beltWidth=stampBeltSolids.bronze_stamp_mill_drive_belt_straight[0].to[0]
+ -stampBeltSolids.bronze_stamp_mill_drive_belt_straight[0].from[0];
+const radialThickness=stampBeltSolids.bronze_stamp_mill_drive_belt_straight[0].to[2]
+ -stampBeltSolids.bronze_stamp_mill_drive_belt_straight[0].from[2];
+assert.ok(beltWidth>=1.55&&beltWidth<=1.7,"Leather ribbon must fit both drums");
+assert.ok(radialThickness>=1.3&&radialThickness<=1.55,
+ "Reject thin leather strings or giant tyre-sized drive bands");
+assert.ok(![...lower.elements,...upper.elements].some(e=>
+ Object.keys(e.faces).some(face=>face==="up"||face==="down")),
+ "Shaft-wide flights may not draw coincident end caps at their junction");
+assert.ok(!wrap.elements.some(e=>
+ Object.keys(e.faces).includes("down")&&Math.abs(e.from[1]-8)<1e-5),
+ "Half-wrap must not draw a coincident cap on its straight tangent");
+
+// The crucial earlier bug: a render call uses
+// pose.translate(center).translate(-0.5,-0.5,-0.5).
+// Local belt y=0..16 at center=16 -> WORLD y=8..24.
+// Local belt y=0..14.5 at center=32 -> WORLD y=24..38.5.
+function transformed(box,[cx,cy,cz],turned=false){
+ return {
+  from:box.from.map((v,i)=>i===0?v+cx-8:turned?16-box.to[i]+[cx,cy,cz][i]-8:v+[cx,cy,cz][i]-8),
+  to:box.to.map((v,i)=>i===0?v+cx-8:turned?16-box.from[i]+[cx,cy,cz][i]-8:v+[cx,cy,cz][i]-8)
+ };
+}
+const transforms={
+ bronze_stamp_mill_drive_belt_straight:[[[47.2,16,-10],false]],
+ bronze_stamp_mill_drive_belt_upper:[[[47.2,32,-10],false]],
+ bronze_stamp_mill_drive_belt_wrap:[[[47.2,8,-10],true],[[47.2,38.5,-10],false]],
+ bronze_stamp_mill_drive_pulley:[[[47.2,8,-10],false],[[47.2,38.5,-10],false]]
+};
+const placed=name=>transforms[name].flatMap(([centre,turned])=>
+ stampBeltSolids[name].map(b=>transformed(b,centre,turned)));
+const extentY=name=>[
+ Math.min(...placed(name).map(b=>b.from[1])),
+ Math.max(...placed(name).map(b=>b.to[1]))
 ];
-assert.deepEqual(ybounds(lower),[0,16]);
-assert.deepEqual(ybounds(upper),[0,14.5]);
-// Lower pulley centre=8; upper centre=38.5; straight runs join at 24.
-assert.deepEqual([8+ybounds(lower)[0],8+ybounds(lower)[1],
-                  24+ybounds(upper)[0],24+ybounds(upper)[1]],
- [8,24,24,38.5],"Belt flights must meet BOTH pulleys, not start 8px late");
+assert.deepEqual(extentY("bronze_stamp_mill_drive_belt_straight"),[8,24],
+ "Lower flight must start at the actual LOWER pulley centre y=8");
+assert.deepEqual(extentY("bronze_stamp_mill_drive_belt_upper"),[24,38.5],
+ "Upper flight must end at upper pulley centre y=38.5");
+const arcWorld=placed("bronze_stamp_mill_drive_belt_wrap");
+assert.ok(Math.max(...arcWorld.filter(p=>p.to[1]<=8+1e-4).map(b=>b.to[1]))<=8+1e-4);
+assert.ok(Math.min(...arcWorld.filter(p=>p.from[1]>=38.5-1e-4).map(b=>b.from[1]))>=38.5-1e-4);
+
+// The two flat strips join without gaps, and each touches both rounded caps
+// on its side at y=8 / y=38.5. The caps must not overlap the straight
+// portions in volume (a common source of flickering).
+for(const name of ["bronze_stamp_mill_drive_belt_straight","bronze_stamp_mill_drive_belt_upper"]){
+ for(const straight of placed(name))for(const round of arcWorld)
+  assert.ok(!overlaps(straight,round),
+   "Leather half-wrap intersects a straight run (Z-fighting)");
+}
+const startCaps=stampBeltSolids.bronze_stamp_mill_drive_belt_wrap
+ .filter(b=>Math.abs(b.from[1]-8)<1e-5);
+assert.equal(startCaps.length,2);
+for(const strap of stampBeltSolids.bronze_stamp_mill_drive_belt_straight)
+ assert.ok(startCaps.some(cap=>
+  Math.min(strap.to[2],cap.to[2])-Math.max(strap.from[2],cap.from[2])>1),
+ "Leather loop is disconnected from its pulley tangent");
+
+// Wheel rotates about +X. Radius envelope of ALL its cuboid corners must
+// clear the inner radius of the stationary leather at every angle.
+const sweepRadius=boxes=>Math.max(...boxes.flatMap(b=>
+ [b.from[1],b.to[1]].flatMap(y=>
+  [b.from[2],b.to[2]].map(z=>Math.hypot(y-8,z-8)))));
+const radiusDrum=sweepRadius(stampBeltSolids.bronze_stamp_mill_drive_pulley);
+const closestToCentre=box=>{
+ const y=Math.max(box.from[1],Math.min(8,box.to[1]));
+ const z=Math.max(box.from[2],Math.min(8,box.to[2]));
+ return Math.hypot(y-8,z-8);
+};
+const clearance=Math.min(...stampBeltSolids.bronze_stamp_mill_drive_belt_wrap.map(closestToCentre))-radiusDrum;
+assert.ok(clearance>.06&&clearance<.20,
+ "Drum must rotate under leather without clipping or visibly floating: "+clearance);
+
+// This extra geometry must NEVER touch the V2 machine, ports, or the
+// existing bearing mounts. No new filler blocks were added.
+let instancedFaces=0;
+for(const name of names){
+ instancedFaces+=builtBelts[name].elements.length*transforms[name].length;
+ for(const b of placed(name)){
+  for(const frame of shell.boxes)assert.ok(!overlaps(b,frame),
+   "End drive visually clips the structural Stamp Mill frame: "+frame.name);
+  assert.ok(b.to[0]<=48&&b.from[0]>46,
+   "Drive must stay in the unchanged 5x3x4 footprint");
+ }
+}
+assert.ok(instancedFaces<=525,
+ "End drive rendered face budget regression: "+instancedFaces);
 const png=fs.readFileSync(base+"assets/magneticraft2/textures/block/bronze_stamp_mill_drive_belt.png");
 assert.equal(png.subarray(0,8).toString("hex"),"89504e470d0a1a0a");
 assert.equal(png.readUInt32BE(16),16);
@@ -201,12 +223,16 @@ assert.ok(client.includes('"multiblock/bronze_stamp_mill_strike_plate"'),
 assert.ok(renderer.includes("STRIKE_PLATE")&&renderer.includes("stations[i]/16D,23D/16D,-10D/16D,null,0F")&&
           renderer.includes("int[] stations={-8,8,24}"),
  "Three wear plates must be centered beneath the existing hammer stations");
-assert.ok(renderer.includes("pulleyX,8D/16D,lowerZ,null,0F")&&
-          renderer.includes("pulleyX,24D/16D,lowerZ,null,0F"),
- "Belt flights have slipped off their actual pulley tangents");
-assert.ok(client.includes('"multiblock/bronze_stamp_mill_drive_belt_guard_lower"')&&
- client.includes('"multiblock/bronze_stamp_mill_drive_belt_guard_upper"')&&
- renderer.includes("BELT_GUARD_LOWER")&&renderer.includes("BELT_GUARD_UPPER"),
- "Both supporting frame models must be baked and drawn behind the belt");
+// IMPORTANT: renderModel uses centre-relative (-0.5 block) coordinates.
+assert.ok(renderer.includes("pulleyX,16D/16D,lowerZ,null,0F")&&
+          renderer.includes("pulleyX,32D/16D,lowerZ,null,0F"),
+ "Belt placement must compensate for part() subtracting half a block");
+assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F")&&
+          renderer.includes("pulleyX,inputY,lowerZ,Axis.XP,180F"),
+ "Both faceted semicircular belt wraps must render around their own pulleys");
+assert.ok(client.includes('"multiblock/bronze_stamp_mill_drive_pulley"')&&
+          !client.includes("bronze_stamp_mill_drive_belt_guard")&&
+          !renderer.includes("BELT_GUARD"),
+ "Use the new solid drums and do not render the rejected external guard");
 console.log("Stamp Mill visuals PASS: 3 strike plates, "+strike.elements.length+
- " authored faces each; 2 mounted full-width leather flights, opaque 16x16 texture");
+ " authored faces each; closed flat leather loop on two solid bronze-rimmed drums");

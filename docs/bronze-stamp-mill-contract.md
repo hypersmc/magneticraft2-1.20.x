@@ -493,3 +493,57 @@ strike plates, and accepted Mechanical Lathe.
 render check from the same end-on view. Source geometry tests validate
 collision and assembly constraints, not artistic quality; do not declare
 the new look accepted before another screenshot.
+
+
+## 2026-10-18 — replace external rope drive with a true leather loop
+
+**Supersedes both previous side-belt descriptions.** The user's end-on
+Minecraft screenshots rejected the exposed spoke-wheel-and-two-strings
+appearance. Adding thickness or supports was not sufficient; the model
+needed a different physical silhouette, and earlier belt position tests
+misunderstood `part()` coordinates.
+
+The current Stamp Mill visual drive now uses a **solid octagonal wooden
+pulley drum with a bronze contact rim**, instead of the 250-face exposed
+spoke-wheel. The original axle positions, direction and phase remain
+unchanged. Each drum has 170 visible face panels with bronze, spruce and
+iron textures. The drum's full angular swept radius is ~3.98px.
+
+An opaque dark leather loop uses two broad straight flights and matching
+faceted upper/lower half-wraps. The belt is about **1.59px wide along
+the axle** and **1.37px thick radially**, compared with the older
+thin radial ~0.54/0.97px cord sections. The leather starts at radius
+4.08px, so the spinning drum has a small deliberate ~0.10px clearance.
+Both halves join their respective straight runs at y=8 and y=38.5,
+and the two straight runs share a hidden seam at y=24. There are no
+unwanted coincident end caps. The additional belt guard frames were
+removed; existing actual shaft bearings continue to hold the pulleys.
+
+**Important renderer-coordinate bug fixed:** A `part()` call translates
+to its *center* and subtracts `(-0.5,-0.5,-0.5)` before drawing the
+16px baked model. Thus:
+- Lower flight local y=0..16 at `part(...y=16/16)` occupies **WORLD
+  y=8..24**, not y=16..32 or y=0..16.
+- Upper flight local y=0..14.5 at `part(...y=32/16)` occupies **WORLD
+  y=24..38.5**.
+- Lower 180° wrap occupies y=2.55..8, top wrap y=38.5..43.95.
+
+Prior source-level tests incorrectly treated the model pivot as the
+minimum Y. The new `test-visual-details.mjs` uses actual centered
+transform calculations, verifies both horizontal flights, both cap
+tangencies, no interpenetration or static V2 collisions, full pulley
+rotation clearance, 16x16 opaque leather texture, model generator
+parity, no oversized face budget, baked resource registration, and
+absence of the rejected extra guards.
+
+Instanced complete belt/drum model budget is **498 rendered faces**,
+lower than approximately 755 faces in the rejected version. No additional
+rendering V2 structure, new blocks, modified ports, changes to mechanical
+load/recipes or accepted Lathe geometry.
+
+**Verification boundary:** source-level checks only until Gradle build
+and Minecraft test are performed. The next mandatory in-game check is
+the exact belt-side end-on view, then three-quarter side view, stopped
+and rotating. Confirm the leather visually loops over both drums
+without looking like two dangling ropes, with no flickering, overlap,
+missing detail or performance regression.
