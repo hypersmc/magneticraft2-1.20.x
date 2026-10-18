@@ -28,6 +28,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer");
     private static final ResourceLocation WORN_HAMMER =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer_worn");
+    private static final ResourceLocation STRIKE_PLATE =
+            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_strike_plate");
     private static final ResourceLocation CAM =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_cam");
     // Only the legacy EXTERIOR trim. The reusable formed input module owns
@@ -167,18 +169,19 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,inputY,lowerZ,Axis.XP,driveAngle);
 
-        // Pulleys share an X axis and turn the SAME way as the top cams.
-        // Straight belt flights and both half-wraps are stationary geometry,
-        // not independently spinning rings. Heights join with no overlap:
-        // 8..24px + 24..38.5px, and the pulley arcs cap the ends.
+        // Open leather belt, connected to both pulley tangents:
+        // lower flight y=8..24, upper flight y=24..38.5.
+        // Older positions mistakenly started at y=16 and ended at 46.5,
+        // leaving an 8-pixel gap below and running past the upper pulley.
+        // Pulleys spin with Gear V2; the belt surface remains stationary.
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,BELT_STRAIGHT,
-                pulleyX,16D/16D,lowerZ,null,0F);
+                pulleyX,8D/16D,lowerZ,null,0F);
         part(pose,buffers,light,overlay,BELT_UPPER,
-                pulleyX,32D/16D,lowerZ,null,0F);
+                pulleyX,24D/16D,lowerZ,null,0F);
         // The lower half-round uses the model's upper semicircle flipped.
         part(pose,buffers,light,overlay,BELT_WRAP,
                 pulleyX,inputY,lowerZ,Axis.XP,180F);
@@ -204,6 +207,11 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Each hammer is centered over one complete 1x1 I/O module pocket.
         int[] stations={-8,8,24};
         for(int i=0;i<stations.length;i++) {
+            // Three industrial wear plates make the crushing stations
+            // legible. Their upper surfaces remain below stopped hammer
+            // clearance: y=23.05..23.58 under the shoe at y=24.
+            part(pose,buffers,light,overlay,STRIKE_PLATE,
+                    stations[i]/16D,23D/16D,-10D/16D,null,0F);
             // The narrow shoe fits BETWEEN the bronze trough lips and
             // rides inside both vertically anchored guide rails.
             pose.pushPose();

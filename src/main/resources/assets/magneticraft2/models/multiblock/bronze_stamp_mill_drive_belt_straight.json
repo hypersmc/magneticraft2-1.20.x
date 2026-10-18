@@ -5,7 +5,7 @@
     "iron": "minecraft:block/iron_block",
     "bronze": "minecraft:block/cut_copper",
     "dark": "minecraft:block/polished_blackstone",
-    "belt": "minecraft:block/brown_wool",
+    "belt": "magneticraft2:block/bronze_stamp_mill_drive_belt",
     "wood": "minecraft:block/stripped_spruce_log",
     "particle": "minecraft:block/cut_copper"
   },
