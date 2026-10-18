@@ -2,32 +2,32 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "iron": "minecraft:block/iron_block",
     "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
     "dark": "minecraft:block/polished_blackstone",
-    "belt": "magneticraft2:block/bronze_stamp_mill_drive_belt",
     "wood": "minecraft:block/stripped_spruce_log",
+    "belt": "magneticraft2:block/bronze_stamp_mill_drive_belt",
     "particle": "minecraft:block/cut_copper"
   },
   "elements": [
     {
       "from": [
-        7.35,
+        7.25,
         0,
-        3.48
+        2.95
       ],
       "to": [
-        8.65,
+        8.7,
         14.5,
-        3.5425
+        3.0125
       ],
       "faces": {
         "north": {
           "texture": "#belt",
           "uv": [
-            7.35,
+            7.25,
             0,
-            8.65,
+            8.7,
             14.5
           ]
         }
@@ -35,22 +35,22 @@
     },
     {
       "from": [
-        7.35,
+        7.25,
         0,
-        3.9574999999999996
+        3.8575
       ],
       "to": [
-        8.65,
+        8.7,
         14.5,
-        4.02
+        3.92
       ],
       "faces": {
         "south": {
           "texture": "#belt",
           "uv": [
-            7.35,
+            7.25,
             0,
-            8.65,
+            8.7,
             14.5
           ]
         }
@@ -58,45 +58,22 @@
     },
     {
       "from": [
-        8.5875,
+        7.25,
         0,
-        3.48
+        2.95
       ],
       "to": [
-        8.65,
+        7.3125,
         14.5,
-        4.02
-      ],
-      "faces": {
-        "east": {
-          "texture": "#belt",
-          "uv": [
-            3.48,
-            0,
-            4.02,
-            14.5
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        7.35,
-        0,
-        3.48
-      ],
-      "to": [
-        7.4125,
-        14.5,
-        4.02
+        3.92
       ],
       "faces": {
         "west": {
           "texture": "#belt",
           "uv": [
-            3.48,
+            2.95,
             0,
-            4.02,
+            3.92,
             14.5
           ]
         }
@@ -104,22 +81,91 @@
     },
     {
       "from": [
-        7.35,
+        7.25,
         0,
-        11.98
+        12.08
       ],
       "to": [
-        8.65,
+        7.3125,
         14.5,
-        12.0425
+        13.05
+      ],
+      "faces": {
+        "west": {
+          "texture": "#belt",
+          "uv": [
+            12.08,
+            0,
+            13.05,
+            14.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.6375,
+        0,
+        2.95
+      ],
+      "to": [
+        8.7,
+        14.5,
+        3.92
+      ],
+      "faces": {
+        "east": {
+          "texture": "#belt",
+          "uv": [
+            2.95,
+            0,
+            3.92,
+            14.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.6375,
+        0,
+        12.08
+      ],
+      "to": [
+        8.7,
+        14.5,
+        13.05
+      ],
+      "faces": {
+        "east": {
+          "texture": "#belt",
+          "uv": [
+            12.08,
+            0,
+            13.05,
+            14.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.25,
+        0,
+        12.08
+      ],
+      "to": [
+        8.7,
+        14.5,
+        12.1425
       ],
       "faces": {
         "north": {
           "texture": "#belt",
           "uv": [
-            7.35,
+            7.25,
             0,
-            8.65,
+            8.7,
             14.5
           ]
         }
@@ -127,68 +173,22 @@
     },
     {
       "from": [
-        7.35,
+        7.25,
         0,
-        12.4575
+        12.9875
       ],
       "to": [
-        8.65,
+        8.7,
         14.5,
-        12.52
+        13.05
       ],
       "faces": {
         "south": {
           "texture": "#belt",
           "uv": [
-            7.35,
+            7.25,
             0,
-            8.65,
-            14.5
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        8.5875,
-        0,
-        11.98
-      ],
-      "to": [
-        8.65,
-        14.5,
-        12.52
-      ],
-      "faces": {
-        "east": {
-          "texture": "#belt",
-          "uv": [
-            11.98,
-            0,
-            12.52,
-            14.5
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        7.35,
-        0,
-        11.98
-      ],
-      "to": [
-        7.4125,
-        14.5,
-        12.52
-      ],
-      "faces": {
-        "west": {
-          "texture": "#belt",
-          "uv": [
-            11.98,
-            0,
-            12.52,
+            8.7,
             14.5
           ]
         }

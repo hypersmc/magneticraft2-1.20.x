@@ -175,6 +175,8 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_pulley"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_straight"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_wrap"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_guard_lower"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_guard_upper"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_chuck"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
