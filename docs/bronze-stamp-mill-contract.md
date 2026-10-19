@@ -601,3 +601,59 @@ stitches around BOTH drums, no UV snapping, clipping, stutter, or FPS
 regression. A source-level check is not a substitute for this render test.
 
 The animation regression also reconstructs all **34 live belt path segments** against the 101 authored V2 static frame solids. It verifies their side-footprint bounds, no frame intersections and clearance from the revolving bronze drum. This does not replace an in-game render test.
+
+
+## 2026-10-19 — make material feed, crushing and discharge visible
+
+The Bronze Stamp Mill already had a recipe
+input port and two separate output item ports, three ore chutes in its
+V2 geometry, and progress through `MultiblockProcessingRecipe`. The
+missing piece was purely visual: the old BER drew `getInputStack()`
+directly at the center of the crushing tray. Player/manual, hopper and
+Mechanical Arm insertions all therefore appeared to teleport ore.
+
+New `BronzeStampMillOreVisuals` renderer uses the **actual unchanged
+physical layout**:
+- Input port at controller-relative model px `(-8,8,24)` feeds left chute
+  `x=-8` over **24 game ticks**, moving from the port rim, up onto the
+  existing front/back chute, then into the tray at `(-8,24,-10)`.
+- The recipe progress `getVisualProcessProgress(partial)` now controls
+  the working material's visual phase: whole ore at the first hammer,
+  two smaller broken chunks approaching the second, and three small
+  recipe-derived crushed fragments progressing toward the third. They
+  are ONLY visual previews; the server performs the actual inventory
+  transaction once at 100%.
+- Primary output travels from the third stamp through the existing
+  right chute `x=24`; optional byproduct uses the middle chute `x=8`.
+  Both take **20 ticks** before appearing at their real output ports,
+  rather than spawning in the crusher itself.
+- Two modest stone-chip particles are emitted when the active hammer
+  reaches its ore, rate-limited on the client. Ore block particles are
+  used where a matching Block exists; otherwise stone dust is used.
+- Input changes are detected from the BE's already-synced controller
+  slot 0; there is no player-only special case. Client visual batches
+  are bounded to three pieces even if automation inserts large stacks.
+  This adds no hidden buffer or delay to actual item processing.
+- Three progress stages are rendered only while the real input exists;
+  when power stops, progress and visual shape stay at their recorded
+  point. Actual recipes, 2x input counts, output/byproduct rolls,
+  maintenance, Gear V2 load, and the Patchouli 5×3×4 construction
+  remain untouched. The accepted rotating belt and both drums are
+  also completely untouched.
+
+Regression in `tools/bronze-stamp-mill/test-ore-visuals.mjs`
+checks module positions, actual V2 chute lanes, sampled travel routes,
+stage thresholds, inventory-only ownership, bounded visuals and impact
+particle direction. The existing source-level Stamp Mill contract
+executes it.
+
+**Review in Minecraft:** insert ore by hand and with a Mechanical Arm;
+watch the left chute load (not appear in the middle), all three stamps
+break it up while powered, both output chutes unload onto their ports,
+and no phantom ore when an input is quickly removed. Confirm dust is
+restrained and still looks good from all four machine orientations.
+This is visual-only: even if animation is still playing, the real item
+is already in the controller inventory and processing remains
+server-authoritative.
+
+No Gradle build or Minecraft rendering verified in this change.
