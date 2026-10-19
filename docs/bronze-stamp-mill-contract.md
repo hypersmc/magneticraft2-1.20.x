@@ -664,3 +664,23 @@ ore around tick 19 while the feed was still animating until tick 24.
 The preview now waits for **actual visual feed completion** instead
 of inferring arrival from recipe percentage. Additional ore arriving
 while an existing batch is under the stamps doesn't hide that batch.
+
+
+## 2026-10-19 - conservative Bronze Stamp Mill feedstock expansion
+
+Added four datapack-editable recipes to the existing two accepted ore recipes, **without changing** the Chalcocite/Cassiterite outputs, Gear V2 demand, handling, controller inventory, or V2 model:
+
+| Feedstock (two blocks/batch) | Primary output | Optional tailings | Downstream processing |
+| --- | --- | --- | --- |
+| Chalcocite Ore (existing) | 2 Crushed Chalcocite | 20% 1 Gravel | Washer -> Sifter -> Copper Concentrate |
+| Cassiterite Ore (existing) | 2 Crushed Cassiterite | 20% 1 Gravel | Washer -> Sifter -> Tin Concentrate |
+| Quartz Ore (new) | 2 Crushed Quartz | 20% 1 Gravel | Washer -> Sifter -> Nether Quartz |
+| Deepslate Quartz Ore (new) | 2 Crushed Quartz | 20% 1 Gravel | Same quartz chain |
+| Cobblestone (new) | 2 Gravel | None | Sifter -> Sand, optional Flint |
+| Cobbled Deepslate (new) | 2 Gravel | None | Same gravel chain |
+
+All six recipes process two input units in 115 ticks at 24 RPM and 6 torque. The existing three real I/O modules and source-level JEI category discover these extra recipes by their `magneticraft2:bronze_stamp_mill` machine ID. Gravel as the **primary** output for crushed stone does not also produce gravel as a byproduct, and a full output still stalls safely.
+
+This is intentionally limited to registered ores whose crushed intermediate and downstream operations already exist, plus ordinary stone breaking. **Not yet enabled:** Magnetite, Hematite, Limonite, Galena, Chromite, other late-game mineral ores, vanilla iron/gold/copper, and mixed or quality-tier outputs. Each needs age-appropriate crushed materials, concentration/roasting/reduction and quality-accounting decisions, not an invented route to ordinary ingots.
+
+The Bronze guide now names the added quartz and rock feedstocks and their destinations. All former ore-handling animation issues remain outside this recipe-only pass.

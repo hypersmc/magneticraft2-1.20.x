@@ -212,6 +212,10 @@
     {
       "type": "text",
       "text": "$(bold)Running the Stamp Mill$()$(br2)Feed TWO Chalcocite Ore or TWO Cassiterite Ore to the item input. Gear V2 must supply at least 24 RPM and 6 torque. A 115-tick cycle outputs two units of the corresponding crushed ore; gravel tailings have a 20% chance.$(br2)If the output or tailings port is blocked, the machine waits without consuming more ore. Stop the gears and the cycle pauses. Continue with your existing Washer and Sifter, rather than bypassing separation."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Additional Stamp Mill materials$()$(br2)Two Quartz Ore or two Deepslate Quartz Ore produce two Crushed Quartz in 115 ticks, with a 20% chance of Gravel tailings. Continue through the Ore Washer and Sifter to recover Nether Quartz.$(br2)Two Cobblestone or two Cobbled Deepslate become two Gravel, with no additional tailings. Gravel can then be sifted into Sand with a 25% chance of Flint.$(br2)All Stamp Mill batches need at least 24 RPM and 6 torque. The Mill is a coarse crusher, not a substitute for washing, sorting or later metallurgy."
     }
   ],
   "sortnum": 3,
@@ -219,7 +223,9 @@
   "extra_recipe_mappings": {
     "magneticraft2:bronze_foundry": 8,
     "magneticraft2:bronze_mechanical_lathe": 18,
-    "magneticraft2:bronze_stamp_mill": 23
+    "magneticraft2:bronze_stamp_mill": 23,
+    "magneticraft2:quartz_ore": 27,
+    "magneticraft2:quartz_deepslate_ore": 27
   },
   "mappings": {
     "magneticraft2:bronze_pouring_ladle": 13,
