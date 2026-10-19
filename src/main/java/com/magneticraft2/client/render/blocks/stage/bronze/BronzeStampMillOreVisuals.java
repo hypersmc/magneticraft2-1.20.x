@@ -67,6 +67,7 @@ final class BronzeStampMillOreVisuals {
         private ItemStack oldByproduct = ItemStack.EMPTY;
         private ItemStack crushedPreview = ItemStack.EMPTY;
         private final List<MovingOre> feeding = new ArrayList<>(MAX_FEED_ITEMS);
+        private boolean workpieceReachedTray;
         private MovingOre primaryDischarge;
         private MovingOre byproductDischarge;
         private final float[] oldLift = {Float.NaN, Float.NaN, Float.NaN};
@@ -86,6 +87,12 @@ final class BronzeStampMillOreVisuals {
         state.feeding.removeIf(entry -> now - entry.started > FEED_TICKS);
         if (input.isEmpty() && !mill.isProcessing()) {
             state.feeding.clear();
+            state.workpieceReachedTray = false;
+        } else if (!input.isEmpty() && state.feeding.isEmpty()) {
+            // The recipe may take fewer than 150 ticks (115 currently).
+            // Its progress must never conjure a second ore piece before
+            // the 24-tick physical feed animation has actually arrived.
+            state.workpieceReachedTray = true;
         }
 
         // A freshly inserted stack is seen at the port and travels along
@@ -103,8 +110,7 @@ final class BronzeStampMillOreVisuals {
         float progress = mill.getVisualProcessProgress(partial);
         // Do not conjure a second copy inside the tray while the first
         // visible ore piece is still travelling in from the real port.
-        if (!input.isEmpty()
-                && (state.feeding.isEmpty() || progress > 0.16F)) {
+        if (!input.isEmpty() && state.workpieceReachedTray) {
             renderCrushing(mill, partial, pose, buffers, light, overlay,
                     input, state.crushedPreview, progress);
         }
@@ -138,6 +144,7 @@ final class BronzeStampMillOreVisuals {
             if (incoming > 0) {
                 if (differentType(visual.oldInput, input)) {
                     visual.feeding.clear();
+                    visual.workpieceReachedTray = false;
                 }
                 for (int n = 0; n < Math.min(incoming, 2)
                         && visual.feeding.size() < MAX_FEED_ITEMS; n++) {
