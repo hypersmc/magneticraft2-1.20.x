@@ -132,6 +132,8 @@ public class MultiblockItemPortBlockEntity
             return sifter.acceptsRecipeInput(stack);
         if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity mill)
             return mill.acceptsRecipeInput(stack);
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity classifier)
+            return classifier.acceptsRecipeInput(stack);
         return true;
     }
 

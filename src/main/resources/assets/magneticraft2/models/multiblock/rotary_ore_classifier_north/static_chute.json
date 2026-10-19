@@ -1,0 +1,288 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "machined": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "chute": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        0,
+        0
+      ],
+      "to": [
+        14,
+        2,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            14,
+            14,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            14,
+            14,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            14,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            0,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            0,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        2,
+        0
+      ],
+      "to": [
+        13,
+        2.35,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#chute",
+          "uv": [
+            3,
+            13.65,
+            13,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#chute",
+          "uv": [
+            3,
+            13.65,
+            13,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#chute",
+          "uv": [
+            0,
+            13.65,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#chute",
+          "uv": [
+            0,
+            13.65,
+            16,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#chute",
+          "uv": [
+            3,
+            0,
+            13,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#chute",
+          "uv": [
+            3,
+            0,
+            13,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        2,
+        0
+      ],
+      "to": [
+        14,
+        6,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            13,
+            10,
+            14,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            13,
+            10,
+            14,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            10,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            10,
+            16,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            13,
+            0,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            13,
+            0,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        2,
+        0
+      ],
+      "to": [
+        3,
+        6,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            10,
+            3,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            10,
+            3,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            10,
+            16,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            10,
+            16,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            0,
+            3,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            0,
+            3,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

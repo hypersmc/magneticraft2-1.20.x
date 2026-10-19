@@ -306,5 +306,11 @@
   "item.magneticraft2.precision_bronze_bearing": "Precision Bronze Bearing",
   "block.magneticraft2.bronze_stamp_mill": "Bronze Stamp Mill",
   "item.magneticraft2.bronze_stamp_mill": "Bronze Stamp Mill Controller",
-  "item.magneticraft2.bronze_stamp_shoe": "Replaceable Bronze Stamp Shoe"
+  "item.magneticraft2.bronze_stamp_shoe": "Replaceable Bronze Stamp Shoe",
+  "block.magneticraft2.rotary_ore_classifier": "Rotary Ore Classifier",
+  "item.magneticraft2.rotary_ore_classifier": "Rotary Ore Classifier",
+  "item.magneticraft2.bronze_classifier_screen": "Bronze Classifier Screen",
+  "item.magneticraft2.classified_chalcocite": "Screened Chalcocite Fines",
+  "item.magneticraft2.classified_cassiterite": "Screened Cassiterite Fines",
+  "item.magneticraft2.classified_quartz": "Screened Quartz Fines"
 }

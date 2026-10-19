@@ -1,6 +1,6 @@
 # Magneticraft2 — Visual Identity and Texture Transition
 
-Status: **visual design baseline, first texture kit implemented** for the active Forge 1.20.1 project (2026-10-19). Ten original texture PNGs and editable pixel definitions now exist in PR #11. The Rotary Ore Classifier and texture integration into existing machines are **not** implemented. Review the first artwork in Minecraft before declaring the palette final.
+Status: **first original texture kit + first machine integration implemented at source level** in draft PR #11 (Forge 1.20.1, 2026-10-19). Ten original texture PNGs and editable pixel definitions exist; the new Rotary Ore Classifier uses them. **In-game review and Gradle build are still pending; no established machine textures have been replaced.**
 
 Related plans: [Bronze production](bronze-age-production-plan.md), [Rendering V2](multiblock-rendering-v2.md), [Voxel V2](multiblock-voxels-v2.md), and [ore processing by age](ore-processing-by-age.md).
 
@@ -155,3 +155,10 @@ This is the **next planned multiblock** in Bronze II, not an implemented block i
 The first **ten** actual, original 16×16 RGBA PNGs are now committed under `textures/block/material/` and `textures/block/component/` (worked copper; machine timber/end; cast/machined bronze; dark work iron; refractory brick; chute liner; normal/worn bronze screen mesh). Their editable per-pixel palette and tile rows are in `tools/texture-art/texture-kit-v1.json`, with deterministic Node generator/checker `tools/texture-art/build-kit.mjs`.
 
 **Status is intentionally assets-only**: none of the existing machine model aliases, block/item registration, recipes, worldgen, physical geometry or formation JSON were changed. The worn screen is an art variant, not an implemented maintenance mechanic. The actual-alpha screen holes require a cutout-capable render layer when later used. Run `node tools/texture-art/build-kit.mjs --check` before migrating any machine's models. The classifier remains the first proposed consumer after its mechanical and processing design is agreed; game rendering and `./gradlew build` have not been run for these additions.
+
+
+## 2026-10-19 — First functional texture adopter: Rotary Ore Classifier
+
+The new 5×3×5 Bronze Rotary Ore Classifier now references the actual custom kit (machine timber, cast/machined bronze, dark work iron, chute liner, and normal/worn transparent screening mesh) through generated per-block V2 static models and cutout-rendered rotating drum models. The cross-facing frame comes from `tools/rotary-classifier/frame-design.json` and `build-static.mjs`; the drum and wear state are separate BER visual assets tied to real Gear V2 and controller maintenance.
+
+This is the **first source-level integration**, not an approval of final art. The previous Foundry, Lathe, Stamp Mill, Washer and Sifter models are intentionally untouched. Review the classifier's tile scale, machine silhouette and ore path in Minecraft first, then migrate one accepted Bronze machine at a time. Run the tests documented in [Rotary classifier contract](bronze-rotary-classifier-contract.md); do not describe it as compiled or visually validated until these checks and `./gradlew build` have actually succeeded.

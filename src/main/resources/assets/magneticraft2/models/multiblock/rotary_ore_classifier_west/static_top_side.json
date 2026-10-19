@@ -1,0 +1,152 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "machined": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "chute": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        2,
+        5
+      ],
+      "to": [
+        16,
+        8,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            8,
+            16,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            8,
+            16,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            5,
+            8,
+            11,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            5,
+            8,
+            11,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            5,
+            16,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            5,
+            16,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        8,
+        5
+      ],
+      "to": [
+        14,
+        8.5,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            7.5,
+            14,
+            8
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            7.5,
+            14,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            7.5,
+            11,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            7.5,
+            11,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            5,
+            14,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            5,
+            14,
+            11
+          ]
+        }
+      }
+    }
+  ]
+}

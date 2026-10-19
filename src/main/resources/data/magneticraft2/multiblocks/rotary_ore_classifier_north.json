@@ -1,0 +1,176 @@
+{
+  "name": "rotary_ore_classifier_north",
+  "structure": {
+    "dimensions": [
+      5,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "Y",
+          "O",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "C",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "B",
+          "I",
+          "U",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "B",
+          "P",
+          "B",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "B",
+          "P",
+          "B",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "B": "minecraft:cut_copper",
+      "C": "magneticraft2:rotary_ore_classifier",
+      "U": "magneticraft2:multiblock_item_input",
+      "I": "magneticraft2:mechanical_input_module",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "Y": "magneticraft2:multiblock_item_byproduct_output",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/rotary_ore_classifier_north",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:rotary_ore_classifier",
+    "render_air_anchors": [
+      [
+        1,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        -1
+      ],
+      [
+        0,
+        1,
+        -1
+      ]
+    ]
+  }
+}

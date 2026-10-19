@@ -1,0 +1,465 @@
+{
+  "schema": 1,
+  "description": "Rotary Ore Classifier 5x3x5 canonical SOUTH authoring data; modify these boxes/layout and regenerate, never hand-edit generated part files.",
+  "dimensions": [
+    5,
+    3,
+    5
+  ],
+  "layers": [
+    [
+      "SSSSS",
+      "SASAS",
+      "SASAS",
+      "SACAS",
+      "SOYSS"
+    ],
+    [
+      "PUIBP",
+      "PAAAP",
+      "PAAAP",
+      "PAAAP",
+      "PAAAP"
+    ],
+    [
+      "PBPBP",
+      "PAAAP",
+      "PAAAP",
+      "PAAAP",
+      "PBPBP"
+    ]
+  ],
+  "anchors": [
+    [
+      -1,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      0,
+      1,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      -1,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      1
+    ]
+  ],
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "machined": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "chute": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "templates": {
+    "base": [
+      {
+        "material": "stone",
+        "from": [
+          0,
+          0,
+          0
+        ],
+        "to": [
+          16,
+          5,
+          16
+        ]
+      }
+    ],
+    "outer_base": [
+      {
+        "material": "stone",
+        "from": [
+          0,
+          0,
+          0
+        ],
+        "to": [
+          16,
+          5,
+          16
+        ]
+      },
+      {
+        "material": "timber",
+        "from": [
+          5,
+          5,
+          5
+        ],
+        "to": [
+          11,
+          16,
+          11
+        ]
+      }
+    ],
+    "central_base": [
+      {
+        "material": "stone",
+        "from": [
+          0,
+          0,
+          0
+        ],
+        "to": [
+          16,
+          5,
+          16
+        ]
+      },
+      {
+        "material": "iron",
+        "from": [
+          6,
+          5,
+          0
+        ],
+        "to": [
+          10,
+          8,
+          16
+        ]
+      }
+    ],
+    "controller_base": [
+      {
+        "material": "stone",
+        "from": [
+          0,
+          0,
+          0
+        ],
+        "to": [
+          16,
+          5,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          3,
+          5,
+          11
+        ],
+        "to": [
+          13,
+          10,
+          14
+        ]
+      }
+    ],
+    "mid_side": [
+      {
+        "material": "timber",
+        "from": [
+          5,
+          0,
+          5
+        ],
+        "to": [
+          11,
+          16,
+          11
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          4.5,
+          2,
+          4.5
+        ],
+        "to": [
+          11.5,
+          4,
+          11.5
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          4.5,
+          12,
+          4.5
+        ],
+        "to": [
+          11.5,
+          14,
+          11.5
+        ]
+      }
+    ],
+    "mid_rear": [
+      {
+        "material": "timber",
+        "from": [
+          5,
+          0,
+          5
+        ],
+        "to": [
+          11,
+          16,
+          11
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          4.5,
+          13,
+          4.5
+        ],
+        "to": [
+          11.5,
+          16,
+          11.5
+        ]
+      }
+    ],
+    "mid_bronze": [
+      {
+        "material": "bronze",
+        "from": [
+          4,
+          0,
+          4
+        ],
+        "to": [
+          12,
+          16,
+          12
+        ]
+      },
+      {
+        "material": "machined",
+        "from": [
+          3.5,
+          8,
+          3.5
+        ],
+        "to": [
+          12.5,
+          10,
+          12.5
+        ]
+      }
+    ],
+    "top_cross": [
+      {
+        "material": "timber",
+        "from": [
+          0,
+          2,
+          5
+        ],
+        "to": [
+          16,
+          8,
+          11
+        ]
+      },
+      {
+        "material": "end",
+        "from": [
+          0,
+          8,
+          5
+        ],
+        "to": [
+          16,
+          8.25,
+          11
+        ]
+      }
+    ],
+    "top_side": [
+      {
+        "material": "timber",
+        "from": [
+          5,
+          2,
+          0
+        ],
+        "to": [
+          11,
+          8,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          5,
+          8,
+          2
+        ],
+        "to": [
+          11,
+          8.5,
+          14
+        ]
+      }
+    ],
+    "top_bearing": [
+      {
+        "material": "bronze",
+        "from": [
+          0,
+          2,
+          5
+        ],
+        "to": [
+          16,
+          8,
+          11
+        ]
+      },
+      {
+        "material": "machined",
+        "from": [
+          0,
+          8,
+          6
+        ],
+        "to": [
+          16,
+          8.75,
+          10
+        ]
+      }
+    ],
+    "drum_anchor": [],
+    "feed": [
+      {
+        "material": "bronze",
+        "from": [
+          4,
+          1,
+          0
+        ],
+        "to": [
+          16,
+          5,
+          16
+        ]
+      },
+      {
+        "material": "chute",
+        "from": [
+          5,
+          5,
+          0
+        ],
+        "to": [
+          15,
+          5.35,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          3,
+          5,
+          0
+        ],
+        "to": [
+          4,
+          8,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          15,
+          5,
+          0
+        ],
+        "to": [
+          16,
+          8,
+          16
+        ]
+      }
+    ],
+    "chute": [
+      {
+        "material": "bronze",
+        "from": [
+          2,
+          0,
+          0
+        ],
+        "to": [
+          14,
+          2,
+          16
+        ]
+      },
+      {
+        "material": "chute",
+        "from": [
+          3,
+          2,
+          0
+        ],
+        "to": [
+          13,
+          2.35,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          2,
+          2,
+          0
+        ],
+        "to": [
+          3,
+          6,
+          16
+        ]
+      },
+      {
+        "material": "bronze",
+        "from": [
+          13,
+          2,
+          0
+        ],
+        "to": [
+          14,
+          6,
+          16
+        ]
+      }
+    ]
+  }
+}

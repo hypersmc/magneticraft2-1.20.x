@@ -105,6 +105,11 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_FOUNDRY.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_MECHANICAL_LATHE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_MILL.get());
+                        entries.accept(ItemRegistry.ITEM_ROTARY_ORE_CLASSIFIER.get());
+                        entries.accept(ItemRegistry.ITEM_CLASSIFIER_SCREEN.get());
+                        entries.accept(ItemRegistry.ITEM_CLASSIFIED_CHALCOCITE.get());
+                        entries.accept(ItemRegistry.ITEM_CLASSIFIED_CASSITERITE.get());
+                        entries.accept(ItemRegistry.ITEM_CLASSIFIED_QUARTZ.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_SHOE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_CASTING_BASIN.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_POURING_LADLE.get());

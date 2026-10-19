@@ -20,7 +20,7 @@ Status: **approved design direction**, not a claim that the proposed machines ar
 | Phase | Role | Production milestones and first verification |
 |---|---|---|
 | **Bronze I — Casting and machine tools** | *Implemented in PR #11; Minecraft/Gradle validation pending* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
-| **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill implemented in PR #11; remaining machines planned* | Stamp Mill (ore breaker) -> existing Washer -> existing Sifter. Follow with rotary classifier, settling/recycled-water tank, ore roasting kiln and charcoal retort. First test line: 64 ore into product + tailings with real machine power and water. |
+| **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill + optional Rotary Ore Classifier source implemented in PR #11; in-game/Gradle verification pending* | Stamp Mill (ore breaker) -> optional Rotary Ore Classifier (3 fines + 1 coarse return per 4 crushed) -> Washer -> Sifter; settling/recycled-water tank, roasting kiln and charcoal retort still planned. First test line: 64 ore into product + tailings with real machine power and water. |
 | **Bronze III — Manufacturing and networks** | *Planned* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
@@ -89,3 +89,8 @@ remain the Rotary Ore Classifier and Dirty Water Settling Tank; neither is
 claimed implemented. Iron ore reduction still needs dedicated concentrates,
 refractory technology, charcoal/flux and Bloomery design decisions. Do not
 add dead-end iron crushed-items or smelting recipes before that path is agreed.
+
+
+## 2026-10-19 — Rotary Ore Classifier implementation slice
+
+The 5x3x5 JSON classifier is now source-implemented with 4-facing models using the first original Copper/Bronze texture kit, Gear V2-driven drum and replaceable screen. It consumes four crushed Chalcocite/Cassiterite/Quartz and produces three screened fines plus one original crushed coarse return; all material is preserved. Three fines wash in one 240-tick/600 mB Washer batch and then proceed to the existing Sifter. This optional throughput/water improvement leaves all plain crushed-ore recipes untouched. **Do not mark compiled or gameplay-verified** until the tests in [the classifier contract](bronze-rotary-classifier-contract.md) run successfully, including the previous prerequisite end-to-end Stamp->Washer->Sifter line. The dirty-water settling/reclamation machine is still the next planned utility; ore roasting is still selective metallurgy work.

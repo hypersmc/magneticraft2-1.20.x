@@ -38,6 +38,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "mechanical_sifter");
     public static final ResourceLocation BRONZE_STAMP_MILL =
             new ResourceLocation("magneticraft2", "bronze_stamp_mill");
+    public static final ResourceLocation ROTARY_ORE_CLASSIFIER =
+            new ResourceLocation("magneticraft2", "rotary_ore_classifier");
 
     private final ResourceLocation id;
     private final ResourceLocation machine;

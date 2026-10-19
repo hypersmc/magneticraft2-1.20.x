@@ -216,6 +216,68 @@
     {
       "type": "text",
       "text": "$(bold)Additional Stamp Mill materials$()$(br2)Two Quartz Ore or two Deepslate Quartz Ore produce two Crushed Quartz in 115 ticks, with a 20% chance of Gravel tailings. Continue through the Ore Washer and Sifter to recover Nether Quartz.$(br2)Two Cobblestone or two Cobbled Deepslate become two Gravel, with no additional tailings. Gravel can then be sifted into Sand with a 25% chance of Flint.$(br2)All Stamp Mill batches need at least 24 RPM and 6 torque. The Mill is a coarse crusher, not a substitute for washing, sorting or later metallurgy."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Rotary Ore Classification$()$(br2)The Stamp Mill is still the bulk ore breaker. The Rotary Ore Classifier is an optional sizing stage before washing: its driven bronze mesh separates fine mineral grains from coarse returns without replacing the Copper Washer or Sifter.$(br2)Screen four Crushed Chalcocite, Cassiterite or Quartz to receive three Screened Fines plus one of the original Crushed Ore in the coarse outlet. The coarse return can be washed normally or collected for another classification batch."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Rotary Ore Classifier",
+      "recipe": "magneticraft2:rotary_ore_classifier",
+      "text": "A substantial 5×3×5 JSON multiblock with an elevated rear Gear V2 input, a real rotating perforated drum, and exposed coarse/fines item ports."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Rotary Ore Classifier",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "B___B",
+            "P___P",
+            "B___B",
+            "PPPPP"
+          ],
+          [
+            "PPPPP",
+            "U____",
+            "I____",
+            "B____",
+            "PPPPP"
+          ],
+          [
+            "SSSSS",
+            "S___O",
+            "SSS0Y",
+            "S___S",
+            "SSSSS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:rotary_ore_classifier",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "B": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "I": "magneticraft2:mechanical_input_module",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Use Visualize for the exact frame. Controller at the lower front-middle. Item INPUT sits one block left of the elevated rear-center Gear V2 Mechanical Input; primary FINES OUTPUT and coarse RETURN OUTPUT stand at ground level on the open front shelf. Six AIR cells become model/physics proxies after formation; do not fill them before forming."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Bronze Screen",
+      "recipe": "magneticraft2:bronze_classifier_screen",
+      "text": "Install a bronze screen in the formed classifier. The drum mesh visibly wears after successful batches and stops the machine when expired. Right-click with a fresh screen to replace it; old material is not silently consumed while idle."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Screening and washing$()$(br2)Supply Gear V2 at the elevated rear input: at least 24 RPM and 4 torque. A 180-tick screen batch yields three Screened Fines and one coarse Crushed Ore return, exactly conserving four input units.$(br2)Three Screened Fines wash together in 240 ticks using 600 mB clean Water and producing 600 mB Dirty Water. This is faster and uses less water per unit than ordinary crushed-ore washing; both routes produce the same three Washed Ore units. Sift Washed Ore normally for concentrates and final yields.$(br2)Full ports, worn screens or absent Gear V2 power pause the process. No free yield is created by recirculating coarse returns."
     }
   ],
   "sortnum": 3,
@@ -225,11 +287,13 @@
     "magneticraft2:bronze_mechanical_lathe": 18,
     "magneticraft2:bronze_stamp_mill": 23,
     "magneticraft2:quartz_ore": 27,
-    "magneticraft2:quartz_deepslate_ore": 27
+    "magneticraft2:quartz_deepslate_ore": 27,
+    "magneticraft2:rotary_ore_classifier": 29
   },
   "mappings": {
     "magneticraft2:bronze_pouring_ladle": 13,
     "magneticraft2:bronze_casting_basin": 14,
-    "magneticraft2:bronze_lathe_cutter": 20
+    "magneticraft2:bronze_lathe_cutter": 20,
+    "magneticraft2:bronze_classifier_screen": 31
   }
 }
