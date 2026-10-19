@@ -65,6 +65,7 @@ final class BronzeStampMillOreVisuals {
         private ItemStack oldInput = ItemStack.EMPTY;
         private ItemStack oldPrimary = ItemStack.EMPTY;
         private ItemStack oldByproduct = ItemStack.EMPTY;
+        private ItemStack crushedPreview = ItemStack.EMPTY;
         private final List<MovingOre> feeding = new ArrayList<>(MAX_FEED_ITEMS);
         private MovingOre primaryDischarge;
         private MovingOre byproductDischarge;
@@ -81,7 +82,7 @@ final class BronzeStampMillOreVisuals {
         ItemStack input = mill.getInputStack();
         ItemStack primary = mill.getOutputStack();
         ItemStack byproduct = mill.getByproductStack();
-        observeInventory(state, input, primary, byproduct, now);
+        observeInventory(mill, state, input, primary, byproduct, now);
         state.feeding.removeIf(entry -> now - entry.started > FEED_TICKS);
         if (input.isEmpty() && !mill.isProcessing()) {
             state.feeding.clear();
@@ -105,7 +106,7 @@ final class BronzeStampMillOreVisuals {
         if (!input.isEmpty()
                 && (state.feeding.isEmpty() || progress > 0.16F)) {
             renderCrushing(mill, partial, pose, buffers, light, overlay,
-                    input, progress);
+                    input, state.crushedPreview, progress);
         }
 
         renderOutput(mill, pose, buffers, light, overlay, primary,
@@ -116,9 +117,15 @@ final class BronzeStampMillOreVisuals {
         emitImpactDust(mill, partial, state, now, input, progress);
     }
 
-    private static void observeInventory(VisualState visual, ItemStack input,
+    private static void observeInventory(BronzeStampMillBlockEntity mill,
+                                         VisualState visual, ItemStack input,
                                          ItemStack primary, ItemStack byproduct,
                                          double now) {
+        // Expensive recipe lookup happens only when the synced input stack
+        // changes, not once per rendered frame for every ore fragment.
+        boolean changedInput = !sameVisualStack(visual.oldInput, input);
+        if (changedInput || !visual.initialized)
+            visual.crushedPreview = mill.getProcessingPrimaryPreview();
         if (!visual.initialized) {
             visual.initialized = true;
             // Even when an item is loaded before the first rendered frame,
@@ -147,9 +154,20 @@ final class BronzeStampMillOreVisuals {
         }
         if (primary.isEmpty()) visual.primaryDischarge = null;
         if (byproduct.isEmpty()) visual.byproductDischarge = null;
-        visual.oldInput = input.copy();
-        visual.oldPrimary = primary.copy();
-        visual.oldByproduct = byproduct.copy();
+        // Retain immutable NBT snapshots until an actual packet-visible
+        // change. Previously there were three new ItemStack copies per
+        // frame even when the machine was completely idle.
+        if (changedInput) visual.oldInput = input.copy();
+        if (!sameVisualStack(visual.oldPrimary,primary))
+            visual.oldPrimary = primary.copy();
+        if (!sameVisualStack(visual.oldByproduct,byproduct))
+            visual.oldByproduct = byproduct.copy();
+    }
+
+    private static boolean sameVisualStack(ItemStack a, ItemStack b) {
+        if (a.isEmpty() && b.isEmpty()) return true;
+        return a.getCount()==b.getCount() &&
+                ItemStack.isSameItemSameTags(a,b);
     }
 
     private static boolean differentType(ItemStack old, ItemStack current) {
@@ -199,7 +217,8 @@ final class BronzeStampMillOreVisuals {
     private static void renderCrushing(BronzeStampMillBlockEntity mill,
                                       float partial, PoseStack pose,
                                       MultiBufferSource buffers, int light,
-                                      int overlay, ItemStack input, float progress) {
+                                      int overlay, ItemStack input,
+                                      ItemStack preview, float progress) {
         if (progress < 0.34F) {
             // Whole ore beneath the first working shoe.
             double tremor = mill.isProcessing()
@@ -221,8 +240,7 @@ final class BronzeStampMillOreVisuals {
             // exactly once by tickProcessing() when the recipe completes.
             double fraction = clamp((progress-0.68F)/0.32F);
             double x = 8D + 16D * fraction;
-            ItemStack crushed = mill.getProcessingPrimaryPreview();
-            if (crushed.isEmpty()) crushed = input;
+            ItemStack crushed = preview.isEmpty() ? input : preview;
             drawItem(mill,pose,buffers,light,overlay,crushed,
                     x-2.5D,24.1D,-10.8D,0.27F,-22F);
             drawItem(mill,pose,buffers,light,overlay,crushed,
