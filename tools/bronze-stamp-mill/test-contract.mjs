@@ -525,4 +525,5 @@ execFileSync(process.execPath,["tools/bronze-stamp-mill/build-belt-models.mjs","
 execFileSync(process.execPath,["tools/bronze-stamp-mill/test-visual-details.mjs"],{stdio:"pipe"});
 execFileSync(process.execPath,["tools/bronze-stamp-mill/test-belt-animation.mjs"],{stdio:"pipe"});
 execFileSync(process.execPath,["tools/bronze-stamp-mill/test-ore-visuals.mjs"],{stdio:"pipe"});
+execFileSync(process.execPath,["tools/bronze-stamp-mill/test-feedstocks.mjs"],{stdio:"pipe"});
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");
