@@ -19,8 +19,8 @@ Status: **approved design direction**, not a claim that the proposed machines ar
 
 | Phase | Role | Production milestones and first verification |
 |---|---|---|
-| **Bronze I — Casting and machine tools** | *In progress* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
-| **Bronze II — Ore dressing and industrial fuel** | *Next* | Stamp Mill (ore breaker) -> existing Washer -> existing Sifter. Follow with rotary classifier, settling/recycled-water tank, ore roasting kiln and charcoal retort. First test line: 64 ore into product + tailings with real machine power and water. |
+| **Bronze I — Casting and machine tools** | *Implemented in PR #11; Minecraft/Gradle validation pending* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
+| **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill implemented in PR #11; remaining machines planned* | Stamp Mill (ore breaker) -> existing Washer -> existing Sifter. Follow with rotary classifier, settling/recycled-water tank, ore roasting kiln and charcoal retort. First test line: 64 ore into product + tailings with real machine power and water. |
 | **Bronze III — Manufacturing and networks** | *Planned* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
@@ -70,6 +70,22 @@ Iron ore deposits -> selective breaking/classification -> concentration -> dewat
 ## Work order
 
 1. Commit roadmap and material-flow table.
-2. Implement the **Stamp Mill** first with one functional ore line, Gear V2 input, replaceable stamp shoe, dedicated item ports, JSON recipes and guide/JEI support.
-3. Test ore -> crushed -> Washer -> Sifter end-to-end before adding the Classifier or Roaster.
+2. **Stamp Mill source implemented:** six raw feedstocks, Gear V2 input, replaceable stamp shoe, physical item ports, JSON recipes and guide/JEI integration. In-game animation polish and a verified build are still outstanding.
+3. **Still required before the next ore-processing multiblock:** verify ore -> crushed -> Washer -> Sifter end-to-end in-game, including block harvests, full output ports, dirty-water backpressure and automation. Do not label source-level checks as gameplay verification.
 4. Implement bounded dirty-water reclamation, then selective metallurgy and Iron Age prerequisites.
+
+## Pre-next-multiblock consistency sweep (2026-10-19)
+
+The registered ore catalog and mining rewards are now fixed as part of PR #11:
+all **42 ore blocks** have self-drop loot tables and Stone-pickaxe mining tags,
+including Quartz and Cassiterite needed in earlier ages. The previously
+untagged Stamp Mill/Lathe controllers are harvestable with Stone pickaxes too.
+See [ore processing by age](ore-processing-by-age.md) for the 31-family matrix
+and implementation states. This did not change ore worldgen or furnace yields.
+
+The next substantial ore-processing multiblock should be chosen based on a
+usable input/output chain, not just a new machine design. Current candidates
+remain the Rotary Ore Classifier and Dirty Water Settling Tank; neither is
+claimed implemented. Iron ore reduction still needs dedicated concentrates,
+refractory technology, charcoal/flux and Bloomery design decisions. Do not
+add dead-end iron crushed-items or smelting recipes before that path is agreed.

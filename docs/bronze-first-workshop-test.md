@@ -1,5 +1,15 @@
 # Bronze Age: first workshop slice (prototype)
 
+> **Historical first-slice checklist (October 2026).** This file records
+> the initial Pattern Maker/Mold Table prototype. Subsequent work on the
+> same draft [Bronze PR #11](https://github.com/hypersmc/magneticraft2-1.20.x/pull/11)
+> implements the Foundry, Casting Basin, Mechanical Lathe and Stamp Mill
+> (source-level only until full Forge/Minecraft verification). The
+> "Remaining Bronze milestones" below reflects the original starting point,
+> **not current implementation status**. For the live plan use
+> [bronze-age-production-plan.md](bronze-age-production-plan.md) and
+> [ore-processing-by-age.md](ore-processing-by-age.md).
+
 Branch: `feature/bronze-age-foundry` (PR #11), rebased directly onto
 `master` after Copper maintenance PR #10 and JEI support PR #9 merged.
 

@@ -80,4 +80,4 @@ This is a **harvestability repair**, not a new technology unlock: all 31 mineral
 
 ## Pre-next-multiblock acceptance
 
-The processing matrix and all registered ore harvestability must be checked against current item/block registration. Existing six Bronze Stamp Mill recipes and the Copper 1/2/3 yield hierarchy must still parse and use their original items. The Copper/Bronze guide pages should describe current functionality rather than prototype tasks. Run `./gradlew build` and mine Cassiterite/Quartz and the two Bronze machine controllers in Minecraft before merging.
+The processing matrix and all registered ore harvestability must be checked against current item/block registration. Existing six Bronze Stamp Mill recipes and the Copper 1/2/3 yield hierarchy must still parse and use their original items. The Copper/Bronze guide pages should describe current functionality rather than prototype tasks. Run `node tools/ore-progression/test-harvest-and-ages.mjs`, `node tools/bronze-stamp-mill/test-contract.mjs`, then `./gradlew build` and mine Cassiterite/Quartz and the two Bronze machine controllers in Minecraft before merging.
