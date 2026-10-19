@@ -258,8 +258,10 @@ final class BronzeStampMillOreVisuals {
                                  double x, double y, double z,
                                  float scale, float yaw) {
         if (original.isEmpty()) return;
-        ItemStack stack = original.copy();
-        stack.setCount(1);
+        // ItemRenderer renders a single model; unlike ItemEntityRenderer,
+        // it does not fan out copies based on the stack count. Avoid
+        // allocating ItemStack copies 2-5 times each rendered frame.
+        ItemStack stack = original;
         ItemRenderer items = Minecraft.getInstance().getItemRenderer();
         pose.pushPose();
         pose.translate(x/16D,y/16D,z/16D);
