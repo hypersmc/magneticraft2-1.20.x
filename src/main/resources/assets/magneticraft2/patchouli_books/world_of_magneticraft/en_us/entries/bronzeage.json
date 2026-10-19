@@ -105,7 +105,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Mechanical Lathe$()$(br2)Bronze parts cast in sand molds are rough and must be machined before precision use. Build a 5-wide, 3-deep, 2-high Lathe structure from Stone Bricks, Oak Planks and Cut Copper, with a Gear V2 Mechanical Input Module at the lower rear center. Place the controller at the lower front center. Right-click the controller to form.$(br2)The first structure model is intentionally a functional prototype; complete headstock and moving tool carriage visuals are still in progress."
+      "text": "$(bold)Mechanical Lathe$()$(br2)Bronze parts cast in sand molds are rough and must be machined before precision use. Build a 5-wide, 3-deep, 2-high Lathe structure from Stone Bricks, Oak Planks and Cut Copper, with a Gear V2 Mechanical Input Module at the lower rear center. Place the controller at the lower front center. Right-click the controller to form.$(br2)Install a cutting tool and supply Gear V2 power to machine rough castings into precision parts. Workpiece, headstock and cutting movement are visible on the formed Lathe."
     },
     {
       "type": "patchouli:crafting",
