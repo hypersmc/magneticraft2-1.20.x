@@ -1,6 +1,6 @@
 # Magneticraft2 — Visual Identity and Texture Transition
 
-Status: **design baseline / staged implementation plan**, agreed direction for the active Forge 1.20.1 project (2026-10-19). This document does **not** claim that the texture set, its example paths, or the proposed Rotary Ore Classifier already exist. Review the first actual artwork in Minecraft before declaring the palette final.
+Status: **visual design baseline, first texture kit implemented** for the active Forge 1.20.1 project (2026-10-19). Ten original texture PNGs and editable pixel definitions now exist in PR #11. The Rotary Ore Classifier and texture integration into existing machines are **not** implemented. Review the first artwork in Minecraft before declaring the palette final.
 
 Related plans: [Bronze production](bronze-age-production-plan.md), [Rendering V2](multiblock-rendering-v2.md), [Voxel V2](multiblock-voxels-v2.md), and [ore processing by age](ore-processing-by-age.md).
 
@@ -148,3 +148,10 @@ This is the **next planned multiblock** in Bronze II, not an implemented block i
 - Mineral-specific processing fractions/yields, water accounting and classifier-vs-sifter recipe split.
 
 **Scope of this initial document:** visual identity, shared material taxonomy, first pilot and migration/testing procedure only. No PNGs or model/registry/recipe/worldgen changes are implied.
+
+
+## 2026-10-19 — Original texture kit v1 landed in PR #11
+
+The first **ten** actual, original 16×16 RGBA PNGs are now committed under `textures/block/material/` and `textures/block/component/` (worked copper; machine timber/end; cast/machined bronze; dark work iron; refractory brick; chute liner; normal/worn bronze screen mesh). Their editable per-pixel palette and tile rows are in `tools/texture-art/texture-kit-v1.json`, with deterministic Node generator/checker `tools/texture-art/build-kit.mjs`.
+
+**Status is intentionally assets-only**: none of the existing machine model aliases, block/item registration, recipes, worldgen, physical geometry or formation JSON were changed. The worn screen is an art variant, not an implemented maintenance mechanic. The actual-alpha screen holes require a cutout-capable render layer when later used. Run `node tools/texture-art/build-kit.mjs --check` before migrating any machine's models. The classifier remains the first proposed consumer after its mechanical and processing design is agreed; game rendering and `./gradlew build` have not been run for these additions.

@@ -1,0 +1,299 @@
+{
+  "schema": 1,
+  "description": "Original hand-directed Minecraft-style pixel tiles for Magneticraft2; 16x16 pixels, 1:1 UV tiling. Each character maps to an explicit RGBA palette entry, . is transparent.",
+  "resolution": 16,
+  "textures": {
+    "chute_liner": {
+      "path": "component/chute_liner.png",
+      "palette": {
+        "a": "#6B5E51FF",
+        "b": "#595148FF",
+        "c": "#796B59FF",
+        "d": "#91806AFF",
+        "e": "#49453EFF",
+        "f": "#4D473EFF",
+        "g": "#A29175FF"
+      },
+      "pixels": [
+        "aaaafffffffffaab",
+        "aabgaabacaaaaaaa",
+        "aaddbaaabaaaabca",
+        "ddeaaababaaaaaaa",
+        "eeaaaabagaaabaaa",
+        "aaaacaaddcaaacac",
+        "aaaaaadeeabaaaab",
+        "aabaaceaacbbccaa",
+        "aaaabababaaaaagb",
+        "aaaaaaaaabaaaada",
+        "aacaaaababaaddba",
+        "aaaacbcababdeeab",
+        "aaaabcaaaabeaaaa",
+        "acaababaaaaacaac",
+        "aacaabbaaaaaaaaa",
+        "baaaabbbbababaaa"
+      ]
+    },
+    "screen_mesh_bronze": {
+      "path": "component/screen_mesh_bronze.png",
+      "palette": {
+        "a": "#D0A76AFF",
+        "b": "#997344FF",
+        "c": "#785B37FF",
+        "d": "#E2BC7EFF"
+      },
+      "pixels": [
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad",
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad",
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad",
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad"
+      ]
+    },
+    "screen_mesh_bronze_worn": {
+      "path": "component/screen_mesh_bronze_worn.png",
+      "palette": {
+        "a": "#CFA56BFF",
+        "b": "#8F704BFF",
+        "c": "#6A5339FF",
+        "d": "#D7B47BFF"
+      },
+      "pixels": [
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad",
+        "cbbacbbacbcacbba",
+        "b..ab..ab...b..a",
+        "b..ab..a....b..a",
+        "aaadaaa......aad",
+        "cbbac.......dbba",
+        "b..ab.......c..a",
+        "b..ab..cb..ab..a",
+        "aaadaaadddadaaad",
+        "cbbacbbacbbacbba",
+        "b..ab..ab..ab..a",
+        "b..ab..ab..ab..a",
+        "aaadaaadaaadaaad"
+      ]
+    },
+    "bronze_cast": {
+      "path": "material/bronze_cast.png",
+      "palette": {
+        "a": "#A67D4BFF",
+        "b": "#947249FF",
+        "c": "#AF8854FF",
+        "d": "#785B39FF",
+        "e": "#BB925EFF",
+        "f": "#66523AFF",
+        "g": "#CFAA70FF"
+      },
+      "pixels": [
+        "aaaaaaaaaaabaaaa",
+        "aaeagaaacaaaaaaa",
+        "aaaddaaabaaaaaca",
+        "accfaabaaaegaaaa",
+        "aaaaaaaabaaddaaa",
+        "aaaacaaaacaafcaa",
+        "aaaaaaaababaaaab",
+        "aabaacaaacabccaa",
+        "aaaabaeabaaaaaab",
+        "aaaaaaedgaaaaaaa",
+        "aacaaaadfaaaacaa",
+        "aaaaabcaaabacaab",
+        "aagabcaaaabaeaaa",
+        "adaabaaaaaaacdfc",
+        "aacaabbaaaaaaaaa",
+        "baaaabbbbababaaa"
+      ]
+    },
+    "bronze_machined": {
+      "path": "material/bronze_machined.png",
+      "palette": {
+        "a": "#C19756FF",
+        "b": "#CBA165FF",
+        "c": "#AA814AFF",
+        "d": "#D9B175FF",
+        "e": "#E2BB7AFF",
+        "f": "#8B673EFF",
+        "g": "#785A38FF"
+      },
+      "pixels": [
+        "cccccccccccfcccc",
+        "aabeeeddddddddaa",
+        "bbbbabbbabbbbbbb",
+        "aaaaaacaaaaaaaaa",
+        "cccccccccccccccc",
+        "aaabbbbbbbaaaaaa",
+        "bggbbbbbbbabbbba",
+        "aaaaaaaaaaaaaaaa",
+        "ccccccfcfccccccf",
+        "aaddddddddddeeaa",
+        "bbbbbbbbbbbbbbbb",
+        "aaaaacaaaaaaaaac",
+        "ccccfcccccgccccc",
+        "aaababbbbbaaaaaa",
+        "bbbbbaaeebbbbbbb",
+        "caaaaccacacaaaaa"
+      ]
+    },
+    "dark_work_iron": {
+      "path": "material/dark_work_iron.png",
+      "palette": {
+        "a": "#50575AFF",
+        "b": "#43494BFF",
+        "c": "#5B6464FF",
+        "d": "#727D7CFF",
+        "e": "#353B3EFF",
+        "f": "#899292FF"
+      },
+      "pixels": [
+        "aaaaaaaaaaabaaee",
+        "aabaaabacaaaaaaa",
+        "aacccccccaaaaaca",
+        "accafabbbbbbaaaa",
+        "aaadddbabaaabaaa",
+        "aaaacaaaacaaacac",
+        "aaaaaaaababaaaab",
+        "eebaacaaacbbccaa",
+        "aaaabababaaaaabb",
+        "aaaaaaaaaaaaaaaa",
+        "aacccccccbafacba",
+        "aaaacbbbbbdddaab",
+        "aaaabcaaaabaaaaa",
+        "acaababaaaaacaac",
+        "aacaabfaaaaaaaaa",
+        "baaaabdbbababaaa"
+      ]
+    },
+    "machine_timber": {
+      "path": "material/machine_timber.png",
+      "palette": {
+        "a": "#715038FF",
+        "b": "#805E42FF",
+        "c": "#624630FF",
+        "d": "#906E4CFF",
+        "e": "#A0805AFF",
+        "f": "#B08B60FF",
+        "g": "#4B382BFF"
+      },
+      "pixels": [
+        "aadbcabdbacfdbac",
+        "aabbcabdbacadbac",
+        "aabbfabdfacadbac",
+        "aabbcabdeacadbac",
+        "aadbcabdeacgdcac",
+        "aadacabdeacgbcac",
+        "aadacabdbecagcac",
+        "aadacabdeacgbcac",
+        "aadacabdbacadcac",
+        "aabacabdbacadcac",
+        "aabgcabdbacadcac",
+        "aabgcabdbacadbac",
+        "aadbfaedbafadbac",
+        "aadbfebdbacabbac",
+        "aadbcefdbacabbac",
+        "aadbcabdbacabbac"
+      ]
+    },
+    "machine_timber_end": {
+      "path": "material/machine_timber_end.png",
+      "palette": {
+        "a": "#816044FF",
+        "b": "#684B33FF",
+        "c": "#95714DFF",
+        "d": "#B28B61FF",
+        "e": "#4E3C2CFF",
+        "f": "#67492FFF"
+      },
+      "pixels": [
+        "bbbbbbbbbbbebbbb",
+        "babaaaaaaaaaaaab",
+        "baaabaaabaaaaaab",
+        "baacccaccccccaab",
+        "baaccccccccccaab",
+        "baaccddbbddccaab",
+        "baaccddbbdcccaae",
+        "baaccddbbddccaab",
+        "baaccdcbbddccaae",
+        "baaccdfbbfdccaab",
+        "baaccdfbbfdccaab",
+        "baaccacbbccccaae",
+        "baacacccccaccaab",
+        "baaabaaaaaaaaaab",
+        "baaaabbaaaaaaaab",
+        "ebbbbeebbbebbbbb"
+      ]
+    },
+    "refractory_brick": {
+      "path": "material/refractory_brick.png",
+      "palette": {
+        "a": "#4B453EFF",
+        "b": "#B19A83FF",
+        "c": "#806C5BFF",
+        "d": "#C5AE92FF",
+        "e": "#A18A73FF",
+        "f": "#8A7663FF",
+        "g": "#D1BCA2FF"
+      },
+      "pixels": [
+        "acccccccaccecdcc",
+        "adeffdbbacbbbbbd",
+        "acbeegbbacbbbbdb",
+        "aaaaaaaaaaaaaaaa",
+        "ccccacccecccaccc",
+        "bddbacbbddbbafbd",
+        "bbdbacbdebebacbe",
+        "aaaaaaaaaaaaaaaa",
+        "acccececacccccce",
+        "acbbbbbfacbbdbbb",
+        "acdgbbbeacbbddbb",
+        "aaaaaaaaaaaaaaaa",
+        "cccdadccccecadcc",
+        "bdbbacbbbbbbacfd",
+        "bbdbaeebbbbgacbb",
+        "aaaaaaaaaaaaaaaa"
+      ]
+    },
+    "worked_copper": {
+      "path": "material/worked_copper.png",
+      "palette": {
+        "a": "#B56C4BFF",
+        "b": "#99553BFF",
+        "c": "#C57A54FF",
+        "d": "#824C37FF",
+        "e": "#D99069FF",
+        "f": "#795A43FF",
+        "g": "#E0A27BFF"
+      },
+      "pixels": [
+        "aaaaaaaaaaadaaaa",
+        "aabaaaaacaaaaaac",
+        "aagbdaaadaabeaca",
+        "accaeebaaaaaaaca",
+        "aaaabbaabaaabaaa",
+        "acaacaaaccaaacac",
+        "afcaaaaababaaaad",
+        "aafaacaagcabccba",
+        "aaaabababaaaaaeb",
+        "aaaaaaaaaaaaaaaa",
+        "aaebaaabaaaaccaa",
+        "aaaacbcaabeebaab",
+        "aaaadcfaaadaacaa",
+        "acaadaabaaaacgac",
+        "aacaabdeaaaaaaaa",
+        "daaaabbbbababaaa"
+      ]
+    }
+  }
+}
