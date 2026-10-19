@@ -72,7 +72,7 @@ This is a **harvestability repair**, not a new technology unlock: all 31 mineral
 
 ## Deferred deliberately, rather than introducing dead ends
 
-- Define proper iron mineral chemistry (magnetite/hematite/limonite) before adding Crushed/Wa[s]hed/Concentrate variants or Stamp Mill recipes. Distinguish roasting/flux from mechanical washing.
+- Define proper iron mineral chemistry (magnetite/hematite/limonite) before adding Crushed/Washed/Concentrate variants or Stamp Mill recipes. Distinguish roasting/flux from mechanical washing.
 - Define Galena lead and Sphalerite zinc paths separately. No direct ore → metal ingot via Stamp Mill.
 - Specify the first Bloomery and the charcoal/refractory/forced-air prerequisites before restricting vanilla recipes.
 - Revisit ore-to-ingot **quality**, item wear and processing impurity calculations as one consistent NBT/recipe system.

@@ -34,7 +34,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Current Copper milestone$()$(br2)The Crusher/Grinder, Ore Washer and Mechanical Sifter now cover Chalcocite, Cassiterite and Quartz. Washer belts and Sifter meshes are replaceable wear parts.$(br2)The Bronze Age expands this workshop into pattern making, mold casting, precision machining and higher-throughput Stamp Mill crushing. Tin is already available through Cassiterite -> Grinder -> Washer -> Sifter -> Primitive Furnace; the first Bronze Charge uses three Copper and one Tin. Iron-mineral reduction waits for the later Bloomery."
+      "text": "$(bold)Current Copper milestone$()$(br2)The Mechanical Grinder, Ore Washer and Mechanical Sifter now cover Chalcocite, Cassiterite and Quartz. Washer belts and Sifter meshes are replaceable wear parts.$(br2)The Bronze Age expands this workshop into pattern making, mold casting, precision machining and higher-throughput Stamp Mill crushing. Tin is already available through Cassiterite -> Grinder -> Washer -> Sifter -> Primitive Furnace; the first Bronze Charge uses three Copper and one Tin. Iron-mineral reduction waits for the later Bloomery."
     },
     {
       "type": "text",
