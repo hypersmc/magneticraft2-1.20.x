@@ -19,6 +19,9 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 /**
  * Three eccentric stamp heads, one shared Gear V2 phase, no per-tick baked
  * V2 geometry regeneration. World/guide frame is rendered by V2 fillers.
@@ -66,12 +69,36 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_side_lower_mount");
     private static final ResourceLocation PULLEY =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
-    private static final ResourceLocation BELT_STRAIGHT =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_straight");
-    private static final ResourceLocation BELT_UPPER =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_upper");
-    private static final ResourceLocation BELT_WRAP =
-            new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_belt_wrap");
+    // Weak keys avoid retaining unloaded multiblocks. The value keeps a
+    // continuous unwrapped texture phase while Gear V2 reports 0..360.
+    private final Map<BronzeStampMillBlockEntity, BeltTravel> beltTravel =
+            new WeakHashMap<>();
+
+    private static final class BeltTravel {
+        private boolean initialized;
+        private float previousAngle;
+        private double travel;
+
+        private double sample(float driveAngle) {
+            if (!initialized) {
+                initialized = true;
+                previousAngle = driveAngle;
+                travel = BronzeStampMillBeltRenderer.distanceForDegrees(driveAngle);
+            } else {
+                float delta = (driveAngle - previousAngle) % 360F;
+                if (delta > 180F) delta -= 360F;
+                else if (delta < -180F) delta += 360F;
+                previousAngle = driveAngle;
+                // Uses the exact SAME angle as both drums. Signed deltas
+                // move the +Z flight down for positive X, and reverse
+                // immediately if Gear V2 reverses direction.
+                travel += BronzeStampMillBeltRenderer.distanceForDegrees(delta);
+            }
+            // Pattern repeats every block. Bounds never grow over long plays.
+            travel %= 1.0D;
+            return travel;
+        }
+    }
 
     private static void part(PoseStack pose,MultiBufferSource buffers,int light,int overlay,
                              ResourceLocation model,double x,double y,double z,
@@ -169,28 +196,19 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,inputY,lowerZ,Axis.XP,driveAngle);
 
-        // Wide, dark, closed leather loop wrapped over smooth bronze-rimmed
-        // wooden drums. The lower/upper centers (8,38.5) and shaft phases
-        // are unchanged. Leather does not rotate as a rigid pulley mesh;
-        // the two half-rounds remain fixed while both drums spin.
+        // Bronze-rimmed drums rotate with Gear V2.
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
-        // IMPORTANT: part() first subtracts 0.5 blocks from the MODEL
-        // origin. The first flight has local y=0..16, so its pivot MUST
-        // be world y=16 to occupy y=8..24 (not y=0..16). The second
-        // local y=0..14.5 must pivot at world y=32 to occupy y=24..38.5.
-        // Old regression tests ignored this half-block translation.
-        part(pose,buffers,light,overlay,BELT_STRAIGHT,
-                pulleyX,16D/16D,lowerZ,null,0F);
-        part(pose,buffers,light,overlay,BELT_UPPER,
-                pulleyX,32D/16D,lowerZ,null,0F);
-        // The lower half-round uses the model's upper semicircle flipped.
-        part(pose,buffers,light,overlay,BELT_WRAP,
-                pulleyX,inputY,lowerZ,Axis.XP,180F);
-        part(pose,buffers,light,overlay,BELT_WRAP,
-                pulleyX,upperY,lowerZ,null,0F);
+        // Render the actual MOVING leather loop, not the old stationary
+        // baked belt faces. One continuous UV path covers both straight
+        // flights and both pulley wraps. Shaft stops -> leather freezes;
+        // reverse input -> leather travels in the opposite direction.
+        BronzeStampMillBeltRenderer.render(
+                pose, buffers, light,
+                beltTravel.computeIfAbsent(mill, unused -> new BeltTravel())
+                        .sample(driveAngle));
 
         // One continuous drive axis through all four fixed crank pillows.
         // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
