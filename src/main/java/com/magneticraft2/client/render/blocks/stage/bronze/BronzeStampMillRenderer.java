@@ -11,12 +11,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Map;
@@ -73,6 +71,8 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
     // continuous unwrapped texture phase while Gear V2 reports 0..360.
     private final Map<BronzeStampMillBlockEntity, BeltTravel> beltTravel =
             new WeakHashMap<>();
+    private final BronzeStampMillOreVisuals oreVisuals =
+            new BronzeStampMillOreVisuals();
 
     private static final class BeltTravel {
         private boolean initialized;
@@ -251,18 +251,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             renderModel(pose,buffers,light,overlay,cam);
             pose.popPose();
         }
-        ItemRenderer items=Minecraft.getInstance().getItemRenderer();
-        ItemStack feed=mill.getInputStack();
-        if(!feed.isEmpty()){
-            pose.pushPose();
-            // Display incoming ore on top of the actual crushing plate,
-            // not below the tray inside the support frame.
-            pose.translate(.5D,24D/16D,-10D/16D);
-            pose.scale(.55F,.55F,.55F);
-            BakedModel model=items.getModel(feed,mill.getLevel(),null,721);
-            items.render(feed,ItemDisplayContext.GROUND,false,pose,buffers,light,overlay,model);
-            pose.popPose();
-        }
+        // Port-aligned feed, progressive crushing and two real output
+        // chutes. The existing functional item ports continue owning
+        // all inventory state; no client-side item transport is invented.
+        oreVisuals.render(mill,partial,pose,buffers,light,overlay);
         pose.popPose();
     }
 }
