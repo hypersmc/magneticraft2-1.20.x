@@ -155,8 +155,14 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_output_rotor"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_arbor"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_spindle"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/rotary_ore_classifier_drum"));
-        event.register(new ResourceLocation(MOD_ID, "multiblock/rotary_ore_classifier_drum_worn"));
+        // Register all six cutout models explicitly: relying solely on
+        // the dynamic models folder scan can show missing-model cubes.
+        for (String section : new String[]{"rear", "middle", "front"}) {
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section));
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section + "_worn"));
+        }
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));

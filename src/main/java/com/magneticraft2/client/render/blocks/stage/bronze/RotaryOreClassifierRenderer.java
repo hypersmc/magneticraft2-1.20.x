@@ -19,18 +19,24 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Gear V2-driven, three-segment rotating trommel screen. The substantial
+ * Gear V2-driven, three-segment large rotating trommel screen. The compact
  * timber/bronze frame and chutes are baked V2 parts, not BER geometry.
  *
- * Only the drum and three small inventory previews are rendered here.
+ * Only the enlarged drum and inventory previews are rendered here.
  * Screen wear is shown on the screen, never as a whole-machine tint.
  */
 public final class RotaryOreClassifierRenderer
         implements BlockEntityRenderer<RotaryOreClassifierBlockEntity> {
-    private static final ResourceLocation SCREEN = new ResourceLocation(
-            "magneticraft2", "multiblock/rotary_ore_classifier_drum");
-    private static final ResourceLocation WORN = new ResourceLocation(
-            "magneticraft2", "multiblock/rotary_ore_classifier_drum_worn");
+    private static final ResourceLocation[] DRUM = {
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_rear"),
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_middle"),
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_front")
+    };
+    private static final ResourceLocation[] WORN_DRUM = {
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_rear_worn"),
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_middle_worn"),
+            new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_front_worn")
+    };
 
     public RotaryOreClassifierRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -59,12 +65,12 @@ public final class RotaryOreClassifierRenderer
         // longitudinal Z axis. Its normal rotor remains independently drawn
         // by the module BER, so no fake shaft is inserted through its cell.
         float angle = classifier.getDrumRotationDegrees(partialTicks);
-        BakedModel model = Minecraft.getInstance().getModelManager().getModel(
-                classifier.getPartWearStage() >= 2 ? WORN : SCREEN);
-
-        // Model is exactly one Z-cell long; adjoining segments have no
-        // duplicate end caps. Revolve every section from the same input phase.
+        // Three large, open octagonal mesh sections. Each has its own cast
+        // rim, with open feed/discharge ends and uninterrupted 16px UV tiles.
+        // Only the drum moves: the compact frame, hopper and chutes are V2 baked.
+        ResourceLocation[] drum = classifier.getPartWearStage() >= 2 ? WORN_DRUM : DRUM;
         for (int dz = -2; dz <= 0; dz++) {
+            BakedModel model = Minecraft.getInstance().getModelManager().getModel(drum[dz + 2]);
             pose.pushPose();
             pose.translate(.5D, 1.5D, dz + .5D);
             pose.mulPose(Axis.ZP.rotationDegrees(angle));
@@ -73,17 +79,25 @@ public final class RotaryOreClassifierRenderer
             pose.popPose();
         }
 
-        // Client-only appearance of server-synced inventory slots. The
-        // physical blocks retain automation/capability ownership.
+        // Client-only ore visuals. The real item/recipe state is owned
+        // exclusively by the server; no invisible phantom inventories.
         ItemStack input = classifier.getInputStack();
         ItemStack primary = classifier.getOutputStack();
         ItemStack coarse = classifier.getByproductStack();
-        if (!input.isEmpty()) drawItem(classifier, input, pose, buffers,
-                packedLight, packedOverlay, -.5D, 1.92D, -2.5D, .35F);
+        if (!input.isEmpty()) {
+            if (classifier.isProcessing()) {
+                drawScreeningOre(classifier, input, angle, partialTicks,
+                        pose, buffers, packedLight, packedOverlay);
+            } else {
+                // Waiting material is shown in the real high input hopper.
+                drawItem(classifier, input, pose, buffers,
+                        packedLight, packedOverlay, -.5D, 2.35D, -2.5D, .35F);
+            }
+        }
         if (!primary.isEmpty()) drawItem(classifier, primary, pose, buffers,
                 packedLight, packedOverlay, -.5D, 1.04D, 1.5D, .34F);
         if (!coarse.isEmpty()) drawItem(classifier, coarse, pose, buffers,
-                packedLight, packedOverlay, .5D, 1.04D, 1.5D, .34F);
+                packedLight, packedOverlay, 1.5D, 1.04D, 1.5D, .34F);
         pose.popPose();
     }
 
@@ -94,6 +108,33 @@ public final class RotaryOreClassifierRenderer
                 buffers.getBuffer(RenderType.cutout()),
                 BlockRegistry.ROTARY_ORE_CLASSIFIER.get().defaultBlockState(),
                 model, 1F, 1F, 1F, light, overlay);
+    }
+
+    /**
+     * Two visible pieces tumble across the BOTTOM of the open screen as
+     * classification advances from the rear inlet to the front discharge.
+     * No item entity, texture/geometry bake, particle or inventory write
+     * happens here. Stopped machines never execute the moving preview.
+     */
+    private static void drawScreeningOre(RotaryOreClassifierBlockEntity owner,
+            ItemStack stack, float degrees, float partialTicks,
+            PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
+        ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
+        BakedModel model = renderer.getModel(stack, owner.getLevel(), null, 420);
+        float progress = owner.getVisualProcessProgress(partialTicks);
+        double radians = Math.toRadians(degrees);
+        for (int n = 0; n < 2; n++) {
+            double z = -1.85D + n * 0.4D + 2.15D * progress;
+            double x = .5D + .22D * Math.sin(radians + n * 2.2D);
+            double y = 1.10D + .045D * Math.cos(radians + n * 2.2D);
+            pose.pushPose();
+            pose.translate(x, y, z);
+            pose.mulPose(Axis.YP.rotationDegrees((float) (n * 34.0D + degrees * .07D)));
+            pose.scale(.24F, .24F, .24F);
+            renderer.render(stack, ItemDisplayContext.GROUND, false,
+                    pose, buffers, light, overlay, model);
+            pose.popPose();
+        }
     }
 
     private static void drawItem(RotaryOreClassifierBlockEntity owner,

@@ -1,14 +1,17 @@
-# Rotary Ore Classifier source and test contract
+# Rotary Ore Classifier — compact 3×3×5 redesign
 
-`frame-design.json` is the editable static-frame source; `build-static.mjs` rebuilds the 251 per-facing static V2 models (48 shared local templates, 200 block-local model wrappers, controller blockstate/model/item). **Do not edit generated part JSON by hand.**
+After screenshots rejected the 5×3×5 scaffolding prototype, the authoritative model was rebuilt as an **open ~22 px-diameter rotating screen**, a bronze/stone lower collection trough and **four** load-bearing timber posts.
 
-`test-contract.mjs` checks all four 5×3×5 blueprints, rotated module locations and V2 render AIR anchors, 50 static model hosts per facing, valid material/UV coordinates, two explicit screen models with transparent original textures, recipe conservation and the Washer/Sifter handoff, machine registrations, mining tags, JEI catalyst and guidebook.
+`frame-design.json` (schema 2) contains the canonical SOUTH 3×3×5 blueprint and one global (model-pixel) box list shared by all four static directions. It also contains the screen radius, wear variants and coarse/fines discharge details. `build-static.mjs` regenerates **136 direct V2 cell models**, **four rotated multiblock structures**, **six animated drum model JSON files**, the Voxel V2 profile and controller blockstate/item models. It removes obsolete old static templates and the tiny old two-model drum.
+
+Do not hand-edit generated assets. Only edit `frame-design.json` and rebuild. The source-contract test checks dimensions, four facings, port clearance, 16px UV coverage, large open drum, Patchouli Visualize and processing chain.
 
 ```bash
-node tools/rotary-classifier/test-contract.mjs
+node tools/rotary-classifier/build-static.mjs
 node tools/rotary-classifier/build-static.mjs --check
+node tools/rotary-classifier/test-contract.mjs
 node tools/texture-art/build-kit.mjs --check
 ./gradlew build
 ```
 
-These source checks do **not** prove Minecraft/Forge compilation or in-game correctness; see `docs/bronze-rotary-classifier-contract.md` for the gameplay test matrix.
+**World migration:** Break the old 5×3×5 test machine *before* updating. The new formation blueprint is incompatible with the original test scaffold. Real Minecraft build and animation tests are pending.

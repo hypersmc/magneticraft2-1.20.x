@@ -1,47 +1,1119 @@
 {
-  "schema": 1,
-  "description": "Rotary Ore Classifier 5x3x5 canonical SOUTH authoring data; modify these boxes/layout and regenerate, never hand-edit generated part files.",
+  "schema": 2,
+  "name": "rotary_ore_classifier",
+  "description": "Compact 3×3×5 SOUTH-oriented Rotary Ore Classifier: only four timber stands, one large open 3-segment bronze screen and two connected chutes. Authored source for all facings, proxy anchors, collision and moving drum.",
   "dimensions": [
-    5,
+    3,
     3,
     5
   ],
   "layers": [
     [
-      "SSSSS",
-      "SASAS",
-      "SASAS",
-      "SACAS",
-      "SOYSS"
+      "SSS",
+      "SAS",
+      "SAS",
+      "SCS",
+      "OAY"
     ],
     [
-      "PUIBP",
-      "PAAAP",
-      "PAAAP",
-      "PAAAP",
-      "PAAAP"
+      "UIA",
+      "PAP",
+      "AAA",
+      "PAP",
+      "AAA"
     ],
     [
-      "PBPBP",
-      "PAAAP",
-      "PAAAP",
-      "PAAAP",
-      "PBPBP"
+      "BAA",
+      "AAA",
+      "AAA",
+      "AAA",
+      "AAA"
     ]
+  ],
+  "blocks": {
+    "S": "minecraft:stone_bricks",
+    "P": "minecraft:oak_planks",
+    "B": "minecraft:cut_copper",
+    "C": "magneticraft2:rotary_ore_classifier",
+    "U": "magneticraft2:multiblock_item_input",
+    "I": "magneticraft2:mechanical_input_module",
+    "O": "magneticraft2:multiblock_item_primary_output",
+    "Y": "magneticraft2:multiblock_item_byproduct_output",
+    "A": "minecraft:air"
+  },
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "bearing": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "liner": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "drum": {
+    "segments": [
+      -2,
+      -1,
+      0
+    ],
+    "axis": "z",
+    "pivot": [
+      8,
+      8,
+      8
+    ],
+    "centerY": 24,
+    "facetOffset": 11.05,
+    "facetWidth": 9,
+    "skinThickness": 0.85,
+    "bandThickness": 1.1
+  },
+  "boxes": [
+    {
+      "name": "stone_rail_west",
+      "material": "stone",
+      "from": [
+        -15,
+        0,
+        -48
+      ],
+      "to": [
+        -5,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "stone_rail_east",
+      "material": "stone",
+      "from": [
+        21,
+        0,
+        -48
+      ],
+      "to": [
+        31,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "rear_stone_tie",
+      "material": "stone",
+      "from": [
+        -5,
+        0,
+        -48
+      ],
+      "to": [
+        21,
+        4.25,
+        -43
+      ]
+    },
+    {
+      "name": "front_stone_tie",
+      "material": "stone",
+      "from": [
+        -5,
+        0,
+        10
+      ],
+      "to": [
+        21,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "left_iron_sill",
+      "material": "iron",
+      "from": [
+        -11,
+        4.25,
+        -42
+      ],
+      "to": [
+        -6,
+        8.5,
+        15
+      ]
+    },
+    {
+      "name": "right_iron_sill",
+      "material": "iron",
+      "from": [
+        22,
+        4.25,
+        -42
+      ],
+      "to": [
+        27,
+        8.5,
+        15
+      ]
+    },
+    {
+      "name": "tray_underpan",
+      "material": "bronze",
+      "from": [
+        -6,
+        6,
+        -32
+      ],
+      "to": [
+        22,
+        7.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_wear_lining",
+      "material": "liner",
+      "from": [
+        -5,
+        7.5,
+        -31
+      ],
+      "to": [
+        21,
+        7.75,
+        15
+      ],
+      "collision": false
+    },
+    {
+      "name": "tray_west_lip",
+      "material": "bronze",
+      "from": [
+        -6,
+        7.5,
+        -31
+      ],
+      "to": [
+        -4.75,
+        11.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_east_lip",
+      "material": "bronze",
+      "from": [
+        20.75,
+        7.5,
+        -31
+      ],
+      "to": [
+        22,
+        11.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_cross_rib_-29",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        -29
+      ],
+      "to": [
+        22,
+        6,
+        -27
+      ]
+    },
+    {
+      "name": "tray_cross_rib_-12",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        -12
+      ],
+      "to": [
+        22,
+        6,
+        -10
+      ]
+    },
+    {
+      "name": "tray_cross_rib_7",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        7
+      ],
+      "to": [
+        22,
+        6,
+        9
+      ]
+    },
+    {
+      "name": "w_rear_timber_post",
+      "material": "timber",
+      "from": [
+        -13,
+        4.25,
+        -31
+      ],
+      "to": [
+        -9,
+        28.2,
+        -27
+      ]
+    },
+    {
+      "name": "w_rear_foot_collar",
+      "material": "bronze",
+      "from": [
+        -13.75,
+        4.25,
+        -31.75
+      ],
+      "to": [
+        -8.25,
+        7,
+        -26.25
+      ]
+    },
+    {
+      "name": "w_rear_upper_clamp",
+      "material": "bronze",
+      "from": [
+        -14,
+        25.5,
+        -31.8
+      ],
+      "to": [
+        -8,
+        28.7,
+        -26.2
+      ]
+    },
+    {
+      "name": "w_rear_top_endgrain",
+      "material": "end",
+      "from": [
+        -13,
+        28.2,
+        -31
+      ],
+      "to": [
+        -9,
+        28.45,
+        -27
+      ],
+      "collision": false
+    },
+    {
+      "name": "w_front_timber_post",
+      "material": "timber",
+      "from": [
+        -13,
+        4.25,
+        7
+      ],
+      "to": [
+        -9,
+        28.2,
+        11
+      ]
+    },
+    {
+      "name": "w_front_foot_collar",
+      "material": "bronze",
+      "from": [
+        -13.75,
+        4.25,
+        6.25
+      ],
+      "to": [
+        -8.25,
+        7,
+        11.75
+      ]
+    },
+    {
+      "name": "w_front_upper_clamp",
+      "material": "bronze",
+      "from": [
+        -14,
+        25.5,
+        6.2
+      ],
+      "to": [
+        -8,
+        28.7,
+        11.8
+      ]
+    },
+    {
+      "name": "w_front_top_endgrain",
+      "material": "end",
+      "from": [
+        -13,
+        28.2,
+        7
+      ],
+      "to": [
+        -9,
+        28.45,
+        11
+      ],
+      "collision": false
+    },
+    {
+      "name": "w_low_longitudinal_girder",
+      "material": "iron",
+      "from": [
+        -13,
+        10,
+        -27
+      ],
+      "to": [
+        -9,
+        13,
+        7
+      ]
+    },
+    {
+      "name": "e_rear_timber_post",
+      "material": "timber",
+      "from": [
+        25,
+        4.25,
+        -31
+      ],
+      "to": [
+        29,
+        28.2,
+        -27
+      ]
+    },
+    {
+      "name": "e_rear_foot_collar",
+      "material": "bronze",
+      "from": [
+        24.25,
+        4.25,
+        -31.75
+      ],
+      "to": [
+        29.75,
+        7,
+        -26.25
+      ]
+    },
+    {
+      "name": "e_rear_upper_clamp",
+      "material": "bronze",
+      "from": [
+        24,
+        25.5,
+        -31.8
+      ],
+      "to": [
+        30,
+        28.7,
+        -26.2
+      ]
+    },
+    {
+      "name": "e_rear_top_endgrain",
+      "material": "end",
+      "from": [
+        25,
+        28.2,
+        -31
+      ],
+      "to": [
+        29,
+        28.45,
+        -27
+      ],
+      "collision": false
+    },
+    {
+      "name": "e_front_timber_post",
+      "material": "timber",
+      "from": [
+        25,
+        4.25,
+        7
+      ],
+      "to": [
+        29,
+        28.2,
+        11
+      ]
+    },
+    {
+      "name": "e_front_foot_collar",
+      "material": "bronze",
+      "from": [
+        24.25,
+        4.25,
+        6.25
+      ],
+      "to": [
+        29.75,
+        7,
+        11.75
+      ]
+    },
+    {
+      "name": "e_front_upper_clamp",
+      "material": "bronze",
+      "from": [
+        24,
+        25.5,
+        6.2
+      ],
+      "to": [
+        30,
+        28.7,
+        11.8
+      ]
+    },
+    {
+      "name": "e_front_top_endgrain",
+      "material": "end",
+      "from": [
+        25,
+        28.2,
+        7
+      ],
+      "to": [
+        29,
+        28.45,
+        11
+      ],
+      "collision": false
+    },
+    {
+      "name": "e_low_longitudinal_girder",
+      "material": "iron",
+      "from": [
+        25,
+        10,
+        -27
+      ],
+      "to": [
+        29,
+        13,
+        7
+      ]
+    },
+    {
+      "name": "bronze_roller_w_rear",
+      "material": "bearing",
+      "from": [
+        -9,
+        15.2,
+        -31
+      ],
+      "to": [
+        -4.25,
+        18.5,
+        -25
+      ]
+    },
+    {
+      "name": "bronze_roller_e_rear",
+      "material": "bearing",
+      "from": [
+        20.25,
+        15.2,
+        -31
+      ],
+      "to": [
+        25,
+        18.5,
+        -25
+      ]
+    },
+    {
+      "name": "iron_roller_axle_w_rear",
+      "material": "iron",
+      "from": [
+        -7.3,
+        18.5,
+        -30.2
+      ],
+      "to": [
+        -6.3,
+        20,
+        -25.8
+      ],
+      "collision": false
+    },
+    {
+      "name": "iron_roller_axle_e_rear",
+      "material": "iron",
+      "from": [
+        22.3,
+        18.5,
+        -30.2
+      ],
+      "to": [
+        23.3,
+        20,
+        -25.8
+      ],
+      "collision": false
+    },
+    {
+      "name": "bronze_roller_w_front",
+      "material": "bearing",
+      "from": [
+        -9,
+        15.2,
+        7
+      ],
+      "to": [
+        -4.25,
+        18.5,
+        13
+      ]
+    },
+    {
+      "name": "bronze_roller_e_front",
+      "material": "bearing",
+      "from": [
+        20.25,
+        15.2,
+        7
+      ],
+      "to": [
+        25,
+        18.5,
+        13
+      ]
+    },
+    {
+      "name": "iron_roller_axle_w_front",
+      "material": "iron",
+      "from": [
+        -7.3,
+        18.5,
+        7.8
+      ],
+      "to": [
+        -6.3,
+        20,
+        12.2
+      ],
+      "collision": false
+    },
+    {
+      "name": "iron_roller_axle_e_front",
+      "material": "iron",
+      "from": [
+        22.3,
+        18.5,
+        7.8
+      ],
+      "to": [
+        23.3,
+        20,
+        12.2
+      ],
+      "collision": false
+    },
+    {
+      "name": "rear_bearing_w",
+      "material": "bronze",
+      "from": [
+        2.2,
+        20,
+        -32
+      ],
+      "to": [
+        4.4,
+        28,
+        -29.8
+      ]
+    },
+    {
+      "name": "rear_bearing_e",
+      "material": "bronze",
+      "from": [
+        11.6,
+        20,
+        -32
+      ],
+      "to": [
+        13.8,
+        28,
+        -29.8
+      ]
+    },
+    {
+      "name": "rear_bearing_top",
+      "material": "bronze",
+      "from": [
+        4.4,
+        27,
+        -32
+      ],
+      "to": [
+        11.6,
+        29,
+        -29.8
+      ]
+    },
+    {
+      "name": "rear_bearing_bottom",
+      "material": "bronze",
+      "from": [
+        4.4,
+        19,
+        -32
+      ],
+      "to": [
+        11.6,
+        21,
+        -29.8
+      ]
+    },
+    {
+      "name": "rear_bearing_trim",
+      "material": "bearing",
+      "from": [
+        5,
+        28.9,
+        -31.7
+      ],
+      "to": [
+        11,
+        29.25,
+        -30.1
+      ],
+      "collision": false
+    },
+    {
+      "name": "ore_hopper_floor",
+      "material": "bronze",
+      "from": [
+        -14,
+        33,
+        -47
+      ],
+      "to": [
+        -1,
+        35,
+        -34
+      ]
+    },
+    {
+      "name": "ore_hopper_lining",
+      "material": "liner",
+      "from": [
+        -12.3,
+        35,
+        -45.5
+      ],
+      "to": [
+        -2.7,
+        35.25,
+        -35.8
+      ],
+      "collision": false
+    },
+    {
+      "name": "ore_hopper_rear_wall",
+      "material": "bronze",
+      "from": [
+        -14,
+        35,
+        -47
+      ],
+      "to": [
+        -12.6,
+        46,
+        -34
+      ]
+    },
+    {
+      "name": "ore_hopper_left_wall",
+      "material": "bronze",
+      "from": [
+        -14,
+        35,
+        -47
+      ],
+      "to": [
+        -1,
+        46,
+        -45.6
+      ]
+    },
+    {
+      "name": "ore_hopper_right_wall",
+      "material": "bronze",
+      "from": [
+        -14,
+        35,
+        -35.4
+      ],
+      "to": [
+        -1,
+        45,
+        -34
+      ]
+    },
+    {
+      "name": "ore_hopper_front_lip",
+      "material": "bronze",
+      "from": [
+        -2.3,
+        35,
+        -45.6
+      ],
+      "to": [
+        -1,
+        40,
+        -35.4
+      ]
+    },
+    {
+      "name": "ore_hopper_rim_rear",
+      "material": "bearing",
+      "from": [
+        -14,
+        45,
+        -47
+      ],
+      "to": [
+        -1,
+        46,
+        -45.6
+      ],
+      "collision": false
+    },
+    {
+      "name": "ore_hopper_rim_left",
+      "material": "bearing",
+      "from": [
+        -14,
+        45,
+        -45.6
+      ],
+      "to": [
+        -12.6,
+        46,
+        -34
+      ],
+      "collision": false
+    },
+    {
+      "name": "ore_hopper_rim_right",
+      "material": "bearing",
+      "from": [
+        -14,
+        44,
+        -35.4
+      ],
+      "to": [
+        -1,
+        45,
+        -34
+      ],
+      "collision": false
+    },
+    {
+      "name": "hopper_short_feed",
+      "material": "bronze",
+      "from": [
+        -4,
+        33,
+        -34
+      ],
+      "to": [
+        9,
+        34.2,
+        -25
+      ],
+      "collision": false
+    },
+    {
+      "name": "hopper_feed_lining",
+      "material": "liner",
+      "from": [
+        -3,
+        34.2,
+        -33
+      ],
+      "to": [
+        8,
+        34.5,
+        -26
+      ],
+      "collision": false
+    },
+    {
+      "name": "hopper_feed_west_lip",
+      "material": "bronze",
+      "from": [
+        -4,
+        34,
+        -34
+      ],
+      "to": [
+        -2.6,
+        37,
+        -25
+      ],
+      "collision": false
+    },
+    {
+      "name": "hopper_feed_east_lip",
+      "material": "bronze",
+      "from": [
+        7.6,
+        34,
+        -34
+      ],
+      "to": [
+        9,
+        37,
+        -25
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_exit_floor",
+      "material": "bronze",
+      "from": [
+        -14,
+        16.2,
+        15
+      ],
+      "to": [
+        -2.5,
+        17.5,
+        31
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_exit_lining",
+      "material": "liner",
+      "from": [
+        -12.8,
+        17.5,
+        16
+      ],
+      "to": [
+        -3.7,
+        17.75,
+        30
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_exit_rail_left",
+      "material": "bronze",
+      "from": [
+        -14,
+        17.5,
+        16
+      ],
+      "to": [
+        -12.8,
+        21.5,
+        31
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_exit_rail_right",
+      "material": "bronze",
+      "from": [
+        -3.7,
+        17.5,
+        16
+      ],
+      "to": [
+        -2.5,
+        21.5,
+        31
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_tray_wedge",
+      "material": "bronze",
+      "from": [
+        -8,
+        8,
+        11
+      ],
+      "to": [
+        -2,
+        13,
+        16
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_exit_floor",
+      "material": "bronze",
+      "from": [
+        12,
+        17,
+        16
+      ],
+      "to": [
+        28,
+        18.5,
+        30
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_exit_liner",
+      "material": "liner",
+      "from": [
+        13.2,
+        18.5,
+        17
+      ],
+      "to": [
+        26.8,
+        18.75,
+        29
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_exit_left_lip",
+      "material": "bronze",
+      "from": [
+        12,
+        18.5,
+        16
+      ],
+      "to": [
+        13.2,
+        22,
+        30
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_exit_right_lip",
+      "material": "bronze",
+      "from": [
+        26.8,
+        18.5,
+        16
+      ],
+      "to": [
+        28,
+        22,
+        30
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_rear_scoop",
+      "material": "bronze",
+      "from": [
+        12,
+        18,
+        11
+      ],
+      "to": [
+        22,
+        21,
+        16
+      ],
+      "collision": false
+    }
+  ],
+  "collisionExtras": [
+    {
+      "name": "drum_floor_contact",
+      "from": [
+        -3.2,
+        11.8,
+        -32
+      ],
+      "to": [
+        19.2,
+        13.6,
+        16
+      ]
+    },
+    {
+      "name": "drum_crown",
+      "from": [
+        -3.2,
+        34.1,
+        -32
+      ],
+      "to": [
+        19.2,
+        36,
+        16
+      ]
+    },
+    {
+      "name": "drum_west_wall",
+      "from": [
+        -4,
+        14,
+        -32
+      ],
+      "to": [
+        -2.5,
+        34.1,
+        16
+      ]
+    },
+    {
+      "name": "drum_east_wall",
+      "from": [
+        18.5,
+        14,
+        -32
+      ],
+      "to": [
+        20,
+        34.1,
+        16
+      ]
+    }
   ],
   "anchors": [
     [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
       -1,
       1,
-      -2
+      -1
     ],
     [
-      0,
       1,
-      -2
-    ],
-    [
-      0,
       1,
       -1
     ],
@@ -59,407 +1131,61 @@
       0,
       1,
       1
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      0,
+      2,
+      -3
+    ],
+    [
+      -1,
+      2,
+      -2
+    ],
+    [
+      0,
+      2,
+      -2
+    ],
+    [
+      1,
+      2,
+      -2
+    ],
+    [
+      -1,
+      2,
+      -1
+    ],
+    [
+      0,
+      2,
+      -1
+    ],
+    [
+      1,
+      2,
+      -1
+    ],
+    [
+      -1,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      0
     ]
-  ],
-  "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "timber": "magneticraft2:block/material/machine_timber",
-    "end": "magneticraft2:block/material/machine_timber_end",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "machined": "magneticraft2:block/material/bronze_machined",
-    "iron": "magneticraft2:block/material/dark_work_iron",
-    "chute": "magneticraft2:block/component/chute_liner",
-    "particle": "magneticraft2:block/material/bronze_cast"
-  },
-  "templates": {
-    "base": [
-      {
-        "material": "stone",
-        "from": [
-          0,
-          0,
-          0
-        ],
-        "to": [
-          16,
-          5,
-          16
-        ]
-      }
-    ],
-    "outer_base": [
-      {
-        "material": "stone",
-        "from": [
-          0,
-          0,
-          0
-        ],
-        "to": [
-          16,
-          5,
-          16
-        ]
-      },
-      {
-        "material": "timber",
-        "from": [
-          5,
-          5,
-          5
-        ],
-        "to": [
-          11,
-          16,
-          11
-        ]
-      }
-    ],
-    "central_base": [
-      {
-        "material": "stone",
-        "from": [
-          0,
-          0,
-          0
-        ],
-        "to": [
-          16,
-          5,
-          16
-        ]
-      },
-      {
-        "material": "iron",
-        "from": [
-          6,
-          5,
-          0
-        ],
-        "to": [
-          10,
-          8,
-          16
-        ]
-      }
-    ],
-    "controller_base": [
-      {
-        "material": "stone",
-        "from": [
-          0,
-          0,
-          0
-        ],
-        "to": [
-          16,
-          5,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          3,
-          5,
-          11
-        ],
-        "to": [
-          13,
-          10,
-          14
-        ]
-      }
-    ],
-    "mid_side": [
-      {
-        "material": "timber",
-        "from": [
-          5,
-          0,
-          5
-        ],
-        "to": [
-          11,
-          16,
-          11
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          4.5,
-          2,
-          4.5
-        ],
-        "to": [
-          11.5,
-          4,
-          11.5
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          4.5,
-          12,
-          4.5
-        ],
-        "to": [
-          11.5,
-          14,
-          11.5
-        ]
-      }
-    ],
-    "mid_rear": [
-      {
-        "material": "timber",
-        "from": [
-          5,
-          0,
-          5
-        ],
-        "to": [
-          11,
-          16,
-          11
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          4.5,
-          13,
-          4.5
-        ],
-        "to": [
-          11.5,
-          16,
-          11.5
-        ]
-      }
-    ],
-    "mid_bronze": [
-      {
-        "material": "bronze",
-        "from": [
-          4,
-          0,
-          4
-        ],
-        "to": [
-          12,
-          16,
-          12
-        ]
-      },
-      {
-        "material": "machined",
-        "from": [
-          3.5,
-          8,
-          3.5
-        ],
-        "to": [
-          12.5,
-          10,
-          12.5
-        ]
-      }
-    ],
-    "top_cross": [
-      {
-        "material": "timber",
-        "from": [
-          0,
-          2,
-          5
-        ],
-        "to": [
-          16,
-          8,
-          11
-        ]
-      },
-      {
-        "material": "end",
-        "from": [
-          0,
-          8,
-          5
-        ],
-        "to": [
-          16,
-          8.25,
-          11
-        ]
-      }
-    ],
-    "top_side": [
-      {
-        "material": "timber",
-        "from": [
-          5,
-          2,
-          0
-        ],
-        "to": [
-          11,
-          8,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          5,
-          8,
-          2
-        ],
-        "to": [
-          11,
-          8.5,
-          14
-        ]
-      }
-    ],
-    "top_bearing": [
-      {
-        "material": "bronze",
-        "from": [
-          0,
-          2,
-          5
-        ],
-        "to": [
-          16,
-          8,
-          11
-        ]
-      },
-      {
-        "material": "machined",
-        "from": [
-          0,
-          8,
-          6
-        ],
-        "to": [
-          16,
-          8.75,
-          10
-        ]
-      }
-    ],
-    "drum_anchor": [],
-    "feed": [
-      {
-        "material": "bronze",
-        "from": [
-          4,
-          1,
-          0
-        ],
-        "to": [
-          16,
-          5,
-          16
-        ]
-      },
-      {
-        "material": "chute",
-        "from": [
-          5,
-          5,
-          0
-        ],
-        "to": [
-          15,
-          5.35,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          3,
-          5,
-          0
-        ],
-        "to": [
-          4,
-          8,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          15,
-          5,
-          0
-        ],
-        "to": [
-          16,
-          8,
-          16
-        ]
-      }
-    ],
-    "chute": [
-      {
-        "material": "bronze",
-        "from": [
-          2,
-          0,
-          0
-        ],
-        "to": [
-          14,
-          2,
-          16
-        ]
-      },
-      {
-        "material": "chute",
-        "from": [
-          3,
-          2,
-          0
-        ],
-        "to": [
-          13,
-          2.35,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          2,
-          2,
-          0
-        ],
-        "to": [
-          3,
-          6,
-          16
-        ]
-      },
-      {
-        "material": "bronze",
-        "from": [
-          13,
-          2,
-          0
-        ],
-        "to": [
-          14,
-          6,
-          16
-        ]
-      }
-    ]
-  }
+  ]
 }

@@ -1,0 +1,397 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "bearing": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "liner": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        0,
+        3
+      ],
+      "to": [
+        11,
+        12.2,
+        7
+      ],
+      "faces": {
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            3,
+            3.8,
+            7,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            3,
+            3.8,
+            7,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            7,
+            3,
+            11,
+            7
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            7,
+            3.8,
+            11,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            7,
+            3.8,
+            11,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.2,
+        9.5,
+        2
+      ],
+      "to": [
+        11.8,
+        12.7,
+        8
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            3.3,
+            8,
+            6.5
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            2,
+            3.3,
+            8,
+            6.5
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            6.2,
+            2,
+            11.8,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            6.2,
+            2,
+            11.8,
+            8
+          ]
+        },
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            6.2,
+            3.3,
+            11.8,
+            6.5
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            6.2,
+            3.3,
+            11.8,
+            6.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        12.2,
+        3
+      ],
+      "to": [
+        11,
+        12.45,
+        7
+      ],
+      "faces": {
+        "west": {
+          "texture": "#end",
+          "uv": [
+            3,
+            3.55,
+            7,
+            3.8
+          ]
+        },
+        "east": {
+          "texture": "#end",
+          "uv": [
+            3,
+            3.55,
+            7,
+            3.8
+          ]
+        },
+        "down": {
+          "texture": "#end",
+          "uv": [
+            7,
+            3,
+            11,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            7,
+            3,
+            11,
+            7
+          ]
+        },
+        "north": {
+          "texture": "#end",
+          "uv": [
+            7,
+            3.55,
+            11,
+            3.8
+          ]
+        },
+        "south": {
+          "texture": "#end",
+          "uv": [
+            7,
+            3.55,
+            11,
+            3.8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        13,
+        2.5,
+        11.75
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bearing",
+          "uv": [
+            7,
+            13.5,
+            11.75,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#bearing",
+          "uv": [
+            7,
+            13.5,
+            11.75,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#bearing",
+          "uv": [
+            7,
+            7,
+            13,
+            11.75
+          ]
+        },
+        "north": {
+          "texture": "#bearing",
+          "uv": [
+            7,
+            13.5,
+            13,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#bearing",
+          "uv": [
+            7,
+            13.5,
+            13,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.8,
+        2.5,
+        8.7
+      ],
+      "to": [
+        12.2,
+        4,
+        9.7
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            8.7,
+            12,
+            9.7,
+            13.5
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            8.7,
+            12,
+            9.7,
+            13.5
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            7.8,
+            8.7,
+            12.2,
+            9.7
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            7.8,
+            8.7,
+            12.2,
+            9.7
+          ]
+        },
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            7.8,
+            12,
+            12.2,
+            13.5
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            7.8,
+            12,
+            12.2,
+            13.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        2,
+        10
+      ],
+      "to": [
+        16,
+        5,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            10,
+            11,
+            16,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            10,
+            11,
+            16,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            11,
+            10,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            11,
+            10,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            11,
+            11,
+            16,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

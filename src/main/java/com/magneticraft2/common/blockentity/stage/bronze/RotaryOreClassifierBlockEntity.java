@@ -45,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * JSON-formed Rotary Ore Classifier with Gear V2 power, two conserved output fractions and a serviceable screen.
+ * Compact JSON-formed Rotary Ore Classifier with Gear V2 power, two conserved output fractions and a serviceable rotating screen.
  */
 public class RotaryOreClassifierBlockEntity
         extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost {

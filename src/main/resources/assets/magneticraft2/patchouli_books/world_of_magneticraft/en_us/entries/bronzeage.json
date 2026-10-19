@@ -225,7 +225,7 @@
       "type": "patchouli:crafting",
       "title": "Rotary Ore Classifier",
       "recipe": "magneticraft2:rotary_ore_classifier",
-      "text": "A substantial 5×3×5 JSON multiblock with an elevated rear Gear V2 input, a real rotating perforated drum, and exposed coarse/fines item ports."
+      "text": "A compact, open 3×3×5 rotary screening machine: visible full-width octagonal bronze drum, low collection trough, high ore-feed hopper, linked rear Gear V2 drive and separate fines/coarse chutes."
     },
     {
       "type": "patchouli:multiblock",
@@ -234,25 +234,19 @@
       "multiblock": {
         "pattern": [
           [
-            "PPPPP",
-            "B___B",
-            "P___P",
-            "B___B",
-            "PPPPP"
-          ],
-          [
-            "PPPPP",
-            "U____",
-            "I____",
             "B____",
-            "PPPPP"
+            "_____",
+            "_____"
           ],
           [
-            "SSSSS",
-            "S___O",
-            "SSS0Y",
-            "S___S",
-            "SSSSS"
+            "UP_P_",
+            "I____",
+            "_P_P_"
+          ],
+          [
+            "SSSSO",
+            "S__0_",
+            "SSSSY"
           ]
         ],
         "mapping": {
@@ -267,7 +261,7 @@
         },
         "symmetrical": false
       },
-      "text": "Use Visualize for the exact frame. Controller at the lower front-middle. Item INPUT sits one block left of the elevated rear-center Gear V2 Mechanical Input; primary FINES OUTPUT and coarse RETURN OUTPUT stand at ground level on the open front shelf. Six AIR cells become model/physics proxies after formation; do not fill them before forming."
+      "text": "Build the smaller 3×3×5 layout exactly as Visualize shows it. The controller is ground-level near the front, with separate Fines and Coarse outputs at the front edge. Four timber posts carry the bronze screen bearings—not a surrounding wooden roof. An upper bronze hopper sits over Item Input; the real Gear V2 Mechanical Input is beside it at the rear. Orient its shaft along the length of the drum. Nineteen required AIR cells become V2 model/collision proxies when formed; leave every AIR cell clear while building."
     },
     {
       "type": "patchouli:crafting",

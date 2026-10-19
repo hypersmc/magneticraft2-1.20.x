@@ -99,7 +99,7 @@ The snippet shows a **possible alias-map migration**, not the complete design fo
 
 ## First practical pilot: Bronze Rotary Ore Classifier
 
-This is the **next planned multiblock** in Bronze II, not an implemented block in this document. The [production plan](bronze-age-production-plan.md) proposes a **5x3x5** footprint, subject to geometry and processing decisions. It must classify fractions rather than duplicate the Washer's cleaning or Sifter's existing washed-material recipes.
+The Bronze II classifier is the first machine integrating this palette. Its first **5x3x5 scaffold prototype was rejected in game**; the updated compact **3x3x5** design emphasizes the machine, not the supporting posts. It classifies fractions without duplicating the Washer's cleaning or Sifter's concentrate recipes.
 
 **Art/animation contract to establish before modeling:**
 
@@ -159,6 +159,10 @@ The first **ten** actual, original 16×16 RGBA PNGs are now committed under `tex
 
 ## 2026-10-19 — First functional texture adopter: Rotary Ore Classifier
 
-The new 5×3×5 Bronze Rotary Ore Classifier now references the actual custom kit (machine timber, cast/machined bronze, dark work iron, chute liner, and normal/worn transparent screening mesh) through generated per-block V2 static models and cutout-rendered rotating drum models. The cross-facing frame comes from `tools/rotary-classifier/frame-design.json` and `build-static.mjs`; the drum and wear state are separate BER visual assets tied to real Gear V2 and controller maintenance.
+The compact 3×3×5 Bronze Rotary Ore Classifier now references the actual custom kit (machine timber, cast/machined bronze, dark work iron, chute liner, and normal/worn transparent screening mesh) through generated per-block V2 static models and cutout-rendered rotating drum models. The cross-facing frame comes from `tools/rotary-classifier/frame-design.json` and `build-static.mjs`; the drum and wear state are separate BER visual assets tied to real Gear V2 and controller maintenance.
 
 This is the **first source-level integration**, not an approval of final art. The previous Foundry, Lathe, Stamp Mill, Washer and Sifter models are intentionally untouched. Review the classifier's tile scale, machine silhouette and ore path in Minecraft first, then migrate one accepted Bronze machine at a time. Run the tests documented in [Rotary classifier contract](bronze-rotary-classifier-contract.md); do not describe it as compiled or visually validated until these checks and `./gradlew build` have actually succeeded.
+
+### Prototype review and structural redesign
+
+Player screenshots rejected the first classifer appearance: oversized repetitive wood frame, tiny screen, no believable collection path and unclear input/drive coupling. The redesigned pilot deliberately **reduces timber to four posts**, makes the main bronze screen around **22 model pixels across**, adds a wide fines trough beneath it, a top hopper at the rear, supported bearing collars and physically distinct output chutes. All of the new V2 frame is generated as *block-local surfaces* (no artificially capped seams), and only six large cutout drum models animate. A new art style is not established until the real 1.20.1 in-game visuals are reviewed. Preexisting Copper and Bronze machine art remains unchanged.

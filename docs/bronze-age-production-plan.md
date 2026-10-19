@@ -29,7 +29,7 @@ Status: **approved design direction**, not a claim that the proposed machines ar
 | Machine | Suggested footprint | Input -> output / distinct role | Dependency |
 |---|---|---|---|
 | Stamp Mill | 5x3x4 | Raw ore -> crushed fraction, optional waste; large inertia and hammer wear | Bronze bearings, Gear V2 |
-| Rotary Ore Classifier | 5x3x5 | Classified coarse/fine fraction and tailings | Stamp Mill |
+| Rotary Ore Classifier | **3x3x5** | 3 screened fines + 1 reusable coarse crushed ore per 4 crushed (no tailings generation yet) | Stamp Mill |
 | Ore Roasting Kiln | 5x3x5 | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | 5x3x5 | Dirty water -> reusable clean water + captured sediment, bounded efficiency | Ore Washer |
 | Charcoal Retort | 3x4x3 | Wood -> charcoal plus recoverable byproduct/heat | Furnace, airflow |
@@ -93,4 +93,8 @@ add dead-end iron crushed-items or smelting recipes before that path is agreed.
 
 ## 2026-10-19 — Rotary Ore Classifier implementation slice
 
-The 5x3x5 JSON classifier is now source-implemented with 4-facing models using the first original Copper/Bronze texture kit, Gear V2-driven drum and replaceable screen. It consumes four crushed Chalcocite/Cassiterite/Quartz and produces three screened fines plus one original crushed coarse return; all material is preserved. Three fines wash in one 240-tick/600 mB Washer batch and then proceed to the existing Sifter. This optional throughput/water improvement leaves all plain crushed-ore recipes untouched. **Do not mark compiled or gameplay-verified** until the tests in [the classifier contract](bronze-rotary-classifier-contract.md) run successfully, including the previous prerequisite end-to-end Stamp->Washer->Sifter line. The dirty-water settling/reclamation machine is still the next planned utility; ore roasting is still selective metallurgy work.
+The redesigned **3x3x5** JSON classifier is now source-implemented with 4-facing models using the first original Copper/Bronze texture kit, Gear V2-driven drum and replaceable screen. It consumes four crushed Chalcocite/Cassiterite/Quartz and produces three screened fines plus one original crushed coarse return; all material is preserved. Three fines wash in one 240-tick/600 mB Washer batch and then proceed to the existing Sifter. This optional throughput/water improvement leaves all plain crushed-ore recipes untouched. **Do not mark compiled or gameplay-verified** until the tests in [the classifier contract](bronze-rotary-classifier-contract.md) run successfully, including the previous prerequisite end-to-end Stamp->Washer->Sifter line. The dirty-water settling/reclamation machine is still the next planned utility; ore roasting is still selective metallurgy work.
+
+### Classifier visual acceptance update (2026-10-19)
+
+The first 5x3x5 prototype was rejected after in-game screenshots showed a forest of repeated posts, a tiny nearly invisible drum, an empty-looking body and unclear mechanical/ore connections. The replacement is **3x3x5** with four structural timber supports, a much larger three-section open bronze screen, an enclosed lower fines collection pan and separate front output chutes. All four blueprints, V2 geometry/physics, guide Visualize and drum models are regenerated together from the same design. Source/contract checks are pending after this revision; the prior prototype must be unformed before upgrading in a test world, because its physical build layout has changed. See [the classifier contract](bronze-rotary-classifier-contract.md).

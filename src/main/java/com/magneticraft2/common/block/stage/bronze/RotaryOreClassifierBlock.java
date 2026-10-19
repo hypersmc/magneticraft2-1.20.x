@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** Formable, JSON-defined 5x3x5 Rotary Ore Classifier with V2 collision and mechanical input. */
+/** Formable, JSON-defined 3x3x5 Rotary Ore Classifier with V2 collision and mechanical input. */
 public final class RotaryOreClassifierBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
