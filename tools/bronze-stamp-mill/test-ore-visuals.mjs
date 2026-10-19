@@ -111,6 +111,23 @@ for(let i=0;i<=100;i++){
 assert.ok(ore.includes("FEED_TICKS = 24.0D")&&
           ore.includes("DISCHARGE_TICKS = 20.0D"),
  "Feed and ejection must be animated, not instantaneous");
+assert.ok(ore.includes("workpieceReachedTray")&&
+          ore.includes("state.feeding.isEmpty()")&&
+          ore.includes("if (!input.isEmpty() && state.workpieceReachedTray)")&&
+          !ore.includes("progress > 0.16F"),
+ "Workpiece must not appear in the trough while the feed animation runs");
+for(const file of ["bronze_stamping_chalcocite.json",
+                   "bronze_stamping_cassiterite.json"]){
+ const recipe=JSON.parse(fs.readFileSync(
+  "src/main/resources/data/magneticraft2/recipes/"+file,"utf8"));
+ assert.ok(recipe.process_time>0&&recipe.process_time<=160);
+ // At 115 ticks, a 0.16 progress gate incorrectly displays a second
+ // workpiece after only 18 ticks, before the 24-tick incoming ore arrives.
+ if(recipe.process_time===115){
+  assert.ok((24/recipe.process_time)>.16);
+ }
+}
+
 for(const snippet of ["if (t < 0.18D)","if (t < 0.80D)",
  "if (t < 0.20D)","if (t < 0.75D)",
  "new Vec3(ax+(bx-ax)*t,ay+(by-ay)*t,az+(bz-az)*t)"]){

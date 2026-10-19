@@ -657,3 +657,10 @@ is already in the controller inventory and processing remains
 server-authoritative.
 
 No Gradle build or Minecraft rendering verified in this change.
+
+The 115-tick Chalcocite/Cassiterite recipes exposed one extra timing
+regression: a progress-based preview threshold of 0.16 would duplicate
+ore around tick 19 while the feed was still animating until tick 24.
+The preview now waits for **actual visual feed completion** instead
+of inferring arrival from recipe percentage. Additional ore arriving
+while an existing batch is under the stamps doesn't hide that batch.
