@@ -104,6 +104,54 @@ for(const phase of [0,.05,.26,.49,.50,.75,.99,1.25,-.37]){
   "Animation must not reintroduce a very costly 500+ face belt: "+faces);
 }
 
+// The live belt is now dynamically tessellated rather than loaded from
+// the legacy static belt models. Reconstruct both paths at their actual
+// controller-relative model-pixel centers and compare against Voxel V2.
+// The half-wrapping arc normals are radial, exactly as BeltPath produces.
+const fixed=JSON.parse(fs.readFileSync(
+ "tools/multiblock-models/designs/bronze_stamp_mill.json","utf8")).boxes;
+const centerX=47.2,centerZ=-10,lowerY=8,upperY=38.5;
+const radiusPx=radius*16,halfThicknessPx=halfThickness*16,halfWidthPx=halfWidth*16;
+const modelSegments=[];
+const addSegment=(a,b,normal,label)=>modelSegments.push({a,b,normal,label});
+const onDrum=(cy,theta)=>[
+ centerX,cy+radiusPx*Math.sin(theta),centerZ+radiusPx*Math.cos(theta)
+];
+addSegment([centerX,lowerY,centerZ+radiusPx],
+ [centerX,upperY,centerZ+radiusPx],[0,0,1],"front upward run");
+for(let i=0;i<stepsPerArc;i++){
+ const a=i*Math.PI/stepsPerArc,b=(i+1)*Math.PI/stepsPerArc;
+ addSegment(onDrum(upperY,a),onDrum(upperY,b),
+  [0,Math.sin((a+b)/2),Math.cos((a+b)/2)],"top pulley wrap");
+}
+addSegment([centerX,upperY,centerZ-radiusPx],
+ [centerX,lowerY,centerZ-radiusPx],[0,0,-1],"back downward run");
+for(let i=0;i<stepsPerArc;i++){
+ const a=Math.PI+i*Math.PI/stepsPerArc;
+ const b=Math.PI+(i+1)*Math.PI/stepsPerArc;
+ addSegment(onDrum(lowerY,a),onDrum(lowerY,b),
+  [0,Math.sin((a+b)/2),Math.cos((a+b)/2)],"bottom pulley wrap");
+}
+assert.equal(modelSegments.length,34);
+const overlaps=(a,b)=>a.from.every((v,i)=>
+ Math.min(a.to[i],b.to[i])-Math.max(v,b.from[i])>1e-5);
+for(const segment of modelSegments){
+ const margin=[halfWidthPx,
+   Math.abs(segment.normal[1])*halfThicknessPx,
+   Math.abs(segment.normal[2])*halfThicknessPx];
+ const bounds={from:segment.a.map((v,i)=>Math.min(v,segment.b[i])-margin[i]),
+  to:segment.a.map((v,i)=>Math.max(v,segment.b[i])+margin[i])};
+ assert.ok(bounds.from[0]>46&&bounds.to[0]<=48,
+  "The dynamic belt cannot leave the current side-drive footprint");
+ for(const part of fixed){
+  assert.ok(!overlaps(bounds,part),
+   "Moving belt would collide with the static V2 frame: "+part.name+
+   " at "+segment.label);
+ }
+}
+assert.ok(radiusPx-halfThicknessPx-3.98>.09,
+ "Moving leather would scrape a turning bronze-rimmed drum");
+
 // This mirrors the renderer's exact signed shortest-angle accumulator.
 // Full rotations cannot make the UV phase jump, and stop/reverse require
 // no independent animation timer or extra machine power state.

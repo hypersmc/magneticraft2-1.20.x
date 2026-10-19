@@ -599,3 +599,5 @@ handling remain unchanged.
 the side with a slow crank, pause, and reverse; watch for moving leather
 stitches around BOTH drums, no UV snapping, clipping, stutter, or FPS
 regression. A source-level check is not a substitute for this render test.
+
+The animation regression also reconstructs all **34 live belt path segments** against the 101 authored V2 static frame solids. It verifies their side-footprint bounds, no frame intersections and clearance from the revolving bronze drum. This does not replace an in-game render test.
