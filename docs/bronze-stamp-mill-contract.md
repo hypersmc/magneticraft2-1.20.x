@@ -547,3 +547,55 @@ the exact belt-side end-on view, then three-quarter side view, stopped
 and rotating. Confirm the leather visually loops over both drums
 without looking like two dangling ropes, with no flickering, overlap,
 missing detail or performance regression.
+
+
+## 2026-10-19 — continuous moving leather synchronized with Gear V2
+
+The previous revision correctly replaced the cord-like belts with wooden
+drums and a fuller leather loop, but its three baked leather models were
+rendered stationary even as both pulleys spun. That is mechanically
+incorrect and the in-game screenshots highlighted it.
+
+**Current correction** in `BronzeStampMillBeltRenderer.java`:
+
+- Reuse the existing `BeltPath.createVisualSegments` path system (also
+  used in the Ore Washer and external belts) to generate one closed
+  belt in local machine space around centers `(47.2,8,-10)` and
+  `(47.2,38.5,-10)`, retaining the accepted X-axis drum positions.
+- The leather preserves its previous 1.59px axial width and 1.37px
+  radial thickness, with physical radial limits 4.08..5.45px.
+  The rotating drum radius is about 3.98px; no new collisions.
+- Vertices are rendered using a dedicated `entityCutoutNoCull` layer
+  with the accepted opaque dark leather PNG, and moving tiled UVs
+  over BOTH straight runs and BOTH pulley arcs.
+- The UV mapping repeats every physical `16 model px / 16 texels`,
+  clips at each texture tile boundary and also crops across the belt
+  width/thickness. This avoids stretched/compressed leather imagery and
+  atlas bleeding. Both arcs share continuous path distances with the
+  straight runs.
+- `BronzeStampMillRenderer` samples only
+  `mill.getStampCrankRotationDegrees(partial)` for both drums and
+  animated material. A per-machine weak-key phase accumulator unwraps
+  ±360-degree transitions, preventing the leather from jumping
+  backward once per revolution, moving after stopping, or continuing
+  forward through reversed input. The signed local-X drive phase
+  already accounts for all four multiblock facings.
+- Existing shared `LeatherBeltRenderHelper` was deliberately NOT
+  changed: Ore Washer belts, independent mechanical belts and their
+  wear visuals keep exactly the accepted rendering behavior.
+- Previous generated static leather JSON models are retained solely as
+  legacy visual geometry/source regression references; the BER no
+  longer calls `part()` on any of them. The two wooden/bronze drum
+  models still use the accepted baked model at their original positions.
+
+`tools/bronze-stamp-mill/test-belt-animation.mjs` now checks source
+integration, physical/UV scale, phase continuity at rollover,
+stopped/reversed movement, all four facings, and a conservative
+tessellation face budget. It runs within the existing Stamp Mill test
+contract. The blueprint, Voxel V2, Gear V2 torque/speed and all item
+handling remain unchanged.
+
+**Not yet verified:** `./gradlew build` and in-game motion. Test from
+the side with a slow crank, pause, and reverse; watch for moving leather
+stitches around BOTH drums, no UV snapping, clipping, stutter, or FPS
+regression. A source-level check is not a substitute for this render test.

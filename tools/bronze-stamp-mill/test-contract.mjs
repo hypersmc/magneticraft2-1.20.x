@@ -486,14 +486,17 @@ assert.ok(renderer.includes("int[] stations={-8,8,24}")&&
           renderer.includes("24D/16D+mill.getHammerLift(partial,i)"),
   "Stamp heads must track the 3 service channels above the hoppers");
 assert.ok(renderer.includes("INPUT_SHAFT")&&renderer.includes("BEVEL_X")&&
-          renderer.includes("BELT_UPPER")&&renderer.includes("BELT_WRAP"),
-  "The complete Gear V2 powertrain must be rendered");
+          renderer.includes("BronzeStampMillBeltRenderer.render("),
+  "The complete Gear V2 powertrain and dynamic leather loop must be rendered");
 assert.ok(renderer.includes("driveAngle+120F*i")&&
           renderer.includes("upperY,lowerZ,Axis.XP,driveAngle")&&
           !renderer.includes("Axis.XP,shaftAngle"),
   "All cams, the upper shaft, and both pulleys must share the bevel output phase");
-assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F"),
-  "The upper belt half-wrap must remain stationary around its rotating pulley");
+assert.ok(!renderer.includes("part(pose,buffers,light,overlay,BELT_STRAIGHT")&&
+          !renderer.includes("part(pose,buffers,light,overlay,BELT_WRAP")&&
+          renderer.includes("beltTravel.computeIfAbsent(mill")&&
+          renderer.includes("getStampCrankRotationDegrees(partial)"),
+  "The leather must use shaft-synchronized moving texture, not static baked parts");
 assert.ok(renderer.includes("mill.getStampInputRotationDegrees(partial)")&&
           renderer.includes("mill.getStampCrankRotationDegrees(partial)")&&
           renderer.includes("BEVEL_Z,")&&renderer.includes("BEVEL_X,")&&
@@ -520,4 +523,5 @@ execFileSync(process.execPath,["tools/bronze-stamp-mill/test-bevel-mesh.mjs"],{s
 execFileSync(process.execPath,["tools/bronze-stamp-mill/build-strike-plate.mjs","--check"],{stdio:"pipe"});
 execFileSync(process.execPath,["tools/bronze-stamp-mill/build-belt-models.mjs","--check"],{stdio:"pipe"});
 execFileSync(process.execPath,["tools/bronze-stamp-mill/test-visual-details.mjs"],{stdio:"pipe"});
+execFileSync(process.execPath,["tools/bronze-stamp-mill/test-belt-animation.mjs"],{stdio:"pipe"});
 console.log("Bronze Stamp Mill contract PASS: four orientations, anchored static frame, culled moving models, clear port volumes, ore recipes and book");

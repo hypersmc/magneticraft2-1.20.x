@@ -223,13 +223,14 @@ assert.ok(client.includes('"multiblock/bronze_stamp_mill_strike_plate"'),
 assert.ok(renderer.includes("STRIKE_PLATE")&&renderer.includes("stations[i]/16D,23D/16D,-10D/16D,null,0F")&&
           renderer.includes("int[] stations={-8,8,24}"),
  "Three wear plates must be centered beneath the existing hammer stations");
-// IMPORTANT: renderModel uses centre-relative (-0.5 block) coordinates.
-assert.ok(renderer.includes("pulleyX,16D/16D,lowerZ,null,0F")&&
-          renderer.includes("pulleyX,32D/16D,lowerZ,null,0F"),
- "Belt placement must compensate for part() subtracting half a block");
-assert.ok(renderer.includes("pulleyX,upperY,lowerZ,null,0F")&&
-          renderer.includes("pulleyX,inputY,lowerZ,Axis.XP,180F"),
- "Both faceted semicircular belt wraps must render around their own pulleys");
+// In the renderer, the accepted static baked belt models are reference
+// geometry only. Leather now moves via the BeltPath tessellated loop.
+assert.ok(renderer.includes("BronzeStampMillBeltRenderer.render(")&&
+          renderer.includes("beltTravel.computeIfAbsent(mill")&&
+          !renderer.includes("part(pose,buffers,light,overlay,BELT_STRAIGHT")&&
+          !renderer.includes("part(pose,buffers,light,overlay,BELT_UPPER")&&
+          !renderer.includes("part(pose,buffers,light,overlay,BELT_WRAP"),
+ "No duplicated static leather may cover the animated belt");
 assert.ok(client.includes('"multiblock/bronze_stamp_mill_drive_pulley"')&&
           !client.includes("bronze_stamp_mill_drive_belt_guard")&&
           !renderer.includes("BELT_GUARD"),
