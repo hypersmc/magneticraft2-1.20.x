@@ -34,9 +34,10 @@ assert.equal(where("S").length,37,
 assert.ok(parts.every(c=>c.y<=1),"Upper frame must be entirely removed");
 const nonModule = p=>!"IPO".includes(p.k);
 const rot=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
-// One AIR-hosted inlet collar plus the six original weir/lip pieces.
+// The inlet is a REAL port with its own tank-only overlay model. Its
+// neighboring AIR cell is empty; only the existing six weir/lip hosts
+// are placed as Voxel V2 fillers during formation.
 const anchors=[
- [0,1,-3],
  [-1,1,-2],[0,1,-2],[1,1,-2],
  [-1,1,-1],[0,1,-1],[1,1,-1]
 ];
@@ -84,15 +85,9 @@ for (const f of sdir) {
   assert.ok(Array.isArray(model.elements) && model.elements.length>0,
     f+": real model host missing geometry "+rel);
   for (const el of model.elements) {
-   const collar=cell.k==="A"&&cell.x===0&&cell.y===1&&cell.z===-3;
-   assert.ok(el.from.every((v,i)=>{
-    const xz=i===0||i===2;
-    return Number.isFinite(v) &&
-           v>=(collar&&xz?-8:0) &&
-           Number.isFinite(el.to[i]) &&
-           el.to[i]<=(collar&&xz?24:16) &&
-           v<el.to[i];
-   }),"Invalid model extent; only inlet collar may protrude "+rel);
+   assert.ok(el.from.every((v,i)=>Number.isFinite(v) && v>=0 &&
+           Number.isFinite(el.to[i]) && el.to[i]<=16 && v<el.to[i]),
+       "Voxel filler models must stay block-local: "+rel);
    for(const [side,view] of Object.entries(el.faces)) {
     const spanU=side==="east"||side==="west"
       ?el.to[2]-el.from[2]:el.to[0]-el.from[0];
@@ -105,8 +100,8 @@ for (const f of sdir) {
   }
  }
 }
-assert.equal(modelPaths.size,180,
- "Four facings need 45 static models including the inlet AIR collar");
+assert.equal(modelPaths.size,176,
+ "Four facings each need 44 V2 model parts; port inserts aren't fillers");
 // All three REAL service modules now rest on a full 16-pixel
 // load-bearing lower block. This must hold for every facing and must NOT
 // be simulated by a detached cosmetic downpipe in an upper wall.
@@ -143,26 +138,91 @@ assert.equal(autoFacing(where("I")[0]),"NORTH",
  "The shared rear Fluid Input must automatically face the exposed north side");
 assert.equal(autoFacing(exposedClean),"EAST",
  "The shared clean Fluid Output must automatically face the exposed east side");
-// Genuine intake integration (without replacing the shared port).
-const collar=json(assets+"models/multiblock/"+id+"_south/part_0_1_-3.json");
-assert.equal(collar.elements.length,10);
-for(const side of [[0,2],[14,16]])assert.ok(
- collar.elements.some(e=>e.from[0]===side[0]&&e.to[0]===side[1] &&
- e.from[2]===-8&&e.to[2]===2),"Missing inlet cheek "+side);
-assert.ok(collar.elements.some(e=>e.from[1]===0&&e.to[1]===2&&e.from[2]===-8),
- "Missing inset metal seating below copper input");
-assert.ok(collar.elements.some(e=>e.from[1]===14&&e.to[1]===16&&e.from[2]===-8),
- "Missing bronze inlet lintel");
-for(const x of [-1,1]){
- const flank=json(assets+"models/multiblock/"+id+"_south/part_"+x+"_1_-4.json");
- assert.ok(flank.elements.some(e=>e.faces.up.texture==="#bronze" &&
- e.from[2]===7 && e.to[2]===16 &&
- (x===-1?e.to[0]===16:e.from[0]===0)),
- "Rear masonry edge does not connect to inlet "+x);
+// The actual REAL port block geometry must remain unchanged. Two purpose-
+// baked static inserts fill the left/right margins INSIDE those very cells;
+// nothing is placed in the AIR block in front of the inlet.
+const portInsertNames=["input","output"];
+const portInner=[
+ ["input","north",where("I")[0],"multiblock_fluid_input"],
+ ["output","east",where("O")[0],"multiblock_fluid_output"]
+];
+const orientNorth=(x,z,f)=>f==="north"?[x,z]:[16-z,x];
+const rotateBox=(e,f)=>{
+ const points=[[e.from[0],e.from[2]],[e.from[0],e.to[2]],
+               [e.to[0],e.from[2]],[e.to[0],e.to[2]]]
+               .map(([x,z])=>orientNorth(x,z,f));
+ return [Math.min(...points.map(p=>p[0])),e.from[1],
+         Math.min(...points.map(p=>p[1])),
+         Math.max(...points.map(p=>p[0])),e.to[1],
+         Math.max(...points.map(p=>p[1]))];
+};
+const intersects=(a,b)=>[0,1,2].every(i=>
+ a[i]<b[i+3]-1e-6 && a[i+3]>b[i]+1e-6);
+for(const [kind,facing,cell,moduleId] of portInner){
+ const overlay=json(assets+"models/multiblock/"+id+"_"+kind+"_port_insert.json");
+ const copper=json(assets+"models/block/"+moduleId+".json");
+ assert.equal(overlay.elements.length,8,kind+" should have eight simple frame pieces");
+ assert.equal(copper.elements.length,9,
+   "Shared port model unexpectedly changed: "+moduleId);
+ assert.equal(overlay.parent,"minecraft:block/block");
+ assert.equal(overlay.ambientocclusion,false);
+ const overlayBoxes=overlay.elements.map(e=>[...e.from,...e.to]);
+ const copperBoxes=copper.elements.map(e=>rotateBox(e,facing));
+ for(const b of overlayBoxes)for(const c of copperBoxes)
+  assert.ok(!intersects(b,c),
+   kind+" tank insert overlaps the real copper port geometry: "+b+" / "+c);
+ // Each port has two material-consistent cheeks extending from the bottom
+ // to the adjacent basin wall's bronze rim (Y=10..12).
+ const left=overlayBoxes.some(b=>
+   (facing==="north"?b[0]===0&&b[3]===2:b[2]===0&&b[5]===2)
+   &&b[1]===0&&b[4]===10);
+ const right=overlayBoxes.some(b=>
+   (facing==="north"?b[0]===14&&b[3]===16:b[2]===14&&b[5]===16)
+   &&b[1]===0&&b[4]===10);
+ assert.ok(left&&right,kind+" must have two walls INSIDE the actual port block");
+ // The upper header and lower sill occupy only the inboard half of
+ // the port, leaving its outward pipe aperture entirely free.
+ assert.ok(overlayBoxes.some(b=>b[1]===0&&b[4]===2 &&
+   (facing==="north"?b[2]>=8:b[3]<=8)),
+    kind+" bottom support fails to meet its existing copper frame");
+ assert.ok(overlayBoxes.some(b=>b[1]===14&&b[4]===16 &&
+   (facing==="north"?b[2]>=8:b[3]<=8)),
+    kind+" top lintel fails to meet its existing copper frame");
+ for(const el of overlay.elements){
+  assert.ok(el.from.every((v,i)=>v>=0&&el.to[i]<=16&&v<el.to[i]),
+       kind+" insert may not extend outside the real port block");
+  for(const [direction,face] of Object.entries(el.faces)){
+   const u=(direction==="east"||direction==="west") ?
+     el.to[2]-el.from[2]:el.to[0]-el.from[0];
+   const v=(direction==="up"||direction==="down") ?
+     el.to[2]-el.from[2]:el.to[1]-el.from[1];
+   assert.ok(face.uv[2]-face.uv[0]===u && face.uv[3]-face.uv[1]===v,
+     kind+" insert stretches textures");
+  }
+ }
 }
-const v2Source=read(source+"common/systems/Multiblocking/core/MultiblockRenderParts.java");
-assert.ok(v2Source.includes("Shapes.box(-0.5D, 0D, -0.5D, 1.5D, 1D, 1.5D)"),
- "Voxel V2 collision must support the deliberate rear half-block inset");
+assert.ok(!fs.existsSync(path.join(root,assets+
+ "models/multiblock/"+id+"_south/part_0_1_-3.json")),
+ "Remove the previous AIR-cell throat: inlet walls belong INSIDE the real port");
+assert.ok(!anchors.some(a=>a.join(",")==="0,1,-3"),
+ "Do not create an air-filler to draw or collide inside the input");
+const clientRegistrations=read(source+"client/Clientsetup.java");
+const tankRenderer=read(source+
+ "client/render/blocks/stage/bronze/WaterSettlingTankRenderer.java");
+for(const kind of portInsertNames){
+ assert.ok(clientRegistrations.includes(
+    "multiblock/water_settling_tank_"+kind+"_port_insert"),
+    kind+" overlay must be baked as an additional Forge model");
+ assert.ok(tankRenderer.includes(
+    "multiblock/water_settling_tank_"+kind+"_port_insert"),
+    kind+" overlay must be drawn only by Settling Tank BER");
+}
+for(const at of ["INPUT_PORT_INSERT, 0D, 1D, -4D",
+                 "OUTPUT_PORT_INSERT, 2D, 1D, -1D"])
+ assert.ok(tankRenderer.includes(at),
+ "Overlay must be rendered at the exact occupied REAL module position: "+at);
+assert.ok(tankRenderer.includes("getModelRenderer().renderModel"),
+ "Use pre-baked model quads rather than per-frame primitive generation");
 
 // The original open rear corners were unconnected: the back wall stopped
 // at Z=7/16 while the two side rails started one block farther along.
@@ -184,7 +244,7 @@ for(const x of [-2,2]){
 for(const facing of sdir){
  const dir=path.join(root,assets+"models/multiblock/"+id+"_"+facing);
  const models=fs.readdirSync(dir).filter(n=>/^part_-?\d+_-?\d+_-?\d+\.json$/.test(n));
- assert.equal(models.length,45,
+ assert.equal(models.length,44,
    "Old third-layer posts/bridge models must be deleted: "+facing);
  assert.ok(models.every(file=>!/^part_-?\d+_2_/.test(file)),
    "No obsolete overhead geometry may remain after redesign: "+facing);
@@ -202,32 +262,14 @@ assert.equal(vox.unit,"model_pixels");
 assert.ok(vox.collision.length>40 && vox.collision.length<=512);
 const inside=(b,cell)=>[0,1,2].every(i=>b[i]<16*(cell[i]+1)-1e-4
   &&b[i+3]>16*cell[i]+1e-4);
-// The inlet's original copper model is only 12px wide and ends at Z=12.
-// The dedicated throat reaches into the EMPTY ring around it, but may
-// never clip any of its nine real baked model cuboids.
-const inlet=where("I")[0];
-const module=json(assets+"models/block/multiblock_fluid_input.json");
-const moduleCubes=module.elements.map(el=>[
- ...el.from.map((v,i)=>v+[inlet.x,inlet.y,inlet.z][i]*16),
- ...el.to.map((v,i)=>v+[inlet.x,inlet.y,inlet.z][i]*16)
-]);
-const overlaps=(a,b)=>[0,1,2].every(i=>a[i]<b[i+3]&&a[i+3]>b[i]);
-let insetCount=0;
-for(const b of vox.collision){
- for(const name of ["P","O"]){
-  const c=where(name)[0];
-  assert.ok(!inside(b,[c.x,c.y,c.z]),
-    "Decorative collar must not intrude into "+name+" port");
- }
- if(inside(b,[inlet.x,inlet.y,inlet.z])){
-  insetCount++;
-  assert.ok(b[2]>=inlet.z*16+8,
-    "Inlet collar may only reach its inside half block");
-  for(const e of moduleCubes)assert.ok(!overlaps(b,e),
-    "Inlet collar overlaps an actual copper model cuboid: "+b);
- }
+// Real port cells continue to own their vanilla block collision and hit
+// selection. No V2 collision geometry is permitted inside any REAL port.
+for(const box of vox.collision)for(const type of ["I","P","O"]){
+ const port=where(type)[0];
+ assert.ok(!inside(box,[port.x,port.y,port.z]),
+   "V2 filler collision cannot occupy a genuine "+type+" port cell");
 }
-assert.ok(insetCount>=6,"Inlet collar must really seal the module margins");
+
 assert.ok(vox.collision.some(b=>b[1]===0&&b[4]===16),
  "The visibly dry basin floor must be solid and continuous");
 for(const point of [[-1,1,-2],[0,1,-2],[1,1,-2],[-1,1,-1],[0,1,-1],[1,1,-1]]){
@@ -277,10 +319,10 @@ for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
 // Internal basin: left wall ends at X=-1, right wall starts at X=2.
 // The low weir occupies Z [-1.1875,-1.0], while the front lip starts
 // at Z=-0.125. A fluid surface MUST stay between these solids.
-const fluidX=[-0.975,1.975],dirtyZ=[-2.84,-1.29],cleanZ=[-0.96,-0.24];
+const fluidX=[-0.975,1.975],dirtyZ=[-3.22,-1.29],cleanZ=[-0.96,-0.24];
 assert.ok(fluidX[0]>-1 && fluidX[1]<2,"Fluid crosses a physical side wall");
-assert.ok(dirtyZ[0]>-3+2/16 && dirtyZ[1]<-1.1875,
- "Dirty water must begin beyond the inlet collar and stop before the weir");
+assert.ok(dirtyZ[0]>-3.25 && dirtyZ[1]<-1.1875,
+ "Dirty water must remain clear of the module block and overflow weir");
 assert.ok(cleanZ[0]>-1.0 && cleanZ[1]<-0.125,"Clean water clips the weir or front retaining lip");
 
 const recipe=json(data+"recipes/settling_dirty_water.json");
@@ -340,7 +382,7 @@ assert.ok(1.045 + 0.495 > 1.50 &&
 for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
-  "-0.975F, 1.975F, -2.84F, -1.29F",
+  "-0.975F, 1.975F, -3.22F, -1.29F",
   "-0.975F, 1.975F, -0.96F, -0.24F",
   "getDirtyAmount() > 0", "getCleanAmount() > 0",
   "float top = 1.045F + 0.495F",
@@ -409,4 +451,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V4.3 inset inlet collar; 180 models, 7 AIR anchors, real copper clearance, zero overlap, clipped dirty water, 4 facings, unchanged ports/recipes");
+console.log("PASS: V4.4 real-port inserts — input and output side walls baked INSIDE their blocks, correct NORTH/EAST orientation, no copper intersections, six V2 air anchors, 176 filler parts, unchanged recipes and four directions");

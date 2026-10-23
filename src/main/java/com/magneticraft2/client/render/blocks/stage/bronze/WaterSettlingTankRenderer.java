@@ -8,6 +8,9 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -21,13 +24,21 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The ceramic-lined vessel, service bridge, central weir and real pipes use
- * baked Voxel V2 parts. Only synchronized fluid VOLUMES and actual stored
- * sediment are rendered dynamically; no particles, fake item entities, or
- * per-tick mesh regeneration.
+ * Static tank walls use chunk-baked Voxel V2 parts. The REAL fluid port
+ * blocks retain their shared models and capabilities; two purpose-baked
+ * machine-only inserts are drawn here inside those same port block spaces.
+ * Fluid volumes and the real stored sediment are the only animated visuals.
+ * No geometry is synthesized from primitives or regenerated every tick.
  */
 public final class WaterSettlingTankRenderer
         implements BlockEntityRenderer<WaterSettlingTankBlockEntity> {
+    private static final ResourceLocation INPUT_PORT_INSERT =
+            new ResourceLocation("magneticraft2",
+                    "multiblock/water_settling_tank_input_port_insert");
+    private static final ResourceLocation OUTPUT_PORT_INSERT =
+            new ResourceLocation("magneticraft2",
+                    "multiblock/water_settling_tank_output_port_insert");
+
     public WaterSettlingTankRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override public int getViewDistance() { return 48; }
@@ -47,17 +58,25 @@ public final class WaterSettlingTankRenderer
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-0.5D, 0D, -0.5D);
 
+        // Both inserts occupy REAL module cells rather than the neighboring
+        // required AIR cells. The generic block models still render normally,
+        // and their external fluid connections remain untouched.
+        drawPortInsert(pose, buffers, light, overlay, tank,
+                INPUT_PORT_INSERT, 0D, 1D, -4D);
+        drawPortInsert(pose, buffers, light, overlay, tank,
+                OUTPUT_PORT_INSERT, 2D, 1D, -1D);
+
         // Use the OPEN interior geometry, not the outside dimensions of the
         // basin. In V4 the water extended ~0.28 blocks INTO EACH wall.
-        // The rear boundary stops 0.035 blocks beyond the new bronze
-        // inlet throat's forward lip (Z=-2.875): never draw fluid through
-        // the static collar or the real copper input model behind it.
+        // There is no forward AIR-cell throat anymore. The side walls
+        // live in the real input block Z=-4..-3; dirty water starts beyond
+        // that block (Z=-3.22) and cannot cross either port insert.
         // Both surfaces use actual synchronized fluid amounts only.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
                     tank.getDirtyFillRatio(),
-                    -0.975F, 1.975F, -2.84F, -1.29F, 0.67F);
+                    -0.975F, 1.975F, -3.22F, -1.29F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
@@ -79,6 +98,27 @@ public final class WaterSettlingTankRenderer
                     items.getModel(sediment, tank.getLevel(), null, 420));
             pose.popPose();
         }
+        pose.popPose();
+    }
+
+    /**
+     * Draw a pre-baked, static block model IN the occupied fluid port cell.
+     * Forge registers both models as additional models on resource reload.
+     * This modifies no shared port state, block model, capabilities, or
+     * collision, and only runs for a formed Water Settling Tank controller.
+     */
+    private static void drawPortInsert(PoseStack pose,
+            MultiBufferSource buffers, int light, int overlay,
+            WaterSettlingTankBlockEntity tank, ResourceLocation modelId,
+            double x, double y, double z) {
+        BakedModel model = Minecraft.getInstance().getModelManager()
+                .getModel(modelId);
+        BlockRenderDispatcher renderer = Minecraft.getInstance().getBlockRenderer();
+        pose.pushPose();
+        pose.translate(x, y, z);
+        renderer.getModelRenderer().renderModel(pose.last(),
+                buffers.getBuffer(RenderType.cutout()), tank.getBlockState(),
+                model, 1F, 1F, 1F, light, overlay);
         pose.popPose();
     }
 

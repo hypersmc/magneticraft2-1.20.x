@@ -1,4 +1,4 @@
-# Bronze II — Water Settling Tank (V4.2 port and rim integration)
+# Bronze II — Water Settling Tank (V4.4 formed-port wall inserts)
 
 **Status:** Implemented in the open, draft Bronze Age PR #11.
 The full Gradle build and final Minecraft appearance are pending user testing.
@@ -80,10 +80,12 @@ existing fluid modules and JEI category remain shared with other machines.
 ## Generated art and fluid placement
 
 The generator `tools/water-settling-tank/build.mjs` is the single source
-of truth for four rotated JSON formation structures, 180 local block
-models, their native-scale texture UVs and the 115-box Voxel V2 collision
-profile. Seven required-air hosts form only after validation:
-one recessed inlet throat and the six original baffle/lip pieces.
+of truth for four rotated JSON formation structures, 176 filler block
+models, two additional pre-baked fluid-port wall insert models, their
+native-scale texture UVs and the 105-box Voxel V2 collision profile.
+Only the six original weir and retaining-lip AIR hosts form.
+The fluid-port inserts render inside the actual occupied module cells,
+not as filler blocks or alternate shared-module textures.
 
 The real rear, front and right-side upper modules are no longer drawn
 as ornamental copper risers. They display their **real block models**. The low bronze rim,
@@ -95,14 +97,16 @@ The fluid BER reads real tank amounts:
 - clean front reservoir X [-0.975,1.975], Z [-0.96,-0.24]
 - display level Y = 1.045 + 0.495 × fill ratio, only if non-empty.
 
-The new tank-only inlet collar seats around the copper input's inboard
-frame without touching its opening or outward pipe face. It occupies the
-previously empty AIR cell (0,1,-3), reaching only 8 model pixels back
-toward the real input cell. The copper model's inner ring spans X=2..14,
-Y=2..14, Z=8..12; the collar fills only the free margins and begins
-its detailed reveal where the copper terminates at Z=12.
-Dirty-water rendering now starts at Z=-2.84, just beyond the collar's
-forward edge at Z=-2.875, never through the casing. The sediment output item is drawn at (-0.5,1.775,0.5), over
+Both real Fluid Input and Fluid Output block models occupy only the
+central 12px of their 16px cells, leaving narrow empty margins. Two
+dedicated, tank-only baked JSON models now draw masonry side walls,
+matching bronze trim, and upper/lower support inside those same
+occupied cells. The input insert is NORTH-facing; the output insert
+is EAST-facing relative to the canonical SOUTH tank orientation.
+The main copper frame and exterior pipe face remain visible and functional.
+No generated V2 filler geometry extends into a real module block.
+The dirty-water renderer once again starts at Z=-3.22, safely outside
+the actual rear input block, while the clean-water boundary is unchanged. The sediment output item is drawn at (-0.5,1.775,0.5), over
 the real elevated front-wall wooden tray. No fake particles or ghost
 sediment entities are introduced. Existing six V3 16×16 hand-painted
 texture assets are reused without stretching.
@@ -119,9 +123,10 @@ node tools/water-settling-tank/test-contract.mjs
 Source-level audit checks:
 - four directional blueprints and Patchouli Visualize agreement
 - all actual modules at Y=1 with underlying bronze bearing plates
-- recessed input collar touches only empty margins of the actual copper
-  module model, without intersecting any real input cuboid
-- no filler model replaces or covers real modules
+- both purpose-baked port inserts fit entirely inside their own real
+  module cells and do not intersect any of the generic port's nine cuboids
+- no V2 filler model extends into real modules; their capabilities,
+  facing, block states, interactions and collision remain unchanged
 - rear and front rim corner joint continuity
 - no cuboid overlap, coplanar matching faces, or stretched UVs
 - correct dirty/clean surface clipping and true item output position
@@ -170,3 +175,45 @@ AIR proxy and Voxel V2 collision snapshots are rebuilt.
 
 Source geometry checks were performed. Full Node contract, Gradle compile
 and in-game appearance remain to be verified before merging PR #11.
+
+## V4.4 — Tank-specific walls INSIDE real fluid module cells (2026-10-24)
+
+The V4.3 input throat (in an adjacent AIR cell) was **the wrong design**.
+The intended effect is for the basin wall to continue on the LEFT and RIGHT
+**within the 16px block occupied by the fluid module itself**. The same
+applies to the right-side clean-water Fluid Output.
+
+V4.4 removes the seventh AIR proxy at (0,1,-3), including its backward
+model protrusion and extra Voxel V2 collision. The six original weir/lip
+AIR proxies remain. The generator now emits two separately registered
+baked render models:
+
+- `multiblock/water_settling_tank_input_port_insert` (module faces NORTH)
+- `multiblock/water_settling_tank_output_port_insert` (module faces EAST)
+
+Each contains eight simple block-local cuboids: left/right masonry cheeks,
+bronze beam-height trim, small steel upper brackets, a low support sill
+and an inboard bronze lintel. The original module center aperture,
+forward-facing fluid pipe connection and working block entity are preserved.
+The output model is rotated to match the actual east-facing base model,
+not the SOUTH-oriented multiblock offset convention.
+
+The formed Settling Tank BER renders those two pre-baked models at the
+precise REAL input (0,1,-4) and output (2,1,-1) locations. They are only
+visible while this tank is formed. No shared module blockstates,
+models, block entities, or pipe capability code were changed. Real module
+blocks continue to handle interaction/collision themselves: do not use
+filler proxies for that space.
+
+**Counts:** 176 regular per-cell V2 filler models in four directions,
+two additional tank-only baked models, 105 V2 collision boxes, six AIR
+anchors. Recipe remains 600 mB Dirty Water -> 480 mB Water + 1 sediment
+per 240 ticks. The 5×2×5 construction and physical module positions
+are unchanged. Old formed V4.3 tanks should be safely unformed/reformed
+once to delete their obsolete AIR throat and update cached collision;
+there is no need to move construction blocks.
+
+Regression tests verify the exact source port model cuboids, each insert's
+placement and native UVs, module orientation, complete absence of solid
+intersections, all four blueprint rotations and the preserved water/recipe
+accounting. A full Forge build and in-game review are still required.

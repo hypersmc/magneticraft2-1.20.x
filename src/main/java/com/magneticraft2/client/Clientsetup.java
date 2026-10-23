@@ -150,6 +150,13 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
+        // Tank-only port wall inserts are BER-rendered inside the REAL
+        // fluid module cells. Explicit registration prevents a missing-model
+        // cube after resource reload; shared module blockstates are unchanged.
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_input_port_insert"));
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_output_port_insert"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_carriage"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_cross_slide"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_frame"));

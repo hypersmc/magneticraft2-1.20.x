@@ -209,3 +209,19 @@ and the regression tests are updated. Builds use identical physical
 blocks and unchanged mechanics; old formed structures need a one-time
 re-form to receive the seventh AIR proxy. PR #11 stays draft until the
 actual Forge build and gameplay visuals pass.
+
+### 2026-10-24 — Water Settling Tank V4.4 real-port integration
+
+The intended rear inlet correction was not another bridge/throat in an
+adjacent AIR block. Both the actual Fluid Input and Fluid Output should
+contain LEFT/RIGHT tank-wall segments **inside their own real module
+block models**. V4.4 replaces the V4.3 air-collar with two tank-specific
+pre-baked visual overlays drawn only by the formed Settling Tank renderer.
+The shared working input/output modules, their copper centers, pipe
+capabilities, blockstates and hitboxes are unchanged. The input faces
+NORTH and the output EAST. Existing six weir/lip V2 proxies remain
+but the seventh (0,1,-3) AIR proxy is removed. The tank retains
+5×2×5 formation, original ports, custom 16×16 textures, 600→480 mB
+water process and sediment output. Generated V2 static model count
+returns to 176, plus two port inserts. Safely re-form an already formed
+V4.3 tank to clear the old proxy; in-game and Gradle verification pending.

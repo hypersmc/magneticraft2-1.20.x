@@ -20,11 +20,11 @@ function makeAssets(){
   if(found.length!==1||[found[0].x,found[0].y,found[0].z].join()!==xyz.join())throw Error("Invalid real port "+letter);
  }
  const shapes=new Map(),voxels=[];
- const isInletCollar=c=>c.x===0&&c.y===1&&c.z===-3;
  const add=(c,material,from,to)=>{
-  // Only this AIR-hosted inlet collar may extend up to half a block into
-  // the adjoining actual Fluid Input. All other parts remain block-local.
-  if(from.some((v,i)=>v<(i===2&&isInletCollar(c)?-8:0)||to[i]>16||v>=to[i]))
+  // Every V2 model is confined to its own filler cell. The real fluid
+  // modules have separate tank-only baked inserts rendered by the
+  // controller BER, NOT by AIR proxies protruding into another block.
+  if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))
    throw Error("Invalid local element "+[c.x,c.y,c.z]+": "+[from,to]);
   const key=[c.x,c.y,c.z].join(",");
   if(!shapes.has(key))shapes.set(key,[]);
@@ -71,8 +71,8 @@ function makeAssets(){
      add(c,"lining",[0,1,5],[16,10,6]);
      add(c,"bronze",[0,10,0],[16,12,7]);
     }
-    // Both rear-wall returns now meet the copper inlet's frame through
-    // a dedicated AIR-hosted throat. The I cell remains the REAL module.
+    // Keep the two rear-wall returns. The matching walls now continue
+    // INSIDE the actual I module via the tank-only baked port insert.
     if(x===-1){
      add(c,"refractory",[13,0,6],[15,10,16]);
      add(c,"lining",[15,2,6],[16,10,16]);
@@ -118,22 +118,6 @@ function makeAssets(){
     add(c,"lining",[0,2,10],[16,10,11]);
     add(c,"bronze",[0,10,9],[16,12,16]);
    }else throw Error("Unrecognized perimeter "+[x,y,z]);
-  }else if(y===1 && k==="A" && x===0 && z===-3){
-   // The actual fluid input's inner copper ring is X=2..14,Y=2..14,
-   // Z=8..12. In this adjoining AIR block Z=-8 touches the copper at
-   // its real depth; the middle stays fully open for water to enter.
-   add(c,"refractory",[0,0,-8],[2,12,2]);
-   add(c,"refractory",[14,0,-8],[16,12,2]);
-   add(c,"bronze",[0,12,-8],[2,14,2]);
-   add(c,"bronze",[14,12,-8],[16,14,2]);
-   add(c,"riveted_iron",[2,0,-8],[14,2,2]);
-   add(c,"bronze",[2,14,-8],[14,16,2]);
-   // Inboard detailing begins only AFTER the actual module's ring
-   // ends, avoiding intersecting or repainting the shared copper port.
-   add(c,"riveted_iron",[2,2,-4],[3,14,2]);
-   add(c,"riveted_iron",[13,2,-4],[14,14,2]);
-   add(c,"riveted_iron",[3,13,-4],[13,14,2]);
-   add(c,"lining",[3,2,-4],[13,3,2]);
   }else if(y===1 && k==="A" && z===-2 && Math.abs(x)<=1){
    // A single low overflow weir across the WIDTH; behind it is the
    // deeper dirty settling area, in front a short clear-water channel.
@@ -149,24 +133,18 @@ function makeAssets(){
  }
  const renderAnchors=cells.filter(c=>c.k==="A"&&shapes.has([c.x,c.y,c.z].join(",")))
   .map(c=>[c.x,c.y,c.z]);
- if(renderAnchors.length!==7)throw Error("Expected inlet throat + six weir/lip AIR hosts, got "+renderAnchors.length);
+ if(renderAnchors.length!==6)throw Error("Expected six weir/lip AIR hosts; port inserts are rendered in REAL modules");
  if(voxels.length>512)throw Error("Voxel collision too complex: "+voxels.length);
- // Ensure no decorative or collision volume overlaps genuine port/module cells.
+ // V2 collision belongs to the controller and filler cells only.
+ // No overlay collision is injected into real modules; they retain their
+ // ordinary block shape, capabilities, facing, and break interactions.
  for(const letter of ["I","P","O"]){
   const c=cells.find(v=>v.k===letter);
   for(const b of voxels){
-   const overlapsCell=[0,1,2].every(i=>
-    b[i]<([c.x,c.y,c.z][i]+1)*16&&b[i+3]>[c.x,c.y,c.z][i]*16);
-   if(!overlapsCell)continue;
-   // The actual north-facing inlet model has a 2px opening along every
-   // edge, and its inboard ring terminates at its own local Z=12.
-   // Allow ONLY the collar's non-intersecting empty margins there.
-   // The module's center and all other genuine port cells stay clear.
-   if(letter==="I"&&b[2]>=c.z*16+8 &&
-      (b[3]<=c.x*16+2 || b[0]>=c.x*16+14
-       || b[4]<=c.y*16+2 || b[1]>=c.y*16+14
-       || b[2]>=c.z*16+12))continue;
-   throw Error("Overlapping real "+letter+" module");
+   if([0,1,2].every(i=>
+      b[i]<([c.x,c.y,c.z][i]+1)*16&&
+      b[i+3]>[c.x,c.y,c.z][i]*16))
+    throw Error("Generated filler collides with REAL port "+letter);
   }
  }
  files.set(d+"multiblock_voxels/"+id+".json",JSON.stringify({format:1,unit:"model_pixels",collision:voxels,selection:voxels,zones:{}},null,2)+"\n");
@@ -178,6 +156,43 @@ function makeAssets(){
   const f=(u,v)=>({texture:"#"+mat,uv:[0,0,u,v]});
   return {north:f(dx,dy),south:f(dx,dy),east:f(dz,dy),west:f(dz,dy),up:f(dx,dz),down:f(dx,dz)};
  };
+ // Tank-only STATIC overlays inside the actual fluid module cells.
+ // They are separate additional baked models drawn by the controller BER.
+ // Never change the generic block model or replace a real fluid module.
+ // The vanilla input/output models face NORTH and occupy X=2..14 around
+ // the opening; the 2px margins and the top/bottom gaps are real empty
+ // space. These inserts fill ONLY those margins, maintaining the aperture.
+ const portFrame=[
+  {material:"refractory",from:[0,0,0],to:[2,10,16]},
+  {material:"refractory",from:[14,0,0],to:[16,10,16]},
+  {material:"bronze",from:[0,10,0],to:[2,12,16]},
+  {material:"bronze",from:[14,10,0],to:[16,12,16]},
+  {material:"riveted_iron",from:[0,12,8],to:[2,16,16]},
+  {material:"riveted_iron",from:[14,12,8],to:[16,16,16]},
+  {material:"refractory",from:[2,0,8],to:[14,2,16]},
+  {material:"bronze",from:[2,14,8],to:[14,16,16]}
+ ];
+ // Unlike the multiblock's SOUTH-local offset rotation, the generic
+ // port's unrotated Minecraft block model faces NORTH. Keep input
+ // unrotated; rotate output 90 degrees to face EAST (toward +X).
+ const turnPort=(x,z,which)=>which==="input"?[x,z]:[16-z,x];
+ for(const which of ["input","output"]){
+  const elements=portFrame.map(part=>{
+   const corners=[[part.from[0],part.from[2]],
+     [part.from[0],part.to[2]],[part.to[0],part.from[2]],
+     [part.to[0],part.to[2]]].map(([x,z])=>turnPort(x,z,which));
+   const from=[Math.min(...corners.map(p=>p[0])),part.from[1],
+               Math.min(...corners.map(p=>p[1]))];
+   const to=[Math.max(...corners.map(p=>p[0])),part.to[1],
+             Math.max(...corners.map(p=>p[1]))];
+   if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))
+    throw Error("Illegal tank port overlay "+which);
+   return {from,to,faces:faces(from,to,part.material)};
+  });
+  files.set(a+"models/multiblock/"+id+"_"+which+"_port_insert.json",
+   JSON.stringify({parent:"minecraft:block/block",
+     ambientocclusion:false,textures:tex,elements},null,2)+"\n");
+ }
  const blockstates={variants:{}};
  for(const facing of dirs){
   const rotated=cells.map(c=>({...c,rot:rotate(c.x,c.z,facing)}));
@@ -202,12 +217,8 @@ function makeAssets(){
                 Math.min(...corners.map(p=>p[1]))-rz*16];
     const to=[Math.max(...corners.map(p=>p[0]))-rx*16,box.to[1],
               Math.max(...corners.map(p=>p[1]))-rz*16];
-    const collar=isInletCollar(c);
-    if(from.some((v,i)=>{
-     const horizontal=i===0||i===2;
-     return v<(collar&&horizontal?-8:0)
-       ||to[i]>(collar&&horizontal?24:16)||v>=to[i];
-    }))throw Error("Invalid facing geometry "+facing+" "+[c.x,c.y,c.z]);
+    if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))
+     throw Error("Invalid facing geometry "+facing+" "+[c.x,c.y,c.z]);
     elements.push({from,to,faces:faces(from,to,box.material)});
    }
    files.set(a+"models/multiblock/"+id+"_"+facing+"/part_"+rx+"_"+c.y+"_"+rz+".json",
