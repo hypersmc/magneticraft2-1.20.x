@@ -110,7 +110,7 @@ The first script also checks for obsolete narrow-drum and former scaffold JSON f
 **Rendering contract (no recipe or inventory changes):**
 
 - The REAL item input is at local (-1,1,-3) and its physical model tops out at 15/16; a queued raw item should appear at local (-0.5, **1.97**, -2.5), not hovering over a former fake hopper.
-- Primary/fine and secondary/coarse outputs remain local (-1,0,1)/(1,0,1); their actual port model tops out at 10/16. Existing **committed** stacks should appear at local (-0.5/**1.5**, **0.665**, 1.5), with two small instances when the stack contains multiple units. An output item must never render as an already-produced result if it is not in the server-owned output slot.
+- Primary/fine and secondary/coarse outputs remain local (-1,0,1)/(1,0,1); their actual port model tops out at 10/16. Existing **committed** primary fines use the one built-in classified-ore tray at local (-0.5, **0.890**, 1.5); byproduct chunks use one or two pieces at local (1.5, **0.620**, 1.5). These are different render anchors because their item model GROUND transforms are different. An output item must never render as an already-produced result unless it exists in the server-owned output slot.
 - Workpiece travel follows the **server-synced batch progress**: first 20% slides from physical input via the rear feed neck into the drum, middle portion tumbles up to **two** small crushed ore models along the lower bronze screen, small fines visibly sift toward the internal collection pan, final 20% advances the coarse return toward the open discharge end. The resulting finished items spawn visually only on the real ports when the controller actually inserts them at batch completion.
 - When a batch stalls due to output backpressure, inadequate Gear V2 power or worn-out screen, its **partially completed workpiece remains inside the drum** rather than jumping back to the input. Stalled progress and all particulate effects remain static/absent. Stored queue material may still appear on the actual input module if a full later batch remains.
 - Only Gear V2 may move the drum. Client workpiece movement is grounded in the existing Gear V2 phase and progress interpolation, not a free-running world-time animation.
@@ -193,3 +193,30 @@ window, with clockwise/counter-clockwise tests at 24 and 48 RPM. The original
 V6 code fails the regression (zero repeat falls); V7 passes locally with the
 same shaft/octagon contact checks. Full Node/Gradle builds and real-client
 visual approval remain pending.
+
+
+## 2026-10-23 — V8 primary output visibility (pending client screenshot)
+
+In-game screenshot showed a full-sized crushed/byproduct stack on the right,
+but the primary fines port looked empty. The port was not necessarily empty:
+the classified ore item models have a .7 GROUND transform **without** the +3px
+GROUND lift used by crushed ore. The shared BER origin Y=.665 placed even the
+topmost part of a classified ore model at Y~.546, below the output module's
+actual wooden top at Y=10/16=.625.
+
+Fine/primary output now uses its own origin Y=.890 at render scale .82, putting
+the built-in bronze-grit tray bottom around Y=.639 and the upper pellets near
+Y=.747. Only **one** classified model is drawn per non-empty slot-1 inventory
+because its JSON model already contains several pieces on one tray; rendering
+two identical items would overlap their solid tray geometry. Coarse/byproduct
+keeps one/two distinct crushed-ore pieces but its preview origin moves to
+Y=.620, leaving their lowest geometry around Y=.641 rather than hovering.
+All three Chalcocite/Cassiterite/Quartz variants share the same model bounds,
+and the Node contract tests the true port surface against their actual display
+transforms to guard against disappearing preview geometry.
+
+These are only stored-slot visual previews. Empty ports remain empty; no
+precommitted outputs, duplicate inventories, item entities, new decorations,
+model-generation changes or multiblock reconstruction are introduced.
+Test both ports filled after a batch and empty after player/automation
+extraction, in all four facings. Source math is not in-game acceptance.

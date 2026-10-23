@@ -237,10 +237,25 @@ assert.ok(renderer.includes('INPUT_X = -0.5D;')&&
  'Real elevated input model is topped at 1 + 15/16 blocks');
 assert.ok(renderer.includes('FINE_X = -0.5D;')&&
           renderer.includes('COARSE_X = 1.5D;')&&
-          renderer.includes('OUTPUT_Y = 0.665D;')&&
+          renderer.includes('FINE_OUTPUT_Y = 0.890D;')&&
+          renderer.includes('OUTPUT_Y = 0.620D;')&&
           renderer.includes('OUTPUT_Z = 1.5D;'),
- 'Two output trays really top out at 10/16 blocks');
+ 'Output previews must be placed on the actual 10/16-height port surface');
 assert.ok(renderer.includes('drawPortStack('),'Only real port surfaces show stored items');
+const fineDisplayBranch=renderer.split('if (!fines.isEmpty()) {')[1]?.split('if (!coarse.isEmpty()) {')[0];
+const coarseDisplayBranch=renderer.split('if (!coarse.isEmpty()) {')[1]?.split('pose.popPose();')[0];
+assert.ok(fineDisplayBranch?.includes('drawItem(')
+       && fineDisplayBranch.includes('FINE_OUTPUT_Y')
+       && fineDisplayBranch.includes('FINE_OUTPUT_ITEM_SCALE')
+       && !fineDisplayBranch.includes('drawPortStack('),
+ 'The classified ore model already contains a small tray: draw one pile, not overlapping duplicate trays');
+assert.ok(coarseDisplayBranch?.includes('drawPortStack(')
+       && coarseDisplayBranch.includes('OUTPUT_Y')
+       && coarseDisplayBranch.includes('OUTPUT_ITEM_SCALE'),
+ 'Retain distinct visible coarse chunks on the real byproduct port');
+assert.ok(renderer.includes('if (!fines.isEmpty()) {')
+       && renderer.includes('if (!coarse.isEmpty()) {'),
+ 'No phantom previews when either output inventory is empty');
 assert.ok(renderer.includes('classifier.hasVisibleWorkpiece()'),
  'A stalled batch must remain visible in the drum');
 assert.ok(renderer.includes('input.getCount() > classifier.getVisualBatchInputCount()'),
@@ -313,9 +328,12 @@ const fineSize=sizeConstant('FINE_ITEM_SCALE');
 const feedSize=sizeConstant('FEED_ITEM_SCALE');
 const inputSize=sizeConstant('INPUT_ITEM_SCALE');
 const outputSize=sizeConstant('OUTPUT_ITEM_SCALE');
+const fineOutputSize=sizeConstant('FINE_OUTPUT_ITEM_SCALE');
 assert.ok(drumSize>=0.75&&drumSize<=0.9);
 assert.ok(fineSize>=0.3&&fineSize<drumSize*0.55);
 assert.ok(feedSize>=0.65&&inputSize>=0.6&&outputSize>=0.6);
+assert.ok(fineOutputSize>=0.75&&fineOutputSize<=0.9,
+ 'The fine pile must remain legible without overhanging the real module');
 const frameCentreY = d.drum.centerY / 16;
 assert.equal(frameCentreY,1.5);
 const apothem=(d.drum.facetOffset-d.drum.skinThickness/2)/16;
@@ -350,9 +368,9 @@ const rotatedCorner=(point,rotation)=>{
 };
 const bounds=(item,size)=>{
  const ground=item.display.ground;
- assert.deepEqual(ground.scale,[0.5,0.5,0.5]);
  const sx=ground.scale.map(v=>v*size);
- const t=ground.translation.map(v=>v/16*size);
+ const translation=ground.translation??[0,0,0];
+ const t=translation.map(v=>v/16*size);
  const ps=[];
  for(const e of item.elements)for(const x of [e.from[0],e.to[0]])
  for(const y of [e.from[1],e.to[1]])for(const z of [e.from[2],e.to[2]]){
@@ -365,9 +383,30 @@ const bounds=(item,size)=>{
   radial:Math.max(...ps.map(p=>Math.hypot(p[0],p[2])))
  };
 };
+// Asset-aware regression: the old shared Y=.665 buried even the
+// HIGHEST point of classified ore below the real 10px-high port.
+const portTop=Math.max(...outputPortModel.elements.map(e=>e.to[1]))/16;
+const fineAnchor=Number(renderer.match(/FINE_OUTPUT_Y\s*=\s*([0-9.]+)D;/)?.[1]);
+const coarseAnchor=Number(renderer.match(/OUTPUT_Y\s*=\s*([0-9.]+)D;/)?.[1]);
+assert.ok(Number.isFinite(fineAnchor)&&Number.isFinite(coarseAnchor));
 for(const ore of ['chalcocite','cassiterite','quartz']){
  const model=json(art+'models/item/crushed_'+ore+'.json');
+ assert.deepEqual(model.display.ground.scale,[0.5,0.5,0.5]);
  const main=bounds(model,drumSize),chip=bounds(model,fineSize);
+ const classified=json(art+'models/item/classified_'+ore+'.json');
+ assert.deepEqual(classified.display.ground.scale,[0.7,0.7,0.7]);
+ const fines=bounds(classified,fineOutputSize);
+ const minFineY=fineAnchor+fines.minY,maxFineY=fineAnchor+fines.maxY;
+ assert.ok(minFineY>portTop+0.005 && minFineY<portTop+0.04,
+  ore+' primary output pile bottom must rest just above the actual module surface');
+ assert.ok(maxFineY>portTop+0.09,
+  ore+' primary output ore still buried in the wooden module');
+ assert.ok(Math.max(Math.abs(fines.minX),Math.abs(fines.maxX))<0.30,
+  ore+' fines tray must stay within the real 10px-wide wooden top');
+ const coarseBase=bounds(model,outputSize);
+ assert.ok(coarseAnchor+coarseBase.minY>portTop+0.005 &&
+           coarseAnchor+coarseBase.minY<portTop+0.04,
+  ore+' byproduct chunks must stand on, not hover over, their wooden surface');
  const visualCentre=centreAtUnitScale*drumSize;
  assert.ok(Math.abs(main.minX)<=halfWidth&&Math.abs(main.maxX)<=halfWidth,
   ore+' model wider than the contact envelope');

@@ -50,15 +50,20 @@ public final class RotaryOreClassifierRenderer
             new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_front_worn")
     };
 
-    // True block-model surface heights: input 15/16 at Y=1, outputs 10/16
-    // at Y=0. The extra ~0.03-0.04 is for the ItemDisplayContext.GROUND item.
-    // These are module locations, NOT decorative chutes or fake inventories.
+    // These are the REAL port surfaces, not extra decorative inventories.
+    // The output block's top is Y=10/16. Crushed ore has a 0.5 GROUND
+    // transform with a +3px lift, but classified ore uses a 0.7 GROUND
+    // transform with NO lift. Sharing the same origin buried all classified
+    // pellets *below* the wooden module top, even when slot 1 was populated.
     private static final double INPUT_X = -0.5D;
     private static final double INPUT_Y = 1.97D;
     private static final double INPUT_Z = -2.5D;
     private static final double FINE_X = -0.5D;
     private static final double COARSE_X = 1.5D;
-    private static final double OUTPUT_Y = 0.665D;
+    // Fine: .82 BER scale * .7 GROUND; model tray at 1px -> Y~.639.
+    private static final double FINE_OUTPUT_Y = 0.890D;
+    // Coarse: .68 BER scale * .5 GROUND +3px lift -> Y~.641.
+    private static final double OUTPUT_Y = 0.620D;
     private static final double OUTPUT_Z = 1.5D;
     private static final int MAX_DRUM_FRAGMENTS = 2;
 
@@ -67,6 +72,9 @@ public final class RotaryOreClassifierRenderer
     // the 22px-diameter screen. Visual sizes do not alter recipe yields.
     private static final float INPUT_ITEM_SCALE = 0.68F;
     private static final float OUTPUT_ITEM_SCALE = 0.68F;
+    // One classified item model already contains a full tray with several
+    // small pellets; drawing a second one would overlap two solid trays.
+    private static final float FINE_OUTPUT_ITEM_SCALE = 0.82F;
     private static final float FEED_ITEM_SCALE = 0.72F;
     private static final float DRUM_ITEM_SCALE = 0.82F;
     private static final float FINE_ITEM_SCALE = 0.38F;
@@ -160,10 +168,13 @@ public final class RotaryOreClassifierRenderer
         // Only completed and actually stored outputs appear on these ports.
         // A "future output" is never shown before the server commits it.
         if (!fines.isEmpty()) {
-            drawPortStack(itemRenderer, fines, itemRenderer.getModel(
+            // Classified ore is much lower than crushed chunks in GROUND
+            // space. Display its single built-in bed of fines on the actual
+            // primary module instead of burying two overlapping bronze trays.
+            drawItem(itemRenderer, fines, itemRenderer.getModel(
                             fines, classifier.getLevel(), null, 420),
                     pose, buffers, packedLight, packedOverlay,
-                    FINE_X, OUTPUT_Y, OUTPUT_Z, OUTPUT_ITEM_SCALE);
+                    FINE_X, FINE_OUTPUT_Y, OUTPUT_Z, FINE_OUTPUT_ITEM_SCALE, 0F);
         }
         if (!coarse.isEmpty()) {
             drawPortStack(itemRenderer, coarse, itemRenderer.getModel(
