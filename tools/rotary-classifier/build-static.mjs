@@ -4,7 +4,7 @@ import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const source=JSON.parse(readFileSync(join(root,'tools/rotary-classifier/frame-design.json'),'utf8'));
-if(source.schema!==3)throw Error('Classifier frame schema mismatch; expected exposed-port V3 design');
+if(source.schema!==4)throw Error('Classifier frame schema mismatch; expected physically supported V4 design');
 function generate(design){
  const A="src/main/resources/assets/magneticraft2/",D="src/main/resources/data/magneticraft2/",files=new Map();
  const F=["south","west","north","east"],round=n=>Math.round(n*10000)/10000;
@@ -23,6 +23,51 @@ function generate(design){
  }
  if(design.boxes.some(b=>/^(ore_hopper_|hopper_|fine_exit_|coarse_exit_|fine_tray_wedge$|coarse_rear_scoop$)/.test(b.name)))
   throw Error("False/noninteractive inventory holders must not be modeled");
+ // Every fixed component must connect through the frame to its foundation.
+ // This detects detached feed collars and bearing brackets at source time.
+ const support=design.supportContract;
+ if(!support||!support.frontOpenEnd||support.roots.length!==4)
+  throw Error("Missing grounded support topology contract");
+ const boxes=design.boxes;
+ const boxByName=new Map(boxes.map((b,i)=>[b.name,i]));
+ if(boxByName.size!==boxes.length)throw Error("Duplicate named classifier geometry");
+ const touchesBox=(a,b)=>a.from.every((v,i)=>v<=b.to[i]+0.001&&a.to[i]+0.001>=b.from[i]);
+ const rootIds=support.roots.map(name=>boxByName.get(name));
+ if(rootIds.some(i=>i===undefined))throw Error("Missing base foundation in support graph");
+ const connected=new Set(rootIds),queue=[...rootIds];
+ for(let i=0;i<queue.length;i++)for(let j=0;j<boxes.length;j++){
+  if(!connected.has(j)&&touchesBox(boxes[queue[i]],boxes[j])){
+   connected.add(j);queue.push(j);
+  }
+ }
+ if(connected.size!==boxes.length)
+  throw Error("Floating classifier geometry: "+
+   boxes.filter((b,i)=>!connected.has(i)).map(b=>b.name).join(","));
+ for(const [part,mount] of [
+  ["rear_bearing_mount_w","w_rear_timber_post"],
+  ["rear_bearing_mount_w","rear_bearing_w"],
+  ["rear_bearing_mount_e","e_rear_timber_post"],
+  ["rear_bearing_mount_e","rear_bearing_e"],
+  ["rear_feed_support_w","w_rear_timber_post"],
+  ["rear_feed_support_w","feed_coupler_outer"],
+  ["front_guide_roller_w","bronze_roller_w_front"],
+  ["front_guide_roller_e","bronze_roller_e_front"],
+  ["fine_outlet_guide_plate","tray_west_lip"],
+  ["coarse_outlet_guide_plate","tray_east_lip"]]){
+  const a=boxes[boxByName.get(part)],b=boxes[boxByName.get(mount)];
+  if(!a||!b||!touchesBox(a,b))
+   throw Error("Missing physical support connection: "+part+" -> "+mount);
+ }
+ // The front rollers must reach the drum's rotating outer hoop.
+ const left=boxes[boxByName.get("front_guide_roller_w")];
+ const right=boxes[boxByName.get("front_guide_roller_e")];
+ const outerLeft=8-design.drum.facetOffset-design.drum.skinThickness/2;
+ const outerRight=8+design.drum.facetOffset+design.drum.skinThickness/2;
+ if(!left||!right||Math.abs(left.to[0]-outerLeft)>0.1||
+    Math.abs(right.from[0]-outerRight)>0.1||
+    left.to[2]<15.5||right.to[2]<15.5||
+    left.from[2]>14.6||right.from[2]>14.6)
+  throw Error("Front guide rollers do not meet rotating drum rim");
  const turn=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
  const offset=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
  const boxRot=(b,f)=>{const q=[[b.from[0],b.from[2]],[b.from[0],b.to[2]],[b.to[0],b.from[2]],[b.to[0],b.to[2]]].map(p=>turn(...p,f));return{...b,from:[Math.min(...q.map(p=>p[0])),b.from[1],Math.min(...q.map(p=>p[1]))],to:[Math.max(...q.map(p=>p[0])),b.to[1],Math.max(...q.map(p=>p[1]))]}};
@@ -75,11 +120,20 @@ function generate(design){
     es.push(element(mat,cases[1][0],cases[1][1],angle));
    }
   }
-  eight("mesh",0,16,0);
-  eight("bearing",section==="front"?14.6:0.3,section==="front"?15.8:1.3,0.22);
+  // The first two pixels of the rear opening are reserved for stationary
+  // bearing braces. The rotating mesh begins just beyond their ends, so
+  // no fixed strut slices through the spinning screen.
+  const rearClearance=section==="rear"?cfg.inletInset:0;
+  eight("mesh",rearClearance,16,0);
+  const hoopStart=section==="front"?14.6:section==="rear"?cfg.inletInset+0.1:0.3;
+  const hoopEnd=section==="front"?15.8:section==="rear"?cfg.inletInset+1.3:1.3;
+  eight("bearing",hoopStart,hoopEnd,0.22);
   if(section==="middle")eight("bronze",7.7,8.55,0.10);
-  es.push(element("iron",[6.9,6.9,0],[9.1,9.1,16]));
+  // The front trommel discharge mouth is open. The rotating bronze rim
+  // rolls on two supported front guide rollers rather than terminating
+  // in a dangling central shaft.
   if(section!=="front"){
+   es.push(element("iron",[6.9,6.9,0],[9.1,9.1,16]));
    es.push(element("bronze",[7.35,-2,0.7],[8.65,8,1.4]));
    es.push(element("bronze",[7.35,8,0.7],[8.65,18,1.4]));
    es.push(element("bronze",[-2,7.35,0.7],[8,8.65,1.4]));

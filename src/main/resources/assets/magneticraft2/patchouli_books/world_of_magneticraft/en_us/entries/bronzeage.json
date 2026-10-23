@@ -225,7 +225,7 @@
       "type": "patchouli:crafting",
       "title": "Rotary Ore Classifier",
       "recipe": "magneticraft2:rotary_ore_classifier",
-      "text": "Compact 3×3×5 bronze screening machine with an open rotating drum and a low internal fines pan. Material enters through the REAL rear-left Item Input module and leaves through the two REAL front Item Output modules. The model includes no additional inventory hoppers or collection bins."
+      "text": "Compact 3×3×5 bronze screening machine with an open rotating drum and a low internal fines pan. Material enters through the REAL rear-left Item Input module and leaves through the two REAL front Item Output modules. The visible rear bearings, metal feed sleeve and front rim rollers are physically supported; the model adds no extra inventory hoppers or collection bins."
     },
     {
       "type": "patchouli:multiblock",
@@ -260,7 +260,7 @@
         },
         "symmetrical": false
       },
-      "text": "Visualize shows all required blocks. Item Input is elevated at the rear-left beside the Gear V2 Mechanical Input; both are actual usable modules. Fines Output (front-left) and Coarse Output (front-right) are the only item collection points—click/automate those blocks, not the internal screen pan. The upper input is unobstructed, with only a small metal coupling into the drum. The AIR cells are required; fourteen receive transparent V2 display/collision proxies after forming. Rotate Gear V2 shaft along the drum."
+      "text": "Visualize shows all required blocks. Item Input is elevated at the rear-left beside the Gear V2 Mechanical Input; both are actual usable modules. Fines Output (front-left) and Coarse Output (front-right) are the only item collection points—click/automate those blocks, not the internal screen pan. The upper input stays interactable, and a short, braced hollow metal throat leads into the rear drum. The AIR cells are required; fourteen receive transparent V2 display/collision proxies after forming. Rotate Gear V2 shaft along the drum. The bronze front rim rides on two visible guide rollers tied to the four timber posts; the front screen opening is not capped by a floating shaft."
     },
     {
       "type": "patchouli:crafting",

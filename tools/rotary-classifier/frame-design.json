@@ -1,7 +1,7 @@
 {
-  "schema": 3,
+  "schema": 4,
   "name": "rotary_ore_classifier",
-  "description": "Compact 3x3x5 SOUTH-oriented classifier. Real item ports are the ONLY item interaction points; no false hoppers or output holders. One internal pan screens fines and a short non-container feed coupler meets the rear input face. Four timber supports, 3 rotating drum segments, exposed real modules.",
+  "description": "3x3x5 classifier V4: front screen hoop rides on grounded rollers with an open outlet (no floating axle). Rear stationary bearing is mounted to timber posts, and the rear mesh begins after the bearing braces. Short hollow bronze feed neck is braced to the frame and aligned to the actual rear-left item module. Narrow runoff fins are fixed to the internal pan and stop before real output modules; no new item handlers or fake containers.",
   "dimensions": [
     3,
     3,
@@ -66,7 +66,8 @@
     "facetOffset": 11.05,
     "facetWidth": 9,
     "skinThickness": 0.85,
-    "bandThickness": 1.1
+    "bandThickness": 1.1,
+    "inletInset": 2.1
   },
   "boxes": [
     {
@@ -705,8 +706,8 @@
       ],
       "to": [
         -1,
-        27,
-        -26
+        23.1,
+        -29.95
       ],
       "collision": false
     },
@@ -714,14 +715,204 @@
       "name": "feed_coupler_machined_band",
       "material": "bearing",
       "from": [
-        -6.1,
-        21.7,
-        -26.8
+        -6.05,
+        22,
+        -30.5
       ],
       "to": [
-        -0.7,
-        27.3,
-        -26
+        -5.8,
+        27,
+        -29.95
+      ],
+      "collision": false
+    },
+    {
+      "name": "rear_bearing_mount_w",
+      "material": "iron",
+      "from": [
+        -11,
+        26.8,
+        -31.4
+      ],
+      "to": [
+        2.65,
+        28.05,
+        -30.05
+      ]
+    },
+    {
+      "name": "rear_bearing_mount_e",
+      "material": "iron",
+      "from": [
+        13.4,
+        26.8,
+        -31.4
+      ],
+      "to": [
+        27.6,
+        28.05,
+        -30.05
+      ]
+    },
+    {
+      "name": "rear_feed_support_w",
+      "material": "iron",
+      "from": [
+        -10,
+        23,
+        -30.8
+      ],
+      "to": [
+        -5.25,
+        25.6,
+        -27.2
+      ]
+    },
+    {
+      "name": "front_guide_roller_w",
+      "material": "bearing",
+      "from": [
+        -6.5,
+        17,
+        12
+      ],
+      "to": [
+        -3.46,
+        20.8,
+        15.7
+      ]
+    },
+    {
+      "name": "front_guide_roller_e",
+      "material": "bearing",
+      "from": [
+        19.46,
+        17,
+        12
+      ],
+      "to": [
+        22.5,
+        20.8,
+        15.7
+      ]
+    },
+    {
+      "name": "fine_outlet_guide_plate",
+      "material": "bronze",
+      "from": [
+        -10.5,
+        8,
+        10
+      ],
+      "to": [
+        -5.2,
+        8.65,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_outlet_guide_rib",
+      "material": "bearing",
+      "from": [
+        -10.25,
+        8.2,
+        10.1
+      ],
+      "to": [
+        -9.55,
+        9.9,
+        15.7
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_outlet_guide_plate",
+      "material": "bronze",
+      "from": [
+        20.5,
+        8.1,
+        10
+      ],
+      "to": [
+        25.9,
+        8.75,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_outlet_guide_rib",
+      "material": "bearing",
+      "from": [
+        25.05,
+        8.65,
+        10.1
+      ],
+      "to": [
+        25.75,
+        10,
+        15.7
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_drop_rib",
+      "material": "bronze",
+      "from": [
+        20.7,
+        9,
+        12.3
+      ],
+      "to": [
+        21.5,
+        19.2,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_top_lip",
+      "material": "bronze",
+      "from": [
+        -5.8,
+        26,
+        -32
+      ],
+      "to": [
+        -1,
+        27,
+        -29.95
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_left_wall",
+      "material": "bronze",
+      "from": [
+        -5.65,
+        23.08,
+        -31.9
+      ],
+      "to": [
+        -5.05,
+        26,
+        -30
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_right_wall",
+      "material": "bronze",
+      "from": [
+        -1.82,
+        23.08,
+        -31.9
+      ],
+      "to": [
+        -1.08,
+        26,
+        -30
       ],
       "collision": false
     }
@@ -851,5 +1042,27 @@
       2,
       0
     ]
-  ]
+  ],
+  "supportContract": {
+    "roots": [
+      "stone_rail_west",
+      "stone_rail_east",
+      "rear_stone_tie",
+      "front_stone_tie"
+    ],
+    "fixedBearingMounts": [
+      "rear_bearing_mount_w",
+      "rear_bearing_mount_e"
+    ],
+    "feedSupport": "rear_feed_support_w",
+    "frontSupportRollers": [
+      "front_guide_roller_w",
+      "front_guide_roller_e"
+    ],
+    "frontOutputGuides": [
+      "fine_outlet_guide_plate",
+      "coarse_outlet_guide_plate"
+    ],
+    "frontOpenEnd": true
+  }
 }

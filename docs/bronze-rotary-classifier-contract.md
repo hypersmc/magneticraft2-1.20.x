@@ -78,3 +78,17 @@ The first script also checks for obsolete narrow-drum and former scaffold JSON f
 8. Right-click the input/output blocks themselves, including the top of Input and Outputs: there must be no intercepted interaction on a decorative tray. Break the machine and reclaim its inventory, modules and components without duplication. Check collision while targeting posts, internal pan and screen; no missing model cubes.
 
 **Validation status:** generated source, spatial assertions and Git tree comparison can be validated without Minecraft. Only `./gradlew build` and real in-game screenshots can establish compilation and visual/behavior acceptance.
+
+## 2026-10-23 — Rear/front supported-geometry acceptance revision
+
+**Problem observed in real client screenshots:** after removing decorative faux item holders, the rear small bronze intake and bearing assembly still appeared to float, and the front mesh ended in a shaft without a visible supporting bearing/roller. Static geometry auditing found exactly two disconnected components: `rear_bearing_*` and `feed_coupler_*`. The front rollers also stopped short of the drum's front hoop.
+
+**Geometry solution (schema 4; purely visual):**
+
+- Rear static axle collar is attached to each rear timber post with a slim dark-iron mount. The feed throat is now a short *hollow* four-sided bronze sleeve with a support brace reaching the same left rear post, **not** a fake inventory block.
+- The rotating rear screen begins after a 2.1-model-pixel inlet clearance, keeping its mesh/hoop out of the stationary brace. The working bearings remain distinguishable from rotating cage parts.
+- The open front drum loses only its unsupported front axial rod. Two fixed small bronze guide rollers sit on the existing grounded front support rollers and nearly touch the actual rotating outer rim. The opening itself remains clear for coarse return.
+- Low-profile fines/coarse outlet guide plates and ribs are mechanically connected to the *internal* pan, ending **before the actual U/O/Y port block boundaries**, without independent containers, click targets, item capability handlers or changes to input/output module positions. The real item port blocks remain the only item interaction targets.
+- All 59 authored static boxes form **one connected ground-supported component**, not separate floating islands. Source generation and regression tests fail if bearings/intake are detached again. The fixed V2 models and voxel boxes update across all four facings; **the 3×3×5 formation blueprint and Patchouli pattern stay exactly the same**. There are still 28 static model cells per facing and six normal/worn rotating drum models.
+
+**Checks from source generation:** prior generator re-created all 126 previous generated files by exact Git blob hash; V4 changes 33 generated files (28 frame parts, four drum variants and one voxel profile), with no changed blueprints, invalid rotation angles, invalid model bounds or stretched UVs. The isolated model generator ran successfully with all geometry/source invariants satisfied. **The repository's Node contract script, Gradle build, actual connected automation, and live in-game appearance have not been reverified in this environment**. In-game, inspect the rear hub support and the open front rim/rollers from the same two screenshot angles and all four facings; watch for overlap during drum rotation.

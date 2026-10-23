@@ -15,7 +15,7 @@ const data=resources+'data/magneticraft2/';
 const java='src/main/java/com/magneticraft2/';
 const name='rotary_ore_classifier';
 const d=json('tools/rotary-classifier/frame-design.json');
-assert.equal(d.schema,3);
+assert.equal(d.schema,4);
 assert.deepEqual(d.dimensions,[3,3,5]);
 assert.equal(d.layers.length,3);
 assert.ok(d.layers.every(l=>l.length===5&&l.every(row=>row.length===3)));
@@ -23,14 +23,61 @@ assert.equal(d.drum.axis,'z');
 assert.deepEqual(d.drum.segments,[-2,-1,0]);
 assert.equal(d.drum.centerY,24);
 assert.ok(d.drum.facetOffset>=10.5,'Screen radius must not regress to the tiny drum');
+assert.ok(d.drum.inletInset>=2&&d.drum.inletInset<4,'Rear mesh needs clearance from fixed support braces');
 const posts=d.boxes.filter(b=>b.name.endsWith('_timber_post'));
 assert.equal(posts.length,4,'The accepted compact design has only four primary timber posts');
+assert.equal(d.supportContract.frontOpenEnd,true,'Trommel front needs its open, roller-supported discharge end');
 assert.ok(d.boxes.every(b=>!b.name.includes('roof')),'No giant framing canopy');
 assert.ok(d.boxes.some(b=>b.name==='tray_underpan'),'No fines collection pan');
 assert.ok(!d.boxes.some(b=>/^(ore_hopper_|hopper_)/.test(b.name)), 'Fake elevated hopper obscures real input');
 assert.ok(d.boxes.some(b=>b.name==='feed_coupler_outer'), 'Actual input must connect to the drum via a small coupling');
 assert.ok(!d.boxes.some(b=>/^(fine_exit_|fine_tray_wedge$)/.test(b.name)), 'Remove misleading fake fines holder');
 assert.ok(!d.boxes.some(b=>/^(coarse_exit_|coarse_rear_scoop$)/.test(b.name)), 'Remove misleading fake coarse holder');
+
+const indexes=new Map(d.boxes.map((b,i)=>[b.name,i]));
+assert.equal(indexes.size,d.boxes.length,'Duplicate geometry identifiers');
+const joined=(a,b)=>a.from.every((v,i)=>v<=b.to[i]+0.001&&a.to[i]+0.001>=b.from[i]);
+const roots=d.supportContract.roots.map(name=>indexes.get(name));
+assert.equal(roots.length,4);assert.ok(roots.every(i=>i!==undefined),'Foundation root missing');
+const visited=new Set(roots),queue=[...roots];
+for(let k=0;k<queue.length;k++)for(let i=0;i<d.boxes.length;i++){
+ if(!visited.has(i)&&joined(d.boxes[queue[k]],d.boxes[i])){visited.add(i);queue.push(i);}
+}
+assert.equal(visited.size,d.boxes.length,'Floating geometry: '+
+ d.boxes.filter((b,i)=>!visited.has(i)).map(b=>b.name).join(','));
+for(const [part,mount] of [
+ ['rear_bearing_mount_w','w_rear_timber_post'],
+ ['rear_bearing_mount_w','rear_bearing_w'],
+ ['rear_bearing_mount_e','e_rear_timber_post'],
+ ['rear_bearing_mount_e','rear_bearing_e'],
+ ['rear_feed_support_w','w_rear_timber_post'],
+ ['rear_feed_support_w','feed_coupler_outer'],
+ ['front_guide_roller_w','bronze_roller_w_front'],
+ ['front_guide_roller_e','bronze_roller_e_front'],
+ ['fine_outlet_guide_plate','tray_west_lip'],
+ ['coarse_outlet_guide_plate','tray_east_lip']
+]){
+ assert.ok(indexes.has(part)&&indexes.has(mount),part+' missing');
+ assert.ok(joined(d.boxes[indexes.get(part)],d.boxes[indexes.get(mount)]),
+  part+' not anchored to '+mount);
+}
+const frontLeft=d.boxes[indexes.get('front_guide_roller_w')];
+const frontRight=d.boxes[indexes.get('front_guide_roller_e')];
+assert.ok(Math.abs(frontLeft.to[0]-(8-d.drum.facetOffset-d.drum.skinThickness/2))<0.1);
+assert.ok(Math.abs(frontRight.from[0]-(8+d.drum.facetOffset+d.drum.skinThickness/2))<0.1);
+for(const name of ['rear_bearing_mount_w','rear_bearing_mount_e']){
+ const bracket=d.boxes[indexes.get(name)];
+ assert.ok(bracket.to[2]<=-32+d.drum.inletInset-0.1,
+  name+' cuts through rotating rear screen instead of supporting its bearing');
+}
+for(const roller of [frontLeft,frontRight])
+ assert.ok(roller.from[2]<=14.6&&roller.to[2]>=15.5,'Front rollers do not meet the moving rim');
+for(const name of d.supportContract.frontOutputGuides){
+ const guide=d.boxes[indexes.get(name)];
+ assert.ok(guide&&guide.to[2]<=16&&guide.to[2]>=15.5,
+  'Internal guide must terminate at, not occupy, the real output block: '+name);
+}
+
 
 const cells=[];
 for(let y=0;y<3;y++)for(let z=-3;z<=1;z++)for(let x=-1;x<=1;x++)cells.push({x,y,z,key:d.layers[y][z+3][x+1]});
@@ -140,9 +187,14 @@ for(const section of ['rear','middle','front'])for(const wear of ['','_worn']){
  assert.equal(model.textures.mesh,'magneticraft2:block/component/screen_mesh_bronze'+wear);
  const mesh=model.elements.filter(e=>Object.values(e.faces).some(f=>f.texture==='#mesh'));
  assert.equal(mesh.length,8,'Use eight individual screen facets');
+ if(section==='rear')assert.ok(mesh.every(e=>e.from[2]>=d.drum.inletInset-0.01),
+  'Rear drum mesh must not extend through fixed bearing mounts');
  assert.ok(mesh.some(e=>e.from[0]<0)||mesh.some(e=>e.to[0]>16),'Screen must visibly extend past the original tiny drum');
  assert.ok(mesh.some(e=>e.to[1]>18),'Drum silhouette must reach the upper visual level');
  assert.ok(model.elements.length<49,'Do not rebuild an expensive high-poly drum');
+ const hasCentralAxle=model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#iron'));
+ if(section==='front')assert.equal(hasCentralAxle,false,'Open front must not show an unsupported spindle');
+ else assert.equal(hasCentralAxle,true,'Rear and middle section retain their power shaft');
  for(const e of model.elements){
   for(let i=0;i<3;i++)assert.ok(e.from[i]>=-16&&e.to[i]<=32&&e.to[i]>e.from[i],'Invalid vanilla model element '+p);
   // Minecraft rejects rotation.angle:null even though it is valid JSON.
@@ -206,4 +258,4 @@ assert.deepEqual(page.multiblock.pattern,pattern,'Patchouli must form EXACTLY th
 assert.ok(page.text.includes('3×3×5'));
 for(const k of ['pickaxe','stone']){const path=k==='pickaxe'?resources+'data/minecraft/tags/blocks/mineable/pickaxe.json':resources+'data/minecraft/tags/blocks/needs_stone_tool.json';assert.ok(json(path).values.includes('magneticraft2:rotary_ore_classifier'));}
 execFileSync(process.execPath,['tools/rotary-classifier/build-static.mjs','--check'],{cwd:root,stdio:'inherit'});
-console.log('Rotary Classifier V3 contract passed: 3x3x5 structure, 28 cells x 4 facings, exposed input and outputs, no fake holders, processing unchanged.');
+console.log('Rotary Classifier V4 contract passed: grounded rear bearing/feed, front rim on rollers, open outlet, real item ports and all facings.');
