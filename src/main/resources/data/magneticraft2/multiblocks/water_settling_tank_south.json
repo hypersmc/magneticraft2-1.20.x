@@ -83,11 +83,11 @@
       ],
       "layer3": [
         [
-          "W",
+          "R",
           "A",
           "A",
           "A",
-          "W"
+          "R"
         ],
         [
           "A",
@@ -111,17 +111,17 @@
           "A"
         ],
         [
-          "W",
+          "R",
           "A",
           "A",
           "A",
-          "W"
+          "R"
         ]
       ]
     },
     "blocks": {
       "S": "minecraft:stone_bricks",
-      "W": "minecraft:oak_planks",
+      "R": "minecraft:cut_copper",
       "A": "minecraft:air",
       "I": "magneticraft2:multiblock_fluid_input",
       "P": "magneticraft2:multiblock_item_primary_output",
@@ -141,15 +141,15 @@
       [
         -1,
         1,
-        -2
+        -3
       ],
       [
         0,
         1,
-        -2
+        -3
       ],
       [
-        1,
+        0,
         1,
         -2
       ],
@@ -166,6 +166,21 @@
       [
         1,
         1,
+        -1
+      ],
+      [
+        -1,
+        2,
+        -1
+      ],
+      [
+        0,
+        2,
+        -1
+      ],
+      [
+        1,
+        2,
         -1
       ]
     ],

@@ -21,9 +21,10 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
- * The masonry, bridge and baffle are baked V2 geometry.  Only the genuine
- * stored fluid surfaces and real stored sediment output need the BER.
- * No animation runs in an empty tank and there are no per-frame particles.
+ * The ceramic-lined vessel, service bridge, central weir and real pipes use
+ * baked Voxel V2 parts. Only synchronized fluid VOLUMES and actual stored
+ * sediment are rendered dynamically; no particles, fake item entities, or
+ * per-tick mesh regeneration.
  */
 public final class WaterSettlingTankRenderer
         implements BlockEntityRenderer<WaterSettlingTankBlockEntity> {
@@ -35,7 +36,6 @@ public final class WaterSettlingTankRenderer
     public void render(WaterSettlingTankBlockEntity tank, float partialTicks,
             PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         if (!tank.isFormed()) return;
-
         float yaw = switch (tank.getFacing()) {
             case WEST -> -90F;
             case NORTH -> 180F;
@@ -47,23 +47,26 @@ public final class WaterSettlingTankRenderer
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-0.5D, 0D, -0.5D);
 
+        // Independent, similarly sized bays divided by a physical bronze
+        // weir. Never show water in a reservoir with zero stored mB.
         if (tank.getDirtyAmount() > 0) {
-            // Two back rows represent the actual dirty reservoir.
-            fluidSurface(pose, buffers, light, new FluidStack(
+            renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
-                    tank.getDirtyFillRatio(), -3, -2);
+                    tank.getDirtyFillRatio(),
+                    -1.26F, 0.36F, -3.53F, -0.28F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
-            // The front chamber is divided from dirty water by a real baffle.
-            fluidSurface(pose, buffers, light, new FluidStack(
+            renderPool(pose, buffers, light, new FluidStack(
                     Fluids.WATER, tank.getCleanAmount()),
-                    tank.getCleanFillRatio(), -1, -1);
+                    tank.getCleanFillRatio(),
+                    0.64F, 2.22F, -3.53F, -0.28F, 0.55F);
         }
+
         ItemStack sediment = tank.getSedimentStack();
         if (!sediment.isEmpty()) {
             ItemRenderer items = Minecraft.getInstance().getItemRenderer();
             pose.pushPose();
-            // Actual primary item-output module, not a decorative bin.
+            // ONLY the actual front-left stored item-output module.
             pose.translate(-0.5D, 0.775D, 0.5D);
             pose.scale(0.8F, 0.8F, 0.8F);
             items.render(sediment, ItemDisplayContext.GROUND, false,
@@ -74,47 +77,93 @@ public final class WaterSettlingTankRenderer
         pose.popPose();
     }
 
-    private static void fluidSurface(PoseStack pose, MultiBufferSource buffers,
-            int light, FluidStack fluid, float ratio, int firstZ, int lastZ) {
+    /**
+     * Top plus four softly shaded transparent vertical fluid sides. UV
+     * coordinates follow the Minecraft still-water sprite per WORLD BLOCK:
+     * the clipped edge tiles never stretch or compress the texture.
+     * Surfaces remain below the weir/metal lip and out of all real ports.
+     */
+    private static void renderPool(PoseStack pose, MultiBufferSource buffers,
+            int light, FluidStack fluid, float ratio,
+            float minX, float maxX, float minZ, float maxZ, float targetOpacity) {
         IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(fluid.getFluid());
-        var location = client.getStillTexture(fluid);
-        if (location == null) return;
+        var texture = client.getStillTexture(fluid);
+        if (texture == null || ratio <= 0F) return;
         TextureAtlasSprite sprite = Minecraft.getInstance()
-                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(location);
+                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(texture);
         int tint = client.getTintColor(fluid);
-        float alpha = ((tint >>> 24) & 255) / 255F;
-        if (alpha <= 0) alpha = 1F;
-        alpha = Math.min(alpha, 0.86F);
-        float red = ((tint >>> 16) & 255) / 255F;
-        float green = ((tint >>> 8) & 255) / 255F;
-        float blue = (tint & 255) / 255F;
-        float height = 1.02F + 0.63F * Math.max(0F, Math.min(1F, ratio));
+        float r = ((tint >>> 16) & 255) / 255F;
+        float g = ((tint >>> 8) & 255) / 255F;
+        float b = (tint & 255) / 255F;
+        float tintAlpha = ((tint >>> 24) & 255) / 255F;
+        float alpha = Math.min(tintAlpha <= 0F ? 1F : tintAlpha, targetOpacity);
+        float top = 1.025F + 0.585F * Math.max(0F, Math.min(1F, ratio));
+        float bottom = 1.014F;
         VertexConsumer consumer = buffers.getBuffer(RenderType.translucent());
-        PoseStack.Pose last = pose.last();
-        // Tile the actual Minecraft still-fluid sprite ONCE PER BLOCK. No
-        // three-block texture stretching and no tessellation per frame.
-        for (int z = firstZ; z <= lastZ; z++) for (int x = -1; x <= 1; x++) {
-            float west = x == -1 ? x + 0.06F : x;
-            float east = x == 1 ? x + 0.94F : x + 1F;
-            float north = z == firstZ ? z + 0.06F : z;
-            float south = z == lastZ ? z + 0.94F : z + 1F;
-            vertex(consumer,last,west,height,north,sprite.getU0(),sprite.getV0(),
-                    red,green,blue,alpha,light);
-            vertex(consumer,last,west,height,south,sprite.getU0(),sprite.getV1(),
-                    red,green,blue,alpha,light);
-            vertex(consumer,last,east,height,south,sprite.getU1(),sprite.getV1(),
-                    red,green,blue,alpha,light);
-            vertex(consumer,last,east,height,north,sprite.getU1(),sprite.getV0(),
-                    red,green,blue,alpha,light);
+        PoseStack.Pose matrix = pose.last();
+
+        for (int tz = (int)Math.floor(minZ); tz < Math.ceil(maxZ); tz++)
+        for (int tx = (int)Math.floor(minX); tx < Math.ceil(maxX); tx++) {
+            float x0 = Math.max(tx, minX), x1 = Math.min(tx+1F, maxX);
+            float z0 = Math.max(tz, minZ), z1 = Math.min(tz+1F, maxZ);
+            if (x1 <= x0 || z1 <= z0) continue;
+            float u0 = u(sprite, x0-tx), u1 = u(sprite, x1-tx);
+            float v0 = v(sprite, z0-tz), v1 = v(sprite, z1-tz);
+            vertex(consumer,matrix,x0,top,z0,u0,v0,r,g,b,alpha,light,0F,1F,0F);
+            vertex(consumer,matrix,x0,top,z1,u0,v1,r,g,b,alpha,light,0F,1F,0F);
+            vertex(consumer,matrix,x1,top,z1,u1,v1,r,g,b,alpha,light,0F,1F,0F);
+            vertex(consumer,matrix,x1,top,z0,u1,v0,r,g,b,alpha,light,0F,1F,0F);
+        }
+
+        float sideAlpha = alpha * 0.62F;
+        float sr = r * 0.83F, sg = g * 0.83F, sb = b * 0.83F;
+        float vBottom = v(sprite, 0F), vTop = v(sprite, top-bottom);
+        for (int tx=(int)Math.floor(minX); tx < Math.ceil(maxX); tx++) {
+            float x0=Math.max(minX,tx),x1=Math.min(maxX,tx+1F);
+            if(x1<=x0)continue;
+            float u0=u(sprite,x0-tx),u1=u(sprite,x1-tx);
+            quad(consumer,matrix,x1,bottom,minZ,x0,bottom,minZ,
+                    x0,top,minZ,x1,top,minZ,u1,u0,vBottom,vTop,
+                    sr,sg,sb,sideAlpha,light,0F,0F,-1F);
+            quad(consumer,matrix,x0,bottom,maxZ,x1,bottom,maxZ,
+                    x1,top,maxZ,x0,top,maxZ,u0,u1,vBottom,vTop,
+                    sr,sg,sb,sideAlpha,light,0F,0F,1F);
+        }
+        for (int tz=(int)Math.floor(minZ); tz < Math.ceil(maxZ); tz++) {
+            float z0=Math.max(minZ,tz),z1=Math.min(maxZ,tz+1F);
+            if(z1<=z0)continue;
+            float u0=u(sprite,z0-tz),u1=u(sprite,z1-tz);
+            quad(consumer,matrix,minX,bottom,z0,minX,bottom,z1,
+                    minX,top,z1,minX,top,z0,u0,u1,vBottom,vTop,
+                    sr,sg,sb,sideAlpha,light,-1F,0F,0F);
+            quad(consumer,matrix,maxX,bottom,z1,maxX,bottom,z0,
+                    maxX,top,z0,maxX,top,z1,u1,u0,vBottom,vTop,
+                    sr,sg,sb,sideAlpha,light,1F,0F,0F);
         }
     }
 
-    private static void vertex(VertexConsumer consumer, PoseStack.Pose last,
+    private static float u(TextureAtlasSprite s, float fraction) {
+        return s.getU0() + (s.getU1()-s.getU0())*fraction;
+    }
+    private static float v(TextureAtlasSprite s, float fraction) {
+        return s.getV0() + (s.getV1()-s.getV0())*fraction;
+    }
+    private static void quad(VertexConsumer b, PoseStack.Pose matrix,
+            float x0,float y0,float z0,float x1,float y1,float z1,
+            float x2,float y2,float z2,float x3,float y3,float z3,
+            float u0,float u1,float v0,float v1,
+            float r,float g,float bl,float alpha,int light,float nx,float ny,float nz) {
+        vertex(b,matrix,x0,y0,z0,u0,v0,r,g,bl,alpha,light,nx,ny,nz);
+        vertex(b,matrix,x1,y1,z1,u1,v0,r,g,bl,alpha,light,nx,ny,nz);
+        vertex(b,matrix,x2,y2,z2,u1,v1,r,g,bl,alpha,light,nx,ny,nz);
+        vertex(b,matrix,x3,y3,z3,u0,v1,r,g,bl,alpha,light,nx,ny,nz);
+    }
+    private static void vertex(VertexConsumer buffer, PoseStack.Pose pose,
             float x,float y,float z,float u,float v,
-            float red,float green,float blue,float alpha,int light) {
-        consumer.vertex(last.pose(),x,y,z)
-                .color(red,green,blue,alpha)
-                .uv(u,v).overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(light).normal(last.normal(),0F,1F,0F).endVertex();
+            float r,float g,float b,float alpha,int light,float nx,float ny,float nz) {
+        buffer.vertex(pose.pose(),x,y,z)
+                .color(r,g,b,alpha).uv(u,v)
+                .overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light)
+                .normal(pose.normal(),nx,ny,nz).endVertex();
     }
 }

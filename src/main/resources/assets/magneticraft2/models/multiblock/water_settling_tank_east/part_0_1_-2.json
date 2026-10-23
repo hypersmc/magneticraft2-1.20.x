@@ -2,77 +2,79 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
       "from": [
         0,
         0,
-        12
+        11
       ],
       "to": [
         16,
-        14,
+        13,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            14
+            5,
+            13
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            14
+            5,
+            13
           ]
         },
         "up": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            4
+            5
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            4
+            5
           ]
         }
       }
@@ -80,8 +82,76 @@
     {
       "from": [
         0,
-        14,
-        12
+        3,
+        10
+      ],
+      "to": [
+        16,
+        13,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13,
+        8
       ],
       "to": [
         16,
@@ -95,7 +165,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "south": {
@@ -104,7 +174,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "east": {
@@ -112,8 +182,8 @@
           "uv": [
             0,
             0,
-            4,
-            2
+            8,
+            3
           ]
         },
         "west": {
@@ -121,8 +191,8 @@
           "uv": [
             0,
             0,
-            4,
-            2
+            8,
+            3
           ]
         },
         "up": {
@@ -131,7 +201,7 @@
             0,
             0,
             16,
-            4
+            8
           ]
         },
         "down": {
@@ -140,7 +210,143 @@
             0,
             0,
             16,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        0,
+        11
+      ],
+      "to": [
+        11,
+        11,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            6,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            6,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            4,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            4,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            6,
             4
+          ]
+        },
+        "down": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            6,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        8,
+        9
+      ],
+      "to": [
+        13,
+        15,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            10,
+            7
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            10,
+            7
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            6,
+            7
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            6,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            10,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            10,
+            6
           ]
         }
       }

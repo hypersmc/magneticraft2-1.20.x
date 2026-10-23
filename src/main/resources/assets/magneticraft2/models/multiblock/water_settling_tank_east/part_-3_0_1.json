@@ -2,11 +2,13 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
@@ -17,48 +19,48 @@
       ],
       "to": [
         16,
-        14,
+        13,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "up": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
@@ -67,7 +69,7 @@
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
@@ -80,17 +82,17 @@
     {
       "from": [
         0,
-        14,
+        13,
         0
       ],
       "to": [
         16,
-        16,
+        15,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
@@ -99,7 +101,7 @@
           ]
         },
         "south": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
@@ -108,7 +110,7 @@
           ]
         },
         "east": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
@@ -117,7 +119,7 @@
           ]
         },
         "west": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
@@ -126,7 +128,7 @@
           ]
         },
         "up": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
@@ -135,12 +137,80 @@
           ]
         },
         "down": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
             16,
             16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        15,
+        1
+      ],
+      "to": [
+        15,
+        16,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            1
+          ]
+        },
+        "west": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#sludge",
+          "uv": [
+            0,
+            0,
+            14,
+            14
           ]
         }
       }

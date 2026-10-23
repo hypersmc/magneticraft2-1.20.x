@@ -2,145 +2,147 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
       "from": [
-        12,
         0,
-        0
+        0,
+        3
       ],
       "to": [
         16,
-        9,
-        16
+        1,
+        13
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#riveted_iron",
           "uv": [
             0,
             0,
-            4,
-            9
+            16,
+            1
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#riveted_iron",
           "uv": [
             0,
             0,
-            4,
-            9
+            16,
+            1
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#riveted_iron",
           "uv": [
             0,
             0,
-            16,
-            9
+            10,
+            1
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            10,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#riveted_iron",
           "uv": [
             0,
             0,
             16,
-            9
-          ]
-        },
-        "up": {
-          "texture": "#stone",
-          "uv": [
-            0,
-            0,
-            4,
-            16
+            10
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#riveted_iron",
           "uv": [
             0,
             0,
-            4,
-            16
+            16,
+            10
           ]
         }
       }
     },
     {
       "from": [
-        12,
-        9,
-        0
+        0,
+        1,
+        4
       ],
       "to": [
         16,
-        11,
-        16
+        2,
+        12
       ],
       "faces": {
         "north": {
-          "texture": "#bronze",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            4,
-            2
+            16,
+            1
           ]
         },
         "south": {
-          "texture": "#bronze",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            4,
-            2
+            16,
+            1
           ]
         },
         "east": {
-          "texture": "#bronze",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            16,
-            2
+            8,
+            1
           ]
         },
         "west": {
-          "texture": "#bronze",
+          "texture": "#grate",
+          "uv": [
+            0,
+            0,
+            8,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#grate",
           "uv": [
             0,
             0,
             16,
-            2
-          ]
-        },
-        "up": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            4,
-            16
+            8
           ]
         },
         "down": {
-          "texture": "#bronze",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            4,
-            16
+            16,
+            8
           ]
         }
       }

@@ -274,7 +274,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze II — Water Recovery$()$(br2)The Ore Washer produces Dirty Water. Rather than dumping it, send it to a passive $(bold)Water Settling Tank$().$(br2)One 240-tick batch treats 600 mB Dirty Water into 480 mB reusable clean Water and one Settled Sediment. The 120 mB unrecovered portion is trapped in the wet sediment: this is not an infinite water source.$(br2)No Gear V2 input is required. Both output capacity and sediment extraction must remain available."
+      "text": "$(bold)Bronze II — Water Recovery$()$(br2)Route the Ore Washer's Dirty Water to a purpose-built, two-chamber Water Settling Tank. A raised ceramic-lined bronze weir divides the muddy and cleaned basins. The inlet spout, grated inspection walkway and outlet pipe are part of its physical model.$(br2)It passively treats 600 mB Dirty Water into 480 mB reusable ordinary Water and one wet Settled Sediment over 240 ticks. The unrecovered 120 mB stays with the wet solids, so the loop cannot manufacture water. No Gear V2 power is required."
     },
     {
       "type": "patchouli:crafting",
@@ -289,11 +289,11 @@
       "multiblock": {
         "pattern": [
           [
-            "W___W",
+            "R___R",
             "_____",
             "_____",
             "_____",
-            "W___W"
+            "R___R"
           ],
           [
             "SSSSS",
@@ -313,18 +313,18 @@
         "mapping": {
           "0": "magneticraft2:water_settling_tank",
           "S": "minecraft:stone_bricks",
-          "W": "minecraft:oak_planks",
           "I": "magneticraft2:multiblock_fluid_input",
           "P": "magneticraft2:multiblock_item_primary_output",
-          "O": "magneticraft2:multiblock_fluid_output"
+          "O": "magneticraft2:multiblock_fluid_output",
+          "R": "minecraft:cut_copper"
         },
         "symmetrical": false
       },
-      "text": "Build a 5×3×5 open masonry basin. Rear-centre floor is the real Fluid Input (I) for Dirty Water; connect its exposed rear face. Front floor has the Sediment Output (P), controller (0), one stone foundation cell and Clean Fluid Output (O) at the exposed EAST edge. Connect the clean-water pipe on its outer eastern side. Four Oak Planks at the upper corners are support posts. All underscore locations are AIR; only the six internal baffle/lip cells receive V2 proxies after forming. Right-click the controller to form. Do not add decorative hoppers or obstruct the three real modules."
+      "text": "Redesigned 5×3×5 Bronze settling installation. Start with a Stone Bricks plinth, put the real Dirty Fluid Input (I) at the REAR centre, Sediment Output (P) at the front-left, Controller (0) at the front centre, and the real Clean Fluid Output (O) at the outer EAST/front-right corner. The four upper corner supports now require CUT COPPER (R), NOT Oak Planks. Leave underscore cells as AIR; upon formation nine specific internal air cells become baked divider, pipe and inspection-grate proxies. The two reservoirs share an internal long bronze weir; water pipes attach to the accessible real modules, not decorative mouths. Right-click the controller to form. Older formed tanks need rebuilding because the support material changed."
     },
     {
       "type": "text",
-      "text": "$(bold)Closing the Water Loop$()$(br2)Connect the Washer Dirty Water outlet to the Settling Tank's rear Fluid Input via existing pipes or tanks. Pipe clean Water from the tank's front-right outer EAST-facing Fluid Output toward the Washer clean-water input, using a tank/pump as needed. Front-left Item Output holds the sediment. If either clean-water storage or sediment output is full, processing pauses without losing Dirty Water or resetting progress.$(br2)The divided basin shows actual dirty and clean tank fill levels; the baffle is fixed structure, not a fake interaction point."
+      "text": "$(bold)Closing the Water Loop$()$(br2)Pipe Washer Dirty Water to the tank's real rear-centre Fluid Input, and recovered clean Water from its real EAST-edge Fluid Output back to the Washer input through your existing pipes/pump/tank.$(br2)The front-left Primary Item Output contains Settled Sediment; four units make one Clay Ball. The two independently filled liquid volumes sit below the cast-bronze weir. Processing pauses if either result cannot fit, without losing Dirty Water or stored settling progress.$(br2)The service grating and pipe collars are stationary structure, not extra inventories or fake output ports."
     },
     {
       "type": "patchouli:crafting",

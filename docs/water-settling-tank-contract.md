@@ -1,108 +1,116 @@
-# Bronze II — Water Settling Tank
+# Bronze II — Water Settling Tank (Visual Redesign V2)
 
-**Status:** Source-implemented in draft Bronze PR #11. The machine is not yet
-Gradle-compiled or accepted from in-game screenshots.
+**Status: PR #11, source implementation awaiting Gradle + in-game acceptance.**
+The original trough was rejected after video review. This redesign changes the
+real block-level construction, baked local geometry, collision and textures,
+not just a recolor of Stone Bricks.
 
-## Function and material accounting
+## Role and fixed processing contract
 
-Passive sedimentation turns **600 mB Dirty Water** produced by the existing
-Ore Washer into **480 mB clean Minecraft Water** plus **one Settled Sediment**
-over **240 server ticks** (12 seconds at normal TPS). The unrecovered
-120 mB is retained in the wet sediment for accounting purposes; this is a
-process loss, not water duplication. Four sediment units can be crafted into
-one Clay Ball. No metal-bearing tailings or bonus ore is produced.
+The passive water-recovery machine remains unchanged economically:
 
-The balance lives in the fluid-only datapack recipe
-\`data/magneticraft2/recipes/settling_dirty_water.json\`. The generic
-\`multiblock_processing\` serializer now supports missing item input **only when
-a nonempty fluid_input exists**. Existing Grinder/Washer/Sifter/Stamp
-recipes keep their item input requirements and item matching.
+| In | Time | Out |
+|---|---|---|
+| 600 mB Magneticraft2 Dirty Water | 240 server ticks | 480 mB ordinary Minecraft Water + 1 Settled Sediment |
 
-Inputs and outputs are server-owned: 12,000 mB Dirty Water in the inlet
-reservoir; 12,000 mB clean Water in the outlet reservoir; one item slot at
-controller slot 1 for settled sediment. **No Gear V2 node, Watts or
-pressure system is required**, because the settling is passive.
+The missing 120 mB remains bound in wet solids. Four Settled Sediment craft
+into one Clay Ball. Two separate 12,000 mB server-side fluid tanks back the
+dirty and clean displays. The sediment item is held by actual output slot 1.
 
-If either output cannot accept the full result, input remains untouched and
-the 240-tick progress freezes. Processing also stops safely on fluid shortage,
-reload or an unformed structure. Production commits only after checking
-both output destinations. The machine stores both fluids, sediment inventory,
-processing state, active recipe ID, formed blueprint and V2 voxel snapshots.
+The recipe lives in \`data/magneticraft2/recipes/settling_dirty_water.json\`.
+The generic multiblock recipe decoder supports no item input ONLY if
+\`fluid_input\` exists. No new metal byproduct, no arbitrary Gear V2 load,
+no added water from nothing and no change to Washer/pipe semantics.
 
-## Exact physical build (canonical SOUTH)
+The server checks BOTH the clean-water output capacity and the sediment slot
+before consuming a batch. Full outlets or insufficient dirty input pause
+progress and retain their contents. Active recipe, tanks, sediment,
+formation state and voxel snapshots persist across unload/reload.
 
-**5 wide × 3 high × 5 deep**, controller at local \`(0,0,0)\`,
-rear Z=-4 to front Z=0. Rows are west-to-east, shown rear to front.
-The clean-water port sits at x=+2, on the exposed outer EAST edge:
+## Formation (canonical SOUTH orientation)
+
+Still **5 wide × 3 high × 5 deep**, with the controller at local (0,0,0).
+Read each row west → east, from the back (north) toward the front (south):
 
 \`\`\`text
-Y=2     W___W    _____    _____    _____    W___W
-Y=1     SSSSS    S___S    S___S    S___S    S___S
-Y=0     SSISS    SSSSS    SSSSS    SSSSS    SPCSO
+                  NORTH / rear
+Y=2    R___R     _____     _____     _____     R___R
+Y=1    SSSSS     S___S     S___S     S___S     S___S
+Y=0    SSISS     SSSSS     SSSSS     SSSSS     SPCSO
+                  SOUTH / front
 \`\`\`
 
-Legend: S = Stone Bricks; W = Oak Planks; I = the REAL
-Multiblock Fluid Input; P = REAL Primary Item Output for sediment;
-C = controller; O = REAL Multiblock Fluid Output; _ = required AIR.
+- S: Stone Bricks, the original hidden construction foundation / masonry
+- R: **Cut Copper** cast-stanchion supports; these REPLACE the old Oak Planks
+- I: existing REAL Multiblock Fluid Input (rear centre, NORTH service face)
+- P: existing REAL Primary Item Output (front-left, for stored sediment)
+- C: Water Settling Tank Controller (front centre)
+- O: existing REAL Fluid Output (far EAST edge, outer service face)
+- _: required AIR; do not put solid filler blocks here before forming
 
-Full port cells and their immediately outward-facing service faces stay
-free from generated V2 decorative models. The floor is ground-supported,
-all four upper posts sit on the masonry walls, and the central divider
-contains six actual AIR-hosted static V2 pieces. The controller is at the
-south/front centre. Models are generated in all four orientations.
+**Breaking and rebuilding is required** for a tank already formed with the
+old Oak Planks layout. The controller recipe, sediment recipe, and processing
+contract have NOT changed.
 
-**Source of truth:** \`node tools/water-settling-tank/build.mjs\` regenerates
-the four JSON formation layouts, native-density static baked per-cell meshes,
-collision profile, basic item/block models and the recipe files together.
-Do not manually edit the 180 generated part models. Their six render AIR
-anchors are formed only after the structure validates.
+The nine air-hosted V2 model pieces represent an actual longitudinal
+ceramic-bronze divider, rear silt-trap grating, two front retaining lips and
+three elevated grated bridge segments. All other required air remains open.
+The generated per-cell models and collision cannot overlap a real module.
 
-Voxel V2 owns collision/selection for the physical floor, side walls, rear wall,
-baffle, discharge lip and four corner posts. Fluid surfaces in the BER only
-depict the actual synchronized Dirty/Clean tank fill; no decorative phantom
-fluid entities are spawned. The only rendered sediment item appears when
-the controller's stored sediment output slot is nonempty.
+## Design identity and custom materials
 
-## Ports and basic use
+This is now an engineered Bronze Age treatment installation rather than
+a generic untextured stone trough:
 
-The real rear-centre **Fluid Input** accepts the Forge Dirty Water fluid from
-the Ore Washer via existing water pipes or a connected fluid tank. The
-right-edge **Fluid Output** drains only newly recovered Minecraft Water.
-It faces **EAST** from controller offset (2,0,0), leaving its outward pipe
-connection in open air rather than against the masonry foundation. Recovered
-water can be piped/tanked and fed to the Washer's existing input.
-The front-left **Primary Item Output** exposes controller slot 1 for
-sediment extraction. The controller is status-only; it is not a separate
-item insertion/extraction interface. It reports both tank fill levels,
-sediment count and settling progress.
+- Refractory dark masonry, separately glazed waterproof cyan-green lining
+- Cast bronze rim/beading, riveted dark-iron frames and upper Cut Copper posts
+- Raised internal weir dividing **two similarly sized side-by-side bays**
+- Rear metal inlet sleeve terminating over the muddy chamber
+- Outer right clean-water crossover fitting, aligned with the real outlet
+- Thin grated inspection bridge and visible sediment trap below the dirty bay
 
-This machine is deliberately usable without electricity or gears.
-There is no new fluid network and no change to the Washers, Sifter or
-other Bronze machine animation. Automatic insertion/extraction is
-performed through the existing module blocks.
+Six purpose-authored **16×16 pixel textures** live at
+\`assets/magneticraft2/textures/block/settling_tank/\`:
+\`refractory.png\`, \`lining.png\`, \`bronze.png\`,
+\`riveted_iron.png\`, \`grate.png\` and \`sludge.png\`.
 
-## Validation
+Each box uses actual pixel-span UVs and remains inside its block-local model,
+rather than stretching one 16×16 texture across the multiblock. They are
+normal standalone resources referenced by the generated baked meshes,
+not illustrations or pre-rendered sprites.
+
+The liquid BER uses the actual Minecraft fluid still texture and real
+controller tank fill ratio. Dirty (left) and clean (right) basins both occupy
+roughly equal internal floor area. Their 3D translucent volumes include
+side faces and floor clearance. Texture UVs are cropped per one-block tile;
+no giant single UV or flat dirt-colored floor. Neither water volume appears
+when its real tank is empty. No particles or new item entities are created.
+Sediment remains visibly displayed only when the output inventory contains it.
+
+## Generator / tests
 
 \`\`\`bash
 node tools/water-settling-tank/build.mjs --check
 node tools/water-settling-tank/test-contract.mjs
-node tools/multiblock-models/build-designs.mjs --check
-node tools/multiblock-models/generate.mjs --check
 ./gradlew build
 \`\`\`
 
-**Gameplay matrix (not yet completed):** Build and form all SOUTH/WEST/NORTH/EAST
-layouts from Patchouli. Check the floor/wall contacts, upper corner posts,
-internal baffle, physical ports and actual filled-fluid levels. Confirm
-the rear Fluid Input faces NORTH into air, the clean Fluid Output faces EAST
-into air and the sediment port is accessible from the southern service row. Feed 600 mB
-Dirty Water and verify 480 mB clean output, one sediment item and zero
-extra items. Fill the clean output then sediment port independently: the
-process must pause, preserve exact quantities and resume; test a mid-batch
-world unload/reload and dismantle. Drain clean water into Washer and check
-it remains standard Minecraft Water. Ensure empty ports have no ghost
-previews, collision isn't a solid invisible lid, and FPS is stable.
+The canonical JavaScript generator owns **four directional blueprints**,
+**192 block-local JSON meshes**, the JSON Voxel V2 collision profile, controller
+and sediment models, existing recipes and loot. Nine required-air pieces are
+registered only upon formation; stale meshes from the old arrangement were
+removed. The independent test checks all rotations, 16×16 PNG signatures,
+custom material refs, UV density, empty real module collision cells, ports,
+conservation, and the Patchouli projection.
 
-**Caveat:** This is source-level acceptance only until the full project build
-and live Minecraft testing have passed. Preexisting worlds contain no such
-formed tank, so no legacy-structure migration is required.
+**To test in game:** rebuild an old tank, then form SOUTH, WEST, NORTH and
+EAST from the Patchouli Visualize projection. Inspect clean and dirty bays
+empty / partly full / full; check that the baffle actually divides the liquid,
+the output pipe faces EAST and the bridge has accurate hitboxes. Feed 600 mB
+Dirty Water; ensure exactly 480 mB normal Water and one stored Sediment after
+240 ticks. Block each output separately, then reload the world mid-batch.
+Ensure no material loss, fake items, FPS drops or stretched texture polygons.
+Use the client video to evaluate whether the inlet/outlet look connected.
+
+The complete Forge Gradle build and in-game visual acceptance remain
+**unverified** until they are explicitly run. Keep PR #11 draft/unmerged.

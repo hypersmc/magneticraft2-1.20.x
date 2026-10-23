@@ -2,76 +2,78 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
       "from": [
-        14,
+        13,
         0,
         0
       ],
       "to": [
         16,
-        14,
+        10,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            2,
-            14
+            3,
+            10
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            2,
-            14
+            3,
+            10
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            10
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            10
           ]
         },
         "up": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            2,
+            3,
             16
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            2,
+            3,
             16
           ]
         }
@@ -79,13 +81,13 @@
     },
     {
       "from": [
-        14,
-        14,
+        12,
+        10,
         0
       ],
       "to": [
         16,
-        16,
+        12,
         16
       ],
       "faces": {
@@ -94,7 +96,7 @@
           "uv": [
             0,
             0,
-            2,
+            4,
             2
           ]
         },
@@ -103,7 +105,7 @@
           "uv": [
             0,
             0,
-            2,
+            4,
             2
           ]
         },
@@ -130,7 +132,7 @@
           "uv": [
             0,
             0,
-            2,
+            4,
             16
           ]
         },
@@ -139,7 +141,7 @@
           "uv": [
             0,
             0,
-            2,
+            4,
             16
           ]
         }

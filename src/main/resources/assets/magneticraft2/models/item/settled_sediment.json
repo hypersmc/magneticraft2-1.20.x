@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "mud": "minecraft:block/mud",
-    "grit": "minecraft:block/gravel",
-    "particle": "minecraft:block/mud"
+    "mud": "magneticraft2:block/settling_tank/sludge",
+    "grit": "magneticraft2:block/settling_tank/refractory",
+    "particle": "magneticraft2:block/settling_tank/sludge"
   },
   "elements": [
     {

@@ -2,91 +2,229 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
       "from": [
-        12,
         0,
-        0
+        0,
+        7
       ],
       "to": [
         16,
-        9,
-        16
+        11,
+        9
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            9
+            16,
+            11
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            9
+            16,
+            11
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            16,
-            9
+            2,
+            11
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#refractory",
+          "uv": [
+            0,
+            0,
+            2,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            9
-          ]
-        },
-        "up": {
-          "texture": "#stone",
-          "uv": [
-            0,
-            0,
-            4,
-            16
+            2
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            16
+            16,
+            2
           ]
         }
       }
     },
     {
       "from": [
-        12,
-        9,
-        0
+        0,
+        7,
+        9
       ],
       "to": [
         16,
-        11,
-        16
+        12,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            5
+          ]
+        },
+        "south": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            5
+          ]
+        },
+        "west": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        7,
+        6
+      ],
+      "to": [
+        16,
+        12,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            5
+          ]
+        },
+        "south": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            5
+          ]
+        },
+        "west": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        },
+        "down": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        5
+      ],
+      "to": [
+        16,
+        14,
+        11
       ],
       "faces": {
         "north": {
@@ -94,7 +232,7 @@
           "uv": [
             0,
             0,
-            4,
+            16,
             2
           ]
         },
@@ -103,7 +241,7 @@
           "uv": [
             0,
             0,
-            4,
+            16,
             2
           ]
         },
@@ -112,7 +250,7 @@
           "uv": [
             0,
             0,
-            16,
+            6,
             2
           ]
         },
@@ -121,7 +259,7 @@
           "uv": [
             0,
             0,
-            16,
+            6,
             2
           ]
         },
@@ -130,8 +268,8 @@
           "uv": [
             0,
             0,
-            4,
-            16
+            16,
+            6
           ]
         },
         "down": {
@@ -139,8 +277,8 @@
           "uv": [
             0,
             0,
-            4,
-            16
+            16,
+            6
           ]
         }
       }

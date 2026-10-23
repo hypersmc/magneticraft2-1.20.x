@@ -2,115 +2,195 @@
 import fs from "node:fs";
 import path from "node:path";
 function makeAssets(){
- const files=new Map(),a="src/main/resources/assets/magneticraft2/",d="src/main/resources/data/magneticraft2/",id="water_settling_tank";
- const rows=[["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"],["WAAAW","AAAAA","AAAAA","AAAAA","WAAAW"]];
- const types={S:"minecraft:stone_bricks",W:"minecraft:oak_planks",A:"minecraft:air",I:"magneticraft2:multiblock_fluid_input",P:"magneticraft2:multiblock_item_primary_output",C:"magneticraft2:water_settling_tank",O:"magneticraft2:multiblock_fluid_output"};
- const tex={stone:"minecraft:block/stone_bricks",bronze:"magneticraft2:block/material/bronze_cast",wood:"magneticraft2:block/material/machine_timber",iron:"minecraft:block/iron_block",particle:"minecraft:block/stone_bricks"};
- const cells=[];
- for(let y=0;y<3;y++)for(let rz=0;rz<5;rz++)for(let rx=0;rx<5;rx++)cells.push({x:rx-2,y,z:rz-4,c:rows[y][rz][rx]});
- for(const [k,expected] of Object.entries({C:[0,0,0],I:[0,0,-4],P:[-1,0,0],O:[2,0,0]})){
-   const entries=cells.filter(c=>c.c===k);if(entries.length!==1||[entries[0].x,entries[0].y,entries[0].z].join()!=expected.join())throw Error("Missing or displaced "+k);
+ const files=new Map();
+ const a="src/main/resources/assets/magneticraft2/",d="src/main/resources/data/magneticraft2/",id="water_settling_tank";
+ const rows=[["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"],["RAAAR","AAAAA","AAAAA","AAAAA","RAAAR"]];
+ const types={S:"minecraft:stone_bricks",R:"minecraft:cut_copper",A:"minecraft:air",
+ I:"magneticraft2:multiblock_fluid_input",P:"magneticraft2:multiblock_item_primary_output",
+ C:"magneticraft2:water_settling_tank",O:"magneticraft2:multiblock_fluid_output"};
+ const tex=Object.fromEntries(["refractory","lining","bronze","riveted_iron","grate","sludge"].map(t=>[t,"magneticraft2:block/settling_tank/"+t]));
+ tex.particle=tex.refractory;
+ const cells=[];for(let y=0;y<3;y++)for(let zi=0;zi<5;zi++)for(let xi=0;xi<5;xi++)cells.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
+ const required={C:[0,0,0],I:[0,0,-4],P:[-1,0,0],O:[2,0,0]};
+ for(const [letter,xyz] of Object.entries(required)){
+  const found=cells.filter(c=>c.k===letter);
+  if(found.length!==1||[found[0].x,found[0].y,found[0].z].join()!==xyz.join())throw Error("Invalid real port "+letter);
  }
- const boxes=new Map(),global=[];
- const add=(c,mat,lo,hi)=>{
-  if(lo.some((v,i)=>v<0||hi[i]>16||hi[i]<=v))throw Error("illegal local box");
-  const key=[c.x,c.y,c.z].join();if(!boxes.has(key))boxes.set(key,[]);
-  boxes.get(key).push({mat,lo,hi});
-  global.push([...lo.map((v,i)=>v+[c.x,c.y,c.z][i]*16),...hi.map((v,i)=>v+[c.x,c.y,c.z][i]*16)]);
+ const shapes=new Map(),voxels=[];
+ const add=(c,material,from,to)=>{
+  if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))throw Error("Non-local model element");
+  const key=[c.x,c.y,c.z].join(",");
+  if(!shapes.has(key))shapes.set(key,[]);
+  shapes.get(key).push({material,from,to});
+  voxels.push([...from.map((v,i)=>v+[c.x,c.y,c.z][i]*16),...to.map((v,i)=>v+[c.x,c.y,c.z][i]*16)]);
  };
  for(const c of cells) {
-  const {x,y,z}=c;
-  if(y===0&&c.c==="S"){
-   // Full-height support under the side walls. The previous 12px footing
-   // left a visible unsupported 4px gap below all upper reservoir walls.
-   add(c,"stone",[0,0,0],[16,14,16]);
-   add(c,"bronze",[0,14,0],[16,16,16]);
-  }else if(y===0&&c.c==="C"){
-   add(c,"stone",[0,0,0],[16,13,16]);
-   add(c,"bronze",[1,13,1],[15,16,15]);
-  }else if(y===1&&c.c==="S"){
-   if(z===-4) {add(c,"stone",[0,0,0],[16,14,4]);add(c,"bronze",[0,14,0],[16,16,4]);}
-   else if(x===-2){add(c,"stone",[12,0,0],[16,14,16]);add(c,"bronze",[12,14,0],[16,16,16]);}
-   else if(x===2){add(c,"stone",[0,0,0],[4,14,16]);add(c,"bronze",[0,14,0],[4,16,16]);}
-   else throw Error("bad wall");
-  }else if(y===2&&c.c==="W"){
-   const xx=x===-2?[12,16]:[0,4],zz=z===-4?[0,4]:[12,16];
-   add(c,"wood",[xx[0],0,zz[0]],[xx[1],13,zz[1]]);
-   add(c,"bronze",[xx[0],13,zz[0]],[xx[1],15,zz[1]]);
-  }else if(y===1&&c.c==="A"&&Math.abs(x)<=1&&(z===-2||z===-1)){
-   const lo=z===-2?12:14,top=z===-2?9:14;
-   add(c,"stone",[0,0,lo],[16,top,16]);
-   add(c,"bronze",[0,top,lo],[16,top+2,16]);
+  const {x,y,z,k}=c;
+  if(y===0&&(k==="S"||k==="C")){
+   add(c,"refractory",[0,0,0],[16,13,16]);     // Dense supporting plinth
+   add(c,"lining",[0,13,0],[16,15,16]);         // Waterproof inset tiled pan
+   if(z===0) {                                  // Front service bench
+    add(c,"riveted_iron",[1,15,1],[15,16,15]);
+   }else if(x===-1&&(z===-3||z===-2)){
+    add(c,"sludge",[1,15,1],[15,16,15]);       // Real sediment pocket
+   }else{
+    add(c,"lining",[1,15,1],[15,16,15]);
+   }
+   if(k==="C"){
+    add(c,"bronze",[2,15,12],[14,16,16]);      // Controller fascia at front
+   }
+  }else if(y===1&&k==="S"){
+   // Cast refractory vessel with thin glazed internal liner and separately
+   // edged metal rim. Each face has native 16 px/m UVs, no oversized quads.
+   if(z===-4){
+    add(c,"refractory",[0,0,0],[16,13,5]);
+    add(c,"lining",[0,2,5],[16,13,6]);
+    add(c,"bronze",[0,13,0],[16,16,8]);
+    if(x===0){ // Rear feed valve visually continues into the dirty chamber.
+     add(c,"riveted_iron",[5,12,8],[11,15,16]);
+     add(c,"bronze",[4,11,13],[12,16,16]);
+     // Physical vertical riser: the visible inlet MUST connect to its
+     // REAL ground-level Fluid Input, not float over the rear wall.
+     add(c,"riveted_iron",[6,0,9],[10,13,13]);
+     add(c,"bronze",[4,0,7],[12,2,15]);
+    }
+   }else if(x===-2){
+    add(c,"refractory",[11,0,0],[16,13,16]);
+    add(c,"lining",[10,3,0],[11,13,16]);
+    add(c,"bronze",[8,13,0],[16,16,16]);
+    if(z===-2) add(c,"riveted_iron",[10,4,3],[11,12,13]);
+   }else if(x===2){
+    add(c,"refractory",[0,0,0],[5,13,16]);
+    add(c,"lining",[5,3,0],[6,13,16]);
+    add(c,"bronze",[0,13,0],[8,16,16]);
+    if(z===-1) { // Integrated clean-water crossover on east wall
+     add(c,"riveted_iron",[6,10,5],[12,15,11]);
+     add(c,"bronze",[10,9,4],[14,16,12]);
+    }
+    if(z===0) {  // Downturned metal sleeve above real outer EAST fluid port
+     add(c,"riveted_iron",[1,0,5],[5,11,11]);
+     add(c,"bronze",[1,8,3],[7,15,13]);
+    }
+   }else throw Error("Invalid side wall "+[x,y,z]);
+  }else if(y===1&&k==="A"){
+   if(x===0&&z>=-3&&z<=-1){
+    // Raised longitudinal weir: both reservoirs have similar visible area.
+    add(c,"refractory",[7,0,0],[9,11,16]);
+    add(c,"lining",[6,7,0],[7,12,16]);
+    add(c,"lining",[9,7,0],[10,12,16]);
+    add(c,"bronze",[5,12,0],[11,14,16]);
+    if(z===-3) {
+     add(c,"riveted_iron",[5,13,0],[11,16,9]);
+     add(c,"bronze",[1,12,7],[8,16,14]); // Feed mouth points to dirty bay
+    }
+   }
+   if(x===-1&&z===-3){
+    // Settling grate over the dirty chamber's sediment collection sump.
+    add(c,"riveted_iron",[1,5,2],[15,6,14]);
+    add(c,"grate",[2,6,3],[14,7,13]);
+   }
+   if((x===-1||x===1)&&z===-1){
+    // Front stop-weir keeps real fluid behind the service modules.
+    add(c,"refractory",[0,0,13],[16,10,16]);
+    add(c,"bronze",[0,10,12],[16,12,16]);
+    if(x===1){
+     add(c,"riveted_iron",[11,10,5],[16,15,11]);
+     add(c,"bronze",[12,9,4],[16,12,12]);
+    }
+   }
+  }else if(y===2&&k==="R"){
+   // Four cast-bronze corner stanchions replace the unrelated timber posts.
+   const xx=x===-2?[11,16]:[0,5],zz=z===-4?[0,5]:[11,16];
+   add(c,"riveted_iron",[xx[0],0,zz[0]],[xx[1],13,zz[1]]);
+   add(c,"bronze",[xx[0],0,zz[0]],[xx[1],3,zz[1]]);
+   add(c,"bronze",[xx[0],12,zz[0]],[xx[1],16,zz[1]]);
+  }else if(y===2&&k==="A"&&z===-1&&Math.abs(x)<=1){
+   // Elevated service catwalk; below it the screen + treatment pools stay open.
+   add(c,"riveted_iron",[0,0,3],[16,1,13]);
+   add(c,"grate",[0,1,4],[16,2,12]);
+   if(x===-1)add(c,"bronze",[0,2,3],[2,9,13]);
+   if(x===1)add(c,"bronze",[14,2,3],[16,9,13]);
   }
  }
- const hosts=cells.filter(c=>c.c!=="A"||boxes.has([c.x,c.y,c.z].join()));
- const anchors=cells.filter(c=>c.c==="A"&&boxes.has([c.x,c.y,c.z].join())).map(c=>[c.x,c.y,c.z]);
- if(anchors.length!==6)throw Error("Expected six real baffle/front-lip AIR anchors");
- files.set(d+"multiblock_voxels/"+id+".json",JSON.stringify({format:1,unit:"model_pixels",collision:global,selection:global,zones:{}},null,2)+"\n");
+ const renderAnchors=cells.filter(c=>c.k==="A"&&shapes.has([c.x,c.y,c.z].join(",")))
+  .map(c=>[c.x,c.y,c.z]);
+ if(renderAnchors.length!==9)throw Error("Expected 9 actual AIR proxy hosts, got "+renderAnchors.length);
+ if(voxels.length>512)throw Error("Voxel collision too complex: "+voxels.length);
+ // Ensure no decorative or collision volume overlaps genuine port/module cells.
+ for(const letter of ["I","P","O"]){
+  const c=cells.find(v=>v.k===letter);
+  for(const b of voxels) if([0,1,2].every(i=>b[i]<(i===0?c.x+1:i===1?c.y+1:c.z+1)*16 &&
+         b[i+3]>(i===0?c.x:i===1?c.y:c.z)*16))throw Error("Overlapping real "+letter+" module");
+ }
+ files.set(d+"multiblock_voxels/"+id+".json",JSON.stringify({format:1,unit:"model_pixels",collision:voxels,selection:voxels,zones:{}},null,2)+"\n");
+ const dirs=["south","west","north","east"];
  const rotate=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
- const point=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
- const faces=(lo,hi,mat)=>{
-   const dx=hi[0]-lo[0],dy=hi[1]-lo[1],dz=hi[2]-lo[2];
-   const p=(x,y)=>({texture:"#"+mat,uv:[0,0,x,y]});
-   return {north:p(dx,dy),south:p(dx,dy),east:p(dz,dy),west:p(dz,dy),up:p(dx,dz),down:p(dx,dz)};
+ const rotatePoint=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
+ const faces=(from,to,mat)=>{
+  const dx=to[0]-from[0],dy=to[1]-from[1],dz=to[2]-from[2];
+  const f=(u,v)=>({texture:"#"+mat,uv:[0,0,u,v]});
+  return {north:f(dx,dy),south:f(dx,dy),east:f(dz,dy),west:f(dz,dy),up:f(dx,dz),down:f(dx,dz)};
  };
- const states={variants:{}};
- for(const f of ["south","west","north","east"]) {
-  const rc=cells.map(c=>({...c,r:rotate(c.x,c.z,f)})),minX=Math.min(...rc.map(c=>c.r[0])),minZ=Math.min(...rc.map(c=>c.r[1]));
-  const l=Array.from({length:3},()=>Array.from({length:5},()=>Array(5).fill("")));
-  for(const c of rc)l[c.y][c.r[1]-minZ][c.r[0]-minX]=c.c;
-  const bp={name:id+"_"+f,structure:{dimensions:[5,3,5],layout:Object.fromEntries(l.map((a,y)=>["layer"+(y+1),a])),blocks:types},
-   settings:{replacewhenformed:"multiblock/"+id+"_"+f,inventory:true,power:false,fuel:false,fluid:true,inputs:[],outputs:[],
-    render_air_anchors:anchors.map(([x,y,z])=>{const [rx,rz]=rotate(x,z,f);return [rx,y,rz]}),voxel_profile:"magneticraft2:"+id}};
-  files.set(d+"multiblocks/"+id+"_"+f+".json",JSON.stringify(bp,null,2)+"\n");
-  for(const c of hosts){
-   if("IPO".includes(c.c))continue;
-   const key=[c.x,c.y,c.z].join(),elements=[];
-   for(const b of boxes.get(key)||[]){
-    const lo=b.lo.map((v,i)=>v+[c.x,c.y,c.z][i]*16),hi=b.hi.map((v,i)=>v+[c.x,c.y,c.z][i]*16);
-    const corners=[[lo[0],lo[2]],[lo[0],hi[2]],[hi[0],lo[2]],[hi[0],hi[2]]].map(q=>point(q[0],q[1],f));
-    const [rx,rz]=rotate(c.x,c.z,f);
-    const from=[Math.min(...corners.map(p=>p[0]))-rx*16,b.lo[1],Math.min(...corners.map(p=>p[1]))-rz*16];
-    const to=[Math.max(...corners.map(p=>p[0]))-rx*16,b.hi[1],Math.max(...corners.map(p=>p[1]))-rz*16];
-    if(from.some((v,i)=>v<-.001||to[i]>16.001||v>=to[i]))throw Error("Bad rotated box at "+key+" / "+f);
-    elements.push({from,to,faces:faces(from,to,b.mat)});
+ const blockstates={variants:{}};
+ for(const facing of dirs){
+  const rotated=cells.map(c=>({...c,rot:rotate(c.x,c.z,facing)}));
+  const x0=Math.min(...rotated.map(c=>c.rot[0])),z0=Math.min(...rotated.map(c=>c.rot[1]));
+  const layout=Array.from({length:3},()=>Array.from({length:5},()=>Array(5).fill("")));
+  for(const c of rotated)layout[c.y][c.rot[1]-z0][c.rot[0]-x0]=c.k;
+  const blueprint={name:id+"_"+facing,structure:{
+    dimensions:[5,3,5],layout:Object.fromEntries(layout.map((v,i)=>["layer"+(i+1),v])),blocks:types
+   },settings:{replacewhenformed:"multiblock/"+id+"_"+facing,inventory:true,power:false,fuel:false,fluid:true,inputs:[],outputs:[],
+    render_air_anchors:renderAnchors.map(([x,y,z])=>{const [X,Z]=rotate(x,z,facing);return [X,y,Z]}),voxel_profile:"magneticraft2:"+id}};
+  files.set(d+"multiblocks/"+id+"_"+facing+".json",JSON.stringify(blueprint,null,2)+"\n");
+  for(const c of cells){
+   const local=shapes.get([c.x,c.y,c.z].join(","));
+   if(!local?.length)continue;
+   const [rx,rz]=rotate(c.x,c.z,facing),elements=[];
+   for(const box of local){
+    const pMin=box.from.map((v,i)=>v+[c.x,c.y,c.z][i]*16);
+    const pMax=box.to.map((v,i)=>v+[c.x,c.y,c.z][i]*16);
+    const corners=[[pMin[0],pMin[2]],[pMin[0],pMax[2]],[pMax[0],pMin[2]],[pMax[0],pMax[2]]]
+      .map(([x,z])=>rotatePoint(x,z,facing));
+    const from=[Math.min(...corners.map(p=>p[0]))-rx*16,box.from[1],
+                Math.min(...corners.map(p=>p[1]))-rz*16];
+    const to=[Math.max(...corners.map(p=>p[0]))-rx*16,box.to[1],
+              Math.max(...corners.map(p=>p[1]))-rz*16];
+    if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))throw Error("Invalid facing geometry "+facing+" "+[c.x,c.y,c.z]);
+    elements.push({from,to,faces:faces(from,to,box.material)});
    }
-   if(!elements.length)throw Error("Non-module host missing static model "+key);
-   const [rx,rz]=rotate(c.x,c.z,f);
-   files.set(a+"models/multiblock/"+id+"_"+f+"/part_"+rx+"_"+c.y+"_"+rz+".json",
+   files.set(a+"models/multiblock/"+id+"_"+facing+"/part_"+rx+"_"+c.y+"_"+rz+".json",
      JSON.stringify({parent:"minecraft:block/block",ambientocclusion:false,textures:tex,elements},null,2)+"\n");
   }
-  const yaw={south:0,west:90,north:180,east:270}[f];
-  states.variants["facing="+f+",is_formed=false"]={model:"magneticraft2:block/"+id+"_controller",y:yaw};
-  states.variants["facing="+f+",is_formed=true"]={model:"magneticraft2:multiblock/"+id+"_"+f+"/part_0_0_0"};
+  const yaw={south:0,west:90,north:180,east:270}[facing];
+  blockstates.variants["facing="+facing+",is_formed=false"]={model:"magneticraft2:block/"+id+"_controller",y:yaw};
+  blockstates.variants["facing="+facing+",is_formed=true"]={model:"magneticraft2:multiblock/"+id+"_"+facing+"/part_0_0_0"};
  }
- files.set(a+"blockstates/"+id+".json",JSON.stringify(states,null,2)+"\n");
- files.set(a+"models/block/"+id+"_controller.json",JSON.stringify({parent:"minecraft:block/cube_all",textures:{all:"magneticraft2:block/material/bronze_cast"}},null,2)+"\n");
+ files.set(a+"blockstates/"+id+".json",JSON.stringify(blockstates,null,2)+"\n");
+ files.set(a+"models/block/"+id+"_controller.json",
+  JSON.stringify({parent:"minecraft:block/cube_all",textures:{all:tex.riveted_iron,particle:tex.bronze}},null,2)+"\n");
  files.set(a+"models/item/"+id+".json",JSON.stringify({parent:"magneticraft2:block/"+id+"_controller"},null,2)+"\n");
  const lumps=[[2,5,3,7,8,8],[7,4,5,13,9,12],[4,5,10,10,7,14]];
  files.set(a+"models/item/settled_sediment.json",JSON.stringify({
-  parent:"minecraft:block/block",textures:{mud:"minecraft:block/mud",grit:"minecraft:block/gravel",particle:"minecraft:block/mud"},
-  elements:lumps.map((b,i)=>{const lo=b.slice(0,3),hi=b.slice(3);return {from:lo,to:hi,faces:faces(lo,hi,i===1?"grit":"mud")}}),
+  parent:"minecraft:block/block",textures:{mud:tex.sludge,grit:tex.refractory,particle:tex.sludge},
+  elements:lumps.map((bbox,i)=>{const from=bbox.slice(0,3),to=bbox.slice(3);
+    return {from,to,faces:faces(from,to,i===1?"grit":"mud")};}),
   display:{ground:{scale:[0.7,0.7,0.7]},gui:{rotation:[25,225,0],scale:[0.85,0.85,0.85]}}
  },null,2)+"\n");
- const crafting={
-  type:"minecraft:crafting_shaped",pattern:["SBS","PCP","SFS"],
+ const recipes=[
+ [id,{type:"minecraft:crafting_shaped",pattern:["SBS","PCP","SFS"],
   key:{S:{item:"minecraft:stone_bricks"},B:{item:"magneticraft2:bronze_ingot"},P:{item:"magneticraft2:copper_plate"},
-       C:{item:"magneticraft2:copper_fluid_tank"},F:{item:"magneticraft2:multiblock_fluid_output"}},
-  result:{item:"magneticraft2:"+id}};
- files.set(d+"recipes/"+id+".json",JSON.stringify(crafting,null,2)+"\n");
- files.set(d+"recipes/settling_dirty_water.json",JSON.stringify({
-  type:"magneticraft2:multiblock_processing",machine:"magneticraft2:"+id,
-  fluid_input:{fluid:"magneticraft2:dirty_water",amount:600},
-  fluid_output:{fluid:"minecraft:water",amount:480},
-  output:{item:"magneticraft2:settled_sediment",count:1},process_time:240
+   C:{item:"magneticraft2:copper_fluid_tank"},F:{item:"magneticraft2:multiblock_fluid_output"}},result:{item:"magneticraft2:"+id}}],
+ ["settling_dirty_water",{type:"magneticraft2:multiblock_processing",machine:"magneticraft2:"+id,
+  fluid_input:{fluid:"magneticraft2:dirty_water",amount:600},fluid_output:{fluid:"minecraft:water",amount:480},
+  output:{item:"magneticraft2:settled_sediment",count:1},process_time:240}],
+ ["settled_sediment_to_clay",{type:"minecraft:crafting_shaped",pattern:["SS","SS"],key:{S:{item:"magneticraft2:settled_sediment"}},
+  result:{item:"minecraft:clay_ball",count:1}}]
+ ];
+ for(const [file,recipe] of recipes)files.set(d+"recipes/"+file+".json",JSON.stringify(recipe,null,2)+"\n");
+ files.set(d+"loot_tables/blocks/"+id+".json",JSON.stringify({
+  type:"minecraft:block",pools:[{rolls:1,entries:[{type:"minecraft:item",name:"magneticraft2:"+id}],
+  conditions:[{condition:"minecraft:survives_explosion"}]}]
  },null,2)+"\n");
- files.set(d+"recipes/settled_sediment_to_clay.json",JSON.stringify({
-  type:"minecraft:crafting_shaped",pattern:["SS","SS"],key:{S:{item:"magneticraft2:settled_sediment"}},
-  result:{item:"minecraft:clay_ball",count:1}
- },null,2)+"\n");
- files.set(d+"loot_tables/blocks/"+id+".json",JSON.stringify({type:"minecraft:block",pools:[{rolls:1,
-  entries:[{type:"minecraft:item",name:"magneticraft2:"+id}],conditions:[{condition:"minecraft:survives_explosion"}]}]},null,2)+"\n");
  return files;
 }
 const args=new Set(process.argv.slice(2));
@@ -123,7 +203,8 @@ for(const [relative,content] of files){
    console.error("Outdated: "+relative);mismatches++;
   }
  }else{
-  fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,content);
+  fs.mkdirSync(path.dirname(file),{recursive:true});
+  fs.writeFileSync(file,content);
  }
 }
 console.log("Water Settling Tank source-generated assets:",files.size);

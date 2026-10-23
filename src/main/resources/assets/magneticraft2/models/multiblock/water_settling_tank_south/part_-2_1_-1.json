@@ -2,76 +2,78 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "bronze": "magneticraft2:block/material/bronze_cast",
-    "wood": "magneticraft2:block/material/machine_timber",
-    "iron": "minecraft:block/iron_block",
-    "particle": "minecraft:block/stone_bricks"
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/refractory"
   },
   "elements": [
     {
       "from": [
-        12,
+        11,
         0,
         0
       ],
       "to": [
         16,
-        14,
+        13,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            14
+            5,
+            13
           ]
         },
         "south": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
-            14
+            5,
+            13
           ]
         },
         "east": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "west": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
             16,
-            14
+            13
           ]
         },
         "up": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
+            5,
             16
           ]
         },
         "down": {
-          "texture": "#stone",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            4,
+            5,
             16
           ]
         }
@@ -79,8 +81,76 @@
     },
     {
       "from": [
-        12,
-        14,
+        10,
+        3,
+        0
+      ],
+      "to": [
+        11,
+        13,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "west": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            16,
+            10
+          ]
+        },
+        "up": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        13,
         0
       ],
       "to": [
@@ -94,8 +164,8 @@
           "uv": [
             0,
             0,
-            4,
-            2
+            8,
+            3
           ]
         },
         "south": {
@@ -103,8 +173,8 @@
           "uv": [
             0,
             0,
-            4,
-            2
+            8,
+            3
           ]
         },
         "east": {
@@ -113,7 +183,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "west": {
@@ -122,7 +192,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "up": {
@@ -130,7 +200,7 @@
           "uv": [
             0,
             0,
-            4,
+            8,
             16
           ]
         },
@@ -139,7 +209,7 @@
           "uv": [
             0,
             0,
-            4,
+            8,
             16
           ]
         }

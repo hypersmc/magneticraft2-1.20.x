@@ -127,3 +127,20 @@ The existing plan's "still planned" references document the earlier
 milestone and are superseded for this specific machine. Gradle and
 in-game visuals remain unverified; the next proposed industrial
 multiblock is the Charcoal Retort.
+
+
+### 2026-10-23 — Water Settling Tank visual redesign V2
+
+User's in-game video rejected the previous large trough, opaque muddy
+surface, narrow clean channel, generic wood supports and unintegrated ports.
+The replacement keeps all processing amounts and stored inventory behavior,
+but changes the model and four formation blueprints to equal side-by-side
+dirty/clean bays, a raised ceramic-lined bronze divider, a silt-trap grate,
+inlet and outlet fittings, a metal service bridge and four Cut Copper upper
+supports. It introduces six new native-density 16x16 PNG textures, with
+192 per-facing static cell models overall.
+
+**Compatibility:** previously formed tanks must be rebuilt; Oak Planks are
+no longer the four upper supports. This is still draft PR #11 with Gradle
+compilation and real-client approval outstanding. See
+[Water Settling Tank V2](water-settling-tank-contract.md).
