@@ -55,6 +55,19 @@ public final class RotaryOreClassifierRenderer
     private static final double OUTPUT_Z = 1.5D;
     private static final int MAX_DRUM_FRAGMENTS = 2;
 
+    // Crushed ore's item models already have a GROUND-scale of 0.5.
+    // The former 0.22/0.12 multiplier made chunks nearly invisible in
+    // the 22px-diameter screen. Visual sizes do not alter recipe yields.
+    private static final float INPUT_ITEM_SCALE = 0.68F;
+    private static final float OUTPUT_ITEM_SCALE = 0.68F;
+    private static final float FEED_ITEM_SCALE = 0.72F;
+    private static final float DRUM_ITEM_SCALE = 0.82F;
+    private static final float FINE_ITEM_SCALE = 0.38F;
+    private static final float COARSE_ITEM_SCALE = 0.72F;
+    // The drum is centered around Y=2.0 and the inner lower mesh is
+    // ~Y=1.34. Keep visible chunks INSIDE at Y~1.50 instead of 1.04.
+    private static final double SCREEN_ORE_REST_Y = 1.50D;
+
     public RotaryOreClassifierRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
@@ -119,7 +132,7 @@ public final class RotaryOreClassifierRenderer
                 if (input.getCount() > classifier.getVisualBatchInputCount()) {
                     drawPortStack(itemRenderer, input, inputModel, pose, buffers,
                             packedLight, packedOverlay,
-                            INPUT_X, INPUT_Y, INPUT_Z, 0.33F);
+                            INPUT_X, INPUT_Y, INPUT_Z, INPUT_ITEM_SCALE);
                 }
             } else {
                 // No active batch (or no progress yet): the workpiece is on
@@ -127,7 +140,7 @@ public final class RotaryOreClassifierRenderer
                 // over a noninteractive model-only hopper.
                 drawPortStack(itemRenderer, input, inputModel, pose, buffers,
                         packedLight, packedOverlay,
-                        INPUT_X, INPUT_Y, INPUT_Z, 0.33F);
+                        INPUT_X, INPUT_Y, INPUT_Z, INPUT_ITEM_SCALE);
             }
         }
 
@@ -137,13 +150,13 @@ public final class RotaryOreClassifierRenderer
             drawPortStack(itemRenderer, fines, itemRenderer.getModel(
                             fines, classifier.getLevel(), null, 420),
                     pose, buffers, packedLight, packedOverlay,
-                    FINE_X, OUTPUT_Y, OUTPUT_Z, 0.31F);
+                    FINE_X, OUTPUT_Y, OUTPUT_Z, OUTPUT_ITEM_SCALE);
         }
         if (!coarse.isEmpty()) {
             drawPortStack(itemRenderer, coarse, itemRenderer.getModel(
                             coarse, classifier.getLevel(), null, 420),
                     pose, buffers, packedLight, packedOverlay,
-                    COARSE_X, OUTPUT_Y, OUTPUT_Z, 0.31F);
+                    COARSE_X, OUTPUT_Y, OUTPUT_Z, OUTPUT_ITEM_SCALE);
         }
         pose.popPose();
     }
@@ -177,10 +190,10 @@ public final class RotaryOreClassifierRenderer
             // Travel diagonally from the genuine rear-left Input module
             // into the open rear mouth, NOT through the drive bearing.
             double x = Mth.lerp(t, INPUT_X, 0.48D);
-            double y = Mth.lerp(t, INPUT_Y, 1.16D);
+            double y = Mth.lerp(t, INPUT_Y, SCREEN_ORE_REST_Y + 0.04D);
             double z = Mth.lerp(t, INPUT_Z, -1.69D);
             drawItem(renderer, input, model, pose, buffers, light, overlay,
-                    x, y, z, 0.29F, 0F);
+                    x, y, z, FEED_ITEM_SCALE, 0F);
         } else {
             float advance = Mth.clamp((progress - 0.20F) / 0.76F, 0F, 1F);
             double radians = Math.toRadians(angle);
@@ -190,12 +203,14 @@ public final class RotaryOreClassifierRenderer
                     continue;
                 }
                 float travel = smoothstep((advance - delay) / (1F - delay));
-                double x = 0.5D + 0.16D * Math.sin(radians * 0.45D + i * 2.3D);
-                double y = 1.04D + 0.075D * Math.abs(
+                // Stay within the drum's ~0.66-block inner radius, but
+                // above the lower screening mesh, not underneath it.
+                double x = 0.5D + 0.15D * Math.sin(radians * 0.45D + i * 2.3D);
+                double y = SCREEN_ORE_REST_Y + 0.045D * Math.abs(
                         Math.cos(radians * 0.55D + i * 1.7D));
                 double z = -1.71D + 2.28D * travel;
                 drawItem(renderer, input, model, pose, buffers, light, overlay,
-                        x, y, z, 0.22F, angle * 0.13F + i * 55F);
+                        x, y, z, DRUM_ITEM_SCALE - i * 0.055F, angle * 0.13F + i * 55F);
             }
         }
 
@@ -205,11 +220,11 @@ public final class RotaryOreClassifierRenderer
         if (progress >= 0.36F && progress < 0.92F && angle != 0F) {
             float cycle = (progress - 0.36F) * 7.0F;
             float fall = cycle - (float) Math.floor(cycle);
-            double x = 0.38D;
-            double y = 1.03D - 0.42D * smoothstep(fall);
+            double x = 0.39D;
+            double y = SCREEN_ORE_REST_Y - 0.85D * smoothstep(fall);
             double z = -1.36D + (progress - 0.36F) * 2.3D;
             drawItem(renderer, input, model, pose, buffers, light, overlay,
-                    x, y, z, 0.12F, angle * 0.10F);
+                    x, y, z, FINE_ITEM_SCALE, angle * 0.10F);
         }
 
         if (progress >= 0.80F) {
@@ -217,8 +232,8 @@ public final class RotaryOreClassifierRenderer
             // tray stays empty until the controller completes this batch.
             float t = smoothstep((progress - 0.80F) / 0.20F);
             drawItem(renderer, input, model, pose, buffers, light, overlay,
-                    0.71D + 0.12D * t, 1.09D, 0.34D + 0.48D * t,
-                    0.18F, angle * 0.11F);
+                    0.65D + 0.09D * t, SCREEN_ORE_REST_Y + 0.02D,
+                    0.34D + 0.48D * t, COARSE_ITEM_SCALE, angle * 0.11F);
         }
     }
 
@@ -236,11 +251,11 @@ public final class RotaryOreClassifierRenderer
             BakedModel model, PoseStack pose, MultiBufferSource buffers,
             int light, int overlay, double x, double y, double z, float scale) {
         drawItem(renderer, stack, model, pose, buffers, light, overlay,
-                x - 0.035D, y, z + 0.025D, scale, 12F);
+                x - 0.14D, y, z + 0.10D, scale, 12F);
         if (stack.getCount() > 1) {
             drawItem(renderer, stack, model, pose, buffers, light, overlay,
-                    x + 0.105D, y + 0.012D, z - 0.080D,
-                    scale * 0.79F, -21F);
+                    x + 0.14D, y + 0.015D, z - 0.09D,
+                    scale * 0.88F, -21F);
         }
     }
 

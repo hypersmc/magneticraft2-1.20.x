@@ -251,7 +251,7 @@ assert.ok(renderer.includes('classifier.isProcessing() ? angle : 0F'),
 assert.ok(renderer.includes('getVisualProcessProgress(partialTicks)'),
  'Workpiece flow must use server-synced batch progress');
 for(const fragment of ['progress < 0.20F','progress >= 0.36F','progress >= 0.80F',
-                       '0.42D * smoothstep(fall)','drawScreeningOre',
+                       '0.85D * smoothstep(fall)','drawScreeningOre',
                        'ItemDisplayContext.GROUND']){
  assert.ok(renderer.includes(fragment),'Missing meaningful screen/process phase: '+fragment);
 }
@@ -259,6 +259,53 @@ assert.ok(!renderer.includes('getProcessingPrimaryPreview()')&&
           !renderer.includes('getProcessingByproductPreview()'),
  'Do not show uncommitted recipe outputs on item ports');
 assert.ok(!renderer.includes('addParticle('),'Particles cannot be emitted every render frame');
+// The three crushed ores have a built-in half-scale GROUND transform.
+// Very small secondary render multipliers used to make them microscopic.
+// All ore must now be big enough to SEE while staying inside the 22px drum.
+for(const ore of ['chalcocite','cassiterite','quartz']){
+ const itemModel=json(art+'models/item/crushed_'+ore+'.json');
+ assert.deepEqual(itemModel.display.ground.scale,[0.5,0.5,0.5],
+  'Update this scale contract if the ore item model transform changes');
+}
+const visualScale=name=>{
+ const rx=new RegExp('\\b'+name+'\\s*=\\s*([0-9]+(?:\\.[0-9]+)?)F;');
+ const m=renderer.match(rx);
+ assert.ok(m,'Missing classifier visual scale constant '+name);
+ return Number(m[1]);
+};
+const drumSize=visualScale('DRUM_ITEM_SCALE');
+const fineSize=visualScale('FINE_ITEM_SCALE');
+const feedSize=visualScale('FEED_ITEM_SCALE');
+const coarseSize=visualScale('COARSE_ITEM_SCALE');
+const inputSize=visualScale('INPUT_ITEM_SCALE');
+const outputSize=visualScale('OUTPUT_ITEM_SCALE');
+assert.ok(drumSize>=0.75&&drumSize<=0.9,'Main pieces should be visually substantial without clipping');
+assert.ok(fineSize>=0.3&&fineSize<drumSize*0.55,'Screened fragments should be smaller, not microscopic');
+assert.ok(feedSize>=0.65&&coarseSize>=0.65,'Material must not shrink during intake/discharge');
+assert.ok(inputSize>=0.6&&outputSize>=0.6,'Actual physical input/output displays should be legible');
+const restY=Number(renderer.match(/SCREEN_ORE_REST_Y\s*=\s*([0-9.]+)D;/)?.[1]);
+assert.ok(Number.isFinite(restY),'Missing roller-rest height constant');
+// Drum centre: BER translates model to Y=1.5, local drum pivot at 8/16.
+// Its inner radius is specified by frame-design. Validate the actual
+// coarse and main chunk bounds with the crushed item model's 10px width.
+const drumAxisY=1.5+0.5;
+const innerRadius=(d.drum.facetOffset-d.drum.skinThickness/2)/16;
+const groundScale=0.5;
+const oreHalfWidth=(10/16)*groundScale/2;
+assert.ok(restY>=1.4&&restY<=1.65,
+ 'Pieces must ride INSIDE lower screen, not below its underside');
+const mainReach=Math.hypot(0.15,drumAxisY-restY)+drumSize*oreHalfWidth;
+const coarseReach=Math.hypot(0.24,drumAxisY-(restY+0.02))+coarseSize*oreHalfWidth;
+assert.ok(mainReach<innerRadius,'Large tumbling chunk now crosses the mesh');
+assert.ok(coarseReach<innerRadius,'Larger coarse-return chunk crosses the outlet rim');
+assert.ok(renderer.includes('DRUM_ITEM_SCALE - i * 0.055F')&&
+          renderer.includes('FINE_ITEM_SCALE')&&
+          renderer.includes('COARSE_ITEM_SCALE')&&
+          renderer.includes('SCREEN_ORE_REST_Y + 0.045D'),
+ 'Use named visual sizes and the corrected lower-inside rolling path');
+assert.ok(renderer.includes('x - 0.14D')&&renderer.includes('x + 0.14D'),
+ 'Multiple finished items need distinct positions on their real output trays');
+
 const client=text(java+'client/Clientsetup.java');
 assert.ok(client.includes('ROTARY_ORE_CLASSIFIER_BE')&&client.includes('rotary_ore_classifier_drum_'),'Six registered BER models required');
 const controller=text(java+'common/blockentity/stage/bronze/RotaryOreClassifierBlockEntity.java');
