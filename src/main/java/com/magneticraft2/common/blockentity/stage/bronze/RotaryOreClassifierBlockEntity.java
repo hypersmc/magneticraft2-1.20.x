@@ -22,6 +22,11 @@ import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
@@ -35,6 +40,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,6 +49,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 /**
  * Compact JSON-formed Rotary Ore Classifier with Gear V2 power, two conserved output fractions and a serviceable rotating screen.
@@ -93,6 +100,10 @@ public class RotaryOreClassifierBlockEntity
     // progress client-side between start/stop sync points, matching the Washer.
     private double clientProcessSyncTime = Double.NaN;
     private float clientProcessSyncProgress = 0.0F;
+    // Client-only display cache. Do not scan every datapack recipe on every
+    // frame merely to decide whether a queued stack remains on the input.
+    @Nullable private ResourceLocation visualCountRecipe;
+    private int visualCountForRecipe = 1;
 
     private ItemStack lastSyncedInput =
             ItemStack.EMPTY;
@@ -120,6 +131,19 @@ public class RotaryOreClassifierBlockEntity
     public boolean isProcessing() {
         return processing;
     }
+    
+    /**
+     * Visual-only state. Stalled batches still have ore inside the screen:
+     * do not teleport their workpieces back to the input when power or an
+     * output is blocked. The server alone owns and changes the inventory.
+     */
+    public boolean hasVisibleWorkpiece() {
+        return formed
+                && activeRecipeId != null
+                && processTime > 0
+                && !getInputStack().isEmpty();
+    }
+
     public boolean needsMaintenance() {
         return classifierScreen.needsAttention();
     }
@@ -155,6 +179,18 @@ public class RotaryOreClassifierBlockEntity
     public int getActiveInputCount() {
         MultiblockProcessingRecipe recipe = getMatchingRecipe();
         return recipe == null ? 1 : recipe.getInputCount();
+    }
+
+    /** One recipe lookup per active batch type, not one per rendered frame. */
+    public int getVisualBatchInputCount() {
+        if (activeRecipeId == null) {
+            return 1;
+        }
+        if (!activeRecipeId.equals(visualCountRecipe)) {
+            visualCountRecipe = activeRecipeId;
+            visualCountForRecipe = getActiveInputCount();
+        }
+        return visualCountForRecipe;
     }
 
     public ItemStack getProcessingPrimaryPreview() {
@@ -228,6 +264,91 @@ public class RotaryOreClassifierBlockEntity
                         predicted
                 )
         );
+    }
+
+    /**
+     * Lightweight effects for a DRY, mechanically-powered sieve.
+     * Runs only on the client and at most once per ten ticks per machine.
+     * No particles/sounds when idle, stalled, unformed or too far away.
+     */
+    public static <E extends BlockEntity> void clientTick(
+            Level level,
+            BlockPos pos,
+            BlockState state,
+            E blockEntity) {
+        if (!level.isClientSide
+                || !(blockEntity instanceof RotaryOreClassifierBlockEntity classifier)
+                || !classifier.formed
+                || !classifier.processing
+                || classifier.getInputStack().isEmpty()) {
+            return;
+        }
+
+        long clock = level.getGameTime();
+        int stagger = Math.floorMod(pos.hashCode(), 40);
+        boolean particleTick = (clock + stagger) % 10L == 0L;
+        boolean soundTick = (clock + stagger) % 40L == 0L;
+        if ((!particleTick && !soundTick)
+                || level.getNearestPlayer(
+                    pos.getX() + 0.5D, pos.getY() + 1.5D,
+                    pos.getZ() + 0.5D, 18.0D, false) == null) {
+            return;
+        }
+
+        float progress = classifier.getVisualProcessProgress(0.0F);
+        if (progress < 0.18F || progress > 0.96F) {
+            return;
+        }
+
+        if (particleTick) {
+            // Fine chips pass through the lower portion of the rotating mesh
+            // into the stationary collection pan. No smoke/sparks/water.
+            double localX = 0.5D + (level.random.nextDouble() - 0.5D) * 0.36D;
+            double localZ = -1.65D + progress * 2.05D
+                    + (level.random.nextDouble() - 0.5D) * 0.35D;
+            double[] worldXZ = classifier.worldParticleXZ(localX, localZ);
+            if (level.random.nextInt(3) == 0) {
+                level.addParticle(new BlockParticleOption(
+                                ParticleTypes.FALLING_DUST, Blocks.GRAVEL.defaultBlockState()),
+                        worldXZ[0], pos.getY() + 0.97D, worldXZ[1],
+                        0.0D, -0.012D, 0.0D);
+            } else {
+                level.addParticle(new DustParticleOptions(
+                                new Vector3f(0.55F, 0.47F, 0.36F), 0.55F),
+                        worldXZ[0], pos.getY() + 0.89D, worldXZ[1],
+                        (level.random.nextDouble() - 0.5D) * 0.012D,
+                        -0.012D, (level.random.nextDouble() - 0.5D) * 0.012D);
+            }
+        }
+
+        if (soundTick) {
+            level.playLocalSound(
+                    pos.getX() + 0.5D, pos.getY() + 1.2D, pos.getZ() + 0.5D,
+                    SoundEvents.GRAVEL_STEP, SoundSource.BLOCKS,
+                    0.15F, 0.86F + level.random.nextFloat() * 0.10F, false);
+        }
+    }
+
+    /**
+     * Matches the controller-centred BER orientation, including all four
+     * rotated JSON formation layouts. Coordinates use the local SOUTH
+     * model's block-corner origin, not the centre of an AIR filler block.
+     */
+    private double[] worldParticleXZ(double x, double z) {
+        return switch (getFacing()) {
+            case NORTH -> new double[]{
+                    worldPosition.getX() + 1.0D - x,
+                    worldPosition.getZ() + 1.0D - z};
+            case WEST -> new double[]{
+                    worldPosition.getX() + 1.0D - z,
+                    worldPosition.getZ() + x};
+            case EAST -> new double[]{
+                    worldPosition.getX() + z,
+                    worldPosition.getZ() + 1.0D - x};
+            default -> new double[]{
+                    worldPosition.getX() + x,
+                    worldPosition.getZ() + z};
+        };
     }
 
     public static <E extends BlockEntity> void serverTick(

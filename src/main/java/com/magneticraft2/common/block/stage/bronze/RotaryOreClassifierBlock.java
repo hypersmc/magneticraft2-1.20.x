@@ -89,8 +89,12 @@ public final class RotaryOreClassifierBlock extends BaseBlockMagneticraft2 {
     }
     @Override public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level,BlockState state,BlockEntityType<T> type){
-        return level.isClientSide?null:createTickerHelper(type,
-                BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(),
-                RotaryOreClassifierBlockEntity::serverTick);
+        return level.isClientSide
+                ? createTickerHelper(type,
+                        BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(),
+                        RotaryOreClassifierBlockEntity::clientTick)
+                : createTickerHelper(type,
+                        BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(),
+                        RotaryOreClassifierBlockEntity::serverTick);
     }
 }

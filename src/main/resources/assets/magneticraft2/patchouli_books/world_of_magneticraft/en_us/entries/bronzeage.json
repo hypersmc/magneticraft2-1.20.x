@@ -225,7 +225,7 @@
       "type": "patchouli:crafting",
       "title": "Rotary Ore Classifier",
       "recipe": "magneticraft2:rotary_ore_classifier",
-      "text": "Compact 3×3×5 bronze screening machine with an open rotating drum and a low internal fines pan. Material enters through the REAL rear-left Item Input module and leaves through the two REAL front Item Output modules. The real Gear V2 module supplies the rear central bearing; external roller cradles support both the rear and front bronze rims, while the short feed sleeve stays attached; the model adds no extra inventory hoppers or collection bins."
+      "text": "Compact 3×3×5 bronze screening machine with an open rotating drum and a low internal fines pan. Material enters through the REAL rear-left Item Input module and leaves through the two REAL front Item Output modules. The real Gear V2 module supplies the rear central bearing; external roller cradles support both the rear and front bronze rims, while the short feed sleeve stays attached; the model adds no extra inventory hoppers or collection bins. With Gear V2 power, crushed material feeds through the real item input, tumbles through the bronze screen, and sheds fine grit into the lower pan. Only completed products appear at the two front modules."
     },
     {
       "type": "patchouli:multiblock",
@@ -260,7 +260,7 @@
         },
         "symmetrical": false
       },
-      "text": "Visualize shows all required blocks. Item Input is elevated at the rear-left beside the Gear V2 Mechanical Input; both are actual usable modules. Fines Output (front-left) and Coarse Output (front-right) are the only item collection points—click/automate those blocks, not the internal screen pan. The upper input stays interactable, and a short, braced hollow metal throat leads into the rear drum. The AIR cells are required; fourteen receive transparent V2 display/collision proxies after forming. Rotate Gear V2 shaft along the drum. Both bronze drum rims rest on roller cradles connected to the timber frame. The rear mechanical module provides the only central drive bearing; no fixed bars cross the screen opening. The front remains open for coarse discharge."
+      "text": "Visualize shows all required blocks. Item Input is elevated at the rear-left beside the Gear V2 Mechanical Input; both are actual usable modules. Fines Output (front-left) and Coarse Output (front-right) are the only item collection points—click/automate those blocks, not the internal screen pan. The upper input stays interactable, and a short, braced hollow metal throat leads into the rear drum. The AIR cells are required; fourteen receive transparent V2 display/collision proxies after forming. Rotate Gear V2 shaft along the drum. Both bronze drum rims rest on roller cradles connected to the timber frame. The rear mechanical module provides the only central drive bearing; no fixed bars cross the screen opening. The front remains open for coarse discharge. During a running batch you can follow the ore from the rear inlet, through the rotating drum, to the open discharge end. Fine dust and gravel rattling are light visual/audio feedback from dry screening, not new item drops. Stalled processing freezes material travel and stops those effects."
     },
     {
       "type": "patchouli:crafting",

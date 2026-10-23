@@ -225,14 +225,83 @@ for(const old of [art+'models/multiblock/'+name+'_drum.json',art+'models/multibl
 
 const renderer=text(java+'client/render/blocks/stage/bronze/RotaryOreClassifierRenderer.java');
 for(const namePart of ['drum_rear','drum_middle','drum_front','WORN_DRUM','RenderType.cutout()','getDrumRotationDegrees','drawScreeningOre','getVisualProcessProgress'])assert.ok(renderer.includes(namePart),'Renderer missing '+namePart);
-assert.ok(renderer.includes('1.5D, .76D, 1.5D'),'Byproduct preview must sit ON the real +X port');
-assert.ok(renderer.includes('-.5D, .76D, 1.5D'),'Fines preview must sit ON the real -X port');
-assert.ok(renderer.includes('-.5D, 2.05D, -2.5D'),'Input preview must sit ON the real elevated input');
+// Check the REAL port surface heights rather than former fake hoppers.
+const inputPortModel=json(art+'models/block/multiblock_item_input.json');
+const outputPortModel=json(art+'models/block/multiblock_item_output.json');
+assert.equal(Math.max(...inputPortModel.elements.map(e=>e.to[1])),15);
+assert.equal(Math.max(...outputPortModel.elements.map(e=>e.to[1])),10);
+assert.ok(renderer.includes('INPUT_X = -0.5D;')&&
+          renderer.includes('INPUT_Y = 1.97D;')&&
+          renderer.includes('INPUT_Z = -2.5D;'),
+ 'Real elevated input model is topped at 1 + 15/16 blocks');
+assert.ok(renderer.includes('FINE_X = -0.5D;')&&
+          renderer.includes('COARSE_X = 1.5D;')&&
+          renderer.includes('OUTPUT_Y = 0.665D;')&&
+          renderer.includes('OUTPUT_Z = 1.5D;'),
+ 'Two output trays really top out at 10/16 blocks');
+assert.ok(renderer.includes('drawPortStack('),'Only real port surfaces show stored items');
+assert.ok(renderer.includes('classifier.hasVisibleWorkpiece()'),
+ 'A stalled batch must remain visible in the drum');
+assert.ok(renderer.includes('input.getCount() > classifier.getVisualBatchInputCount()'),
+ 'Only remaining queued ore should stay on the input while one batch runs');
+assert.ok(renderer.includes('MAX_DRUM_FRAGMENTS = 2;'),
+ 'Keep the number of BER item draws bounded for FPS');
+assert.ok(renderer.includes('classifier.isProcessing() ? angle : 0F'),
+ 'Stalled material must not tumble freely');
+assert.ok(renderer.includes('getVisualProcessProgress(partialTicks)'),
+ 'Workpiece flow must use server-synced batch progress');
+for(const fragment of ['progress < 0.20F','progress >= 0.36F','progress >= 0.80F',
+                       '0.42D * smoothstep(fall)','drawScreeningOre',
+                       'ItemDisplayContext.GROUND']){
+ assert.ok(renderer.includes(fragment),'Missing meaningful screen/process phase: '+fragment);
+}
+assert.ok(!renderer.includes('getProcessingPrimaryPreview()')&&
+          !renderer.includes('getProcessingByproductPreview()'),
+ 'Do not show uncommitted recipe outputs on item ports');
+assert.ok(!renderer.includes('addParticle('),'Particles cannot be emitted every render frame');
 const client=text(java+'client/Clientsetup.java');
 assert.ok(client.includes('ROTARY_ORE_CLASSIFIER_BE')&&client.includes('rotary_ore_classifier_drum_'),'Six registered BER models required');
 const controller=text(java+'common/blockentity/stage/bronze/RotaryOreClassifierBlockEntity.java');
-for(const piece of ['getMechanicalInput','classifierScreen.completeBatch()','removeMechanicalLoad','pendingByproduct','MultiblockRenderParts.assign','getDrumRotationDegrees'])
+for(const piece of ['getMechanicalInput','classifierScreen.completeBatch()','removeMechanicalLoad','pendingByproduct','MultiblockRenderParts.assign','getDrumRotationDegrees','hasVisibleWorkpiece','clientTick','worldParticleXZ','getVisualBatchInputCount'])
  assert.ok(controller.includes(piece),'Regressed processor: '+piece);
+const block=text(java+'common/block/stage/bronze/RotaryOreClassifierBlock.java');
+assert.ok(block.includes('RotaryOreClassifierBlockEntity::clientTick')&&
+          block.includes('RotaryOreClassifierBlockEntity::serverTick'),
+ 'Register separate client particle/sound and server processing tickers');
+assert.ok(controller.includes('!classifier.processing')&&
+          controller.includes('!classifier.formed')&&
+          controller.includes('getInputStack().isEmpty()'),
+ 'Client effects must stop when idle, unformed or out of feed');
+assert.ok(controller.includes('getNearestPlayer(')&&
+          controller.includes('18.0D, false'),
+ 'Cull particle/sound work beyond nearby players');
+assert.ok(controller.includes('% 10L == 0L')&&
+          controller.includes('% 40L == 0L'),
+ 'Particles/sounds must be time-budgeted and spread across machine positions');
+assert.ok(controller.includes('ParticleTypes.FALLING_DUST')&&
+          controller.includes('DustParticleOptions')&&
+          controller.includes('SoundEvents.GRAVEL_STEP'),
+ 'Physical screening should shed low-rate grit/dust and soft gravel rattles');
+const tickerBody=controller.slice(controller.indexOf('public static <E extends BlockEntity> void clientTick'),
+                                  controller.indexOf('public static <E extends BlockEntity> void serverTick'));
+assert.ok(tickerBody.includes('!classifier.processing')&&tickerBody.includes('progress < 0.18F'),
+ 'No particle emission for power loss/output blockage');
+assert.ok(!tickerBody.includes('extractItem(')&&!tickerBody.includes('insertItem('),
+ 'Visuals must never mutate the real inventory');
+for(const dir of ['case NORTH','case WEST','case EAST','default ->'])assert.ok(
+ controller.includes(dir),'Client particle spawn must rotate with four blueprints: '+dir);
+// The client effect transform must match the BER's SOUTH canonical rotated points.
+const maps={
+ south:([x,z])=>[x,z],
+ north:([x,z])=>[1-x,1-z],
+ west:([x,z])=>[1-z,x],
+ east:([x,z])=>[z,1-x]
+};
+const inputPoint=[-0.5,-2.5];
+assert.deepEqual(maps.south(inputPoint),[-0.5,-2.5]);
+assert.deepEqual(maps.north(inputPoint),[1.5,3.5]);
+assert.deepEqual(maps.west(inputPoint),[3.5,-0.5]);
+assert.deepEqual(maps.east(inputPoint),[-2.5,1.5]);
 assert.ok(text(java+'common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java').includes('RotaryOreClassifierBlockEntity'));
 assert.ok(text(java+'compatibility/JEI/MagneticraftJeiPlugin.java').includes('ROTARY_ORE_CLASSIFIER'));
 for(const ore of ['chalcocite','cassiterite','quartz']){
@@ -271,4 +340,4 @@ assert.deepEqual(page.multiblock.pattern,pattern,'Patchouli must form EXACTLY th
 assert.ok(page.text.includes('3×3×5'));
 for(const k of ['pickaxe','stone']){const path=k==='pickaxe'?resources+'data/minecraft/tags/blocks/mineable/pickaxe.json':resources+'data/minecraft/tags/blocks/needs_stone_tool.json';assert.ok(json(path).values.includes('magneticraft2:rotary_ore_classifier'));}
 execFileSync(process.execPath,['tools/rotary-classifier/build-static.mjs','--check'],{cwd:root,stdio:'inherit'});
-console.log('Rotary Classifier V5 contract passed: rear drive owned by Gear V2, no crossbars through mesh, grounded rim rollers at both ends, real exposed ports and four facings.');
+console.log('Rotary Classifier V5 animation contract passed: physical input/output surfaces, material transfer, screening/fines/coarse, paused batches, low-rate client effects, grounded frame and four facings.');
