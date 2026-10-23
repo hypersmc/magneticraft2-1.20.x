@@ -4,7 +4,7 @@ import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const source=JSON.parse(readFileSync(join(root,'tools/rotary-classifier/frame-design.json'),'utf8'));
-if(source.schema!==4)throw Error('Classifier frame schema mismatch; expected physically supported V4 design');
+if(source.schema!==5)throw Error('Classifier frame schema mismatch; expected external-roller V5 design');
 function generate(design){
  const A="src/main/resources/assets/magneticraft2/",D="src/main/resources/data/magneticraft2/",files=new Map();
  const F=["south","west","north","east"],round=n=>Math.round(n*10000)/10000;
@@ -26,7 +26,7 @@ function generate(design){
  // Every fixed component must connect through the frame to its foundation.
  // This detects detached feed collars and bearing brackets at source time.
  const support=design.supportContract;
- if(!support||!support.frontOpenEnd||support.roots.length!==4)
+ if(!support||!support.frontOpenEnd||!support.driveBearingOwnedByModule||support.roots.length!==4)
   throw Error("Missing grounded support topology contract");
  const boxes=design.boxes;
  const boxByName=new Map(boxes.map((b,i)=>[b.name,i]));
@@ -44,10 +44,8 @@ function generate(design){
   throw Error("Floating classifier geometry: "+
    boxes.filter((b,i)=>!connected.has(i)).map(b=>b.name).join(","));
  for(const [part,mount] of [
-  ["rear_bearing_mount_w","w_rear_timber_post"],
-  ["rear_bearing_mount_w","rear_bearing_w"],
-  ["rear_bearing_mount_e","e_rear_timber_post"],
-  ["rear_bearing_mount_e","rear_bearing_e"],
+  ["rear_guide_roller_w","bronze_roller_w_rear"],
+  ["rear_guide_roller_e","bronze_roller_e_rear"],
   ["rear_feed_support_w","w_rear_timber_post"],
   ["rear_feed_support_w","feed_coupler_outer"],
   ["front_guide_roller_w","bronze_roller_w_front"],
@@ -57,6 +55,31 @@ function generate(design){
   const a=boxes[boxByName.get(part)],b=boxes[boxByName.get(mount)];
   if(!a||!b||!touchesBox(a,b))
    throw Error("Missing physical support connection: "+part+" -> "+mount);
+ }
+ // The formed Mechanical Input module is the REAL rear axial bearing.
+ // Never draw a duplicate stationary central bearing or span iron arms
+ // across the inlet/drum. Both ends ride on external powered-wheel cradles.
+ if(boxes.some(b=>/^(rear_bearing_|rear_bearing_mount_)/.test(b.name)))
+  throw Error("Duplicate fixed rear bearing crosses the rotating screen");
+ const drive={from:[0,16,-32],to:[16,32,-32+design.drum.inletInset]};
+ const overlaps=(a,b)=>a.from.every((v,i)=>v<b.to[i]-0.0001&&a.to[i]>b.from[i]+0.0001);
+ for(const b of boxes)if(overlaps(b,drive))
+  throw Error("Stationary component crosses Gear V2's rear drum entry: "+b.name);
+ // Each bronze support roller must end at the outer facet rather than
+ // passing through the open drum or stopping in midair.
+ for(const site of [
+  {side:"rear",z0:-32+design.drum.inletInset+0.1,z1:-32+design.drum.inletInset+1.3},
+  {side:"front",z0:14.6,z1:15.8}
+ ]){
+  const left=boxes[boxByName.get(site.side+"_guide_roller_w")];
+  const right=boxes[boxByName.get(site.side+"_guide_roller_e")];
+  const outerLeft=8-design.drum.facetOffset-design.drum.skinThickness/2;
+  const outerRight=8+design.drum.facetOffset+design.drum.skinThickness/2;
+  if(!left||!right||Math.abs(left.to[0]-outerLeft)>0.1||
+     Math.abs(right.from[0]-outerRight)>0.1||
+     left.from[2]>site.z0+0.15||left.to[2]<site.z1-0.15||
+     right.from[2]>site.z0+0.15||right.to[2]<site.z1-0.15)
+   throw Error(site.side+" support roller does not meet the rotating rim");
  }
  // The front rollers must reach the drum's rotating outer hoop.
  const left=boxes[boxByName.get("front_guide_roller_w")];

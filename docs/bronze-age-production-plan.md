@@ -106,3 +106,7 @@ Screenshots exposed a UI/mechanical affordance error: the classifier rendered an
 ### Rotary classifier structural-support pass (2026-10-23)
 
 Real client screenshots showed unsupported intake and rear bearing geometry and a front drum ending beyond its rollers. The source was revised without changing the mechanical recipe contract or structure formation: rear bearings and the short hollow feed sleeve are anchored to their timber/stone support path; two front guide rollers now meet an **open-ended** rotating drum rim; small collection guides are attached to the pan and stop at the physical outputs. The generator now rejects disconnected static components and maintains the original U/I/O/Y module cells. Validation still requires `./gradlew build`, end-to-end automated operation and in-game visual/FPS comparison before PR #11 can be accepted.
+
+### Classifier V5 exterior bearing supports (2026-10-23)
+
+In-game screenshots revealed that the latest "grounded" V4 design used long rear metal struts across the open drum. The existing Gear V2 Mechanical Input module already renders its own central bearing/shaft, so those seven duplicate fixed bearing/mount pieces are being removed in favor of two short external roller supports on the rear hoop. Source-level classification and normal/worn drum animation remain unchanged, as do all 3×3×5 multiblock cells and ore/Washer/Sifter recipes. Before merging PR #11, confirm the central input bearing aligns with the drum spindle in-game and nothing clips through the rear or front open ends.

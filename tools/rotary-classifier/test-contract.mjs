@@ -15,7 +15,7 @@ const data=resources+'data/magneticraft2/';
 const java='src/main/java/com/magneticraft2/';
 const name='rotary_ore_classifier';
 const d=json('tools/rotary-classifier/frame-design.json');
-assert.equal(d.schema,4);
+assert.equal(d.schema,5);
 assert.deepEqual(d.dimensions,[3,3,5]);
 assert.equal(d.layers.length,3);
 assert.ok(d.layers.every(l=>l.length===5&&l.every(row=>row.length===3)));
@@ -26,7 +26,12 @@ assert.ok(d.drum.facetOffset>=10.5,'Screen radius must not regress to the tiny d
 assert.ok(d.drum.inletInset>=2&&d.drum.inletInset<4,'Rear mesh needs clearance from fixed support braces');
 const posts=d.boxes.filter(b=>b.name.endsWith('_timber_post'));
 assert.equal(posts.length,4,'The accepted compact design has only four primary timber posts');
-assert.equal(d.supportContract.frontOpenEnd,true,'Trommel front needs its open, roller-supported discharge end');
+assert.equal(d.supportContract.frontOpenEnd,true,'The front discharge must remain open');
+assert.equal(d.supportContract.driveBearingOwnedByModule,true,
+ 'The real Gear V2 input already owns the rear copper bearing');
+for(const oldBearing of ['rear_bearing_w','rear_bearing_e','rear_bearing_top','rear_bearing_bottom','rear_bearing_trim','rear_bearing_mount_w','rear_bearing_mount_e'])
+ assert.ok(!d.boxes.some(b=>b.name===oldBearing),
+  'Do not reintroduce duplicate bearing/crossbar over the screen: '+oldBearing);
 assert.ok(d.boxes.every(b=>!b.name.includes('roof')),'No giant framing canopy');
 assert.ok(d.boxes.some(b=>b.name==='tray_underpan'),'No fines collection pan');
 assert.ok(!d.boxes.some(b=>/^(ore_hopper_|hopper_)/.test(b.name)), 'Fake elevated hopper obscures real input');
@@ -46,10 +51,8 @@ for(let k=0;k<queue.length;k++)for(let i=0;i<d.boxes.length;i++){
 assert.equal(visited.size,d.boxes.length,'Floating geometry: '+
  d.boxes.filter((b,i)=>!visited.has(i)).map(b=>b.name).join(','));
 for(const [part,mount] of [
- ['rear_bearing_mount_w','w_rear_timber_post'],
- ['rear_bearing_mount_w','rear_bearing_w'],
- ['rear_bearing_mount_e','e_rear_timber_post'],
- ['rear_bearing_mount_e','rear_bearing_e'],
+ ['rear_guide_roller_w','bronze_roller_w_rear'],
+ ['rear_guide_roller_e','bronze_roller_e_rear'],
  ['rear_feed_support_w','w_rear_timber_post'],
  ['rear_feed_support_w','feed_coupler_outer'],
  ['front_guide_roller_w','bronze_roller_w_front'],
@@ -61,17 +64,27 @@ for(const [part,mount] of [
  assert.ok(joined(d.boxes[indexes.get(part)],d.boxes[indexes.get(mount)]),
   part+' not anchored to '+mount);
 }
-const frontLeft=d.boxes[indexes.get('front_guide_roller_w')];
-const frontRight=d.boxes[indexes.get('front_guide_roller_e')];
-assert.ok(Math.abs(frontLeft.to[0]-(8-d.drum.facetOffset-d.drum.skinThickness/2))<0.1);
-assert.ok(Math.abs(frontRight.from[0]-(8+d.drum.facetOffset+d.drum.skinThickness/2))<0.1);
-for(const name of ['rear_bearing_mount_w','rear_bearing_mount_e']){
- const bracket=d.boxes[indexes.get(name)];
- assert.ok(bracket.to[2]<=-32+d.drum.inletInset-0.1,
-  name+' cuts through rotating rear screen instead of supporting its bearing');
+// All roller support sites must meet a bronze rim and remain grounded.
+for(const site of [
+ {end:'rear',z0:-32+d.drum.inletInset+0.1,z1:-32+d.drum.inletInset+1.3},
+ {end:'front',z0:14.6,z1:15.8}
+]){
+ const left=d.boxes[indexes.get(site.end+'_guide_roller_w')];
+ const right=d.boxes[indexes.get(site.end+'_guide_roller_e')];
+ assert.ok(left&&right,site.end+' missing support rollers');
+ assert.ok(Math.abs(left.to[0]-(8-d.drum.facetOffset-d.drum.skinThickness/2))<0.1);
+ assert.ok(Math.abs(right.from[0]-(8+d.drum.facetOffset+d.drum.skinThickness/2))<0.1);
+ for(const roller of [left,right]){
+  assert.ok(roller.from[2]<=site.z0+0.15&&roller.to[2]>=site.z1-0.15,
+   site.end+' roller misses the outer rotating rim');
+ }
 }
-for(const roller of [frontLeft,frontRight])
- assert.ok(roller.from[2]<=14.6&&roller.to[2]>=15.5,'Front rollers do not meet the moving rim');
+// The central axial connection is already the formed Mechanical Input
+// module. Fixed radial braces must never intrude across that opening.
+const driveMouth={from:[0,16,-32],to:[16,32,-32+d.drum.inletInset]};
+const overlap=(a,b)=>a.from.every((v,i)=>v<b.to[i]-1e-4&&a.to[i]>b.from[i]+1e-4);
+for(const box of d.boxes)assert.ok(!overlap(box,driveMouth),
+ 'Stationary '+box.name+' intrudes across Gear V2 central shaft opening');
 for(const name of d.supportContract.frontOutputGuides){
  const guide=d.boxes[indexes.get(name)];
  assert.ok(guide&&guide.to[2]<=16&&guide.to[2]>=15.5,
@@ -258,4 +271,4 @@ assert.deepEqual(page.multiblock.pattern,pattern,'Patchouli must form EXACTLY th
 assert.ok(page.text.includes('3×3×5'));
 for(const k of ['pickaxe','stone']){const path=k==='pickaxe'?resources+'data/minecraft/tags/blocks/mineable/pickaxe.json':resources+'data/minecraft/tags/blocks/needs_stone_tool.json';assert.ok(json(path).values.includes('magneticraft2:rotary_ore_classifier'));}
 execFileSync(process.execPath,['tools/rotary-classifier/build-static.mjs','--check'],{cwd:root,stdio:'inherit'});
-console.log('Rotary Classifier V4 contract passed: grounded rear bearing/feed, front rim on rollers, open outlet, real item ports and all facings.');
+console.log('Rotary Classifier V5 contract passed: rear drive owned by Gear V2, no crossbars through mesh, grounded rim rollers at both ends, real exposed ports and four facings.');
