@@ -20,8 +20,12 @@ function makeAssets(){
   if(found.length!==1||[found[0].x,found[0].y,found[0].z].join()!==xyz.join())throw Error("Invalid real port "+letter);
  }
  const shapes=new Map(),voxels=[];
+ const isInletCollar=c=>c.x===0&&c.y===1&&c.z===-3;
  const add=(c,material,from,to)=>{
-  if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))throw Error("Non-local model element");
+  // Only this AIR-hosted inlet collar may extend up to half a block into
+  // the adjoining actual Fluid Input. All other parts remain block-local.
+  if(from.some((v,i)=>v<(i===2&&isInletCollar(c)?-8:0)||to[i]>16||v>=to[i]))
+   throw Error("Invalid local element "+[c.x,c.y,c.z]+": "+[from,to]);
   const key=[c.x,c.y,c.z].join(",");
   if(!shapes.has(key))shapes.set(key,[]);
   shapes.get(key).push({material,from,to});
@@ -67,8 +71,17 @@ function makeAssets(){
      add(c,"lining",[0,1,5],[16,10,6]);
      add(c,"bronze",[0,10,0],[16,12,7]);
     }
-    // The centered rear cell is a REAL Fluid Input block, not an
-    // ornamental pipe protruding up from a hole in the foundation.
+    // Both rear-wall returns now meet the copper inlet's frame through
+    // a dedicated AIR-hosted throat. The I cell remains the REAL module.
+    if(x===-1){
+     add(c,"refractory",[13,0,6],[15,10,16]);
+     add(c,"lining",[15,2,6],[16,10,16]);
+     add(c,"bronze",[13,10,7],[16,12,16]);
+    }else if(x===1){
+     add(c,"refractory",[1,0,6],[3,10,16]);
+     add(c,"lining",[0,2,6],[1,10,16]);
+     add(c,"bronze",[0,10,7],[3,12,16]);
+    }
    }else if(z===0 && (x===-2 || x===2)){
     // Front corners connect side rails to the short front wall; neither
     // rail terminates mid-air. Leave true module blocks unobstructed.
@@ -105,6 +118,22 @@ function makeAssets(){
     add(c,"lining",[0,2,10],[16,10,11]);
     add(c,"bronze",[0,10,9],[16,12,16]);
    }else throw Error("Unrecognized perimeter "+[x,y,z]);
+  }else if(y===1 && k==="A" && x===0 && z===-3){
+   // The actual fluid input's inner copper ring is X=2..14,Y=2..14,
+   // Z=8..12. In this adjoining AIR block Z=-8 touches the copper at
+   // its real depth; the middle stays fully open for water to enter.
+   add(c,"refractory",[0,0,-8],[2,12,2]);
+   add(c,"refractory",[14,0,-8],[16,12,2]);
+   add(c,"bronze",[0,12,-8],[2,14,2]);
+   add(c,"bronze",[14,12,-8],[16,14,2]);
+   add(c,"riveted_iron",[2,0,-8],[14,2,2]);
+   add(c,"bronze",[2,14,-8],[14,16,2]);
+   // Inboard detailing begins only AFTER the actual module's ring
+   // ends, avoiding intersecting or repainting the shared copper port.
+   add(c,"riveted_iron",[2,2,-4],[3,14,2]);
+   add(c,"riveted_iron",[13,2,-4],[14,14,2]);
+   add(c,"riveted_iron",[3,13,-4],[13,14,2]);
+   add(c,"lining",[3,2,-4],[13,3,2]);
   }else if(y===1 && k==="A" && z===-2 && Math.abs(x)<=1){
    // A single low overflow weir across the WIDTH; behind it is the
    // deeper dirty settling area, in front a short clear-water channel.
@@ -120,13 +149,25 @@ function makeAssets(){
  }
  const renderAnchors=cells.filter(c=>c.k==="A"&&shapes.has([c.x,c.y,c.z].join(",")))
   .map(c=>[c.x,c.y,c.z]);
- if(renderAnchors.length!==6)throw Error("Expected 6 actual AIR weir/lip hosts, got "+renderAnchors.length);
+ if(renderAnchors.length!==7)throw Error("Expected inlet throat + six weir/lip AIR hosts, got "+renderAnchors.length);
  if(voxels.length>512)throw Error("Voxel collision too complex: "+voxels.length);
  // Ensure no decorative or collision volume overlaps genuine port/module cells.
  for(const letter of ["I","P","O"]){
   const c=cells.find(v=>v.k===letter);
-  for(const b of voxels) if([0,1,2].every(i=>b[i]<(i===0?c.x+1:i===1?c.y+1:c.z+1)*16 &&
-         b[i+3]>(i===0?c.x:i===1?c.y:c.z)*16))throw Error("Overlapping real "+letter+" module");
+  for(const b of voxels){
+   const overlapsCell=[0,1,2].every(i=>
+    b[i]<([c.x,c.y,c.z][i]+1)*16&&b[i+3]>[c.x,c.y,c.z][i]*16);
+   if(!overlapsCell)continue;
+   // The actual north-facing inlet model has a 2px opening along every
+   // edge, and its inboard ring terminates at its own local Z=12.
+   // Allow ONLY the collar's non-intersecting empty margins there.
+   // The module's center and all other genuine port cells stay clear.
+   if(letter==="I"&&b[2]>=c.z*16+8 &&
+      (b[3]<=c.x*16+2 || b[0]>=c.x*16+14
+       || b[4]<=c.y*16+2 || b[1]>=c.y*16+14
+       || b[2]>=c.z*16+12))continue;
+   throw Error("Overlapping real "+letter+" module");
+  }
  }
  files.set(d+"multiblock_voxels/"+id+".json",JSON.stringify({format:1,unit:"model_pixels",collision:voxels,selection:voxels,zones:{}},null,2)+"\n");
  const dirs=["south","west","north","east"];
@@ -161,7 +202,12 @@ function makeAssets(){
                 Math.min(...corners.map(p=>p[1]))-rz*16];
     const to=[Math.max(...corners.map(p=>p[0]))-rx*16,box.to[1],
               Math.max(...corners.map(p=>p[1]))-rz*16];
-    if(from.some((v,i)=>v<0||to[i]>16||v>=to[i]))throw Error("Invalid facing geometry "+facing+" "+[c.x,c.y,c.z]);
+    const collar=isInletCollar(c);
+    if(from.some((v,i)=>{
+     const horizontal=i===0||i===2;
+     return v<(collar&&horizontal?-8:0)
+       ||to[i]>(collar&&horizontal?24:16)||v>=to[i];
+    }))throw Error("Invalid facing geometry "+facing+" "+[c.x,c.y,c.z]);
     elements.push({from,to,faces:faces(from,to,box.material)});
    }
    files.set(a+"models/multiblock/"+id+"_"+facing+"/part_"+rx+"_"+c.y+"_"+rz+".json",

@@ -101,6 +101,11 @@
     "outputs": [],
     "render_air_anchors": [
       [
+        0,
+        1,
+        3
+      ],
+      [
         1,
         1,
         2

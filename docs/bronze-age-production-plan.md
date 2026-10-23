@@ -195,3 +195,17 @@ generator and geometry regression contract are updated as a group.
 This revision changes the actual multiblock blueprint; **existing V4.1
 tanks need a safe unform/rebuild.** Compile and live in-game appearance
 are still pending. PR #11 remains draft and unmerged.
+
+### 2026-10-24 — Settling Tank V4.3 inlet throat integration
+
+The inlet's own 12px-wide model left a 16px-wide gap in both rear
+screenshot views. The proposed V4.3 adds a tank-specific copper and
+refractory throat in the AIR cell immediately ahead of the actual rear
+Fluid Input, plus adjoining wall returns. The frame deliberately meets
+but does not overlap the real module's copper model; its center and
+outward pipe capability remain accessible. Dirty Water now starts just
+beyond the inner lip. Four rotated models, Voxel V2 geometry, Patchouli
+and the regression tests are updated. Builds use identical physical
+blocks and unchanged mechanics; old formed structures need a one-time
+re-form to receive the seventh AIR proxy. PR #11 stays draft until the
+actual Forge build and gameplay visuals pass.

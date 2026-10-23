@@ -49,14 +49,15 @@ public final class WaterSettlingTankRenderer
 
         // Use the OPEN interior geometry, not the outside dimensions of the
         // basin. In V4 the water extended ~0.28 blocks INTO EACH wall.
-        // The rear boundary also sits just INSIDE the real inlet's tip,
-        // never cutting through its copper model inside the rear wall.
-        // Both surfaces are tied solely to the real server-side tank amounts.
+        // The rear boundary stops 0.035 blocks beyond the new bronze
+        // inlet throat's forward lip (Z=-2.875): never draw fluid through
+        // the static collar or the real copper input model behind it.
+        // Both surfaces use actual synchronized fluid amounts only.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
                     tank.getDirtyFillRatio(),
-                    -0.975F, 1.975F, -3.22F, -1.29F, 0.67F);
+                    -0.975F, 1.975F, -2.84F, -1.29F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(

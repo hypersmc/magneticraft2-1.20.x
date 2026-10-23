@@ -80,9 +80,10 @@ existing fluid modules and JEI category remain shared with other machines.
 ## Generated art and fluid placement
 
 The generator `tools/water-settling-tank/build.mjs` is the single source
-of truth for four rotated JSON formation structures, 176 local block
-models, their exact native pixel UVs and the 99-box Voxel V2 collision
-profile. Six required-air baffle/lip hosts are placed only upon formation.
+of truth for four rotated JSON formation structures, 180 local block
+models, their native-scale texture UVs and the 115-box Voxel V2 collision
+profile. Seven required-air hosts form only after validation:
+one recessed inlet throat and the six original baffle/lip pieces.
 
 The real rear, front and right-side upper modules are no longer drawn
 as ornamental copper risers. They display their **real block models**. The low bronze rim,
@@ -90,14 +91,18 @@ dark masonry, ceramic lining and divider are purposefully tiled in their
 own block-local parts.
 
 The fluid BER reads real tank amounts:
-- dirty rear reservoir X [-0.975,1.975], Z [-3.22,-1.29]
+- dirty rear reservoir X [-0.975,1.975], Z [-2.84,-1.29]
 - clean front reservoir X [-0.975,1.975], Z [-0.96,-0.24]
 - display level Y = 1.045 + 0.495 × fill ratio, only if non-empty.
 
-Moving the real inlet to the rear upper wall required starting dirty
-fluid at Z=-3.22, just inside its visible pipe mouth at Z=-3.25.
-This prevents translucent water from passing through the copper port
-model. The sediment output item is drawn at (-0.5,1.775,0.5), over
+The new tank-only inlet collar seats around the copper input's inboard
+frame without touching its opening or outward pipe face. It occupies the
+previously empty AIR cell (0,1,-3), reaching only 8 model pixels back
+toward the real input cell. The copper model's inner ring spans X=2..14,
+Y=2..14, Z=8..12; the collar fills only the free margins and begins
+its detailed reveal where the copper terminates at Z=12.
+Dirty-water rendering now starts at Z=-2.84, just beyond the collar's
+forward edge at Z=-2.875, never through the casing. The sediment output item is drawn at (-0.5,1.775,0.5), over
 the real elevated front-wall wooden tray. No fake particles or ghost
 sediment entities are introduced. Existing six V3 16×16 hand-painted
 texture assets are reused without stretching.
@@ -114,7 +119,9 @@ node tools/water-settling-tank/test-contract.mjs
 Source-level audit checks:
 - four directional blueprints and Patchouli Visualize agreement
 - all actual modules at Y=1 with underlying bronze bearing plates
-- no rendered filler mesh covering real modules
+- recessed input collar touches only empty margins of the actual copper
+  module model, without intersecting any real input cuboid
+- no filler model replaces or covers real modules
 - rear and front rim corner joint continuity
 - no cuboid overlap, coplanar matching faces, or stretched UVs
 - correct dirty/clean surface clipping and true item output position
@@ -136,3 +143,30 @@ separate existing naming/UX problem, not resolved by this mesh repair.
 - V4.1: removed Z-fighting; clipped liquids inside the real walls.
 - V4.2: raised the real service modules, filled foundation holes and
   permanently joined the rear/front rim corner geometry.
+
+## V4.3 — rear Fluid Input throat repair (2026-10-24)
+
+Close-up screenshots showed that the copper inlet still floated in an
+unframed 16px opening. The actual shared Fluid Input model occupies only
+the center X=2..14/Y=2..14; its visual gaps cannot be repaired by adding
+more texture to the neighboring wall.
+
+The V4.3 tank-specific model fills these margins using slim rear-wall
+cheeks, a solid lower saddle, a short bronze lintel and an inboard
+metal-and-ceramic throat. The aperture and genuine NORTH fluid connection
+remain open. The surrounding geometry is attached to a new Voxel V2 AIR
+anchor at (0,1,-3), not a modification to the shared Fluid Input block.
+
+This collar is the only intentional outside-cell model element: up to
+8 pixels backward into the real inlet's EMPTY margins, allowed by the
+V2 AIR-anchor collision limit. The test checks against the actual copper
+cuboids and rejects intersections or same-facing coplanar overlays.
+All four horizontal orientations share the same source geometry.
+
+**No new physical construction blocks:** existing 5×2×5 V4.2 blueprint,
+fluid ports, machine output, recipe and custom textures remain unchanged.
+For an already formed tank, safely unform/reform it once so the extra
+AIR proxy and Voxel V2 collision snapshots are rebuilt.
+
+Source geometry checks were performed. Full Node contract, Gradle compile
+and in-game appearance remain to be verified before merging PR #11.
