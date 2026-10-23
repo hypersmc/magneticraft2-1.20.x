@@ -13,150 +13,150 @@
   "elements": [
     {
       "from": [
-        11,
+        0,
         0,
         0
       ],
       "to": [
         16,
-        13,
-        5
+        6,
+        3
       ],
       "faces": {
         "north": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            13
+            16,
+            6
           ]
         },
         "south": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            13
+            16,
+            6
           ]
         },
         "east": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            13
+            3,
+            6
           ]
         },
         "west": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            13
+            3,
+            6
           ]
         },
         "up": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            3
           ]
         },
         "down": {
-          "texture": "#riveted_iron",
+          "texture": "#refractory",
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            3
           ]
         }
       }
     },
     {
       "from": [
-        11,
         0,
+        6,
         0
       ],
       "to": [
         16,
-        3,
-        5
+        8,
+        3
       ],
       "faces": {
         "north": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            3
+            16,
+            2
           ]
         },
         "south": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            3
+            16,
+            2
           ]
         },
         "east": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            3
+            3,
+            2
           ]
         },
         "west": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            3
+            3,
+            2
           ]
         },
         "up": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            3
           ]
         },
         "down": {
-          "texture": "#bronze",
+          "texture": "#lining",
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            3
           ]
         }
       }
     },
     {
       "from": [
-        11,
-        12,
+        0,
+        8,
         0
       ],
       "to": [
         16,
-        16,
-        5
+        9,
+        4
       ],
       "faces": {
         "north": {
@@ -164,8 +164,8 @@
           "uv": [
             0,
             0,
-            5,
-            4
+            16,
+            1
           ]
         },
         "south": {
@@ -173,8 +173,8 @@
           "uv": [
             0,
             0,
-            5,
-            4
+            16,
+            1
           ]
         },
         "east": {
@@ -182,8 +182,8 @@
           "uv": [
             0,
             0,
-            5,
-            4
+            4,
+            1
           ]
         },
         "west": {
@@ -191,8 +191,8 @@
           "uv": [
             0,
             0,
-            5,
-            4
+            4,
+            1
           ]
         },
         "up": {
@@ -200,8 +200,8 @@
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            4
           ]
         },
         "down": {
@@ -209,8 +209,8 @@
           "uv": [
             0,
             0,
-            5,
-            5
+            16,
+            4
           ]
         }
       }

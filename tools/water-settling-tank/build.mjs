@@ -4,13 +4,13 @@ import path from "node:path";
 function makeAssets(){
  const files=new Map();
  const a="src/main/resources/assets/magneticraft2/",d="src/main/resources/data/magneticraft2/",id="water_settling_tank";
- const rows=[["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"],["RAAAR","AAAAA","AAAAA","AAAAA","RAAAR"]];
- const types={S:"minecraft:stone_bricks",R:"minecraft:cut_copper",A:"minecraft:air",
+ const rows=[["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"]];
+ const types={S:"minecraft:stone_bricks",A:"minecraft:air",
  I:"magneticraft2:multiblock_fluid_input",P:"magneticraft2:multiblock_item_primary_output",
  C:"magneticraft2:water_settling_tank",O:"magneticraft2:multiblock_fluid_output"};
  const tex=Object.fromEntries(["refractory","lining","bronze","riveted_iron","grate","sludge"].map(t=>[t,"magneticraft2:block/settling_tank/"+t]));
  tex.particle=tex.refractory;
- const cells=[];for(let y=0;y<3;y++)for(let zi=0;zi<5;zi++)for(let xi=0;xi<5;xi++)cells.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
+ const cells=[];for(let y=0;y<2;y++)for(let zi=0;zi<5;zi++)for(let xi=0;xi<5;xi++)cells.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
  const required={C:[0,0,0],I:[0,0,-4],P:[-1,0,0],O:[2,0,0]};
  for(const [letter,xyz] of Object.entries(required)){
   const found=cells.filter(c=>c.k===letter);
@@ -26,95 +26,59 @@ function makeAssets(){
  };
  for(const c of cells) {
   const {x,y,z,k}=c;
-  if(y===0&&(k==="S"||k==="C")){
-   add(c,"refractory",[0,0,0],[16,13,16]);     // Dense supporting plinth
-   add(c,"lining",[0,13,0],[16,15,16]);         // Waterproof inset tiled pan
-   if(z===0) {                                  // Front service bench
-    add(c,"riveted_iron",[1,15,1],[15,16,15]);
-   }else if(x===-1&&(z===-3||z===-2)){
-    add(c,"sludge",[1,15,1],[15,16,15]);       // Real sediment pocket
-   }else{
-    add(c,"lining",[1,15,1],[15,16,15]);
-   }
-   if(k==="C"){
-    add(c,"bronze",[2,15,12],[14,16,16]);      // Controller fascia at front
-   }
+  if(y===0 && (k==="S"||k==="C")){
+   // Flat, readable masonry foundation with waterproof ceramic floor.
+   // Keeping the base close to Minecraft blocks avoids false wood beams.
+   add(c,"refractory",[0,0,0],[16,13,16]);
+   add(c,"lining",[0,13,0],[16,16,16]);
+   if((x===-1||x===0)&&z===-3)
+    add(c,"sludge",[3,15,3],[12,16,12]); // Subtle mineral stain, not free items.
+   if(x===1&&z===-1)
+    add(c,"grate",[3,15,4],[13,16,12]); // Low drain guard near clean outlet.
+   if(k==="C")
+    add(c,"riveted_iron",[3,13,14],[13,16,16]); // Controller's real fascia.
   }else if(y===1&&k==="S"){
-   // Cast refractory vessel with thin glazed internal liner and separately
-   // edged metal rim. Each face has native 16 px/m UVs, no oversized quads.
+   // A 12-pixel LOW outer wall; no overhead frame, posts, or catwalk.
    if(z===-4){
-    add(c,"refractory",[0,0,0],[16,13,5]);
-    add(c,"lining",[0,2,5],[16,13,6]);
-    add(c,"bronze",[0,13,0],[16,16,8]);
-    if(x===0){ // Rear feed valve visually continues into the dirty chamber.
-     add(c,"riveted_iron",[5,12,8],[11,15,16]);
-     add(c,"bronze",[4,11,13],[12,16,16]);
-     // Physical vertical riser: the visible inlet MUST connect to its
-     // REAL ground-level Fluid Input, not float over the rear wall.
-     add(c,"riveted_iron",[6,0,9],[10,13,13]);
-     add(c,"bronze",[4,0,7],[12,2,15]);
+    add(c,"refractory",[0,0,0],[16,10,5]);
+    add(c,"lining",[0,1,5],[16,10,6]);
+    add(c,"bronze",[0,10,0],[16,12,7]);
+    if(x===0){
+     // Real rear fluid input is directly below this restrained inlet pipe.
+     add(c,"riveted_iron",[6,0,8],[10,9,12]);
+     add(c,"riveted_iron",[5,8,9],[11,12,16]);
+     add(c,"bronze",[4,8,11],[12,11,16]);
     }
    }else if(x===-2){
-    add(c,"refractory",[11,0,0],[16,13,16]);
-    add(c,"lining",[10,3,0],[11,13,16]);
-    add(c,"bronze",[8,13,0],[16,16,16]);
-    if(z===-2) add(c,"riveted_iron",[10,4,3],[11,12,13]);
+    add(c,"refractory",[11,0,0],[16,10,16]);
+    add(c,"lining",[10,2,0],[11,10,16]);
+    add(c,"bronze",[9,10,0],[16,12,16]);
    }else if(x===2){
-    add(c,"refractory",[0,0,0],[5,13,16]);
-    add(c,"lining",[5,3,0],[6,13,16]);
-    add(c,"bronze",[0,13,0],[8,16,16]);
-    if(z===-1) { // Integrated clean-water crossover on east wall
-     add(c,"riveted_iron",[6,10,5],[12,15,11]);
-     add(c,"bronze",[10,9,4],[14,16,12]);
+    add(c,"refractory",[0,0,0],[5,10,16]);
+    add(c,"lining",[5,2,0],[6,10,16]);
+    add(c,"bronze",[0,10,0],[7,12,16]);
+    if(z===0){
+     // The downpipe ends above the exposed actual east-edge output module.
+     add(c,"riveted_iron",[1,0,5],[5,10,11]);
+     add(c,"bronze",[1,8,3],[9,11,13]);
     }
-    if(z===0) {  // Downturned metal sleeve above real outer EAST fluid port
-     add(c,"riveted_iron",[1,0,5],[5,11,11]);
-     add(c,"bronze",[1,8,3],[7,15,13]);
-    }
-   }else throw Error("Invalid side wall "+[x,y,z]);
-  }else if(y===1&&k==="A"){
-   if(x===0&&z>=-3&&z<=-1){
-    // Raised longitudinal weir: both reservoirs have similar visible area.
-    add(c,"refractory",[7,0,0],[9,11,16]);
-    add(c,"lining",[6,7,0],[7,12,16]);
-    add(c,"lining",[9,7,0],[10,12,16]);
-    add(c,"bronze",[5,12,0],[11,14,16]);
-    if(z===-3) {
-     add(c,"riveted_iron",[5,13,0],[11,16,9]);
-     add(c,"bronze",[1,12,7],[8,16,14]); // Feed mouth points to dirty bay
-    }
-   }
-   if(x===-1&&z===-3){
-    // Settling grate over the dirty chamber's sediment collection sump.
-    add(c,"riveted_iron",[1,5,2],[15,6,14]);
-    add(c,"grate",[2,6,3],[14,7,13]);
-   }
-   if((x===-1||x===1)&&z===-1){
-    // Front stop-weir keeps real fluid behind the service modules.
-    add(c,"refractory",[0,0,13],[16,10,16]);
-    add(c,"bronze",[0,10,12],[16,12,16]);
-    if(x===1){
-     add(c,"riveted_iron",[11,10,5],[16,15,11]);
-     add(c,"bronze",[12,9,4],[16,12,12]);
-    }
-   }
-  }else if(y===2&&k==="R"){
-   // Four cast-bronze corner stanchions replace the unrelated timber posts.
-   const xx=x===-2?[11,16]:[0,5],zz=z===-4?[0,5]:[11,16];
-   add(c,"riveted_iron",[xx[0],0,zz[0]],[xx[1],13,zz[1]]);
-   add(c,"bronze",[xx[0],0,zz[0]],[xx[1],3,zz[1]]);
-   add(c,"bronze",[xx[0],12,zz[0]],[xx[1],16,zz[1]]);
-  }else if(y===2&&k==="A"&&z===-1&&Math.abs(x)<=1){
-   // Elevated service catwalk; below it the screen + treatment pools stay open.
-   add(c,"riveted_iron",[0,0,3],[16,1,13]);
-   add(c,"grate",[0,1,4],[16,2,12]);
-   if(x===-1)add(c,"bronze",[0,2,3],[2,9,13]);
-   if(x===1)add(c,"bronze",[14,2,3],[16,9,13]);
+   }else throw Error("Unrecognized perimeter "+[x,y,z]);
+  }else if(y===1 && k==="A" && z===-2 && Math.abs(x)<=1){
+   // A single low overflow weir across the WIDTH; behind it is the
+   // deeper dirty settling area, in front a short clear-water channel.
+   add(c,"refractory",[0,0,13],[16,6,16]);
+   add(c,"lining",[0,6,13],[16,8,16]);
+   add(c,"bronze",[0,8,12],[16,9,16]);
+  }else if(y===1 && k==="A" && z===-1 && Math.abs(x)<=1){
+   // Front retaining lip stays BEHIND the three real service modules.
+   add(c,"refractory",[0,0,14],[16,9,16]);
+   add(c,"lining",[0,9,14],[16,10,16]);
+   add(c,"bronze",[0,10,13],[16,11,16]);
   }
  }
  const renderAnchors=cells.filter(c=>c.k==="A"&&shapes.has([c.x,c.y,c.z].join(",")))
   .map(c=>[c.x,c.y,c.z]);
- if(renderAnchors.length!==9)throw Error("Expected 9 actual AIR proxy hosts, got "+renderAnchors.length);
+ if(renderAnchors.length!==6)throw Error("Expected 6 actual AIR weir/lip hosts, got "+renderAnchors.length);
  if(voxels.length>512)throw Error("Voxel collision too complex: "+voxels.length);
  // Ensure no decorative or collision volume overlaps genuine port/module cells.
  for(const letter of ["I","P","O"]){
@@ -135,10 +99,10 @@ function makeAssets(){
  for(const facing of dirs){
   const rotated=cells.map(c=>({...c,rot:rotate(c.x,c.z,facing)}));
   const x0=Math.min(...rotated.map(c=>c.rot[0])),z0=Math.min(...rotated.map(c=>c.rot[1]));
-  const layout=Array.from({length:3},()=>Array.from({length:5},()=>Array(5).fill("")));
+  const layout=Array.from({length:2},()=>Array.from({length:5},()=>Array(5).fill("")));
   for(const c of rotated)layout[c.y][c.rot[1]-z0][c.rot[0]-x0]=c.k;
   const blueprint={name:id+"_"+facing,structure:{
-    dimensions:[5,3,5],layout:Object.fromEntries(layout.map((v,i)=>["layer"+(i+1),v])),blocks:types
+    dimensions:[5,2,5],layout:Object.fromEntries(layout.map((v,i)=>["layer"+(i+1),v])),blocks:types
    },settings:{replacewhenformed:"multiblock/"+id+"_"+facing,inventory:true,power:false,fuel:false,fluid:true,inputs:[],outputs:[],
     render_air_anchors:renderAnchors.map(([x,y,z])=>{const [X,Z]=rotate(x,z,facing);return [X,y,Z]}),voxel_profile:"magneticraft2:"+id}};
   files.set(d+"multiblocks/"+id+"_"+facing+".json",JSON.stringify(blueprint,null,2)+"\n");

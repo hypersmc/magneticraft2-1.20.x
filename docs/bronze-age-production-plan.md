@@ -144,3 +144,19 @@ supports. It introduces six new native-density 16x16 PNG textures, with
 no longer the four upper supports. This is still draft PR #11 with Gradle
 compilation and real-client approval outstanding. See
 [Water Settling Tank V2](water-settling-tank-contract.md).
+
+
+### 2026-10-23 — Water Settling Tank V4 process-first redesign
+
+The V3 screenshot still looked like a framed bathtub, with heavy upper bronze
+posts obscuring the treatment process. V4 has replaced the entire static
+structure (not another texture pass): low **5×2×5** open basin instead of
+5×3×5, no third-layer Cut Copper posts or inspection walkway, clear large
+rear dirty-water pool, transverse low overflow weir, short front clean-water
+channel, and only restrained visible connections to real fluid modules.
+The six V3 hand-painted textures and all actual 600→480 mB/240-tick
+mechanics remain untouched. Four rotated formation blueprints, Patchouli
+and Voxel V2 physics/collision were updated together; obsolete model files
+were deleted. Existing V3 test builds require reforming. This is still
+PR #11, draft, **not gameplay-accepted or Gradle-verified**.
+See [V4 contract](water-settling-tank-contract.md).

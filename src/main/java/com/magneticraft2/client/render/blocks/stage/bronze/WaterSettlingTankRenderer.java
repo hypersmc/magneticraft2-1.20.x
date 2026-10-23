@@ -47,19 +47,20 @@ public final class WaterSettlingTankRenderer
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-0.5D, 0D, -0.5D);
 
-        // Independent, similarly sized bays divided by a physical bronze
-        // weir. Never show water in a reservoir with zero stored mB.
+        // Real tank contents, now placed along the material's FLOW direction:
+        // rear two rows = dirty settling area; front row = clean-water
+        // overflow channel. Both vanish when their server tanks are empty.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
                     tank.getDirtyFillRatio(),
-                    -1.26F, 0.36F, -3.53F, -0.28F, 0.67F);
+                    -1.28F, 2.28F, -3.53F, -1.29F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     Fluids.WATER, tank.getCleanAmount()),
                     tank.getCleanFillRatio(),
-                    0.64F, 2.22F, -3.53F, -0.28F, 0.55F);
+                    -1.28F, 2.28F, -1.10F, -0.24F, 0.55F);
         }
 
         ItemStack sediment = tank.getSedimentStack();
@@ -97,7 +98,8 @@ public final class WaterSettlingTankRenderer
         float b = (tint & 255) / 255F;
         float tintAlpha = ((tint >>> 24) & 255) / 255F;
         float alpha = Math.min(tintAlpha <= 0F ? 1F : tintAlpha, targetOpacity);
-        float top = 1.025F + 0.585F * Math.max(0F, Math.min(1F, ratio));
+        // Water is below the outer rim and reaches the low weir near full.
+        float top = 1.045F + 0.535F * Math.max(0F, Math.min(1F, ratio));
         float bottom = 1.014F;
         VertexConsumer consumer = buffers.getBuffer(RenderType.translucent());
         PoseStack.Pose matrix = pose.last();

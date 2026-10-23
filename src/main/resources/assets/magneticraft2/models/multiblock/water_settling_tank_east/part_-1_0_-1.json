@@ -87,7 +87,7 @@
       ],
       "to": [
         16,
-        15,
+        16,
         16
       ],
       "faces": {
@@ -97,7 +97,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "south": {
@@ -106,7 +106,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "east": {
@@ -115,7 +115,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "west": {
@@ -124,7 +124,7 @@
             0,
             0,
             16,
-            2
+            3
           ]
         },
         "up": {
@@ -149,68 +149,68 @@
     },
     {
       "from": [
-        1,
+        4,
         15,
-        1
+        3
       ],
       "to": [
-        15,
+        12,
         16,
-        15
+        13
       ],
       "faces": {
         "north": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
+            8,
             1
           ]
         },
         "south": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
+            8,
             1
           ]
         },
         "east": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
+            10,
             1
           ]
         },
         "west": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
+            10,
             1
           ]
         },
         "up": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
-            14
+            8,
+            10
           ]
         },
         "down": {
-          "texture": "#lining",
+          "texture": "#grate",
           "uv": [
             0,
             0,
-            14,
-            14
+            8,
+            10
           ]
         }
       }

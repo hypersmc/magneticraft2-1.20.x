@@ -15,11 +15,10 @@ const source = "src/main/java/com/magneticraft2/";
 const id = "water_settling_tank";
 const rows = [
   ["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],
-  ["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"],
-  ["RAAAR","AAAAA","AAAAA","AAAAA","RAAAR"]
+  ["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"]
 ];
 const parts = [];
-for (let y=0;y<3;y++) for(let zi=0;zi<5;zi++) for(let xi=0;xi<5;xi++)
+for (let y=0;y<2;y++) for(let zi=0;zi<5;zi++) for(let xi=0;xi<5;xi++)
   parts.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
 const where = k => parts.filter(p=>p.k===k);
 assert.equal(where("C").length, 1);
@@ -30,17 +29,15 @@ assert.deepEqual(where("C").map(p=>[p.x,p.y,p.z]),[[0,0,0]]);
 assert.deepEqual(where("I").map(p=>[p.x,p.y,p.z]),[[0,0,-4]]);
 assert.deepEqual(where("P").map(p=>[p.x,p.y,p.z]),[[-1,0,0]]);
 assert.deepEqual(where("O").map(p=>[p.x,p.y,p.z]),[[2,0,0]]);
-assert.deepEqual(where("R").map(p=>[p.x,p.y,p.z]).sort(),[
- [-2,2,-4],[-2,2,0],[2,2,-4],[2,2,0]
-].sort());
+assert.equal(where("S").length,34,"Low basin needs 21 Stone Bricks in foundation and 13 in rim");
+assert.ok(parts.every(c=>c.y<=1),"Upper frame must be entirely removed");
 const nonModule = p=>!"IPO".includes(p.k);
 const rot=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
-// Real V2 AIR hosts: three-cell weir, dirty trap, two front-stop lips
-// and three raised bridge segments. All other required AIR remains open.
+// Only six low, continuous air-hosted pieces: transverse overflow
+// across z=-2 and short front retaining lip at z=-1.
 const anchors=[
- [0,1,-3],[0,1,-2],[0,1,-1],
- [-1,1,-3],[-1,1,-1],[1,1,-1],
- [-1,2,-1],[0,2,-1],[1,2,-1]
+ [-1,1,-2],[0,1,-2],[1,1,-2],
+ [-1,1,-1],[0,1,-1],[1,1,-1]
 ];
 const sdir=["south","west","north","east"];
 const expectedIds={
@@ -48,13 +45,13 @@ const expectedIds={
  I:"magneticraft2:multiblock_fluid_input",
  P:"magneticraft2:multiblock_item_primary_output",
  O:"magneticraft2:multiblock_fluid_output",
- S:"minecraft:stone_bricks",R:"minecraft:cut_copper",A:"minecraft:air"
+ S:"minecraft:stone_bricks",A:"minecraft:air"
 };
 const modelPaths=new Set();
 for (const f of sdir) {
  const bp=json(data+"multiblocks/"+id+"_"+f+".json");
  assert.equal(bp.name,id+"_"+f);
- assert.deepEqual(bp.structure.dimensions,[5,3,5]);
+ assert.deepEqual(bp.structure.dimensions,[5,2,5]);
  assert.deepEqual(bp.structure.blocks,expectedIds);
  assert.equal(bp.settings.voxel_profile,"magneticraft2:"+id);
  assert.equal(bp.settings.inventory,true);
@@ -101,21 +98,23 @@ for (const f of sdir) {
   }
  }
 }
-assert.equal(modelPaths.size,192,"Four rotations need 48 static models each");
+assert.equal(modelPaths.size,164,"Four rotations need 41 low-basin static models each");
 // Physical pipe-to-port continuity: the rear riser begins at the top of
 // the real ground-floor fluid input instead of hovering overhead.
 const inletRiser=json(assets+"models/multiblock/"+id+"_south/part_0_1_-4.json");
-assert.ok(inletRiser.elements.some(e=>e.from[1]===0&&e.to[1]===13
-       &&e.from[0]===6&&e.from[2]===9),
+assert.ok(inletRiser.elements.some(e=>e.from[1]===0&&e.to[1]===9
+       &&e.from[0]===6&&e.from[2]===8),
        "Dirty inlet riser no longer joins the real Fluid Input below");
 const eastDownpipe=json(assets+"models/multiblock/"+id+"_south/part_2_1_0.json");
-assert.ok(eastDownpipe.elements.some(e=>e.from[1]===0&&e.to[1]===11),
+assert.ok(eastDownpipe.elements.some(e=>e.from[1]===0&&e.to[1]===10),
        "Recovered water downpipe must reach its east-edge real Fluid Output");
 for(const facing of sdir){
  const dir=path.join(root,assets+"models/multiblock/"+id+"_"+facing);
  const models=fs.readdirSync(dir).filter(n=>/^part_-?\d+_-?\d+_-?\d+\.json$/.test(n));
- assert.equal(models.length,48,
-   "No stale invisible filler models after the new baffle/bridge layout: "+facing);
+ assert.equal(models.length,41,
+   "Old third-layer posts/bridge models must be deleted: "+facing);
+ assert.ok(models.every(file=>!/^part_-?\d+_2_/.test(file)),
+   "No obsolete overhead geometry may remain after redesign: "+facing);
 }
 for(const f of sdir) {
  const state=json(assets+"blockstates/"+id+".json");
@@ -136,12 +135,14 @@ for(const box of vox.collision)for(const name of ["I","P","O"]) {
    "Voxel solid illegally overlaps real module "+name);
 }
 assert.ok(vox.collision.some(b=>b[1]===0&&b[4]===13)
-       &&vox.collision.some(b=>b[1]===13&&b[4]===15),
+       &&vox.collision.some(b=>b[1]===13&&b[4]===16),
  "No floating liner or unsupported basin panels");
-for(const point of [[0,1,-2],[0,2,-1],[-1,1,-3]]){
+for(const point of [[-1,1,-2],[0,1,-2],[1,1,-2],[-1,1,-1],[0,1,-1],[1,1,-1]]){
  assert.ok(vox.collision.some(box=>inside(box,point)),
-    "Missing central divider, elevated catwalk or sediment trap: "+point);
+    "Missing low overflow weir or rear-of-port retaining lip: "+point);
 }
+assert.ok(vox.collision.every(box=>box[4] <= 32),
+ "Tall posts, walkways or third-level collision geometry remain");
 
 const recipe=json(data+"recipes/settling_dirty_water.json");
 assert.equal(recipe.type,"magneticraft2:multiblock_processing");
@@ -194,15 +195,16 @@ assert.ok(generic.includes("Ingredient.EMPTY") &&
           generic.includes("input.isEmpty() && fluidInput.isEmpty()") &&
           generic.includes("if (input.isEmpty()) return false"),
  "Fluid-only recipe support must leave item recipe matching gated");
-assert.ok(1.025 + 0.585 < 1 + 14/16,
- "Water must remain beneath the raised bronze weir and outside real ports");
+assert.ok(1.045 + 0.535 > 1 + 9/16 &&
+          1.045 + 0.535 < 1 + 11/16,
+ "Water should reach the low spill weir but remain behind the front retaining lip");
 for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
-  "-1.26F, 0.36F, -3.53F, -0.28F",
-  "0.64F, 2.22F, -3.53F, -0.28F",
+  "-1.28F, 2.28F, -3.53F, -1.29F",
+  "-1.28F, 2.28F, -1.10F, -0.24F",
   "getDirtyAmount() > 0", "getCleanAmount() > 0",
-  "float top = 1.025F + 0.585F",
+  "float top = 1.045F + 0.535F",
   "float sideAlpha = alpha * 0.62F",
   "for (int tz = (int)Math.floor(minZ)",
   "float u0 = u(sprite, x0-tx)",
@@ -229,7 +231,7 @@ const book=json(assets+"patchouli_books/world_of_magneticraft/en_us/entries/bron
 const page=book.pages.find(p=>p.name==="Water Settling Tank");
 assert.ok(page?.enable_visualize);
 const expectedPattern=[];
-for(let y=2;y>=0;y--){
+for(let y=1;y>=0;y--){
  const cols=[];
  for(let x=0;x<5;x++){
   let s="";
@@ -242,7 +244,7 @@ for(let y=2;y>=0;y--){
  expectedPattern.push(cols);
 }
 assert.deepEqual(page.multiblock.pattern,expectedPattern,
- "Patchouli projection must match all 75 exact multiblock cells");
+ "Patchouli projection must match all 50 exact multiblock cells");
 assert.ok(book.pages.some(p=>p.recipe==="magneticraft2:"+id));
 assert.ok(book.pages.some(p=>p.recipe==="magneticraft2:settled_sediment_to_clay"));
 // New machine-specific 16x16 art is backed by real committed PNG assets.
@@ -268,4 +270,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: Settling Tank V2 structure + V3 hand-painted pixel textures, 4 directions, 9 AIR proxies, 192 model parts, original 16x16 RGB assets, water accounting, book and generators");
+console.log("PASS: V4 low open settling tank, rear dirty/front clean pools, 4 facings, 6 air proxies, 164 local models, accessible real ports, original textures, conserved water, Patchouli projection and generators");
