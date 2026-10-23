@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Gear V2-driven, three-segment large rotating trommel screen. The compact
- * timber/bronze frame and chutes are baked V2 parts, not BER geometry.
+ * timber/bronze frame and internal screening pan are baked V2 parts, not BER geometry.
  *
  * Only the enlarged drum and inventory previews are rendered here.
  * Screen wear is shown on the screen, never as a whole-machine tint.
@@ -67,7 +67,7 @@ public final class RotaryOreClassifierRenderer
         float angle = classifier.getDrumRotationDegrees(partialTicks);
         // Three large, open octagonal mesh sections. Each has its own cast
         // rim, with open feed/discharge ends and uninterrupted 16px UV tiles.
-        // Only the drum moves: the compact frame, hopper and chutes are V2 baked.
+        // Only the drum moves: the frame and internal collection pan are V2 baked.
         ResourceLocation[] drum = classifier.getPartWearStage() >= 2 ? WORN_DRUM : DRUM;
         for (int dz = -2; dz <= 0; dz++) {
             BakedModel model = Minecraft.getInstance().getModelManager().getModel(drum[dz + 2]);
@@ -89,15 +89,15 @@ public final class RotaryOreClassifierRenderer
                 drawScreeningOre(classifier, input, angle, partialTicks,
                         pose, buffers, packedLight, packedOverlay);
             } else {
-                // Waiting material is shown in the real high input hopper.
+                // Waiting material is displayed on the REAL elevated item input port.
                 drawItem(classifier, input, pose, buffers,
-                        packedLight, packedOverlay, -.5D, 2.35D, -2.5D, .35F);
+                        packedLight, packedOverlay, -.5D, 2.05D, -2.5D, .35F);
             }
         }
         if (!primary.isEmpty()) drawItem(classifier, primary, pose, buffers,
-                packedLight, packedOverlay, -.5D, 1.04D, 1.5D, .34F);
+                packedLight, packedOverlay, -.5D, .76D, 1.5D, .34F);
         if (!coarse.isEmpty()) drawItem(classifier, coarse, pose, buffers,
-                packedLight, packedOverlay, 1.5D, 1.04D, 1.5D, .34F);
+                packedLight, packedOverlay, 1.5D, .76D, 1.5D, .34F);
         pose.popPose();
     }
 

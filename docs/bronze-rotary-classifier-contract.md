@@ -1,6 +1,6 @@
 # Rotary Ore Classifier — Bronze II acceptance contract
 
-**Status:** Compact **3×3×5 redesign** staged for PR #11 in Forge 1.20.1 after rejecting the first overscaffolded, tiny-drum prototype from the user's screenshots on 2026-10-19. This is a source-level geometry revision; **no `./gradlew build` or Minecraft test has been run against the redesign**.
+**Status:** Compact **3×3×5 design**, with a 2026-10-23 port-visibility correction after in-game screenshots showed noninteractive duplicate hoppers and output holders. Source belongs to draft PR #11 (Forge 1.20.1). Minecraft screenshots confirmed the previous geometry ran but showed false noninteractive holders; **the new port-exposure fix has not yet been retested in game or verified by `./gradlew build`**.
 
 ## Functional scope — intentionally preserved
 
@@ -27,30 +27,30 @@ UIA   real Item Input at (-1,1,-3), Gear V2 at (0,1,-3)
 PAP   rear timber bearings
 AAA
 PAP   front timber bearings
-AAA   discharge chutes above output modules
+AAA   AIR: no false bins/chutes over the real output ports
 
 Layer Y=2:
-BAA   one bronze/copper build block supports the hopper
+AAA   AIR: input must remain accessible from above
 AAA
 AAA
 AAA
 AAA
 ```
 
-`S` Stone Bricks, `P` Oak Planks, `B` Cut Copper, `C` Classifier Controller, `A` **required empty AIR**, `U` true Item Input module, `I` true Gear V2 Mechanical Input module, `O` Primary Item Output and `Y` Byproduct Item Output.
+`S` Stone Bricks, `P` Oak Planks, `C` Classifier Controller, `A` **required empty AIR**, `U` true Item Input module, `I` true Gear V2 Mechanical Input module, `O` Primary Item Output and `Y` Byproduct Item Output.
 
-**Nineteen selected AIR cells** become V2 filler render/collision proxies after formation, including the real occupied space around the wide drum; all others remain AIR. East/west blueprints are **5×3×3** after rotation; north/south remain **3×3×5**. Both the local model origin and Voxel V2 rotations use the controller's 8-pixel X/Z pivot. Patchouli `multiblock` Visualize follows the exact canonical structure, transposed into Patchouli's X-column format.
+**Fourteen selected AIR cells** become V2 filler render/collision proxies after formation, including the real occupied space around the wide drum; all others remain AIR. East/west blueprints are **5×3×3** after rotation; north/south remain **3×3×5**. Both the local model origin and Voxel V2 rotations use the controller's 8-pixel X/Z pivot. Patchouli `multiblock` Visualize follows the exact canonical structure, transposed into Patchouli's X-column format.
 
-**Development-world warning:** Unform/break the *old* 5×3×5 prototype before loading the new revision. Existing formed machine blocks and saved proxy positions cannot safely be migrated by merely retexturing; the source must not silently rewrite the player's test-world multiblock NBT.
+**Development-world warning:** Unform/break either the first 5×3×5 scaffold or the 3×3×5 model with an upper Cut Copper block before loading this port-exposed revision. Existing formed machine blocks and saved proxy positions cannot safely be migrated by merely retexturing; the source must not silently rewrite the player's test-world multiblock NBT.
 
 ## Appearance and engineering acceptance
 
 - **The screen is the silhouette:** an uncovered octagonal **~22 px diameter**, three-block-long rotating wire-mesh drum; normal/worn `screen_mesh_bronze` cutout tiles contain actual alpha openings. At normal Minecraft FOV it must be obvious that ore is being classified in the drum.
 - **Only four timber support posts**, two stations (rear/front), connected to real stone cradles and dark-iron lower girders. No five-wide timber perimeter, wood roof, disconnected bearing collar, invisible support, or repeated fence-look.
-- **Connected process path:** high rear feed hopper above the real Item Input → rear screen mouth → lower bronze fines collection tray → left-front fines output. Coarse ore exits the front of the drum via a separate right-front lined chute and the genuine Byproduct port. The physical modules must remain unobstructed by V2 model geometry.
+- **Only real ports are interaction points:** U at (-1,1,-3) is the input, O at (-1,0,1) the fines outlet, Y at (1,0,1) the coarse outlet. There are **no additional hoppers, catch bins, item trays or independent inventories** in decorative V2 geometry. A short machined-metal coupling meets the REAL input module's front face; the low bronze pan underneath the screen is an internal separating part, not an output holder. The mesh discharges into the actual item-port inventories. Keep the block AND the full cell immediately above each U/O/Y module free of solid/decorative geometry.
 - **Connected drive:** the real input at (0,1,-3) has its own Gear V2 moving shaft; static rear bronze bearing surrounds the axis just *outside* its cell, and the first rotating segment starts immediately at z=-2. The module's shaft axis must follow the length of the drum. No fake drives through wood supports, floating couplers or conflicting rotation axes.
 - **No UV stretching:** editable box-based design `tools/rotary-classifier/frame-design.json` builds block-local baked V2 faces with native 16-pixel texel density. Split faces across cells must **not** gain visible artificial end caps. Thin wear liners have separate physical thickness. The drum's 16px screen panels use vanilla-valid ±45° rotated elements.
-- **Only drum moves in BER:** front/rear/middle normal/worn models are explicit registrations; fixed frame, hopper, collection basin and discharge chutes are baked into V2 models, not redrawn per frame. Two small visible ore fragments follow real processing progress inside the cutout screen and stop when power/processing stops; these are render-only and cannot duplicate items. Client rendering uses `RenderType.cutout()` and the real module's Gear V2 angle.
+- **Only drum moves in BER:** front/rear/middle normal/worn models are explicit registrations; fixed frame, small input coupling and internal collection pan are baked into V2 models, not redrawn per frame. Two small visible ore fragments follow real processing progress inside the cutout screen and stop when power/processing stops; these are render-only and cannot duplicate items. Waiting inputs are previewed ON the actual elevated input module, and finished items are shown ON their respective real ground-level output modules. Client rendering uses `RenderType.cutout()` and the real module's Gear V2 angle.
 - The voxel profile follows original structural boxes plus a simplified rotating-drum physical envelope, clipped to each valid controller/filler cell; all AIR proxy cells are defined in the JSON blueprint. Port modules own their block models/capabilities. No static or collision geometry may penetrate U/I/O/Y modules.
 - **No change to ore fractions, water, age assignment, Gear V2 computation, damage, maintenance logic or world generation** in this visual revision.
 
@@ -69,12 +69,12 @@ The first script also checks for obsolete narrow-drum and former scaffold JSON f
 ## What to test in Minecraft before approval
 
 1. **Break old prototype first**, rebuild the new exact Patchouli layout in SOUTH/WEST/NORTH/EAST and form; check block substitutions, real U/I/O/Y modules and AIR proxies. Confirm dimensions rotate (3×3×5 vs 5×3×3).
-2. Day and night / survival and spectator views: the big 3-block mesh drum dominates, no wood canopy, 4 timber posts grounded, hopper and fines trough physically attached, two real output chutes. Check all sides for missing block parts, texture distortion, thin-plane z-fighting and fake double faces.
+2. Day and night / survival and spectator views: big 3-block mesh drum, four grounded timber posts, one internal fines pan and a small metal intake coupling; no standalone decorative hopper or fake output receptacles. Check all sides for missing block parts, texture distortion, thin-plane z-fighting and fake double faces.
 3. Run Gear V2 in both signed directions then remove power. Real module shaft and drum must remain coaxial and rotate in lockstep; stopped state freezes. No invisible motion, no ghost rotor/shaft passing through module, no animation jumps.
 4. Feed 4 Crushed Chalcocite, Cassiterite and Quartz through the real input module and visually locate inventory items at *the actual* port, fines outlet and coarse outlet. Check 3 fines + 1 coarse return, pressure/torque limits, screen installation and screen wear/replace after many cycles.
 5. Block primary then coarse output independently: machine pauses safely without wasting material and resumes. Confirm save/reload and chunk boundary persistence, automation and manual extraction.
 6. Send 3 fines to Washer (600 mB Water/Dirty Water) and then Sifter. Old normal Crusher/Stamp → Washer → Sifter flows should still work, with no extra material or altered base recipes.
 7. Performance comparison with first prototype from same world/view distance, especially FPS looking at the animated drum and BER client allocation; check that static geometry remains chunk-baked.
-8. Break machine and reclaim its inventory, modules and components without duplication. Check collision while walking on/off platform and targeting posts, chute and screen, and absence of missing model cubes.
+8. Right-click the input/output blocks themselves, including the top of Input and Outputs: there must be no intercepted interaction on a decorative tray. Break the machine and reclaim its inventory, modules and components without duplication. Check collision while targeting posts, internal pan and screen; no missing model cubes.
 
 **Validation status:** generated source, spatial assertions and Git tree comparison can be validated without Minecraft. Only `./gradlew build` and real in-game screenshots can establish compilation and visual/behavior acceptance.

@@ -15,7 +15,7 @@ const data=resources+'data/magneticraft2/';
 const java='src/main/java/com/magneticraft2/';
 const name='rotary_ore_classifier';
 const d=json('tools/rotary-classifier/frame-design.json');
-assert.equal(d.schema,2);
+assert.equal(d.schema,3);
 assert.deepEqual(d.dimensions,[3,3,5]);
 assert.equal(d.layers.length,3);
 assert.ok(d.layers.every(l=>l.length===5&&l.every(row=>row.length===3)));
@@ -27,9 +27,10 @@ const posts=d.boxes.filter(b=>b.name.endsWith('_timber_post'));
 assert.equal(posts.length,4,'The accepted compact design has only four primary timber posts');
 assert.ok(d.boxes.every(b=>!b.name.includes('roof')),'No giant framing canopy');
 assert.ok(d.boxes.some(b=>b.name==='tray_underpan'),'No fines collection pan');
-assert.ok(d.boxes.some(b=>b.name==='ore_hopper_floor'),'No ore inlet hopper');
-assert.ok(d.boxes.some(b=>b.name==='fine_exit_floor'),'No fine fraction chute');
-assert.ok(d.boxes.some(b=>b.name==='coarse_exit_floor'),'No coarse fraction chute');
+assert.ok(!d.boxes.some(b=>/^(ore_hopper_|hopper_)/.test(b.name)), 'Fake elevated hopper obscures real input');
+assert.ok(d.boxes.some(b=>b.name==='feed_coupler_outer'), 'Actual input must connect to the drum via a small coupling');
+assert.ok(!d.boxes.some(b=>/^(fine_exit_|fine_tray_wedge$)/.test(b.name)), 'Remove misleading fake fines holder');
+assert.ok(!d.boxes.some(b=>/^(coarse_exit_|coarse_rear_scoop$)/.test(b.name)), 'Remove misleading fake coarse holder');
 
 const cells=[];
 for(let y=0;y<3;y++)for(let z=-3;z<=1;z++)for(let x=-1;x<=1;x++)cells.push({x,y,z,key:d.layers[y][z+3][x+1]});
@@ -56,6 +57,8 @@ for(const b of d.boxes.concat(d.collisionExtras)){
  for(let a=0;a<3;a++)assert.ok(b.to[a]>b.from[a],b.name+' has inverted dimensions');
  assert.ok(b.from[0]>=-16&&b.to[0]<=32&&b.from[1]>=0&&b.to[1]<=48&&b.from[2]>=-48&&b.to[2]<=32,b.name+' extends outside 3x3x5 physical footprint');
  for(const c of cells.filter(c=>'UIOY'.includes(c.key)))assert.ok(!contains(b,c),b.name+' overlaps functional module '+c.key+' at '+[c.x,c.y,c.z]);
+ for(const c of cells.filter(c=>'UOY'.includes(c.key)))assert.ok(!contains(b,{...c,y:c.y+1}),
+    b.name+' blocks the space directly above actual interactive port '+c.key);
 }
 const anchors=new Set(d.anchors.map(a=>a.join(',')));
 assert.equal(anchors.size,d.anchors.length);
@@ -69,7 +72,7 @@ assert.deepEqual([...anchors].sort(),[...calculated].sort(),'AIR proxies must ma
 const rot=(x,z,f)=>f==='south'?[x,z]:f==='west'?[-z,x]:f==='north'?[-x,-z]:[z,-x];
 const faceNames=['south','west','north','east'];
 const fixedHosts=cells.filter(c=>c.key==='A'?anchors.has([c.x,c.y,c.z].join(',')):!'UIOY'.includes(c.key));
-assert.equal(fixedHosts.length,34);
+assert.equal(fixedHosts.length,28);
 for(const face of faceNames){
  const bp=json(data+'multiblocks/'+name+'_'+face+'.json');
  assert.equal(bp.name,name+'_'+face);
@@ -157,7 +160,9 @@ for(const old of [art+'models/multiblock/'+name+'_drum.json',art+'models/multibl
 
 const renderer=text(java+'client/render/blocks/stage/bronze/RotaryOreClassifierRenderer.java');
 for(const namePart of ['drum_rear','drum_middle','drum_front','WORN_DRUM','RenderType.cutout()','getDrumRotationDegrees','drawScreeningOre','getVisualProcessProgress'])assert.ok(renderer.includes(namePart),'Renderer missing '+namePart);
-assert.ok(renderer.includes('1.5D, 1.04D, 1.5D'),'Byproduct must be displayed above physical +X output');
+assert.ok(renderer.includes('1.5D, .76D, 1.5D'),'Byproduct preview must sit ON the real +X port');
+assert.ok(renderer.includes('-.5D, .76D, 1.5D'),'Fines preview must sit ON the real -X port');
+assert.ok(renderer.includes('-.5D, 2.05D, -2.5D'),'Input preview must sit ON the real elevated input');
 const client=text(java+'client/Clientsetup.java');
 assert.ok(client.includes('ROTARY_ORE_CLASSIFIER_BE')&&client.includes('rotary_ore_classifier_drum_'),'Six registered BER models required');
 const controller=text(java+'common/blockentity/stage/bronze/RotaryOreClassifierBlockEntity.java');
@@ -201,4 +206,4 @@ assert.deepEqual(page.multiblock.pattern,pattern,'Patchouli must form EXACTLY th
 assert.ok(page.text.includes('3×3×5'));
 for(const k of ['pickaxe','stone']){const path=k==='pickaxe'?resources+'data/minecraft/tags/blocks/mineable/pickaxe.json':resources+'data/minecraft/tags/blocks/needs_stone_tool.json';assert.ok(json(path).values.includes('magneticraft2:rotary_ore_classifier'));}
 execFileSync(process.execPath,['tools/rotary-classifier/build-static.mjs','--check'],{cwd:root,stdio:'inherit'});
-console.log('Rotary Classifier V2 contract passed: 3x3x5 structure, 34 cell models × 4 facings, 19 correct AIR proxies, four supports, open 22px drum, zero module overlaps, recipes unchanged.');
+console.log('Rotary Classifier V3 contract passed: 3x3x5 structure, 28 cells x 4 facings, exposed input and outputs, no fake holders, processing unchanged.');

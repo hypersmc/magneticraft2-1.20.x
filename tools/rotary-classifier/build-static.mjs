@@ -4,13 +4,25 @@ import {join,dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const source=JSON.parse(readFileSync(join(root,'tools/rotary-classifier/frame-design.json'),'utf8'));
+if(source.schema!==3)throw Error('Classifier frame schema mismatch; expected exposed-port V3 design');
 function generate(design){
  const A="src/main/resources/assets/magneticraft2/",D="src/main/resources/data/magneticraft2/",files=new Map();
  const F=["south","west","north","east"],round=n=>Math.round(n*10000)/10000;
  const write=(p,j)=>{if(files.has(p))throw Error("Duplicate "+p);files.set(p,JSON.stringify(j,null,2)+"\n")};
  const cells=[];for(let y=0;y<3;y++)for(let z=-3;z<=1;z++)for(let x=-1;x<=1;x++)cells.push({x,y,z,key:design.layers[y][z+3][x+1]});
  const air=new Set(design.anchors.map(p=>p.join(","))),hosts=cells.filter(c=>c.key==="A"?air.has([c.x,c.y,c.z].join(",")):!"UIOY".includes(c.key));
- if(hosts.length!==34)throw Error("Wrong render host count "+hosts.length);
+ if(hosts.length!==28)throw Error("Wrong render host count "+hosts.length);
+ const touches=(b,c)=>b.to[0]>c.x*16+1e-4&&b.from[0]<(c.x+1)*16-1e-4
+  &&b.to[1]>c.y*16+1e-4&&b.from[1]<(c.y+1)*16-1e-4
+  &&b.to[2]>c.z*16+1e-4&&b.from[2]<(c.z+1)*16-1e-4;
+ const ports=cells.filter(c=>"UOY".includes(c.key));
+ if(ports.length!==3)throw Error("Exactly one true item input and two outputs are required");
+ for(const b of design.boxes.concat(design.collisionExtras))for(const port of ports){
+  if(touches(b,port)||touches(b,{...port,y:port.y+1}))
+   throw Error("Decoration obscures real "+port.key+" port: "+b.name);
+ }
+ if(design.boxes.some(b=>/^(ore_hopper_|hopper_|fine_exit_|coarse_exit_|fine_tray_wedge$|coarse_rear_scoop$)/.test(b.name)))
+  throw Error("False/noninteractive inventory holders must not be modeled");
  const turn=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
  const offset=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
  const boxRot=(b,f)=>{const q=[[b.from[0],b.from[2]],[b.from[0],b.to[2]],[b.to[0],b.from[2]],[b.to[0],b.to[2]]].map(p=>turn(...p,f));return{...b,from:[Math.min(...q.map(p=>p[0])),b.from[1],Math.min(...q.map(p=>p[1]))],to:[Math.max(...q.map(p=>p[0])),b.to[1],Math.max(...q.map(p=>p[1]))]}};

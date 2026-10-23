@@ -1,7 +1,7 @@
 {
-  "schema": 2,
+  "schema": 3,
   "name": "rotary_ore_classifier",
-  "description": "Compact 3×3×5 SOUTH-oriented Rotary Ore Classifier: only four timber stands, one large open 3-segment bronze screen and two connected chutes. Authored source for all facings, proxy anchors, collision and moving drum.",
+  "description": "Compact 3x3x5 SOUTH-oriented classifier. Real item ports are the ONLY item interaction points; no false hoppers or output holders. One internal pan screens fines and a short non-container feed coupler meets the rear input face. Four timber supports, 3 rotating drum segments, exposed real modules.",
   "dimensions": [
     3,
     3,
@@ -23,7 +23,7 @@
       "AAA"
     ],
     [
-      "BAA",
+      "AAA",
       "AAA",
       "AAA",
       "AAA",
@@ -33,7 +33,6 @@
   "blocks": {
     "S": "minecraft:stone_bricks",
     "P": "minecraft:oak_planks",
-    "B": "minecraft:cut_copper",
     "C": "magneticraft2:rotary_ore_classifier",
     "U": "magneticraft2:multiblock_item_input",
     "I": "magneticraft2:mechanical_input_module",
@@ -697,342 +696,32 @@
       "collision": false
     },
     {
-      "name": "ore_hopper_floor",
+      "name": "feed_coupler_outer",
       "material": "bronze",
       "from": [
-        -14,
-        33,
-        -47
+        -5.8,
+        22,
+        -32
       ],
       "to": [
         -1,
-        35,
-        -34
-      ]
-    },
-    {
-      "name": "ore_hopper_lining",
-      "material": "liner",
-      "from": [
-        -12.3,
-        35,
-        -45.5
-      ],
-      "to": [
-        -2.7,
-        35.25,
-        -35.8
-      ],
-      "collision": false
-    },
-    {
-      "name": "ore_hopper_rear_wall",
-      "material": "bronze",
-      "from": [
-        -14,
-        35,
-        -47
-      ],
-      "to": [
-        -12.6,
-        46,
-        -34
-      ]
-    },
-    {
-      "name": "ore_hopper_left_wall",
-      "material": "bronze",
-      "from": [
-        -14,
-        35,
-        -47
-      ],
-      "to": [
-        -1,
-        46,
-        -45.6
-      ]
-    },
-    {
-      "name": "ore_hopper_right_wall",
-      "material": "bronze",
-      "from": [
-        -14,
-        35,
-        -35.4
-      ],
-      "to": [
-        -1,
-        45,
-        -34
-      ]
-    },
-    {
-      "name": "ore_hopper_front_lip",
-      "material": "bronze",
-      "from": [
-        -2.3,
-        35,
-        -45.6
-      ],
-      "to": [
-        -1,
-        40,
-        -35.4
-      ]
-    },
-    {
-      "name": "ore_hopper_rim_rear",
-      "material": "bearing",
-      "from": [
-        -14,
-        45,
-        -47
-      ],
-      "to": [
-        -1,
-        46,
-        -45.6
-      ],
-      "collision": false
-    },
-    {
-      "name": "ore_hopper_rim_left",
-      "material": "bearing",
-      "from": [
-        -14,
-        45,
-        -45.6
-      ],
-      "to": [
-        -12.6,
-        46,
-        -34
-      ],
-      "collision": false
-    },
-    {
-      "name": "ore_hopper_rim_right",
-      "material": "bearing",
-      "from": [
-        -14,
-        44,
-        -35.4
-      ],
-      "to": [
-        -1,
-        45,
-        -34
-      ],
-      "collision": false
-    },
-    {
-      "name": "hopper_short_feed",
-      "material": "bronze",
-      "from": [
-        -4,
-        33,
-        -34
-      ],
-      "to": [
-        9,
-        34.2,
-        -25
-      ],
-      "collision": false
-    },
-    {
-      "name": "hopper_feed_lining",
-      "material": "liner",
-      "from": [
-        -3,
-        34.2,
-        -33
-      ],
-      "to": [
-        8,
-        34.5,
+        27,
         -26
       ],
       "collision": false
     },
     {
-      "name": "hopper_feed_west_lip",
-      "material": "bronze",
+      "name": "feed_coupler_machined_band",
+      "material": "bearing",
       "from": [
-        -4,
-        34,
-        -34
+        -6.1,
+        21.7,
+        -26.8
       ],
       "to": [
-        -2.6,
-        37,
-        -25
-      ],
-      "collision": false
-    },
-    {
-      "name": "hopper_feed_east_lip",
-      "material": "bronze",
-      "from": [
-        7.6,
-        34,
-        -34
-      ],
-      "to": [
-        9,
-        37,
-        -25
-      ],
-      "collision": false
-    },
-    {
-      "name": "fine_exit_floor",
-      "material": "bronze",
-      "from": [
-        -14,
-        16.2,
-        15
-      ],
-      "to": [
-        -2.5,
-        17.5,
-        31
-      ],
-      "collision": false
-    },
-    {
-      "name": "fine_exit_lining",
-      "material": "liner",
-      "from": [
-        -12.8,
-        17.5,
-        16
-      ],
-      "to": [
-        -3.7,
-        17.75,
-        30
-      ],
-      "collision": false
-    },
-    {
-      "name": "fine_exit_rail_left",
-      "material": "bronze",
-      "from": [
-        -14,
-        17.5,
-        16
-      ],
-      "to": [
-        -12.8,
-        21.5,
-        31
-      ],
-      "collision": false
-    },
-    {
-      "name": "fine_exit_rail_right",
-      "material": "bronze",
-      "from": [
-        -3.7,
-        17.5,
-        16
-      ],
-      "to": [
-        -2.5,
-        21.5,
-        31
-      ],
-      "collision": false
-    },
-    {
-      "name": "fine_tray_wedge",
-      "material": "bronze",
-      "from": [
-        -8,
-        8,
-        11
-      ],
-      "to": [
-        -2,
-        13,
-        16
-      ],
-      "collision": false
-    },
-    {
-      "name": "coarse_exit_floor",
-      "material": "bronze",
-      "from": [
-        12,
-        17,
-        16
-      ],
-      "to": [
-        28,
-        18.5,
-        30
-      ],
-      "collision": false
-    },
-    {
-      "name": "coarse_exit_liner",
-      "material": "liner",
-      "from": [
-        13.2,
-        18.5,
-        17
-      ],
-      "to": [
-        26.8,
-        18.75,
-        29
-      ],
-      "collision": false
-    },
-    {
-      "name": "coarse_exit_left_lip",
-      "material": "bronze",
-      "from": [
-        12,
-        18.5,
-        16
-      ],
-      "to": [
-        13.2,
-        22,
-        30
-      ],
-      "collision": false
-    },
-    {
-      "name": "coarse_exit_right_lip",
-      "material": "bronze",
-      "from": [
-        26.8,
-        18.5,
-        16
-      ],
-      "to": [
-        28,
-        22,
-        30
-      ],
-      "collision": false
-    },
-    {
-      "name": "coarse_rear_scoop",
-      "material": "bronze",
-      "from": [
-        12,
-        18,
-        11
-      ],
-      "to": [
-        22,
-        21,
-        16
+        -0.7,
+        27.3,
+        -26
       ],
       "collision": false
     }
@@ -1116,31 +805,6 @@
       1,
       1,
       -1
-    ],
-    [
-      0,
-      1,
-      0
-    ],
-    [
-      -1,
-      1,
-      1
-    ],
-    [
-      0,
-      1,
-      1
-    ],
-    [
-      1,
-      1,
-      1
-    ],
-    [
-      0,
-      2,
-      -3
     ],
     [
       -1,

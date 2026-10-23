@@ -333,6 +333,142 @@
           ]
         }
       }
+    },
+    {
+      "from": [
+        0,
+        6,
+        1
+      ],
+      "to": [
+        6,
+        11,
+        5.8
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            1,
+            5,
+            5.8,
+            10
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            1,
+            5,
+            5.8,
+            10
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            1,
+            6,
+            5.8
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            1,
+            6,
+            5.8
+          ]
+        },
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            5,
+            6,
+            10
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            5,
+            6,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5.2,
+        5.7,
+        0.7
+      ],
+      "to": [
+        6,
+        11.3,
+        6.1
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bearing",
+          "uv": [
+            0.7,
+            4.7,
+            6.1,
+            10.3
+          ]
+        },
+        "east": {
+          "texture": "#bearing",
+          "uv": [
+            0.7,
+            4.7,
+            6.1,
+            10.3
+          ]
+        },
+        "down": {
+          "texture": "#bearing",
+          "uv": [
+            5.2,
+            0.7,
+            6,
+            6.1
+          ]
+        },
+        "up": {
+          "texture": "#bearing",
+          "uv": [
+            5.2,
+            0.7,
+            6,
+            6.1
+          ]
+        },
+        "north": {
+          "texture": "#bearing",
+          "uv": [
+            5.2,
+            4.7,
+            6,
+            10.3
+          ]
+        },
+        "south": {
+          "texture": "#bearing",
+          "uv": [
+            5.2,
+            4.7,
+            6,
+            10.3
+          ]
+        }
+      }
     }
   ]
 }

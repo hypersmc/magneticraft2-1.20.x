@@ -63,7 +63,7 @@
       ],
       "layer3": [
         [
-          "B",
+          "A",
           "A",
           "A"
         ],
@@ -92,7 +92,6 @@
     "blocks": {
       "S": "minecraft:stone_bricks",
       "P": "minecraft:oak_planks",
-      "B": "minecraft:cut_copper",
       "C": "magneticraft2:rotary_ore_classifier",
       "U": "magneticraft2:multiblock_item_input",
       "I": "magneticraft2:mechanical_input_module",
@@ -135,31 +134,6 @@
         1,
         1,
         -1
-      ],
-      [
-        0,
-        1,
-        0
-      ],
-      [
-        -1,
-        1,
-        1
-      ],
-      [
-        0,
-        1,
-        1
-      ],
-      [
-        1,
-        1,
-        1
-      ],
-      [
-        0,
-        2,
-        -3
       ],
       [
         -1,
