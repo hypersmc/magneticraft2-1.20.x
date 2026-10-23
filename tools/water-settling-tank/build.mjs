@@ -4,14 +4,17 @@ import path from "node:path";
 function makeAssets(){
  const files=new Map();
  const a="src/main/resources/assets/magneticraft2/",d="src/main/resources/data/magneticraft2/",id="water_settling_tank";
- const rows=[["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"]];
+ const rows=[["SSSSS","SSSSS","SSSSS","SSSSS","SSCSS"],["SSISS","SAAAS","SAAAS","SAAAO","SPSSS"]];
  const types={S:"minecraft:stone_bricks",A:"minecraft:air",
  I:"magneticraft2:multiblock_fluid_input",P:"magneticraft2:multiblock_item_primary_output",
  C:"magneticraft2:water_settling_tank",O:"magneticraft2:multiblock_fluid_output"};
  const tex=Object.fromEntries(["refractory","lining","bronze","riveted_iron","grate","sludge"].map(t=>[t,"magneticraft2:block/settling_tank/"+t]));
  tex.particle=tex.refractory;
  const cells=[];for(let y=0;y<2;y++)for(let zi=0;zi<5;zi++)for(let xi=0;xi<5;xi++)cells.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
- const required={C:[0,0,0],I:[0,0,-4],P:[-1,0,0],O:[2,0,0]};
+ // Real working modules belong in accessible walls with a solid base BELOW
+ // each one. The old floor-level ports looked sunken, disconnected, and
+ // punched conspicuous holes through the floor.
+ const required={C:[0,0,0],I:[0,1,-4],P:[-1,1,0],O:[2,1,-1]};
  for(const [letter,xyz] of Object.entries(required)){
   const found=cells.filter(c=>c.k===letter);
   if(found.length!==1||[found[0].x,found[0].y,found[0].z].join()!==xyz.join())throw Error("Invalid real port "+letter);
@@ -32,20 +35,60 @@ function makeAssets(){
    // overlapping TOP FACES, producing severe in-game Z-fighting.
    // No water is rendered when the tanks are empty, so the dark dry floor
    // now reads differently from the translucent water surface.
-   add(c,"refractory",[0,0,0],[16,16,16]);
+   // Dedicated bronze footplates visibly seat all three real working
+   // ports ON the masonry, rather than floating in cut-out ground cells.
+   if((x===0&&z===-4)||(x===-1&&z===0)||(x===2&&z===-1)){
+    add(c,"refractory",[0,0,0],[16,14,16]);
+    add(c,"bronze",[0,14,0],[16,16,16]);
+   }else{
+    add(c,"refractory",[0,0,0],[16,16,16]);
+   }
   }else if(y===1&&k==="S"){
-   // A 12-pixel LOW outer wall; no overhead frame, posts, or catwalk.
+   // Each upper wall segment occupies ONLY its own block-local cell.
+   // In corner cells the rear/front return and side wall join without
+   // geometric intersections, missing wedges, or duplicate surfaces.
    if(z===-4){
     add(c,"refractory",[0,0,0],[16,10,5]);
-    add(c,"lining",[0,1,5],[16,10,6]);
-    add(c,"bronze",[0,10,0],[16,12,7]);
-    if(x===0){
-     // Real rear fluid input is directly below this restrained inlet pipe.
-     // Bottom-to-top pipe and a small non-overlapping bronze mouth.
-     // Adjacent faces touch, but no two solids share a rendered face.
-     add(c,"riveted_iron",[6,0,8],[10,8,12]);
-     add(c,"riveted_iron",[5,8,11],[11,11,16]);
-     add(c,"bronze",[5,11,11],[11,12,16]);
+    if(x===-2){
+     // Left rear L joint, continuous right up to the inside wall.
+     add(c,"refractory",[11,0,5],[16,10,16]);
+     add(c,"lining",[0,1,5],[11,10,6]);
+     add(c,"lining",[10,2,6],[11,10,16]);
+     add(c,"bronze",[0,10,0],[16,12,7]);
+     add(c,"bronze",[9,10,7],[16,12,16]);
+    }else if(x===2){
+     // Right rear L joint; no dark missing triangle behind copper rim.
+     add(c,"refractory",[0,0,5],[5,10,16]);
+     add(c,"lining",[5,1,5],[16,10,6]);
+     add(c,"lining",[5,2,6],[6,10,16]);
+     add(c,"bronze",[0,10,0],[16,12,7]);
+     add(c,"bronze",[0,10,7],[7,12,16]);
+    }else{
+     add(c,"lining",[0,1,5],[16,10,6]);
+     add(c,"bronze",[0,10,0],[16,12,7]);
+    }
+    // The centered rear cell is a REAL Fluid Input block, not an
+    // ornamental pipe protruding up from a hole in the foundation.
+   }else if(z===0 && (x===-2 || x===2)){
+    // Front corners connect side rails to the short front wall; neither
+    // rail terminates mid-air. Leave true module blocks unobstructed.
+    if(x===-2){
+     add(c,"refractory",[11,0,0],[16,10,16]);
+     add(c,"refractory",[0,0,11],[11,10,16]);
+     add(c,"lining",[10,2,0],[11,10,10]);
+     add(c,"lining",[0,2,10],[11,10,11]);
+     add(c,"bronze",[9,10,0],[16,12,16]);
+     add(c,"bronze",[0,10,9],[9,12,16]);
+    }else{
+     add(c,"refractory",[0,0,0],[5,10,16]);
+     add(c,"refractory",[5,0,11],[16,10,16]);
+     add(c,"lining",[5,2,0],[6,10,10]);
+     add(c,"lining",[5,2,10],[16,10,11]);
+     add(c,"bronze",[0,10,0],[7,12,16]);
+     add(c,"bronze",[7,10,9],[16,12,16]);
+     // Simple raised end-cap matching the opposite end of the copper
+     // output module in adjacent side-wall cell (2,1,-1).
+     add(c,"riveted_iron",[0,12,0],[7,14,2]);
     }
    }else if(x===-2){
     add(c,"refractory",[11,0,0],[16,10,16]);
@@ -55,13 +98,12 @@ function makeAssets(){
     add(c,"refractory",[0,0,0],[5,10,16]);
     add(c,"lining",[5,2,0],[6,10,16]);
     add(c,"bronze",[0,10,0],[7,12,16]);
-    if(z===0){
-     // The downpipe ends above the exposed actual east-edge output module.
-     // Inside-facing downpipe beside the lining, connected to the real
-     // Fluid Output underneath; do not bury another pipe inside the wall.
-     add(c,"riveted_iron",[6,0,5],[10,10,11]);
-     add(c,"bronze",[7,10,5],[11,12,11]);
-    }
+    if(z===-2) add(c,"riveted_iron",[0,12,14],[7,14,16]);
+   }else if(z===0){
+    // Continuous front facade between actual sediment/clean-water ports.
+    add(c,"refractory",[0,0,11],[16,10,16]);
+    add(c,"lining",[0,2,10],[16,10,11]);
+    add(c,"bronze",[0,10,9],[16,12,16]);
    }else throw Error("Unrecognized perimeter "+[x,y,z]);
   }else if(y===1 && k==="A" && z===-2 && Math.abs(x)<=1){
    // A single low overflow weir across the WIDTH; behind it is the

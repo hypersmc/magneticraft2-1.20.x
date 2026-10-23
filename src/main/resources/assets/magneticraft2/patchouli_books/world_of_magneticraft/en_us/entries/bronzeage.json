@@ -280,7 +280,7 @@
       "type": "patchouli:crafting",
       "title": "Water Settling Tank",
       "recipe": "magneticraft2:water_settling_tank",
-      "text": "Craft a controller, then build the two-block-high, five-wide, five-deep open settling basin shown on the next Visualize page. Rear inlet and front services stay accessible. Existing V3 installations must be rebuilt because the four upper support blocks are no longer part of the structure."
+      "text": "Craft a controller and build a low 5×2×5 settling basin. The controller sits at front-centre on the stone foundation. The Dirty Water inlet belongs in the REAR upper wall, the sediment hatch in the FRONT upper wall and the clean-water outlet in the RIGHT/EAST upper side wall. Every port sits on a Stone Brick support. Follow the next Visualize page for exact placements; do not reuse the old floor-mounted port positions."
     },
     {
       "type": "patchouli:multiblock",
@@ -290,17 +290,17 @@
         "pattern": [
           [
             "SSSSS",
-            "S____",
-            "S____",
-            "S____",
-            "SSSSS"
+            "S___P",
+            "I___S",
+            "S___S",
+            "SSSOS"
           ],
           [
             "SSSSS",
-            "SSSSP",
-            "ISSS0",
             "SSSSS",
-            "SSSSO"
+            "SSSS0",
+            "SSSSS",
+            "SSSSS"
           ]
         ],
         "mapping": {
@@ -312,11 +312,11 @@
         },
         "symmetrical": false
       },
-      "text": "Build a LOW 5×2×5 treatment basin, not the old post-and-walkway structure. Place the rear-centre Dirty Water Fluid Input (I), front-left Sediment Output (P), front-centre Controller (0) and front-right EAST-edge Clean Water Output (O). All other solid cells are Stone Bricks. The six inner AIR cells at the overflow divider and front retaining lip become slim V2 models after forming; leave them clear. The open rear basin is for DIRTY water, and the shorter channel nearer the front collects CLEAN water. No Cut Copper posts or elevated grating are needed. The inlet/outlet fittings are attached to the real fluid modules. Unform and rebuild a V3 tank before testing."
+      "text": "$(bold)Water Settling Tank (5×2×5)$()$(br2)The bottom layer is STONE BRICKS except the front-centre Controller (0). The three real ports sit on the UPPER perimeter walls, supported by solid masonry. The Dirty Fluid Input (I) goes in the REAR centre, auto-facing NORTH; the wooden Primary Sediment Output (P) goes at the FRONT-left; and the clean-water Fluid Output (O) goes in the RIGHT/EAST wall, near the clean-water channel, where it automatically faces EAST toward open space. Place both fluid pipes on their outward-facing sides. All other solid cells are Stone Bricks. The A cells are AIR when building; six form the internal weir and retaining lip upon formation. The copper-coloured rim and corner joints are model details, NOT extra blocks. Right-click the controller to form. Old tanks with floor-level modules must be rebuilt."
     },
     {
       "type": "text",
-      "text": "$(bold)Closing the Water Loop$()$(br2)Connect the rear-centre real Fluid Input to the Washer's Dirty Water pipe. Take clean Water from the real outer EAST Fluid Output and feed it back through the existing water-pipe system. The front-left Primary Item Output stores the sediment, which can be crafted into Clay Balls.$(br2)The large exposed muddy pool, transverse bronze weir and short cleaned-water channel show the treatment direction. There are no false collection bins or clickable decorative ports. A blocked clean-water output or full sediment slot pauses the cycle without consuming Dirty Water."
+      "text": "$(bold)Closing the Water Loop$()$(br2)Connect Dirty Water from the Washer to the real upper rear Fluid Input, facing out through the back. Extract sediment from the REAL Primary Item Output in the upper front-left wall. Connect clean Water from the real Fluid Output in the upper RIGHT side wall, facing east toward open space, back to the Washer's water supply.$(br2)The large basin visibly contains dirty water behind a low transverse weir, while clarified Water collects near the front. Processing remains 600 mB Dirty Water to 480 mB clean Water and 1 Settled Sediment in 240 ticks; blocked outputs preserve water and progress."
     },
     {
       "type": "patchouli:crafting",

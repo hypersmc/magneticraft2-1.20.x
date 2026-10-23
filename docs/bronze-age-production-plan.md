@@ -173,3 +173,25 @@ The 5×2×5 multiblock JSON, ports, recipes, water loss, processing and
 hand-painted V3 tile resources remain unchanged. Model/collider
 snapshots of already formed machines require a safe re-form to refresh
 collision, but no block construction change. Compile/client testing pending.
+
+### 2026-10-23 — Water Settling Tank V4.2 port integration
+
+New screenshots showed the floor-mounted rear Fluid Input, front Sediment
+Output and external Clean Water Output as sunken/disconnected objects.
+The upper rim also had empty, mismatched rear corner joints.
+
+V4.2 relocates the existing REAL modules to the 2nd-layer perimeter:
+rear inlet (0,1,-4), front-left sediment (-1,1,0) and EAST
+side clean-water outlet (2,1,-1), all seated on bronze-covered Stone Bricks.
+The shared modules automatically orient the inlet NORTH and outlet EAST,
+so both connect outward instead of facing into a neighboring wall.
+The rear and front rim corners are modeled as connected returns,
+without same-facing coplanar surfaces. The 5×2×5 footprint, V3
+hand-painted textures, 600→480 mB recipe, tanks, Gear V2 non-requirement
+and pump/pipe capability semantics are unchanged. Four rotated JSONs,
+Voxel V2 collision, renderer sediment location, Patchouli projection,
+generator and geometry regression contract are updated as a group.
+
+This revision changes the actual multiblock blueprint; **existing V4.1
+tanks need a safe unform/rebuild.** Compile and live in-game appearance
+are still pending. PR #11 remains draft and unmerged.

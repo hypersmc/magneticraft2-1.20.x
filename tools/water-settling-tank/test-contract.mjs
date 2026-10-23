@@ -14,8 +14,8 @@ const data = "src/main/resources/data/magneticraft2/";
 const source = "src/main/java/com/magneticraft2/";
 const id = "water_settling_tank";
 const rows = [
-  ["SSISS","SSSSS","SSSSS","SSSSS","SPCSO"],
-  ["SSSSS","SAAAS","SAAAS","SAAAS","SAAAS"]
+  ["SSSSS","SSSSS","SSSSS","SSSSS","SSCSS"],
+  ["SSISS","SAAAS","SAAAS","SAAAO","SPSSS"]
 ];
 const parts = [];
 for (let y=0;y<2;y++) for(let zi=0;zi<5;zi++) for(let xi=0;xi<5;xi++)
@@ -26,10 +26,11 @@ assert.equal(where("I").length, 1);
 assert.equal(where("P").length, 1);
 assert.equal(where("O").length, 1);
 assert.deepEqual(where("C").map(p=>[p.x,p.y,p.z]),[[0,0,0]]);
-assert.deepEqual(where("I").map(p=>[p.x,p.y,p.z]),[[0,0,-4]]);
-assert.deepEqual(where("P").map(p=>[p.x,p.y,p.z]),[[-1,0,0]]);
-assert.deepEqual(where("O").map(p=>[p.x,p.y,p.z]),[[2,0,0]]);
-assert.equal(where("S").length,34,"Low basin needs 21 Stone Bricks in foundation and 13 in rim");
+assert.deepEqual(where("I").map(p=>[p.x,p.y,p.z]),[[0,1,-4]]);
+assert.deepEqual(where("P").map(p=>[p.x,p.y,p.z]),[[-1,1,0]]);
+assert.deepEqual(where("O").map(p=>[p.x,p.y,p.z]),[[2,1,-1]]);
+assert.equal(where("S").length,37,
+ "Basin foundation must support all three raised port modules");
 assert.ok(parts.every(c=>c.y<=1),"Upper frame must be entirely removed");
 const nonModule = p=>!"IPO".includes(p.k);
 const rot=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
@@ -98,21 +99,64 @@ for (const f of sdir) {
   }
  }
 }
-assert.equal(modelPaths.size,164,"Four rotations need 41 low-basin static models each");
-// Physical pipe-to-port continuity: the rear riser begins at the top of
-// the real ground-floor fluid input instead of hovering overhead.
-const inletRiser=json(assets+"models/multiblock/"+id+"_south/part_0_1_-4.json");
-assert.ok(inletRiser.elements.some(e=>e.from[1]===0&&e.to[1]===8
-       &&e.from[0]===6&&e.from[2]===8),
-       "Dirty inlet riser no longer joins the real Fluid Input below");
-const eastDownpipe=json(assets+"models/multiblock/"+id+"_south/part_2_1_0.json");
-assert.ok(eastDownpipe.elements.some(e=>e.from[1]===0&&e.to[1]===10
-       &&e.from[0]===6&&e.from[2]===5),
-       "Recovered water downpipe must reach its east-edge real Fluid Output");
+assert.equal(modelPaths.size,176,"Four rotations need 44 port-supported local models each");
+// All three REAL service modules now rest on a full 16-pixel
+// load-bearing lower block. This must hold for every facing and must NOT
+// be simulated by a detached cosmetic downpipe in an upper wall.
+for(const c of [where("I")[0],where("P")[0],where("O")[0]]){
+ assert.equal(c.y,1,"The service port must sit in the upper perimeter wall");
+ const lower=json(assets+"models/multiblock/"+id+"_south/part_"+
+            c.x+"_0_"+c.z+".json");
+ assert.ok(lower.elements.some(e=>e.from[1]===0 && e.to[1]===14
+                  && e.faces.up.texture==="#refractory"),
+       "Real port needs a solid refractory base: "+c.k);
+ assert.ok(lower.elements.some(e=>e.from[1]===14 && e.to[1]===16
+                  && e.faces.up.texture==="#bronze"),
+       "Real port needs a flush bronze bearing plate: "+c.k);
+ const missing=assets+"models/multiblock/"+id+"_south/part_"+
+                   c.x+"_1_"+c.z+".json";
+ assert.ok(!fs.existsSync(path.join(root,missing)),
+       "The genuine module must not be overdrawn by a Voxel V2 filler model: "+c.k);
+}
+// Shared fluid ports auto-orient by greatest controller-relative axis.
+// The clean port must be on the outside east edge; x=1,z=0 would point
+// EAST INTO THE CORNER WALL and could not accept external pipe access.
+const exposedClean=where("O")[0];
+assert.ok(exposedClean.x===2 && exposedClean.z===-1,
+ "The real clean Fluid Output must face exposed exterior on EAST edge");
+const autoFacing=(v)=>{
+ const {x,y,z}=v;
+ if(Math.abs(x)>=Math.abs(z)&&Math.abs(x)>=Math.abs(y)&&x!==0)
+  return x>0?"EAST":"WEST";
+ if(Math.abs(z)>=Math.abs(y)&&z!==0)
+  return z>0?"SOUTH":"NORTH";
+ return y>0?"UP":"DOWN";
+};
+assert.equal(autoFacing(where("I")[0]),"NORTH",
+ "The shared rear Fluid Input must automatically face the exposed north side");
+assert.equal(autoFacing(exposedClean),"EAST",
+ "The shared clean Fluid Output must automatically face the exposed east side");
+// The original open rear corners were unconnected: the back wall stopped
+// at Z=7/16 while the two side rails started one block farther along.
+// Each corner must now have a true return to the side wall.
+const cornerL=json(assets+"models/multiblock/"+id+"_south/part_-2_1_-4.json");
+const cornerR=json(assets+"models/multiblock/"+id+"_south/part_2_1_-4.json");
+assert.ok(cornerL.elements.some(e=>e.faces.up.texture==="#bronze" &&
+                        e.from[0]===9 && e.from[2]===7 && e.to[2]===16),
+  "Left rear rim does not meet its side wall");
+assert.ok(cornerR.elements.some(e=>e.faces.up.texture==="#bronze" &&
+                        e.to[0]===7 && e.from[2]===7 && e.to[2]===16),
+  "Right rear rim does not meet its side wall");
+for(const x of [-2,2]){
+ const model=json(assets+"models/multiblock/"+id+"_south/part_"+x+"_1_0.json");
+ assert.ok(model.elements.some(e=>e.faces.up.texture==="#bronze" &&
+                      e.from[2]===9 && e.to[2]===16),
+      "Front corner rim does not return to front facade: "+x);
+}
 for(const facing of sdir){
  const dir=path.join(root,assets+"models/multiblock/"+id+"_"+facing);
  const models=fs.readdirSync(dir).filter(n=>/^part_-?\d+_-?\d+_-?\d+\.json$/.test(n));
- assert.equal(models.length,41,
+ assert.equal(models.length,44,
    "Old third-layer posts/bridge models must be deleted: "+facing);
  assert.ok(models.every(file=>!/^part_-?\d+_2_/.test(file)),
    "No obsolete overhead geometry may remain after redesign: "+facing);
@@ -184,9 +228,10 @@ for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
 // Internal basin: left wall ends at X=-1, right wall starts at X=2.
 // The low weir occupies Z [-1.1875,-1.0], while the front lip starts
 // at Z=-0.125. A fluid surface MUST stay between these solids.
-const fluidX=[-0.975,1.975],dirtyZ=[-3.53,-1.29],cleanZ=[-0.96,-0.24];
+const fluidX=[-0.975,1.975],dirtyZ=[-3.22,-1.29],cleanZ=[-0.96,-0.24];
 assert.ok(fluidX[0]>-1 && fluidX[1]<2,"Fluid crosses a physical side wall");
-assert.ok(dirtyZ[0]>-3.625 && dirtyZ[1]<-1.1875,"Dirty water enters rear rim or weir");
+assert.ok(dirtyZ[0]>-3.25 && dirtyZ[1]<-1.1875,
+ "Dirty water may not pass through the raised real input model or the weir");
 assert.ok(cleanZ[0]>-1.0 && cleanZ[1]<-0.125,"Clean water clips the weir or front retaining lip");
 
 const recipe=json(data+"recipes/settling_dirty_water.json");
@@ -246,14 +291,14 @@ assert.ok(1.045 + 0.495 > 1.50 &&
 for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
-  "-0.975F, 1.975F, -3.53F, -1.29F",
+  "-0.975F, 1.975F, -3.22F, -1.29F",
   "-0.975F, 1.975F, -0.96F, -0.24F",
   "getDirtyAmount() > 0", "getCleanAmount() > 0",
   "float top = 1.045F + 0.495F",
   "float sideAlpha = alpha * 0.62F",
   "for (int tz = (int)Math.floor(minZ)",
   "float u0 = u(sprite, x0-tx)",
-  "pose.translate(-0.5D, 0.775D, 0.5D)",
+  "pose.translate(-0.5D, 1.775D, 0.5D)",
   "getSedimentStack()", "RenderType.translucent()"
 ])assert.ok(renderer.includes(s),"Wrong fluid/port position in renderer: "+s);
 for(const s of ["BlockRegistry.WATER_SETTLING_TANK","ITEM_WATER_SETTLING_TANK",
@@ -315,4 +360,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: Water Settling Tank V4.1 — zero overlapping solids or coplanar faces, clipped dry/clean fluid bounds, two-stage basin, 4 facings, 164 models, 6 anchors, recipes, book and generated textures");
+console.log("PASS: V4.2 — real upper-wall input and outputs are properly supported and automatically oriented toward free exterior faces, stitched rear/front rim corners, 176 models, 4 facings, no overlapping geometry, Patchouli and unchanged recipes");

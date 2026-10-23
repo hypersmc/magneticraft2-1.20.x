@@ -214,6 +214,74 @@
           ]
         }
       }
+    },
+    {
+      "from": [
+        0,
+        12,
+        0
+      ],
+      "to": [
+        2,
+        14,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ]
+        },
+        "south": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            7,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            7,
+            2
+          ]
+        },
+        "up": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            2,
+            7
+          ]
+        },
+        "down": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            0,
+            2,
+            7
+          ]
+        }
+      }
     }
   ]
 }

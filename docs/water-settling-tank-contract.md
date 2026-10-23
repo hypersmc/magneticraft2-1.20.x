@@ -1,103 +1,108 @@
-# Bronze II — Water Settling Tank (V4 open-basin design)
+# Bronze II — Water Settling Tank (V4.2 port and rim integration)
 
-**Status:** Source implementation on draft PR #11, not yet Gradle-built or
-accepted from Minecraft screenshots.
+**Status:** Implemented in the open, draft Bronze Age PR #11.
+The full Gradle build and final Minecraft appearance are pending user testing.
 
-## Purpose and material conservation
+## Why V4.2 replaced V4.1
 
-The machine passively recovers useful water from the existing Ore Washer's
-Dirty Water output. It is *not* powered, and it is not an ore-production bonus.
+The V4.1 in-game screenshots exposed physical layout issues that cannot be
+corrected by moving one decorative fitting: all three service ports were
+part of the **foundation layer**, while the rest of the machine stood on a
+full-height stone floor. Because the module block models are only partial
+cubes, this left deep holes, a sunken wooden tray and an external copper
+output appearing unsupported. The rear rim ended without connecting to
+the left and right side rails, leaving obvious dark wedges at both corners.
 
-| Input | Duration | Actual completed output |
-| --- | --- | --- |
-| 600 mB Magneticraft2 Dirty Water | 240 server ticks | 480 mB ordinary Minecraft Water + one Settled Sediment |
+**V4.2 fixes the actual block layout.** No new machine, fluid mechanic,
+byproduct, or bespoke module type is necessary.
 
-The remaining 120 mB per batch is process loss in wet sediment. Four sediment
-items craft one Clay Ball. Storage remains two independent 12,000 mB fluid
-tanks, and sediment is stored in the controller's actual output item slot 1.
+## Formation: 5 wide × 2 high × 5 deep
 
-The recipe is the existing datapack
-`data/magneticraft2/recipes/settling_dirty_water.json`. Fluid-only
-multiblock recipes require a nonempty fluid input. The controller simulates
-both full output batches BEFORE consuming dirty water; a full clean tank,
-blocked sediment slot or insufficient input pauses operation without
-resetting incomplete progress. No change to Washer, pipe capabilities,
-Gear V2, processing time or amounts is part of V4.
-
-## Build — 5 wide × 2 high × 5 long
-
-V4 deliberately **removes the four tall Cut Copper corner posts, overhead
-crossbeams and inspection walkway** that dominated V2/V3 screenshots.
-Only a low masonry basin and slender real-connected pipes remain.
-
-Controller anchor local `(0,0,0)`, canonical SOUTH orientation.
-Read rear (NORTH, z=-4) to front (SOUTH, z=0); each row west-to-east:
+Canonical SOUTH orientation, controller at local (0,0,0).
+All rows run **west to east**. Rows listed back/NORTH (z=-4) to
+front/SOUTH (z=0):
 
 ```text
-                    REAR (dirty inlet)
-Y=1     SSSSS    SAAAS    SAAAS    SAAAS    SAAAS
-Y=0     SSISS    SSSSS    SSSSS    SSSSS    SPCSO
-                    FRONT (service ports)
+               BACK / DIRTY WATER INLET
+Y=1    SSISS    SAAAS    SAAAS    SAAAO    SPSSS
+Y=0    SSSSS    SSSSS    SSSSS    SSSSS    SSCSS
+               FRONT / ITEM OUTPUT; EAST SIDE / WATER OUTPUT
 ```
 
-- `S`: Stone Bricks, including the real floor and low perimeter wall
-- `A`: required AIR (no blocks before formation)
-- `I`: real Dirty Water Fluid Input at rear-centre `(0,0,-4)`
-- `P`: real Primary Item Output at front-left `(-1,0,0)` for sediment
-- `C`: one controller at front-centre `(0,0,0)`
-- `O`: real Clean Water Fluid Output at outer EAST edge `(2,0,0)`
+- `S`: 37 Stone Bricks: 24 in the foundation and 13 in the walls
+- `A`: nine REQUIRED AIR cells, six of which become Voxel V2 models
+- `C`: controller; only non-stone foundation block, at (0,0,0)
+- `I`: real Fluid Input in REAR upper wall, at (0,1,-4)
+- `P`: real Primary Item Output in FRONT upper wall, at (-1,1,0)
+- `O`: real Fluid Output in EAST/RIGHT upper wall, at (2,1,-1)
 
-All four directions have JSON blueprints generated from one source.
-Six inner AIR cells form slim Voxel V2 proxies: three segments for a
-**transverse low overflow weir** (`z=-2`) and three for the front
-retaining lip (`z=-1`). The other six upper interior AIR cells stay open.
-The model has 41 local static parts per direction (164 total), down from
-48 per direction (192). The 36 old models no longer referenced by V4
-have been deleted. Real ports and their accessible outside faces
-remain unobstructed. World collision uses the same Voxel V2 boxes.
+The shared fluid modules automatically orient outward on formation,
+using their offset from the controller. The rear inlet therefore faces
+**NORTH** and the clean-water side outlet faces **EAST** in the canonical
+layout. Connect pipes to those outward faces; do not place the clean
+outlet in the upper front-right wall where it would point east INTO stone.
+Other three machine orientations rotate both outward directions.
 
-**Compatibility:** A V3 tank must be unformed/dismantled and rebuilt:
-the structure now has TWO layers and no Cut Copper posts. Replacing
-textures alone was safe in V3; the V4 geometry is not a resource-only update.
+All three module cells are entirely real blocks, not V2 proxies. A
+load-bearing Stone Brick foundation sits immediately below each one.
+The generated model displays a thin bronze support plate on each
+foundation and does not render any fake pipe inside a module cell.
+The front sediment hatch stays accessible to players and item automation;
+the right-side clean-water port remains exposed for external pipes.
 
-## Visual treatment: follow the process
+The two rear corner returns and two front corner returns are genuine
+stitched shapes with zero overlapping cuboids or same-facing coplanar faces.
+No visually unsupported rim overhangs remain at the rear wall/sidewall
+junctions. The machine remains two blocks tall, has an open top and no
+overhead supports or catwalk.
 
-The large rear settling pool receives Dirty Water through a small
-metal riser physically attached to its real rear inlet, rather than a
-hovering hopper. A low crosswise glazed weir separates muddy water from
-the narrow front cleaned-water channel. A restrained right-side
-downpipe reaches the existing real Fluid Output on the east edge.
-The sediment output remains a real module, not a decorative bin.
-The floor is now a continuous **dark refractory surface** when dry,
-not an opaque ceramic-blue slab decorated with permanent fake sludge
-and a fake grate. This makes the presence of water and the output item
-observable only when the server actually stores them.
+**Old V4/V4.1 tanks MUST be safely emptied, unformed and rebuilt.**
+Moving the ports from Y=0 to Y=1 changes the required building pattern;
+a resource reload alone cannot make an old multiblock valid.
 
-Fluid surfaces now occupy the **full interior width** in both reservoirs:
+## Processing contract (unchanged)
 
-- Dirty: rear two rows, from local Z -3.53 to -1.29
-- Clean: front collection row, from local Z -0.96 to -0.24
-- Both: inside the masonry at local X -0.975 to 1.975, with a
-  server-driven height `1.045 + 0.495 × fillRatio` above controller
-  origin (only if nonempty)
+| Actual input | Time | Actual server-side output |
+| --- | --- | --- |
+| 600 mB Magneticraft2 Dirty Water | 240 ticks | 480 mB ordinary Minecraft Water + 1 Settled Sediment |
 
-At full display height the water stays just below the low weir and below
-the front retaining wall. It does not penetrate either side wall.
-The renderer draws native-tiled water texture,
-translucent surfaces and visible vertical sides, not a solid brown floor.
-These are inventory-backed visual representations of the two tanks, **not
-a physical fluid-flow simulation** or a new transfer mechanism.
+- The remaining 120 mB per batch is irrecoverable process loss.
+- Four Settled Sediment produce one Clay Ball.
+- The machine remains passive, with no Gear V2 load.
+- Dirty and clean storage are separate 12,000 mB fluid tanks.
+- Sediment is always stored in the actual primary item output slot.
+- Both output capacities are simulated before dirty fluid is consumed.
+- Blocked outputs preserve material and progress, not phantom items.
 
-Six original 16×16 V3 textures are deliberately retained:
-`refractory`, `lining`, `bronze`, `riveted_iron`, `grate`
-and `sludge`. Geometry uses native pixel-span UVs, without stretching
-tiles over multiple blocks or applying artificial noisy highlights.
-The old floor grate and static sludge patches have been removed because
-they overlapped the floor's top faces. Actual extractable sediment appears
-only when the real output slot is populated. The material tiles are still
-available for item models and future, non-overlapping details.
+The passive `multiblock_processing` datapack recipe is unchanged. The
+existing fluid modules and JEI category remain shared with other machines.
 
-## Generation and verification
+## Generated art and fluid placement
+
+The generator `tools/water-settling-tank/build.mjs` is the single source
+of truth for four rotated JSON formation structures, 176 local block
+models, their exact native pixel UVs and the 99-box Voxel V2 collision
+profile. Six required-air baffle/lip hosts are placed only upon formation.
+
+The real rear, front and right-side upper modules are no longer drawn
+as ornamental copper risers. They display their **real block models**. The low bronze rim,
+dark masonry, ceramic lining and divider are purposefully tiled in their
+own block-local parts.
+
+The fluid BER reads real tank amounts:
+- dirty rear reservoir X [-0.975,1.975], Z [-3.22,-1.29]
+- clean front reservoir X [-0.975,1.975], Z [-0.96,-0.24]
+- display level Y = 1.045 + 0.495 × fill ratio, only if non-empty.
+
+Moving the real inlet to the rear upper wall required starting dirty
+fluid at Z=-3.22, just inside its visible pipe mouth at Z=-3.25.
+This prevents translucent water from passing through the copper port
+model. The sediment output item is drawn at (-0.5,1.775,0.5), over
+the real elevated front-wall wooden tray. No fake particles or ghost
+sediment entities are introduced. Existing six V3 16×16 hand-painted
+texture assets are reused without stretching.
+
+## Verification
 
 ```bash
 node tools/water-settling-tank/build.mjs --check
@@ -106,63 +111,28 @@ node tools/water-settling-tank/test-contract.mjs
 ./gradlew build
 ```
 
-The generator emits four formation JSON files, per-cell models,
-the Voxel V2 profile, block/item models, recipes and loot. The contract
-tests four rotations, native UV density, unblocked module cells, six AIR
-anchors, absence of old upper posts, plumbing continuity, fluid-level
-bounds, no water duplication, book layout and texture signatures.
+Source-level audit checks:
+- four directional blueprints and Patchouli Visualize agreement
+- all actual modules at Y=1 with underlying bronze bearing plates
+- no rendered filler mesh covering real modules
+- rear and front rim corner joint continuity
+- no cuboid overlap, coplanar matching faces, or stretched UVs
+- correct dirty/clean surface clipping and true item output position
+- preservation of the 600→480 mB recipe and item byproduct
 
-The geometry generator was checked for output bounds and model counts
-before committing. The complete Node contract, Forge build and in-game
-appearance have **not** been verified in this chat.
+**Live Minecraft acceptance still needed:** rebuild once, verify all
+three module blocks face out, test accessible water pipes and item
+extraction, look at the four corners and both output modules from front,
+side and overhead, then run empty/full/blocked/reload scenarios.
+Watch for lingering WTHIT "Multiblock Filler" tooltips: that is a
+separate existing naming/UX problem, not resolved by this mesh repair.
 
-**In-game review:** rebuild from the book; test all four facings,
-dirty-only / clean-only / both-full / both-empty, visual separation,
-rear inlet connection, east-edge output access, sediment visibility and
-extractability, blocked outputs, chunk reload and multiple formed tanks.
-View both from walking height and above: the two visible water stages
-should dominate, not copper rails. Watch for Z-fighting and any missing
-stone support or invisible collision. PR #11 stays draft until accepted.
+## Design history
 
-## Prior iterations
-
-- V1: bare stone trough with flat-looking fluid and unrelated wood.
-- V2: custom refractory/ceramic/metal details, but too many beams/posts
-  and a front bridge obscuring the treatment area.
-- V3: original simple, hand-painted pixel textures; these were retained.
-- V4: process-first geometry and fluid layout, low 5×2×5 silhouette
-  and smaller functional fittings, without changing the processing contract.
-
-## 2026-10-23 — V4.1: overlapping-faces and fluid containment repair
-
-A real in-game screenshot showed flickering floor panels, ghost grating and
-liquid that looked merged with solid masonry. Geometry audit of V4 found
-**12 same-facing coplanar face pairs**, and the front/back liquid renderer
-spanned x=-1.28 to x=2.28 although the actual basin interior spans x=-1
-to x=2. Each reservoir intruded about 0.28 blocks into both stone walls;
-clean fluid also entered the crosswise divider at z=-1.10.
-
-The V4.1 model now has *zero* positive-volume solid cuboid overlaps and
-*zero* overlapping same-facing coplanar faces. We removed floor-bound
-sludge/grate/fascia decals which competed for Y=16 with the pale lining,
-unified dry foundation top faces into dark refractory masonry, and rebuilt
-inlet/outlet fittings from distinct touching (not interpenetrating) parts.
-The generator still produces 164 local parts with the same 5×2×5 four-facing
-block pattern. No new texture resources were introduced.
-
-The fluid renderer now clips both surfaces to x=-0.975..1.975, keeps dirty
-water z=-3.53..-1.29, moves the start of the clean channel to z=-0.96
-and keeps full-water height at 1.54 (below the solid bronze weir top
-1.5625). Fluid never appears if its actual tank is empty. No water amount,
-recipe, real port, inventory, or formation block changed.
-
-**Compatibility:** The structural blueprint is identical to V4, so there
-is **no construction rebuild**. Previously formed V4 proxies hold serialized
-Voxel V2 collision snapshots, however, and won't receive the revised
-fitting collision automatically. For accurate interaction/collision checks,
-safely empty the machine and unform/reform it once. Otherwise a client
-restart reloads the baked visual models and fixes the visible overlaps.
-
-**Verification:** Generated asset geometry was audited for all four facings,
-UV spans, actual port access, coplanar faces and fluid/stone clearance.
-The full Node suite, Gradle build and new in-game screenshot are pending.
+- V1: basic stone trough and flat-looking water.
+- V2: highly ornamented ceramic/metal frame and walkway.
+- V3: restrained hand-painted 16×16 textures.
+- V4: simpler low, two-stage open tank.
+- V4.1: removed Z-fighting; clipped liquids inside the real walls.
+- V4.2: raised the real service modules, filled foundation holes and
+  permanently joined the rear/front rim corner geometry.

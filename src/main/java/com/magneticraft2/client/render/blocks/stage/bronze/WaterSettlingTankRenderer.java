@@ -48,14 +48,15 @@ public final class WaterSettlingTankRenderer
         pose.translate(-0.5D, 0D, -0.5D);
 
         // Use the OPEN interior geometry, not the outside dimensions of the
-        // basin. In V4 the water extended ~0.28 blocks INTO EACH wall,
-        // giving translucent/opaque geometry and water overlap artifacts.
+        // basin. In V4 the water extended ~0.28 blocks INTO EACH wall.
+        // The rear boundary also sits just INSIDE the real inlet's tip,
+        // never cutting through its copper model inside the rear wall.
         // Both surfaces are tied solely to the real server-side tank amounts.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
                     tank.getDirtyFillRatio(),
-                    -0.975F, 1.975F, -3.53F, -1.29F, 0.67F);
+                    -0.975F, 1.975F, -3.22F, -1.29F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
@@ -68,8 +69,9 @@ public final class WaterSettlingTankRenderer
         if (!sediment.isEmpty()) {
             ItemRenderer items = Minecraft.getInstance().getItemRenderer();
             pose.pushPose();
-            // ONLY the actual front-left stored item-output module.
-            pose.translate(-0.5D, 0.775D, 0.5D);
+            // Only the actual elevated front-wall sediment output is rendered:
+            // the module moved up one block, its stored stack moved with it.
+            pose.translate(-0.5D, 1.775D, 0.5D);
             pose.scale(0.8F, 0.8F, 0.8F);
             items.render(sediment, ItemDisplayContext.GROUND, false,
                     pose, buffers, light, overlay,
