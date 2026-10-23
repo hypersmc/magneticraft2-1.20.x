@@ -253,3 +253,21 @@ or liquid crossing physical walls. The only game-source change is
 WaterSettlingTankRenderer.java; no multiblock rebuild or texture changes.
 Source-level tests passed; Gradle/in-game rendering still pending.
 Next planned design discussion: user's texture improvements.
+
+
+### 2026-10-24 — Water Settling Tank V5 art-family redesign
+
+After verifying the V4.6 model from front, side and overhead screenshots,
+the remaining criticism was **uniform materials**, not the silhouette or
+liquid shapes. V5 retains V4.6 machine logic and geometry while establishing
+nine purposeful, original 16×16 material tiles: dark foundation, lighter
+refractory outer masonry, smoother ceramic lining, distinct watertight
+floor top, clean cast bronze, darker bronze joining plates, working iron,
+and preserved grate/sediment art. The generated floor cuboids now use
+different texture roles on up vs. side faces without adding geometry.
+Bronze corner returns, port footplates, and port caps use dark joint
+metal; straight rails keep cast bronze; weir and front retention use steel.
+No texture stretching, random speckle, fake grating, or decorative mud.
+Voxel shapes, recipes, rotated construction, actual fluid ports, fluid
+rendering and item output remain unchanged. PR #11 remains draft until
+visual feedback and the full Forge build are accepted.

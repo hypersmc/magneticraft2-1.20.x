@@ -8,8 +8,12 @@ function makeAssets(){
  const types={S:"minecraft:stone_bricks",A:"minecraft:air",
  I:"magneticraft2:multiblock_fluid_input",P:"magneticraft2:multiblock_item_primary_output",
  C:"magneticraft2:water_settling_tank",O:"magneticraft2:multiblock_fluid_output"};
- const tex=Object.fromEntries(["refractory","lining","bronze","riveted_iron","grate","sludge"].map(t=>[t,"magneticraft2:block/settling_tank/"+t]));
- tex.particle=tex.refractory;
+ // V5 role-based materials for visually distinct machine components.
+ const tex=Object.fromEntries([
+  "foundation","refractory","lining","basin_floor","bronze",
+  "bronze_joint","riveted_iron","grate","sludge"
+ ].map(t=>[t,"magneticraft2:block/settling_tank/"+t]));
+ tex.particle=tex.foundation;
  const cells=[];for(let y=0;y<2;y++)for(let zi=0;zi<5;zi++)for(let xi=0;xi<5;xi++)cells.push({x:xi-2,y,z:zi-4,k:rows[y][zi][xi]});
  // Real working modules belong in accessible walls with a solid base BELOW
  // each one. The old floor-level ports looked sunken, disconnected, and
@@ -34,18 +38,13 @@ function makeAssets(){
  for(const c of cells) {
   const {x,y,z,k}=c;
   if(y===0 && (k==="S"||k==="C")){
-   // One uninterrupted dark structural floor per cell. The former ceramic
-   // top slab, "sludge" decal, grate and fascia all ended at Y=16 with
-   // overlapping TOP FACES, producing severe in-game Z-fighting.
-   // No water is rendered when the tanks are empty, so the dark dry floor
-   // now reads differently from the translucent water surface.
-   // Dedicated bronze footplates visibly seat all three real working
-   // ports ON the masonry, rather than floating in cut-out ground cells.
+   // Same cuboid: dark structural stone SIDES and sealed ceramic TOP.
+   // The three real ports retain bronze joining plates underneath.
    if((x===0&&z===-4)||(x===-1&&z===0)||(x===2&&z===-1)){
-    add(c,"refractory",[0,0,0],[16,14,16]);
-    add(c,"bronze",[0,14,0],[16,16,16]);
+    add(c,"foundation",[0,0,0],[16,14,16]);
+    add(c,"bronze_joint",[0,14,0],[16,16,16]);
    }else{
-    add(c,"refractory",[0,0,0],[16,16,16]);
+    add(c,{all:"foundation",up:"basin_floor"},[0,0,0],[16,16,16]);
    }
   }else if(y===1&&k==="S"){
    // Each upper wall segment occupies ONLY its own block-local cell.
@@ -58,15 +57,15 @@ function makeAssets(){
      add(c,"refractory",[11,0,5],[16,10,16]);
      add(c,"lining",[0,1,5],[11,10,6]);
      add(c,"lining",[10,2,6],[11,10,16]);
-     add(c,"bronze",[0,10,0],[16,12,7]);
-     add(c,"bronze",[9,10,7],[16,12,16]);
+     add(c,"bronze_joint",[0,10,0],[16,12,7]);
+     add(c,"bronze_joint",[9,10,7],[16,12,16]);
     }else if(x===2){
      // Right rear L joint; no dark missing triangle behind copper rim.
      add(c,"refractory",[0,0,5],[5,10,16]);
      add(c,"lining",[5,1,5],[16,10,6]);
      add(c,"lining",[5,2,6],[6,10,16]);
-     add(c,"bronze",[0,10,0],[16,12,7]);
-     add(c,"bronze",[0,10,7],[7,12,16]);
+     add(c,"bronze_joint",[0,10,0],[16,12,7]);
+     add(c,"bronze_joint",[0,10,7],[7,12,16]);
     }else{
      add(c,"lining",[0,1,5],[16,10,6]);
      add(c,"bronze",[0,10,0],[16,12,7]);
@@ -90,15 +89,15 @@ function makeAssets(){
      add(c,"refractory",[0,0,11],[11,10,16]);
      add(c,"lining",[10,2,0],[11,10,10]);
      add(c,"lining",[0,2,10],[11,10,11]);
-     add(c,"bronze",[9,10,0],[16,12,16]);
-     add(c,"bronze",[0,10,9],[9,12,16]);
+     add(c,"bronze_joint",[9,10,0],[16,12,16]);
+     add(c,"bronze_joint",[0,10,9],[9,12,16]);
     }else{
      add(c,"refractory",[0,0,0],[5,10,16]);
      add(c,"refractory",[5,0,11],[16,10,16]);
      add(c,"lining",[5,2,0],[6,10,10]);
      add(c,"lining",[5,2,10],[16,10,11]);
-     add(c,"bronze",[0,10,0],[7,12,16]);
-     add(c,"bronze",[7,10,9],[16,12,16]);
+     add(c,"bronze_joint",[0,10,0],[7,12,16]);
+     add(c,"bronze_joint",[7,10,9],[16,12,16]);
      // Simple raised end-cap matching the opposite end of the copper
      // output module in adjacent side-wall cell (2,1,-1).
      add(c,"riveted_iron",[0,12,0],[7,14,2]);
@@ -123,12 +122,12 @@ function makeAssets(){
    // deeper dirty settling area, in front a short clear-water channel.
    add(c,"refractory",[0,0,13],[16,6,16]);
    add(c,"lining",[0,6,13],[16,8,16]);
-   add(c,"bronze",[0,8,12],[16,9,16]);
+   add(c,"riveted_iron",[0,8,12],[16,9,16]);
   }else if(y===1 && k==="A" && z===-1 && Math.abs(x)<=1){
    // Front retaining lip stays BEHIND the three real service modules.
    add(c,"refractory",[0,0,14],[16,9,16]);
    add(c,"lining",[0,9,14],[16,10,16]);
-   add(c,"bronze",[0,10,13],[16,11,16]);
+   add(c,"riveted_iron",[0,10,13],[16,11,16]);
   }
  }
  const renderAnchors=cells.filter(c=>c.k==="A"&&shapes.has([c.x,c.y,c.z].join(",")))
@@ -153,8 +152,15 @@ function makeAssets(){
  const rotatePoint=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
  const faces=(from,to,mat)=>{
   const dx=to[0]-from[0],dy=to[1]-from[1],dz=to[2]-from[2];
-  const f=(u,v)=>({texture:"#"+mat,uv:[0,0,u,v]});
-  return {north:f(dx,dy),south:f(dx,dy),east:f(dz,dy),west:f(dz,dy),up:f(dx,dz),down:f(dx,dz)};
+  const f=(side,u,v)=>{
+   const key=typeof mat==="string"?mat:(mat[side]??mat.all);
+   if(!key||(!tex[key]&&key!=="mud"&&key!=="grit"))
+    throw Error("Unknown texture material "+key);
+   return {texture:"#"+key,uv:[0,0,u,v]};
+  };
+  return {north:f("north",dx,dy),south:f("south",dx,dy),
+          east:f("east",dz,dy),west:f("west",dz,dy),
+          up:f("up",dx,dz),down:f("down",dx,dz)};
  };
  // Tank-only STATIC overlays inside the actual fluid module cells.
  // They are separate additional baked models drawn by the controller BER.
@@ -165,12 +171,12 @@ function makeAssets(){
  const portFrame=[
   {material:"refractory",from:[0,0,0],to:[2,10,16]},
   {material:"refractory",from:[14,0,0],to:[16,10,16]},
-  {material:"bronze",from:[0,10,0],to:[2,12,16]},
-  {material:"bronze",from:[14,10,0],to:[16,12,16]},
+  {material:"bronze_joint",from:[0,10,0],to:[2,12,16]},
+  {material:"bronze_joint",from:[14,10,0],to:[16,12,16]},
   {material:"riveted_iron",from:[0,12,8],to:[2,16,16]},
   {material:"riveted_iron",from:[14,12,8],to:[16,16,16]},
   {material:"refractory",from:[2,0,8],to:[14,2,16]},
-  {material:"bronze",from:[2,14,8],to:[14,16,16]}
+  {material:"bronze_joint",from:[2,14,8],to:[14,16,16]}
  ];
  // Unlike the multiblock's SOUTH-local offset rotation, the generic
  // port's unrotated Minecraft block model faces NORTH. Keep input

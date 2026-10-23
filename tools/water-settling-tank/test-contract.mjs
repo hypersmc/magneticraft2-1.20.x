@@ -110,10 +110,10 @@ for(const c of [where("I")[0],where("P")[0],where("O")[0]]){
  const lower=json(assets+"models/multiblock/"+id+"_south/part_"+
             c.x+"_0_"+c.z+".json");
  assert.ok(lower.elements.some(e=>e.from[1]===0 && e.to[1]===14
-                  && e.faces.up.texture==="#refractory"),
+                  && e.faces.up.texture==="#foundation"),
        "Real port needs a solid refractory base: "+c.k);
  assert.ok(lower.elements.some(e=>e.from[1]===14 && e.to[1]===16
-                  && e.faces.up.texture==="#bronze"),
+                  && e.faces.up.texture==="#bronze_joint"),
        "Real port needs a flush bronze bearing plate: "+c.k);
  const missing=assets+"models/multiblock/"+id+"_south/part_"+
                    c.x+"_1_"+c.z+".json";
@@ -229,15 +229,15 @@ assert.ok(tankRenderer.includes("getModelRenderer().renderModel"),
 // Each corner must now have a true return to the side wall.
 const cornerL=json(assets+"models/multiblock/"+id+"_south/part_-2_1_-4.json");
 const cornerR=json(assets+"models/multiblock/"+id+"_south/part_2_1_-4.json");
-assert.ok(cornerL.elements.some(e=>e.faces.up.texture==="#bronze" &&
+assert.ok(cornerL.elements.some(e=>e.faces.up.texture==="#bronze_joint" &&
                         e.from[0]===9 && e.from[2]===7 && e.to[2]===16),
   "Left rear rim does not meet its side wall");
-assert.ok(cornerR.elements.some(e=>e.faces.up.texture==="#bronze" &&
+assert.ok(cornerR.elements.some(e=>e.faces.up.texture==="#bronze_joint" &&
                         e.to[0]===7 && e.from[2]===7 && e.to[2]===16),
   "Right rear rim does not meet its side wall");
 for(const x of [-2,2]){
  const model=json(assets+"models/multiblock/"+id+"_south/part_"+x+"_1_0.json");
- assert.ok(model.elements.some(e=>e.faces.up.texture==="#bronze" &&
+ assert.ok(model.elements.some(e=>e.faces.up.texture==="#bronze_joint" &&
                       e.from[2]===9 && e.to[2]===16),
       "Front corner rim does not return to front facade: "+x);
 }
@@ -311,8 +311,9 @@ for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
  const floor=json(assets+"models/multiblock/"+id+"_south/part_"+
         dx+"_0_"+dz+".json");
  assert.ok(floor.elements.some(el=>el.from[1]===0&&el.to[1]===16 &&
-           el.faces.up.texture==="#refractory"),
-   "Unfilled basin must show dark, dry refractory rather than a water-colored liner");
+           el.faces.up.texture==="#basin_floor" &&
+           el.faces.north.texture==="#foundation"),
+   "Dry basin floor must have a sealed ceramic TOP on structural stone SIDES");
  assert.ok(!floor.elements.some(el=>el.faces.up.texture==="#sludge"),
    "Do not Z-fight with permanent floating sediment decals");
 }
@@ -574,7 +575,10 @@ assert.deepEqual(page.multiblock.pattern,expectedPattern,
 assert.ok(book.pages.some(p=>p.recipe==="magneticraft2:"+id));
 assert.ok(book.pages.some(p=>p.recipe==="magneticraft2:settled_sediment_to_clay"));
 // New machine-specific 16x16 art is backed by real committed PNG assets.
-const customTextures=["refractory","lining","bronze","riveted_iron","grate","sludge"];
+const customTextures=[
+ "foundation","refractory","lining","basin_floor",
+ "bronze","bronze_joint","riveted_iron","grate","sludge"
+];
 const bytes=new Set();
 for(const tex of customTextures){
  const rel=assets+"textures/block/settling_tank/"+tex+".png";
@@ -590,10 +594,36 @@ for(const tex of customTextures){
 assert.equal(bytes.size,customTextures.length,"Textures must not be copied duplicates");
 execFileSync(process.execPath,["tools/water-settling-tank/build-textures.mjs","--check"],
              {cwd:root,stdio:"inherit"});
+// Materials are DIFFERENT ROLES, not merely nine aliases on one mesh.
 const modelExample=json(assets+"models/multiblock/"+id+"_south/part_0_1_-2.json");
-for(const mat of ["refractory","lining","bronze"])
- assert.ok(modelExample.textures[mat]?.includes("block/settling_tank/"),
-     "Baffle does not use a new purposeful machine-specific tile: "+mat);
+for(const mat of customTextures)
+ assert.equal(modelExample.textures[mat],"magneticraft2:block/settling_tank/"+mat,
+   "Missing registered V5 material "+mat);
+assert.ok(modelExample.elements.some(e=>e.faces.up.texture==="#riveted_iron"),
+ "Transverse overflow weir must look like WORKING METAL, not another bronze rail");
+const retainingLip=json(assets+"models/multiblock/"+id+"_south/part_0_1_-1.json");
+assert.ok(retainingLip.elements.some(e=>e.faces.up.texture==="#riveted_iron"),
+ "Retaining lip must contrast with the bronze perimeter");
+const straightRail=json(assets+"models/multiblock/"+id+"_south/part_-2_1_-3.json");
+assert.ok(straightRail.elements.some(e=>e.faces.up.texture==="#bronze"),
+ "Straight perimeter rails must use unadorned cast bronze");
+for(const f of sdir){
+ const at=rot(0,-2,f);
+ const floor=json(assets+"models/multiblock/"+id+"_"+f+"/part_"+at[0]+"_0_"+at[1]+".json");
+ assert.ok(floor.elements.some(e=>
+      e.faces.up.texture==="#basin_floor" &&
+      e.faces.east.texture==="#foundation"),
+   "Waterproof floor TOP and load-bearing foundation SIDES must survive facing "+f);
+}
+for(const kind of portInsertNames){
+ const insert=json(assets+"models/multiblock/"+id+"_"+kind+"_port_insert.json");
+ assert.ok(insert.elements.some(e=>e.faces.up.texture==="#bronze_joint"),
+  "Real fluid port "+kind+" should have DARK mechanical joining plates");
+}
+const textureGenerator=read("tools/water-settling-tank/build-textures.mjs");
+assert.ok(textureGenerator.includes("const tiles = {") &&
+          !textureGenerator.includes("Math.random("),
+ "V5 textures must be reproducible hand-painted pixel grids");
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V4.6 renderer-only inlet throat + wider clean outlet, connected contours at low/full levels, copper/weir clearance, native UVs, six V2 anchors, unchanged recipe and textures");
+console.log("PASS: V5 role-based art — nine unique 16x16 tiles, foundation vs ceramic floor per-face UVs, cast bronze and dark riveted joints, steel working surfaces, no geometry or fluid changes, 4 facings");

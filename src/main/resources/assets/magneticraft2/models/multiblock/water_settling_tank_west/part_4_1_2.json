@@ -2,13 +2,16 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
+    "foundation": "magneticraft2:block/settling_tank/foundation",
     "refractory": "magneticraft2:block/settling_tank/refractory",
     "lining": "magneticraft2:block/settling_tank/lining",
+    "basin_floor": "magneticraft2:block/settling_tank/basin_floor",
     "bronze": "magneticraft2:block/settling_tank/bronze",
+    "bronze_joint": "magneticraft2:block/settling_tank/bronze_joint",
     "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
     "grate": "magneticraft2:block/settling_tank/grate",
     "sludge": "magneticraft2:block/settling_tank/sludge",
-    "particle": "magneticraft2:block/settling_tank/refractory"
+    "particle": "magneticraft2:block/settling_tank/foundation"
   },
   "elements": [
     {
@@ -296,7 +299,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -305,7 +308,7 @@
           ]
         },
         "south": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -314,7 +317,7 @@
           ]
         },
         "east": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -323,7 +326,7 @@
           ]
         },
         "west": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -332,7 +335,7 @@
           ]
         },
         "up": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -341,7 +344,7 @@
           ]
         },
         "down": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -364,7 +367,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -373,7 +376,7 @@
           ]
         },
         "south": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -382,7 +385,7 @@
           ]
         },
         "east": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -391,7 +394,7 @@
           ]
         },
         "west": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -400,7 +403,7 @@
           ]
         },
         "up": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,
@@ -409,7 +412,7 @@
           ]
         },
         "down": {
-          "texture": "#bronze",
+          "texture": "#bronze_joint",
           "uv": [
             0,
             0,

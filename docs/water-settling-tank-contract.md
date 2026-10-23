@@ -304,3 +304,68 @@ renderer-only pass. Restart the development client to load the new Java
 renderer. The 5×2×5 construction, textures, fluid tanks and processing
 mechanics are unchanged. This leaves the art/texture revision as a
 separate decision for the next iteration.
+
+
+## V5 — Role-based Minecraft pixel-art textures (2026-10-24)
+
+The V4.6 machine works as a readable two-chamber tank, but its art was too
+uniform: the lower wall, upper stone, dry floor, and wet inner lining were
+visually close, and an identical bronze slab repeated around the entire rim.
+V5 addresses the **material design**, not machine operation or geometry.
+
+All nine tiles are original, hand-designed **16×16 opaque RGB pixel art**,
+source-defined at `tools/water-settling-tank/build-textures.mjs`.
+
+| Resource | Visual role | Applied to |
+| --- | --- | --- |
+| `foundation.png` **new** | Deep charcoal-fired stone | Lower visible masonry and structural bases |
+| `refractory.png` **repaint** | Warmer, lighter stone courses | Upper exposed outer walls and the real port cheek inserts |
+| `lining.png` **repaint** | Smooth, pale desaturated ceramic | Inner wet walls, ceramic baffle and retaining-lip sections |
+| `basin_floor.png` **new** | Slate-green sealed floor panels | TOP faces of 16px foundation cells only |
+| `bronze.png` **repaint** | Restrained cast bronze with no wood grain | Straight rim rails and selected visible reinforcement |
+| `bronze_joint.png` **new** | Darker bolted/fastened bronze | All four corner joins, real-port footplates and in-block port headers |
+| `riveted_iron.png` **repaint** | Neutral cool industrial steel | Functional weir crest, front lip, fastened port brackets |
+| `grate.png` **unchanged** | True perforated metal | Reserved for a real grate; **not** painted onto solid flooring |
+| `sludge.png` **unchanged** | Earth-brown wet sediment | Actual settled-sediment item model; no fake floor deposits |
+
+The block generator now accepts **per-face texture roles** without introducing
+additional model cuboids: the same solid lower masonry block has
+`north/south/east/west/down = foundation`, and `up = basin_floor`.
+This is a texture assignment, not a physical waterproof layer and therefore
+does not create face overlaps or different collision shapes. All faces retain
+their native dimension-matching UV ranges: a two-pixel-high rail does not
+stretch an entire sixteen-pixel pattern across its edge.
+
+Likewise, original shapes are preserved but the copper rim is no longer
+uniform: long straight runs use smooth cast bronze, corner pieces use darker
+bronze joining plates, and the two fluid-port inserts receive matching
+bolted caps. Working features use steel rather than more decorative bronze.
+The four orientation-specific baked parts are generated from the same
+canonical shapes and preserve their rotated dimensions.
+
+**Exact compatibility:**
+- Formation remains `5×2×5` with 37 Stone Bricks and the same four real
+  working module/controller blocks.
+- **105** Voxel V2 collision boxes and **six** AIR proxy hosts are unchanged.
+- The V4.6 Dirty Water / clean Water client rendering code and synchronized
+  tank amounts are untouched.
+- Recipe remains **600 mB Dirty Water → 480 mB Water + 1 sediment per
+  240 ticks**, with all previous blocking/retention conditions.
+- There is **no need to reconstruct or re-form** an existing V4.6 tank;
+  a resource/client reload is sufficient for revised art.
+- The two original `grate` and `sludge` PNGs are retained byte-for-byte.
+
+Reproduce/verify the artwork and models using:
+
+```bash
+node tools/water-settling-tank/build-textures.mjs --check
+node tools/water-settling-tank/build.mjs --check
+node tools/water-settling-tank/test-contract.mjs
+./gradlew build
+```
+
+The V5 regression contract checks all nine unique tiles, 16×16 RGB format,
+pixel-source reproducibility, the dry-floor top/side role split in all four
+facings, functional steel at the weir and front lip, joined bronze at corners
+and service ports, and unchanged UV/collision/recipe/blueprint contracts.
+**The final in-game visual direction remains subject to screenshot approval.**
