@@ -360,14 +360,17 @@ const fluidOutline=name=>[...getFluidDefinition(name).matchAll(
  /\{\s*(-?[\d.]+)F,\s*(-?[\d.]+)F\s*\}/g
 )].map(match=>match.slice(1).map(Number));
 const dirtySections=fluidRects("DIRTY_SECTIONS");
+const dirtyInlet=fluidRects("DIRTY_INLET")[0];
 const cleanMain=fluidRects("CLEAN_MAIN")[0];
 const cleanTongue=fluidRects("CLEAN_OUTLET")[0];
 const dirtyContour=fluidOutline("DIRTY_PERIMETER");
+const dirtyInletContour=fluidOutline("DIRTY_INLET_PERIMETER");
 const cleanContour=fluidOutline("CLEAN_OUTLET_PERIMETER");
 const shallowContour=fluidOutline("CLEAN_SHALLOW_PERIMETER");
 assert.equal(dirtySections.length,3,
  "Dirty basin must have rear-left and rear-right pockets plus main reservoir");
-assert.ok(cleanMain&&cleanTongue,"Missing clean collection channel or outlet tongue");
+assert.ok(dirtyInlet&&cleanMain&&cleanTongue,
+ "Missing inlet throat or clean collection/outlet");
 const dirtyMain=dirtySections[1],left=dirtySections[0],right=dirtySections[2];
 assert.equal(left[3],dirtyMain[2],"Left rear water pocket must meet the main pool");
 assert.equal(right[3],dirtyMain[2],"Right rear water pocket must meet the main pool");
@@ -376,15 +379,31 @@ assert.equal(right[1],dirtyMain[1],"Right pocket must meet the basin's right wal
 assert.ok(left[2] < dirtyMain[2]-0.5 && right[2] < dirtyMain[2]-0.5,
  "Dirty water must actually reach both rear wall pockets, not stop at the inlet");
 assert.ok(left[1] < 0 && right[0] > 1,
- "Leave the center rear-wall inlet returns dry; fill only the TWO side pockets");
+ "Keep the original rear side pockets outside the actual inlet walls");
+assert.equal(dirtyInlet[3],dirtyMain[2],
+ "New dirty inlet water must meet the main pool without a seam");
+assert.ok(dirtyInlet[0]>0.125 && dirtyInlet[1]<0.875,
+ "New dirty inlet water must fit BETWEEN the real input port's side walls");
+assert.ok(dirtyInlet[2]>-3.25 && dirtyInlet[2]<-3.10,
+ "Water under the inlet must approach but not overlap its copper ring");
+assert.ok(dirtyInlet[0]>left[1] && dirtyInlet[1]<right[0],
+ "Dirty inlet throat must occupy only the dry center gap between rear pockets");
+assert.ok(renderer.includes("top > DIRTY_INLET_SILL + 0.005F"),
+ "Fluid may only cover the real inlet's raised bottom sill once high enough");
+assert.ok(renderer.includes("onInletThroat ? DIRTY_INLET_SILL"),
+ "Dirty throat sides must start above the real inlet sill, not the basin floor");
+assert.ok(renderer.includes("DIRTY_WITH_INLET")&&
+          renderer.includes("DIRTY_INLET_PERIMETER"),
+ "New dirty inlet must be rendered with its exterior contour and no inner seam");
 assert.equal(cleanTongue[0],cleanMain[1],
  "The clean outlet must have a connected approach, not a floating water island");
-assert.ok(cleanMain[3]>-0.15 && cleanMain[3]<-0.125,
- "Clean water must nearly meet the front retaining wall without clipping it");
-assert.ok(cleanTongue[1]>2.1 && cleanTongue[1]<2.25,
- "Clean water must enter the open output cell but stop BEFORE its copper ring");
-assert.ok(cleanTongue[2]>-0.875 && cleanTongue[3]<-0.125,
- "Output approach must stay between the module's side walls");
+assert.ok(cleanMain[3]>-0.145 && cleanMain[3]<-0.125,
+ "Clean pool must nearly meet the front retaining wall without intersecting it");
+assert.ok(cleanTongue[1]>2.22 && cleanTongue[1]<2.25,
+ "Clean water must approach the copper output frame without intersecting it");
+assert.ok(cleanTongue[2]>-0.875 && cleanTongue[2]<-0.85 &&
+          cleanTongue[3]>-0.15 && cleanTongue[3]<-0.125,
+ "Clean water must fill BOTH sides of the output throat without crossing its walls");
 assert.ok(renderer.includes("top > CLEAN_OUTLET_SILL + 0.005F"),
  "Outlet approach should only form after liquid rises above its bottom sill");
 assert.ok(renderer.includes("CLEAN_OUTLET_SILL : POOL_BOTTOM"),
@@ -408,7 +427,8 @@ const containsOutline=(outline,x,z)=>{
  return yes;
 };
 for(const [label,sections,outline] of [
- ["dirty",dirtySections,dirtyContour],
+ ["dirty-shallow",dirtySections,dirtyContour],
+ ["dirty-with-inlet",[...dirtySections,dirtyInlet],dirtyInletContour],
  ["clean",[cleanMain,cleanTongue],cleanContour],
  ["clean-shallow",[cleanMain],shallowContour]
 ]){
@@ -445,6 +465,7 @@ const staticBoxes=vox.collision.map(c=>c.map(v=>v/16));
 const volume=(b,baseY)=>[b[0],baseY,b[2],b[1],1.54,b[3]];
 const sectionVolumes=[
  ...dirtySections.map(b=>["dirty",volume(b,1.014)]),
+ ["dirty-inlet",volume(dirtyInlet,1.135)],
  ["clean",volume(cleanMain,1.014)],
  ["clean-output",volume(cleanTongue,1.135)]
 ];
@@ -504,6 +525,7 @@ for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
   "DIRTY_SECTIONS", "DIRTY_PERIMETER",
+  "DIRTY_INLET", "DIRTY_WITH_INLET", "DIRTY_INLET_PERIMETER",
   "CLEAN_MAIN", "CLEAN_OUTLET", "CLEAN_OUTLET_PERIMETER",
   "CLEAN_SHALLOW_PERIMETER", "renderPerimeter(",
   "renderPool(pose, buffers, light, new FluidStack(",
@@ -574,4 +596,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V4.5 renderer-only fluid footprints: dirty-water rear pockets, connected clean outlet/wall approach, zero model intersections, native UVs, six V2 anchors and unchanged processing");
+console.log("PASS: V4.6 renderer-only inlet throat + wider clean outlet, connected contours at low/full levels, copper/weir clearance, native UVs, six V2 anchors, unchanged recipe and textures");

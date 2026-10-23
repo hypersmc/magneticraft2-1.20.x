@@ -45,6 +45,9 @@ public final class WaterSettlingTankRenderer
     private record PoolSection(float minX, float maxX, float minZ, float maxZ) {}
 
     private static final float POOL_BOTTOM = 1.014F;
+    // The real fluid modules have matching 2px bottom plates (Y=1.125).
+    // Their in-block water tongues begin just above these metal sills.
+    private static final float DIRTY_INLET_SILL = 1.135F;
     private static final float CLEAN_OUTLET_SILL = 1.135F;
     private static final float CLEAN_EAST_EDGE = 1.985F;
 
@@ -53,10 +56,28 @@ public final class WaterSettlingTankRenderer
             new PoolSection(-0.985F, 1.985F, -2.985F, -1.29F),
             new PoolSection(1.205F, 1.985F, -3.60F, -2.985F)
     };
+    // The small centered throat is in front of the real inlet's copper
+    // ring (which ends at Z=-3.25). X stays between the port's side walls.
+    // Keep it separate from the two deeper side pockets: it has a higher
+    // metal sill and must not appear until water actually reaches that sill.
+    private static final PoolSection DIRTY_INLET =
+            new PoolSection(0.135F, 0.865F, -3.22F, -2.985F);
+    private static final PoolSection[] DIRTY_WITH_INLET = {
+            DIRTY_SECTIONS[0], DIRTY_SECTIONS[1], DIRTY_SECTIONS[2],
+            DIRTY_INLET
+    };
     private static final float[][] DIRTY_PERIMETER = {
             {-0.985F, -1.29F}, {1.985F, -1.29F},
             {1.985F, -3.60F}, {1.205F, -3.60F},
             {1.205F, -2.985F}, {-0.205F, -2.985F},
+            {-0.205F, -3.60F}, {-0.985F, -3.60F}
+    };
+    private static final float[][] DIRTY_INLET_PERIMETER = {
+            {-0.985F, -1.29F}, {1.985F, -1.29F},
+            {1.985F, -3.60F}, {1.205F, -3.60F},
+            {1.205F, -2.985F}, {0.865F, -2.985F},
+            {0.865F, -3.22F}, {0.135F, -3.22F},
+            {0.135F, -2.985F}, {-0.205F, -2.985F},
             {-0.205F, -3.60F}, {-0.985F, -3.60F}
     };
 
@@ -64,22 +85,22 @@ public final class WaterSettlingTankRenderer
     // lip. At sufficient level a shallow tongue extends through the open
     // center of the real EAST-facing output, ending BEFORE its copper ring.
     private static final PoolSection CLEAN_MAIN =
-            new PoolSection(-0.985F, 1.985F, -0.985F, -0.14F);
+            new PoolSection(-0.985F, 1.985F, -0.985F, -0.135F);
     private static final PoolSection CLEAN_OUTLET =
-            new PoolSection(1.985F, 2.20F, -0.84F, -0.20F);
+            new PoolSection(1.985F, 2.235F, -0.865F, -0.135F);
     private static final PoolSection[] CLEAN_SHALLOW = {CLEAN_MAIN};
     private static final PoolSection[] CLEAN_WITH_OUTLET = {
             CLEAN_MAIN, CLEAN_OUTLET
     };
     private static final float[][] CLEAN_SHALLOW_PERIMETER = {
-            {-0.985F, -0.14F}, {1.985F, -0.14F},
+            {-0.985F, -0.135F}, {1.985F, -0.135F},
             {1.985F, -0.985F}, {-0.985F, -0.985F}
     };
     private static final float[][] CLEAN_OUTLET_PERIMETER = {
-            {-0.985F, -0.14F}, {1.985F, -0.14F},
-            {1.985F, -0.20F}, {2.20F, -0.20F},
-            {2.20F, -0.84F}, {1.985F, -0.84F},
-            {1.985F, -0.985F}, {-0.985F, -0.985F}
+            {-0.985F, -0.135F}, {1.985F, -0.135F},
+            {2.235F, -0.135F}, {2.235F, -0.865F},
+            {1.985F, -0.865F}, {1.985F, -0.985F},
+            {-0.985F, -0.985F}
     };
 
     public WaterSettlingTankRenderer(BlockEntityRendererProvider.Context context) {}
@@ -186,10 +207,13 @@ public final class WaterSettlingTankRenderer
 
         // Retain the existing low-weir clearance and server-driven level.
         float top = 1.045F + 0.495F * Math.max(0F, Math.min(1F, ratio));
+        boolean extendsIntoInlet = dirty && top > DIRTY_INLET_SILL + 0.005F;
         boolean extendsIntoOutlet = !dirty && top > CLEAN_OUTLET_SILL + 0.005F;
-        PoolSection[] sections = dirty ? DIRTY_SECTIONS :
+        PoolSection[] sections = dirty ?
+                (extendsIntoInlet ? DIRTY_WITH_INLET : DIRTY_SECTIONS) :
                 (extendsIntoOutlet ? CLEAN_WITH_OUTLET : CLEAN_SHALLOW);
-        float[][] contour = dirty ? DIRTY_PERIMETER :
+        float[][] contour = dirty ?
+                (extendsIntoInlet ? DIRTY_INLET_PERIMETER : DIRTY_PERIMETER) :
                 (extendsIntoOutlet ? CLEAN_OUTLET_PERIMETER
                                    : CLEAN_SHALLOW_PERIMETER);
 
@@ -220,7 +244,7 @@ public final class WaterSettlingTankRenderer
             }
         }
         renderPerimeter(consumer, matrix, sprite, contour, top,
-                dirty, alpha, r, g, b, light);
+                dirty, extendsIntoInlet, alpha, r, g, b, light);
     }
 
     /**
@@ -230,7 +254,8 @@ public final class WaterSettlingTankRenderer
      */
     private static void renderPerimeter(VertexConsumer consumer,
             PoseStack.Pose matrix, TextureAtlasSprite sprite,
-            float[][] contour, float top, boolean dirty, float alpha,
+            float[][] contour, float top, boolean dirty,
+            boolean extendsIntoInlet, float alpha,
             float r, float g, float b, int light) {
         float sideAlpha=alpha*0.62F;
         float sr=r*0.83F,sg=g*0.83F,sb=b*0.83F;
@@ -246,9 +271,14 @@ public final class WaterSettlingTankRenderer
             // Inside the real output there is a metal sill at Y=1.125.
             // The tiny clean-water tongue starts ABOVE it; the main basin
             // continues down to the ceramic floor at Y=1.014.
-            float bottom=!dirty && Math.max(a[0],p[0]) >
-                    CLEAN_EAST_EDGE + 0.0001F ?
-                    CLEAN_OUTLET_SILL : POOL_BOTTOM;
+            boolean onInletThroat = dirty && extendsIntoInlet &&
+                    Math.min(a[0],p[0])>=DIRTY_INLET.minX()-0.0001F &&
+                    Math.max(a[0],p[0])<=DIRTY_INLET.maxX()+0.0001F &&
+                    Math.min(a[1],p[1])<DIRTY_INLET.maxZ()-0.0001F;
+            boolean onOutletTongue = !dirty && Math.max(a[0],p[0]) >
+                    CLEAN_EAST_EDGE + 0.0001F;
+            float bottom = onInletThroat ? DIRTY_INLET_SILL :
+                    onOutletTongue ? CLEAN_OUTLET_SILL : POOL_BOTTOM;
             if (top<=bottom) continue;
             float v0=v(sprite,0F),v1=v(sprite,top-bottom);
             for (int tile=(int)Math.floor(low);tile<Math.ceil(high);tile++) {

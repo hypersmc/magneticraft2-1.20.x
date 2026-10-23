@@ -263,3 +263,44 @@ Patchouli formation pattern, textures, recipes or server-side tanks
 were modified. Reload client resources or restart the dev client
 before visually evaluating the result. The full Forge build and
 in-game acceptance remain outstanding.
+
+## V4.6 — Port throat fluid finishing pass (2026-10-24)
+
+Two close-up screenshots of the formed tank identified a thin dry gap
+under the real copper Dirty Water Input, plus narrow uncovered strips
+beside the clean-water Fluid Output opening.
+
+**Only the dynamic client fluid renderer has changed:**
+
+- At low dirty-water levels the original U-shaped pool and two rear
+  side pockets are maintained. Above the copper inlet's 2px sill,
+  an additional **center inlet strip** from local X=0.135..0.865,
+  Z=-3.22..-2.985 meets the main dirty pool. It starts after the
+  real copper input geometry ends at Z=-3.25. The strip has its own
+  lower liquid depth (Y=1.135) to avoid passing through the metal sill.
+- The clean-water channel reaches closer to the front retaining lip
+  (Z=-0.135). Its outlet approach now occupies X=1.985..2.235,
+  Z=-0.865..-0.135, leaving about 0.015 block before the actual copper
+  output frame and avoiding both output side-wall inserts. This small
+  outlet tongue still appears only when fluid clears Y=1.135.
+- There are now two calculated fluid silhouettes for each reservoir
+  (below and above its port sill). On every level, touching rectangles
+  share only an edge and the renderer emits just one exterior vertical
+  contour, **never duplicate transparent seam faces**. Native one-block
+  fluid UV tiling is unchanged.
+
+The V4.6 contract derives its sections and perimeters from actual Java
+constants. It checks the inboard tongue and clean-outlet width, shallow
+and full contour area/coverage, positive-volume fluid collision against
+105 Voxel V2 solids and the real copper input/output meshes and tank-only
+inserts, plus unchanged recipe, four facings and Patchouli arrangement.
+5,585 source-level assertions passed in a virtual-file contract run.
+The full native Node suite and `./gradlew build` could not be run
+from the GitHub-only environment, and visual gameplay acceptance remains
+outstanding.
+
+**Compatibility:** No rebuilding or reforming is necessary for this
+renderer-only pass. Restart the development client to load the new Java
+renderer. The 5×2×5 construction, textures, fluid tanks and processing
+mechanics are unchanged. This leaves the art/texture revision as a
+separate decision for the next iteration.

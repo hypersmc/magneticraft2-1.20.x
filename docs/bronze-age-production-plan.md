@@ -239,3 +239,17 @@ remain outside the solid masonry and copper module/insert geometries.
 No blueprint/model/texture/processing change, and no rebuild required.
 Patchouli/JEI and conserved 600→480 mB water process are intact;
 Gradle build and Minecraft appearance still require verification.
+
+### 2026-10-24 — V4.6 fluid finishing before texture review
+
+A new screenshot showed missing water directly under the copper rear
+inlet and along both sides of the clean output throat. Rather than
+altering the shared modules or the V4.4 tank-only inserts, V4.6 adds
+a small dirty-water center tongue **only above the real inlet sill**
+and broadens the existing clean-water outlet approach toward the actual
+copper frame and front retaining lip. Both are edge-connected to their
+reservoirs with shallow/full exterior contours, without Z-fighting
+or liquid crossing physical walls. The only game-source change is
+WaterSettlingTankRenderer.java; no multiblock rebuild or texture changes.
+Source-level tests passed; Gradle/in-game rendering still pending.
+Next planned design discussion: user's texture improvements.
