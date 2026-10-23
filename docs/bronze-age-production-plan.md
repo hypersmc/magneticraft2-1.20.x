@@ -110,3 +110,20 @@ Real client screenshots showed unsupported intake and rear bearing geometry and 
 ### Classifier V5 exterior bearing supports (2026-10-23)
 
 In-game screenshots revealed that the latest "grounded" V4 design used long rear metal struts across the open drum. The existing Gear V2 Mechanical Input module already renders its own central bearing/shaft, so those seven duplicate fixed bearing/mount pieces are being removed in favor of two short external roller supports on the rear hoop. Source-level classification and normal/worn drum animation remain unchanged, as do all 3×3×5 multiblock cells and ore/Washer/Sifter recipes. Before merging PR #11, confirm the central input bearing aligns with the drum spindle in-game and nothing clips through the rear or front open ends.
+
+
+### 2026-10-23 — Water Settling Tank (draft PR #11, unverified)
+
+The first Bronze II recycling utility is now source-implemented as a
+passive 5×3×5 multiblock with two distinct Forge fluid storage tanks and
+real fluid in/out plus item byproduct modules. It takes 600 mB Washer
+Dirty Water -> 480 mB reusable clean Water + one settled sediment in 240 ticks.
+Sediment can be combined 4:1 into Clay. There is no new Gear V2 load and
+no invented bonus ore or infinite closed-loop yield. Outputs are reserved
+before input is drained and unfinished progress survives blockage.
+
+See [Water Settling Tank contract](water-settling-tank-contract.md).
+The existing plan's "still planned" references document the earlier
+milestone and are superseded for this specific machine. Gradle and
+in-game visuals remain unverified; the next proposed industrial
+multiblock is the Charcoal Retort.

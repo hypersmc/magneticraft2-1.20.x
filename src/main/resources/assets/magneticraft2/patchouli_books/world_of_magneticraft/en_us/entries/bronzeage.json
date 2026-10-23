@@ -271,6 +271,66 @@
     {
       "type": "text",
       "text": "$(bold)Screening and washing$()$(br2)Supply Gear V2 at the elevated rear input: at least 24 RPM and 4 torque. A 180-tick screen batch yields three Screened Fines and one coarse Crushed Ore return, exactly conserving four input units.$(br2)Three Screened Fines wash together in 240 ticks using 600 mB clean Water and producing 600 mB Dirty Water. This is faster and uses less water per unit than ordinary crushed-ore washing; both routes produce the same three Washed Ore units. Sift Washed Ore normally for concentrates and final yields.$(br2)Full ports, worn screens or absent Gear V2 power pause the process. No free yield is created by recirculating coarse returns."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Water Recovery$()$(br2)The Ore Washer produces Dirty Water. Rather than dumping it, send it to a passive $(bold)Water Settling Tank$().$(br2)One 240-tick batch treats 600 mB Dirty Water into 480 mB reusable clean Water and one Settled Sediment. The 120 mB unrecovered portion is trapped in the wet sediment: this is not an infinite water source.$(br2)No Gear V2 input is required. Both output capacity and sediment extraction must remain available."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Water Settling Tank",
+      "recipe": "magneticraft2:water_settling_tank",
+      "text": "Craft one controller; the full tank requires a five-wide, five-deep, three-high construction. The controller goes at the front-bottom centre. Build according to the next Visualize page."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Water Settling Tank",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "W___W",
+            "_____",
+            "_____",
+            "_____",
+            "W___W"
+          ],
+          [
+            "SSSSS",
+            "S____",
+            "S____",
+            "S____",
+            "SSSSS"
+          ],
+          [
+            "SSSSS",
+            "SSSSP",
+            "ISSS0",
+            "SSSSS",
+            "SSSSO"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:water_settling_tank",
+          "S": "minecraft:stone_bricks",
+          "W": "minecraft:oak_planks",
+          "I": "magneticraft2:multiblock_fluid_input",
+          "P": "magneticraft2:multiblock_item_primary_output",
+          "O": "magneticraft2:multiblock_fluid_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Build a 5×3×5 open masonry basin. Rear-centre floor is the real Fluid Input (I) for Dirty Water; connect its exposed rear face. Front floor has the Sediment Output (P), controller (0), one stone foundation cell and Clean Fluid Output (O) at the exposed EAST edge. Connect the clean-water pipe on its outer eastern side. Four Oak Planks at the upper corners are support posts. All underscore locations are AIR; only the six internal baffle/lip cells receive V2 proxies after forming. Right-click the controller to form. Do not add decorative hoppers or obstruct the three real modules."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Closing the Water Loop$()$(br2)Connect the Washer Dirty Water outlet to the Settling Tank's rear Fluid Input via existing pipes or tanks. Pipe clean Water from the tank's front-right outer EAST-facing Fluid Output toward the Washer clean-water input, using a tank/pump as needed. Front-left Item Output holds the sediment. If either clean-water storage or sediment output is full, processing pauses without losing Dirty Water or resetting progress.$(br2)The divided basin shows actual dirty and clean tank fill levels; the baffle is fixed structure, not a fake interaction point."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Reclaim Clay from Sediment",
+      "recipe": "magneticraft2:settled_sediment_to_clay",
+      "text": "Four units of wet Settled Sediment give one Clay Ball. This gives sediment a real use without returning the 120 mB unrecovered water from each settling batch."
     }
   ],
   "sortnum": 3,
@@ -281,12 +341,14 @@
     "magneticraft2:bronze_stamp_mill": 23,
     "magneticraft2:quartz_ore": 27,
     "magneticraft2:quartz_deepslate_ore": 27,
-    "magneticraft2:rotary_ore_classifier": 29
+    "magneticraft2:rotary_ore_classifier": 29,
+    "magneticraft2:water_settling_tank": 34
   },
   "mappings": {
     "magneticraft2:bronze_pouring_ladle": 13,
     "magneticraft2:bronze_casting_basin": 14,
     "magneticraft2:bronze_lathe_cutter": 20,
-    "magneticraft2:bronze_classifier_screen": 31
+    "magneticraft2:bronze_classifier_screen": 31,
+    "magneticraft2:settled_sediment": 37
   }
 }

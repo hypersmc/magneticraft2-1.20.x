@@ -81,3 +81,11 @@ This is a **harvestability repair**, not a new technology unlock: all 31 mineral
 ## Pre-next-multiblock acceptance
 
 The processing matrix and all registered ore harvestability must be checked against current item/block registration. Existing six Bronze Stamp Mill recipes and the Copper 1/2/3 yield hierarchy must still parse and use their original items. The Copper/Bronze guide pages should describe current functionality rather than prototype tasks. Run `node tools/ore-progression/test-harvest-and-ages.mjs`, `node tools/bronze-stamp-mill/test-contract.mjs`, then `./gradlew build` and mine Cassiterite/Quartz and the two Bronze machine controllers in Minecraft before merging.
+
+
+## Bronze water-recovery utility (draft PR #11)
+
+The Water Settling Tank is source-implemented as a separate passive
+utility after the Ore Washer: 600 mB Dirty Water recovers 480 mB ordinary
+Water and one Settled Sediment. This does not create any new ore or replace
+the Crusher/Washer/Sifter path. In-game/Gradle validation remains pending.

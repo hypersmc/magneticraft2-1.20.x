@@ -38,6 +38,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
+import com.magneticraft2.common.block.stage.bronze.WaterSettlingTankBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -119,6 +120,8 @@ public class BlockRegistry {
             BLOCKS.register("bronze_stamp_mill", BronzeStampMillBlock::new);
     public static final RegistryObject<RotaryOreClassifierBlock> ROTARY_ORE_CLASSIFIER =
             BLOCKS.register("rotary_ore_classifier", RotaryOreClassifierBlock::new);
+    public static final RegistryObject<WaterSettlingTankBlock> WATER_SETTLING_TANK =
+            BLOCKS.register("water_settling_tank", WaterSettlingTankBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
