@@ -1,6 +1,7 @@
 /** Regression contract for the 3×3×5 Rotary Ore Classifier. Node 18+, no npm deps. */
 import assert from 'node:assert/strict';
-import {existsSync,readFileSync,readdirSync} from 'node:fs';
+import {existsSync,readFileSync,readdirSync,mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
 import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
@@ -246,78 +247,89 @@ assert.ok(renderer.includes('input.getCount() > classifier.getVisualBatchInputCo
  'Only remaining queued ore should stay on the input while one batch runs');
 assert.ok(renderer.includes('MAX_DRUM_FRAGMENTS = 2;'),
  'Keep the number of BER item draws bounded for FPS');
-assert.ok(renderer.includes('classifier.isProcessing() ? angle : 0F'),
- 'Stalled material must not tumble freely');
+assert.ok(renderer.includes('signedDriveDegreesPerTick(classifier)')
+       && renderer.includes('drive.getDirectionMultiplier()')
+       && renderer.includes('drive.isClientOverloaded()')
+       && renderer.includes('classifier.isProcessing()'),
+ 'The same signed Gear V2 speed that drives the drum must drive material contact');
 assert.ok(renderer.includes('getVisualProcessProgress(partialTicks)'),
- 'Workpiece flow must use server-synced batch progress');
-for(const fragment of ['progress < 0.20F','progress >= 0.36F','progress >= 0.80F',
-                       'FINE_FALL_DISTANCE * smoothstep(fall)','drawScreeningOre',
-                       'ItemDisplayContext.GROUND']){
- assert.ok(renderer.includes(fragment),'Missing meaningful screen/process phase: '+fragment);
+ 'Batch progression still governs input staging and committed output, not physical X/Y motion');
+assert.ok(renderer.includes('motion.advance(classifier.getLevel().getGameTime()')
+       && renderer.includes('oreStates.computeIfAbsent(')
+       && renderer.includes('WeakHashMap<')
+       && renderer.includes('oreStates.remove(classifier)'),
+ 'Client animation state must be per-machine, tick-stepped, and unloadable');
+assert.ok(renderer.includes('MAX_DRUM_FRAGMENTS = 2;')
+       && renderer.includes('RotaryClassifierOreMotion.Fragment')
+       && renderer.includes('RotaryClassifierOreMotion.FineChip'),
+ 'Exactly two normal chunks and at most one impact-created fine chip');
+for(const fragment of [
+ 'progress < 0.20F', 'drawTumblingItem(', 'Axis.ZP.rotationDegrees(rollDegrees)',
+ 'MODEL_CENTRE_AT_UNIT_SCALE * scale','ItemDisplayContext.GROUND']){
+ assert.ok(renderer.includes(fragment),'Missing physical ore render stage: '+fragment);
+}
+for(const obsolete of [
+ 'SCREEN_ORE_REST_Y','SCREEN_ORE_BOUNCE','FINE_FALL_DISTANCE',
+ 'Math.sin(radians * 0.45D','Math.cos(radians * 0.55D',
+ 'angle * 0.13F', 'progress >= 0.80F']){
+ assert.ok(!renderer.includes(obsolete),'Old fake-path ore animation remains: '+obsolete);
 }
 assert.ok(!renderer.includes('getProcessingPrimaryPreview()')&&
           !renderer.includes('getProcessingByproductPreview()'),
- 'Do not show uncommitted recipe outputs on item ports');
-assert.ok(!renderer.includes('addParticle('),'Particles cannot be emitted every render frame');
-// The three crushed ores have a built-in half-scale GROUND transform.
-// Very small secondary render multipliers used to make them microscopic.
-// All ore must now be big enough to SEE while staying inside the 22px drum.
-for(const ore of ['chalcocite','cassiterite','quartz']){
- const itemModel=json(art+'models/item/crushed_'+ore+'.json');
- assert.deepEqual(itemModel.display.ground.scale,[0.5,0.5,0.5],
-  'Update this scale contract if the ore item model transform changes');
-}
-const visualScale=name=>{
- const rx=new RegExp('\\b'+name+'\\s*=\\s*([0-9]+(?:\\.[0-9]+)?)F;');
- const m=renderer.match(rx);
- assert.ok(m,'Missing classifier visual scale constant '+name);
- return Number(m[1]);
-};
-const drumSize=visualScale('DRUM_ITEM_SCALE');
-const fineSize=visualScale('FINE_ITEM_SCALE');
-const feedSize=visualScale('FEED_ITEM_SCALE');
-const coarseSize=visualScale('COARSE_ITEM_SCALE');
-const inputSize=visualScale('INPUT_ITEM_SCALE');
-const outputSize=visualScale('OUTPUT_ITEM_SCALE');
-assert.ok(drumSize>=0.75&&drumSize<=0.9,'Main pieces should be visually substantial without clipping');
-assert.ok(fineSize>=0.3&&fineSize<drumSize*0.55,'Screened fragments should be smaller, not microscopic');
-assert.ok(feedSize>=0.65&&coarseSize>=0.65,'Material must not shrink during intake/discharge');
-assert.ok(inputSize>=0.6&&outputSize>=0.6,'Actual physical input/output displays should be legible');
-const restY=Number(renderer.match(/SCREEN_ORE_REST_Y\s*=\s*([0-9.]+)D;/)?.[1]);
-assert.ok(Number.isFinite(restY),'Missing roller-rest height constant');
-// Drum centre: BER translates model to Y=1.5, local drum pivot at 8/16.
-// Its inner radius is specified by frame-design. Validate the actual
-// coarse and main chunk bounds with the crushed item model's 10px width.
-// The BER translates the rotating drum to Y=1.50, then shifts its local
-// 16px model origin by -8px to rotate around the mesh's actual centre.
-// It does NOT create an extra +0.50-block height. The earlier test assumed
-// Y=2.00 and mistakenly placed large ore directly through the axle.
-const drumAxisY=Number(renderer.match(/DRUM_AXIS_Y\s*=\s*([0-9.]+)D;/)?.[1]);
-const bounce=Number(renderer.match(/SCREEN_ORE_BOUNCE\s*=\s*([0-9.]+)D;/)?.[1]);
-const fineFall=Number(renderer.match(/FINE_FALL_DISTANCE\s*=\s*([0-9.]+)D;/)?.[1]);
-assert.ok(Number.isFinite(drumAxisY)&&Number.isFinite(bounce)&&Number.isFinite(fineFall));
-assert.equal(drumAxisY,d.drum.centerY/16,'BER rotation height must match drum design pivot');
-assert.ok(renderer.includes('pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D)'),
- 'Drum position and item clearance must use the same render axis');
+ 'Do not show uncommitted recipe output items on physical port modules');
+assert.ok(!renderer.includes('addParticle('),'Particles cannot be emitted in BER per frame');
+assert.ok(renderer.includes('x - 0.14D')&&renderer.includes('x + 0.14D'),
+ 'Multiple finished items need distinct positions on their real output trays');
 
-const innerRadius=(d.drum.facetOffset-d.drum.skinThickness/2)/16;
+const motion=text(java+'client/render/blocks/stage/bronze/RotaryClassifierOreMotion.java');
+const getConstant=which=>{
+ const match=motion.match(new RegExp('\\b'+which+'\\s*=\\s*([0-9.]+)D;'));
+ assert.ok(match,'Missing motion geometry constant '+which);
+ return Number(match[1]);
+};
+assert.ok(motion.includes('for (int side = 0; side < 8; side++)')
+       && motion.includes('projectedRockRadius(rock.roll, nx, ny)')
+       && motion.includes('Math.toRadians(drumAngleDegrees')
+       && motion.includes('double wallTangential = omega * SCREEN_APOTHEM')
+       && motion.includes('rock.vy -= GRAVITY;'),
+ 'Rock contact needs 8 rotating facets, radius, wall traction and gravity');
+assert.ok(motion.includes('if (!processing || Math.abs(signedDegreesPerTick) < 0.001F)')
+       && motion.includes('rock.z = Math.min(MAX_AXIAL_Z')
+       && motion.includes('fine.active = true'),
+ 'Stopped batches freeze; powered screen must transport material and emit impact fines');
+const sizeConstant=which=>{
+ const match=renderer.match(new RegExp('\\b'+which+'\\s*=\\s*([0-9.]+)F;'));
+ assert.ok(match,'Missing classifier display size '+which);
+ return Number(match[1]);
+};
+const drumSize=sizeConstant('DRUM_ITEM_SCALE');
+const fineSize=sizeConstant('FINE_ITEM_SCALE');
+const feedSize=sizeConstant('FEED_ITEM_SCALE');
+const inputSize=sizeConstant('INPUT_ITEM_SCALE');
+const outputSize=sizeConstant('OUTPUT_ITEM_SCALE');
+assert.ok(drumSize>=0.75&&drumSize<=0.9);
+assert.ok(fineSize>=0.3&&fineSize<drumSize*0.55);
+assert.ok(feedSize>=0.65&&inputSize>=0.6&&outputSize>=0.6);
+const frameCentreY = d.drum.centerY / 16;
+assert.equal(frameCentreY,1.5);
+const apothem=(d.drum.facetOffset-d.drum.skinThickness/2)/16;
+assert.ok(motion.includes('SCREEN_APOTHEM = (11.05D - 0.85D / 2D) / 16D;'));
+assert.ok(Math.abs(apothem-(11.05-.85/2)/16)<1e-7,
+ 'Geometry changed: update the physics contact limit to match the mesh');
+assert.ok(renderer.includes('DRUM_AXIS_Y = RotaryClassifierOreMotion.AXIS_Y;')
+       && renderer.includes('pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D)'),
+ 'Drum rotation and physical rocks must share the actual Y=1.50 axis');
+const halfWidth=getConstant('HALF_WIDTH'), halfHeight=getConstant('HALF_HEIGHT');
+const centreAtUnitScale=getConstant('MODEL_CENTRE_AT_UNIT_SCALE');
 const rearDrum=json(art+'models/multiblock/'+name+'_drum_rear.json');
 const frontDrum=json(art+'models/multiblock/'+name+'_drum_front.json');
 const shaft=rearDrum.elements.find(e=>Object.values(e.faces).some(f=>f.texture==='#iron'));
-assert.ok(shaft,'A central drive shaft must be present in the rear drum');
-const shaftBottom=drumAxisY+(shaft.from[1]-8)/16;
-const frontRimZ=Math.min(...frontDrum.elements.filter(
- e=>Object.values(e.faces).some(f=>f.texture==='#bearing')).map(e=>e.from[2]/16));
+assert.ok(shaft,'Drive shaft must remain present');
+const frontRimZ=Math.min(...frontDrum.elements.filter(e=>
+ Object.values(e.faces).some(f=>f.texture==='#bearing')).map(e=>e.from[2]/16));
 const pan=d.boxes.find(b=>b.name==='tray_underpan');
-assert.ok(pan,'Missing screened-fines pan');
+assert.ok(pan,'Internal fines collection pan must remain present');
 const panTop=pan.to[1]/16;
-assert.ok(restY<drumAxisY-0.35,'Large ore must sit below, not through, the shaft');
-assert.ok(restY>drumAxisY-innerRadius,'The ore anchor must remain inside the screen');
-
-// The crushed-ore item models have their OWN 0.5 GROUND scaling and +3px
-// ground translation, on top of the BER item scale. Measure rotated model
-// element corners so future texture/model revisions cannot silently make
-// chunks cross the shaft, outer mesh, front rim or collection pan.
 const rotatedCorner=(point,rotation)=>{
  if(!rotation)return point;
  const [x,y,z]=point.map((v,i)=>v-rotation.origin[i]);
@@ -328,59 +340,49 @@ const rotatedCorner=(point,rotation)=>{
  if(rotation.axis==='y')return [
    c*x+s*z+rotation.origin[0], y+rotation.origin[1],
    -s*x+c*z+rotation.origin[2]];
- throw new Error('Unsupported crushed-ore model rotation '+rotation.axis);
+ throw Error('Unsupported crushed-ore model rotation '+rotation.axis);
 };
-const itemDisplayBounds=(itemModel,size)=>{
- const ground=itemModel.display.ground;
- const sx=ground.scale[0]*size,sy=ground.scale[1]*size,sz=ground.scale[2]*size;
- const ty=ground.translation[1]/16*size;
- let radial=0,minY=Infinity,maxY=-Infinity;
- for(const e of itemModel.elements){
-  for(const x of [e.from[0],e.to[0]])
-  for(const y of [e.from[1],e.to[1]])
-  for(const z of [e.from[2],e.to[2]]){
-   const v=rotatedCorner([x,y,z],e.rotation);
-   const ox=(v[0]/16-0.5)*sx,oy=(v[1]/16-0.5)*sy+ty,oz=(v[2]/16-0.5)*sz;
-   radial=Math.max(radial,Math.hypot(ox,oz));
-   minY=Math.min(minY,oy);
-   maxY=Math.max(maxY,oy);
-  }
+const bounds=(item,size)=>{
+ const ground=item.display.ground;
+ assert.deepEqual(ground.scale,[0.5,0.5,0.5]);
+ const sx=ground.scale.map(v=>v*size);
+ const t=ground.translation.map(v=>v/16*size);
+ const ps=[];
+ for(const e of item.elements)for(const x of [e.from[0],e.to[0]])
+ for(const y of [e.from[1],e.to[1]])for(const z of [e.from[2],e.to[2]]){
+  const v=rotatedCorner([x,y,z],e.rotation);
+  ps.push(v.map((a,i)=>(a/16-0.5)*sx[i]+t[i]));
  }
- return {radial,minY,maxY};
+ return {
+  minX:Math.min(...ps.map(p=>p[0])),maxX:Math.max(...ps.map(p=>p[0])),
+  minY:Math.min(...ps.map(p=>p[1])),maxY:Math.max(...ps.map(p=>p[1])),
+  radial:Math.max(...ps.map(p=>Math.hypot(p[0],p[2])))
+ };
 };
 for(const ore of ['chalcocite','cassiterite','quartz']){
- const rock=json(art+'models/item/crushed_'+ore+'.json');
- const main=itemDisplayBounds(rock,drumSize),coarse=itemDisplayBounds(rock,coarseSize);
- const fine=itemDisplayBounds(rock,fineSize);
- // 0.15 is the maximum lateral swing of tumbling chunks. Coarse return
- // finishes with its centre at x=0.74 in the front end of the screen.
- const mainRadius=Math.hypot(0.15+main.radial,drumAxisY-(restY+main.minY));
- const coarseRadius=Math.hypot(0.24+coarse.radial,
-                              drumAxisY-(restY+0.02+coarse.minY));
- assert.ok(mainRadius<innerRadius-0.01,
-  ore+' large chunks cut through rotating octagonal mesh');
- assert.ok(coarseRadius<innerRadius-0.01,
-  ore+' coarse chunks cut through the front rim');
- assert.ok(restY+bounce+main.maxY<shaftBottom-0.05,
-  ore+' rolling ore cuts through central drive shaft');
- assert.ok(restY+0.02+coarse.maxY<shaftBottom-0.05,
-  ore+' coarse return cuts through central shaft');
- const finesBottom=restY-fineFall+fine.minY;
- assert.ok(finesBottom>panTop&&finesBottom-panTop<0.08,
-  ore+' screened fines need to fall toward, not through, the lower pan');
- // End the coarse visual just INSIDE the ring; the server exposes the
- // actual output item on the real module only after a completed batch.
- assert.ok(0.34+0.36+coarse.radial<frontRimZ-0.01,
-  ore+' coarse chunk cuts through front discharge rim');
+ const model=json(art+'models/item/crushed_'+ore+'.json');
+ const main=bounds(model,drumSize),chip=bounds(model,fineSize);
+ const visualCentre=centreAtUnitScale*drumSize;
+ assert.ok(Math.abs(main.minX)<=halfWidth&&Math.abs(main.maxX)<=halfWidth,
+  ore+' model wider than the contact envelope');
+ assert.ok(visualCentre-main.minY<=halfHeight
+           &&main.maxY-visualCentre<=halfHeight,
+  ore+' model taller than the contact envelope');
+ assert.ok(0.60+main.radial<frontRimZ-0.01,
+  ore+' moving rock extends through the output rim');
+ assert.ok(0.49+chip.minY>panTop&&0.49+chip.minY<panTop+.08,
+  ore+' fine chip should land above, not inside, the lower pan');
 }
-assert.ok(renderer.includes('DRUM_ITEM_SCALE - i * 0.055F')&&
-          renderer.includes('FINE_ITEM_SCALE')&&
-          renderer.includes('COARSE_ITEM_SCALE')&&
-          renderer.includes('SCREEN_ORE_REST_Y + SCREEN_ORE_BOUNCE')&&
-          renderer.includes('0.34D + 0.36D * t'),
- 'Use corrected lower-bed motion and a coarse path clear of the front rim');
-assert.ok(renderer.includes('x - 0.14D')&&renderer.includes('x + 0.14D'),
- 'Multiple finished items need distinct positions on their real output trays');
+const contractPath=join(root,'tools/rotary-classifier/OreMotionContractTest.java');
+const motionPath=join(root,java+'client/render/blocks/stage/bronze/RotaryClassifierOreMotion.java');
+exists('tools/rotary-classifier/OreMotionContractTest.java');
+const classDir=mkdtempSync(join(tmpdir(),'mgc2-classifier-'));
+try{
+ execFileSync('javac',['-d',classDir,motionPath,contractPath],{cwd:root,stdio:'inherit'});
+ execFileSync('java',['-cp',classDir,'OreMotionContractTest'],{cwd:root,stdio:'inherit'});
+}finally{
+ rmSync(classDir,{recursive:true,force:true});
+}
 
 const client=text(java+'client/Clientsetup.java');
 assert.ok(client.includes('ROTARY_ORE_CLASSIFIER_BE')&&client.includes('rotary_ore_classifier_drum_'),'Six registered BER models required');
@@ -463,4 +465,4 @@ assert.deepEqual(page.multiblock.pattern,pattern,'Patchouli must form EXACTLY th
 assert.ok(page.text.includes('3×3×5'));
 for(const k of ['pickaxe','stone']){const path=k==='pickaxe'?resources+'data/minecraft/tags/blocks/mineable/pickaxe.json':resources+'data/minecraft/tags/blocks/needs_stone_tool.json';assert.ok(json(path).values.includes('magneticraft2:rotary_ore_classifier'));}
 execFileSync(process.execPath,['tools/rotary-classifier/build-static.mjs','--check'],{cwd:root,stdio:'inherit'});
-console.log('Rotary Classifier V5 animation contract passed: physical input/output surfaces, material transfer, screening/fines/coarse, paused batches, low-rate client effects, grounded frame and four facings.');
+console.log('Rotary Classifier V6 physical tumbling contract passed: physical input/output surfaces, material transfer, screening/fines/coarse, paused batches, low-rate client effects, grounded frame and four facings.');

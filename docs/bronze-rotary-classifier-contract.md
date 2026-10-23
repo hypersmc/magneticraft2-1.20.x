@@ -135,3 +135,37 @@ In-game evidence exposed another rendering problem after ore was enlarged: ore m
 - The regression contract derives conservative radial and vertical envelopes from all three registered crushed-ore item models, their JSON element rotations and GROUND display transforms, and compares against the actual drum radius, axial shaft, internal fines pan and front rim. The test must not reintroduce the erroneous extra +0.5 Y offset.
 
 **Verification pending:** Full checkout Node test suite, Forge 1.20.1 `./gradlew build`, and in-game checks in each facing at multiple shaft angles. No machine inventory or processing behavior is changed by this fix.
+
+
+## 2026-10-23 — V6 true rotating-screen contact (awaiting in-game approval)
+
+In-game review of the old enlarged-rock animation revealed an underlying design error:
+the rocks followed scripted X/Y sine waves and a progress-driven Z path while the
+actual barrel rotated around them. Adjusting the ore rest height did not make
+that motion physically connected to the machine.
+
+**Replacement:** the BER now keeps one weakly referenced client-only motion state
+per formed controller. At most two crushed-ore models simulate at 20 Hz against
+the eight rotating screen facets (using the same Gear V2 sign/phase as the baked
+drum), gravity, mesh friction and central-shaft exclusion. Model-centre-aware
+rotation makes chunks *roll* instead of spinning around an unrelated Y-axis.
+Modest axial transport advances only while running, rather than interpolating
+the full 2.28-block path from recipe progress. One small fine chip may fall from
+a real lower-screen contact toward the stationary internal pan; normal particle
+and sound budgets remain unchanged.
+
+This is **visual only**. The input throat feed remains staged for the first
+20% of a batch; finished results are still shown solely when the server has
+committed them to the real primary and byproduct ports. Stalled batches freeze,
+new batches reset visual state, and no item entities, fluids, recipes, wear,
+gear physics or multiblock geometry change. There is no full 3D granular solver.
+
+**Verification:** standalone pure-Java contact/regression harness
+\`tools/rotary-classifier/OreMotionContractTest.java\` checks octagonal and
+shaft clearance, sign reversal, contact-triggered fines, axial transport,
+stall freeze and batch reset; \`test-contract.mjs\` compiles and runs it as
+part of the contract. Local standalone harness passed. Full repository Node
+and Gradle builds and real-client rendering require checking in a full
+working checkout. Test +/− mechanical direction, 24 RPM and higher, all
+four facings, collisions at rim/shaft, speed changes, paused output, input
+with multiple batches, and FPS with many machines before merging PR #11.
