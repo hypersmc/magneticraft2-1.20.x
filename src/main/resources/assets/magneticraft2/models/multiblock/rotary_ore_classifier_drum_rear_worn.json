@@ -75,16 +75,6 @@
             16
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -153,16 +143,6 @@
             16
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -231,16 +211,6 @@
             16
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -309,16 +279,6 @@
             16
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -699,16 +659,6 @@
             1
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -777,16 +727,6 @@
             1
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -855,16 +795,6 @@
             1
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {
@@ -933,16 +863,6 @@
             1
           ]
         }
-      },
-      "rotation": {
-        "origin": [
-          8,
-          8,
-          8
-        ],
-        "axis": "z",
-        "angle": null,
-        "rescale": false
       }
     },
     {

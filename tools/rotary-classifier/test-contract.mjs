@@ -142,7 +142,14 @@ for(const section of ['rear','middle','front'])for(const wear of ['','_worn']){
  assert.ok(model.elements.length<49,'Do not rebuild an expensive high-poly drum');
  for(const e of model.elements){
   for(let i=0;i<3;i++)assert.ok(e.from[i]>=-16&&e.to[i]<=32&&e.to[i]>e.from[i],'Invalid vanilla model element '+p);
-  if(e.rotation)assert.ok([-45,45].includes(e.rotation.angle)&&e.rotation.axis==='z','Only vanilla-legal rotation angles');
+  // Minecraft rejects rotation.angle:null even though it is valid JSON.
+  // Keep this check explicit: older source tests did not run before the bad model shipped.
+  if (Object.hasOwn(e,'rotation')) {
+   assert.ok(e.rotation && Number.isFinite(e.rotation.angle),
+    'rotation.angle must be a finite number, never null: '+p);
+   assert.ok([-45,45].includes(e.rotation.angle) && e.rotation.axis==='z',
+    'Only explicitly rotated screen diagonals have an angle: '+p);
+  }
   for(const f of Object.values(e.faces))assert.ok(f.uv[2]-f.uv[0]<=16&&f.uv[3]-f.uv[1]<=16);
  }
 }

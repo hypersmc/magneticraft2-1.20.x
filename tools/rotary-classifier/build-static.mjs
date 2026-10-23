@@ -39,7 +39,13 @@ function generate(design){
    faces[side]={texture:"#"+mat,uv:[0,0,round(width),round(height)]};
   }
   const result={from:from.map(round),to:to.map(round),faces};
-  if(angle!==undefined)result.rotation={origin:[8,8,8],axis:"z",angle,rescale:false};
+  // A missing rotation is represented by no field at all. Serializing an
+  // explicit rotation.angle:null breaks BlockElement deserialization in 1.20.1.
+  if (angle !== null && angle !== undefined) {
+   if (!Number.isFinite(angle) || ![-45,-22.5,0,22.5,45].includes(angle))
+    throw Error("Invalid vanilla model rotation angle: "+angle);
+   result.rotation={origin:[8,8,8],axis:"z",angle,rescale:false};
+  }
   return result;
  };
  function drum(section,worn){
