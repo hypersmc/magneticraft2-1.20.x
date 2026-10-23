@@ -225,3 +225,17 @@ but the seventh (0,1,-3) AIR proxy is removed. The tank retains
 water process and sediment output. Generated V2 static model count
 returns to 176, plus two port inserts. Safely re-form an already formed
 V4.3 tank to clear the old proxy; in-game and Gradle verification pending.
+
+### 2026-10-24 — Water Settling Tank V4.5 liquid footprint correction
+
+User screenshots exposed missing muddy water in the two rear pockets
+beside the input and missing clean water near the output/front lip.
+V4.5 changes only the dynamic client fluid renderer: a three-area
+U-shaped dirty-water surface, connected clean front channel and a
+small raised clean-water tongue inside the real EAST fluid output.
+Exterior contour sides eliminate internal transparent seam faces and
+maintain native fluid UV density. Checks ensure all rendered volumes
+remain outside the solid masonry and copper module/insert geometries.
+No blueprint/model/texture/processing change, and no rebuild required.
+Patchouli/JEI and conserved 600→480 mB water process are intact;
+Gradle build and Minecraft appearance still require verification.

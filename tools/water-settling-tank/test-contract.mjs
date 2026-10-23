@@ -316,14 +316,9 @@ for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
  assert.ok(!floor.elements.some(el=>el.faces.up.texture==="#sludge"),
    "Do not Z-fight with permanent floating sediment decals");
 }
-// Internal basin: left wall ends at X=-1, right wall starts at X=2.
-// The low weir occupies Z [-1.1875,-1.0], while the front lip starts
-// at Z=-0.125. A fluid surface MUST stay between these solids.
-const fluidX=[-0.975,1.975],dirtyZ=[-3.22,-1.29],cleanZ=[-0.96,-0.24];
-assert.ok(fluidX[0]>-1 && fluidX[1]<2,"Fluid crosses a physical side wall");
-assert.ok(dirtyZ[0]>-3.25 && dirtyZ[1]<-1.1875,
- "Dirty water must remain clear of the module block and overflow weir");
-assert.ok(cleanZ[0]>-1.0 && cleanZ[1]<-0.125,"Clean water clips the weir or front retaining lip");
+// Connected fluid footprints are checked from the actual renderer constants
+// below, including concave pocket coverage, outlet approach and containment.
+
 
 const recipe=json(data+"recipes/settling_dirty_water.json");
 assert.equal(recipe.type,"magneticraft2:multiblock_processing");
@@ -348,6 +343,132 @@ assert.equal(clay.result.count,1);
 const be=read(source+"common/blockentity/stage/bronze/WaterSettlingTankBlockEntity.java");
 const block=read(source+"common/block/stage/bronze/WaterSettlingTankBlock.java");
 const renderer=read(source+"client/render/blocks/stage/bronze/WaterSettlingTankRenderer.java");
+
+// A fluid-volume regression based on the actual Java static definitions,
+// not a second set of hand-copied water coordinates in this test.
+const getFluidDefinition=name=>{
+ const m=renderer.match(new RegExp(
+  "private static final (?:PoolSection\\[\\]|PoolSection|float\\[\\]\\[\\])\\s+"+
+  name+"\\s*=\\s*([\\s\\S]*?);"));
+ assert.ok(m,"Missing fluid footprint definition: "+name);
+ return m[1];
+};
+const fluidRects=name=>[...getFluidDefinition(name).matchAll(
+ /new PoolSection\((-?[\d.]+)F,\s*(-?[\d.]+)F,\s*(-?[\d.]+)F,\s*(-?[\d.]+)F\)/g
+)].map(match=>match.slice(1).map(Number));
+const fluidOutline=name=>[...getFluidDefinition(name).matchAll(
+ /\{\s*(-?[\d.]+)F,\s*(-?[\d.]+)F\s*\}/g
+)].map(match=>match.slice(1).map(Number));
+const dirtySections=fluidRects("DIRTY_SECTIONS");
+const cleanMain=fluidRects("CLEAN_MAIN")[0];
+const cleanTongue=fluidRects("CLEAN_OUTLET")[0];
+const dirtyContour=fluidOutline("DIRTY_PERIMETER");
+const cleanContour=fluidOutline("CLEAN_OUTLET_PERIMETER");
+const shallowContour=fluidOutline("CLEAN_SHALLOW_PERIMETER");
+assert.equal(dirtySections.length,3,
+ "Dirty basin must have rear-left and rear-right pockets plus main reservoir");
+assert.ok(cleanMain&&cleanTongue,"Missing clean collection channel or outlet tongue");
+const dirtyMain=dirtySections[1],left=dirtySections[0],right=dirtySections[2];
+assert.equal(left[3],dirtyMain[2],"Left rear water pocket must meet the main pool");
+assert.equal(right[3],dirtyMain[2],"Right rear water pocket must meet the main pool");
+assert.equal(left[0],dirtyMain[0],"Left pocket must meet the basin's left wall");
+assert.equal(right[1],dirtyMain[1],"Right pocket must meet the basin's right wall");
+assert.ok(left[2] < dirtyMain[2]-0.5 && right[2] < dirtyMain[2]-0.5,
+ "Dirty water must actually reach both rear wall pockets, not stop at the inlet");
+assert.ok(left[1] < 0 && right[0] > 1,
+ "Leave the center rear-wall inlet returns dry; fill only the TWO side pockets");
+assert.equal(cleanTongue[0],cleanMain[1],
+ "The clean outlet must have a connected approach, not a floating water island");
+assert.ok(cleanMain[3]>-0.15 && cleanMain[3]<-0.125,
+ "Clean water must nearly meet the front retaining wall without clipping it");
+assert.ok(cleanTongue[1]>2.1 && cleanTongue[1]<2.25,
+ "Clean water must enter the open output cell but stop BEFORE its copper ring");
+assert.ok(cleanTongue[2]>-0.875 && cleanTongue[3]<-0.125,
+ "Output approach must stay between the module's side walls");
+assert.ok(renderer.includes("top > CLEAN_OUTLET_SILL + 0.005F"),
+ "Outlet approach should only form after liquid rises above its bottom sill");
+assert.ok(renderer.includes("CLEAN_OUTLET_SILL : POOL_BOTTOM"),
+ "Fluid outlet approach must use the higher sill to avoid the metal base");
+
+const fluidSectionArea=box=>(box[1]-box[0])*(box[3]-box[2]);
+const overlapArea=(a,b)=>Math.max(0,Math.min(a[1],b[1])-Math.max(a[0],b[0]))*
+                       Math.max(0,Math.min(a[3],b[3])-Math.max(a[2],b[2]));
+const signedContourArea=outline=>outline.reduce((area,p,i)=>{
+ const next=outline[(i+1)%outline.length];
+ return area+p[0]*next[1]-next[0]*p[1];
+},0)/2;
+const containsFluid=(box,x,z)=>x>box[0]&&x<box[1]&&z>box[2]&&z<box[3];
+const containsOutline=(outline,x,z)=>{
+ let yes=false;
+ for(let i=0,j=outline.length-1;i<outline.length;j=i++){
+  const a=outline[i],b=outline[j];
+  if((a[1]>z)!==(b[1]>z) &&
+     x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0]) yes=!yes;
+ }
+ return yes;
+};
+for(const [label,sections,outline] of [
+ ["dirty",dirtySections,dirtyContour],
+ ["clean",[cleanMain,cleanTongue],cleanContour],
+ ["clean-shallow",[cleanMain],shallowContour]
+]){
+ assert.ok(signedContourArea(outline)<0,
+  label+" perimeter must be ordered with outward normals (-dz,+dx)");
+ const area=Math.abs(signedContourArea(outline));
+ const sum=sections.reduce((a,b)=>a+fluidSectionArea(b),0);
+ assert.ok(Math.abs(area-sum)<1e-5,
+  label+" has an overlap, top-surface hole or mismatch at joined regions");
+ for(let i=0;i<sections.length;i++)for(let j=i+1;j<sections.length;j++)
+  assert.ok(overlapArea(sections[i],sections[j])<1e-8,
+   label+" sections must TOUCH only, never duplicate translucent top faces");
+ for(let i=0;i<outline.length;i++){
+  const a=outline[i],b=outline[(i+1)%outline.length];
+  assert.ok((a[0]===b[0]) !== (a[1]===b[1]),
+   label+" perimeter must use nonzero axis-aligned exterior edges only");
+ }
+ // Sample every rectangle-boundary cell; the contour must describe exactly
+ // the union of the rectangular top tiles, with no fake interior side walls.
+ const xs=[...new Set([...outline.map(v=>v[0]),
+   ...sections.flatMap(b=>[b[0],b[1]])])].sort((a,b)=>a-b);
+ const zs=[...new Set([...outline.map(v=>v[1]),
+   ...sections.flatMap(b=>[b[2],b[3]])])].sort((a,b)=>a-b);
+ for(let xi=0;xi<xs.length-1;xi++)for(let zi=0;zi<zs.length-1;zi++){
+  const x=(xs[xi]+xs[xi+1])/2,z=(zs[zi]+zs[zi+1])/2;
+  assert.equal(containsOutline(outline,x,z),
+   sections.some(b=>containsFluid(b,x,z)),
+   label+" exterior perimeter mismatches top footprint at "+[x,z]);
+ }
+}
+// Check real MODEL/COLLISION clearance at maximum fill, where intersection
+// is most likely. A smaller fill cannot cross a static solid if this passes.
+const staticBoxes=vox.collision.map(c=>c.map(v=>v/16));
+const volume=(b,baseY)=>[b[0],baseY,b[2],b[1],1.54,b[3]];
+const sectionVolumes=[
+ ...dirtySections.map(b=>["dirty",volume(b,1.014)]),
+ ["clean",volume(cleanMain,1.014)],
+ ["clean-output",volume(cleanTongue,1.135)]
+];
+for(const [name,water] of sectionVolumes)
+ for(const solid of staticBoxes)
+  assert.ok(!intersects(water,solid),
+   name+" rendered fluid volume intersects actual V2 masonry: "+water);
+const realPortVolumes=[
+ ["input",where("I")[0],json(assets+"models/block/multiblock_fluid_input.json"),"north",
+  json(assets+"models/multiblock/"+id+"_input_port_insert.json")],
+ ["output",where("O")[0],json(assets+"models/block/multiblock_fluid_output.json"),"east",
+  json(assets+"models/multiblock/"+id+"_output_port_insert.json")]
+];
+for(const [name,cell,model,facing,insert] of realPortVolumes){
+ const offset=[cell.x,cell.y,cell.z];
+ const modelShapes=model.elements.map(e=>rotateBox(e,facing));
+ const insertShapes=insert.elements.map(e=>[...e.from,...e.to]);
+ for(const shape of [...modelShapes,...insertShapes]){
+  const solid=shape.map((v,i)=>v/16+offset[i%3]);
+  for(const [region,water] of sectionVolumes)assert.ok(!intersects(water,solid),
+    region+" water cuts through the real "+name+" port or tank insert");
+ }
+}
+
 const generic=read(source+"common/recipe/multiblock/MultiblockProcessingRecipe.java");
 const expectedBE=[
 "new FluidTank(DIRTY_CAPACITY", "new FluidTank(CLEAN_CAPACITY",
@@ -382,13 +503,15 @@ assert.ok(1.045 + 0.495 > 1.50 &&
 for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
-  "-0.975F, 1.975F, -3.22F, -1.29F",
-  "-0.975F, 1.975F, -0.96F, -0.24F",
+  "DIRTY_SECTIONS", "DIRTY_PERIMETER",
+  "CLEAN_MAIN", "CLEAN_OUTLET", "CLEAN_OUTLET_PERIMETER",
+  "CLEAN_SHALLOW_PERIMETER", "renderPerimeter(",
+  "renderPool(pose, buffers, light, new FluidStack(",
   "getDirtyAmount() > 0", "getCleanAmount() > 0",
   "float top = 1.045F + 0.495F",
-  "float sideAlpha = alpha * 0.62F",
-  "for (int tz = (int)Math.floor(minZ)",
-  "float u0 = u(sprite, x0-tx)",
+  "float sideAlpha=alpha*0.62F",
+  "for (int tileZ=(int)Math.floor(section.minZ())",
+  "float u0=u(sprite,x0-tileX)",
   "pose.translate(-0.5D, 1.775D, 0.5D)",
   "getSedimentStack()", "RenderType.translucent()"
 ])assert.ok(renderer.includes(s),"Wrong fluid/port position in renderer: "+s);
@@ -451,4 +574,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V4.4 real-port inserts — input and output side walls baked INSIDE their blocks, correct NORTH/EAST orientation, no copper intersections, six V2 air anchors, 176 filler parts, unchanged recipes and four directions");
+console.log("PASS: V4.5 renderer-only fluid footprints: dirty-water rear pockets, connected clean outlet/wall approach, zero model intersections, native UVs, six V2 anchors and unchanged processing");

@@ -93,8 +93,12 @@ dark masonry, ceramic lining and divider are purposefully tiled in their
 own block-local parts.
 
 The fluid BER reads real tank amounts:
-- dirty rear reservoir X [-0.975,1.975], Z [-2.84,-1.29]
-- clean front reservoir X [-0.975,1.975], Z [-0.96,-0.24]
+- dirty rear reservoir: broad center X [-0.985,1.985], Z [-2.985,-1.29]
+- muddy left rear pocket: X [-0.985,-0.205], Z [-3.60,-2.985]
+- muddy right rear pocket: X [1.205,1.985], Z [-3.60,-2.985]
+- clean front reservoir: X [-0.985,1.985], Z [-0.985,-0.14]
+- clean side outlet approach: X [1.985,2.20], Z [-0.84,-0.20],
+  only visible when fluid is above the metal sill at Y=1.135
 - display level Y = 1.045 + 0.495 × fill ratio, only if non-empty.
 
 Both real Fluid Input and Fluid Output block models occupy only the
@@ -105,8 +109,12 @@ occupied cells. The input insert is NORTH-facing; the output insert
 is EAST-facing relative to the canonical SOUTH tank orientation.
 The main copper frame and exterior pipe face remain visible and functional.
 No generated V2 filler geometry extends into a real module block.
-The dirty-water renderer once again starts at Z=-3.22, safely outside
-the actual rear input block, while the clean-water boundary is unchanged. The sediment output item is drawn at (-0.5,1.775,0.5), over
+The water renderer uses one connected silhouette per reservoir, rather
+than stretching a single rectangle through walls. Dirty Water occupies
+both rear side pockets beside the inlet, keeping the solid central wall
+returns dry. Clean Water approaches the outlet inside its open center
+and nearly meets the front lip without clipping masonry. The extent
+depends solely on synchronized stored fluid; the server process is unchanged. The sediment output item is drawn at (-0.5,1.775,0.5), over
 the real elevated front-wall wooden tray. No fake particles or ghost
 sediment entities are introduced. Existing six V3 16×16 hand-painted
 texture assets are reused without stretching.
@@ -217,3 +225,41 @@ Regression tests verify the exact source port model cuboids, each insert's
 placement and native UVs, module orientation, complete absence of solid
 intersections, all four blueprint rotations and the preserved water/recipe
 accounting. A full Forge build and in-game review are still required.
+
+## V4.5 — Fluid-volume contour pass (2026-10-24)
+
+The latest in-game screenshots showed that the dirty reservoir still
+left two unfilled spaces immediately beside the rear intake. The clean
+reservoir also stopped short of the right-side Fluid Output and the
+front retaining wall. Neither required new blocks or textures.
+
+**Renderer-only changes:** Dirty water is now represented by one U-shaped
+top surface, partitioned into three edge-touching areas so it reaches
+both rear pockets without intersecting the central inlet/wall returns.
+The clean surface approaches the actual front wall, plus a short narrow
+tongue into the empty center of the EAST-facing output module. This
+tongue appears only once the fluid level clears its existing lower
+metal sill. It stops before the copper frame and leaves its external
+pipe opening unobstructed.
+
+Each reservoir has a single explicitly defined exterior perimeter:
+only outer vertical fluid faces are rendered. Inner edges between
+touching rectangular surface sections produce **no duplicate translucent
+quads or artificial seams**. UVs remain tiled per Minecraft block,
+including around both side pockets and the output tongue.
+
+At maximum fluid level, every generated fluid area was checked against
+the 105 Voxel V2 masonry boxes and both real copper module models and
+their tank-specific wall inserts; all intersections are zero. Regression
+checks parse the actual renderer shape constants and compare polygon area
+to the union of the top sections, plus perimeter continuity and output
+sill clearance.
+
+**No construction changes or re-form necessary for V4.5.**
+The entire change to gameplay source is confined to
+`WaterSettlingTankRenderer.java`; the other changes are contract tests
+and documentation. No physical blocks, ports, Voxel V2 collision,
+Patchouli formation pattern, textures, recipes or server-side tanks
+were modified. Reload client resources or restart the dev client
+before visually evaluating the result. The full Forge build and
+in-game acceptance remain outstanding.

@@ -39,6 +39,49 @@ public final class WaterSettlingTankRenderer
             new ResourceLocation("magneticraft2",
                     "multiblock/water_settling_tank_output_port_insert");
 
+    // Three touching regions produce one U-shaped muddy pool. The two narrow
+    // rear arms fill the pockets on either side of the north-facing input.
+    // All coordinates are local to the SOUTH-oriented controller.
+    private record PoolSection(float minX, float maxX, float minZ, float maxZ) {}
+
+    private static final float POOL_BOTTOM = 1.014F;
+    private static final float CLEAN_OUTLET_SILL = 1.135F;
+    private static final float CLEAN_EAST_EDGE = 1.985F;
+
+    private static final PoolSection[] DIRTY_SECTIONS = {
+            new PoolSection(-0.985F, -0.205F, -3.60F, -2.985F),
+            new PoolSection(-0.985F, 1.985F, -2.985F, -1.29F),
+            new PoolSection(1.205F, 1.985F, -3.60F, -2.985F)
+    };
+    private static final float[][] DIRTY_PERIMETER = {
+            {-0.985F, -1.29F}, {1.985F, -1.29F},
+            {1.985F, -3.60F}, {1.205F, -3.60F},
+            {1.205F, -2.985F}, {-0.205F, -2.985F},
+            {-0.205F, -3.60F}, {-0.985F, -3.60F}
+    };
+
+    // The main clean pool meets both the east wall and the front retaining
+    // lip. At sufficient level a shallow tongue extends through the open
+    // center of the real EAST-facing output, ending BEFORE its copper ring.
+    private static final PoolSection CLEAN_MAIN =
+            new PoolSection(-0.985F, 1.985F, -0.985F, -0.14F);
+    private static final PoolSection CLEAN_OUTLET =
+            new PoolSection(1.985F, 2.20F, -0.84F, -0.20F);
+    private static final PoolSection[] CLEAN_SHALLOW = {CLEAN_MAIN};
+    private static final PoolSection[] CLEAN_WITH_OUTLET = {
+            CLEAN_MAIN, CLEAN_OUTLET
+    };
+    private static final float[][] CLEAN_SHALLOW_PERIMETER = {
+            {-0.985F, -0.14F}, {1.985F, -0.14F},
+            {1.985F, -0.985F}, {-0.985F, -0.985F}
+    };
+    private static final float[][] CLEAN_OUTLET_PERIMETER = {
+            {-0.985F, -0.14F}, {1.985F, -0.14F},
+            {1.985F, -0.20F}, {2.20F, -0.20F},
+            {2.20F, -0.84F}, {1.985F, -0.84F},
+            {1.985F, -0.985F}, {-0.985F, -0.985F}
+    };
+
     public WaterSettlingTankRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override public int getViewDistance() { return 48; }
@@ -66,23 +109,19 @@ public final class WaterSettlingTankRenderer
         drawPortInsert(pose, buffers, light, overlay, tank,
                 OUTPUT_PORT_INSERT, 2D, 1D, -1D);
 
-        // Use the OPEN interior geometry, not the outside dimensions of the
-        // basin. In V4 the water extended ~0.28 blocks INTO EACH wall.
-        // There is no forward AIR-cell throat anymore. The side walls
-        // live in the real input block Z=-4..-3; dirty water starts beyond
-        // that block (Z=-3.22) and cannot cross either port insert.
-        // Both surfaces use actual synchronized fluid amounts only.
+        // Server tanks drive all surfaces. Dirt fills both rear pockets
+        // BESIDE the input, not the solid wall returns in its center.
+        // Clean water reaches the front lip and, when high enough, the
+        // open middle of the east-facing output block.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
-                    tank.getDirtyFillRatio(),
-                    -0.975F, 1.975F, -3.22F, -1.29F, 0.67F);
+                    tank.getDirtyFillRatio(), true, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     Fluids.WATER, tank.getCleanAmount()),
-                    tank.getCleanFillRatio(),
-                    -0.975F, 1.975F, -0.96F, -0.24F, 0.55F);
+                    tank.getCleanFillRatio(), false, 0.55F);
         }
 
         ItemStack sediment = tank.getSedimentStack();
@@ -123,15 +162,17 @@ public final class WaterSettlingTankRenderer
     }
 
     /**
-     * Top plus four softly shaded transparent vertical fluid sides. UV
-     * coordinates follow the Minecraft still-water sprite per WORLD BLOCK:
-     * the clipped edge tiles never stretch or compress the texture.
-     * Surfaces remain below the weir/metal lip and out of all real ports.
+     * Connected, tiled X/Z footprints instead of one conservative rectangle.
+     * Rectangles only TOUCH along their edges, never overlap in area.
+     * One exterior contour draws vertical sides, avoiding fake translucent
+     * walls along internal rectangle seams. The texture still tiles once
+     * per Minecraft block, even around narrow pockets and the outlet.
      */
     private static void renderPool(PoseStack pose, MultiBufferSource buffers,
             int light, FluidStack fluid, float ratio,
-            float minX, float maxX, float minZ, float maxZ, float targetOpacity) {
-        IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(fluid.getFluid());
+            boolean dirty, float targetOpacity) {
+        IClientFluidTypeExtensions client =
+                IClientFluidTypeExtensions.of(fluid.getFluid());
         var texture = client.getStillTexture(fluid);
         if (texture == null || ratio <= 0F) return;
         TextureAtlasSprite sprite = Minecraft.getInstance()
@@ -142,50 +183,85 @@ public final class WaterSettlingTankRenderer
         float b = (tint & 255) / 255F;
         float tintAlpha = ((tint >>> 24) & 255) / 255F;
         float alpha = Math.min(tintAlpha <= 0F ? 1F : tintAlpha, targetOpacity);
-        // Water stays below the LOWER weir cap (Y=1 + 9/16), never through it.
-        // Dirty and clean levels remain separate and inventory-driven.
+
+        // Retain the existing low-weir clearance and server-driven level.
         float top = 1.045F + 0.495F * Math.max(0F, Math.min(1F, ratio));
-        float bottom = 1.014F;
+        boolean extendsIntoOutlet = !dirty && top > CLEAN_OUTLET_SILL + 0.005F;
+        PoolSection[] sections = dirty ? DIRTY_SECTIONS :
+                (extendsIntoOutlet ? CLEAN_WITH_OUTLET : CLEAN_SHALLOW);
+        float[][] contour = dirty ? DIRTY_PERIMETER :
+                (extendsIntoOutlet ? CLEAN_OUTLET_PERIMETER
+                                   : CLEAN_SHALLOW_PERIMETER);
+
         VertexConsumer consumer = buffers.getBuffer(RenderType.translucent());
         PoseStack.Pose matrix = pose.last();
-
-        for (int tz = (int)Math.floor(minZ); tz < Math.ceil(maxZ); tz++)
-        for (int tx = (int)Math.floor(minX); tx < Math.ceil(maxX); tx++) {
-            float x0 = Math.max(tx, minX), x1 = Math.min(tx+1F, maxX);
-            float z0 = Math.max(tz, minZ), z1 = Math.min(tz+1F, maxZ);
-            if (x1 <= x0 || z1 <= z0) continue;
-            float u0 = u(sprite, x0-tx), u1 = u(sprite, x1-tx);
-            float v0 = v(sprite, z0-tz), v1 = v(sprite, z1-tz);
-            vertex(consumer,matrix,x0,top,z0,u0,v0,r,g,b,alpha,light,0F,1F,0F);
-            vertex(consumer,matrix,x0,top,z1,u0,v1,r,g,b,alpha,light,0F,1F,0F);
-            vertex(consumer,matrix,x1,top,z1,u1,v1,r,g,b,alpha,light,0F,1F,0F);
-            vertex(consumer,matrix,x1,top,z0,u1,v0,r,g,b,alpha,light,0F,1F,0F);
+        for (PoolSection section : sections) {
+            // Native 1-block sprite tiling; crop UVs only at each edge.
+            for (int tileZ=(int)Math.floor(section.minZ());
+                    tileZ<Math.ceil(section.maxZ()); tileZ++) {
+                for (int tileX=(int)Math.floor(section.minX());
+                        tileX<Math.ceil(section.maxX()); tileX++) {
+                    float x0=Math.max(tileX,section.minX());
+                    float x1=Math.min(tileX+1F,section.maxX());
+                    float z0=Math.max(tileZ,section.minZ());
+                    float z1=Math.min(tileZ+1F,section.maxZ());
+                    if (x1<=x0 || z1<=z0) continue;
+                    float u0=u(sprite,x0-tileX),u1=u(sprite,x1-tileX);
+                    float v0=v(sprite,z0-tileZ),v1=v(sprite,z1-tileZ);
+                    vertex(consumer,matrix,x0,top,z0,u0,v0,
+                            r,g,b,alpha,light,0F,1F,0F);
+                    vertex(consumer,matrix,x0,top,z1,u0,v1,
+                            r,g,b,alpha,light,0F,1F,0F);
+                    vertex(consumer,matrix,x1,top,z1,u1,v1,
+                            r,g,b,alpha,light,0F,1F,0F);
+                    vertex(consumer,matrix,x1,top,z0,u1,v0,
+                            r,g,b,alpha,light,0F,1F,0F);
+                }
+            }
         }
+        renderPerimeter(consumer, matrix, sprite, contour, top,
+                dirty, alpha, r, g, b, light);
+    }
 
-        float sideAlpha = alpha * 0.62F;
-        float sr = r * 0.83F, sg = g * 0.83F, sb = b * 0.83F;
-        float vBottom = v(sprite, 0F), vTop = v(sprite, top-bottom);
-        for (int tx=(int)Math.floor(minX); tx < Math.ceil(maxX); tx++) {
-            float x0=Math.max(minX,tx),x1=Math.min(maxX,tx+1F);
-            if(x1<=x0)continue;
-            float u0=u(sprite,x0-tx),u1=u(sprite,x1-tx);
-            quad(consumer,matrix,x1,bottom,minZ,x0,bottom,minZ,
-                    x0,top,minZ,x1,top,minZ,u1,u0,vBottom,vTop,
-                    sr,sg,sb,sideAlpha,light,0F,0F,-1F);
-            quad(consumer,matrix,x0,bottom,maxZ,x1,bottom,maxZ,
-                    x1,top,maxZ,x0,top,maxZ,u0,u1,vBottom,vTop,
-                    sr,sg,sb,sideAlpha,light,0F,0F,1F);
-        }
-        for (int tz=(int)Math.floor(minZ); tz < Math.ceil(maxZ); tz++) {
-            float z0=Math.max(minZ,tz),z1=Math.min(maxZ,tz+1F);
-            if(z1<=z0)continue;
-            float u0=u(sprite,z0-tz),u1=u(sprite,z1-tz);
-            quad(consumer,matrix,minX,bottom,z0,minX,bottom,z1,
-                    minX,top,z1,minX,top,z0,u0,u1,vBottom,vTop,
-                    sr,sg,sb,sideAlpha,light,-1F,0F,0F);
-            quad(consumer,matrix,maxX,bottom,z1,maxX,bottom,z0,
-                    maxX,top,z0,maxX,top,z1,u1,u0,vBottom,vTop,
-                    sr,sg,sb,sideAlpha,light,1F,0F,0F);
+    /**
+     * The perimeter is ordered so its exterior normal is (-dz,+dx).
+     * Only exterior vertical faces are emitted, never the internal joins
+     * between the rear pockets/main basin or the clean outlet tongue.
+     */
+    private static void renderPerimeter(VertexConsumer consumer,
+            PoseStack.Pose matrix, TextureAtlasSprite sprite,
+            float[][] contour, float top, boolean dirty, float alpha,
+            float r, float g, float b, int light) {
+        float sideAlpha=alpha*0.62F;
+        float sr=r*0.83F,sg=g*0.83F,sb=b*0.83F;
+        for (int edge=0;edge<contour.length;edge++) {
+            float[] a=contour[edge],p=contour[(edge+1)%contour.length];
+            float dx=p[0]-a[0],dz=p[1]-a[1];
+            float length=(float)Math.sqrt(dx*dx+dz*dz);
+            if (length<=0F) continue;
+            float nx=-dz/length,nz=dx/length;
+            boolean alongX=Math.abs(dx)>0.0001F;
+            float from=alongX?a[0]:a[1],to=alongX?p[0]:p[1];
+            float low=Math.min(from,to),high=Math.max(from,to);
+            // Inside the real output there is a metal sill at Y=1.125.
+            // The tiny clean-water tongue starts ABOVE it; the main basin
+            // continues down to the ceramic floor at Y=1.014.
+            float bottom=!dirty && Math.max(a[0],p[0]) >
+                    CLEAN_EAST_EDGE + 0.0001F ?
+                    CLEAN_OUTLET_SILL : POOL_BOTTOM;
+            if (top<=bottom) continue;
+            float v0=v(sprite,0F),v1=v(sprite,top-bottom);
+            for (int tile=(int)Math.floor(low);tile<Math.ceil(high);tile++) {
+                float lo=Math.max(tile,low),hi=Math.min(tile+1F,high);
+                if (hi<=lo) continue;
+                float start=from<to?lo:hi,end=from<to?hi:lo;
+                float x0=alongX?start:a[0],z0=alongX?a[1]:start;
+                float x1=alongX?end:a[0],z1=alongX?a[1]:end;
+                quad(consumer,matrix,x0,bottom,z0,x1,bottom,z1,
+                        x1,top,z1,x0,top,z0,
+                        u(sprite,start-tile),u(sprite,end-tile),v0,v1,
+                        sr,sg,sb,sideAlpha,light,nx,0F,nz);
+            }
         }
     }
 
