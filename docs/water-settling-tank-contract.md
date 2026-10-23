@@ -62,8 +62,8 @@ The generated per-cell models and collision cannot overlap a real module.
 This is now an engineered Bronze Age treatment installation rather than
 a generic untextured stone trough:
 
-- Refractory dark masonry, separately glazed waterproof cyan-green lining
-- Cast bronze rim/beading, riveted dark-iron frames and upper Cut Copper posts
+- Muted warm-gray refractory masonry, smoothly glazed neutral sage-gray lining
+- Restrained warm-bronze rims, clean riveted neutral iron and upper Cut Copper posts
 - Raised internal weir dividing **two similarly sized side-by-side bays**
 - Rear metal inlet sleeve terminating over the muddy chamber
 - Outer right clean-water crossover fitting, aligned with the real outlet
@@ -91,6 +91,7 @@ Sediment remains visibly displayed only when the output inventory contains it.
 
 \`\`\`bash
 node tools/water-settling-tank/build.mjs --check
+node tools/water-settling-tank/build-textures.mjs --check
 node tools/water-settling-tank/test-contract.mjs
 ./gradlew build
 \`\`\`
@@ -114,3 +115,37 @@ Use the client video to evaluate whether the inlet/outlet look connected.
 
 The complete Forge Gradle build and in-game visual acceptance remain
 **unverified** until they are explicitly run. Keep PR #11 draft/unmerged.
+
+
+## Texture-only redesign V3 — 2026-10-23
+
+The V2 in-game review showed that the previous textures looked overly noisy,
+heavily pre-shaded and visually disconnected, like a collection of borrowed
+game materials. The underlying V2 model and flow contract were not rejected
+by this texture decision. **V3 changes only the six pixel textures and their
+reproducibility/validation documentation; it does not alter geometry,
+formation, item/fluid ports, world saves, recipes, physics, animations or
+collision.** Old already-formed V2 Settling Tanks need no rebuild for V3.
+
+The new hand-authored palette replaces scattered procedural speckles with
+deliberately painted 16x16 pixel clusters. All six textures are unique
+8-bit opaque RGB PNGs using 5–11 colors apiece:
+
+- **refractory:** muted warm-gray large masonry courses, subtle mortar;
+- **lining:** pale desaturated sage-gray ceramic panels, minimal seams;
+- **bronze:** warm copper-brown cast plate with restrained highlight and bolts;
+- **riveted_iron:** cool neutral-gray metal plate with two clear fasteners;
+- **grate:** large readable steel bars and dark negative spaces;
+- **sludge:** quiet earth-brown, gently layered wet deposits.
+
+No palette is copied from a stock texture or another game's asset. Lighting
+comes from Minecraft, not from high-frequency painted noise. Each 16x16 tile
+retains the *same resource name* as V2 and is applied at the existing native
+UV density, so models and their texture references remain untouched.
+
+The six source-defined pixel grids are at
+\`tools/water-settling-tank/build-textures.mjs\`; this script uses built-in
+Node PNG encoding without external dependencies. Use \`--check\` to ensure
+the committed PNGs exactly match the editable source. The main structure
+asset generator is intentionally unchanged. In-game approval is pending
+a resource reload and a visual comparison at typical block-view distances.

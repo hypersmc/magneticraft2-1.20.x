@@ -255,13 +255,17 @@ for(const tex of customTextures){
      tex+" is not a real PNG");
  assert.equal(buf.readUInt32BE(16),16,tex+" width must be one Minecraft tile");
  assert.equal(buf.readUInt32BE(20),16,tex+" height must be one Minecraft tile");
+ assert.equal(buf[24],8,tex+" must use 8-bit channels");
+ assert.equal(buf[25],2,tex+" must be a painted, opaque RGB texture");
  bytes.add(buf.toString("base64"));
 }
 assert.equal(bytes.size,customTextures.length,"Textures must not be copied duplicates");
+execFileSync(process.execPath,["tools/water-settling-tank/build-textures.mjs","--check"],
+             {cwd:root,stdio:"inherit"});
 const modelExample=json(assets+"models/multiblock/"+id+"_south/part_0_1_-2.json");
 for(const mat of ["refractory","lining","bronze"])
  assert.ok(modelExample.textures[mat]?.includes("block/settling_tank/"),
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: Settling Tank V2 redesign: 4 directions, 9 AIR proxies, 192 model parts, six real textures, independent liquid volumes, ports, fluids, process conservation, book and generated assets");
+console.log("PASS: Settling Tank V2 structure + V3 hand-painted pixel textures, 4 directions, 9 AIR proxies, 192 model parts, original 16x16 RGB assets, water accounting, book and generators");
