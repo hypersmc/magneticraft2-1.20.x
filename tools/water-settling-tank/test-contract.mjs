@@ -102,11 +102,12 @@ assert.equal(modelPaths.size,164,"Four rotations need 41 low-basin static models
 // Physical pipe-to-port continuity: the rear riser begins at the top of
 // the real ground-floor fluid input instead of hovering overhead.
 const inletRiser=json(assets+"models/multiblock/"+id+"_south/part_0_1_-4.json");
-assert.ok(inletRiser.elements.some(e=>e.from[1]===0&&e.to[1]===9
+assert.ok(inletRiser.elements.some(e=>e.from[1]===0&&e.to[1]===8
        &&e.from[0]===6&&e.from[2]===8),
        "Dirty inlet riser no longer joins the real Fluid Input below");
 const eastDownpipe=json(assets+"models/multiblock/"+id+"_south/part_2_1_0.json");
-assert.ok(eastDownpipe.elements.some(e=>e.from[1]===0&&e.to[1]===10),
+assert.ok(eastDownpipe.elements.some(e=>e.from[1]===0&&e.to[1]===10
+       &&e.from[0]===6&&e.from[2]===5),
        "Recovered water downpipe must reach its east-edge real Fluid Output");
 for(const facing of sdir){
  const dir=path.join(root,assets+"models/multiblock/"+id+"_"+facing);
@@ -134,15 +135,59 @@ for(const box of vox.collision)for(const name of ["I","P","O"]) {
  assert.ok(!inside(box,[c.x,c.y,c.z]),
    "Voxel solid illegally overlaps real module "+name);
 }
-assert.ok(vox.collision.some(b=>b[1]===0&&b[4]===13)
-       &&vox.collision.some(b=>b[1]===13&&b[4]===16),
- "No floating liner or unsupported basin panels");
+assert.ok(vox.collision.some(b=>b[1]===0&&b[4]===16),
+ "The visibly dry basin floor must be solid and continuous");
 for(const point of [[-1,1,-2],[0,1,-2],[1,1,-2],[-1,1,-1],[0,1,-1],[1,1,-1]]){
  assert.ok(vox.collision.some(box=>inside(box,point)),
     "Missing low overflow weir or rear-of-port retaining lip: "+point);
 }
 assert.ok(vox.collision.every(box=>box[4] <= 32),
  "Tall posts, walkways or third-level collision geometry remain");
+
+/**
+ * V4.1 geometry regression: the previous renderer drew panels on the exact
+ * top of the dry ceramic floor (and mutually overlapping inlet fittings).
+ * Same-facing coplanar faces MUST NEVER share positive rendered area.
+ * Touching walls/floor along opposing interior faces is perfectly valid.
+ */
+const intersections=[];
+const coplanar=[];
+for(let i=0;i<vox.collision.length;i++) {
+ const a=vox.collision[i];
+ for(let j=i+1;j<vox.collision.length;j++) {
+  const b=vox.collision[j];
+  const delta=[0,1,2].map(k=>Math.min(a[k+3],b[k+3])-Math.max(a[k],b[k]));
+  if(delta.every(n=>n>0))
+    intersections.push({i,j,volume:delta.reduce((x,y)=>x*y,1)});
+  for(let axis=0;axis<3;axis++){
+   const sides=[0,1,2].filter(k=>k!==axis);
+   if(sides.every(k=>delta[k]>0) &&
+       (a[axis]===b[axis] || a[axis+3]===b[axis+3]))
+    coplanar.push({i,j,axis});
+  }
+ }
+}
+assert.deepEqual(intersections,[],
+ "Overlapping cuboid volumes cause overlapping opaque faces and depth artifacts");
+assert.deepEqual(coplanar,[],
+ "Same-facing, same-plane surfaces are Z-fighting inside the generated model");
+
+for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
+ const floor=json(assets+"models/multiblock/"+id+"_south/part_"+
+        dx+"_0_"+dz+".json");
+ assert.ok(floor.elements.some(el=>el.from[1]===0&&el.to[1]===16 &&
+           el.faces.up.texture==="#refractory"),
+   "Unfilled basin must show dark, dry refractory rather than a water-colored liner");
+ assert.ok(!floor.elements.some(el=>el.faces.up.texture==="#sludge"),
+   "Do not Z-fight with permanent floating sediment decals");
+}
+// Internal basin: left wall ends at X=-1, right wall starts at X=2.
+// The low weir occupies Z [-1.1875,-1.0], while the front lip starts
+// at Z=-0.125. A fluid surface MUST stay between these solids.
+const fluidX=[-0.975,1.975],dirtyZ=[-3.53,-1.29],cleanZ=[-0.96,-0.24];
+assert.ok(fluidX[0]>-1 && fluidX[1]<2,"Fluid crosses a physical side wall");
+assert.ok(dirtyZ[0]>-3.625 && dirtyZ[1]<-1.1875,"Dirty water enters rear rim or weir");
+assert.ok(cleanZ[0]>-1.0 && cleanZ[1]<-0.125,"Clean water clips the weir or front retaining lip");
 
 const recipe=json(data+"recipes/settling_dirty_water.json");
 assert.equal(recipe.type,"magneticraft2:multiblock_processing");
@@ -195,16 +240,16 @@ assert.ok(generic.includes("Ingredient.EMPTY") &&
           generic.includes("input.isEmpty() && fluidInput.isEmpty()") &&
           generic.includes("if (input.isEmpty()) return false"),
  "Fluid-only recipe support must leave item recipe matching gated");
-assert.ok(1.045 + 0.535 > 1 + 9/16 &&
-          1.045 + 0.535 < 1 + 11/16,
- "Water should reach the low spill weir but remain behind the front retaining lip");
+assert.ok(1.045 + 0.495 > 1.50 &&
+          1.045 + 0.495 < 1 + 9/16,
+ "Full water must stay below the low transverse weir, not slice through it");
 for (const s of [
   "tank.getDirtyFillRatio(),",
   "tank.getCleanFillRatio(),",
-  "-1.28F, 2.28F, -3.53F, -1.29F",
-  "-1.28F, 2.28F, -1.10F, -0.24F",
+  "-0.975F, 1.975F, -3.53F, -1.29F",
+  "-0.975F, 1.975F, -0.96F, -0.24F",
   "getDirtyAmount() > 0", "getCleanAmount() > 0",
-  "float top = 1.045F + 0.535F",
+  "float top = 1.045F + 0.495F",
   "float sideAlpha = alpha * 0.62F",
   "for (int tz = (int)Math.floor(minZ)",
   "float u0 = u(sprite, x0-tx)",
@@ -270,4 +315,4 @@ for(const mat of ["refractory","lining","bronze"])
      "Baffle does not use a new purposeful machine-specific tile: "+mat);
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V4 low open settling tank, rear dirty/front clean pools, 4 facings, 6 air proxies, 164 local models, accessible real ports, original textures, conserved water, Patchouli projection and generators");
+console.log("PASS: Water Settling Tank V4.1 — zero overlapping solids or coplanar faces, clipped dry/clean fluid bounds, two-stage basin, 4 facings, 164 models, 6 anchors, recipes, book and generated textures");

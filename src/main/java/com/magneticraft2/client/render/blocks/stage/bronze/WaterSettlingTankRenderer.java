@@ -47,20 +47,21 @@ public final class WaterSettlingTankRenderer
         pose.mulPose(Axis.YP.rotationDegrees(yaw));
         pose.translate(-0.5D, 0D, -0.5D);
 
-        // Real tank contents, now placed along the material's FLOW direction:
-        // rear two rows = dirty settling area; front row = clean-water
-        // overflow channel. Both vanish when their server tanks are empty.
+        // Use the OPEN interior geometry, not the outside dimensions of the
+        // basin. In V4 the water extended ~0.28 blocks INTO EACH wall,
+        // giving translucent/opaque geometry and water overlap artifacts.
+        // Both surfaces are tied solely to the real server-side tank amounts.
         if (tank.getDirtyAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     FluidRegistry.DIRTY_WATER.get(), tank.getDirtyAmount()),
                     tank.getDirtyFillRatio(),
-                    -1.28F, 2.28F, -3.53F, -1.29F, 0.67F);
+                    -0.975F, 1.975F, -3.53F, -1.29F, 0.67F);
         }
         if (tank.getCleanAmount() > 0) {
             renderPool(pose, buffers, light, new FluidStack(
                     Fluids.WATER, tank.getCleanAmount()),
                     tank.getCleanFillRatio(),
-                    -1.28F, 2.28F, -1.10F, -0.24F, 0.55F);
+                    -0.975F, 1.975F, -0.96F, -0.24F, 0.55F);
         }
 
         ItemStack sediment = tank.getSedimentStack();
@@ -98,8 +99,9 @@ public final class WaterSettlingTankRenderer
         float b = (tint & 255) / 255F;
         float tintAlpha = ((tint >>> 24) & 255) / 255F;
         float alpha = Math.min(tintAlpha <= 0F ? 1F : tintAlpha, targetOpacity);
-        // Water is below the outer rim and reaches the low weir near full.
-        float top = 1.045F + 0.535F * Math.max(0F, Math.min(1F, ratio));
+        // Water stays below the LOWER weir cap (Y=1 + 9/16), never through it.
+        // Dirty and clean levels remain separate and inventory-driven.
+        float top = 1.045F + 0.495F * Math.max(0F, Math.min(1F, ratio));
         float bottom = 1.014F;
         VertexConsumer consumer = buffers.getBuffer(RenderType.translucent());
         PoseStack.Pose matrix = pose.last();

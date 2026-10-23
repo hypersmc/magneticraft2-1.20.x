@@ -27,16 +27,12 @@ function makeAssets(){
  for(const c of cells) {
   const {x,y,z,k}=c;
   if(y===0 && (k==="S"||k==="C")){
-   // Flat, readable masonry foundation with waterproof ceramic floor.
-   // Keeping the base close to Minecraft blocks avoids false wood beams.
-   add(c,"refractory",[0,0,0],[16,13,16]);
-   add(c,"lining",[0,13,0],[16,16,16]);
-   if((x===-1||x===0)&&z===-3)
-    add(c,"sludge",[3,15,3],[12,16,12]); // Subtle mineral stain, not free items.
-   if(x===1&&z===-1)
-    add(c,"grate",[3,15,4],[13,16,12]); // Low drain guard near clean outlet.
-   if(k==="C")
-    add(c,"riveted_iron",[3,13,14],[13,16,16]); // Controller's real fascia.
+   // One uninterrupted dark structural floor per cell. The former ceramic
+   // top slab, "sludge" decal, grate and fascia all ended at Y=16 with
+   // overlapping TOP FACES, producing severe in-game Z-fighting.
+   // No water is rendered when the tanks are empty, so the dark dry floor
+   // now reads differently from the translucent water surface.
+   add(c,"refractory",[0,0,0],[16,16,16]);
   }else if(y===1&&k==="S"){
    // A 12-pixel LOW outer wall; no overhead frame, posts, or catwalk.
    if(z===-4){
@@ -45,9 +41,11 @@ function makeAssets(){
     add(c,"bronze",[0,10,0],[16,12,7]);
     if(x===0){
      // Real rear fluid input is directly below this restrained inlet pipe.
-     add(c,"riveted_iron",[6,0,8],[10,9,12]);
-     add(c,"riveted_iron",[5,8,9],[11,12,16]);
-     add(c,"bronze",[4,8,11],[12,11,16]);
+     // Bottom-to-top pipe and a small non-overlapping bronze mouth.
+     // Adjacent faces touch, but no two solids share a rendered face.
+     add(c,"riveted_iron",[6,0,8],[10,8,12]);
+     add(c,"riveted_iron",[5,8,11],[11,11,16]);
+     add(c,"bronze",[5,11,11],[11,12,16]);
     }
    }else if(x===-2){
     add(c,"refractory",[11,0,0],[16,10,16]);
@@ -59,8 +57,10 @@ function makeAssets(){
     add(c,"bronze",[0,10,0],[7,12,16]);
     if(z===0){
      // The downpipe ends above the exposed actual east-edge output module.
-     add(c,"riveted_iron",[1,0,5],[5,10,11]);
-     add(c,"bronze",[1,8,3],[9,11,13]);
+     // Inside-facing downpipe beside the lining, connected to the real
+     // Fluid Output underneath; do not bury another pipe inside the wall.
+     add(c,"riveted_iron",[6,0,5],[10,10,11]);
+     add(c,"bronze",[7,10,5],[11,12,11]);
     }
    }else throw Error("Unrecognized perimeter "+[x,y,z]);
   }else if(y===1 && k==="A" && z===-2 && Math.abs(x)<=1){

@@ -68,16 +68,22 @@ hovering hopper. A low crosswise glazed weir separates muddy water from
 the narrow front cleaned-water channel. A restrained right-side
 downpipe reaches the existing real Fluid Output on the east edge.
 The sediment output remains a real module, not a decorative bin.
+The floor is now a continuous **dark refractory surface** when dry,
+not an opaque ceramic-blue slab decorated with permanent fake sludge
+and a fake grate. This makes the presence of water and the output item
+observable only when the server actually stores them.
 
 Fluid surfaces now occupy the **full interior width** in both reservoirs:
 
 - Dirty: rear two rows, from local Z -3.53 to -1.29
-- Clean: front collection row, from local Z -1.10 to -0.24
-- Both: interior X -1.28 to 2.28, with a server-driven height
-  `1.045 + 0.535 × fillRatio` above controller origin (only if nonempty)
+- Clean: front collection row, from local Z -0.96 to -0.24
+- Both: inside the masonry at local X -0.975 to 1.975, with a
+  server-driven height `1.045 + 0.495 × fillRatio` above controller
+  origin (only if nonempty)
 
-At full display height the water just reaches the low weir; it stays below
-the front retaining wall. The renderer draws native-tiled water texture,
+At full display height the water stays just below the low weir and below
+the front retaining wall. It does not penetrate either side wall.
+The renderer draws native-tiled water texture,
 translucent surfaces and visible vertical sides, not a solid brown floor.
 These are inventory-backed visual representations of the two tanks, **not
 a physical fluid-flow simulation** or a new transfer mechanism.
@@ -86,9 +92,10 @@ Six original 16×16 V3 textures are deliberately retained:
 `refractory`, `lining`, `bronze`, `riveted_iron`, `grate`
 and `sludge`. Geometry uses native pixel-span UVs, without stretching
 tiles over multiple blocks or applying artificial noisy highlights.
-The metal grate is a small floor drain guard, not another bridge.
-Sediment material on the bed is only a static stain; actual extractable
-sediment is shown from the real stored output slot.
+The old floor grate and static sludge patches have been removed because
+they overlapped the floor's top faces. Actual extractable sediment appears
+only when the real output slot is populated. The material tiles are still
+available for item models and future, non-overlapping details.
 
 ## Generation and verification
 
@@ -125,3 +132,37 @@ stone support or invisible collision. PR #11 stays draft until accepted.
 - V3: original simple, hand-painted pixel textures; these were retained.
 - V4: process-first geometry and fluid layout, low 5×2×5 silhouette
   and smaller functional fittings, without changing the processing contract.
+
+## 2026-10-23 — V4.1: overlapping-faces and fluid containment repair
+
+A real in-game screenshot showed flickering floor panels, ghost grating and
+liquid that looked merged with solid masonry. Geometry audit of V4 found
+**12 same-facing coplanar face pairs**, and the front/back liquid renderer
+spanned x=-1.28 to x=2.28 although the actual basin interior spans x=-1
+to x=2. Each reservoir intruded about 0.28 blocks into both stone walls;
+clean fluid also entered the crosswise divider at z=-1.10.
+
+The V4.1 model now has *zero* positive-volume solid cuboid overlaps and
+*zero* overlapping same-facing coplanar faces. We removed floor-bound
+sludge/grate/fascia decals which competed for Y=16 with the pale lining,
+unified dry foundation top faces into dark refractory masonry, and rebuilt
+inlet/outlet fittings from distinct touching (not interpenetrating) parts.
+The generator still produces 164 local parts with the same 5×2×5 four-facing
+block pattern. No new texture resources were introduced.
+
+The fluid renderer now clips both surfaces to x=-0.975..1.975, keeps dirty
+water z=-3.53..-1.29, moves the start of the clean channel to z=-0.96
+and keeps full-water height at 1.54 (below the solid bronze weir top
+1.5625). Fluid never appears if its actual tank is empty. No water amount,
+recipe, real port, inventory, or formation block changed.
+
+**Compatibility:** The structural blueprint is identical to V4, so there
+is **no construction rebuild**. Previously formed V4 proxies hold serialized
+Voxel V2 collision snapshots, however, and won't receive the revised
+fitting collision automatically. For accurate interaction/collision checks,
+safely empty the machine and unform/reform it once. Otherwise a client
+restart reloads the baked visual models and fixes the visible overlaps.
+
+**Verification:** Generated asset geometry was audited for all four facings,
+UV spans, actual port access, coplanar faces and fluid/stone clearance.
+The full Node suite, Gradle build and new in-game screenshot are pending.

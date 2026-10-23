@@ -160,3 +160,16 @@ and Voxel V2 physics/collision were updated together; obsolete model files
 were deleted. Existing V3 test builds require reforming. This is still
 PR #11, draft, **not gameplay-accepted or Gradle-verified**.
 See [V4 contract](water-settling-tank-contract.md).
+
+### 2026-10-23 — Settling Tank V4.1 geometry correction
+
+Follow-up screenshot exposed actual Z-fighting and water drawn partly
+through masonry, not merely a question of visual style. V4.1 eliminates
+all 12 coplanar same-facing overlay pairs and all solid cuboid overlaps,
+replaces the muddy-looking empty floor with dark refractory masonry,
+simplifies inlet/outlet fittings, and clips both fluid surfaces to the
+real basin interior (no 0.28-block intersections with each side wall).
+The 5×2×5 multiblock JSON, ports, recipes, water loss, processing and
+hand-painted V3 tile resources remain unchanged. Model/collider
+snapshots of already formed machines require a safe re-form to refresh
+collision, but no block construction change. Compile/client testing pending.
