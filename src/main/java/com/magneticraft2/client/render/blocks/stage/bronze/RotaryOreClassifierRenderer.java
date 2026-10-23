@@ -64,9 +64,16 @@ public final class RotaryOreClassifierRenderer
     private static final float DRUM_ITEM_SCALE = 0.82F;
     private static final float FINE_ITEM_SCALE = 0.38F;
     private static final float COARSE_ITEM_SCALE = 0.72F;
-    // The drum is centered around Y=2.0 and the inner lower mesh is
-    // ~Y=1.34. Keep visible chunks INSIDE at Y~1.50 instead of 1.04.
-    private static final double SCREEN_ORE_REST_Y = 1.50D;
+    // Drum axis is world Y=1.50 (not Y=2.00!). The crushed ore's GROUND
+    // transform also raises its visible mesh above the supplied Y anchor.
+    // Seat that visible mesh near the ~Y=0.84 lower screen without letting
+    // the larger tumbling chunks touch the axle or spinning outer rim.
+    private static final double DRUM_AXIS_Y = 1.50D;
+    private static final double SCREEN_ORE_REST_Y = 0.96D;
+    private static final double SCREEN_ORE_BOUNCE = 0.045D;
+    // Small fines pass through the lower mesh toward the internal pan
+    // (top ~Y=0.47), without dropping through the machine's stone base.
+    private static final double FINE_FALL_DISTANCE = 0.46D;
 
     public RotaryOreClassifierRenderer(BlockEntityRendererProvider.Context context) {}
 
@@ -104,7 +111,7 @@ public final class RotaryOreClassifierRenderer
             BakedModel model = Minecraft.getInstance().getModelManager()
                     .getModel(models[dz + 2]);
             pose.pushPose();
-            pose.translate(0.5D, 1.5D, dz + 0.5D);
+            pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D);
             pose.mulPose(Axis.ZP.rotationDegrees(angle));
             pose.translate(-0.5D, -0.5D, -0.5D);
             drawBaked(model, pose, buffers, packedLight, packedOverlay);
@@ -203,10 +210,11 @@ public final class RotaryOreClassifierRenderer
                     continue;
                 }
                 float travel = smoothstep((advance - delay) / (1F - delay));
-                // Stay within the drum's ~0.66-block inner radius, but
-                // above the lower screening mesh, not underneath it.
+                // The visual scale already includes the crushed item's
+                // GROUND transform. Roll below the central shaft rather
+                // than revolving the material through the drum axis.
                 double x = 0.5D + 0.15D * Math.sin(radians * 0.45D + i * 2.3D);
-                double y = SCREEN_ORE_REST_Y + 0.045D * Math.abs(
+                double y = SCREEN_ORE_REST_Y + SCREEN_ORE_BOUNCE * Math.abs(
                         Math.cos(radians * 0.55D + i * 1.7D));
                 double z = -1.71D + 2.28D * travel;
                 drawItem(renderer, input, model, pose, buffers, light, overlay,
@@ -221,7 +229,7 @@ public final class RotaryOreClassifierRenderer
             float cycle = (progress - 0.36F) * 7.0F;
             float fall = cycle - (float) Math.floor(cycle);
             double x = 0.39D;
-            double y = SCREEN_ORE_REST_Y - 0.85D * smoothstep(fall);
+            double y = SCREEN_ORE_REST_Y - FINE_FALL_DISTANCE * smoothstep(fall);
             double z = -1.36D + (progress - 0.36F) * 2.3D;
             drawItem(renderer, input, model, pose, buffers, light, overlay,
                     x, y, z, FINE_ITEM_SCALE, angle * 0.10F);
@@ -233,7 +241,7 @@ public final class RotaryOreClassifierRenderer
             float t = smoothstep((progress - 0.80F) / 0.20F);
             drawItem(renderer, input, model, pose, buffers, light, overlay,
                     0.65D + 0.09D * t, SCREEN_ORE_REST_Y + 0.02D,
-                    0.34D + 0.48D * t, COARSE_ITEM_SCALE, angle * 0.11F);
+                    0.34D + 0.36D * t, COARSE_ITEM_SCALE, angle * 0.11F);
         }
     }
 

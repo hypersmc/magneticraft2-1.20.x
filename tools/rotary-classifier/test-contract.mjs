@@ -251,7 +251,7 @@ assert.ok(renderer.includes('classifier.isProcessing() ? angle : 0F'),
 assert.ok(renderer.includes('getVisualProcessProgress(partialTicks)'),
  'Workpiece flow must use server-synced batch progress');
 for(const fragment of ['progress < 0.20F','progress >= 0.36F','progress >= 0.80F',
-                       '0.85D * smoothstep(fall)','drawScreeningOre',
+                       'FINE_FALL_DISTANCE * smoothstep(fall)','drawScreeningOre',
                        'ItemDisplayContext.GROUND']){
  assert.ok(renderer.includes(fragment),'Missing meaningful screen/process phase: '+fragment);
 }
@@ -288,21 +288,97 @@ assert.ok(Number.isFinite(restY),'Missing roller-rest height constant');
 // Drum centre: BER translates model to Y=1.5, local drum pivot at 8/16.
 // Its inner radius is specified by frame-design. Validate the actual
 // coarse and main chunk bounds with the crushed item model's 10px width.
-const drumAxisY=1.5+0.5;
+// The BER translates the rotating drum to Y=1.50, then shifts its local
+// 16px model origin by -8px to rotate around the mesh's actual centre.
+// It does NOT create an extra +0.50-block height. The earlier test assumed
+// Y=2.00 and mistakenly placed large ore directly through the axle.
+const drumAxisY=Number(renderer.match(/DRUM_AXIS_Y\s*=\s*([0-9.]+)D;/)?.[1]);
+const bounce=Number(renderer.match(/SCREEN_ORE_BOUNCE\s*=\s*([0-9.]+)D;/)?.[1]);
+const fineFall=Number(renderer.match(/FINE_FALL_DISTANCE\s*=\s*([0-9.]+)D;/)?.[1]);
+assert.ok(Number.isFinite(drumAxisY)&&Number.isFinite(bounce)&&Number.isFinite(fineFall));
+assert.equal(drumAxisY,d.drum.centerY/16,'BER rotation height must match drum design pivot');
+assert.ok(renderer.includes('pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D)'),
+ 'Drum position and item clearance must use the same render axis');
+
 const innerRadius=(d.drum.facetOffset-d.drum.skinThickness/2)/16;
-const groundScale=0.5;
-const oreHalfWidth=(10/16)*groundScale/2;
-assert.ok(restY>=1.4&&restY<=1.65,
- 'Pieces must ride INSIDE lower screen, not below its underside');
-const mainReach=Math.hypot(0.15,drumAxisY-restY)+drumSize*oreHalfWidth;
-const coarseReach=Math.hypot(0.24,drumAxisY-(restY+0.02))+coarseSize*oreHalfWidth;
-assert.ok(mainReach<innerRadius,'Large tumbling chunk now crosses the mesh');
-assert.ok(coarseReach<innerRadius,'Larger coarse-return chunk crosses the outlet rim');
+const rearDrum=json(art+'models/multiblock/'+name+'_drum_rear.json');
+const frontDrum=json(art+'models/multiblock/'+name+'_drum_front.json');
+const shaft=rearDrum.elements.find(e=>Object.values(e.faces).some(f=>f.texture==='#iron'));
+assert.ok(shaft,'A central drive shaft must be present in the rear drum');
+const shaftBottom=drumAxisY+(shaft.from[1]-8)/16;
+const frontRimZ=Math.min(...frontDrum.elements.filter(
+ e=>Object.values(e.faces).some(f=>f.texture==='#bearing')).map(e=>e.from[2]/16));
+const pan=d.boxes.find(b=>b.name==='tray_underpan');
+assert.ok(pan,'Missing screened-fines pan');
+const panTop=pan.to[1]/16;
+assert.ok(restY<drumAxisY-0.35,'Large ore must sit below, not through, the shaft');
+assert.ok(restY>drumAxisY-innerRadius,'The ore anchor must remain inside the screen');
+
+// The crushed-ore item models have their OWN 0.5 GROUND scaling and +3px
+// ground translation, on top of the BER item scale. Measure rotated model
+// element corners so future texture/model revisions cannot silently make
+// chunks cross the shaft, outer mesh, front rim or collection pan.
+const rotatedCorner=(point,rotation)=>{
+ if(!rotation)return point;
+ const [x,y,z]=point.map((v,i)=>v-rotation.origin[i]);
+ const t=rotation.angle*Math.PI/180,c=Math.cos(t),s=Math.sin(t);
+ if(rotation.axis==='x')return [
+   x+rotation.origin[0], c*y-s*z+rotation.origin[1],
+   s*y+c*z+rotation.origin[2]];
+ if(rotation.axis==='y')return [
+   c*x+s*z+rotation.origin[0], y+rotation.origin[1],
+   -s*x+c*z+rotation.origin[2]];
+ throw new Error('Unsupported crushed-ore model rotation '+rotation.axis);
+};
+const itemDisplayBounds=(itemModel,size)=>{
+ const ground=itemModel.display.ground;
+ const sx=ground.scale[0]*size,sy=ground.scale[1]*size,sz=ground.scale[2]*size;
+ const ty=ground.translation[1]/16*size;
+ let radial=0,minY=Infinity,maxY=-Infinity;
+ for(const e of itemModel.elements){
+  for(const x of [e.from[0],e.to[0]])
+  for(const y of [e.from[1],e.to[1]])
+  for(const z of [e.from[2],e.to[2]]){
+   const v=rotatedCorner([x,y,z],e.rotation);
+   const ox=(v[0]/16-0.5)*sx,oy=(v[1]/16-0.5)*sy+ty,oz=(v[2]/16-0.5)*sz;
+   radial=Math.max(radial,Math.hypot(ox,oz));
+   minY=Math.min(minY,oy);
+   maxY=Math.max(maxY,oy);
+  }
+ }
+ return {radial,minY,maxY};
+};
+for(const ore of ['chalcocite','cassiterite','quartz']){
+ const rock=json(art+'models/item/crushed_'+ore+'.json');
+ const main=itemDisplayBounds(rock,drumSize),coarse=itemDisplayBounds(rock,coarseSize);
+ const fine=itemDisplayBounds(rock,fineSize);
+ // 0.15 is the maximum lateral swing of tumbling chunks. Coarse return
+ // finishes with its centre at x=0.74 in the front end of the screen.
+ const mainRadius=Math.hypot(0.15+main.radial,drumAxisY-(restY+main.minY));
+ const coarseRadius=Math.hypot(0.24+coarse.radial,
+                              drumAxisY-(restY+0.02+coarse.minY));
+ assert.ok(mainRadius<innerRadius-0.01,
+  ore+' large chunks cut through rotating octagonal mesh');
+ assert.ok(coarseRadius<innerRadius-0.01,
+  ore+' coarse chunks cut through the front rim');
+ assert.ok(restY+bounce+main.maxY<shaftBottom-0.05,
+  ore+' rolling ore cuts through central drive shaft');
+ assert.ok(restY+0.02+coarse.maxY<shaftBottom-0.05,
+  ore+' coarse return cuts through central shaft');
+ const finesBottom=restY-fineFall+fine.minY;
+ assert.ok(finesBottom>panTop&&finesBottom-panTop<0.08,
+  ore+' screened fines need to fall toward, not through, the lower pan');
+ // End the coarse visual just INSIDE the ring; the server exposes the
+ // actual output item on the real module only after a completed batch.
+ assert.ok(0.34+0.36+coarse.radial<frontRimZ-0.01,
+  ore+' coarse chunk cuts through front discharge rim');
+}
 assert.ok(renderer.includes('DRUM_ITEM_SCALE - i * 0.055F')&&
           renderer.includes('FINE_ITEM_SCALE')&&
           renderer.includes('COARSE_ITEM_SCALE')&&
-          renderer.includes('SCREEN_ORE_REST_Y + 0.045D'),
- 'Use named visual sizes and the corrected lower-inside rolling path');
+          renderer.includes('SCREEN_ORE_REST_Y + SCREEN_ORE_BOUNCE')&&
+          renderer.includes('0.34D + 0.36D * t'),
+ 'Use corrected lower-bed motion and a coarse path clear of the front rim');
 assert.ok(renderer.includes('x - 0.14D')&&renderer.includes('x + 0.14D'),
  'Multiple finished items need distinct positions on their real output trays');
 
