@@ -20,10 +20,17 @@ public final class RotaryClassifierOreMotion {
     private static final double RESTITUTION = 0.12D;
     private static final double MAX_SPEED = 0.12D;
     private static final double MAX_AXIAL_Z = 0.60D;
+    // Approximate repose angles of coarse ore against the rough screen.
+    // At ~50 degrees it loses grip; friction returns only once the rock
+    // has slid back to ~26 degrees. This hysteresis prevents side adhesion.
+    private static final double RELEASE_ANGLE = 0.87D;
+    private static final double REGRIP_ANGLE = 0.45D;
+    private static final double WALL_FRICTION = 1.45D;
 
     public static final class Fragment {
         private boolean active;
         private double x, y, z, roll, vx, vy, rollVelocity;
+        private boolean slipping;
         private double previousX, previousY, previousZ, previousRoll;
 
         public boolean active() { return active; }
@@ -53,6 +60,7 @@ public final class RotaryClassifierOreMotion {
                     Math.max(0D, (progress - (index == 0 ? 0.20D : 0.33D)) / 0.80D)) * 2.05D;
             roll = index * 24D;
             vx = vy = rollVelocity = 0D;
+            slipping = false;
             snapshot();
         }
     }
@@ -130,6 +138,14 @@ public final class RotaryClassifierOreMotion {
 
     private void simulateRock(Fragment rock, double omega, double phase,
             long tick, float progress) {
+        // Only real wall contact can carry rock upward. Once it reaches its
+        // angle of repose, it must slide and fall back before re-gripping.
+        double slopeAngle = Math.atan2(Math.abs(rock.x), Math.max(0.03D, -rock.y));
+        if (rock.slipping) {
+            if (slopeAngle < REGRIP_ANGLE) rock.slipping = false;
+        } else if (slopeAngle > RELEASE_ANGLE) {
+            rock.slipping = true;
+        }
         rock.vy -= GRAVITY;
         rock.vx *= 0.985D;
         rock.vy *= 0.985D;
@@ -149,17 +165,24 @@ public final class RotaryClassifierOreMotion {
             }
             // Outward relative velocity hits the wall. The wall itself moves
             // tangentially at omega*r, so friction lifts the material with it.
+            // Normal-pressure-limited traction: a vertical wall cannot exert
+            // unlimited upward force on an ore chunk without an impact.
             double outward = rock.vx * nx + rock.vy * ny;
+            double normalImpulse = GRAVITY * Math.max(0.0D, -ny);
             if (outward > 0D) {
-                rock.vx -= (1D + RESTITUTION) * outward * nx;
-                rock.vy -= (1D + RESTITUTION) * outward * ny;
+                double impact = (1D + RESTITUTION) * outward;
+                rock.vx -= impact * nx;
+                rock.vy -= impact * ny;
+                normalImpulse += impact;
             }
             double tx = -ny, ty = nx;
             double tangential = rock.vx * tx + rock.vy * ty;
             double wallTangential = omega * SCREEN_APOTHEM;
-            double traction = 0.31D;
-            rock.vx += (wallTangential - tangential) * tx * traction;
-            rock.vy += (wallTangential - tangential) * ty * traction;
+            double maxTraction = rock.slipping ? 0D : WALL_FRICTION * normalImpulse;
+            double traction = clamp((wallTangential - tangential) * 0.31D,
+                    -maxTraction, maxTraction);
+            rock.vx += traction * tx;
+            rock.vy += traction * ty;
             rock.rollVelocity = clamp(-((rock.vx * tx + rock.vy * ty)
                     / 0.17D) * 23D, -14D, 14D);
             if (ny < -0.45D && outward > 0.012D

@@ -169,3 +169,27 @@ and Gradle builds and real-client rendering require checking in a full
 working checkout. Test +/− mechanical direction, 24 RPM and higher, all
 four facings, collisions at rim/shaft, speed changes, paused output, input
 with multiple batches, and FPS with many machines before merging PR #11.
+
+
+## 2026-10-23 — V7 anti-adhesion ore slip (awaiting in-game acceptance)
+
+The first V6 client test video showed that after an initial tumble, crushed ore
+seemed to attach to the side wall. A standalone 24 RPM reproduction confirmed
+a persistent, nearly stationary X/Y position after the first lift despite ongoing
+roll and Z travel. The old wall collision applied a 31% tangential velocity pull
+every touching tick regardless of available normal pressure.
+
+The updated client-only physical model caps mesh traction by the estimated
+normal reaction (gravity plus contact impulse) and adds an angle-of-repose
+hysteresis: a carried rock loses grip at ~50 degrees off the lower bed and
+does not regrip until it has slid back below ~26 degrees. There is no
+time-based bounce loop or scripted material path. Both gear directions use
+the same contact and gravity; no inventory, recipes, construction, size,
+textures, wear or Gear V2 logic changes.
+
+**Regression:** OreMotionContractTest now requires at least three distinct
+lift/slip/fall cycles and significant X/Y movement in EACH later 45-tick
+window, with clockwise/counter-clockwise tests at 24 and 48 RPM. The original
+V6 code fails the regression (zero repeat falls); V7 passes locally with the
+same shaft/octagon contact checks. Full Node/Gradle builds and real-client
+visual approval remain pending.

@@ -282,6 +282,12 @@ assert.ok(renderer.includes('x - 0.14D')&&renderer.includes('x + 0.14D'),
  'Multiple finished items need distinct positions on their real output trays');
 
 const motion=text(java+'client/render/blocks/stage/bronze/RotaryClassifierOreMotion.java');
+assert.ok(motion.includes('RELEASE_ANGLE = 0.87D;') &&
+          motion.includes('REGRIP_ANGLE = 0.45D;') &&
+          motion.includes('if (rock.slipping)') &&
+          motion.includes('rock.slipping ? 0D : WALL_FRICTION * normalImpulse') &&
+          motion.includes('double normalImpulse = GRAVITY * Math.max(0.0D, -ny)'),
+ 'Pressure-dependent wall grip must release above repose angle and regrip only at screen bottom');
 const getConstant=which=>{
  const match=motion.match(new RegExp('\\b'+which+'\\s*=\\s*([0-9.]+)D;'));
  assert.ok(match,'Missing motion geometry constant '+which);

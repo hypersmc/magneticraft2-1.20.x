@@ -31,7 +31,58 @@ public final class OreMotionContractTest {
             require(f.rawZ() >= -1.71D, "Rock travelled through rear drive");
         }
     }
+    /**
+     * Regression for side-wall adhesion: after its first drop a rock must
+     * repeatedly climb, break contact and return toward the bottom. Check
+     * EACH later interval, not just that the initial fall looked convincing.
+     */
+    private static void assertRepeatFalls(float rpm, int direction) {
+        var motion = new RotaryClassifierOreMotion();
+        float speed = direction * rpm * 360.0F / 1200.0F;
+        int falls = 0;
+        boolean lifted = false;
+        double[] minX = {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY,
+                Double.POSITIVE_INFINITY};
+        double[] maxX = {Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY,
+                Double.NEGATIVE_INFINITY};
+        double[] minY = minX.clone(), maxY = maxX.clone();
+        for (int tick = 0; tick <= 175; ++tick) {
+            float progress = 0.20F + tick / 220.0F;
+            motion.advance(tick, progress, tick * speed, speed, true);
+            var rock = motion.fragment(0);
+            assertClear(motion, tick * speed, tick);
+            if (tick > 15 && rock.rawY() > -0.31D) lifted = true;
+            if (lifted && rock.rawY() < -0.43D) {
+                falls++;
+                lifted = false;
+            }
+            int window = tick < 30 ? -1 : tick < 75 ? 0 : tick < 120 ? 1
+                    : tick < 165 ? 2 : -1;
+            if (window >= 0) {
+                minX[window] = Math.min(minX[window], rock.rawX());
+                maxX[window] = Math.max(maxX[window], rock.rawX());
+                minY[window] = Math.min(minY[window], rock.rawY());
+                maxY[window] = Math.max(maxY[window], rock.rawY());
+            }
+        }
+        require(falls >= 3, "Screen kept ore attached after initial fall: "
+                + rpm + " RPM dir " + direction + " falls=" + falls);
+        for (int i = 0; i < 3; ++i) {
+            require(maxX[i] - minX[i] > 0.19D,
+                    "Ore side-locked during later tumbling window " + i
+                            + " at " + rpm + " RPM, dir=" + direction);
+            require(maxY[i] - minY[i] > 0.14D,
+                    "Ore stopped falling toward mesh floor in window " + i
+                            + " at " + rpm + " RPM, dir=" + direction);
+        }
+    }
+
     public static void main(String[] args) {
+        // Both signed Gear V2 directions and sustained operation must tumble.
+        for (float rpm : new float[]{24F, 48F}) {
+            assertRepeatFalls(rpm, 1);
+            assertRepeatFalls(rpm, -1);
+        }
         final var positive = new RotaryClassifierOreMotion();
         final var negative = new RotaryClassifierOreMotion();
         final float speed = 7.2F; // Gear V2 24 RPM: degrees/tick
@@ -70,6 +121,6 @@ public final class OreMotionContractTest {
         require(!positive.fine().active(), "Chip kept falling while stopped");
         positive.advance(217L,.02F,0F,0F,false);
         require(!positive.fragment(0).active(), "New batch retained previous material");
-        System.out.println("PASS: octagon/shaft bounds, reversed traction, fine impacts, powered axial transport, pause and batch reset");
+        System.out.println("PASS: repeating lift/slip/fall in both directions, octagon/shaft bounds, fines, axial transport, pause and batch reset");
     }
 }
