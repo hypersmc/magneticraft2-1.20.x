@@ -822,6 +822,76 @@ for(const dir of dirs){
   // V3.18, V3.19 and V3.20 checks immediately above prove the grille,
   // seven arch segments and continuous 48px front header stay intact.
 }
+// V3.22 — SINGLE RIGHT UPPER FRONT BLOCK: raised bricks/mortar,
+// a recessed top-right square iron fixing and a small lower-right
+// copper shoulder over a dark iron foot. Inner edge remains masonry.
+// The existing V3.20 three-block header must stay continuous.
+const retortRight={
+  south:'1_2_0',west:'0_2_1',north:'-1_2_0',east:'0_2_-1'
+};
+for(const [dir,id] of Object.entries(retortRight)){
+ const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+   dir+'/part_'+id+'.json');
+ const horizontal=(dir==='south'||dir==='north')?0:2;
+ const normal=(dir==='south'||dir==='north')?2:0;
+ const positive=dir==='south'||dir==='east';
+ const mirrored=dir==='north'||dir==='east';
+ const depth=e=>positive?e.to[normal]:16-e.from[normal];
+ const front=m.elements.filter(e=>e.faces[dir]);
+ const mat=e=>e.faces[dir].texture;
+ assert.equal(m.textures.mortar,'minecraft:block/stone',
+   'V3.22 right-hand masonry must have real mortar '+dir);
+ const hit=(localX,y)=>{
+   const x=mirrored?16-localX:localX;
+   const f=front.filter(e=>e.from[horizontal]<x&&x<e.to[horizontal]&&
+       e.from[1]<y&&y<e.to[1])
+     .sort((a,b)=>depth(b)-depth(a))[0];
+   return f&&{material:mat(f),depth:depth(f)};
+ };
+ const bricks=front.filter(e=>mat(e)==='#brick'&&
+   e.from[1]>=3&&e.to[1]<=13.8&&depth(e)>=15.45);
+ const depths=[...new Set(bricks.map(e=>+depth(e).toFixed(2)))].sort();
+ assert.deepEqual(depths,[15.45,15.7],
+   'V3.22 physical brick-course depth lost '+dir);
+ for(const y of [3,7.05,11.1])
+   assert(bricks.some(e=>Math.abs(e.from[1]-y)<0.00001),
+     'V3.22 missing staggered masonry course at '+y+'/'+dir);
+ for(const [x,y] of [[4,6.8],[5.65,8.8],[7.55,12.2]]){
+   const exposed=hit(x,y);
+   assert(exposed&&exposed.material==='#mortar'&&
+     Math.abs(exposed.depth-14.2)<0.00001,
+     'V3.22 mortar line not recessed at '+dir+'/'+x+','+y);
+ }
+ assert(hit(4,7.6)?.material==='#brick'&&hit(4,7.6)?.depth>15.4,
+   'V3.22 masonry is flat or hollow '+dir);
+ assert(hit(14.8,9)?.material==='#bronze' &&
+   hit(14.8,9)?.depth===16,
+   'V3.22 copper outer support missing '+dir);
+ const plate=hit(14,14);
+ assert(plate&&plate.material==='#stone'&&
+   Math.abs(plate.depth-15.65)<0.00001,
+   'V3.22 upper right iron fitting lacks recessed boss '+dir);
+ for(const x of [12.2,15.8]){
+   const bossEdge=hit(x,14);
+   assert(bossEdge&&bossEdge.material==='#metal'&&bossEdge.depth===16,
+     'V3.22 upper plate lacks substantial iron perimeter '+dir+'/'+x);
+ }
+ const shoulder=hit(13.8,2),base=hit(14,0.6);
+ assert(shoulder&&shoulder.material==='#bronze'&&shoulder.depth===16,
+   'V3.22 lower-right copper shoulder missing '+dir);
+ assert(base&&base.material==='#metal'&&base.depth===16,
+   'V3.22 dark base must be below the copper shoulder '+dir);
+ assert(hit(0.5,8)?.material==='#brick',
+   'V3.22 unwanted inner framing instead of masonry '+dir);
+ assert(hit(0.1,15.7)?.material==='#bronze'&&
+   hit(0.1,15.7)?.depth===16,
+   'V3.22 right-hand copper header disconnected at center seam '+dir);
+ assert(m.elements.every(e=>e.from.every((v,i)=>
+   v>=0&&e.to[i]<=16&&e.to[i]>v)),
+   'V3.22 mesh escaped the physical right-hand block '+dir);
+}
+// Asset diff checks also verify that the center outward grille, all
+// approved roof top/sides, formation/ports and collision are unchanged.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

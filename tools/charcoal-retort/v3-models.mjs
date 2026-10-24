@@ -238,20 +238,53 @@ export function applyRetortV3(files) {
       ];
       for(const [x0,x1,bottom,top] of archSegments)
         solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
-    }else if(front){
-      // V3.20: the RIGHT front masonry joins the existing upper copper
-      // header instead of terminating as plain brick at the center seam.
-      // Below the copper lintel, retain the original outward masonry.
-      // Only trim the last 0.9px of brick behind the new header so that
-      // copper does not share a coplanar Z=16 face with exposed brick.
-      solid(c,"brick",[0,0,0],[16,1,13]);
-      solid(c,"brick",[0,1,0],[16,14.1,16]);
-      solid(c,"brick",[0,14.1,0],[16,15,14.5]);
-      solid(c,"brick",[0,15,0],[16,16,13]);
-      // The header is COPPER, not the rejected dark iron roof-underlining.
-      // It meets the center block at X=0 and finishes against the
-      // already-existing outer riveted-iron corner fitting (X=13..16).
+    }else if(front&&x===1){
+      // V3.22: match the right-hand concept image. This is a SOLID
+      // upper front brick wall with physical staggered masonry courses,
+      // one substantial outer RIGHT copper support, and a recessed
+      // square iron fixing. Do not rebuild the center-facing inner edge
+      // into another U-shaped frame.
+      solid(c,"brick",[0,0,0],[16,16,14]);
+      // Mortar backing, 0.2px proud of the structural brick core.
+      solid(c,"mortar",[0,2.5,14],[13,14.1,14.2]);
+      const rightCourses=[
+        {y0:3.0,y1:6.55,spans:[[0.25,7.65],[8.1,12.75]]},
+        {y0:7.05,y1:10.6,spans:[[0.25,5.4],[5.85,10.1],[10.55,12.75]]},
+        {y0:11.1,y1:13.8,spans:[[0.25,7.35],[7.8,12.75]]}
+      ];
+      for(const row of rightCourses)for(const [xa,xb] of row.spans){
+        // Genuine cuboids, not a stretched brick overlay. Front faces
+        // alternate Z=15.45 / 15.70, leaving recessed mortar joints.
+        const faceDepth=xa===0.25?15.7:15.45;
+        solid(c,"brick",[xa,row.y0,14.2],[xb,row.y1,faceDepth]);
+      }
+      // Retain V3.20 cross-block copper beam: reaches the inner seam
+      // at X=0 and ends at the outer corner iron fixing, X=13.
       solid(c,"bronze",[0,14.1,14.5],[13,16,16]);
+
+      // Outer RIGHT copper post. The thick copper shoulder at its base
+      // is distinct from the thin dark iron foot BELOW the shoulder.
+      solid(c,"bronze",[13,3,13],[16,13,16]);
+      solid(c,"bronze",[12,1.25,14],[16,4.5,16]);
+      solid(c,"bronze",[12.5,5,14.5],[15.5,6,16]);
+      solid(c,"metal",[12,0,14],[16,1.25,16]);
+
+      // Structural contacts continue into the adjacent roof/bottom and
+      // side, but stop behind the VISIBLE front trim at Z=15.25.
+      solid(c,"metal",[13,13,0],[16,16,15.25]);
+      solid(c,"metal",[13,0,0],[16,3,15]);
+      // Outer top-right dark iron mounting, with a distinct framed,
+      // recessed square center — do not hide it behind a full iron cube.
+      solid(c,"metal",[12,12,14],[16,16,15.25]);
+      solid(c,"metal",[12,12,15.25],[16,12.5,16]);
+      solid(c,"metal",[12,15.5,15.25],[16,16,16]);
+      solid(c,"metal",[12,12.5,15.25],[12.5,15.5,16]);
+      solid(c,"metal",[15.5,12.5,15.25],[16,15.5,16]);
+      solid(c,"join",[12.5,12.5,15.25],[13,15.5,16]);
+      solid(c,"join",[15,12.5,15.25],[15.5,15.5,16]);
+      solid(c,"join",[13,12.5,15.25],[15,13,16]);
+      solid(c,"join",[13,15,15.25],[15,15.5,16]);
+      solid(c,"stone",[13,13,15.25],[15,15,15.65]);
     }else if(outer){
       // Keep the previously accepted Y1/Y3 contact shape so face
       // culling never alters those already-approved adjacent layers.
@@ -260,7 +293,7 @@ export function applyRetortV3(files) {
     }else{
       solid(c,"brick",[0,0,0],[16,16,16]);
     }
-    if(front&&outer&&!leftFacade){
+    if(front&&outer&&!leftFacade&&x!==1){
       const corner=x===-1?0:13;
       const inside=x===-1?13:1;
       // Outside edge: copper column with a substantial square iron
@@ -277,7 +310,7 @@ export function applyRetortV3(files) {
       // Low brick course becomes a stronger masonry sill on each side.
       solid(c,"bronze",[3,0,14],[13,1.5,16]);
     }
-    if(outer&&!leftFacade){
+    if(outer&&!leftFacade&&!(front&&x===1)){
       // Preserve exactly the prior side contacts at the top and bottom
       // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;
@@ -499,7 +532,7 @@ export function applyRetortV3(files) {
     brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron",
-    ...((c.x===-1 || c.x===0) && c.z===0 ? {mortar:"minecraft:block/stone"} : {})
+    ...(c.z===0 ? {mortar:"minecraft:block/stone"} : {})
   };
   files.set(path,json(m));
   if(byPort){

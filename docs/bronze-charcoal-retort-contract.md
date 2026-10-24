@@ -341,3 +341,22 @@ SOUTH-local implementation:
 **Generated assets:** four Y2 center models (one per facing) and four Y1 center contact models re-partitioned for internal face culling. No other generated models changed. Verified front-visible lower Y1 model surfaces must match the previous commit. Static checks: V3.18 five soot slots, V3.19 seven arch segments/iron-copper contact, V3.20 48px three-block header continuity and V3.21 masonry depth/wider trim pass in all four facings. No global coplanar overlaps, UV stretching, or model-cuboid bounds errors.
 
 **Status: visual candidate awaiting user in-game sign-off, not accepted.** Full `./gradlew build` and Minecraft in-game rendering have not been executed in this workflow. Do not expand scope to other front blocks or layers until the user approves.
+
+### 2026-10-24 — V3.22: front-right upper masonry and fittings (await in-game approval)
+
+The user supplied two screenshots: the current in-game front-right upper block looked like a flat/recessed framed panel; the reference is a **solid raised-brick wall** with one **upper-right recessed square dark iron bracket** and a **lower-right copper shoulder** above a dark-iron foot. The front-center and left-center work had already established real raised bricks and shallow mortar; the right must use that same visual language, not another deep alcove or symmetrical U-shaped front frame.
+
+**Authored SOUTH-local Y2 cell:** `x=1,y=2,z=0`; only this right-front block's design is edited, then rotated to the other three facings.
+
+- Structural brick core `[0,0,0]→[16,16,14]`. Recessed exposed mortar `[0,2.5,14]→[13,14.1,14.2]`, texture `minecraft:block/stone` scoped to physical front blocks.
+- Three staggered rows of actual brick solids, Z14.2 backing and Z15.45 / Z15.70 face depth: Y3–6.55 X0.25–7.65 and 8.1–12.75; Y7.05–10.6 X0.25–5.4, 5.85–10.1 and 10.55–12.75; Y11.1–13.8 X0.25–7.35 and 7.8–12.75. Joints expose the mortar behind and cast genuine tiny block-face shadows.
+- Retain the V3.20 copper structural header `[0,14.1,14.5]→[13,16,16]`. It must join the center directly at x0 and terminate under the outer iron corner at x13, rather than becoming a separate dark horizontal band.
+- Single strong copper RIGHT outer pillar `[13,3,13]→[16,13,16]` meets the existing outer side-wall boundary. No new copper post or broad foot along the **inner x=0 edge** toward the center grille.
+- Small protruding copper right shoulder `[12,1.25,14]→[16,4.5,16]`, plus narrow step `[12.5,5,14.5]→[15.5,6,16]`. Dark iron base under it `[12,0,14]→[16,1.25,16]`, not another 3px-tall all-metal block.
+- Structural iron roof/base contacts continue behind the front finish (to Z15.25 / Z15), keeping corner support into the side and roof without obscuring the fitting.
+- Top-right square iron bracket X12–16 Y12–16: rear plate Z14–15.25; four raised iron perimeter bars to Z16, thinner riveted iron inset rails, dark recessed central 2×2 square `[13,13,15.25]→[15,15,15.65]`. This is intentionally **not** a flat solid metal cube.
+- The previous shared generic right-front decor (full-height inner pilaster, long copper bottom sill and solid corner metal overlays) is bypassed **only for this one front-right cell**, since it would obscure the new details. All side/rear block generator paths remain unchanged.
+
+**Generated visual assets:** four rotations of the authored right Y2 part; four center Y2 shared-face meshes and four right roof Y3 underside meshes regenerate due to automatic face culling. The center's outward vent/grille faces are identical to V3.21; no roof top/sides/front appearance changes. Existing left front, all Y0/Y1 blocks, other side/rear wall models, actual item ports, roof/chimney, recipes, multiblock assembly, power/heat logic and voxel collision remain unchanged.
+
+Static validation: all rotations have raised bricks (Z15.45/Z15.70), visible recessed mortar (Z14.2), an outer copper post, lower copper shoulder above dark iron foot, and distinct top-right dark inset at Z15.65; V3.18–V3.21 grille/arch/header tests still pass. Across all generated meshes no out-of-bounds models, UV scaling faults or coplanar faces were detected. **Minecraft in-game visual approval and a full `./gradlew build` are still outstanding**; do not mark the retort art as final without the user checking the right block.

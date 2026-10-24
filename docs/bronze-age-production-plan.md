@@ -395,3 +395,7 @@ After V3.19, horizontal left–center–right connection remained missing. V3.20
 ### 2026-10-24 — Retort V3.21 center width + physical 3D brickwork (visual review pending)
 
 On the front-center Y2 cell only, widen the two iron mounting brackets 1.9→2.5px, copper uprights 1.1→1.9px and dark feet 1.5→2.25px; replace flat brick front with nine raised staggered bricks over a Z14.2 mortar backing, with Z15.45/Z15.70 faces. Preserve the five recessed grille slots, V3.19 seven-piece arch and V3.20 cross-block copper header. Four center Y2 assets plus four contact-only Y1 meshes regenerate. Roof, left/right facade, parts/ports, recipes, collision and gameplay unchanged. Static model checks passing; in-game comparison and Gradle build outstanding.
+
+### 2026-10-24 — Retort V3.22 front-right upper block (await visual sign-off)
+
+Rebuilt right/front Y2 cell as physical staggered-brick masonry over recessed stone mortar, with a single substantial copper outer-right post, raised header connecting to center, recessed square iron top-right corner boss and a copper shoulder above a narrow iron foot. Removed the generic right-hand inner frame and lower continuous sill to match the reference. Four right-cell facings, four center internal-seam meshes and four roof undersides regenerate; roof outward and center outward visuals remain unchanged. No formation, port, machine logic or collision changes. Static mesh checks pass; Minecraft appearance and Gradle build not yet verified.
