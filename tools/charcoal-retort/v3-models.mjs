@@ -373,6 +373,17 @@ export function applyRetortV3(files) {
       solid(c,"metal",[xx,0,0],[xx+3,3,16]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
     }
+
+    // V3.25 — copper side cap/lip above the recessed masonry detail.
+    // Mirror on both upper Y2 walls; the front iron mounts stop the run.
+    if(outer){
+      const endZ=front?(x===1?13:13.75):16;
+      const minX=x===-1?0:15.15,maxX=x===-1?0.85:16;
+      solid(c,"bronze",[minX,12.45,0],[maxX,13.35,endZ]);
+      // Raised upper edge, not another full-height horizontal iron band.
+      solid(c,"bronze",[x===-1?0:15.6,13.35,0],
+                       [x===-1?0.4:16,13.65,endZ]);
+    }
     // NO continuous metal course below the roof. That extra horizontal
     // strip was not in the approved front reference (V3.10). The roof
     // contacts and the two actual corner fasteners remain unchanged.

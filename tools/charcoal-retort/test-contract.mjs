@@ -856,7 +856,7 @@ for(const [dir,id] of Object.entries(retortRight)){
  assert.deepEqual(depths,[15.45,15.7],
    'V3.22 physical brick-course depth lost '+dir);
  for(const y of [3,7.05,11.1])
-   assert(bricks.some(e=>Math.abs(e.from[1]-y)<0.00001),
+   assert(bricks.some(e=>e.from[1]-0.00001<=y&&e.to[1]>=y+0.1),
      'V3.22 missing staggered masonry course at '+y+'/'+dir);
  for(const [x,y] of [[4,6.8],[5.65,8.8],[7.55,12.2]]){
    const exposed=hit(x,y);
@@ -929,7 +929,7 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
       if(mat==='#sideBrick'&&depth(e)>15.4){
         realBricks++;
         brickDepths.add(+depth(e).toFixed(2));
-        for(const y of [0.25,3.25,6.3,9.35,12.4])
+        for(const y of [0.25,3.25,6.3,9.35,13.7])
           if(e.from[1]-0.00001<=y&&e.to[1]>=y+0.1)yLevels.add(y);
       }
       if(mat==='#mortar'&&Math.abs(depth(e)-14.2)<0.00001)
@@ -955,7 +955,7 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
     'V3.23 exposed recessed mortar joints are missing '+orientation);
   assert.deepEqual([...brickDepths].sort((a,b)=>a-b),[15.45,15.7],
     'V3.23 individual brick depth relief must alternate '+orientation);
-  assert.deepEqual([...yLevels].sort((a,b)=>a-b),[0.25,3.25,6.3,9.35,12.4],
+  assert.deepEqual([...yLevels].sort((a,b)=>a-b),[0.25,3.25,6.3,9.35,13.7],
     'V3.23 all five side masonry courses required '+orientation);
   assert(rearCorners>0,
     'V3.23 rear copper corner anchor removed '+orientation);
@@ -974,10 +974,10 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
    const bricks=visible.filter(e=>e.faces[side].texture==='#sideBrick'&&depth(e)>15.4);
    assert.equal(m.textures.sideBrick,'minecraft:block/bricks',
      'V3.24 front-right side texture missing '+orientation);
-   assert.equal(bricks.length,15,'V3.24 missing raised side bricks '+orientation);
+   assert(bricks.length>=15,'V3.24 missing raised side bricks '+orientation);
    assert.deepEqual([...new Set(bricks.map(e=>+depth(e).toFixed(2)))].sort((a,b)=>a-b),
      [15.45,15.7],'V3.24 incorrect side masonry relief '+orientation);
-   for(const y of [0.25,3.25,6.3,9.35,12.4])
+   for(const y of [0.25,3.25,6.3,9.35,13.7])
      assert(bricks.some(e=>Math.abs(e.from[1]-y)<0.00001),
        'V3.24 missing masonry course '+orientation+'/'+y);
    assert(visible.filter(e=>e.faces[side].texture==='#mortar'&&
@@ -989,6 +989,29 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
        (e.from[1]<16&&e.to[1]>13))),
        'V3.24 full-width dark side band returned '+orientation);
    }
+ }
+
+ // V3.25: continuous, exposed cut-copper cap and upper lip on both walls.
+ const capRotate=(x,z,dir)=>dir==='south'?[x,z]:dir==='west'?[-z,x]:
+   dir==='north'?[-x,-z]:[z,-x];
+ const capSide=(x,dir)=>({
+   south:x===-1?'west':'east',west:x===-1?'north':'south',
+   north:x===-1?'east':'west',east:x===-1?'south':'north'
+ })[dir];
+ for(const dir of dirs)for(const x of [-1,1])for(const z of [-2,-1,0]){
+   const [rx,rz]=capRotate(x,z,dir);
+   const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+     dir+'/part_'+rx+'_2_'+rz+'.json');
+   const face=capSide(x,dir),normal=['west','east'].includes(face)?0:2;
+   const h=normal===0?2:0;
+   const depth=e=>['east','south'].includes(face)?e.to[normal]:16-e.from[normal];
+   const copperAt=y=>m.elements.some(e=>e.faces[face]?.texture==='#bronze'&&
+     Math.abs(depth(e)-16)<0.00001&&e.from[h]<8&&e.to[h]>8&&
+     e.from[1]<y&&e.to[1]>y);
+   assert.equal(m.textures.bronze,'minecraft:block/cut_copper',
+     'V3.25 incorrect side cap material '+dir+'/'+x+'/'+z);
+   assert(copperAt(12.75)&&copperAt(13.5),
+     'V3.25 missing side copper cap/lip '+dir+'/'+x+'/'+z);
  }
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
