@@ -234,14 +234,16 @@ export function applyRetortV3(files) {
       // opening rather than a straight rectangular sill or a U-tray.
       // A Minecraft-scale stair-step approximation avoids UV stretch.
       // The end pieces physically meet the adjacent iron feet.
+      // V3.30: widen the visual rise while staying entirely within the
+      // ONE upper center Y2 cell. Seven symmetrical copper segments.
       const archSegments=[
-        [2.8,4.0,0.9,2.65],
-        [4.0,5.2,1.25,3.0],
-        [5.2,6.4,1.7,3.4],
-        [6.4,9.6,2.1,3.85],
-        [9.6,10.8,1.7,3.4],
-        [10.8,12.0,1.25,3.0],
-        [12.0,13.2,0.9,2.65]
+        [2.8,4.0,1.25,3.0],
+        [4.0,5.2,1.85,3.55],
+        [5.2,6.4,2.55,4.1],
+        [6.4,9.6,3.25,4.55],
+        [9.6,10.8,2.55,4.1],
+        [10.8,12.0,1.85,3.55],
+        [12.0,13.2,1.25,3.0]
       ];
       for(const [x0,x1,bottom,top] of archSegments)
         solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
@@ -254,18 +256,17 @@ export function applyRetortV3(files) {
       solid(c,"metal",[3.2,0.1,15.45],[12.8,0.62,16]);
       solid(c,"bronze",[3.35,0.62,15.55],[12.65,1.02,16]);
 
-      // Two short inset iron pockets sit back 0.12px from the
-      // front-facing copper frame, as in the user's reference crop.
-      for(const [xa,xb] of [[5.2,6.4],[9.6,10.8]])
-        solid(c,"metal",[xa,1.02,15.35],[xb,1.58,15.88]);
+      // Taller, wider inset iron pockets. The front face is 0.22px
+      // behind the copper trim and the raised arch, not flush with it.
+      for(const [xa,xb] of [[4.6,6.4],[9.6,11.4]])
+        solid(c,"metal",[xa,1.02,15.35],[xb,2.55,15.78]);
 
-      // Stepped copper cheeks keep these pockets framed, while the
-      // raised central apron leads into the existing arch above.
-      for(const [xa,xb] of [[3.4,4.2],[4.8,5.2],[6.4,6.8],
-                            [9.2,9.6],[10.8,11.2],[11.8,12.6]])
-        solid(c,"bronze",[xa,1.02,15.6],[xb,1.58,16]);
-      solid(c,"bronze",[6.8,1.58,15.6],[9.2,1.94,16]);
-      solid(c,"bronze",[6.8,1.94,15.6],[9.2,2.1,16]);
+      // Separate copper cheeks border both recesses without covering
+      // them, while a central copper pier rises to meet the new arch.
+      for(const [xa,xb] of [[3.4,4.35],[4.35,4.6],[6.4,6.7],
+                            [9.3,9.6],[11.4,11.65],[11.65,12.6]])
+        solid(c,"bronze",[xa,1.02,15.6],[xb,2.55,16]);
+      solid(c,"bronze",[6.7,1.02,15.6],[9.3,3.25,16]);
 
     }else if(front&&x===1){
       // V3.22: match the right-hand concept image. This is a SOLID
