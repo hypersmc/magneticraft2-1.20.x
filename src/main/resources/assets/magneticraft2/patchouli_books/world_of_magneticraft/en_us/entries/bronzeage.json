@@ -353,7 +353,7 @@
           [
             "BYB",
             "B_B",
-            "UBO"
+            "OBU"
           ],
           [
             "SSS",
@@ -372,7 +372,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build bottom-up exactly as Visualize shows. Required AIR inside stays empty, including the copper-roof chimney cell. Input U on the front-left feeds logs; Output O on front-right holds charcoal; Byproduct Y at rear center holds tar. All three are REAL modules, not decorative hoppers. Form using the controller. Right-click the controller with solid fuel; sneak-empty-hand to recover unused fuel. Smoke rises only when the retort is burning."
+      "text": "Build exactly as Visualize shows. The Patchouli projection reverses row columns relative to the SOUTH JSON blueprint; the actual front ports remain Log Input on the left and Charcoal Output on the right when facing the controller, with Wood Tar collected at the rear. All three are real interactable modules. Keep every required AIR cell clear, including the roof chimney. Right-click the controller to form; supply solid fuel at the controller."
     }
   ],
   "sortnum": 3,

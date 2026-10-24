@@ -16,7 +16,10 @@ The Retort is industrial charcoal production for improved heat sources and iron 
 
 Form a 3x4x3 JSON multiblock with Stone Brick foundation, Brick walls, Cut Copper roof and a center chimney AIR cell. Controller sits in the bottom front center. Build according to Bronze Age Patchouli Visualize; all four horizontal orientations are present.
 
-The **three real working modules** are: logs at the front-left Item Input, charcoal at the front-right Primary Output and tar at the rear-middle Byproduct Output. They store controller slots 0/1/2. No decorative fake hopper/output inventory and no controller-wide item capability bypass. Controller right-click with fuel adds one item; empty hand shows status; sneak-empty-hand removes unused fuel. Chimney smoke is displayed only while the fuel firebox is lit.
+The **three real working modules** are: logs at the front-left Item Input, charcoal at the front-right Primary Output and tar at the rear-middle Byproduct Output.
+
+**Patchouli orientation correction (2026-10-24):** use `OBU` for the book's front module row even though the SOUTH formation JSON uses `UBO`. The projector mirrors its displayed row when aligned by the controller. The live formation log showed Primary Output occupying the Input position. The regression test now compares every book layer against the corresponding actual SOUTH blueprint, accounting for that projection reversal. No physical multiblock JSON has been changed.
+ They store controller slots 0/1/2. No decorative fake hopper/output inventory and no controller-wide item capability bypass. Controller right-click with fuel adds one item; empty hand shows status; sneak-empty-hand removes unused fuel. Chimney smoke is displayed only while the fuel firebox is lit.
 
 ## Save and safety contract
 

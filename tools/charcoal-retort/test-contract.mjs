@@ -38,6 +38,19 @@ assert.equal(recipe.byproduct_chance,1);
 assert.equal(recipe.process_time,720);
 const guide=json(resource+'assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
 assert(guide.pages.some(p=>p.type==='patchouli:multiblock'&&p.name==='Charcoal Retort'));
+const buildPage = guide.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Charcoal Retort');
+// The oriented Patchouli projection reverses row columns relative to the
+// SOUTH JSON layout. Match actual materials and modules in every layer.
+const south = json(resource+'data/magneticraft2/multiblocks/charcoal_retort_south.json');
+const asSymbol = ch => ch === '0' ? 'C' : ch === '_' ? 'A' : ch;
+for(let y=0;y<4;y++) {
+  const projected = buildPage.multiblock.pattern[3-y]
+      .map(row => [...row].reverse().map(asSymbol));
+  assert.deepEqual(projected, south.structure.layout['layer'+(y+1)],
+      'Patchouli formation mismatch in physical layer '+y);
+}
+assert.equal(buildPage.multiblock.pattern[2][2], 'OBU');
+
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));
