@@ -49,6 +49,20 @@ const expectedIds={
  O:"magneticraft2:multiblock_fluid_output",
  S:"minecraft:stone_bricks",A:"minecraft:air"
 };
+// UV coordinates must be CROPPED to each cuboid's absolute local position.
+// V5 used [0,0,width,height] and reset every mortar course at partial
+// model boundaries, even though the UV span (and previous tests) looked OK.
+const nativeFaceUV=(from,to,side)=>{
+ switch(side){
+  case "north": return [16-to[0],16-to[1],16-from[0],16-from[1]];
+  case "south": return [from[0],16-to[1],to[0],16-from[1]];
+  case "east": return [16-to[2],16-to[1],16-from[2],16-from[1]];
+  case "west": return [from[2],16-to[1],to[2],16-from[1]];
+  case "up": return [from[0],from[2],to[0],to[2]];
+  case "down": return [from[0],16-to[2],to[0],16-from[2]];
+  default: throw Error("Unknown face "+side);
+ }
+};
 const modelPaths=new Set();
 for (const f of sdir) {
  const bp=json(data+"multiblocks/"+id+"_"+f+".json");
@@ -96,6 +110,8 @@ for (const f of sdir) {
     assert.ok(Math.abs(view.uv[2]-view.uv[0]-spanU)<0.001 &&
        Math.abs(view.uv[3]-view.uv[1]-spanV)<0.001,
       "Texture UV stretched or compressed "+rel+" "+side);
+    assert.deepEqual(view.uv,nativeFaceUV(el.from,el.to,side),
+      "UV pattern starts at the wrong mortar course: "+rel+" / "+side);
    }
   }
  }
@@ -198,6 +214,8 @@ for(const [kind,facing,cell,moduleId] of portInner){
      el.to[2]-el.from[2]:el.to[1]-el.from[1];
    assert.ok(face.uv[2]-face.uv[0]===u && face.uv[3]-face.uv[1]===v,
      kind+" insert stretches textures");
+   assert.deepEqual(face.uv,nativeFaceUV(el.from,el.to,direction),
+     kind+" port insert must use native face-aligned material UVs");
   }
  }
 }
@@ -223,6 +241,17 @@ for(const at of ["INPUT_PORT_INSERT, 0D, 1D, -4D",
  "Overlay must be rendered at the exact occupied REAL module position: "+at);
 assert.ok(tankRenderer.includes("getModelRenderer().renderModel"),
  "Use pre-baked model quads rather than per-frame primitive generation");
+// Render-only port inserts must sample light at their own world block,
+// rotating the module offsets around the actual controller facing.
+for(const part of [
+ "LevelRenderer.getLightColor(tank.getLevel(), portPos)",
+ "BlockPos portPos = tank.getBlockPos().offset(rx, dy, rz)",
+ "case WEST -> { rx = -dz; rz = dx; }",
+ "case NORTH -> { rx = -dx; rz = -dz; }",
+ "case EAST -> { rx = dz; rz = -dx; }",
+ "model, 1F, 1F, 1F, portLight, overlay"
+])assert.ok(tankRenderer.includes(part),
+ "Port light must use actual module position, not controller: "+part);
 
 // The original open rear corners were unconnected: the back wall stopped
 // at Z=7/16 while the two side rails started one block farther along.
@@ -307,6 +336,32 @@ assert.deepEqual(intersections,[],
 assert.deepEqual(coplanar,[],
  "Same-facing, same-plane surfaces are Z-fighting inside the generated model");
 
+// The long exposed WEST/EAST outside ledges are DRY masonry, not wet
+// waterproof ceramic whose tile suddenly ends against an inset wall.
+for(const edgeX of [-2,2])for(const edgeZ of [-3,-2,-1]){
+ // The real fluid output has its BRONZE bearing plate on top of the
+ // floor at (2,0,-1), not a dry exposed stone ledge.
+ if(edgeX===2&&edgeZ===-1)continue;
+ const wall=json(assets+"models/multiblock/"+id+"_south/part_"+
+  edgeX+"_0_"+edgeZ+".json");
+ assert.ok(wall.elements.some(e=>e.from[1]===0&&e.to[1]===16 &&
+       e.faces.up.texture==="#refractory"&&e.faces.south.texture==="#foundation"),
+ "Exterior top ledge must stay dry stone: "+edgeX+","+edgeZ);
+}
+for(const module of [where("I")[0],where("P")[0],where("O")[0]]){
+ const base=json(assets+"models/multiblock/"+id+"_south/part_"+
+   module.x+"_0_"+module.z+".json");
+ const bottom=base.elements.find(e=>e.from[1]===0&&e.to[1]===14);
+ const cap=base.elements.find(e=>e.from[1]===14&&e.to[1]===16);
+ assert.ok(bottom&&cap,"The real port must keep its existing support solids");
+ assert.equal(bottom.faces.south.texture,"#foundation");
+ assert.equal(cap.faces.south.texture,"#foundation");
+ assert.equal(cap.faces.up.texture,"#bronze_joint");
+ assert.deepEqual(bottom.faces.south.uv,[0,2,16,16]);
+ assert.deepEqual(cap.faces.south.uv,[0,0,16,2]);
+ assert.equal(bottom.faces.south.uv[1],cap.faces.south.uv[3],
+  "Masonry texture must continue vertically beneath the bronze footplate");
+}
 for(const dx of [-1,0,1])for(const dz of [-3,-2,-1]){
  const floor=json(assets+"models/multiblock/"+id+"_south/part_"+
         dx+"_0_"+dz+".json");
@@ -624,6 +679,8 @@ const textureGenerator=read("tools/water-settling-tank/build-textures.mjs");
 assert.ok(textureGenerator.includes("const tiles = {") &&
           !textureGenerator.includes("Math.random("),
  "V5 textures must be reproducible hand-painted pixel grids");
+assert.ok(textureGenerator.includes('"1": "#3E4A43"'),
+ "Foundation palette light balance regressed to near-black V5 values");
 execFileSync(process.execPath,["tools/water-settling-tank/build.mjs","--check"],
              {cwd:root,stdio:"inherit"});
-console.log("PASS: V5 role-based art — nine unique 16x16 tiles, foundation vs ceramic floor per-face UVs, cast bronze and dark riveted joints, steel working surfaces, no geometry or fluid changes, 4 facings");
+console.log("PASS: V5.1 — cropped face-anchored UVs, continuous masonry beneath service ports, dry exterior ledges, per-module lighting, balanced foundation palette, preserved 5x2x5 geometry/recipe/water");

@@ -38,11 +38,17 @@ function makeAssets(){
  for(const c of cells) {
   const {x,y,z,k}=c;
   if(y===0 && (k==="S"||k==="C")){
-   // Same cuboid: dark structural stone SIDES and sealed ceramic TOP.
-   // The three real ports retain bronze joining plates underneath.
+   // Perimeter ledges on the WEST/EAST exterior remain dry stone. They
+   // were incorrectly glazed with the wet basin-floor texture in V5,
+   // so that texture suddenly STOPPED against the recessed upper wall.
+   // Keep the actual interior floor ceramic; never add overlapping slabs.
+   // Service footplates display a bronze TOP but continue foundation
+   // courses on their visible SIDES, all the way through Y=16.
    if((x===0&&z===-4)||(x===-1&&z===0)||(x===2&&z===-1)){
     add(c,"foundation",[0,0,0],[16,14,16]);
-    add(c,"bronze_joint",[0,14,0],[16,16,16]);
+    add(c,{all:"foundation",up:"bronze_joint"},[0,14,0],[16,16,16]);
+   }else if(x===-2||x===2){
+    add(c,{all:"foundation",up:"refractory"},[0,0,0],[16,16,16]);
    }else{
     add(c,{all:"foundation",up:"basin_floor"},[0,0,0],[16,16,16]);
    }
@@ -151,16 +157,25 @@ function makeAssets(){
  const rotate=(x,z,f)=>f==="south"?[x,z]:f==="west"?[-z,x]:f==="north"?[-x,-z]:[z,-x];
  const rotatePoint=(x,z,f)=>f==="south"?[x,z]:f==="west"?[16-z,x]:f==="north"?[16-x,16-z]:[z,16-x];
  const faces=(from,to,mat)=>{
-  const dx=to[0]-from[0],dy=to[1]-from[1],dz=to[2]-from[2];
-  const f=(side,u,v)=>{
+  // Minecraft's native face-UV crop, ANCHORED to the actual coordinates
+  // of each cuboid. Using [0,0,width,height] on every face restarted
+  // the mortar courses at every cut-off wall element and every footplate.
+  // The same tile now follows continuous masonry across block seams,
+  // without stretching or shifting when an element is only 1-2px thick.
+  const coords={
+   north:[16-to[0],16-to[1],16-from[0],16-from[1]],
+   south:[from[0],16-to[1],to[0],16-from[1]],
+   east:[16-to[2],16-to[1],16-from[2],16-from[1]],
+   west:[from[2],16-to[1],to[2],16-from[1]],
+   up:[from[0],from[2],to[0],to[2]],
+   down:[from[0],16-to[2],to[0],16-from[2]]
+  };
+  return Object.fromEntries(Object.entries(coords).map(([side,uv])=>{
    const key=typeof mat==="string"?mat:(mat[side]??mat.all);
    if(!key||(!tex[key]&&key!=="mud"&&key!=="grit"))
     throw Error("Unknown texture material "+key);
-   return {texture:"#"+key,uv:[0,0,u,v]};
-  };
-  return {north:f("north",dx,dy),south:f("south",dx,dy),
-          east:f("east",dz,dy),west:f("west",dz,dy),
-          up:f("up",dx,dz),down:f("down",dx,dz)};
+   return [side,{texture:"#"+key,uv}];
+  }));
  };
  // Tank-only STATIC overlays inside the actual fluid module cells.
  // They are separate additional baked models drawn by the controller BER.

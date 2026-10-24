@@ -30,36 +30,36 @@
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            7,
             16,
-            9
+            16
           ]
         },
         "south": {
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            7,
             16,
-            9
+            16
           ]
         },
         "east": {
           "texture": "#refractory",
           "uv": [
-            0,
-            0,
-            2,
-            9
+            14,
+            7,
+            16,
+            16
           ]
         },
         "west": {
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            7,
             2,
-            9
+            16
           ]
         },
         "up": {
@@ -75,9 +75,9 @@
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            14,
             16,
-            2
+            16
           ]
         }
       }
@@ -98,36 +98,36 @@
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            6,
             16,
-            1
+            7
           ]
         },
         "south": {
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            6,
             16,
-            1
+            7
           ]
         },
         "east": {
           "texture": "#lining",
           "uv": [
-            0,
-            0,
-            2,
-            1
+            14,
+            6,
+            16,
+            7
           ]
         },
         "west": {
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            6,
             2,
-            1
+            7
           ]
         },
         "up": {
@@ -143,9 +143,9 @@
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            14,
             16,
-            2
+            16
           ]
         }
       }
@@ -166,36 +166,36 @@
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            5,
             16,
-            1
+            6
           ]
         },
         "south": {
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            5,
             16,
-            1
+            6
           ]
         },
         "east": {
           "texture": "#riveted_iron",
           "uv": [
-            0,
-            0,
-            3,
-            1
+            13,
+            5,
+            16,
+            6
           ]
         },
         "west": {
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            5,
             3,
-            1
+            6
           ]
         },
         "up": {
@@ -211,9 +211,9 @@
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            13,
             16,
-            3
+            16
           ]
         }
       }

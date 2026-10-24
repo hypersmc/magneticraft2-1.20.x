@@ -30,45 +30,45 @@
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            10,
             16,
-            6
+            16
           ]
         },
         "south": {
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            10,
             16,
-            6
+            16
           ]
         },
         "east": {
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            10,
             3,
-            6
+            16
           ]
         },
         "west": {
           "texture": "#refractory",
           "uv": [
-            0,
-            0,
-            3,
-            6
+            13,
+            10,
+            16,
+            16
           ]
         },
         "up": {
           "texture": "#refractory",
           "uv": [
             0,
-            0,
+            13,
             16,
-            3
+            16
           ]
         },
         "down": {
@@ -98,45 +98,45 @@
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            8,
             16,
-            2
+            10
           ]
         },
         "south": {
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            8,
             16,
-            2
+            10
           ]
         },
         "east": {
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            8,
             3,
-            2
+            10
           ]
         },
         "west": {
           "texture": "#lining",
           "uv": [
-            0,
-            0,
-            3,
-            2
+            13,
+            8,
+            16,
+            10
           ]
         },
         "up": {
           "texture": "#lining",
           "uv": [
             0,
-            0,
+            13,
             16,
-            3
+            16
           ]
         },
         "down": {
@@ -166,45 +166,45 @@
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            7,
             16,
-            1
+            8
           ]
         },
         "south": {
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            7,
             16,
-            1
+            8
           ]
         },
         "east": {
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            7,
             4,
-            1
+            8
           ]
         },
         "west": {
           "texture": "#riveted_iron",
           "uv": [
-            0,
-            0,
-            4,
-            1
+            12,
+            7,
+            16,
+            8
           ]
         },
         "up": {
           "texture": "#riveted_iron",
           "uv": [
             0,
-            0,
+            12,
             16,
-            4
+            16
           ]
         },
         "down": {

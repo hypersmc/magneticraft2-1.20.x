@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 /**
  * Magneticraft2 Settling Tank: nine original hand-drawn 16x16 textures.
- * Each palette character is one painted pixel. V5 uses material roles,\n * including distinct foundation, waterproof floor and dark bronze joints.\n * No random noise, filters,
+ * Each palette character is one painted pixel. V5 uses material roles,
+ * including distinct foundation, waterproof floor and dark bronze joints.
+ * V5.1 gently lifts the very dark foundation values under directional
+ * Minecraft light, without changing the pattern or material roles.
+ * No random noise, filters,
  * borrowed textures or fake baked directional shading.
  *
  * From repository root:
@@ -16,13 +20,13 @@ import { deflateSync, inflateSync } from 'node:zlib';
 const tiles = {
   "foundation": {
     "palette": {
-      "0": "#454C48",
-      "1": "#313B37",
-      "2": "#59635D",
-      "3": "#3D4540",
-      "4": "#4C554E",
-      "5": "#707A70",
-      "6": "#363F3B"
+      "0": "#515C55",
+      "1": "#3E4A43",
+      "2": "#6D796F",
+      "3": "#48544B",
+      "4": "#5A665B",
+      "5": "#839084",
+      "6": "#435047"
     },
     "pixels": [
       "1111111111111111",

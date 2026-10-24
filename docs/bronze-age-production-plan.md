@@ -271,3 +271,20 @@ No texture stretching, random speckle, fake grating, or decorative mud.
 Voxel shapes, recipes, rotated construction, actual fluid ports, fluid
 rendering and item output remain unchanged. PR #11 remains draft until
 visual feedback and the full Forge build are accepted.
+
+### 2026-10-24 — V5.1 settling tank texture alignment and lighting
+
+In-game screenshots revealed clipped brick mortar patterns at partial
+model elements and on the port footplates, green wet-floor tiles sitting
+on exposed exterior side ledges, and differently lit port inserts.
+V5.1 replaces start-at-zero UV mapping with Minecraft-native cropped
+face UVs in all four orientations. Side ledges receive dry refractory
+tops, while real service footplates display bronze only on their top
+faces; their sides continue the load-bearing foundation's courses.
+The BER samples packed light at the actual rotated fluid-port positions,
+not at the controller. A small foundation palette lift improves detail
+under directional shading without flattening the Minecraft material.
+There are **no geometry, collision, multiblock formation, water-volume,
+recipe, controller, or shared fluid-module changes**. Existing tanks
+should only require restarting the development client. Geometry/source
+assertions passed, but full Gradle and live game acceptance are pending.

@@ -369,3 +369,57 @@ pixel-source reproducibility, the dry-floor top/side role split in all four
 facings, functional steel at the weir and front lip, joined bronze at corners
 and service ports, and unchanged UV/collision/recipe/blueprint contracts.
 **The final in-game visual direction remains subject to screenshot approval.**
+
+## V5.1 — Course alignment, dry ledges, and local light (2026-10-24)
+
+Four test-world screenshots exposed visual defects in the first V5 materials:
+masonry courses terminating or shifting at cut-off wall elements,
+light-green waterproof floor tiles appearing on DRY exterior ledges,
+bronze footplate side bands breaking the foundation courses, and
+unusually dark/light custom port inserts.
+
+The fixes are specific to the Settling Tank and retain its shape:
+
+- **UV anchoring:** all generated JSON model faces now use the native
+  Minecraft face crop based on each element's **from/to** coordinates.
+  The former `[0,0,width,height]` reset caused a 2px support ledge
+  and a 10px-high outer wall to start masonry at different texture rows,
+  even though both had correct texel density. North/south/east/west/up/
+  down each use its correct orientation. All four rotated variants and
+  the two BER port models are generated using the same UV function.
+- **Dry perimeter ledges:** exterior WEST/EAST top faces of the foundation
+  use refractory stone rather than the wet-contact `basin_floor`.
+  The interior floor remains glazed ceramic. The genuine clean output
+  and other two service modules keep their visible bronze bearing-plate
+  top textures.
+- **Continuous module bases:** the sides of each 2px-tall bronze
+  bearing plate now use foundation masonry; only the top is bolted bronze.
+  The lower and upper segments have complementary, uninterrupted
+  vertical texture UV coordinates.
+- **Actual port lighting:** the formed-only input/output insert BER now
+  queries `LevelRenderer.getLightColor` at each real fluid module's
+  block position, with the SOUTH/NORTH/EAST/WEST rotation applied.
+  Previously both inserts inherited the controller's packed light,
+  even though they are several blocks away.
+- **Foundation balance:** the same hand-authored 16x16 stone pixel pattern
+  receives a modest brightness lift to avoid almost-black lower walls
+  under ordinary directional lighting. No emissive faces or disabled
+  global shading are introduced.
+
+**Unchanged:** 5×2×5 construction, 37 Stone Bricks, all actual modules,
+176 V2 static parts and two BER port inserts, 105 collision boxes,
+six render-air anchors, water/dirty water display bounds, rates, tanks,
+JEI, sediment outputs, all progression recipes and server processing.
+No unform or structure rebuild is necessary. Java renderer changes
+require a development-client restart; textures and model resource
+reloads alone are insufficient for the packed-light code change.
+
+The enhanced regression contract tests exact cropped UV coordinates on
+every generated static face and port insert, complementary support
+masonry courses, dry exterior ledges, correct port light sampling and
+all previous geometry/fluid/recipe constraints. **8,233** source-level
+assertions passed using generated files in an isolated in-memory test
+harness; the real Node PNG/generator checks, full Gradle compile, and
+live Forge/lighting appearance remain to be confirmed. The new foundation
+PNG was generated with the source encoder and its exact Git blob SHA
+verified independently.

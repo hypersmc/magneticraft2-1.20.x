@@ -7,10 +7,12 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -174,11 +176,28 @@ public final class WaterSettlingTankRenderer
         BakedModel model = Minecraft.getInstance().getModelManager()
                 .getModel(modelId);
         BlockRenderDispatcher renderer = Minecraft.getInstance().getBlockRenderer();
+
+        // A port is several blocks away from the controller. Reusing the
+        // controller's packed light value made its BER-only stone cheeks
+        // look darker/brighter than the neighboring chunk-baked wall.
+        // Read light at the ACTUAL rotated fluid module position instead.
+        int dx = (int) x, dy = (int) y, dz = (int) z;
+        int rx, rz;
+        switch (tank.getFacing()) {
+            case WEST -> { rx = -dz; rz = dx; }
+            case NORTH -> { rx = -dx; rz = -dz; }
+            case EAST -> { rx = dz; rz = -dx; }
+            default -> { rx = dx; rz = dz; }
+        }
+        BlockPos portPos = tank.getBlockPos().offset(rx, dy, rz);
+        int portLight = tank.getLevel() == null ? light
+                : LevelRenderer.getLightColor(tank.getLevel(), portPos);
+
         pose.pushPose();
         pose.translate(x, y, z);
         renderer.getModelRenderer().renderModel(pose.last(),
                 buffers.getBuffer(RenderType.cutout()), tank.getBlockState(),
-                model, 1F, 1F, 1F, light, overlay);
+                model, 1F, 1F, 1F, portLight, overlay);
         pose.popPose();
     }
 
