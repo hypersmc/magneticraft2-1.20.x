@@ -76,3 +76,11 @@ The first actual V3 shell is now authored from the previously accepted *directio
 V3 port meshes temporarily take their real block cell locations during asset generation to allow the collision-free face partitioner to remove hidden faces against the surrounding masonry. They are then renamed to formed-state models **and removed from the V2 filler part names**. No fake port filler remains in the world.
 
 **Current status:** source prototype, pending compilation and in-game visual comparison to the single concept image. Existing formed Retorts should be safely unformed and formed again to establish port-controller links and refresh Voxel collision. Test all four facing variants, port automation, reload behavior and FPS with multiple machines. No visual acceptance asserted.
+
+### 2026-10-24 — V3.1 silhouette revision from five in-game views
+
+The user provided all four elevations plus a roof screenshot. They confirmed the V3 source is *rendering*, but the model still reads as a flat brick box rather than the detailed reference. The ports blend more naturally; the main remaining problems are **weak depth at the main kiln hatch**, **chimney too close to the copper roof plane**, flat corners and relatively indistinct input/output interiors.
+
+V3.1 is a **visual-only correction**: the physical build stays 3x4x3, with all three genuine modules, formation JSON, recipes, automation/capabilities, power/fuel contract and item outputs untouched. We replace the front center full brick cube with inset masonry and dark backplate, add several independent thin grate bars and a thicker door surround; reduce roof field height beneath its coping to expose more of the hollow raised chimney; lightly recess outside side masonry behind ribs; and make log/charcoal port interiors visually distinct. No additional multiblock blocks, hidden output or renderer loop. The baked model repair step still partitions and culls intersecting surfaces.
+
+Source/data geometry sanity checks include a chimney rim at least four model pixels above roof edge, a genuinely recessed dark hatch, model bounds and formed port interiors. **Acceptance pending screenshot-based in-game comparison and an actual Gradle build.** No new texture atlas, extra construction block or functional change is claimed.

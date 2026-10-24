@@ -160,6 +160,23 @@ const retortGenerator=read('tools/charcoal-retort/build.mjs');
 assert(retortGenerator.includes('finalizeRetortV3(files,v3.ports)'));
 const sourceV3=read('tools/charcoal-retort/v3-models.mjs');
 assert(sourceV3.includes('portShapes')&&sourceV3.includes('files.delete(path)'));
+// V3.1 proportion regression: a real chimney above the roof edge,
+ // and a large DEEP front hatch instead of a grille painted on a full cube.
+const southModel = name => json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_south/'+name+'.json');
+const roofEdge = southModel('part_1_3_0');
+const chimney = southModel('part_0_3_-1');
+const highest = model => Math.max(...model.elements.map(e=>e.to[1]));
+assert(highest(chimney)-highest(roofEdge)>=4,
+  'Retort chimney rim must stand clearly above roof coping');
+const door = southModel('part_0_1_0');
+const recessedFaces=door.elements.filter(e=>e.faces.south?.texture==='#soot'&&e.to[2]<=12);
+assert(recessedFaces.length>=3,'Main retort hatch lost its deep dark recess');
+for(const role of ['input','primary']){
+  const port=southModel('port_'+role);
+  const expected=role==='input'?'#wood':'#charcoal';
+  assert(port.elements.some(e=>Object.values(e.faces).some(f=>f.texture===expected)),
+    'Retort '+role+' must have a distinct chamber interior');
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

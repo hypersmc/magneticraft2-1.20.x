@@ -311,3 +311,7 @@ The formable Charcoal Retort now has a regenerated static shell with separate da
 ### 2026-10-24 — Charcoal Retort V3 visual source implementation
 
 Generated V3 block-local roof, front hatch, foundation and chimney geometry is added, alongside formed-state *real port* model switching for log input / charcoal output / tar output. The port BEs keep their Forge capabilities and their generic unformed/other-machine models; the Retort links them during formation. The construction JSON, 3×4×3 footprint and original recipe remain untouched. V3 is **not yet Forge-build or gameplay accepted**; confirm from in-game screenshots before starting another machine.
+
+### 2026-10-24 — Retort V3.1 visual proportions (review pending)
+
+Following new front/side/rear/roof gameplay screenshots, the Retort model generator was revised to deepen the hatch, increase apparent chimney height by lowering the adjacent roof field, recess side masonry behind corner ribs and differentiate real intake/charcoal compartments. Structural 3x4x3 JSON, actual ports, recipes and processing remain unchanged; **in-game acceptance/Gradle compilation still pending**.

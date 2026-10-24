@@ -49,8 +49,24 @@ export function applyRetortV3(files) {
    solid(c,"bronze",[3,13,13],[13,16,16]);solid(c,"bronze",[3,0,13],[13,3,16]);
    solid(c,"join",[6,1,15],[10,4,16]);
   } else if(k==="B"){
-   solid(c,"brick",[0,0,0],[16,16,16]);
    const front=z===0,side=x!==0,rear=z===-2;
+   // The important front openings are hollow/recessed masonry, not painted
+   // faces on a full cube. The shoulder/corner cells also step backward.
+   if(front&&x===0&&(y===1||y===2)){
+    const opening=y===1?{lo:2,hi:14,bottom:2,top:15}:{lo:3,hi:13,bottom:6,top:12};
+    solid(c,"brick",[0,0,0],[16,16,8]);
+    solid(c,"brick",[0,0,8],[opening.lo,16,16]);
+    solid(c,"brick",[opening.hi,0,8],[16,16,16]);
+    solid(c,"brick",[opening.lo,0,8],[opening.hi,opening.bottom,16]);
+    solid(c,"brick",[opening.lo,opening.top,8],[opening.hi,16,16]);
+   }else if(front){
+    solid(c,"brick",[0,0,0],[16,16,13]);
+   }else if(side){
+    // The two side walls are actually recessed behind their outer ribs.
+    solid(c,"brick",[x===-1?1.5:0,0,0],[x===1?14.5:16,16,16]);
+   }else{
+    solid(c,"brick",[0,0,0],[16,16,16]);
+   }
    if(side){
     // Actual corner buttresses instead of two layers of free-floating copper bands.
     const xa=x===-1?0:13;
@@ -65,22 +81,28 @@ export function applyRetortV3(files) {
    }
    if(front&&x===0&&y===1){
     // Dominant sealed door with copper jambs, side hinges and dark central grate.
-    solid(c,"soot",[2,2,12],[14,15,14]);
-    solid(c,"metal",[3,3,14],[13,14,15]);
-    solid(c,"vent",[4,4,15],[12,12,16]);
-    solid(c,"bronze",[0,1,13],[3,15,16]);
-    solid(c,"bronze",[13,1,13],[16,15,16]);
-    solid(c,"bronze",[3,13,13],[13,16,16]);
-    solid(c,"metal",[3,1,13],[13,3,16]);
-    solid(c,"join",[11,7,15],[14,10,16]);
+    // A deep, wide opening. Dark recess sits behind discrete iron grating;
+    // it is not another solid texture covering the whole opening.
+    solid(c,"soot",[2.5,2.5,8],[13.5,14.5,10]);
+    solid(c,"metal",[3,3,10],[13,13.5,11]);
+    solid(c,"soot",[3.5,3.5,11],[12.5,12.5,12]);
+    for(const xx of [4,7,10])solid(c,"metal",[xx,4,12],[xx+1,12,14]);
+    solid(c,"metal",[3,3,12],[13,4,14]);
+    solid(c,"metal",[3,12,12],[13,13,14]);
+    solid(c,"bronze",[1,1,12],[3.5,15,16]);
+    solid(c,"bronze",[12.5,1,12],[15,15,16]);
+    solid(c,"bronze",[3.5,13.5,12],[12.5,16,16]);
+    solid(c,"metal",[3.5,1,12],[12.5,3,16]);
+    solid(c,"join",[11.5,7,15],[14,9,16]);
    } else if(front&&x===0&&y===2){
     // Small upper vent deliberately subordinate to the one-block door below.
-    solid(c,"metal",[2,5,14],[14,12,16]);
-    solid(c,"soot",[3,6,13],[13,11,14]);
-    solid(c,"vent",[4,7,15],[12,10,16]);
-    solid(c,"bronze",[2,12,14],[14,14,16]);
-    solid(c,"join",[1,4,14],[3,13,16]);
-    solid(c,"join",[13,4,14],[15,13,16]);
+    solid(c,"soot",[3,6,9],[13,12,11]);
+    solid(c,"metal",[4,7,11],[12,11,12]);
+    for(const xx of [4,7,10])solid(c,"metal",[xx,7,12],[xx+1,11,14]);
+    solid(c,"bronze",[3,12,12],[13,14,16]);
+    solid(c,"metal",[3,5,13],[13,6,16]);
+    solid(c,"join",[2,5,13],[4,13,16]);
+    solid(c,"join",[12,5,13],[14,13,16]);
    }
    if(side&&z===-1){
     if(x===-1)solid(c,"metal",[0,3,0],[2,5,16]);
@@ -88,20 +110,22 @@ export function applyRetortV3(files) {
    }
   } else if(k==="P"){
    // The roof reads as a substantial separate copper cap; not flat brick cladding.
-   solid(c,"brick",[0,0,0],[16,4,16]);
-   solid(c,"bronze",[0,4,0],[16,8,16]);
-   solid(c,"roof",[0,8,0],[16,11,16]);
+   // Roof field sits noticeably below the chimney lip: visible height,
+   // fewer flat planes, and a supported copper overhang/cap silhouette.
+   solid(c,"brick",[0,0,0],[16,3,16]);
+   solid(c,"bronze",[0,3,0],[16,5,16]);
+   solid(c,"roof",[0,5,0],[16,8,16]);
    if(x!==0){
     const xa=x===-1?0:13;
-    solid(c,"roof",[xa,11,0],[xa+3,14,16]);
-    solid(c,"metal",[xa,4,0],[xa+2,6,16]);
+    solid(c,"roof",[xa,8,0],[xa+3,12,16]);
+    solid(c,"metal",[xa,3,0],[xa+2,5,16]);
    }
    if(z===0||z===-2){
     const za=z===-2?0:13;
-    solid(c,"bronze",[x===-1?3:0,11,za],[x===1?13:16,14,za+3]);
-    if(x===0)solid(c,"metal",[0,4,za],[16,6,za+1]);
+    solid(c,"bronze",[x===-1?3:0,8,za],[x===1?13:16,12,za+3]);
+    if(x===0)solid(c,"metal",[0,3,za],[16,5,za+1]);
    }
-   if(x===0&&z!==-1)solid(c,"metal",[7.2,11,3],[8.8,12,13]);
+   if(x===0&&z!==-1)solid(c,"metal",[7.2,8,3],[8.8,9,13]);
   } else if(k==="A"&&y===3){
    // Hollow raised chimney with open central air shaft and distinct side vents.
    solid(c,"bronze",[2,2,2],[5,16,14]);
@@ -112,25 +136,33 @@ export function applyRetortV3(files) {
    solid(c,"metal",[11,11,2],[14,13,14]);
    solid(c,"metal",[5,11,2],[11,13,5]);
    solid(c,"metal",[5,11,11],[11,13,14]);
-   solid(c,"soot",[5,2,5],[11,3,11]);
+   // Inner shaft remains open. Dark lining sits below the rim with no lid.
+   solid(c,"soot",[5,1,5],[11,2,11]);
+   for(const [f,t]of [
+     [[2,14,2],[5,16,14]],[[11,14,2],[14,16,14]],
+     [[5,14,2],[11,16,5]],[[5,14,11],[11,16,14]]
+   ])solid(c,"metal",f,t);
   } else if(["U","O","Y"].includes(k)){
    // These are not fillers. The real item port BE selects this baked model.
    // Left log hopper vs right charcoal drawer vs rear tar port remain distinct.
    const rear=k==="Y",input=k==="U";
-   port(c,"metal",[0,0,0],[16,3,16]);
-   port(c,"stone",[0,3,0],[16,5,16]);
-   port(c,"soot",[2,5,2],[14,8,14]);
-   port(c,input?"wood":k==="O"?"charcoal":"soot",[3,7,3],[13,11,13]);
-   port(c,"bronze",[0,5,0],[3,15,16]);
-   port(c,"bronze",[13,5,0],[16,15,16]);
-   port(c,"bronze",[3,12,0],[13,15,3]);
-   port(c,"bronze",[3,12,13],[13,15,16]);
-   port(c,"join",[3,5,rear?0:13],[13,7,rear?3:16]);
+   // Not the generic wooden bins: inset feed/collection chambers in
+   // real port blocks, framed by the same kiln-facing metal/bronze.
+   port(c,"metal",[0,0,0],[16,4,16]);
+   port(c,"stone",[0,4,0],[16,6,12]);
+   port(c,"soot",[2.5,6,6],[13.5,12,12]);
+   port(c,input?"wood":k==="O"?"charcoal":"soot",[4,7,9],[12,9.5,12]);
+   port(c,"bronze",[1,5,11],[3.5,14,16]);
+   port(c,"bronze",[12.5,5,11],[15,14,16]);
+   port(c,"bronze",[3.5,12.5,11],[12.5,15,16]);
+   port(c,"metal",[3.5,5,12],[12.5,6.5,16]);
    if(rear){
-    port(c,"metal",[5,7,0],[11,12,3]);
-    port(c,"soot",[6,8,0],[10,11,1]);
+    // Rear tar drain is a recessed metal fitting, not a third front hopper.
+    port(c,"metal",[4,7,0],[12,12,3]);
+    port(c,"soot",[5,8,0],[11,11,1]);
+    port(c,"join",[6,9,0],[10,10,2]);
    }else{
-    port(c,"metal",[4,0,14],[12,3,16]);
+    port(c,"join",[4,5,14],[12,6.5,16]);
    }
   }
  }
