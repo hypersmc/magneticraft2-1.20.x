@@ -351,3 +351,7 @@ Fixed an actual missing Y2 front-wall field: the shoulder brick base ended at Z=
 ### 2026-10-24 — Retort V3.10 front-focused correction
 
 Removed the unwanted continuous under-roof iron strip, switched only the Y2 **front** brick blocks to mortar-lined Minecraft brick textures matching the reference, and refined the copper-framed five-slot grille. Only 12 front Y2 model files (three per orientation) and four equivalent/culling-only Y3 roof underside outputs changed. No changes to chimney, roof top and grooves, sides/rear, real ports, Y0/Y1, formation, recipes or collision. **Pending frontal in-game acceptance; do not proceed to side/lower layer yet.**
+
+### 2026-10-24 — Retort V3.11 one-block front-left facade trial
+
+User requested **one physical block at a time**: edit only Y2 SOUTH-local x=-1,z=0 to produce a 3D masonry inset, raised left copper pillar, large dark square corner bracket, lower iron foot and slim right separator. All four orientations generated. Six neighboring asset meshes may be regenerated solely for shared-face culling, not restyled. The accepted roof/chimney, central/right front, lower machine, port layout, recipes and collision remain unchanged. **Wait for one-block in-game sign-off before mirroring or progressing.**

@@ -54,7 +54,44 @@ export function applyRetortV3(files) {
     // real Y=1 hatches/ports are locked. All new detail is contained
     // inside the eight Y=2 brick positions, never in neighboring cells.
     const front=z===0,outer=x!==0,rear=z===-2;
-    if(front&&x===0){
+    // ONE BLOCK AT A TIME: the front-left Y=2 brick cell (SOUTH x=-1).
+    // Geometry belongs only to this cell; other front pieces and the
+    // approved roof remain unchanged until this left panel is accepted.
+    const leftFacade=front&&x===-1;
+    if(leftFacade){
+      // 3D masonry: full structural backing with a brick panel recessed
+      // 3 pixels behind the front-facing copper/iron framing. Preserve
+      // the previous contact at all four shared block-cell boundaries.
+      solid(c,"brick",[0,0,0],[16,1,13]);
+      solid(c,"brick",[0,1,0],[16,15,13]);
+      solid(c,"brick",[0,15,0],[16,16,13]);
+      // Structural reveals prevent the inset from resembling a hole.
+      solid(c,"brick",[0,1,13],[3,15,16]);
+      solid(c,"brick",[13,1,13],[16,15,16]);
+      solid(c,"brick",[3,1,13],[13,3,14.5]);
+      solid(c,"brick",[3,13,13],[13,15,14.5]);
+      // Lock the two neighboring-boundary contact rails first; the
+      // visible bracket/rivet geometry is applied AFTER these rails.
+      solid(c,"metal",[0,13,0],[3,16,16]);
+      solid(c,"metal",[0,0,0],[3,3,16]);
+      // Left external copper pilaster, substantially in front of the
+      // recessed masonry. Copper cap, dark iron foot and single large
+      // corner bracket are deliberately individual 3D solids.
+      solid(c,"bronze",[0.5,3,14],[3,13,16]);
+      solid(c,"bronze",[0,3,14],[4,4.5,16]);
+      solid(c,"metal",[0,0,14],[4,3,16]);
+      solid(c,"metal",[0,12,14],[4,16,16]);
+      solid(c,"join",[0.5,12.5,15],[3.5,15.5,16]);
+      solid(c,"stone",[1,13,15.5],[3,15,16]); // dark bracket boss
+      // Right boundary of this ONE wall panel: copper separator against
+      // the still-unchanged center-vent block, with visible iron foot.
+      solid(c,"bronze",[13,3,14],[15,13,16]);
+      solid(c,"metal",[13,0,14],[15.5,3,16]);
+      solid(c,"metal",[13,13,14],[15.5,15,16]);
+      // Only a short copper bottom sill, not another full-width band.
+      solid(c,"bronze",[4,0.5,14.5],[13,1.75,16]);
+
+    }else if(front&&x===0){
       // Front-only reference pass: five recessed dark vertical slots
       // bounded by a copper lintel and shallow iron side clamps.
       // No extra full-width band across the chamber under the roof.
@@ -90,7 +127,7 @@ export function applyRetortV3(files) {
     }else{
       solid(c,"brick",[0,0,0],[16,16,16]);
     }
-    if(front&&outer){
+    if(front&&outer&&!leftFacade){
       const corner=x===-1?0:13;
       const inside=x===-1?13:1;
       // Outside edge: copper column with a substantial square iron
@@ -107,7 +144,7 @@ export function applyRetortV3(files) {
       // Low brick course becomes a stronger masonry sill on each side.
       solid(c,"bronze",[3,0,14],[13,1.5,16]);
     }
-    if(outer){
+    if(outer&&!leftFacade){
       // Preserve exactly the prior side contacts at the top and bottom
       // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;

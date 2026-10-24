@@ -181,3 +181,20 @@ User marked the entire Y2 front region against the target concept and explicitly
 - **Locked regions:** all Y0/Y1 part models, all formed item-port models, all other Y2 side/rear models, the chimney and all exposed copper-roof/groove geometry remain visually unchanged. Four Y3 west/east front-roof files are regenerated only because the face-culling step *merges two equivalent underside quads* after the bordering Y2 geometry changes; their visible top, sides, band geometry and texture mappings are identical. The physical 3x4x3 formation, collision profile, recipes and fuel/port behavior are unchanged.
 
 All four orientations were checked for valid 16-pixel model bounds, UV proportions and no coplanar overlapping rendered faces. **This is still a candidate**, not a claim that the in-game appearance matches the reference. Wait for a frontal screenshot before changing the side or the next physical layer. `./gradlew build` was not executed.
+
+### 2026-10-24 — V3.11: FIRST front-left Y2 brick block in isolation
+
+After V3.10 still failed the reference comparison, the user chose a tighter approach: **work on the single upper-chamber front-left block** from the red rectangle in the reference, and explicitly preserve the **three-dimensional feel**. This is *one physical 16x16x16 brick cell*, not a redesign of the full facade.
+
+**Precise SOUTH-facing local model recipe** (`part_-1_2_0.json`; all coordinates 0–16 model pixels):
+- Structural brick backing: main recessed wall from Z=0..13, plus side reveals at X=0..3 and X=13..16, a bottom reveal Y=1..3 and a top reveal Y=13..15. The open central brick panel at X=4..13, Y=3..13 exposes its brick texture at **Z=13**, a **3px recess** behind the frontmost trim.
+- Left copper corner pillar: X=0.5..3, Y=3..13, Z=14..16, with a wider copper bottom shoulder at X=0..4, Y=3..4.5.
+- Substantial dark iron top-left bracket: X=0..4, Y=12..16, Z=14..16, with inset riveted-metal frame and a separate darker foundation-textured boss at X=1..3, Y=13..15, Z=15.5..16.
+- Bottom outer support: dark iron foot X=0..4, Y=0..3, Z=14..16.
+- Inner edge near the unchanged central vent block: copper separator X=13..15, Y=3..13, Z=14..16, with separate small iron foot/cap.
+- Bottom sill: **short copper segment** X=4..13, Y=0.5..1.75, Z=14.5..16. **No** full-width iron band beneath the copper roof.
+- Material map remains identical to V3.10: `minecraft:block/bricks` for this front brick panel, `minecraft:block/cut_copper` for copper, and existing Retort iron/stone materials. All exposed faces use proportional UVs (no stretched textures).
+
+**Scope:** one authored local cell `x=-1,y=2,z=0`; generated for SOUTH/WEST/NORTH/EAST as four front-left parts. Six *neighbor model files* can regenerate from automatic internal seam/underside culling because adjacent faces are shared. Those are **not additional facade redesigns**. The roof's visible top/grooves/chimney, all other front decoration, Y0/Y1, ports, formation, recipes, power, animations and Voxel collision remain unchanged.
+
+**Status:** candidate for a single-block in-game review only. Do not copy it to the right block, alter the central vent or continue down layers until the user explicitly accepts this front-left block. No `./gradlew build` claim.

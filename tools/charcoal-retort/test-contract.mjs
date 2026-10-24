@@ -451,6 +451,47 @@ for(const dir of dirs){
 // culling; their visible top, groove and fascia faces are identical.
 // Physical Y=1 modules and Y=3 chimney/roof grooves are independently
 // preserved by the byte-for-byte diff scope check used when committing.
+// V3.11: one physical front-left Y=2 block is reviewed at a time.
+// There must be a brick face inset ~3px behind the copper outer post,
+// a separate outer metal bracket with rivet, a lower iron foot and
+// a second inner copper separator. Preserve these parts in every facing.
+const v311LeftParts={
+  south:'-1_2_0',west:'0_2_-1',north:'1_2_0',east:'0_2_1'
+};
+for(const [dir,offset] of Object.entries(v311LeftParts)){
+  const left=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+    +dir+'/part_'+offset+'.json');
+  const front=left.elements.filter(e=>e.faces[dir]);
+  const depth=(e)=>dir==='south'?e.to[2]:
+    dir==='north'?16-e.from[2]:
+    dir==='west'?16-e.from[0]:e.to[0];
+  const has=(material,predicate)=>front.some(e=>e.faces[dir].texture===material &&
+     predicate(e));
+  assert(has('#brick',e=>depth(e)<=13.001 &&
+     e.to[1]-e.from[1]>=9),
+     'V3.11 missing recessed brick panel '+dir);
+  assert(has('#bronze',e=>depth(e)>=15.999 &&
+     e.from[1]>=3 && e.to[1]<=13.001),
+     'V3.11 missing raised copper pilaster '+dir);
+  assert(has('#metal',e=>depth(e)>=15.999 &&
+     e.from[1]>=12),
+     'V3.11 missing top-left iron bracket '+dir);
+  assert(has('#stone',e=>depth(e)>=15.999 &&
+     e.from[1]>=13),
+     'V3.11 missing darker center of bracket '+dir);
+  assert(has('#join',e=>depth(e)>=15.999 &&
+     e.from[1]>=12),
+     'V3.11 missing bracket frame '+dir);
+  assert(has('#metal',e=>depth(e)>=15.999 &&
+     e.to[1]<=3),
+     'V3.11 missing lower iron foot '+dir);
+  for(const part of left.elements)for(const [side,face] of Object.entries(part.faces)){
+    assert(face.texture&&left.textures[face.texture.replace(/^#/,'')],
+      'Unresolved Y2 left block material '+dir+'/'+side);
+    assert(part.from.every((v,i)=>v>=0 && part.to[i]<=16 && part.to[i]>v),
+      'V3.11 facade escaped its one-block footprint');
+  }
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));
