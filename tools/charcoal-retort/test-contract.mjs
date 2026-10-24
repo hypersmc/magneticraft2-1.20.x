@@ -1056,6 +1056,40 @@ for(const dir of dirs)for(const x of [-1,1]){
       'V3.27 slot blocked at block seam '+dir+'/'+x+'/'+seam);
   }
 }
+// V3.28: front-right copper header and stepped lower lip must mirror
+// the approved front-left profile in each orientation, independently
+// of the different outer corner iron fittings. Compare all visible
+// samples, plus copper material/depth where left exposes its header.
+for(const dir of dirs){
+  const ids=v320FrontParts[dir],root=resource+
+    'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/part_';
+  const left=json(root+ids[0]+'.json'),right=json(root+ids[2]+'.json');
+  const axis=['south','north'].includes(dir)?0:2;
+  const normal=axis===0?2:0,positive=['south','east'].includes(dir);
+  const flipped=['north','east'].includes(dir);
+  const sample=(m,localX,y)=>{
+    const x=flipped?16-localX:localX;
+    const faces=m.elements.filter(e=>e.faces[dir]&&
+      e.from[axis]<x&&e.to[axis]>x&&e.from[1]<y&&e.to[1]>y);
+    faces.sort((a,b)=>positive?b.to[normal]-a.to[normal]:
+                            a.from[normal]-b.from[normal]);
+    const e=faces[0];return e&&{
+      mat:e.faces[dir].texture,
+      depth:positive?e.to[normal]:16-e.from[normal]};
+  };
+  for(const x of [5,6,7,8,9,10,11]){
+    for(const y of [12.3,12.5,12.9,13.2,14.1,15.5]){
+      const a=sample(left,x,y),b=sample(right,16-x,y);
+      assert.deepEqual(b,a,
+        'V3.28 right copper header not mirrored '+dir+'/'+x+'/'+y);
+      // A few west/east surfaces were already culled in the accepted
+      // left reference. Require copper wherever it is visibly exposed.
+      if([12.3,12.9,13.2,14.1].includes(y))
+        assert(a&&a.mat==='#bronze'&&a.depth===16,
+          'V3.28 source copper profile absent '+dir+'/'+x+'/'+y);
+    }
+  }
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');

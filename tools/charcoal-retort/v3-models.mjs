@@ -281,9 +281,12 @@ export function applyRetortV3(files) {
           const relief=(courseIndex+brickIndex)%2===0?15.7:15.45;
           solid(c,"sideBrick",[14.2,row.y0,za],[relief,row.y1,zb]);
         }
-      // Retain V3.20 cross-block copper beam: reaches the inner seam
-      // at X=0 and ends at the outer corner iron fixing, X=13.
-      solid(c,"bronze",[0,14.1,14.5],[13,16,16]);
+      // V3.28: reflect the approved left upper copper header exactly.
+      // Left main X3..16 Y12.75..16 mirrors to right X0..13;
+      // the shallow Y12.25..12.75 stepped lower lip is mirrored too.
+      // The iron mounting is authored afterward and remains on top.
+      solid(c,"bronze",[0,12.75,14.5],[13,16,16]);
+      solid(c,"bronze",[0,12.25,15],[12.25,12.75,16]);
 
       // Outer RIGHT copper post. The thick copper shoulder at its base
       // is distinct from the thin dark iron foot BELOW the shoulder.
