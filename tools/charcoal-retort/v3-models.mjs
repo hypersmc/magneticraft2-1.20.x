@@ -561,14 +561,35 @@ export function applyRetortV3(files) {
     solid(c,"soot",[2.5,2.5,8],[13.5,14.5,10]);
     solid(c,"metal",[3,3,10],[13,13.5,11]);
     solid(c,"soot",[3.5,3.5,11],[12.5,12.5,12]);
-    for(const xx of [4,7,10])solid(c,"metal",[xx,4,12],[xx+1,12,14]);
+    // V3.36: three recessed bars stay INSIDE a framed iron door,
+    // not free-floating above the open furnace recess.
+    for(const [xa,xb] of [[5.05,5.8],[7.625,8.375],[10.2,10.95]])
+      solid(c,"metal",[xa,4.25,12.4],[xb,11.75,15.2]);
     solid(c,"metal",[3,3,12],[13,4,14]);
     solid(c,"metal",[3,12,12],[13,13,14]);
     solid(c,"bronze",[1,1,12],[3.5,15,16]);
     solid(c,"bronze",[12.5,1,12],[15,15,16]);
-    solid(c,"bronze",[3.5,13.5,12],[12.5,16,16]);
+    // V3.36: dark inset under the stepped copper crown already in
+    // the Y2 block. Do not recreate the rejected full copper sill.
+    solid(c,"metal",[3.5,13.5,12],[12.5,16,15.15]);
+    solid(c,"soot",[4.1,13.85,15.15],[11.9,15.5,15.35]);
     solid(c,"metal",[3.5,1,12],[12.5,3,16]);
-    solid(c,"join",[11.5,7,15],[14,9,16]);
+    // V3.36: a squared industrial iron furnace-door bezel, built
+    // as four rails so the central recess remains visible.
+    solid(c,"metal",[3.5,2.75,13.5],[12.5,4.05,15.9]);
+    solid(c,"metal",[3.5,11.95,13.5],[12.5,13.25,15.9]);
+    solid(c,"metal",[3.5,4.05,13.5],[4.65,11.95,15.9]);
+    solid(c,"metal",[11.35,4.05,13.5],[12.5,11.95,15.9]);
+    // Two shallow bevels set below the thick bezel perimeter.
+    solid(c,"stone",[4.65,11.6,14.4],[11.35,11.95,15.65]);
+    solid(c,"stone",[4.65,4.05,14.4],[11.35,4.35,15.65]);
+    // Copper shoulders and distinct dark feet: still confined to
+    // this single Y1 center cell, not the Y0 lit controller.
+    solid(c,"bronze",[1,1.1,14],[3.5,2.8,16]);
+    solid(c,"bronze",[12.5,1.1,14],[15,2.8,16]);
+    solid(c,"metal",[1,0,14],[3.5,1.1,16]);
+    solid(c,"metal",[12.5,0,14],[15,1.1,16]);
+    solid(c,"join",[12.4,7.2,15],[14,9.1,16]);
    } else if(front&&x===0&&y===2){
     // Small upper vent deliberately subordinate to the one-block door below.
     solid(c,"soot",[3,6,9],[13,12,11]);
@@ -727,6 +748,12 @@ export function applyRetortV3(files) {
   // Keep only this layer's texture change. The other three layers use
   // their old shared material map and generated JSON byte-for-byte.
   if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
+  // V3.36: lower center furnace uses the copper and iron palette of
+  // the accepted upper center Y2 block; other Y1 cells are unaffected.
+  if(c.y===1&&c.x===0&&c.z===0&&c.k==="B")
+    m.textures={...m.textures,
+      bronze:"minecraft:block/cut_copper",
+      join:"magneticraft2:block/settling_tank/riveted_iron"};
   if(c.y===2 && c.k==="B")m.textures={
     ...m.textures,
     // Keep structural side/rear backing on the original Retort brick.

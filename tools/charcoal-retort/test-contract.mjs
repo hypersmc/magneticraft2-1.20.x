@@ -1267,6 +1267,44 @@ for(const dir of dirs)for(const x of [-1,1]){
   assert(firstSlot&&firstSlot.material==='#soot'&&firstSlot.depth<15,
     'V3.35 rear corner fitting blocks the first side vent '+dir+'/'+x);
 }
+// V3.36 — only Y1 front-center gains the framed iron furnace
+// housing. Its recessed bars, bezel, upper dark inset and copper
+// palette must survive four rotations and generator regeneration.
+for(const dir of dirs){
+  const p=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+    '/part_0_1_0.json';
+  const m=json(p);
+  assert.equal(m.textures.bronze,'minecraft:block/cut_copper',
+    'V3.36 lower center copper no longer matches accepted Y2 '+dir);
+  assert.equal(m.textures.join,'magneticraft2:block/settling_tank/riveted_iron',
+    'V3.36 iron latch mapping changed '+dir);
+  const ax=(dir==='south'||dir==='north')?0:2;
+  const norm=ax===0?2:0;
+  const forward=(dir==='south'||dir==='east');
+  const reverse=(dir==='north'||dir==='east');
+  const at=(x,y)=>{
+    const coord=reverse?16-x:x;
+    const list=m.elements.filter(e=>e.faces[dir]&&
+      e.from[ax]<coord&&coord<e.to[ax]&&
+      e.from[1]<y&&y<e.to[1]);
+    list.sort((a,b)=>forward?b.to[norm]-a.to[norm]:a.from[norm]-b.from[norm]);
+    const e=list[0];
+    return e&&{material:e.faces[dir].texture,
+      depth:forward?e.to[norm]:16-e.from[norm]};
+  };
+  for(const [x,y,material,depth] of [
+    [2,8,'#bronze',16],[8,3.3,'#metal',15.9],
+    [4,7,'#metal',15.9],[12,7,'#metal',15.9],
+    [8,12.6,'#metal',15.9],[8,4.3,'#stone',15.65],
+    [8,7,'#metal',15.2],[5.4,7,'#metal',15.2],
+    [8,14.8,'#soot',15.35]
+  ]){
+    assert.deepEqual(at(x,y),{material,depth},
+      'V3.36 furnace bezel/grille visibility '+dir+'/'+x+'/'+y);
+  }
+  assert.notEqual(at(6.4,7)?.material,'#bronze',
+    'V3.36 center opening buried behind copper '+dir);
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
