@@ -514,6 +514,39 @@ for(const [dir,part] of Object.entries(v314LeftParts)){
     }
   }
 }
+// V3.15: the user approved the staggered masonry, NOT the surrounding
+// U-shaped framing. This one-block pass must have a full copper header
+// bridging the brick panel, and remove the *right* full-height copper
+// post and its dark top/bottom caps. The left bracket and pillar remain.
+const v315RightPost={south:[13,15,14,16],
+  west:[0,2,13,15],north:[1,3,0,2],east:[14,16,1,3]};
+for(const [dir,id] of Object.entries(v314LeftParts)){
+  const panel=json(resource+
+    'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+    '/part_'+id+'.json');
+  const visible=panel.elements.filter(e=>e.faces[dir]);
+  const depth=e=>dir==='south'?e.to[2]:
+    dir==='north'?16-e.from[2]:
+    dir==='west'?16-e.from[0]:e.to[0];
+  const header=visible.filter(e=>e.faces[dir].texture==='#bronze'&&
+    e.from[1]>=12.25 && depth(e)===16 &&
+    (e.to[0]-e.from[0]>=10 || e.to[2]-e.from[2]>=10));
+  assert(header.length>=1,'V3.15 must have a wide horizontal copper header '+dir);
+  const [xmin,xmax,zmin,zmax]=v315RightPost[dir];
+  const unwantedRight=visible.filter(e=>e.faces[dir].texture==='#bronze'&&
+    e.from[1]<=3 && e.to[1]>=13 &&
+    e.from[0]>=xmin && e.to[0]<=xmax &&
+    e.from[2]>=zmin && e.to[2]<=zmax);
+  assert.equal(unwantedRight.length,0,
+    'V3.15 rejected symmetrical right-hand copper pillar returned '+dir);
+  assert(visible.some(e=>e.faces[dir].texture==='#stone'&&
+    e.from[1]>=13),'V3.15 left iron bracket boss disappeared '+dir);
+  assert(visible.some(e=>e.faces[dir].texture==='#brick'&&
+    e.from[1]>=7.05&&e.to[1]<=10.60),
+    'V3.15 retained physical brickwork was lost '+dir);
+}
+// Only the one left cell is authored; adjacent Y2 center/Y3 roof
+// files change at hidden touching faces due to the face partitioner.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

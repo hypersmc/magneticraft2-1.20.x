@@ -236,3 +236,18 @@ After V3.13's flat, nearly full-cube wall failed the user's visual comparison, t
 The build generator authors this one SOUTH-local cell and rotates it for the other three facings. As a side effect, the four adjacent center-grille meshes and four touching roof meshes are regenerated for hidden internal face partitioning; their exterior visible faces, material maps, geometry, item port functions and construction coordinates remain unchanged. Other machine layers, roof/chimney shapes, formation blueprint, recipes, fuel/production and voxel collision remain unchanged.
 
 Validation criteria: three **staggered** rows of visible physical brick geometry, real thin mortar seams, outer/inner copper supports, darker bracket/foot, 16px bounds, per-face 1:1 UV dimensions, and no overlapping model faces across all four facings. **The visual match remains unapproved** pending a front three-quarter Minecraft screenshot; `./gradlew build` has not been run. Do not copy this model to the right front block or redesign other layers until approved.
+
+### 2026-10-24 — V3.15 L-shaped frame on the first front-left brick block
+
+The user compared V3.14 in-game to the reference and **liked the staggered 3D masonry in the middle**, but the surrounding copper/iron frame was visually wrong. The reference has one large left vertical copper pillar and a **wide horizontal copper header**, reading as an **L-shape**. V3.14 unintentionally had a visually symmetrical U-shape: an additional thick right copper pillar, an upper-right iron cap, lower-right iron foot and a spanning copper bottom sill.
+
+V3.15 retains the V3.14 three staggered masonry courses, 0.45–0.55px exposed mortar gaps, 14–15px shallow brick depths, left copper pillar, substantial left-top dark bracket with riveted inset boss, and lower-left stepped shoulder. In the SAME single front-left Y2 cell only:
+
+- Extend the brick course last spans to local X=15.75; mortar bed extends to X=16 so there is a masonry face beneath the removed right post.
+- Introduce a broad cut-copper horizontal header at `[3,12.75,14.5] -> [16,16,16]`, plus a 0.5px narrow copper lower step at `[3.75,12.25,15] -> [16,12.75,16]`. It connects visually to the outer post without inventing a dark continuous under-roof metal band.
+- **Remove** the right vertical copper strip (`X=13..15,Y=3..13`), its top dark cap, its lower dark foot, and the long lower copper sill.
+- Keep the central grille, entire right front cell, all other chamber/side blocks, chimney/roof grooves, Y0/Y1, recipes, multiblock formation and collision profile unchanged.
+
+Generated asset scope is 12 files: four copies of the single authored left cell, four center-neighbor files whose **outward faces do not change**, and four accepted-roof-edge files whose **non-bottom faces do not change**. Static geometry checks confirm two copper header segments and zero remaining tall right copper uprights, retained physical brick courses/mortar, model-local bounds, zero coplanar rendered overlaps, and native proportional UV mapping in all orientations.
+
+**Status: V3.15 pending visual acceptance in Minecraft.** This is not a claim to have performed a Forge Gradle build or in-game screenshot test. Do not copy the design to the right/front-center or proceed to the next layer until the user accepts this block.

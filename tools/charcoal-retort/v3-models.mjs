@@ -59,7 +59,8 @@ export function applyRetortV3(files) {
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
     if(leftFacade){
-      // V3.14: one-block, reference-led facade rebuild.
+      // V3.15: retain the V3.14 raised brick courses, replace the
+      // unwanted symmetrical U-shaped trim with reference L-frame.
       // Structural backing stops at Z=14; the brick courses are genuine
       // shallow 3D solids up to Z=15, not a flat retextured cuboid.
       // Copper and iron pillars finish at Z=16. Every element remains
@@ -70,16 +71,16 @@ export function applyRetortV3(files) {
       // It is NOT a hollow pocket: the courses sit 0.65 pixels ahead
       // of a complete structural backing, leaving only 1px relief
       // relative to the raised supports.
-      solid(c,"mortar",[3,2.5,14],[13,15,14.35]);
+      solid(c,"mortar",[3,2.5,14],[16,15,14.35]);
 
       // Three coursed rows. Joints stagger from course to course;
       // tiny gaps leave the light mortar behind visibly exposed.
       // Widths and placements are deliberately asymmetric like real
       // laid masonry rather than a tiled full-cube brick texture.
       const courses=[
-        {y0:3.0,y1:6.55,spans:[[3.25,7.9],[8.35,12.75]]},
-        {y0:7.05,y1:10.6,spans:[[3.25,5.45],[5.9,10.15],[10.6,12.75]]},
-        {y0:11.1,y1:14.55,spans:[[3.25,8.2],[8.65,12.75]]}
+        {y0:3.0,y1:6.55,spans:[[3.25,7.9],[8.35,15.75]]},
+        {y0:7.05,y1:10.6,spans:[[3.25,5.45],[5.9,10.15],[10.6,15.75]]},
+        {y0:11.1,y1:14.55,spans:[[3.25,8.2],[8.65,15.75]]}
       ];
       for(const row of courses){
         for(const [x0,x1] of row.spans){
@@ -89,6 +90,16 @@ export function applyRetortV3(files) {
           solid(c,"brick",[x0,row.y0,14.35],[x1,row.y1,relief]);
         }
       }
+
+      // Copper header: the reference has an L-shaped outline, with
+      // ONE strong left post and a horizontal copper lintel. It stops
+      // at this cell boundary where the existing center vent begins.
+      // The header is shallowly raised above the brick faces and
+      // is not the rejected dark band beneath the copper roof.
+      solid(c,"bronze",[3,12.75,14.5],[16,16,16]);
+      // A tiny step at the lower edge gives the header a real underside
+      // without hiding the staggered central masonry courses.
+      solid(c,"bronze",[3.75,12.25,15],[16,12.75,16]);
 
       // Preserve concealed edge contacts to the adjacent course while
       // integrating the copper post and dark iron mount into the wall.
@@ -108,14 +119,9 @@ export function applyRetortV3(files) {
       solid(c,"join",[0.5,12.5,15],[3.5,15.5,16]);
       solid(c,"stone",[1,13,15.5],[3,15,16]);
 
-      // Slim right-hand separator frames the masonry, not a void.
-      solid(c,"bronze",[13,3,14],[15,13,16]);
-      solid(c,"metal",[13,0,14],[15.5,3,16]);
-      solid(c,"metal",[13,13,14],[15.5,15,16]);
-
-      // No floating tray, just one narrow copper sill integrated into
-      // the bottom of the masonry.
-      solid(c,"bronze",[4,1,15],[13,2,16]);
+      // No right-hand pillar, cap, iron foot or bottom-wide sill:
+      // those formed the unintended U-shape in V3.14. The masonry
+      // continues through X=16 to meet the unchanged center block.
     }else if(front&&x===0){
       // Front-only reference pass: five recessed dark vertical slots
       // bounded by a copper lintel and shallow iron side clamps.

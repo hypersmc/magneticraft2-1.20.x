@@ -367,3 +367,7 @@ Changed only the front-left Y2 brick cell from a 3px-deep alcove to a continuous
 ### 2026-10-24 — Retort V3.14 physical masonry on one front-left Y2 cell (review pending)
 
 Rebuilt only the SOUTH-local x=-1,y=2,z=0 front-left brick block with three staggered raised brick courses over a narrow exposed mortar bed, integrated copper outer/inner framing, and an iron corner bracket/foot. The 1px relief preserves solidity without a deep alcove. All four rotations generate; the center vent and adjacent roof assets regenerate only internal hidden faces. No other facade block, chimney, roof top/grooves, Y0/Y1, ports, recipes or collision changed. Await in-game visual acceptance and Gradle build.
+
+### 2026-10-24 — Retort V3.15 L-shaped framing for first upper front-left block
+
+Preserved the newly accepted-in-principle individual brick courses and their mortar gaps from V3.14. Replaced the incorrect symmetrical copper U-frame with the target L-shaped silhouette: left corner post and dark iron bracket plus a broad cut-copper header, extending the exposed masonry to the right edge and removing the unwanted right post, both right iron caps/feet and the bottom sill. Four rotations generated. Neighbor/roof assets changed only for hidden face partitioning; all neighboring *outward* faces remain identical. Still awaiting in-game sign-off before other blocks are touched.
