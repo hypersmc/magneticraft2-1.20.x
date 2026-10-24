@@ -59,7 +59,8 @@ export function applyRetortV3(files) {
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
     if(leftFacade){
-      // V3.16: PRESERVE the newly correct L-shaped copper/iron framing.
+      // V3.17: preserve copper L-shape and 3D bricks; fix ONLY the two
+      // left corner fittings to match the user's arrowed reference.
       // Restore brick-course relief only: the mortar stays deep and the
       // raised brick faces now reach Z=15.45..15.70 below the trim at 16.
       // Everything remains in the same one 16x16x16 front-left cell.
@@ -102,21 +103,37 @@ export function applyRetortV3(files) {
 
       // Preserve concealed edge contacts to the adjacent course while
       // integrating the copper post and dark iron mount into the wall.
-      solid(c,"metal",[0,13,0],[3,16,16]);
-      solid(c,"metal",[0,0,0],[3,3,16]);
+      // The top and bottom retain their invisible masonry contacts.
+      // Crucially the exposed fronts are not solid iron cuboids: that
+      // covered the dark inset and copper shoulder in V3.16.
+      solid(c,"metal",[0,13,0],[3,16,15.25]);
+      solid(c,"metal",[0,15.5,15.25],[3,16,16]);
+      solid(c,"metal",[0,0,0],[3,3,15]);
 
       // Broad structural outer copper post; the bottom shoulder is
       // stepped only on this side, following the concept reference.
       solid(c,"bronze",[0.5,3,14],[3,13,16]);
-      solid(c,"bronze",[0,3,14],[4,5,16]);
+      // Reference: the LOWER SHOULDER is copper, with a much thinner
+      // dark iron anchoring foot BELOW it, not an all-iron 3px box.
+      solid(c,"bronze",[0,1.25,14],[4,4.5,16]);
       solid(c,"bronze",[0.5,5,14.5],[3.5,6,16]);
-      solid(c,"metal",[0,0,14],[4,3,16]);
+      solid(c,"metal",[0,0,14],[4,1.25,16]);
 
-      // Large top-left iron bracket: forged plate, inset rivet ring,
-      // and darker square boss; no long under-roof metal strip.
-      solid(c,"metal",[0,12,14],[4,16,16]);
-      solid(c,"join",[0.5,12.5,15],[3.5,15.5,16]);
-      solid(c,"stone",[1,13,15.5],[3,15,16]);
+      // Reference top-left bracket: a deep cast-iron fixing with a
+      // DISTINCT dark square inset. A complete front-facing metal cube
+      // would obscure the recess, so the edge is made from four rails.
+      solid(c,"metal",[0,12,14],[4,16,15.25]);
+      solid(c,"metal",[0,12,15.25],[4,12.5,16]);
+      solid(c,"metal",[0,15.5,15.25],[4,16,16]);
+      solid(c,"metal",[0,12.5,15.25],[0.5,15.5,16]);
+      solid(c,"metal",[3.5,12.5,15.25],[4,15.5,16]);
+      // Inner riveted ring and recessed dark center (Z=15.65),
+      // versus the surrounding bracket frame at Z=16.
+      solid(c,"join",[0.5,12.5,15.25],[1,15.5,16]);
+      solid(c,"join",[3,12.5,15.25],[3.5,15.5,16]);
+      solid(c,"join",[1,12.5,15.25],[3,13,16]);
+      solid(c,"join",[1,15,15.25],[3,15.5,16]);
+      solid(c,"stone",[1,13,15.25],[3,15,15.65]);
 
       // No right-hand pillar, cap, iron foot or bottom-wide sill:
       // those formed the unintended U-shape in V3.14. The masonry

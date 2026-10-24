@@ -551,6 +551,42 @@ for(const [dir,id] of Object.entries(v314LeftParts)){
 }
 // Only the one left cell is authored; adjacent Y2 center/Y3 roof
 // files change at hidden touching faces due to the face partitioner.
+// V3.17: user-marked TOP iron fixing and LOWER copper collar only.
+// Do not flatten the inset or turn the copper collar back into a tall
+// iron foot. Every direction is generated from the same left facade.
+for(const [dir,part] of Object.entries(v314LeftParts)){
+ const model=json(resource+
+    'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+    '/part_'+part+'.json');
+ const f=model.elements.filter(e=>e.faces[dir]);
+ const depth=e=>dir==='south'?e.to[2]:
+   dir==='west'?16-e.from[0]:
+   dir==='north'?16-e.from[2]:e.to[0];
+ const has=(material,check)=>f.some(e=>
+   e.faces[dir].texture===material && check(e));
+ assert(has('#stone',e=>e.from[1]===13&&e.to[1]===15&&
+   Math.abs(depth(e)-15.65)<0.00001),
+   'V3.17 dark square bracket center must be physically recessed '+dir);
+ assert(has('#metal',e=>e.from[1]===12&&e.to[1]===12.5&&
+   depth(e)===16),
+   'V3.17 upper dark iron bracket must retain raised border '+dir);
+ assert(has('#join',e=>e.from[1]===12.5&&e.to[1]===15.5&&
+   depth(e)===16),
+   'V3.17 upper bracket inset riveted border missing '+dir);
+ assert(has('#bronze',e=>e.from[1]===1.25&&e.to[1]===4.5&&
+   depth(e)===16),
+   'V3.17 lower-left copper shoulder missing '+dir);
+ assert(has('#metal',e=>e.from[1]===0&&e.to[1]===1.25&&
+   depth(e)===16),
+   'V3.17 lower dark iron foot must remain BELOW the copper shoulder '+dir);
+ // The brick courses remain physically raised and the L-frame stays.
+ for(const level of [3,7.05,11.1])assert(
+   has('#brick',e=>e.from[1]===level&&depth(e)>=15.45),
+   'V3.17 brick relief regressed at '+level+' '+dir);
+ assert(has('#bronze',e=>e.from[1]>=12.25&&e.to[1]===16&&
+   depth(e)===16),
+   'V3.17 copper L-header disappeared '+dir);
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

@@ -375,3 +375,7 @@ Preserved the newly accepted-in-principle individual brick courses and their mor
 ### 2026-10-24 — Retort V3.16 restore brick relief, preserve front-left frame
 
 The user confirmed V3.15 framing is placed correctly, while the 3D brick effect became too weak. V3.16 leaves the copper L-frame unchanged, increases the original staggered brick courses to 1.25/1.50px relief above the mortar (brick Z15.45/15.70, mortar Z14.2), and changes nothing beyond the four directional versions of this one authored Y2 block and four hidden-contact center-neighbor meshes. All Y3 roof assets remain byte-identical. Pending in-game acceptance and Forge build.
+
+### 2026-10-24 — Charcoal Retort V3.17 top bracket + lower copper shoulder (review pending)
+
+User highlighted two front-left Y2 differences: top iron corner must be a recessed-square fixing rather than plain cap, and lower projecting shoulder must be copper with a smaller dark metal foot beneath. Rebuilt only those two fittings, leaving staggered raised masonry and correctly positioned copper L-frame identical in source. Roof, chimney, other layers, real ports, collision and gameplay unchanged; visual sign-off pending.
