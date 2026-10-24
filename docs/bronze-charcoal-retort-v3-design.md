@@ -2,6 +2,12 @@
 
 **Status:** proposed visual direction following the 2026-10-24 concept image and user gameplay video `2026-10-24_14-04-52.mp4`. **No V3 models, gameplay code, blueprints, or collision geometry changed by this document.** V2 is not visually accepted. The goal is to obtain agreement on a model that resembles the concept rather than implementing another generic brick/copper box.
 
+> **User clarification (2026-10-24):** the existing **3×4×3 real block layout is correct and must not be moved**. The observed fault is rendered models/textures intersecting or visually landing inside other models. This is a **geometry/face-placement repair**, not a request to change construction footprint or relocate modules. Resolve V2 generator overlap and port-model fit **before** any optional aesthetic redesign.
+
+**Confirmed V2 geometry defect:** `tools/charcoal-retort/build.mjs` draws the front stone foundation using `[0,0,0]..[16,12,16]`, then draws front metal band `[0,1,15.4]..[16,3,16]` through its volume in the same block cell. Similar front bands and corners create competing geometry. Correct by subtracting/decomposing opaque solids into non-intersecting volumes, omitting concealed/copied faces (including coplanar faces), and checking the actual module model geometry. A simple arbitrary depth offset only hides the error and can introduce new clipping. Preserve the working `U/O/Y` modules and their real positions.
+
+**Required first proof:** screenshot/video before/after of the identical SOUTH build, with arrows' lower front band, left/right port transitions and upper front vent inspected, then verify WEST/NORTH/EAST. Do not infer that a nicer texture pack fixes geometry.
+
 ## Non-negotiable constraints
 
 - Forge 1.20.1; the JSON-formed machine remains **3 wide x 4 high x 3 deep** in four orientations. No changes to the actual construction recipe, Patchouli formation pattern, formation controller, material process, or output quantities.
