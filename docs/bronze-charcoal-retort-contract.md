@@ -94,3 +94,11 @@ All Y=0–2 generated models, their textures, the existing real log/charcoal/tar
 The end-to-end process still yields four charcoal plus one Wood Tar as an **item**. Physically wood tar is a viscous, dark liquid/semiliquid condensate from destructive wood distillation; deciding whether to use the mod's fluid system, tanks, pipes and separate pyrolysis distillate outputs is a *future gameplay decision*, not part of this roof model change.
 
 **Review gate:** first confirm the roof in a high overhead and front-three-quarter in-game screenshot. Do not touch the lower three layers for another aesthetic pass until this one roof composition is accepted. Gradle compilation and runtime rendering remain unverified.
+
+### 2026-10-24 — V3.3 roof grooves recessed into copper
+
+The reference roof's two dark lengthwise lines are **carved grooves**, not raised rails. Only the top-layer model geometry changed: each of the three left roof tiles and three right roof tiles has a 2-pixel-wide channel with dark iron-coloured material at **Y=8.75 local pixels**, below the **Y=10 copper roof surface**. Copper walls on both sides of each channel remain visible. The six channels align continuously over the three front-to-back tiles and are correctly rotated for NORTH/SOUTH/EAST/WEST. The middle copper slabs remain flush and the original hollow chimney remains unchanged.
+
+The previous roof collision slab is reduced from 12 to 10 model pixels to match the real copper surface. Exactly eight roof collision cells remain. All Y=0–2 model assets, port skins, formation patterns, process recipes, fuel logic, JEI and Patchouli data are **identical to the previous commit**. Re-form an existing machine to refresh stored voxel collision; use top and front three-quarter screenshots to accept this one roof detail before moving down a layer.
+
+**Status:** model geometry statically verified; Minecraft render appearance and `./gradlew build` not yet verified.

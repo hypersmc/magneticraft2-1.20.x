@@ -212,13 +212,42 @@ for (const dir of dirs) {
   assert.equal(copperTiles,8,'eight solid copper slabs around opening');
   assert.equal(centerHole,1,'exactly one central chimney');
 }
-for(const x of [-1,1])for(const z of [-2,-1,0]){
-  const part=southModel('part_'+x+'_3_'+z);
-  assert(part.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#metal') &&
-    e.to[1]===12), 'Continuous left/right lengthwise roof band missing');
+// V3.3 — both longitudinal lines are CUT INTO copper at height 8.75.
+// Surface is at height 10, so the dark floor must never be a raised strap.
+// Each orientation contains six grooved roof tiles (two 3-block lengths).
+for (const dir of dirs) {
+  const layout=json(resource+'data/magneticraft2/multiblocks/charcoal_retort_'+dir+'.json').structure.layout;
+  let cx=0,cz=0;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+    if(layout.layer1[z][x]==='C'){cx=x;cz=z;}
+  }
+  let grooves=0;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+    if(layout.layer4[z][x]!=='P')continue;
+    const path=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+(x-cx)+'_3_'+(z-cz)+'.json';
+    const roof=json(path);
+    const darkFloors=roof.elements.filter(e =>
+      e.faces.up?.texture==='#metal' && Math.abs(e.to[1]-8.75)<0.00001);
+    const expected=(dir==='south'||dir==='north') ? x!==1 : z!==1;
+    assert.equal(darkFloors.length>0,expected,'Recessed side groove position '+path);
+    assert(roof.elements.some(e=>e.faces.up?.texture==='#roof' &&
+      Math.abs(e.to[1]-10)<0.00001),'Copper top must remain at 10px '+path);
+    assert(Math.max(...roof.elements.map(e=>e.to[1]))===10,
+      'Grooves must be inside the roof, not raised '+path);
+    assert(!roof.elements.some(e=>e.faces.up?.texture==='#metal' &&
+      e.to[1]>=10),'Raised metal strap detected '+path);
+    if(darkFloors.length)grooves++;
+  }
+  assert.equal(grooves,6,'Two unbroken 3-block channels per facing');
 }
 const profileRoof=json(resource+'data/magneticraft2/multiblock_voxels/charcoal_retort.json');
-assert.equal(profileRoof.collision.length,34,'Roof-only changes must preserve voxel component count');
+assert.equal(profileRoof.collision.length,34,'Keep voxel component count');
+const roofCollision=profileRoof.collision.filter(box=>
+  box[1]===48 && box[3]-box[0]===16 && box[5]-box[2]===16);
+assert.equal(roofCollision.length,8,'Expected eight roof slabs');
+assert(roofCollision.every(box=>box[4]===58),
+  'Voxel roof height must match the 10px copper slab, not old raised bands');
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

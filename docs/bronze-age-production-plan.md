@@ -319,3 +319,7 @@ Following new front/side/rear/roof gameplay screenshots, the Retort model genera
 ### 2026-10-24 — Retort V3.2 top-layer-only art pass
 
 As requested, the next visual prototype replaces **only the Y=3 roof** with continuous copper slabs, two dark front-to-back bands and a real open-centred chimney. The 3x4x3 construction/ports/processing are unchanged; roof Voxel collision tracks its new height, so re-form the machine. **Visual acceptance pending**; no lower-layer redesign in this commit. Wood Tar remains an item pending a separate fluid-processing decision.
+
+### 2026-10-24 — Retort V3.3 inset roof channels
+
+The two lengthwise dark roof lines now sit in **recessed grooves (Y=8.75)** cut into the **copper slab surface (Y=10)** instead of raised straps. Only top-layer models and roof Voxel collision were updated. Real modules, lower three layers, recipes and formation JSON are unchanged. Await screenshot-based roof sign-off before touching the next layer.

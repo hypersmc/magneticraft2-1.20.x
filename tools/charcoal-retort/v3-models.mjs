@@ -109,13 +109,25 @@ export function applyRetortV3(files) {
     else solid(c,"metal",[14,3,0],[16,5,16]);
    }
   } else if(k==="P"){
-   // ROOF-ONLY PASS: copper slab field over all eight actual roof blocks.
-   // The central ninth roof position stays genuine AIR for the chimney.
+   // ROOF-ONLY PASS: the two dark lines are GROOVES CUT INTO copper,
+   // not raised iron rails. The same local-X trench spans all 3 Z cells
+   // in each outer roof column, for every rotated machine orientation.
+   // The 3x3 JSON still contains eight roof blocks plus chimney AIR.
    solid(c,"bronze",[0,0,0],[16,3,16]);
-   solid(c,"roof",[0,3,0],[16,10,16]);
-   // Exactly two long side-to-side-of-chimney straps, front to back.
-   if(x===-1)solid(c,"metal",[12,10,0],[14,12,16]);
-   if(x===1)solid(c,"metal",[2,10,0],[4,12,16]);
+   solid(c,"roof",[0,3,0],[16,8,16]);  // supporting copper slab
+   if(x===-1){
+    // Left seam, cut 1.25px below the 10px copper walking surface.
+    solid(c,"roof",[0,8,0],[12,10,16]);
+    solid(c,"roof",[14,8,0],[16,10,16]);
+    solid(c,"metal",[12,8,0],[14,8.75,16]);
+   }else if(x===1){
+    // Mirrored right seam. Copper vertical walls remain visible.
+    solid(c,"roof",[0,8,0],[2,10,16]);
+    solid(c,"roof",[4,8,0],[16,10,16]);
+    solid(c,"metal",[2,8,0],[4,8.75,16]);
+   }else{
+    solid(c,"roof",[0,8,0],[16,10,16]);
+   }
   } else if(k==="A"&&y===3){
    // One open square chimney, not a solid model painted with a hole.
    // The interior is empty through the full 6x6 central aperture.
@@ -210,7 +222,7 @@ export function applyRetortV3(files) {
  const physical=[];
  for(const c of cells){
   if(["S","B","P","C"].includes(c.k)){
-   physical.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,c.y*16+(c.k==="P"?12:16),(c.z+1)*16]);
+   physical.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,c.y*16+(c.k==="P"?10:16),(c.z+1)*16]);
   }else if(c.k==="A"&&c.y===3){
    for(const [f,t]of [
     [[2,4,2],[5,16,14]],[[11,4,2],[14,16,14]],
