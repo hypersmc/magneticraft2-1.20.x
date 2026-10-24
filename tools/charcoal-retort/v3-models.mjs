@@ -324,13 +324,13 @@ export function applyRetortV3(files) {
         {y0:3.25,y1:5.85,spans:[[0.15,2.65],[3.1,8.6],[9.05,14.35],[14.8,15.85]]},
         {y0:6.3,y1:8.9,spans:[[0.15,5.75],[6.2,11.85],[12.3,15.85]]},
         {y0:9.35,y1:11.95,spans:[[0.15,3.8],[4.25,9.75],[10.2,15.85]]},
-        {y0:12.4,y1:15.75,spans:[[0.15,6.1],[6.55,12.05],[12.5,15.85]]}
+        {y0:12.4,y1:13.35,spans:[[0.15,6.1],[6.55,12.05],[12.5,15.85]]}
       ] : [
         {y0:0.25,y1:2.8,spans:[[0.15,3.1],[3.55,9.05],[9.5,15.85]]},
         {y0:3.25,y1:5.85,spans:[[0.15,5.1],[5.55,10.8],[11.25,15.85]]},
         {y0:6.3,y1:8.9,spans:[[0.15,3.65],[4.1,9.55],[10,15.85]]},
         {y0:9.35,y1:11.95,spans:[[0.15,5.9],[6.35,12.15],[12.6,15.85]]},
-        {y0:12.4,y1:15.75,spans:[[0.15,3.2],[3.65,8.9],[9.35,15.85]]}
+        {y0:12.4,y1:13.35,spans:[[0.15,3.2],[3.65,8.9],[9.35,15.85]]}
       ];
       for(const [courseIndex,row] of sideCourses.entries()){
         for(const [brickIndex,span] of row.spans.entries()){
@@ -376,7 +376,9 @@ export function applyRetortV3(files) {
       // Preserve exactly the prior side contacts at the top and bottom
       // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;
-      solid(c,"metal",[xx,13,0],[xx+3,16,16]);
+      // V3.27: lift the obsolete left upper iron stripe off the vent.
+      // Keep the original visible rear metal end cap and its material.
+      if(rear)solid(c,"metal",[xx,13,0],[xx+3,16,0.5]);
       solid(c,"metal",[xx,0,0],[xx+3,3,16]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
     }
@@ -392,22 +394,38 @@ export function applyRetortV3(files) {
                        [x===-1?0.4:16,13.65,endZ]);
     }
 
-    // V3.26: physically-framed COPPER side vents, matching the user's
-    // Blockbench prototype in SOUTH part_1_2_0.json (commit 3378110).
-    // Five copper uprights form four dark recessed square apertures.
-    // Only the two FRONT upper Y2 corner cells receive this panel.
-    if(front&&outer){
-      const xNear=x===-1?0:14.85,xFar=x===-1?1.15:16;
-      // Keep the real chamber sealed; this is visual ventilation only.
-      // The shadow face is recessed well behind the copper face.
-      if(x===-1)solid(c,"soot",[1.45,13.35,0],[1.6,15.075,13]);
-      else solid(c,"soot",[14.2,13.35,0],[14.3,15.075,13]);
-      const mullions=[[0,1.1],[2.9,4],[5.9,7],[8.9,10],[11.9,13]];
-      for(const [za,zb] of mullions)
-        solid(c,"bronze",[xNear,13.35,za],[xFar,15.075,zb]);
-      // A continuous upper copper beam tucks directly under the
-      // accepted roof, above the existing V3.25 lower copper cap.
-      solid(c,"bronze",[xNear,15.075,0],[xFar,16,13]);
+    // V3.27: ONE copper-framed vent with FOUR openings over the whole
+    // THREE-block side, mirrored on both walls. SOUTH-local U=0..48
+    // increases from the rear end towards the front mounting bracket.
+    if(outer){
+      const offset=(z+2)*16;
+      const clip=(a,b)=>{
+        const lo=Math.max(0,a-offset),hi=Math.min(16,b-offset);
+        return hi-lo>1e-6?[lo,hi]:null;
+      };
+      // Leave the existing rear copper fitting (U0..2) and the front
+      // square iron mounting (U45..48) undisturbed.
+      const start=2.2,end=45;
+      const posts=[[2.2,4.2],[12.4,14.4],[22.6,24.6],
+                   [32.8,34.8],[43,45]];
+      const sideMin=x===-1?0:14.85,sideMax=x===-1?1.15:16;
+      const panel=clip(start,end);
+      if(panel){
+        // A recessed *visual* soot panel: no through-hole, no changes
+        // to the multiblock's structural cells or functionality.
+        if(x===-1)solid(c,"soot",[1.45,13.35,panel[0]],
+                                   [1.6,15.075,panel[1]]);
+        else solid(c,"soot",[14.2,13.35,panel[0]],
+                             [14.3,15.075,panel[1]]);
+        // Continuous upper copper frame, clipped at block boundaries.
+        solid(c,"bronze",[sideMin,15.075,panel[0]],
+                         [sideMax,16,panel[1]]);
+      }
+      for(const [a,b] of posts){
+        const section=clip(a,b);
+        if(section)solid(c,"bronze",[sideMin,13.35,section[0]],
+                                     [sideMax,15.075,section[1]]);
+      }
     }
     // NO continuous metal course below the roof. That extra horizontal
     // strip was not in the approved front reference (V3.10). The roof

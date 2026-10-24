@@ -929,8 +929,8 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
       if(mat==='#sideBrick'&&depth(e)>15.4){
         realBricks++;
         brickDepths.add(+depth(e).toFixed(2));
-        for(const y of [0.25,3.25,6.3,9.35,13.7])
-          if(e.from[1]-0.00001<=y&&e.to[1]>=y+0.1)yLevels.add(y);
+        for(const y of [0.25,3.25,6.3,9.35,12.4])
+          if(e.from[1]-0.00001<=y&&e.to[1]>=y+(y===12.4?0.02:0.1))yLevels.add(y);
       }
       if(mat==='#mortar'&&Math.abs(depth(e)-14.2)<0.00001)
         recessedMortar++;
@@ -955,7 +955,7 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
     'V3.23 exposed recessed mortar joints are missing '+orientation);
   assert.deepEqual([...brickDepths].sort((a,b)=>a-b),[15.45,15.7],
     'V3.23 individual brick depth relief must alternate '+orientation);
-  assert.deepEqual([...yLevels].sort((a,b)=>a-b),[0.25,3.25,6.3,9.35,13.7],
+  assert.deepEqual([...yLevels].sort((a,b)=>a-b),[0.25,3.25,6.3,9.35,12.4],
     'V3.23 all five side masonry courses required '+orientation);
   assert(rearCorners>0,
     'V3.23 rear copper corner anchor removed '+orientation);
@@ -1014,44 +1014,48 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
      'V3.25 missing side copper cap/lip '+dir+'/'+x+'/'+z);
  }
 
- // V3.26 — source-of-truth copper vent geometry reproduced from the
- // user's Blockbench edit, and mirrored to BOTH front upper corners.
- const ventRotate=(x,z,dir)=>dir==='south'?[x,z]:dir==='west'?[-z,x]:
-   dir==='north'?[-x,-z]:[z,-x];
- const ventFace=(x,dir)=>({
-   south:x===-1?'west':'east',west:x===-1?'north':'south',
-   north:x===-1?'east':'west',east:x===-1?'south':'north'
- })[dir];
- for(const dir of dirs)for(const x of [-1,1]){
-   const [rx,rz]=ventRotate(x,0,dir);
-   const model=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
-     dir+'/part_'+rx+'_2_'+rz+'.json');
-   const face=ventFace(x,dir),normal=['east','west'].includes(face)?0:2;
-   const along=normal===0?2:0,positive=(face==='east'||face==='south');
-   const visualAt=(localZ,y)=>{
-     const h=(dir==='south'||dir==='east')?localZ:16-localZ;
-     const elems=model.elements.filter(e=>e.faces[face]&&
-       e.from[along]<h&&e.to[along]>h&&e.from[1]<y&&e.to[1]>y);
-     elems.sort((a,b)=>positive?b.to[normal]-a.to[normal]:a.from[normal]-b.from[normal]);
-     const e=elems[0];return e&&{
-       texture:e.faces[face].texture,
-       depth:positive?e.to[normal]:16-e.from[normal]
-     };
-   };
-   for(const z of [0.5,3.5,6.5,9.5,12.5]){
-     const post=visualAt(z,14.25);
-     assert(post&&post.texture==='#bronze'&&Math.abs(post.depth-16)<0.00001,
-       'V3.26 copper mullion missing '+dir+'/'+x+'/'+z);
-   }
-   for(const z of [2,5,8,11]){
-     const aperture=visualAt(z,14.25);
-     assert(aperture&&aperture.texture==='#soot'&&aperture.depth<15,
-       'V3.26 one of four side vents is covered or not recessed '+dir+'/'+x+'/'+z);
-   }
-   const upper=visualAt(8,15.5);
-   assert(upper&&upper.texture==='#bronze'&&Math.abs(upper.depth-16)<0.00001,
-     'V3.26 copper roof-side vent header missing '+dir+'/'+x);
- }
+ // V3.27: FOUR openings distributed across all THREE real upper Y2
+// side cells. Check all four rotations and both left/right walls.
+const ventRotate=(x,z,dir)=>dir==='south'?[x,z]:dir==='west'?[-z,x]:
+  dir==='north'?[-x,-z]:[z,-x];
+const ventFace=(x,dir)=>({
+  south:x===-1?'west':'east',west:x===-1?'north':'south',
+  north:x===-1?'east':'west',east:x===-1?'south':'north'
+})[dir];
+for(const dir of dirs)for(const x of [-1,1]){
+  const at=(u,y)=>{
+    const z=-2+Math.min(2,Math.floor(u/16)),local=u-(z+2)*16;
+    const [rx,rz]=ventRotate(x,z,dir);
+    const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+      dir+'/part_'+rx+'_2_'+rz+'.json');
+    const f=ventFace(x,dir),axis=['west','east'].includes(f)?0:2,
+      h=axis===0?2:0,positive=(f==='east'||f==='south');
+    const localU=(dir==='south'||dir==='east')?local:16-local;
+    const arr=m.elements.filter(e=>e.faces[f]&&e.from[h]<localU&&
+      e.to[h]>localU&&e.from[1]<y&&e.to[1]>y);
+    arr.sort((a,b)=>positive?b.to[axis]-a.to[axis]:a.from[axis]-b.from[axis]);
+    const e=arr[0];return e&&{
+      tex:e.faces[f].texture,depth:positive?e.to[axis]:16-e.from[axis]};
+  };
+  for(const u of [3.2,13.4,23.6,33.8,44]){
+    const p=at(u,14.25);
+    assert(p&&p.tex==='#bronze'&&p.depth===16,
+      'V3.27 missing copper mullion '+dir+'/'+x+'/'+u);
+  }
+  for(const u of [8.3,18.5,28.7,38.9]){
+    const p=at(u,14.25),header=at(u,15.5);
+    assert(p&&p.tex==='#soot'&&p.depth<15,
+      'V3.27 missing one of four vent openings '+dir+'/'+x+'/'+u);
+    assert(header&&header.tex==='#bronze'&&header.depth===16,
+      'V3.27 incomplete top copper frame '+dir+'/'+x+'/'+u);
+  }
+  for(const seam of [16,32]){
+    const before=at(seam-0.01,14.25),after=at(seam+0.01,14.25);
+    assert(before&&after&&before.tex==='#soot'&&after.tex==='#soot'&&
+      Math.abs(before.depth-after.depth)<0.00001,
+      'V3.27 slot blocked at block seam '+dir+'/'+x+'/'+seam);
+  }
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
