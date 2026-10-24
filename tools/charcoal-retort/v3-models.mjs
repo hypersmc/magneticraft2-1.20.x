@@ -55,26 +55,25 @@ export function applyRetortV3(files) {
     // inside the eight Y=2 brick positions, never in neighboring cells.
     const front=z===0,outer=x!==0,rear=z===-2;
     if(front&&x===0){
-      // Recessed five-slot copper vent, not grey grilles in wood-colored
-      // trim. The surrounding wall is real masonry with a deep aperture.
+      // Front-only reference pass: five recessed dark vertical slots
+      // bounded by a copper lintel and shallow iron side clamps.
+      // No extra full-width band across the chamber under the roof.
       solid(c,"brick",[0,0,0],[16,16,8]);
       solid(c,"brick",[0,0,8],[3,16,16]);
       solid(c,"brick",[13,0,8],[16,16,16]);
       solid(c,"brick",[3,0,8],[13,8,16]);
       solid(c,"brick",[3,15,8],[13,16,16]);
       solid(c,"soot",[3,8,8],[13,15,10]);
-      // Bronze (Copper Age) face of the actual furnace grille.
-      // Leave the soot backing visible through all five slots.
-      // A top panel across the vent, and a strong lower copper sill.
-      solid(c,"bronze",[3,13.5,11],[13,15,15]);
-      solid(c,"bronze",[3,8,11],[13,9,16]);
-      solid(c,"metal",[2,8,12],[3,15,16]);
-      solid(c,"metal",[13,8,12],[14,15,16]);
-      // Four copper uprights produce five separate black vent slots.
-      // Slots stay visibly deep between bars (not a flat decal).
+      // The lintel/sill are inside this one front cell; the four slim
+      // copper dividers do not cover up the deeper soot backing.
+      solid(c,"bronze",[3,14,12],[13,15,16]);
+      solid(c,"bronze",[3,8,12],[13,9,16]);
+      solid(c,"metal",[2,9,13],[3,15,16]);
+      solid(c,"metal",[13,9,13],[14,15,16]);
       for(const xx of [4.5,6.5,8.5,10.5])
-        solid(c,"bronze",[xx,9,12],[xx+1,13.5,14.5]);
-      solid(c,"bronze",[3,14.5,12],[13,16,16]);
+        solid(c,"bronze",[xx,9,12],[xx+0.75,14,14]);
+      // Short copper brow over the vent itself, no continuous iron strip.
+      solid(c,"bronze",[3,15,12],[13,16,16]);
     }else if(front){
       // V3.9: the face used to stop at Z=13, leaving a 3px deep
       // hollow-looking gap behind the copper pilasters. Keep the old
@@ -116,10 +115,9 @@ export function applyRetortV3(files) {
       solid(c,"metal",[xx,0,0],[xx+3,3,16]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
     }
-    // A single continuous under-roof iron course. It follows the
-    // front line across all three physical Y=2 brick cells.
-    // Kept strictly below Y=16 so the accepted Y=3 roof meshes stay locked.
-    if(front)solid(c,"metal",[0,14,15.25],[16,15,16]);
+    // NO continuous metal course below the roof. That extra horizontal
+    // strip was not in the approved front reference (V3.10). The roof
+    // contacts and the two actual corner fasteners remain unchanged.
    }else{
    const front=z===0,side=x!==0,rear=z===-2;
    // The important front openings are hollow/recessed masonry, not painted
@@ -326,7 +324,9 @@ export function applyRetortV3(files) {
   if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
   if(c.y===2 && c.k==="B")m.textures={
     ...m.textures,
-    brick:"magneticraft2:block/charcoal_retort/refractory",
+    // Only three FRONT blocks get the mortar-lined masonry of the
+    // reference; sides/rear remain byte-for-byte unchanged.
+    brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron"
   };

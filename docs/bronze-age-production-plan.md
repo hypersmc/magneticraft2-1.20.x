@@ -347,3 +347,7 @@ Corrected the visually wrong Y2 materials and missing industrial details: native
 ### 2026-10-24 — Retort V3.9 front masonry and roof-lip line fix (review pending)
 
 Fixed an actual missing Y2 front-wall field: the shoulder brick base ended at Z=13, leaving the decorated front 3px hollow. Its visible middle now reaches the face without altering adjoining layer contacts. The two accepted roof grooves now also continue down the front copper fascia, at the user's marked positions, while their horizontal paths, chimney and all other roof cells remain intact. Generated change: 12 Y2 front models plus 8 roof-front models only. No structural, I/O, process, or collision changes. In-game approval pending.
+
+### 2026-10-24 — Retort V3.10 front-focused correction
+
+Removed the unwanted continuous under-roof iron strip, switched only the Y2 **front** brick blocks to mortar-lined Minecraft brick textures matching the reference, and refined the copper-framed five-slot grille. Only 12 front Y2 model files (three per orientation) and four equivalent/culling-only Y3 roof underside outputs changed. No changes to chimney, roof top and grooves, sides/rear, real ports, Y0/Y1, formation, recipes or collision. **Pending frontal in-game acceptance; do not proceed to side/lower layer yet.**

@@ -357,9 +357,16 @@ for(const dir of dirs){
       assert.equal(id,'B','Y2 construction stays entirely masonry: '+dir);
       masonryCount++;
       const chamber=json(modelPath);
-      assert.equal(chamber.textures.brick,
-        'magneticraft2:block/charcoal_retort/refractory',
-        'Y2 must use the established warm masonry, not vanilla red bricks: '+dir);
+      // Three front-facing masonry blocks use readable mortar courses
+      // from the original reference. Side/rear materials remain the
+      // existing Retort refractory for this front-only iteration.
+      const expectedBrick=z===2 && dir==='south' ? 'minecraft:block/bricks':
+        z===0 && dir==='north' ? 'minecraft:block/bricks':
+        x===0 && dir==='west' ? 'minecraft:block/bricks':
+        x===2 && dir==='east' ? 'minecraft:block/bricks':
+        'magneticraft2:block/charcoal_retort/refractory';
+      assert.equal(chamber.textures.brick,expectedBrick,
+        'V3.10 front brick material mismatch: '+dir+' x='+x+' z='+z);
       assert.equal(chamber.textures.bronze,'minecraft:block/cut_copper',
         'Y2 copper details must match the accepted roof, not appear wooden: '+dir);
       assert.equal(chamber.textures.join,
@@ -378,7 +385,7 @@ for(const dir of dirs){
 const upperFront = southModel('part_0_2_0');
 const ventDividers=upperFront.elements.filter(e=>
   e.faces.south?.texture==='#bronze' && e.from[0]>=4.5 &&
-  e.to[0]<=11.5 && e.from[1]>=9 && e.to[1]<=13.5);
+  e.to[0]<=11.5 && e.from[1]>=9 && e.to[1]<=14);
 assert.equal(ventDividers.length,4,
   'Copper upper grille must contain four bars leaving five dark slots');
 assert(upperFront.elements.some(e=>
@@ -419,6 +426,29 @@ for(const dir of dirs)for(const side of [-1,1]){
   assert(forwardWall.length>=1,
       'Y2 front shoulders should have a continuous visible masonry field: '+dir+' '+side);
 }
+// V3.10: NO full-width dark metal strip immediately below the roof.
+// That was a V3.9 addition not present in the user's reference.
+for(const dir of dirs){
+  const frontOffsets = {
+    south:[[-1,0],[0,0],[1,0]],
+    north:[[1,0],[0,0],[-1,0]],
+    west:[[0,-1],[0,0],[0,1]],
+    east:[[0,1],[0,0],[0,-1]]
+  }[dir];
+  for(const [x,z] of frontOffsets){
+    const model=json(resource+
+      'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+x+'_2_'+z+'.json');
+    const unwanted=model.elements.some(e=>
+      e.faces[dir]?.texture==='#metal'&&
+      e.from[1]===14&&e.to[1]===15&&
+      (e.to[0]-e.from[0]===16||e.to[2]-e.from[2]===16));
+    assert(!unwanted,'Unwanted full-width metal roof-underlining: '+dir+'/'+x+'/'+z);
+  }
+}
+// The roof geometry is unchanged. Four west/east roof models have
+// equivalent-but-merged underside faces due to changed neighboring Y2
+// culling; their visible top, groove and fascia faces are identical.
 // Physical Y=1 modules and Y=3 chimney/roof grooves are independently
 // preserved by the byte-for-byte diff scope check used when committing.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
