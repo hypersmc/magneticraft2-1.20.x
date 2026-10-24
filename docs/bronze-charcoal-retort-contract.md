@@ -283,3 +283,21 @@ The two vertical copper supports are at X1.7..2.8 and X13.2..14.3, Y2.3..11.2, w
 Generated visual-model files: **20 total** across four facing orientations (four edited center Y2 models and 16 neighboring seam/culling outputs). Exterior front faces of the adjacent left/right upper blocks, lower Y1 service block, and upper Y3 copper roof block stay identical in each facing. Side/rear chamber, chimney, controller, recipes, formation JSON, item ports, animations, heat and power, and the retort voxel collision profile remain unchanged.
 
 Static validation: four orientations, zero coplanar overlapping faces, no stretched UVs, four copper bars + **five individually sampled visible soot slots** per orientation, two dark metal bosses, paired lower vertical supports and the copper arch. **No Forge `./gradlew build` or in-game confirmation has been performed.** V3.18 is a visual candidate, not an accepted design. Work on the center block only until the user accepts it.
+
+### 2026-10-24 — V3.19: join the upper copper supports and curve the lower apron
+
+The user reviewed the in-game V3.18 front-center Y2 block and marked two concrete defects:
+1. The two **vertical copper supports stop below their dark iron vent mounting brackets**, leaving visible gaps between parts intended to form one connected structural assembly.
+2. The **bottom copper detail is a flat stepped tray**, not the curved/arched trim over the lower hatch shown in the reference.
+
+**Exact SOUTH-local geometry change (all in the existing one 16×16×16 block):**
+- Raise the top of the LEFT copper rib `[1.7,2.3,14.5] .. [2.8,11.2,16]` to `[1.7,2.3,14.5] .. [2.8,11.5,16]`.
+- Raise the RIGHT copper rib `[13.2,2.3,14.5] .. [14.3,11.2,16]` to `[13.2,2.3,14.5] .. [14.3,11.5,16]`.
+- The iron bracket's bottom rails already begin at **Y=11.5**, so the copper directly meets the metal with overlapping horizontal footprints. No overlay, disconnected cap, or added material is necessary.
+- Remove the four legacy copper apron boxes and use **seven symmetric stepped arc segments** with X start/end and Y bottom/top:
+  `[2.8,4.0;0.90,2.65]`, `[4.0,5.2;1.25,3.0]`, `[5.2,6.4;1.70,3.40]`, `[6.4,9.6;2.10,3.85]`, then mirror to `[9.6,10.8;1.70,3.40]`, `[10.8,12.0;1.25,3.0]`, `[12.0,13.2;0.90,2.65]`. All segments extend from local Z=14.75 to Z=16. Their contiguous x edges and overlapping Y spans create a connected, blocky copper arch with BOTH contours rising toward the center. It remains above the existing Y1 hatch, which is not rebuilt.
+- Retain five copper-framed recessed soot vent slots, four copper mullions, both dark iron mounting insets, brickwork, and the iron feet. Nothing in the front-left or front-right part is authored or restyled.
+
+**Generator scope:** four facing-specific models of the *one* center Y2 block, plus two lower Y1 center models regenerated for internal-face partitioning only. All outward faces of those two Y1 models are unchanged. Y3 roof/chimney, remaining Y2 and lower models, port skins, formation JSON, recipes, Voxel collision and processing remain byte-identical.
+
+**Status:** V3.19 static geometry candidate, pending in-game acceptance. Checks cover direct iron-copper connection, seven contiguous symmetric curved pieces, unchanged five recessed slots, no coplanar overlapping faces and proportional UV mappings in all four orientations. A full Forge `./gradlew build` and in-game appearance test are not claimed.

@@ -139,7 +139,7 @@ export function applyRetortV3(files) {
       // those formed the unintended U-shape in V3.14. The masonry
       // continues through X=16 to meet the unchanged center block.
     }else if(front&&x===0){
-      // V3.18: FRONT-CENTER Y2 block, rebuilt as one coherent furnace
+      // V3.19: FRONT-CENTER Y2 block, rebuilt as one coherent furnace
       // facade. The user's right reference has a copper grille with
       // five dark slots, dark iron clamps, two copper side supports and
       // a low stepped arch. All geometry stays in this 16px block.
@@ -181,18 +181,32 @@ export function applyRetortV3(files) {
       // Brick front directly beneath the vent: solid masonry, slightly
       // behind the framing so the side supports cast shadows.
       // Core face Z=15 is only 1px back from copper, NOT a hollow alcove.
-      // Copper vertical ribs along both sides tie the vent to arch.
-      solid(c,"bronze",[1.7,2.3,14.5],[2.8,11.2,16]);
-      solid(c,"bronze",[13.2,2.3,14.5],[14.3,11.2,16]);
+      // The vertical copper ribs CONNECT DIRECTLY to the underside
+      // of the two iron grille mountings at Y=11.5, without the V3.18
+      // 0.3px air gap. They meet the bracket bottom rails at a real
+      // geometric seam; the copper does not protrude in front of iron.
+      solid(c,"bronze",[1.7,2.3,14.5],[2.8,11.5,16]);
+      solid(c,"bronze",[13.2,2.3,14.5],[14.3,11.5,16]);
       solid(c,"metal",[1.5,0,14.5],[3,2.4,16]);
       solid(c,"metal",[13,0,14.5],[14.5,2.4,16]);
 
-      // Low stepped copper arch above the lower Y1 furnace hatch.
-      // The steps deliberately terminate INSIDE the one center cell.
-      solid(c,"bronze",[3.5,0.7,14.75],[12.5,2.1,16]);
-      solid(c,"bronze",[2.8,1.5,14.75],[4.7,3.2,16]);
-      solid(c,"bronze",[11.3,1.5,14.75],[13.2,3.2,16]);
-      solid(c,"bronze",[4.0,2.0,14.75],[12.0,2.8,16]);
+      // Seven symmetric voussoir-like segments form a shallow RISING
+      // COPPER ARCH over the Y1 hatch. Both the upper and lower
+      // contours rise toward the middle, forming a genuine curved
+      // opening rather than a straight rectangular sill or a U-tray.
+      // A Minecraft-scale stair-step approximation avoids UV stretch.
+      // The end pieces physically meet the adjacent iron feet.
+      const archSegments=[
+        [2.8,4.0,0.9,2.65],
+        [4.0,5.2,1.25,3.0],
+        [5.2,6.4,1.7,3.4],
+        [6.4,9.6,2.1,3.85],
+        [9.6,10.8,1.7,3.4],
+        [10.8,12.0,1.25,3.0],
+        [12.0,13.2,0.9,2.65]
+      ];
+      for(const [x0,x1,bottom,top] of archSegments)
+        solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
     }else if(front){
       // V3.9: the face used to stop at Z=13, leaving a 3px deep
       // hollow-looking gap behind the copper pilasters. Keep the old

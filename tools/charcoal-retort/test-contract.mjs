@@ -642,6 +642,62 @@ for(const dir of dirs){
     v>=0&&e.to[i]<=16&&e.to[i]>v)),
     'One-block center facade overflow '+dir);
 }
+// V3.19 — the mounting plates must be physically connected to the
+// vertical copper ribs (not 0.3 model pixels above them). The lower
+// apron must be a shallow centered ARCH, with BOTH outlines rising
+// toward the middle instead of four rectangular/corner shelves.
+const archProfile=[
+ [2.8,4,0.9,2.65],[4,5.2,1.25,3],
+ [5.2,6.4,1.7,3.4],[6.4,9.6,2.1,3.85],
+ [9.6,10.8,1.7,3.4],[10.8,12,1.25,3],
+ [12,13.2,0.9,2.65]
+];
+for(const dir of dirs){
+ const obj=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+   +dir+'/part_0_2_0.json');
+ const front=obj.elements.filter(e=>e.faces[dir]);
+ const horizontal=(dir==='south'||dir==='north')?0:2;
+ const normal=(dir==='south'||dir==='north')?2:0;
+ const positive=dir==='south'||dir==='east';
+ const depth=e=>positive?e.to[normal]:16-e.from[normal];
+ const copper=front.filter(e=>e.faces[dir].texture==='#bronze' &&
+   depth(e)===16);
+ const brackets=front.filter(e=>e.faces[dir].texture==='#metal' &&
+   e.from[1]===11.5&&e.to[1]===12.2&&depth(e)===16);
+ const supports=copper.filter(e=>e.to[1]===11.5&&e.from[1]<=2.4);
+ assert.equal(brackets.length,2,
+   'V3.19 two upper iron fixing bottom rails required '+dir);
+ assert.equal(supports.length,2,
+   'V3.19 both copper ribs must physically reach the brackets '+dir);
+ for(const support of supports){
+   const overlap=brackets.some(bracket=>
+     Math.min(bracket.to[horizontal],support.to[horizontal])-
+     Math.max(bracket.from[horizontal],support.from[horizontal])>0.1);
+   assert(overlap,'V3.19 copper rib hangs below mounting plate '+dir);
+ }
+ const arch=copper.filter(e=>e.from[1]>=0.9-0.00001 &&
+   e.to[1]<=3.85+0.00001 &&
+   e.from[horizontal]>=2.8-0.00001 &&
+   e.to[horizontal]<=13.2+0.00001 &&
+   e.to[1]-e.from[1]>=1.4)
+   .map(e=>[e.from[horizontal],e.to[horizontal],
+     e.from[1],e.to[1]])
+   .sort((a,b)=>a[0]-b[0]);
+ assert.equal(arch.length,7,
+   'V3.19 arch must have seven separate physical copper segments '+dir);
+ for(let i=0;i<arch.length;i++){
+   for(let j=0;j<4;j++)assert(
+     Math.abs(arch[i][j]-archProfile[i][j])<0.00001,
+     'V3.19 incorrect curved arch profile '+dir+' index='+i+' axis='+j);
+   if(i>0)assert(Math.abs(arch[i][0]-arch[i-1][1])<0.00001,
+     'V3.19 arch segments are detached '+dir+' index='+i);
+ }
+ // Two mirrored halves, both intrados and extrados rise to the crown.
+ assert(arch[3][2]>arch[0][2] && arch[3][3]>arch[0][3],
+   'V3.19 apron still flat rather than crowned '+dir);
+ // The reference grille keeps the five V3.18 real recessed slots,
+ // validated above, with no change to their copper mullions.
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

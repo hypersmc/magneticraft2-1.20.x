@@ -383,3 +383,7 @@ User highlighted two front-left Y2 differences: top iron corner must be a recess
 ### 2026-10-24 — Retort V3.18 upper front-center block only (await screenshot)
 
 Following the single-block approach, rebuilt the center Y2 block from the reference: five-slot copper grille backed by recessed soot, inset iron mounting plates on both ends, solid brick lower field, two copper load-bearing uprights, short stepped copper arch and dark feet. Single-authored part in four orientations; 16 adjacent Y1/Y2/Y3 meshes regenerated only for shared hidden-face culling, with their outward front geometry unchanged. Left/right front facades, accepted copper roof/chimney and all structure, ports, recipes and collision untouched. Gradle/in-game confirmation pending; do not advance to right block yet.
+
+### 2026-10-24 — Retort V3.19 connected front-center supports + arched copper apron
+
+The front-center Y2 block's two copper uprights now meet their iron vent mountings at Y=11.5 (previous 0.3px gaps removed). Replaced the old flat four-box lower bridge with a seven-piece symmetric shallow arched copper trim, using physically connected segments and a higher center. The five recessed grille slots, accepted front-left facade, roof/chimney, real lower hatch/ports, collision and processing are unchanged. Four Y2 directional models and two hidden-contact Y1 models regenerate. In-game approval and Gradle build pending.
