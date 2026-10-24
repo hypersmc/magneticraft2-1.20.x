@@ -216,3 +216,23 @@ V3.13 replaces that cell's previous partial brick backing + side reveals + small
 Exactly one authored local cell (`x=-1,y=2,z=0`) changes, exported as four cardinal facing models. The neighboring center grille and adjacent roof model files may regenerate **hidden contact faces** as a mesh-partitioner consequence; their visible front/roof outlines and materials are unchanged. No opposite front block, other roof or chimney surfaces, Y0/Y1 models, real ports, collision profile, formation, heat/power or recipe code changes.
 
 **Static QA:** all four model orientations have at least 120 square model pixels of visible solid brick face at Z-depth 15, with copper/iron trim at depth 16; no remaining depth-13 front bricks, overlapping faces or UV scaling errors. **Not yet an accepted in-game result**; inspect exactly this left block before mirroring, touching the center grille, or moving to other layers. Full Forge compilation not run.
+
+### 2026-10-24 — V3.14, one-block physical brickwork rebuild (visual candidate)
+
+After V3.13's flat, nearly full-cube wall failed the user's visual comparison, this pass rebuilds **only the upper front-left brick cell** (`SOUTH: x=-1, y=2, z=0`) from explicit cuboids rather than patching the wallpaper-like face.
+
+**SOUTH-facing design geometry**, coordinates are 0–16 within the block:
+- Structural `brick` core: `[0,0,0] -> [16,16,14]`.
+- Thin gray `mortar` backing: `[3,2.5,14] -> [13,15,14.35]`. Texture `minecraft:block/stone` is scoped exclusively to this one cell.
+- Course A, Y 3.00–6.55, face base Z14.35, individual bricks X 3.25–7.9 and 8.35–12.75.
+- Course B, Y 7.05–10.60, individual bricks X 3.25–5.45, 5.9–10.15, 10.6–12.75.
+- Course C, Y 11.10–14.55, individual bricks X 3.25–8.2 and 8.65–12.75.
+- Brick front depth: normally Z15; slightly offset brick faces Z14.85 in selected segments to create subtle relief without a cavernous alcove. Visible mortar joints are 0.45–0.55px wide.
+- Outer copper structural post: `[0.5,3,14] -> [3,13,16]`, shoulder `[0,3,14] -> [4,5,16]`, small step `[0.5,5,14.5] -> [3.5,6,16]`.
+- Dark iron outer foot `[0,0,14] -> [4,3,16]`, upper bracket `[0,12,14] -> [4,16,16]`, riveted plate `[0.5,12.5,15] -> [3.5,15.5,16]`, inset dark boss `[1,13,15.5] -> [3,15,16]`.
+- Narrow copper inner separator `[13,3,14] -> [15,13,16]`, iron foot `[13,0,14] -> [15.5,3,16]` and top cap `[13,13,14] -> [15.5,15,16]`.
+- Minimal bottom copper sill `[4,1,15] -> [13,2,16]`. No full-width iron roof band.
+
+The build generator authors this one SOUTH-local cell and rotates it for the other three facings. As a side effect, the four adjacent center-grille meshes and four touching roof meshes are regenerated for hidden internal face partitioning; their exterior visible faces, material maps, geometry, item port functions and construction coordinates remain unchanged. Other machine layers, roof/chimney shapes, formation blueprint, recipes, fuel/production and voxel collision remain unchanged.
+
+Validation criteria: three **staggered** rows of visible physical brick geometry, real thin mortar seams, outer/inner copper supports, darker bracket/foot, 16px bounds, per-face 1:1 UV dimensions, and no overlapping model faces across all four facings. **The visual match remains unapproved** pending a front three-quarter Minecraft screenshot; `./gradlew build` has not been run. Do not copy this model to the right front block or redesign other layers until approved.

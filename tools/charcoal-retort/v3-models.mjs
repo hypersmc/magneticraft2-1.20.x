@@ -59,31 +59,62 @@ export function applyRetortV3(files) {
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
     if(leftFacade){
-      // V3.13 — ONE-BLOCK repair. The reference is a SOLID masonry face
-      // with shallow raised copper framing, NOT an inset compartment.
-      // The wall is one continuous structural volume with a front face
-      // at Z=15. The copper and iron trim finish at Z=16, leaving only
-      // 1px of relief rather than a hollow 3px-deep brick alcove.
-      solid(c,"brick",[0,0,0],[16,16,15]);
-      // Preserve the established corner's concealed upper and lower
-      // metal contacts. These are structure, not a new under-roof stripe.
+      // V3.14: one-block, reference-led facade rebuild.
+      // Structural backing stops at Z=14; the brick courses are genuine
+      // shallow 3D solids up to Z=15, not a flat retextured cuboid.
+      // Copper and iron pillars finish at Z=16. Every element remains
+      // inside this ONE real front-left chamber block (16x16x16).
+      solid(c,"brick",[0,0,0],[16,16,14]);
+
+      // Thin exposed mortar bed behind the physical brick courses.
+      // It is NOT a hollow pocket: the courses sit 0.65 pixels ahead
+      // of a complete structural backing, leaving only 1px relief
+      // relative to the raised supports.
+      solid(c,"mortar",[3,2.5,14],[13,15,14.35]);
+
+      // Three coursed rows. Joints stagger from course to course;
+      // tiny gaps leave the light mortar behind visibly exposed.
+      // Widths and placements are deliberately asymmetric like real
+      // laid masonry rather than a tiled full-cube brick texture.
+      const courses=[
+        {y0:3.0,y1:6.55,spans:[[3.25,7.9],[8.35,12.75]]},
+        {y0:7.05,y1:10.6,spans:[[3.25,5.45],[5.9,10.15],[10.6,12.75]]},
+        {y0:11.1,y1:14.55,spans:[[3.25,8.2],[8.65,12.75]]}
+      ];
+      for(const row of courses){
+        for(const [x0,x1] of row.spans){
+          // Alternate slight face relief per brick: the material
+          // remains a consistent brick texture, never stretched.
+          const relief=x0===3.25?15:14.85;
+          solid(c,"brick",[x0,row.y0,14.35],[x1,row.y1,relief]);
+        }
+      }
+
+      // Preserve concealed edge contacts to the adjacent course while
+      // integrating the copper post and dark iron mount into the wall.
       solid(c,"metal",[0,13,0],[3,16,16]);
       solid(c,"metal",[0,0,0],[3,3,16]);
-      // Left outer load-bearing copper pillar and its substantial
-      // dark iron fixing beneath the accepted roof line.
+
+      // Broad structural outer copper post; the bottom shoulder is
+      // stepped only on this side, following the concept reference.
       solid(c,"bronze",[0.5,3,14],[3,13,16]);
-      solid(c,"bronze",[0,3,14],[4,4.5,16]);
+      solid(c,"bronze",[0,3,14],[4,5,16]);
+      solid(c,"bronze",[0.5,5,14.5],[3.5,6,16]);
       solid(c,"metal",[0,0,14],[4,3,16]);
+
+      // Large top-left iron bracket: forged plate, inset rivet ring,
+      // and darker square boss; no long under-roof metal strip.
       solid(c,"metal",[0,12,14],[4,16,16]);
       solid(c,"join",[0.5,12.5,15],[3.5,15.5,16]);
       solid(c,"stone",[1,13,15.5],[3,15,16]);
-      // Copper divider adjacent to the separate, UNCHANGED vent block.
-      // It overlays the solid brick, without cutting an empty pocket.
+
+      // Slim right-hand separator frames the masonry, not a void.
       solid(c,"bronze",[13,3,14],[15,13,16]);
       solid(c,"metal",[13,0,14],[15.5,3,16]);
       solid(c,"metal",[13,13,14],[15.5,15,16]);
-      // Single thin bottom sill sitting on the solid masonry, not a
-      // multi-step ledge suspended across an open void.
+
+      // No floating tray, just one narrow copper sill integrated into
+      // the bottom of the masonry.
       solid(c,"bronze",[4,1,15],[13,2,16]);
     }else if(front&&x===0){
       // Front-only reference pass: five recessed dark vertical slots
@@ -359,7 +390,8 @@ export function applyRetortV3(files) {
     // reference; sides/rear remain byte-for-byte unchanged.
     brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
-    join:"magneticraft2:block/settling_tank/riveted_iron"
+    join:"magneticraft2:block/settling_tank/riveted_iron",
+    ...(c.x===-1 && c.z===0 ? {mortar:"minecraft:block/stone"} : {})
   };
   files.set(path,json(m));
   if(byPort){

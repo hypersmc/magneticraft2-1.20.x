@@ -363,3 +363,7 @@ Fixed only the small void next to the front-left Y2 block's inner copper divider
 ### 2026-10-24 — Retort V3.13 first left upper brick block (pending review)
 
 Changed only the front-left Y2 brick cell from a 3px-deep alcove to a continuous near-flush brick wall (face at Z15) with copper and iron supports protruding to Z16, retaining a modest 3D effect. Removed the old side reveals, right fill patch and stepped lower sill; neighboring center/roof files regenerate only for hidden face culling. No gameplay/collision alterations. Await in-game acceptance of this single block.
+
+### 2026-10-24 — Retort V3.14 physical masonry on one front-left Y2 cell (review pending)
+
+Rebuilt only the SOUTH-local x=-1,y=2,z=0 front-left brick block with three staggered raised brick courses over a narrow exposed mortar bed, integrated copper outer/inner framing, and an iron corner bracket/foot. The 1px relief preserves solidity without a deep alcove. All four rotations generate; the center vent and adjacent roof assets regenerate only internal hidden faces. No other facade block, chimney, roof top/grooves, Y0/Y1, ports, recipes or collision changed. Await in-game visual acceptance and Gradle build.

@@ -451,58 +451,66 @@ for(const dir of dirs){
 // culling; their visible top, groove and fascia faces are identical.
 // Physical Y=1 modules and Y=3 chimney/roof grooves are independently
 // preserved by the byte-for-byte diff scope check used when committing.
-// V3.13 — the accepted reference shows an almost-solid brick face,
-// NOT a 3px inset. One front-left Y=2 cell is the only authored part.
-// Four rotated versions should have structural masonry at DEPTH 15,
-// with raised metal/copper elements ending at DEPTH 16. No small fill
-// patch or deep alcove must survive this pass.
-const retortLeftParts={
-  south:'-1_2_0',west:'0_2_-1',north:'1_2_0',east:'0_2_1'
-};
-for(const [dir,offset] of Object.entries(retortLeftParts)){
+// V3.14: a single front-left Y2 block has PHYSICAL masonry courses
+// and gray mortar seams, while the corner plates and copper pillars
+// remain 1px ahead of its real brick faces. Do not accept the previous
+// deep recess or a single wallpaper-like full brick face.
+const v314LeftParts={south:'-1_2_0',west:'0_2_-1',north:'1_2_0',east:'0_2_1'};
+for(const [dir,part] of Object.entries(v314LeftParts)){
   const panel=json(resource+
     'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
-    '/part_'+offset+'.json');
+    '/part_'+part+'.json');
+  assert.equal(panel.textures.brick,'minecraft:block/bricks',
+    'Front-left bricks must match reference masonry: '+dir);
+  assert.equal(panel.textures.mortar,'minecraft:block/stone',
+    'Mortar should be real visible material: '+dir);
+  assert.equal(panel.textures.bronze,'minecraft:block/cut_copper',
+    'Copper trim must match accepted roof: '+dir);
   const front=panel.elements.filter(e=>e.faces[dir]);
   const depth=e=>dir==='south'?e.to[2]:
-     dir==='north'?16-e.from[2]:
-     dir==='west'?16-e.from[0]:e.to[0];
-  const horizontalWidth=e=>dir==='south'||dir==='north'?
-    e.to[0]-e.from[0]:e.to[2]-e.from[2];
-  const brick=front.filter(e=>e.faces[dir].texture==='#brick');
-  const metal=front.filter(e=>e.faces[dir].texture==='#metal');
-  const copper=front.filter(e=>e.faces[dir].texture==='#bronze');
-  const visibleBrickArea=brick.filter(e=>depth(e)===15)
-    .reduce((sum,e)=>sum+horizontalWidth(e)*(e.to[1]-e.from[1]),0);
-  assert(visibleBrickArea>=120,
-    'V3.13 brick should read as full masonry, not a hollow recess: '+dir);
-  assert(brick.every(e=>depth(e)===15),
-    'V3.13 unexpected inset brick return or three-pixel cavity: '+dir);
-  assert(copper.some(e=>depth(e)===16 && e.from[1]>=3 &&
-    e.to[1]<=13),'V3.13 raised copper support missing: '+dir);
-  assert(metal.some(e=>depth(e)===16 && e.from[1]>=12),
-    'V3.13 top iron bracket missing: '+dir);
-  assert(metal.some(e=>depth(e)===16 && e.to[1]<=3),
-    'V3.13 lower iron foot missing: '+dir);
-  assert(front.some(e=>e.faces[dir].texture==='#join'&&depth(e)===16),
-    'V3.13 riveted bracket frame missing: '+dir);
-  assert(front.some(e=>e.faces[dir].texture==='#stone'&&depth(e)===16),
-    'V3.13 dark bracket center missing: '+dir);
-  // Every cuboid and UV must stay within the standard 16px block model.
+    dir==='west'?16-e.from[0]:
+    dir==='north'?16-e.from[2]:e.to[0];
+  const material=(e)=>e.faces[dir].texture;
+  const brick=front.filter(e=>material(e)==='#brick'&&
+    depth(e)>=14.8&&depth(e)<=15.001);
+  const mortar=front.filter(e=>material(e)==='#mortar'&&
+    Math.abs(depth(e)-14.35)<0.00001);
+  // The baked mesh partitioner can split individual course faces where
+  // corner trim occludes them; demand at least one part of each row.
+  for(const y of [3,7.05,11.1]){
+    assert(brick.some(e=>Math.abs(e.from[1]-y)<0.00001),
+      'Missing raised physical brick course at Y='+y+' for '+dir);
+  }
+  assert(brick.length>=7,'V3.14 insufficient individual masonry faces '+dir);
+  assert(mortar.length>=5,'Mortar gaps hidden or missing '+dir);
+  assert(brick.every(e=>depth(e)<=15.001),
+    'Brick must stay behind copper supports '+dir);
+  const has=(tex,test)=>front.some(e=>material(e)===tex&&test(e));
+  assert(has('#bronze',e=>depth(e)===16&&e.to[1]>10),
+    'Raised copper column missing '+dir);
+  assert(has('#metal',e=>depth(e)===16&&e.from[1]>=12),
+    'Upper iron bracket missing '+dir);
+  assert(has('#metal',e=>depth(e)===16&&e.to[1]<=3),
+    'Lower iron foot missing '+dir);
+  assert(has('#join',e=>depth(e)===16),
+    'Inset riveted plate missing '+dir);
+  assert(has('#stone',e=>depth(e)===16),
+    'Dark bracket center missing '+dir);
+  // Native per-face UV spans (including narrow fractional brick joints).
   const faceAxes={north:[0,1],south:[0,1],
     east:[2,1],west:[2,1],up:[0,2],down:[0,2]};
   for(const element of panel.elements){
     assert(element.from.every((v,i)=>v>=0&&element.to[i]<=16&&
-      element.to[i]>v),'Retort panel escaped its own block cell: '+dir);
+      element.to[i]>v),'V3.14 block-local geometry overflow '+dir);
     for(const [side,face] of Object.entries(element.faces)){
-      assert(panel.textures[face.texture.replace(/^#/,'')],
-        'Missing texture for V3.13 '+dir+' '+side);
-      const axes=faceAxes[side];
-      const expected=axes.map(i=>element.to[i]-element.from[i]);
-      const uv=[Math.abs(face.uv[2]-face.uv[0]),
+      assert(panel.textures[face.texture.slice(1)],
+        'Missing V3.14 face texture '+dir+'/'+side);
+      const ax=faceAxes[side];
+      const expected=ax.map(i=>element.to[i]-element.from[i]);
+      const actual=[Math.abs(face.uv[2]-face.uv[0]),
         Math.abs(face.uv[3]-face.uv[1])];
-      assert(expected.every((v,i)=>Math.abs(v-uv[i])<0.00001),
-        'Stretched masonry or metal texture: '+dir+' '+side);
+      assert(expected.every((v,i)=>Math.abs(v-actual[i])<0.00001),
+        'Texture is stretched/compressed on '+dir+'/'+side);
     }
   }
 }
