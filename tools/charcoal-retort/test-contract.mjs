@@ -492,6 +492,29 @@ for(const [dir,offset] of Object.entries(v311LeftParts)){
       'V3.11 facade escaped its one-block footprint');
   }
 }
+// V3.12: fix only the right-hand masonry return of the single
+// front-left Y2 cell. The central panel remains recessed to depth 13,
+// and a continuous BRICK return now meets the copper divider at depth 15.
+for(const [dir,part] of Object.entries(v311LeftParts)){
+  const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+    +dir+'/part_'+part+'.json');
+  const depth=e=>dir==='south'?e.to[2]:
+    dir==='west'?16-e.from[0]:dir==='north'?16-e.from[2]:e.to[0];
+  const visible=m.elements.filter(e=>e.faces[dir]?.texture==='#brick');
+  assert(visible.some(e=>Math.abs(depth(e)-13)<0.00001 &&
+    e.to[1]-e.from[1]>=9),
+    'V3.12 preserve the 3px recessed brick face: '+dir);
+  const filled=visible.filter(e=>Math.abs(depth(e)-15)<0.00001 &&
+    e.from[1]===3 && e.to[1]===13 &&
+    (dir==='south'||dir==='north'?
+      e.to[0]-e.from[0]===2:e.to[2]-e.from[2]===2));
+  assert.equal(filled.length,1,
+    'V3.12 right-side brick return must connect to copper divider: '+dir);
+  const returnFace=filled[0].faces[dir];
+  assert(Math.abs(returnFace.uv[2]-returnFace.uv[0])===2 &&
+    Math.abs(returnFace.uv[3]-returnFace.uv[1])===10,
+    'V3.12 right-side brick return has stretched texture: '+dir);
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

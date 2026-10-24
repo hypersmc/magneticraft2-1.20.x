@@ -355,3 +355,7 @@ Removed the unwanted continuous under-roof iron strip, switched only the Y2 **fr
 ### 2026-10-24 — Retort V3.11 one-block front-left facade trial
 
 User requested **one physical block at a time**: edit only Y2 SOUTH-local x=-1,z=0 to produce a 3D masonry inset, raised left copper pillar, large dark square corner bracket, lower iron foot and slim right separator. All four orientations generated. Six neighboring asset meshes may be regenerated solely for shared-face culling, not restyled. The accepted roof/chimney, central/right front, lower machine, port layout, recipes and collision remain unchanged. **Wait for one-block in-game sign-off before mirroring or progressing.**
+
+### 2026-10-24 — Retort V3.12 one-block masonry right-edge fill
+
+Fixed only the small void next to the front-left Y2 block's inner copper divider by adding a 2px-wide brick return (local X 11..13, Y 3..13, Z 13..15), preserving the recessed center panel at Z=13. Exactly four facing-specific versions of **the same one block** regenerate; all adjacent parts and collision remain unchanged. Pending one-block screenshot sign-off and Forge build.

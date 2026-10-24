@@ -198,3 +198,11 @@ After V3.10 still failed the reference comparison, the user chose a tighter appr
 **Scope:** one authored local cell `x=-1,y=2,z=0`; generated for SOUTH/WEST/NORTH/EAST as four front-left parts. Six *neighbor model files* can regenerate from automatic internal seam/underside culling because adjacent faces are shared. Those are **not additional facade redesigns**. The roof's visible top/grooves/chimney, all other front decoration, Y0/Y1, ports, formation, recipes, power, animations and Voxel collision remain unchanged.
 
 **Status:** candidate for a single-block in-game review only. Do not copy it to the right block, alter the central vent or continue down layers until the user explicitly accepts this front-left block. No `./gradlew build` claim.
+
+### 2026-10-24 — V3.12 front-left brick return only
+
+The screenshot after V3.11 revealed a missing/hollow strip of masonry immediately beside the **right-hand (inner) copper divider** of the front-left Y=2 block. The agreed change is minimal: leave the exterior copper pillar, center vent, iron corner fittings, short sill and original three-pixel-recessed main brick panel alone, and close the notch where the panel joins the right copper divider.
+
+Added exactly **one local brick cuboid** to the front-left chamber cell: `from=[11,3,13]`, `to=[13,13,15]`, in the SOUTH-authored frame. This two-pixel-wide masonry return is one model pixel behind the front of the copper divider (front at Z=16), while the bulk brick panel remains at Z=13, so the section retains visible 3D depth. The model generator outputs four variants, one per cardinal facing, and does not change any neighbor model file.
+
+Static tests verify that all four directional models contain both the main recessed panel and its nearer right brick return at local front depth 15 with native 2×10 UV scaling. No Y=3 accepted roof, chimney, Y=0/Y=1 layers, center grille, opposite front block, real port skins, formation JSON, recipes or collision data changes. This remains **pending in-game appearance acceptance and an actual Gradle build**. Do not mirror or continue to the next block yet.

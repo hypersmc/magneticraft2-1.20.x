@@ -70,6 +70,13 @@ export function applyRetortV3(files) {
       solid(c,"brick",[13,1,13],[16,15,16]);
       solid(c,"brick",[3,1,13],[13,3,14.5]);
       solid(c,"brick",[3,13,13],[13,15,14.5]);
+      // Close the accidental hollow beside the RIGHT separator:
+      // fill the wall's inner return from X=11..13, to Z=15.
+      // The central brick field still ends at Z=13 (3px recessed),
+      // while this narrow return meets the raised copper frame at X=13.
+      // Y=3..13 stays inside this one block, so the seams, roof,
+      // center grille and lower neighboring blocks cannot be affected.
+      solid(c,"brick",[11,3,13],[13,13,15]);
       // Lock the two neighboring-boundary contact rails first; the
       // visible bracket/rivet geometry is applied AFTER these rails.
       solid(c,"metal",[0,13,0],[3,16,16]);
