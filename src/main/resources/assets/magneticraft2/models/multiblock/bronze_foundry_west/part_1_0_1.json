@@ -1,0 +1,175 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "minecraft:block/bricks",
+    "refractory": "minecraft:block/mud_bricks",
+    "soot": "minecraft:block/polished_blackstone_bricks",
+    "iron": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
+    "particle": "minecraft:block/bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        0.0625,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#soot",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        15.9375
+      ],
+      "to": [
+        16,
+        2,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#soot",
+          "uv": [
+            0,
+            0,
+            16,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        2,
+        15.9375
+      ],
+      "to": [
+        16,
+        14.1,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            2,
+            16,
+            14.1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        15.4,
+        16.5375
+      ],
+      "to": [
+        16,
+        16,
+        16.6
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            15.4,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        15.3375,
+        16.6
+      ],
+      "to": [
+        16,
+        15.4,
+        16.65
+      ],
+      "faces": {
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0.6,
+            16,
+            0.65
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14.1,
+        16
+      ],
+      "to": [
+        16,
+        14.1625,
+        16.65
+      ],
+      "faces": {
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            16,
+            0.65
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14.1,
+        16.5875
+      ],
+      "to": [
+        16,
+        15.4,
+        16.65
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            14.1,
+            16,
+            15.4
+          ]
+        }
+      }
+    }
+  ]
+}

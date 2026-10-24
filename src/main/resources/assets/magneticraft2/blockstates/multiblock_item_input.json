@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "magneticraft2:block/multiblock_item_input"
+      "model": "magneticraft2:block/multiblock_item_input_selector"
     }
   }
 }

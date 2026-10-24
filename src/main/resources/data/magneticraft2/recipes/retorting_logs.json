@@ -1,0 +1,18 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:charcoal_retort",
+  "input": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "input_count": 4,
+  "output": {
+    "item": "minecraft:charcoal",
+    "count": 4
+  },
+  "byproduct": {
+    "item": "magneticraft2:wood_tar",
+    "count": 1
+  },
+  "byproduct_chance": 1,
+  "process_time": 720
+}

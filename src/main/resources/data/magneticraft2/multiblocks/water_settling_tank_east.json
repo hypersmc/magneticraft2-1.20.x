@@ -1,0 +1,136 @@
+{
+  "name": "water_settling_tank_east",
+  "structure": {
+    "dimensions": [
+      5,
+      2,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "C"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "S",
+          "S",
+          "S",
+          "O",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "A",
+          "A",
+          "S"
+        ],
+        [
+          "I",
+          "A",
+          "A",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "A": "minecraft:air",
+      "I": "magneticraft2:multiblock_fluid_input",
+      "P": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:water_settling_tank",
+      "O": "magneticraft2:multiblock_fluid_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/water_settling_tank_east",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": true,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [
+      [
+        -2,
+        1,
+        1
+      ],
+      [
+        -2,
+        1,
+        0
+      ],
+      [
+        -2,
+        1,
+        -1
+      ],
+      [
+        -1,
+        1,
+        1
+      ],
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        -1,
+        1,
+        -1
+      ]
+    ],
+    "voxel_profile": "magneticraft2:water_settling_tank"
+  }
+}

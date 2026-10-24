@@ -20,6 +20,16 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArm
 import com.magneticraft2.client.render.blocks.stage.copper.CopperFluidTankBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModuleBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeStampMillRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.RotaryOreClassifierRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.WaterSettlingTankRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import net.minecraft.client.renderer.item.ItemProperties;
 import com.magneticraft2.client.render.blocks.stage.copper.CrankBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
@@ -69,7 +79,13 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 public class Clientsetup {
     private static final Logger LOGGER = LogManager.getLogger("magneticraft2_clientsetup");
     public static void init(FMLClientSetupEvent e){
-
+        // Built-in item predicate: empty and filled ladles use different
+        // baked models. The server-synced held ItemStack NBT drives the state.
+        e.enqueueWork(() -> ItemProperties.register(
+                ItemRegistry.ITEM_BRONZE_POURING_LADLE.get(),
+                new ResourceLocation(MOD_ID, "filled"),
+                (stack, world, entity, seed) ->
+                        BronzePouringLadleItem.hasMetal(stack) ? 1F : 0F));
     }
     @SubscribeEvent
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
@@ -98,6 +114,13 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(), CopperFluidTankBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_INPUT_MODULE_BE.get(), MechanicalInputModuleBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get(), BronzeStampMillRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(), RotaryOreClassifierRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_SETTLING_TANK_BE.get(), WaterSettlingTankRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
@@ -121,12 +144,67 @@ public class Clientsetup {
         // BER-only block models are requested directly from ModelManager by
         // ResourceLocation. Register them as top-level models so the baked model
         // lookup cannot fall back to an empty/missing entry.
+
+        // V3 Retort formed-state models are owned by the real port BEs.
+        // Register all facings so ModelManager never falls back to a missing cube.
+        for (String direction : new String[]{"south", "west", "north", "east"}) {
+            for (String role : new String[]{"input", "primary", "byproduct"}) {
+                event.register(new ResourceLocation(MOD_ID,
+                        "multiblock/charcoal_retort_" + direction + "/port_" + role));
+            }
+        }
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
+        // Tank-only port wall inserts are BER-rendered inside the REAL
+        // fluid module cells. Explicit registration prevents a missing-model
+        // cube after resource reload; shared module blockstates are unchanged.
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_input_port_insert"));
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_output_port_insert"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_carriage"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_cross_slide"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_rotor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_output_rotor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_arbor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_spindle"));
+        // Register all six cutout models explicitly: relying solely on
+        // the dynamic models folder scan can show missing-model cubes.
+        for (String section : new String[]{"rear", "middle", "front"}) {
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section));
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section + "_worn"));
+        }
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame_detail"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_cam"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_start"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel_x"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_coupler"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_lower_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_gearbox_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_cross_bearing"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_side_lower_mount"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_upper"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_tip"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_pulley"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_straight"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_wrap"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_chuck"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_connecting_rod"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_follower"));

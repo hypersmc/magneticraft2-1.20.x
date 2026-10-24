@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBC",
+    "PWP",
+    "L L"
+  ],
+  "key": {
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "P": {
+      "tag": "minecraft:planks"
+    },
+    "W": {
+      "item": "minecraft:crafting_table"
+    },
+    "L": {
+      "tag": "minecraft:logs"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_pattern_maker",
+    "count": 1
+  }
+}

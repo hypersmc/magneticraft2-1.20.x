@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBC",
+    "SIS",
+    "CBC"
+  ],
+  "key": {
+    "C": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "I": {
+      "item": "magneticraft2:copper_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_mechanical_lathe"
+  }
+}

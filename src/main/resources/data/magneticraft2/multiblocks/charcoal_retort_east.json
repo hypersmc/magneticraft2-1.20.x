@@ -1,0 +1,107 @@
+{
+  "name": "charcoal_retort_east",
+  "structure": {
+    "dimensions": [
+      3,
+      4,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "C"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "B",
+          "O"
+        ],
+        [
+          "Y",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "U"
+        ]
+      ],
+      "layer3": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer4": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "B": "minecraft:bricks",
+      "P": "minecraft:cut_copper",
+      "C": "magneticraft2:charcoal_retort",
+      "Y": "magneticraft2:multiblock_item_byproduct_output",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/charcoal_retort_east",
+    "inventory": true,
+    "power": false,
+    "fuel": true,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [
+      [
+        -1,
+        3,
+        0
+      ]
+    ],
+    "voxel_profile": "magneticraft2:charcoal_retort"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "PFP",
+    "BIB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "I": {
+      "item": "magneticraft2:bronze_ingot"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_foundry",
+    "count": 1
+  }
+}
