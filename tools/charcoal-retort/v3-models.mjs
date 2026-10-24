@@ -244,7 +244,7 @@ export function applyRetortV3(files) {
       // one substantial outer RIGHT copper support, and a recessed
       // square iron fixing. Do not rebuild the center-facing inner edge
       // into another U-shaped frame.
-      solid(c,"brick",[0,0,0],[16,16,14]);
+      solid(c,"brick",[0,0,0],[14,16,14]);
       // Mortar backing, 0.2px proud of the structural brick core.
       solid(c,"mortar",[0,2.5,14],[13,14.1,14.2]);
       const rightCourses=[
@@ -258,6 +258,22 @@ export function applyRetortV3(files) {
         const faceDepth=xa===0.25?15.7:15.45;
         solid(c,"brick",[xa,row.y0,14.2],[xb,row.y1,faceDepth]);
       }
+
+      // V3.24: continue V3.23's raised side bricks across the front-right
+      // upper block, stopping at its accepted corner copper upright.
+      solid(c,"mortar",[14,0,0],[14.2,16,13]);
+      const cornerSideCourses=[
+        {y0:0.25,y1:2.8,spans:[[0.15,3.9],[4.35,9.5],[9.95,12.85]]},
+        {y0:3.25,y1:5.85,spans:[[0.15,5.25],[5.7,10.65],[11.1,12.85]]},
+        {y0:6.3,y1:8.9,spans:[[0.15,3.4],[3.85,9.3],[9.75,12.85]]},
+        {y0:9.35,y1:11.95,spans:[[0.15,5.85],[6.3,11.3],[11.75,12.85]]},
+        {y0:12.4,y1:15.75,spans:[[0.15,4.2],[4.65,9.6],[10.05,12.85]]}
+      ];
+      for(const [courseIndex,row] of cornerSideCourses.entries())
+        for(const [brickIndex,[za,zb]] of row.spans.entries()){
+          const relief=(courseIndex+brickIndex)%2===0?15.7:15.45;
+          solid(c,"sideBrick",[14.2,row.y0,za],[relief,row.y1,zb]);
+        }
       // Retain V3.20 cross-block copper beam: reaches the inner seam
       // at X=0 and ends at the outer corner iron fixing, X=13.
       solid(c,"bronze",[0,14.1,14.5],[13,16,16]);
@@ -271,8 +287,8 @@ export function applyRetortV3(files) {
 
       // Structural contacts continue into the adjacent roof/bottom and
       // side, but stop behind the VISIBLE front trim at Z=15.25.
-      solid(c,"metal",[13,13,0],[16,16,15.25]);
-      solid(c,"metal",[13,0,0],[16,3,15]);
+      solid(c,"metal",[13,13,13],[16,16,15.25]);
+      solid(c,"metal",[13,0,13],[16,3,15]);
       // Outer top-right dark iron mounting, with a distinct framed,
       // recessed square center — do not hide it behind a full iron cube.
       solid(c,"metal",[12,12,14],[16,16,15.25]);
@@ -574,7 +590,7 @@ export function applyRetortV3(files) {
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron",
     ...(c.z===0 ? {mortar:"minecraft:block/stone"} : {}),
-    ...(c.x===1 && c.z<0 ?
+    ...(c.x===1 ?
       {mortar:"minecraft:block/stone",sideBrick:"minecraft:block/bricks"} : {})
   };
   files.set(path,json(m));

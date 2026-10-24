@@ -960,6 +960,36 @@ for(const [orientation,cfg] of Object.entries(v323RightSide)){
   assert(rearCorners>0,
     'V3.23 rear copper corner anchor removed '+orientation);
 }
+
+ // V3.24 — side-facing continuation of the front-right upper block.
+ for(const [orientation,id] of Object.entries(retortRight)){
+   const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+     orientation+'/part_'+id+'.json');
+   const side=v323RightSide[orientation].side;
+   const axis=(side==='east'||side==='west')?0:2;
+   const horizontal=axis===0?2:0;
+   const positive=(side==='east'||side==='south');
+   const depth=e=>positive?e.to[axis]:16-e.from[axis];
+   const visible=m.elements.filter(e=>e.faces[side]);
+   const bricks=visible.filter(e=>e.faces[side].texture==='#sideBrick'&&depth(e)>15.4);
+   assert.equal(m.textures.sideBrick,'minecraft:block/bricks',
+     'V3.24 front-right side texture missing '+orientation);
+   assert.equal(bricks.length,15,'V3.24 missing raised side bricks '+orientation);
+   assert.deepEqual([...new Set(bricks.map(e=>+depth(e).toFixed(2)))].sort((a,b)=>a-b),
+     [15.45,15.7],'V3.24 incorrect side masonry relief '+orientation);
+   for(const y of [0.25,3.25,6.3,9.35,12.4])
+     assert(bricks.some(e=>Math.abs(e.from[1]-y)<0.00001),
+       'V3.24 missing masonry course '+orientation+'/'+y);
+   assert(visible.filter(e=>e.faces[side].texture==='#mortar'&&
+     Math.abs(depth(e)-14.2)<0.00001).length>=8,
+     'V3.24 missing recessed side mortar '+orientation);
+   for(const e of visible)if(e.faces[side].texture==='#metal'){
+     const span=e.to[horizontal]-e.from[horizontal];
+     assert(!(span>=8&&((e.from[1]<3&&e.to[1]>0)||
+       (e.from[1]<16&&e.to[1]>13))),
+       'V3.24 full-width dark side band returned '+orientation);
+   }
+ }
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
