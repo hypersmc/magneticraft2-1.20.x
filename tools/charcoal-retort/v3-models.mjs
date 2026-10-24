@@ -245,6 +245,28 @@ export function applyRetortV3(files) {
       ];
       for(const [x0,x1,bottom,top] of archSegments)
         solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
+
+      // V3.29: add the reference's center copper drip-apron and iron
+      // underside immediately above the lower center hatch. This does
+      // NOT replace the accepted shallow seven-segment copper arch.
+      // The narrow 0.52px dark strip is a local apron shadow, not a
+      // full-width Retort side-wall iron band.
+      solid(c,"metal",[3.2,0.1,15.45],[12.8,0.62,16]);
+      solid(c,"bronze",[3.35,0.62,15.55],[12.65,1.02,16]);
+
+      // Two short inset iron pockets sit back 0.12px from the
+      // front-facing copper frame, as in the user's reference crop.
+      for(const [xa,xb] of [[5.2,6.4],[9.6,10.8]])
+        solid(c,"metal",[xa,1.02,15.35],[xb,1.58,15.88]);
+
+      // Stepped copper cheeks keep these pockets framed, while the
+      // raised central apron leads into the existing arch above.
+      for(const [xa,xb] of [[3.4,4.2],[4.8,5.2],[6.4,6.8],
+                            [9.2,9.6],[10.8,11.2],[11.8,12.6]])
+        solid(c,"bronze",[xa,1.02,15.6],[xb,1.58,16]);
+      solid(c,"bronze",[6.8,1.58,15.6],[9.2,1.94,16]);
+      solid(c,"bronze",[6.8,1.94,15.6],[9.2,2.1,16]);
+
     }else if(front&&x===1){
       // V3.22: match the right-hand concept image. This is a SOLID
       // upper front brick wall with physical staggered masonry courses,

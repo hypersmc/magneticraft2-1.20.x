@@ -1090,6 +1090,49 @@ for(const dir of dirs){
     }
   }
 }
+// V3.29 — the reference's lower-center hood consists of a copper
+// drip-apron, two inset dark iron accents and a slim continuous
+// underside strip. The prior arch, masonry and upper five-slot
+// center grille must remain unchanged.
+for(const dir of dirs){
+  const path=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+    dir+'/part_0_2_0.json';
+  const m=json(path);
+  const axis=['south','north'].includes(dir)?0:2;
+  const normal=axis===0?2:0;
+  const front=['south','east'].includes(dir),flip=['north','east'].includes(dir);
+  const sample=(u,y)=>{
+    const pos=flip?16-u:u;
+    const hits=m.elements.filter(e=>e.faces[dir]&&
+      e.from[axis]<pos&&pos<e.to[axis]&&e.from[1]<y&&y<e.to[1]);
+    hits.sort((a,b)=>front?b.to[normal]-a.to[normal]:
+                           a.from[normal]-b.from[normal]);
+    const e=hits[0];
+    return e&&{material:e.faces[dir].texture,
+      depth:front?e.to[normal]:16-e.from[normal]};
+  };
+  for(const u of [4,8,12]){
+    assert.deepEqual(sample(u,0.3),{material:'#metal',depth:16},
+      'V3.29 missing center iron underside strip '+dir+'/'+u);
+    assert.deepEqual(sample(u,0.82),{material:'#bronze',depth:16},
+      'V3.29 missing projecting copper sill '+dir+'/'+u);
+  }
+  for(const u of [5.8,10.2])
+    assert.deepEqual(sample(u,1.3),{material:'#metal',depth:15.88},
+      'V3.29 missing recessed iron detail '+dir+'/'+u);
+  assert.deepEqual(sample(8,1.75),{material:'#bronze',depth:16},
+    'V3.29 missing stepped copper apron '+dir);
+  assert.deepEqual(sample(8,2.8),{material:'#bronze',depth:16},
+    'V3.29 replaced the previously accepted copper arch '+dir);
+  assert.equal(sample(8,5)?.material,'#brick',
+    'V3.29 lower masonry course changed '+dir);
+  assert.equal(sample(8,12.4)?.material,'#soot',
+    'V3.29 upper center grille changed '+dir);
+  // Ensure the new hood is entirely within the center upper 16px cell.
+  assert(m.elements.every(e=>e.from.every((n,i)=>
+    n>=0&&e.to[i]<=16&&e.to[i]>n)),
+    'V3.29 center model exceeds cell bounds '+dir);
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
