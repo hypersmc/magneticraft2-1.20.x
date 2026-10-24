@@ -64,7 +64,12 @@ export function applyRetortV3(files) {
       // Restore brick-course relief only: the mortar stays deep and the
       // raised brick faces now reach Z=15.45..15.70 below the trim at 16.
       // Everything remains in the same one 16x16x16 front-left cell.
-      solid(c,"brick",[0,0,0],[16,16,14]);
+      // The user's copper vent requires a shallow dark recess in this
+      // LEFT-facing side, but the front-facing brick core is preserved.
+      solid(c,"brick",[0,0,0],[16,13.35,14]);
+      solid(c,"brick",[1.6,13.35,0],[16,15.975,14]);
+      solid(c,"brick",[0,15.975,0],[16,16,14]);
+      solid(c,"brick",[0,13.35,13],[1.6,15.975,14]);
 
       // Mortar is a thin solid backing against the core at Z=14.2.
       // The physical brick faces rise 1.25..1.50px beyond it,
@@ -106,7 +111,9 @@ export function applyRetortV3(files) {
       // The top and bottom retain their invisible masonry contacts.
       // Crucially the exposed fronts are not solid iron cuboids: that
       // covered the dark inset and copper shoulder in V3.16.
-      solid(c,"metal",[0,13,0],[3,16,15.25]);
+      // The iron contact must terminate behind the existing front mount;
+      // its old rearward extension covered the side-vent openings.
+      solid(c,"metal",[0,13,13],[3,16,15.25]);
       solid(c,"metal",[0,15.5,15.25],[3,16,16]);
       solid(c,"metal",[0,0,0],[3,3,15]);
 
@@ -267,7 +274,7 @@ export function applyRetortV3(files) {
         {y0:3.25,y1:5.85,spans:[[0.15,5.25],[5.7,10.65],[11.1,12.85]]},
         {y0:6.3,y1:8.9,spans:[[0.15,3.4],[3.85,9.3],[9.75,12.85]]},
         {y0:9.35,y1:11.95,spans:[[0.15,5.85],[6.3,11.3],[11.75,12.85]]},
-        {y0:12.4,y1:15.75,spans:[[0.15,4.2],[4.65,9.6],[10.05,12.85]]}
+        {y0:12.4,y1:13.35,spans:[[0.15,4.2],[4.65,9.6],[10.05,12.85]]}
       ];
       for(const [courseIndex,row] of cornerSideCourses.entries())
         for(const [brickIndex,[za,zb]] of row.spans.entries()){
@@ -383,6 +390,24 @@ export function applyRetortV3(files) {
       // Raised upper edge, not another full-height horizontal iron band.
       solid(c,"bronze",[x===-1?0:15.6,13.35,0],
                        [x===-1?0.4:16,13.65,endZ]);
+    }
+
+    // V3.26: physically-framed COPPER side vents, matching the user's
+    // Blockbench prototype in SOUTH part_1_2_0.json (commit 3378110).
+    // Five copper uprights form four dark recessed square apertures.
+    // Only the two FRONT upper Y2 corner cells receive this panel.
+    if(front&&outer){
+      const xNear=x===-1?0:14.85,xFar=x===-1?1.15:16;
+      // Keep the real chamber sealed; this is visual ventilation only.
+      // The shadow face is recessed well behind the copper face.
+      if(x===-1)solid(c,"soot",[1.45,13.35,0],[1.6,15.075,13]);
+      else solid(c,"soot",[14.2,13.35,0],[14.3,15.075,13]);
+      const mullions=[[0,1.1],[2.9,4],[5.9,7],[8.9,10],[11.9,13]];
+      for(const [za,zb] of mullions)
+        solid(c,"bronze",[xNear,13.35,za],[xFar,15.075,zb]);
+      // A continuous upper copper beam tucks directly under the
+      // accepted roof, above the existing V3.25 lower copper cap.
+      solid(c,"bronze",[xNear,15.075,0],[xFar,16,13]);
     }
     // NO continuous metal course below the roof. That extra horizontal
     // strip was not in the approved front reference (V3.10). The roof
