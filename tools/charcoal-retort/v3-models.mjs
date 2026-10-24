@@ -155,7 +155,15 @@ export function applyRetortV3(files) {
       // Recessed soot visible through five copper-fronted vent slots,
       // not free-floating metal bars. The copper facade ends at Z=16.
       solid(c,"soot",[3.1,10.5,9],[12.9,15,13.75]);
-      // Main copper lintel and sill define a rectangular vent casing.
+      // V3.20 — copper header shared with the left and right Y2 cells.
+      // The existing center grille header covered only X=2.5..13.5,
+      // leaving two visible 2.5px gaps at the inter-block seams.
+      // Add real end returns flush with the outer face at Z=16.
+      // Keep the dark iron end mountings on top, not buried in copper.
+      solid(c,"bronze",[0,14.1,14.5],[0.6,16,16]);
+      solid(c,"bronze",[15.4,14.1,14.5],[16,16,16]);
+      // The central grille header is the uninterrupted copper span
+      // between the two iron mountings; five vent slots sit below.
       solid(c,"bronze",[2.5,14.1,14.5],[13.5,16,16]);
       solid(c,"bronze",[2.5,10.5,14.5],[13.5,11.3,16]);
       solid(c,"bronze",[2.5,11.3,14.5],[4,14.1,16]);
@@ -208,13 +216,19 @@ export function applyRetortV3(files) {
       for(const [x0,x1,bottom,top] of archSegments)
         solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
     }else if(front){
-      // V3.9: the face used to stop at Z=13, leaving a 3px deep
-      // hollow-looking gap behind the copper pilasters. Keep the old
-      // lower/top contact footprints to leave Y=1/Y=3 baked assets
-      // unchanged, but bring the visible wall field forward to Z=16.
+      // V3.20: the RIGHT front masonry joins the existing upper copper
+      // header instead of terminating as plain brick at the center seam.
+      // Below the copper lintel, retain the original outward masonry.
+      // Only trim the last 0.9px of brick behind the new header so that
+      // copper does not share a coplanar Z=16 face with exposed brick.
       solid(c,"brick",[0,0,0],[16,1,13]);
-      solid(c,"brick",[0,1,0],[16,15,16]);
+      solid(c,"brick",[0,1,0],[16,14.1,16]);
+      solid(c,"brick",[0,14.1,0],[16,15,14.5]);
       solid(c,"brick",[0,15,0],[16,16,13]);
+      // The header is COPPER, not the rejected dark iron roof-underlining.
+      // It meets the center block at X=0 and finishes against the
+      // already-existing outer riveted-iron corner fitting (X=13..16).
+      solid(c,"bronze",[0,14.1,14.5],[13,16,16]);
     }else if(outer){
       // Keep the previously accepted Y1/Y3 contact shape so face
       // culling never alters those already-approved adjacent layers.

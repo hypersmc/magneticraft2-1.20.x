@@ -698,6 +698,63 @@ for(const dir of dirs){
  // The reference grille keeps the five V3.18 real recessed slots,
  // validated above, with no change to their copper mullions.
 }
+// V3.20 — FRONT CROSS-BLOCK HEADER. The copper/iron structural fascia
+// must physically connect the left, center and right Y2 cells without
+// a dark decorative under-roof strip or holes at block boundaries.
+// The sample is inside faces/segments (not exactly on mesh edges).
+const v320FrontParts={
+  south:['-1_2_0','0_2_0','1_2_0'],
+  west:['0_2_-1','0_2_0','0_2_1'],
+  north:['1_2_0','0_2_0','-1_2_0'],
+  east:['0_2_1','0_2_0','0_2_-1']
+};
+for(const [dir,ids] of Object.entries(v320FrontParts)){
+  const horizontal=(dir==='south'||dir==='north')?0:2;
+  const normal=(dir==='south'||dir==='north')?2:0;
+  const positive=(dir==='south'||dir==='east');
+  const reversed=(dir==='north'||dir==='west');
+  const front=[];
+  for(let blockIndex=0;blockIndex<3;blockIndex++){
+    const part=json(resource+
+      'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+ids[blockIndex]+'.json');
+    for(const e of part.elements){
+      if(!e.faces[dir])continue;
+      const left=reversed?16-e.to[horizontal]:e.from[horizontal];
+      const right=reversed?16-e.from[horizontal]:e.to[horizontal];
+      front.push({left:blockIndex*16+left,right:blockIndex*16+right,
+        y0:e.from[1],y1:e.to[1],
+        depth:positive?e.to[normal]:16-e.from[normal],
+        material:e.faces[dir].texture});
+    }
+  }
+  const facingAt=(x,y)=>{
+    const hits=front.filter(f=>f.left<x&&x<f.right&&f.y0<y&&y<f.y1)
+      .sort((a,b)=>b.depth-a.depth);
+    return hits[0]||null;
+  };
+  // A full 48px row of copper and intentionally interrupted iron
+  // fittings, all exactly flush. No air or brick material at this height.
+  for(let x=0.125;x<48;x+=0.25){
+    const face=facingAt(x,15.7);
+    assert(face&&face.depth===16&&
+      (face.material==='#bronze'||face.material==='#metal'),
+      'V3.20 broken copper/iron header at '+dir+' x='+x);
+  }
+  for(const x of [15.875,16.125,31.875,32.125]){
+    const face=facingAt(x,15.7);
+    assert(face&&face.depth===16,
+      'V3.20 visible gap at an inter-block upper-facade seam '+dir+'/'+x);
+  }
+  // Check a point firmly INSIDE the third block: the mesh partitioner
+  // may split its header into smaller visible rectangles around trim.
+  const rightHeader=facingAt(40.125,15.7);
+  assert(rightHeader&&rightHeader.material==='#bronze' &&
+    rightHeader.depth===16,
+    'V3.20 right brick block lacks continuous copper header '+dir);
+}
+// Roof top/grooves and left outward faces are also compared
+// byte-for-byte by the generator asset-diff check before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));
