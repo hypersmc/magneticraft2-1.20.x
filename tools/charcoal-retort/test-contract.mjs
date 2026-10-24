@@ -1245,6 +1245,28 @@ for(const dir of dirs)for(const x of [-1,0,1])for(const z of [-2,-1,0]){
       'V3.34 missing raised brick mapping in '+path);
   }
 }
+// V3.35 — rear end supports are matching capped copper/iron posts
+// on BOTH side walls in every orientation. The fitting belongs to
+// the rear Y2 corner block and must stop before the first vent opening.
+for(const dir of dirs)for(const x of [-1,1]){
+  const rearModel=v333Model(dir,x,-2);
+  const face=v333SideFace(x,dir);
+  const reversed=(dir==='west'||dir==='north');
+  const at=(localZ,y)=>
+    v333Sample(rearModel,face,reversed?16-localZ:localZ,y);
+  for(const [z,y,mat] of [
+    [1.5,1.5,'#metal'],[1.5,2.6,'#metal'],
+    [1.5,8,'#bronze'],[1.5,12.8,'#bronze'],
+    [1.5,14,'#metal'],[1.5,15.82,'#bronze'],
+    [2.8,1.5,'#metal'],[2.8,8,'#bronze'],[2.8,14,'#metal']
+  ]){
+    assert.deepEqual(at(z,y),{material:mat,depth:16},
+      'V3.35 rear side-wall corner support incomplete '+dir+'/'+x+'/'+z+'/'+y);
+  }
+  const firstSlot=at(4.5,14.25);
+  assert(firstSlot&&firstSlot.material==='#soot'&&firstSlot.depth<15,
+    'V3.35 rear corner fitting blocks the first side vent '+dir+'/'+x);
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');

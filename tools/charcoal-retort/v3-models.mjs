@@ -398,16 +398,7 @@ export function applyRetortV3(files) {
           solid(c,"sideBrick",[14.2,row.y0,span[0]],[depth,row.y1,span[1]]);
         }
       }
-      // Retain ONLY the rear corner's original upright copper fixing.
-      // It ties this wall into the rear surface without recreating
-      // the rejected continuous dark Y=0..3 / Y=13..16 bands.
-      if(rear){
-        solid(c,"bronze",[13,3,0],[16,14,2]);
-        // Rear-corner iron caps remain, but only as a short 0.5px
-        // return at the rear edge, never a stripe across the side.
-        solid(c,"metal",[13,0,0],[16,3,0.5]);
-        solid(c,"metal",[13,14,0],[16,16,0.5]);
-      }
+      // V3.35: shared rear-end fittings below, on both side corners.
     }else if(x===-1){
       solid(c,"brick",[1.8,0,rear?2:0],[16,16,16]);
       leftSideMasonry();
@@ -435,11 +426,7 @@ export function applyRetortV3(files) {
       // Preserve exactly the prior side contacts at the top and bottom
       // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;
-      // V3.27: lift the obsolete left upper iron stripe off the vent.
-      // Keep the original visible rear metal end cap and its material.
-      if(rear)solid(c,"metal",[xx,13,0],[xx+3,16,0.5]);
-      if(rear)solid(c,"metal",[xx,0,0],[xx+3,3,.5]);
-      if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
+      // V3.35 replaces the shallow old end caps with matched block-local fittings below.
     }
 
     // V3.33: rear three-block raised brick field and continuous
@@ -521,6 +508,18 @@ export function applyRetortV3(files) {
                                      [sideMax,15.075,section[1]]);
       }
     }
+    // V3.35: match the rear endings of BOTH full-length upper side
+    // walls. Short 3.05px-deep rear corner fittings; not continuous
+    // iron bands. The first actual side slot begins at U=4.2.
+    if(rear&&outer){
+      const edge=x===-1?0:13;
+      const far=edge+3;
+      solid(c,"bronze",[edge,2.75,0],[far,13.1,3.05]);
+      solid(c,"metal",[edge,0,0],[far,2.75,3.05]);
+      solid(c,"metal",[edge,13.1,0],[far,15.65,3.05]);
+      solid(c,"bronze",[edge,15.65,0],[far,16,3.05]);
+    }
+
     // NO continuous metal course below the roof. That extra horizontal
     // strip was not in the approved front reference (V3.10). The roof
     // contacts and the two actual corner fasteners remain unchanged.
