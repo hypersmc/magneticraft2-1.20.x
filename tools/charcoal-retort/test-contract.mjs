@@ -177,6 +177,48 @@ for(const role of ['input','primary']){
   assert(port.elements.some(e=>Object.values(e.faces).some(f=>f.texture===expected)),
     'Retort '+role+' must have a distinct chamber interior');
 }
+// Roof-only redesign: prove it stays a continuous copper slab with two
+// lengthwise side bands and a genuinely open middle chimney (no center lid).
+for (const dir of dirs) {
+  const layout=json(resource+'data/magneticraft2/multiblocks/charcoal_retort_'+dir+'.json').structure.layout;
+  const ground=layout.layer1;
+  let centerX=-1,centerZ=-1;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++)if(ground[z][x]==='C'){centerX=x;centerZ=z;}
+  let copperTiles=0,centerHole=0;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+    const symbol=layout.layer4[z][x];
+    const p=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+(x-centerX)+'_3_'+(z-centerZ)+'.json';
+    const roof=json(p);
+    assert.equal(roof.textures.roof,'minecraft:block/cut_copper', 'roof must use copper slab texture');
+    assert(roof.elements.length>0);
+    if(symbol==='P'){
+      copperTiles++;
+      assert(roof.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#roof')),
+        'Copper roof slab missing '+p);
+      assert(Math.max(...roof.elements.map(e=>e.to[1]))<=12,
+        'roof caps cannot be tall full-block boxes '+p);
+    }else{
+      assert.equal(symbol,'A','only chimney AIR is permitted in the roof');
+      centerHole++;
+      const open=roof.elements.every(e=>
+        !(Math.min(e.to[0],10.9)-Math.max(e.from[0],5.1)>0.00001 &&
+          Math.min(e.to[2],10.9)-Math.max(e.from[2],5.1)>0.00001 &&
+          Math.min(e.to[1],15.9)-Math.max(e.from[1],5.1)>0.00001));
+      assert(open,'chimney must have a real hollow shaft '+p);
+      assert(Math.max(...roof.elements.map(e=>e.to[1]))===16,'chimney rim must rise above roof');
+    }
+  }
+  assert.equal(copperTiles,8,'eight solid copper slabs around opening');
+  assert.equal(centerHole,1,'exactly one central chimney');
+}
+for(const x of [-1,1])for(const z of [-2,-1,0]){
+  const part=southModel('part_'+x+'_3_'+z);
+  assert(part.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#metal') &&
+    e.to[1]===12), 'Continuous left/right lengthwise roof band missing');
+}
+const profileRoof=json(resource+'data/magneticraft2/multiblock_voxels/charcoal_retort.json');
+assert.equal(profileRoof.collision.length,34,'Roof-only changes must preserve voxel component count');
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

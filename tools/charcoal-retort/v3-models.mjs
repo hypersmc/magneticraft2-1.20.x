@@ -109,39 +109,30 @@ export function applyRetortV3(files) {
     else solid(c,"metal",[14,3,0],[16,5,16]);
    }
   } else if(k==="P"){
-   // The roof reads as a substantial separate copper cap; not flat brick cladding.
-   // Roof field sits noticeably below the chimney lip: visible height,
-   // fewer flat planes, and a supported copper overhang/cap silhouette.
-   solid(c,"brick",[0,0,0],[16,3,16]);
-   solid(c,"bronze",[0,3,0],[16,5,16]);
-   solid(c,"roof",[0,5,0],[16,8,16]);
-   if(x!==0){
-    const xa=x===-1?0:13;
-    solid(c,"roof",[xa,8,0],[xa+3,12,16]);
-    solid(c,"metal",[xa,3,0],[xa+2,5,16]);
-   }
-   if(z===0||z===-2){
-    const za=z===-2?0:13;
-    solid(c,"bronze",[x===-1?3:0,8,za],[x===1?13:16,12,za+3]);
-    if(x===0)solid(c,"metal",[0,3,za],[16,5,za+1]);
-   }
-   if(x===0&&z!==-1)solid(c,"metal",[7.2,8,3],[8.8,9,13]);
+   // ROOF-ONLY PASS: copper slab field over all eight actual roof blocks.
+   // The central ninth roof position stays genuine AIR for the chimney.
+   solid(c,"bronze",[0,0,0],[16,3,16]);
+   solid(c,"roof",[0,3,0],[16,10,16]);
+   // Exactly two long side-to-side-of-chimney straps, front to back.
+   if(x===-1)solid(c,"metal",[12,10,0],[14,12,16]);
+   if(x===1)solid(c,"metal",[2,10,0],[4,12,16]);
   } else if(k==="A"&&y===3){
-   // Hollow raised chimney with open central air shaft and distinct side vents.
-   solid(c,"bronze",[2,2,2],[5,16,14]);
-   solid(c,"bronze",[11,2,2],[14,16,14]);
-   solid(c,"bronze",[5,2,2],[11,16,5]);
-   solid(c,"bronze",[5,2,11],[11,16,14]);
-   solid(c,"metal",[2,11,2],[5,13,14]);
-   solid(c,"metal",[11,11,2],[14,13,14]);
-   solid(c,"metal",[5,11,2],[11,13,5]);
-   solid(c,"metal",[5,11,11],[11,13,14]);
-   // Inner shaft remains open. Dark lining sits below the rim with no lid.
-   solid(c,"soot",[5,1,5],[11,2,11]);
-   for(const [f,t]of [
-     [[2,14,2],[5,16,14]],[[11,14,2],[14,16,14]],
-     [[5,14,2],[11,16,5]],[[5,14,11],[11,16,14]]
+   // One open square chimney, not a solid model painted with a hole.
+   // The interior is empty through the full 6x6 central aperture.
+   for(const [f,t] of [
+    [[2,4,2],[5,16,14]],[[11,4,2],[14,16,14]],
+    [[5,4,2],[11,16,5]],[[5,4,11],[11,16,14]]
+   ])solid(c,"roof",f,t);
+   // Simple reinforcing ring at its upper rim.
+   for(const [f,t] of [
+    [[2,13,2],[5,15,14]],[[11,13,2],[14,15,14]],
+    [[5,13,2],[11,15,5]],[[5,13,11],[11,15,14]]
    ])solid(c,"metal",f,t);
+   // Blackened inner wall lining, no geometry across the open shaft.
+   for(const [f,t] of [
+    [[4.5,5,5],[5,13,11]],[[11,5,5],[11.5,13,11]],
+    [[5,5,4.5],[11,13,5]],[[5,5,11],[11,13,11.5]]
+   ])solid(c,"soot",f,t);
   } else if(["U","O","Y"].includes(k)){
    // These are not fillers. The real item port BE selects this baked model.
    // Left log hopper vs right charcoal drawer vs rear tar port remain distinct.
@@ -197,6 +188,9 @@ export function applyRetortV3(files) {
   if(!parts)continue;
   const path=a+"models/multiblock/charcoal_retort_"+dir+"/part_"+x+"_"+c.y+"_"+z+".json";
   const m=makeModel(parts,dir);
+  // Keep only this layer's texture change. The other three layers use
+  // their old shared material map and generated JSON byte-for-byte.
+  if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
   files.set(path,json(m));
   if(byPort){
    ports.push({dir,role:c.k==="U"?"input":c.k==="O"?"primary":"byproduct",path});
@@ -216,11 +210,11 @@ export function applyRetortV3(files) {
  const physical=[];
  for(const c of cells){
   if(["S","B","P","C"].includes(c.k)){
-   physical.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,c.y*16+(c.k==="P"?14:16),(c.z+1)*16]);
+   physical.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,c.y*16+(c.k==="P"?12:16),(c.z+1)*16]);
   }else if(c.k==="A"&&c.y===3){
    for(const [f,t]of [
-    [[2,2,2],[5,16,14]],[[11,2,2],[14,16,14]],
-    [[5,2,2],[11,16,5]],[[5,2,11],[11,16,14]]
+    [[2,4,2],[5,16,14]],[[11,4,2],[14,16,14]],
+    [[5,4,2],[11,16,5]],[[5,4,11],[11,16,14]]
    ])physical.push([...f.map((v,i)=>v+[c.x,c.y,c.z][i]*16),...t.map((v,i)=>v+[c.x,c.y,c.z][i]*16)]);
   }
  }

@@ -315,3 +315,7 @@ Generated V3 block-local roof, front hatch, foundation and chimney geometry is a
 ### 2026-10-24 — Retort V3.1 visual proportions (review pending)
 
 Following new front/side/rear/roof gameplay screenshots, the Retort model generator was revised to deepen the hatch, increase apparent chimney height by lowering the adjacent roof field, recess side masonry behind corner ribs and differentiate real intake/charcoal compartments. Structural 3x4x3 JSON, actual ports, recipes and processing remain unchanged; **in-game acceptance/Gradle compilation still pending**.
+
+### 2026-10-24 — Retort V3.2 top-layer-only art pass
+
+As requested, the next visual prototype replaces **only the Y=3 roof** with continuous copper slabs, two dark front-to-back bands and a real open-centred chimney. The 3x4x3 construction/ports/processing are unchanged; roof Voxel collision tracks its new height, so re-form the machine. **Visual acceptance pending**; no lower-layer redesign in this commit. Wood Tar remains an item pending a separate fluid-processing decision.
