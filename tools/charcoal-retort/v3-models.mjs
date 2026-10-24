@@ -58,6 +58,32 @@ export function applyRetortV3(files) {
     // Geometry belongs only to this cell; other front pieces and the
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
+    // V3.33: mirror the physically raised side brickwork on the LEFT.
+    function leftSideMasonry(){
+      const rows=front?[
+        [.25,2.8,[[.15,3.9],[4.35,9.5],[9.95,12.85]]],
+        [3.25,5.85,[[.15,5.25],[5.7,10.65],[11.1,12.85]]],
+        [6.3,8.9,[[.15,3.4],[3.85,9.3],[9.75,12.85]]],
+        [9.35,11.95,[[.15,5.85],[6.3,11.3],[11.75,12.85]]],
+        [12.4,13.35,[[.15,4.2],[4.65,9.6],[10.05,12.85]]]
+      ]:z===-1?[
+        [.25,2.8,[[.15,4.9],[5.35,10.75],[11.2,15.85]]],
+        [3.25,5.85,[[.15,2.65],[3.1,8.6],[9.05,14.35],[14.8,15.85]]],
+        [6.3,8.9,[[.15,5.75],[6.2,11.85],[12.3,15.85]]],
+        [9.35,11.95,[[.15,3.8],[4.25,9.75],[10.2,15.85]]],
+        [12.4,13.35,[[.15,6.1],[6.55,12.05],[12.5,15.85]]]
+      ]:[
+        [.25,2.8,[[.15,3.1],[3.55,9.05],[9.5,15.85]]],
+        [3.25,5.85,[[.15,5.1],[5.55,10.8],[11.25,15.85]]],
+        [6.3,8.9,[[.15,3.65],[4.1,9.55],[10,15.85]]],
+        [9.35,11.95,[[.15,5.9],[6.35,12.15],[12.6,15.85]]],
+        [12.4,13.35,[[.15,3.2],[3.65,8.9],[9.35,15.85]]]
+      ];
+      solid(c,"mortar",[1.8,0,0],[2,13.35,front?13:16]);
+      for(const [i,[ya,yb,spans]] of rows.entries())
+        for(const [j,[a,b]] of spans.entries())
+          solid(c,"sideBrick",[front?.55:((i+j)%2===0?.3:.55),ya,a],[1.8,yb,b]);
+    }
     if(leftFacade){
       // V3.17: preserve copper L-shape and 3D bricks; fix ONLY the two
       // left corner fittings to match the user's arrowed reference.
@@ -66,11 +92,15 @@ export function applyRetortV3(files) {
       // Everything remains in the same one 16x16x16 front-left cell.
       // The user's copper vent requires a shallow dark recess in this
       // LEFT-facing side, but the front-facing brick core is preserved.
-      solid(c,"brick",[0,0,0],[16,13.35,14]);
+      solid(c,"brick",[1.8,0,0],[16,13.35,13]);
+      solid(c,"brick",[0,0,13],[16,13.35,14]);
       solid(c,"brick",[1.6,13.35,0],[16,15.975,14]);
       solid(c,"brick",[0,15.975,0],[16,16,14]);
       solid(c,"brick",[0,13.35,13],[1.6,15.975,14]);
 
+      leftSideMasonry();
+      // Match the missing copper end post, hidden from the front face.
+      solid(c,"bronze",[0,3,13],[1.1,12.45,13.95]);
       // Mortar is a thin solid backing against the core at Z=14.2.
       // The physical brick faces rise 1.25..1.50px beyond it,
       // creating a clear side facet and shadow for each real brick.
@@ -115,7 +145,7 @@ export function applyRetortV3(files) {
       // its old rearward extension covered the side-vent openings.
       solid(c,"metal",[0,13,13],[3,16,15.25]);
       solid(c,"metal",[0,15.5,15.25],[3,16,16]);
-      solid(c,"metal",[0,0,0],[3,3,15]);
+      solid(c,"metal",[0,0,13],[3,3,15]);
 
       // Broad structural outer copper post; the bottom shoulder is
       // stepped only on this side, following the concept reference.
@@ -343,7 +373,7 @@ export function applyRetortV3(files) {
       // The reference is continuous raised brick masonry, NOT the
       // old broad iron rails at top and bottom. The structural core
       // remains solid and the visible outer surface faces X=16.
-      solid(c,"brick",[0,0,0],[14,16,16]);
+      solid(c,"brick",[0,0,rear?2:0],[14,16,16]);
       solid(c,"mortar",[14,0,0],[14.2,16,16]);
       // Five physical horizontal masonry courses, intentionally
       // staggered differently in the middle and rear side blocks.
@@ -378,12 +408,11 @@ export function applyRetortV3(files) {
         solid(c,"metal",[13,0,0],[16,3,0.5]);
         solid(c,"metal",[13,14,0],[16,16,0.5]);
       }
-    }else if(outer){
-      // Other chamber walls remain on the previous accepted path.
-      solid(c,"brick",[x===-1?1.5:0,0,0],
-                       [x===1?14.5:16,16,16]);
+    }else if(x===-1){
+      solid(c,"brick",[1.8,0,rear?2:0],[16,16,16]);
+      leftSideMasonry();
     }else{
-      solid(c,"brick",[0,0,0],[16,16,16]);
+      solid(c,"brick",[0,0,rear?2:0],[16,16,16]);
     }
     if(front&&outer&&!leftFacade&&x!==1){
       const corner=x===-1?0:13;
@@ -409,8 +438,43 @@ export function applyRetortV3(files) {
       // V3.27: lift the obsolete left upper iron stripe off the vent.
       // Keep the original visible rear metal end cap and its material.
       if(rear)solid(c,"metal",[xx,13,0],[xx+3,16,0.5]);
-      solid(c,"metal",[xx,0,0],[xx+3,3,16]);
+      if(rear)solid(c,"metal",[xx,0,0],[xx+3,3,.5]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
+    }
+
+    // V3.33: rear three-block raised brick field and continuous
+    // four-aperture copper vent, wrapping both corner buttresses.
+    if(rear){
+      solid(c,"mortar",[0,0,1.8],[16,13.35,2]);
+      const courses=[
+        [.25,2.8,[[.15,5.2],[5.65,10.45],[10.9,15.85]]],
+        [3.25,5.85,[[.15,3.3],[3.75,9.1],[9.55,15.85]]],
+        [6.3,8.9,[[.15,5.95],[6.4,11.65],[12.1,15.85]]],
+        [9.35,11.95,[[.15,3.8],[4.25,9.55],[10,15.85]]],
+        [12.4,13.35,[[.15,6],[6.45,12],[12.45,15.85]]]
+      ];
+      const minX=x===-1?3.05:.15,maxX=x===1?12.95:15.85;
+      for(const [i,[ya,yb,spans]]of courses.entries())
+        for(const [j,[a,b]]of spans.entries()){
+          const lo=Math.max(a,minX),hi=Math.min(b,maxX);
+          if(hi-lo>.1)
+            solid(c,"sideBrick",[lo,ya,(i+j)%2===0?.3:.55],[hi,yb,1.8]);
+        }
+      const offset=(x+1)*16;
+      const clip=(a,b)=>{
+        const lo=Math.max(0,a-offset),hi=Math.min(16,b-offset);
+        return hi-lo>1e-6?[lo,hi]:null;
+      };
+      const panel=clip(2.2,45);
+      if(panel){
+        solid(c,"soot",[panel[0],13.35,1.45],[panel[1],15.075,1.6]);
+        solid(c,"bronze",[panel[0],15.075,0],[panel[1],16,1.15]);
+        solid(c,"bronze",[panel[0],12.45,0],[panel[1],13.35,.85]);
+      }
+      for(const [a,b]of [[2.2,4.2],[12.4,14.4],[22.6,24.6],[32.8,34.8],[43,45]]){
+        const span=clip(a,b);
+        if(span)solid(c,"bronze",[span[0],13.35,0],[span[1],15.075,1.15]);
+      }
     }
 
     // V3.25 — copper side cap/lip above the recessed masonry detail.

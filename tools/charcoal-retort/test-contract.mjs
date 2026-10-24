@@ -1135,6 +1135,91 @@ for(const dir of dirs){
   assert(m.elements.every(e=>e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v)),
     'V3.31 geometry left the single center block '+dir);
 }
+// V3.33 — mirror the raised right-wall masonry on the other side,
+// restore end pillars on both ends, and wrap the three-cell back in
+// raised masonry plus four copper-framed vents. All four rotations.
+const v333Rotate=(x,z,dir)=>dir==='south'?[x,z]:dir==='west'?[-z,x]:
+  dir==='north'?[-x,-z]:[z,-x];
+const v333SideFace=(x,dir)=>({
+  south:x===-1?'west':'east',
+  west:x===-1?'north':'south',
+  north:x===-1?'east':'west',
+  east:x===-1?'south':'north'
+})[dir];
+const v333BackFace=dir=>({
+  south:'north',west:'east',north:'south',east:'west'
+})[dir];
+const v333Sample=(model,face,u,y)=>{
+  const horizontal=['east','west'].includes(face)?2:0;
+  const normal=horizontal===2?0:2;
+  const positive=face==='east'||face==='south';
+  const e=model.elements.filter(v=>v.faces[face]&&
+    v.from[horizontal]<u&&u<v.to[horizontal]&&
+    v.from[1]<y&&y<v.to[1])
+    .sort((a,b)=>positive?b.to[normal]-a.to[normal]:
+                          a.from[normal]-b.from[normal])[0];
+  return e&&{material:e.faces[face].texture,
+    depth:positive?e.to[normal]:16-e.from[normal]};
+};
+const v333Model=(dir,x,z)=>{
+  const [rx,rz]=v333Rotate(x,z,dir);
+  return json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+    dir+'/part_'+rx+'_2_'+rz+'.json');
+};
+for(const dir of dirs){
+  const sideAt=(x,u,y)=>{
+    const z=-2+Math.min(2,Math.floor(u/16)),local=u-(z+2)*16;
+    const horizontal=(dir==='south'||dir==='east')?local:16-local;
+    return v333Sample(v333Model(dir,x,z),v333SideFace(x,dir),horizontal,y);
+  };
+  const rearAt=(u,y)=>{
+    const x=-1+Math.min(2,Math.floor(u/16)),local=u-(x+1)*16;
+    const horizontal=(dir==='south'||dir==='west')?local:16-local;
+    return v333Sample(v333Model(dir,x,-2),v333BackFace(dir),horizontal,y);
+  };
+  for(const x of [-1,1]){
+    for(const u of [8,24,40]){
+      const b=sideAt(x,u,5);
+      assert(b&&b.material==='#sideBrick'&&b.depth>15.4,
+        'V3.33 one of three side cells is still flat '+dir+'/'+x+'/'+u);
+    }
+    for(const u of [1,45.5]){
+      assert.deepEqual(sideAt(x,u,8),{material:'#bronze',depth:16},
+        'V3.33 unpaired copper side-end buttress '+dir+'/'+x+'/'+u);
+    }
+    for(const u of [8.3,18.5,28.7,38.9]){
+      const slot=sideAt(x,u,14.25);
+      assert(slot&&slot.material==='#soot'&&slot.depth<15,
+        'V3.33 side vent was covered by masonry '+dir+'/'+x+'/'+u);
+    }
+  }
+  for(const u of [8,24,40]){
+    const b=rearAt(u,5);
+    assert(b&&b.material==='#sideBrick'&&b.depth>15.4,
+      'V3.33 rear block lacks relief '+dir+'/'+u);
+  }
+  for(const u of [8.3,18.5,28.7,38.9]){
+    const slot=rearAt(u,14.25);
+    assert(slot&&slot.material==='#soot'&&slot.depth<15,
+      'V3.33 one of four rear vent slots is missing '+dir+'/'+u);
+  }
+  for(const u of [3.2,13.4,23.6,33.8,44]){
+    assert.deepEqual(rearAt(u,14.25),{material:'#bronze',depth:16},
+      'V3.33 rear copper mullion missing '+dir+'/'+u);
+  }
+  for(const u of [16,32]){
+    const l=rearAt(u-.02,14.25),r=rearAt(u+.02,14.25);
+    assert(l&&r&&l.material==='#soot'&&r.material==='#soot'&&
+      Math.abs(l.depth-r.depth)<0.00001,
+      'V3.33 rear vent interrupted at block seam '+dir+'/'+u);
+  }
+  for(const x of [-1,0,1]){
+    const m=v333Model(dir,x,0);
+    assert(m.elements.every(e=>e.from.every((v,i)=>
+      v>=0&&e.to[i]<=16&&e.to[i]>v)),
+      'V3.33 changed front geometry outside a cell '+dir+'/'+x);
+  }
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
