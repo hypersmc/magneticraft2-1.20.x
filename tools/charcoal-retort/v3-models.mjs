@@ -731,15 +731,15 @@ export function applyRetortV3(files) {
   if(c.y===2 && c.k==="B")m.textures={
     ...m.textures,
     // Keep structural side/rear backing on the original Retort brick.
-    // Only physically raised RIGHT SIDE faces use vanilla sideBrick;
-    // this avoids recoloring the rear exterior/corner wall as a
-    // side effect of the visual front/side masonry cleanup.
+    // Keep existing structural refractory/front brick materials.
+    // V3.34: ALL upper Y2 B cells may now contain physical masonry
+    // faces (V3.33 added them to left and rear); provide the aliases
+    // unconditionally or Minecraft draws purple/black missing textures.
     brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron",
-    ...(c.z===0 ? {mortar:"minecraft:block/stone"} : {}),
-    ...(c.x===1 ?
-      {mortar:"minecraft:block/stone",sideBrick:"minecraft:block/bricks"} : {})
+    mortar:"minecraft:block/stone",
+    sideBrick:"minecraft:block/bricks"
   };
   files.set(path,json(m));
   if(byPort){

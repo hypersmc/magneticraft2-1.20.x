@@ -1220,6 +1220,31 @@ for(const dir of dirs){
       'V3.33 changed front geometry outside a cell '+dir+'/'+x);
   }
 }
+// V3.34 — every generated upper chamber model must bind every #alias
+// it actually uses. Geometry/UV bounds cannot detect Minecraft's
+// bright purple missing-texture fallback when an alias is undefined.
+for(const dir of dirs)for(const x of [-1,0,1])for(const z of [-2,-1,0]){
+  if(x===0&&z===-1)continue; // Real chimney throat air cell.
+  const [rx,rz]=v333Rotate(x,z,dir);
+  const path=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+    dir+'/part_'+rx+'_2_'+rz+'.json';
+  const model=json(path);
+  for(const element of model.elements)for(const face of Object.values(element.faces)){
+    const alias=face.texture;
+    if(!alias.startsWith('#'))continue;
+    const name=alias.slice(1);
+    assert(typeof model.textures[name]==='string'&&model.textures[name].length>0,
+      'V3.34 unresolved material '+alias+' in '+path);
+  }
+  if(x!==0||z===-2){
+    // Left/right and rear physical masonry must use resolved mappings
+    // even when the original structural backing uses refractory brick.
+    assert.equal(model.textures.mortar,'minecraft:block/stone',
+      'V3.34 missing mortar mapping in '+path);
+    assert.equal(model.textures.sideBrick,'minecraft:block/bricks',
+      'V3.34 missing raised brick mapping in '+path);
+  }
+}
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
