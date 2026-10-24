@@ -140,3 +140,15 @@ The inner faces at X/Z=5 and 11 now use `#roof`, which resolves to Minecraft's C
 **Collision alignment:** the center AIR roof proxy's former four coarse wall boxes are replaced with eight collision boxes: four flush copper seat segments (Y=0..10) and four upper chimney-wall regions (Y=10..16), retaining an open 6x6 chimney interior. Total Retort voxel shapes change **34 -> 38**. The eight genuine copper roof slabs retain their height, as do the recessed dark channels. **Existing formed machines must be unformed and re-formed** to load the new stored voxel collision.
 
 Scope: the **center roof model in four directions** plus neighboring Y=3 model files automatically updated by face culling at their touching edges; this does **not** alter neighboring copper slab geometry/texture or the lower three layers, ports, formation blueprint, processing, fuel, or recipes. Four-orientation visual acceptance and an actual Forge build remain pending.
+
+### 2026-10-24 — V3.7 upper-brick-chamber-only visual pass
+
+The user accepted the **copper slab roof, recessed twin grooves, and corrected flush chimney**. These are now a **locked/accepted visual baseline** for the Retort; do not modify them again while styling the remaining layers unless a regression is demonstrated.
+
+The user marked the reddish masonry region immediately below the roof in the original reference. This spans portions of more than one physical machine course from the viewing angle, so the next isolated model iteration intentionally targets **physical Y=2 only**. That layer is eight real Brick construction blocks around one required center AIR throat; Y=1 contains the lower hatch and real ports and will be reviewed separately.
+
+Y=2 now uses native **Minecraft brick masonry (1:1 16px UV scale)**, a structurally deep upper front ventilation opening with narrow bronze framing, four metal separators forming five dark recessed slots, two substantial dark riveted corner fasteners, and restrained structural side bands. The visual mass remains brick with metal/copper as accents; no fake mechanical shaft, new block or invented vent behavior.
+
+**Hard model-scope check:** exactly 32 generated `part_*_2_*.json` files changed (eight Y=2 parts per facing). All Y=3 roof/chimney files, all Y=0/Y=1 models, all formed port skins, all construction JSON, recipes, JEI/Patchouli data and Voxel collision profiles are **byte-for-byte unchanged**. The mesh generator verifies block-local geometry and eliminates hidden/coplanar faces without touching those accepted layers.
+
+**Status:** proposed Y=2 visual prototype, *not yet accepted in-game*. Compare front, side and three-quarter screenshots with the marked concept; keep the accepted roof fixed while iterating. Full `./gradlew build` is not claimed in this turn.

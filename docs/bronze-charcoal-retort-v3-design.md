@@ -133,3 +133,15 @@ All Y=0–2 generated models, their textures, the existing real log/charcoal/tar
 The end-to-end process still yields four charcoal plus one Wood Tar as an **item**. Physically wood tar is a viscous, dark liquid/semiliquid condensate from destructive wood distillation; deciding whether to use the mod's fluid system, tanks, pipes and separate pyrolysis distillate outputs is a *future gameplay decision*, not part of this roof model change.
 
 **Review gate:** first confirm the roof in a high overhead and front-three-quarter in-game screenshot. Do not touch the lower three layers for another aesthetic pass until this one roof composition is accepted. Gradle compilation and runtime rendering remain unverified.
+
+### 2026-10-24 — V3.7 upper-brick-chamber-only visual pass
+
+The user accepted the **copper slab roof, recessed twin grooves, and corrected flush chimney**. These are now a **locked/accepted visual baseline** for the Retort; do not modify them again while styling the remaining layers unless a regression is demonstrated.
+
+The user marked the reddish masonry region immediately below the roof in the original reference. This spans portions of more than one physical machine course from the viewing angle, so the next isolated model iteration intentionally targets **physical Y=2 only**. That layer is eight real Brick construction blocks around one required center AIR throat; Y=1 contains the lower hatch and real ports and will be reviewed separately.
+
+Y=2 now uses native **Minecraft brick masonry (1:1 16px UV scale)**, a structurally deep upper front ventilation opening with narrow bronze framing, four metal separators forming five dark recessed slots, two substantial dark riveted corner fasteners, and restrained structural side bands. The visual mass remains brick with metal/copper as accents; no fake mechanical shaft, new block or invented vent behavior.
+
+**Hard model-scope check:** exactly 32 generated `part_*_2_*.json` files changed (eight Y=2 parts per facing). All Y=3 roof/chimney files, all Y=0/Y=1 models, all formed port skins, all construction JSON, recipes, JEI/Patchouli data and Voxel collision profiles are **byte-for-byte unchanged**. The mesh generator verifies block-local geometry and eliminates hidden/coplanar faces without touching those accepted layers.
+
+**Status:** proposed Y=2 visual prototype, *not yet accepted in-game*. Compare front, side and three-quarter screenshots with the marked concept; keep the accepted roof fixed while iterating. Full `./gradlew build` is not claimed in this turn.

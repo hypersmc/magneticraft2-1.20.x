@@ -335,6 +335,57 @@ for(const dir of dirs){
 }
 // V3.5 affects only the chimney model. The roof's long inset grooves
 // continue to be tested above independently.
+
+// V3.7 — upper refractory chamber only. Do not make model edits to
+// accepted copper roof Y=3 or service-layer Y=1 when reviewing Y=2.
+for(const dir of dirs){
+  const def=json(resource+'data/magneticraft2/multiblocks/charcoal_retort_'+dir+'.json');
+  const base=def.structure.layout.layer1, upper=def.structure.layout.layer3;
+  let cx=-1,cz=-1;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++)
+    if(base[z][x]==='C'){cx=x;cz=z;}
+  let masonryCount=0,airCount=0;
+  for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+    const id=upper[z][x],modelPath=resource+
+      'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+(x-cx)+'_2_'+(z-cz)+'.json';
+    if(id==='A'){
+      airCount++;
+      assert(!fs.existsSync(new URL(modelPath,root)),
+        'Y2 center must remain AIR and not hide the exhaust throat: '+dir);
+    }else{
+      assert.equal(id,'B','Y2 construction stays entirely masonry: '+dir);
+      masonryCount++;
+      const chamber=json(modelPath);
+      assert.equal(chamber.textures.brick,'minecraft:block/bricks',
+        'Y2 brickwork must use native Minecraft tile scale: '+dir);
+      assert(chamber.elements.length>0,'Empty chamber model: '+modelPath);
+      for(const e of chamber.elements){
+        assert(e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v),
+          'Chamber exceeds its block cell: '+modelPath);
+      }
+    }
+  }
+  assert.equal(masonryCount,8);
+  assert.equal(airCount,1);
+}
+const upperFront = southModel('part_0_2_0');
+const ventDividers=upperFront.elements.filter(e=>
+  e.faces.south?.texture==='#metal' && e.from[0]>=5 &&
+  e.to[0]<=12 && e.from[1]>=9);
+assert(ventDividers.length>=4,
+  'Upper chamber must have four grille bars with five open slots');
+assert(upperFront.elements.some(e=>
+  e.faces.south?.texture==='#soot' && e.to[2]<=10),
+  'Upper vent must have dark recessed backing, not painted-on bars');
+for(const x of [-1,1]){
+  const shoulder=southModel('part_'+x+'_2_0');
+  assert(shoulder.elements.some(e=>
+    Object.values(e.faces).some(f=>f.texture==='#join')),
+    'Front Y2 corner should retain its riveted iron bracket');
+}
+// V3.7 keeps Y1 and Y3 geometry as-is; this is verified by asset-delta
+// comparison during commit staging, while these assertions pin Y2 intent.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

@@ -335,3 +335,7 @@ Removed the visually distracting floating mounting ring, rebuilt the vent wall w
 ### 2026-10-24 — Retort V3.6 flush chimney integration
 
 Corrected floating chimney by filling the *center AIR-host model only* with four flush Cut Copper roof-seat segments at Y=0..10 while preserving the open 6x6 flue. Inner faces now use copper rather than near-black soot. The center seat updates voxel collisions (34 -> 38), so re-form existing Retorts. Adjacent roof-part face culling is regenerated but their shape/texture, real ports, lower layers, structure JSON and recipes remain unchanged. Screenshot approval and Gradle build pending.
+
+### 2026-10-24 — Retort V3.7 Y2 chamber (visual review)
+
+Copper roof/chimney are **visually accepted and locked** after user approval. The next pass changes **only the eight Y=2 brick chamber models for each of four orientations** (32 generated model files): tiled brick walls, stronger corner brackets and a recessed five-slot copper/iron vent. The user's marked region partly crosses into Y=1, which remains for a subsequent isolated pass. JSON formation, lower machine, real ports, process/fuel, collision and roof model bytes are unchanged. In-game Y2 acceptance and Gradle compilation pending.

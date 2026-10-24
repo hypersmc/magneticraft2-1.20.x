@@ -49,6 +49,50 @@ export function applyRetortV3(files) {
    solid(c,"bronze",[3,13,13],[13,16,16]);solid(c,"bronze",[3,0,13],[13,3,16]);
    solid(c,"join",[6,1,15],[10,4,16]);
   } else if(k==="B"){
+   if(y===2){
+    // Y=2 only. Rebuild the upper masonry, narrow front grille and
+    // front corner fixings. Y=1 and the accepted copper roof stay frozen.
+    const front=z===0,outer=x!==0,rear=z===-2;
+    if(front&&x===0){
+      // True inset grille: thick masonry reveals rather than a
+      // dark sticker applied to an opaque solid brick front.
+      solid(c,"brick",[0,0,0],[16,16,8]);
+      solid(c,"brick",[0,0,8],[3,16,16]);
+      solid(c,"brick",[13,0,8],[16,16,16]);
+      solid(c,"brick",[3,0,8],[13,8,16]);
+      solid(c,"brick",[3,15,8],[13,16,16]);
+      solid(c,"soot",[3,8,8],[13,15,10]);
+      for(const xx of [5,7,9,11])
+       solid(c,"metal",[xx,10,11],[xx+0.75,14,14]);
+      solid(c,"bronze",[2,8,12],[4,15,16]);
+      solid(c,"bronze",[12,8,12],[14,15,16]);
+      solid(c,"bronze",[4,14,12],[12,16,16]);
+      solid(c,"bronze",[4,8,12],[12,9,16]);
+      solid(c,"metal",[4,9,11],[12,10,13]);
+    }else if(front){
+      solid(c,"brick",[0,0,0],[16,16,13]);
+    }else if(outer){
+      solid(c,"brick",[x===-1?1.5:0,0,0],[x===1?14.5:16,16,16]);
+    }else solid(c,"brick",[0,0,0],[16,16,16]);
+    if(front&&outer){
+      // Riveted dark square just below the roof, with bronze corner
+      // pilaster descending through this level only.
+      const xx=x===-1?0:13;
+      solid(c,"bronze",[xx,3,13],[xx+3,15,16]);
+      solid(c,"metal",[xx,0,0],[xx+3,3,16]);
+      solid(c,"metal",[xx,11,14],[xx+3,16,16]);
+      solid(c,"join",[xx+1,12,15],[xx+3,14,16]);
+    }
+    if(outer){
+      const xx=x===-1?0:13;
+      // Match the Y=1/roof seam coverage of the previous renderer,
+      // while giving this level a dark iron corner band.
+      solid(c,"metal",[xx,13,0],[xx+3,16,16]);
+      solid(c,"metal",[xx,0,0],[xx+3,3,16]);
+      if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
+    }
+    if(front&&x===0)solid(c,"metal",[0,14,15],[16,15,16]);
+   }else{
    const front=z===0,side=x!==0,rear=z===-2;
    // The important front openings are hollow/recessed masonry, not painted
    // faces on a full cube. The shoulder/corner cells also step backward.
@@ -107,6 +151,7 @@ export function applyRetortV3(files) {
    if(side&&z===-1){
     if(x===-1)solid(c,"metal",[0,3,0],[2,5,16]);
     else solid(c,"metal",[14,3,0],[16,5,16]);
+   }
    }
   } else if(k==="P"){
    // ROOF-ONLY PASS: the two dark lines are GROOVES CUT INTO copper,
@@ -240,6 +285,7 @@ export function applyRetortV3(files) {
   // Keep only this layer's texture change. The other three layers use
   // their old shared material map and generated JSON byte-for-byte.
   if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
+  if(c.y===2 && c.k==="B")m.textures={...m.textures,brick:"minecraft:block/bricks"};
   files.set(path,json(m));
   if(byPort){
    ports.push({dir,role:c.k==="U"?"input":c.k==="O"?"primary":"byproduct",path});
