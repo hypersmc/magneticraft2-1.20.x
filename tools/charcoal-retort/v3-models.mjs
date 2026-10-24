@@ -253,9 +253,12 @@ export function applyRetortV3(files) {
       // underside immediately above the lower center hatch. This does
       // NOT replace the accepted shallow seven-segment copper arch.
       // The narrow 0.52px dark strip is a local apron shadow, not a
-      // full-width Retort side-wall iron band.
+      // full-width Retort side-wall iron band. V3.32 removes the bronze
+      // sill immediately above it, which was not present in the reference.
       solid(c,"metal",[3.2,0.1,15.45],[12.8,0.62,16]);
-      solid(c,"bronze",[3.35,0.62,15.55],[12.65,1.02,16]);
+      // V3.32: no continuous lower COPPER sill. The reference has
+      // exposed dark iron immediately below the shaped copper crown.
+      // Keep the existing black iron drip-edge at Y0.10..0.62.
 
       // V3.31: dark recessed iron follows the crown's underside.
       // The former wide copper center pier is intentionally absent.
@@ -268,7 +271,7 @@ export function applyRetortV3(files) {
         if(top>1.02)
           solid(c,"metal",[xa,1.02,15.35],[xb,top,15.78]);
       }
-      // Keep V3.29's original narrow iron drip line and copper sill.
+      // Keep the thin iron drip-edge; the unwanted lower copper sill is gone.
     }else if(front&&x===1){
       // V3.22: match the right-hand concept image. This is a SOLID
       // upper front brick wall with physical staggered masonry courses,

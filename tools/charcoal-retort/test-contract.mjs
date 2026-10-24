@@ -1090,7 +1090,7 @@ for(const dir of dirs){
     }
   }
 }
-// V3.31: right above the lower hatch, copper is a stepped crown over
+// V3.32: right above the lower hatch, copper is a stepped crown over
 // dark iron and must NOT cover blast-furnace-style raised masonry.
 for(const dir of dirs){
   const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
@@ -1108,8 +1108,12 @@ for(const dir of dirs){
   for(const x of [4,8,12]){
     assert.deepEqual(at(x,0.3),{mat:'#metal',depth:16},
       'V3.31 lost narrow iron drip-edge '+dir+'/'+x);
-    assert.deepEqual(at(x,0.8),{mat:'#bronze',depth:16},
-      'V3.31 lost the lower copper sill '+dir+'/'+x);
+    assert.deepEqual(at(x,0.8),{mat:'#brick',depth:14},
+      'V3.32 unwanted horizontal copper sill reappeared '+dir+'/'+x);
+  }
+  for(const x of [3.6,4,5,6,7,8,9,10,11,12]){
+    assert.deepEqual(at(x,0.9),{mat:'#brick',depth:14},
+      'V3.32 visible copper line below the crown '+dir+'/'+x);
   }
   for(const x of [5.8,8,10.2]){
     assert.deepEqual(at(x,2),{mat:'#metal',depth:15.78},
