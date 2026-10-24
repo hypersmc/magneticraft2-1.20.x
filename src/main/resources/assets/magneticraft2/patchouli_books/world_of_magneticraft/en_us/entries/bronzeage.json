@@ -323,6 +323,56 @@
       "title": "Reclaim Clay from Sediment",
       "recipe": "magneticraft2:settled_sediment_to_clay",
       "text": "Four units of wet Settled Sediment give one Clay Ball. This gives sediment a real use without returning the 120 mB unrecovered water from each settling batch."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Charcoal Retort$()$(br2)The sealed Retort produces charcoal fuel for refractory processing and later iron reduction. It takes four burnable logs per 720-tick cycle and burns a SEPARATE solid fuel supply. Each completed cycle yields four Charcoal and one Wood Tar. Wood Tar can be burned in the Retort for 200 ticks; it cannot fuel a complete batch by itself."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Charcoal Retort Controller",
+      "recipe": "magneticraft2:charcoal_retort",
+      "text": "The controller is only one block of a 3x4x3 sealed masonry retort. Use the construction Visualize on the next page."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Charcoal Retort",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P_P",
+            "PPP"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BYB",
+            "B_B",
+            "UBO"
+          ],
+          [
+            "SSS",
+            "SSS",
+            "S0S"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:charcoal_retort",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "P": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Build bottom-up exactly as Visualize shows. Required AIR inside stays empty, including the copper-roof chimney cell. Input U on the front-left feeds logs; Output O on front-right holds charcoal; Byproduct Y at rear center holds tar. All three are REAL modules, not decorative hoppers. Form using the controller. Right-click the controller with solid fuel; sneak-empty-hand to recover unused fuel. Smoke rises only when the retort is burning."
     }
   ],
   "sortnum": 3,

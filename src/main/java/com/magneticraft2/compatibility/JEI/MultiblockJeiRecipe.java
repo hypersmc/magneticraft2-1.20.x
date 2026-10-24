@@ -42,6 +42,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "rotary_ore_classifier");
     public static final ResourceLocation WATER_SETTLING_TANK =
             new ResourceLocation("magneticraft2", "water_settling_tank");
+    public static final ResourceLocation CHARCOAL_RETORT =
+            new ResourceLocation("magneticraft2", "charcoal_retort");
 
     private final ResourceLocation id;
     private final ResourceLocation machine;

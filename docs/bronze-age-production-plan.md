@@ -35,7 +35,7 @@ Status: **living implementation roadmap** for draft Bronze Age PR #11. In the ma
 | Rotary Ore Classifier | **Source implemented** (PR #11; validation pending) | **3x3x5** | 3 screened fines + 1 reusable coarse crushed ore per 4 crushed (no tailings generation yet) | Stamp Mill |
 | Ore Roasting Kiln | Planned | 5x3x5 | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | **Source implemented; V5.1 visuals accepted** (gameplay/build validation pending) | **5x2x5** | 600 mB dirty water -> 480 mB reusable clean water + 1 settled sediment per 240 ticks | Ore Washer |
-| Charcoal Retort | **Planned — next** | 3x4x3 | Wood -> charcoal plus recoverable byproduct/heat | Furnace, airflow |
+| Charcoal Retort | **First source prototype** (PR #11; uncompiled / gameplay unverified) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + 1 wood tar (720 ticks); tar is a modest Retort fuel | Furnace; advanced airflow still planned |
 | Refractory Kiln | Planned | 5x4x5 | Clay/sand/flux -> refractory ceramics | Improved fuel |
 | Mechanical Forge Hammer | Planned | 5x4x3 | Hot metal blank -> forged part | Bronze power |
 | Bronze Rolling Mill | Planned | 5x3x3 | Heated billet -> sheet/rod | Precision bearings |
@@ -78,7 +78,7 @@ Iron ore deposits -> selective breaking/classification -> concentration -> dewat
 2. **Stamp Mill source implemented:** six raw feedstocks, Gear V2 input, replaceable stamp shoe, physical item ports, JSON recipes and guide/JEI integration. In-game animation polish and a verified build are still outstanding.
 3. **Still required before the next ore-processing multiblock:** verify ore -> crushed -> Washer -> Sifter end-to-end in-game, including block harvests, full output ports, dirty-water backpressure and automation. Do not label source-level checks as gameplay verification.
 4. **Water Settling Tank source implemented:** 5x2x5; V5.1 visuals accepted. Verify actual 600 -> 480 mB + sediment operation, pipe/item ports, output blocking, reload persistence and integrated water reuse; no full Forge build or complete gameplay acceptance claimed.
-5. **Next planned machine: Charcoal Retort.** Decide its fuel/heat input, charcoal yield, realistic recoverable byproduct(s) and material accounting before committing the implementation. Refractory Kiln and selective metallurgy follow.
+5. **Charcoal Retort first source prototype:** sealed 3x4x3 multiblock with manual finite fuel, real log input and separate charcoal/tar outputs, current-lit state and chimney smoke, JSON recipe/JEI/Patchouli support. Uses vanilla masonry/copper textures in a **V1 visual prototype, not accepted art**. Full Forge and gameplay testing required. After it is verified, Refractory Kiln and selective metallurgy follow.
 
 ## Pre-next-multiblock consistency sweep (2026-10-19)
 
@@ -299,3 +299,7 @@ assertions passed, but full Gradle and live game acceptance are pending.
 ### 2026-10-24 — V5.1 user visual sign-off and live status table
 
 After the final V5.1 visual review, the **Water Settling Tank V5.1 appearance is accepted as the visual baseline**. This does **not** clear the separate `./gradlew build`, automation, fluid/item I/O, pause/reload and end-to-end ore-processing acceptance requirements. PR #11 remains **open and draft**, and the next proposed build is the **Charcoal Retort**, not another Mechanical Lathe. The machine-status table above is the current summary; earlier dated sections record historical states.
+
+### 2026-10-24 — Charcoal Retort first source implementation
+
+A source-only 3x4x3 Charcoal Retort has been added to the draft Bronze PR #11: manual fuel queue, 4 burnable logs -> 4 charcoal + 1 Wood Tar in 720 active ticks, output reservation, real item I/O modules, persisted fuel and batch progress, lit chimney smoke, four rotated JSON layouts and Voxel V2 collision, JEI and construction instructions. Wood Tar can be reused as 200-tick fuel in this Retort. The V1 model is a deliberately basic vanilla brick/copper prototype; **do not mark visually accepted, compiled or gameplay validated**. The subsequent Refractory Kiln is the intended next candidate once this machine passes integration testing.

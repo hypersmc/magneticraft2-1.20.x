@@ -33,6 +33,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBl
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.WaterSettlingTankBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeCastingBasinBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -109,6 +110,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("water_settling_tank", () ->
                     BlockEntityType.Builder.of(WaterSettlingTankBlockEntity::new,
                             BlockRegistry.WATER_SETTLING_TANK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CharcoalRetortBlockEntity>> CHARCOAL_RETORT_BE =
+            BLOCK_ENTITIES.register("charcoal_retort", () ->
+                    BlockEntityType.Builder.of(CharcoalRetortBlockEntity::new,
+                            BlockRegistry.CHARCOAL_RETORT.get()).build(null));
     public static final RegistryObject<BlockEntityType<RotaryOreClassifierBlockEntity>> ROTARY_ORE_CLASSIFIER_BE =
             BLOCK_ENTITIES.register("rotary_ore_classifier", () ->
                     BlockEntityType.Builder.of(RotaryOreClassifierBlockEntity::new,
