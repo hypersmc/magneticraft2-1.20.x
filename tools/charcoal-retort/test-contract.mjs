@@ -137,6 +137,29 @@ for(const dir of dirs){
  }
 }
 
+
+for(const dir of dirs)for(const role of ['input','primary','byproduct']){
+  const file=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/port_'+role+'.json';
+  const model=json(file);
+  assert(model.elements.length>0,'Empty V3 real port '+file);
+  assert(model.elements.every(e=>e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v)),
+    'Port model overflows its REAL block cell: '+file);
+  const selector=role==='input'?'input':role==='primary'?'primary_output':'byproduct_output';
+  const state=json(resource+'assets/magneticraft2/blockstates/multiblock_item_'+selector+'.json');
+  assert(state.variants[''].model.endsWith('_selector'),'Shared port must use fallback selector');
+  const dynamic=json(resource+'assets/magneticraft2/models/block/multiblock_item_'+selector+'_selector.json');
+  assert.equal(dynamic.loader,'magneticraft2:multiblock');
+  assert.equal(dynamic.baseModel,'magneticraft2:models/block/multiblock_item_'+selector+'.json');
+}
+const portSource=read('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
+assert(portSource.includes('linkRetortController('));
+assert(portSource.includes('getModelData()') && portSource.includes('CharcoalRetortBlockEntity'));
+const clientSetup=read('src/main/java/com/magneticraft2/client/Clientsetup.java');
+assert(clientSetup.includes('charcoal_retort_')&&clientSetup.includes('port_'));
+const retortGenerator=read('tools/charcoal-retort/build.mjs');
+assert(retortGenerator.includes('finalizeRetortV3(files,v3.ports)'));
+const sourceV3=read('tools/charcoal-retort/v3-models.mjs');
+assert(sourceV3.includes('portShapes')&&sourceV3.includes('files.delete(path)'));
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

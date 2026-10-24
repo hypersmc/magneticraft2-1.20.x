@@ -7,6 +7,10 @@ import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraftforge.client.model.data.ModelData;
+import com.magneticraft2.common.utils.MultiBlockProperties;
+import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -65,6 +69,37 @@ public class MultiblockItemPortBlockEntity
         }
 
         return MultiblockItemPortBlock.PortMode.INPUT;
+    }
+
+
+    /**
+     * This changes only the baked appearance of a REAL, still-interactable
+     * item module. Other multiblocks and unformed modules keep their normal
+     * wooden/copper port appearance. No port coordinates or capabilities move.
+     */
+    @Override
+    public @NotNull ModelData getModelData() {
+        if (formedModule && level != null
+                && getController() instanceof CharcoalRetortBlockEntity retort) {
+            BlockState controllerState = retort.getBlockState();
+            if (controllerState.getBlock() instanceof CharcoalRetortBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    case BYPRODUCT_OUTPUT -> "byproduct";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "charcoal_retort_"
+                            + controllerState.getValue(CharcoalRetortBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key)
+                            .build();
+                }
+            }
+        }
+        return ModelData.EMPTY;
     }
 
     public boolean isOutputPort() {
@@ -241,6 +276,20 @@ public class MultiblockItemPortBlockEntity
         return world.getBlockEntity(pos) == this;
     }
 
+    /**
+     * The Retort links its own three existing ports after formation.
+     * No extra block is added and other multiblocks retain their behavior.
+     */
+    public void linkRetortController(BlockPos controller) {
+        if (level == null || level.isClientSide) return;
+        controllerX = controller.getX();
+        controllerY = controller.getY();
+        controllerZ = controller.getZ();
+        formedModule = true;
+        setChanged();
+        sync();
+    }
+
     @Override
     public void onActivate(Level world, BlockPos pos) {
         if (world.isClientSide) {
@@ -359,6 +408,7 @@ public class MultiblockItemPortBlockEntity
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
+        if (level != null && level.isClientSide) requestModelDataUpdate();
     }
 
     @Override
@@ -381,6 +431,7 @@ public class MultiblockItemPortBlockEntity
     }
 
     private void sync() {
+        requestModelDataUpdate();
         if (level != null) {
             level.sendBlockUpdated(
                     worldPosition,

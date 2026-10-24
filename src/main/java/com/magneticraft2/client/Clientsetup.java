@@ -144,6 +144,15 @@ public class Clientsetup {
         // BER-only block models are requested directly from ModelManager by
         // ResourceLocation. Register them as top-level models so the baked model
         // lookup cannot fall back to an empty/missing entry.
+
+        // V3 Retort formed-state models are owned by the real port BEs.
+        // Register all facings so ModelManager never falls back to a missing cube.
+        for (String direction : new String[]{"south", "west", "north", "east"}) {
+            for (String role : new String[]{"input", "primary", "byproduct"}) {
+                event.register(new ResourceLocation(MOD_ID,
+                        "multiblock/charcoal_retort_" + direction + "/port_" + role));
+            }
+        }
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));

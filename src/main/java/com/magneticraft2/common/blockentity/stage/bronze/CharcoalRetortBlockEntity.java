@@ -2,6 +2,7 @@ package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
@@ -263,6 +264,14 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         MultiblockController controller = new MultiblockController(structure);
         controller.identifyAndAddModules(level, worldPosition, structure);
         if (!controller.createStructure(level, worldPosition)) return null;
+        // These remain REAL item module blocks. Link only this Retort's
+        // ports to its controller so formed-state models AND slot forwarding
+        // resolve correctly; other multiblock controllers are unchanged.
+        for (BlockPos member : controller.getBlockMap().keySet()) {
+            if (level.getBlockEntity(member) instanceof MultiblockItemPortBlockEntity port) {
+                port.linkRetortController(worldPosition);
+            }
+        }
         controller.setFormed(true);
         setMultiblockController(controller);
         formed = true;

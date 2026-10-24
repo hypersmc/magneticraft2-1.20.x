@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "magneticraft2:block/multiblock_item_primary_output"
+      "model": "magneticraft2:block/multiblock_item_primary_output_selector"
     }
   }
 }

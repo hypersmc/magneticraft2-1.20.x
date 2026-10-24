@@ -1,0 +1,5 @@
+{
+  "loader": "magneticraft2:multiblock",
+  "baseModel": "magneticraft2:models/block/multiblock_item_byproduct_output.json",
+  "namedModels": {}
+}

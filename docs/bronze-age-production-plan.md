@@ -307,3 +307,7 @@ A source-only 3x4x3 Charcoal Retort has been added to the draft Bronze PR #11: m
 ### 2026-10-24 — Retort copper-clad V2 visual prototype
 
 The formable Charcoal Retort now has a regenerated static shell with separate dark foundation, recessed kiln door, inspection grille, native 16×16 refractory/bronze art, layered copper roof and open framed chimney. Four facing-specific block-local model sets and the Voxel V2 profile were updated together. The real Input, Charcoal Output and Wood Tar Output **remain unchanged and never receive fake replacement models**; formation JSON, Patchouli recipe, processing and firebox logic are unchanged. Existing formed V1 instances must be safely unformed and re-formed to refresh physical collision. **Visual/Forge/gameplay acceptance remains pending.**
+
+### 2026-10-24 — Charcoal Retort V3 visual source implementation
+
+Generated V3 block-local roof, front hatch, foundation and chimney geometry is added, alongside formed-state *real port* model switching for log input / charcoal output / tar output. The port BEs keep their Forge capabilities and their generic unformed/other-machine models; the Retort links them during formation. The construction JSON, 3×4×3 footprint and original recipe remain untouched. V3 is **not yet Forge-build or gameplay accepted**; confirm from in-game screenshots before starting another machine.
