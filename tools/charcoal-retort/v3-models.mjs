@@ -234,16 +234,17 @@ export function applyRetortV3(files) {
       // opening rather than a straight rectangular sill or a U-tray.
       // A Minecraft-scale stair-step approximation avoids UV stretch.
       // The end pieces physically meet the adjacent iron feet.
-      // V3.30: widen the visual rise while staying entirely within the
-      // ONE upper center Y2 cell. Seven symmetrical copper segments.
+      // V3.31: the user's reference has a raised, stepped COPPER
+      // CROWN above dark iron, rather than a solid copper middle post.
+      // The center peak Y3.85 stops before brick masonry begins Y4.05.
       const archSegments=[
-        [2.8,4.0,1.25,3.0],
-        [4.0,5.2,1.85,3.55],
-        [5.2,6.4,2.55,4.1],
-        [6.4,9.6,3.25,4.55],
-        [9.6,10.8,2.55,4.1],
-        [10.8,12.0,1.85,3.55],
-        [12.0,13.2,1.25,3.0]
+        [2.8,4.0,1.05,1.65],
+        [4.0,5.2,1.65,2.25],
+        [5.2,6.4,2.25,2.95],
+        [6.4,9.6,2.95,3.85],
+        [9.6,10.8,2.25,2.95],
+        [10.8,12.0,1.65,2.25],
+        [12.0,13.2,1.05,1.65]
       ];
       for(const [x0,x1,bottom,top] of archSegments)
         solid(c,"bronze",[x0,bottom,14.75],[x1,top,16]);
@@ -256,18 +257,18 @@ export function applyRetortV3(files) {
       solid(c,"metal",[3.2,0.1,15.45],[12.8,0.62,16]);
       solid(c,"bronze",[3.35,0.62,15.55],[12.65,1.02,16]);
 
-      // Taller, wider inset iron pockets. The front face is 0.22px
-      // behind the copper trim and the raised arch, not flush with it.
-      for(const [xa,xb] of [[4.6,6.4],[9.6,11.4]])
-        solid(c,"metal",[xa,1.02,15.35],[xb,2.55,15.78]);
-
-      // Separate copper cheeks border both recesses without covering
-      // them, while a central copper pier rises to meet the new arch.
-      for(const [xa,xb] of [[3.4,4.35],[4.35,4.6],[6.4,6.7],
-                            [9.3,9.6],[11.4,11.65],[11.65,12.6]])
-        solid(c,"bronze",[xa,1.02,15.6],[xb,2.55,16]);
-      solid(c,"bronze",[6.7,1.02,15.6],[9.3,3.25,16]);
-
+      // V3.31: dark recessed iron follows the crown's underside.
+      // The former wide copper center pier is intentionally absent.
+      // Metal ends at Z15.78; surrounding copper is at Z16.
+      for(const [xa,xb,top] of [
+        [3.2,4.0,1.05],[4.0,5.2,1.65],[5.2,6.4,2.25],
+        [6.4,9.6,2.95],[9.6,10.8,2.25],
+        [10.8,12.0,1.65],[12.0,12.8,1.05]
+      ]){
+        if(top>1.02)
+          solid(c,"metal",[xa,1.02,15.35],[xb,top,15.78]);
+      }
+      // Keep V3.29's original narrow iron drip line and copper sill.
     }else if(front&&x===1){
       // V3.22: match the right-hand concept image. This is a SOLID
       // upper front brick wall with physical staggered masonry courses,

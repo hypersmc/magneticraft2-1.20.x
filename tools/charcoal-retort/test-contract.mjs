@@ -1090,87 +1090,46 @@ for(const dir of dirs){
     }
   }
 }
-// V3.29 — the reference's lower-center hood consists of a copper
-// drip-apron, two inset dark iron accents and a slim continuous
-// underside strip. The prior arch, masonry and upper five-slot
-// center grille must remain unchanged.
-for(const dir of dirs){
-  const path=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
-    dir+'/part_0_2_0.json';
-  const m=json(path);
-  const axis=['south','north'].includes(dir)?0:2;
-  const normal=axis===0?2:0;
-  const front=['south','east'].includes(dir),flip=['north','east'].includes(dir);
-  const sample=(u,y)=>{
-    const pos=flip?16-u:u;
-    const hits=m.elements.filter(e=>e.faces[dir]&&
-      e.from[axis]<pos&&pos<e.to[axis]&&e.from[1]<y&&y<e.to[1]);
-    hits.sort((a,b)=>front?b.to[normal]-a.to[normal]:
-                           a.from[normal]-b.from[normal]);
-    const e=hits[0];
-    return e&&{material:e.faces[dir].texture,
-      depth:front?e.to[normal]:16-e.from[normal]};
-  };
-  for(const u of [4,8,12]){
-    assert.deepEqual(sample(u,0.3),{material:'#metal',depth:16},
-      'V3.29 missing center iron underside strip '+dir+'/'+u);
-    assert.deepEqual(sample(u,0.82),{material:'#bronze',depth:16},
-      'V3.29 missing projecting copper sill '+dir+'/'+u);
-  }
-  for(const u of [5.8,10.2])
-    assert.deepEqual(sample(u,1.3),{material:'#metal',depth:15.78},
-      'V3.29 missing recessed iron detail '+dir+'/'+u);
-  assert.deepEqual(sample(8,1.75),{material:'#bronze',depth:16},
-    'V3.29 missing stepped copper apron '+dir);
-  assert.deepEqual(sample(8,2.8),{material:'#bronze',depth:16},
-    'V3.29 replaced the previously accepted copper arch '+dir);
-  assert.equal(sample(8,5)?.material,'#brick',
-    'V3.29 lower masonry course changed '+dir);
-  assert.equal(sample(8,12.4)?.material,'#soot',
-    'V3.29 upper center grille changed '+dir);
-  // Ensure the new hood is entirely within the center upper 16px cell.
-  assert(m.elements.every(e=>e.from.every((n,i)=>
-    n>=0&&e.to[i]<=16&&e.to[i]>n)),
-    'V3.29 center model exceeds cell bounds '+dir);
-}
-// V3.30 — enlarge the SAME single front-center upper-block copper
-// curve, exposing two taller symmetrical inset iron recesses. Ensure
-// its dark underside, bronze central pier and existing grille remain.
+// V3.31: right above the lower hatch, copper is a stepped crown over
+// dark iron and must NOT cover blast-furnace-style raised masonry.
 for(const dir of dirs){
   const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
     dir+'/part_0_2_0.json');
-  const horizontal=['south','north'].includes(dir)?0:2;
-  const normal=horizontal===0?2:0;
-  const forward=['south','east'].includes(dir);
-  const flipped=['north','east'].includes(dir);
-  const hit=(x,y)=>{
-    const u=flipped?16-x:x;
-    const faces=m.elements.filter(e=>e.faces[dir]&&
-      e.from[horizontal]<u&&u<e.to[horizontal]&&
-      e.from[1]<y&&y<e.to[1]);
-    faces.sort((a,b)=>forward?b.to[normal]-a.to[normal]:
-                                  a.from[normal]-b.from[normal]);
-    const e=faces[0];return e&&{
-      material:e.faces[dir].texture,
-      depth:forward?e.to[normal]:16-e.from[normal]};
+  const h=['south','north'].includes(dir)?0:2,n=h===0?2:0;
+  const outward=['south','east'].includes(dir),reverse=['north','east'].includes(dir);
+  const at=(x,y)=>{
+    const u=reverse?16-x:x;
+    const e=m.elements.filter(e=>e.faces[dir]&&
+      e.from[h]<u&&u<e.to[h]&&e.from[1]<y&&y<e.to[1])
+      .sort((a,b)=>outward?b.to[n]-a.to[n]:a.from[n]-b.from[n])[0];
+    return e&&{
+      mat:e.faces[dir].texture,depth:outward?e.to[n]:16-e.from[n]};
   };
-  for(const x of [5.5,10.5]){
-    assert.deepEqual(hit(x,1.4),{material:'#metal',depth:15.78},
-      'V3.30 lower dark pocket not recessed '+dir+'/'+x);
-    assert.deepEqual(hit(x,2.3),{material:'#metal',depth:15.78},
-      'V3.30 arch does not expose larger upper dark pocket '+dir+'/'+x);
-    assert.deepEqual(hit(x,2.6),{material:'#bronze',depth:16},
-      'V3.30 copper contour no longer bounds recessed pocket '+dir+'/'+x);
+  for(const x of [4,8,12]){
+    assert.deepEqual(at(x,0.3),{mat:'#metal',depth:16},
+      'V3.31 lost narrow iron drip-edge '+dir+'/'+x);
+    assert.deepEqual(at(x,0.8),{mat:'#bronze',depth:16},
+      'V3.31 lost the lower copper sill '+dir+'/'+x);
   }
-  for(const y of [1.75,2.8,3.9,4.5])
-    assert.deepEqual(hit(8,y),{material:'#bronze',depth:16},
-      'V3.30 larger center copper rise disconnected '+dir+'/'+y);
-  assert.deepEqual(hit(8,0.3),{material:'#metal',depth:16},
-    'V3.30 lost thin iron drip-edge '+dir);
-  assert.equal(hit(8,5)?.material,'#brick',
-    'V3.30 expanded curve over upper masonry '+dir);
-  assert.equal(hit(8,12.4)?.material,'#soot',
-    'V3.30 changed accepted upper grille '+dir);
+  for(const x of [5.8,8,10.2]){
+    assert.deepEqual(at(x,2),{mat:'#metal',depth:15.78},
+      'V3.31 copper is masking recessed iron '+dir+'/'+x);
+  }
+  for(const [x,y] of [[3.4,1.4],[4.6,1.95],[5.8,2.6],
+                        [8,3.6],[10.2,2.6],[11.4,1.95],[12.6,1.4]]){
+    assert.deepEqual(at(x,y),{mat:'#bronze',depth:16},
+      'V3.31 broken stepped copper cap '+dir+'/'+x+'/'+y);
+  }
+  assert.deepEqual(at(8,4),{mat:'#mortar',depth:14.2},
+    'V3.31 copper rises into mortar above its hood '+dir);
+  for(const x of [3.4,5.8,8,10.2,12.6]){
+    assert.equal(at(x,4.5)?.mat,'#brick',
+      'V3.31 copper hides lower raised brick course '+dir+'/'+x);
+  }
+  assert.equal(at(8,12.4)?.mat,'#soot',
+    'V3.31 upper five-slot grille changed '+dir);
+  assert(m.elements.every(e=>e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v)),
+    'V3.31 geometry left the single center block '+dir);
 }
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
