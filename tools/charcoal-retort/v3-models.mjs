@@ -59,19 +59,17 @@ export function applyRetortV3(files) {
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
     if(leftFacade){
-      // V3.15: retain the V3.14 raised brick courses, replace the
-      // unwanted symmetrical U-shaped trim with reference L-frame.
-      // Structural backing stops at Z=14; the brick courses are genuine
-      // shallow 3D solids up to Z=15, not a flat retextured cuboid.
-      // Copper and iron pillars finish at Z=16. Every element remains
-      // inside this ONE real front-left chamber block (16x16x16).
+      // V3.16: PRESERVE the newly correct L-shaped copper/iron framing.
+      // Restore brick-course relief only: the mortar stays deep and the
+      // raised brick faces now reach Z=15.45..15.70 below the trim at 16.
+      // Everything remains in the same one 16x16x16 front-left cell.
       solid(c,"brick",[0,0,0],[16,16,14]);
 
-      // Thin exposed mortar bed behind the physical brick courses.
-      // It is NOT a hollow pocket: the courses sit 0.65 pixels ahead
-      // of a complete structural backing, leaving only 1px relief
-      // relative to the raised supports.
-      solid(c,"mortar",[3,2.5,14],[16,15,14.35]);
+      // Mortar is a thin solid backing against the core at Z=14.2.
+      // The physical brick faces rise 1.25..1.50px beyond it,
+      // creating a clear side facet and shadow for each real brick.
+      // The wall remains solid: no missing full-block pocket.
+      solid(c,"mortar",[3,2.5,14],[16,15,14.2]);
 
       // Three coursed rows. Joints stagger from course to course;
       // tiny gaps leave the light mortar behind visibly exposed.
@@ -84,10 +82,11 @@ export function applyRetortV3(files) {
       ];
       for(const row of courses){
         for(const [x0,x1] of row.spans){
-          // Alternate slight face relief per brick: the material
-          // remains a consistent brick texture, never stretched.
-          const relief=x0===3.25?15:14.85;
-          solid(c,"brick",[x0,row.y0,14.35],[x1,row.y1,relief]);
+          // Visible individual brick faces rise almost to the copper trim,
+          // while neighboring faces differ by 0.25px to break flatness.
+          // The side faces are genuine textured geometry, not decals.
+          const relief=x0===3.25?15.70:15.45;
+          solid(c,"brick",[x0,row.y0,14.2],[x1,row.y1,relief]);
         }
       }
 

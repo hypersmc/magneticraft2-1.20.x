@@ -451,10 +451,9 @@ for(const dir of dirs){
 // culling; their visible top, groove and fascia faces are identical.
 // Physical Y=1 modules and Y=3 chimney/roof grooves are independently
 // preserved by the byte-for-byte diff scope check used when committing.
-// V3.14: a single front-left Y2 block has PHYSICAL masonry courses
-// and gray mortar seams, while the corner plates and copper pillars
-// remain 1px ahead of its real brick faces. Do not accept the previous
-// deep recess or a single wallpaper-like full brick face.
+// V3.16: physically raised masonry courses with clearly recessed mortar.
+// V3.15's accepted-in-principle L-shaped framing is preserved in place.
+// Reject paper-thin relief, an empty cavity, and any right-hand U-post.
 const v314LeftParts={south:'-1_2_0',west:'0_2_-1',north:'1_2_0',east:'0_2_1'};
 for(const [dir,part] of Object.entries(v314LeftParts)){
   const panel=json(resource+
@@ -472,9 +471,9 @@ for(const [dir,part] of Object.entries(v314LeftParts)){
     dir==='north'?16-e.from[2]:e.to[0];
   const material=(e)=>e.faces[dir].texture;
   const brick=front.filter(e=>material(e)==='#brick'&&
-    depth(e)>=14.8&&depth(e)<=15.001);
+    depth(e)>=15.449&&depth(e)<=15.701);
   const mortar=front.filter(e=>material(e)==='#mortar'&&
-    Math.abs(depth(e)-14.35)<0.00001);
+    Math.abs(depth(e)-14.2)<0.00001);
   // The baked mesh partitioner can split individual course faces where
   // corner trim occludes them; demand at least one part of each row.
   for(const y of [3,7.05,11.1]){
@@ -483,8 +482,13 @@ for(const [dir,part] of Object.entries(v314LeftParts)){
   }
   assert(brick.length>=7,'V3.14 insufficient individual masonry faces '+dir);
   assert(mortar.length>=5,'Mortar gaps hidden or missing '+dir);
-  assert(brick.every(e=>depth(e)<=15.001),
-    'Brick must stay behind copper supports '+dir);
+  assert(brick.every(e=>depth(e)<=15.701),
+    'Brick faces must remain behind the L-frame '+dir);
+  const uniqueFaceDepths=[...new Set(brick.map(e=>+depth(e).toFixed(2)))].sort();
+  assert.deepEqual(uniqueFaceDepths,[15.45,15.70],
+    'V3.16 alternating masonry course relief must stay physical: '+dir);
+  assert(brick.every(e=>depth(e)-14.2>=1.249),
+    'V3.16 restore at least 1.25px depth above mortar '+dir);
   const has=(tex,test)=>front.some(e=>material(e)===tex&&test(e));
   assert(has('#bronze',e=>depth(e)===16&&e.to[1]>10),
     'Raised copper column missing '+dir);

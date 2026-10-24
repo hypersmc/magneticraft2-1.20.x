@@ -371,3 +371,7 @@ Rebuilt only the SOUTH-local x=-1,y=2,z=0 front-left brick block with three stag
 ### 2026-10-24 — Retort V3.15 L-shaped framing for first upper front-left block
 
 Preserved the newly accepted-in-principle individual brick courses and their mortar gaps from V3.14. Replaced the incorrect symmetrical copper U-frame with the target L-shaped silhouette: left corner post and dark iron bracket plus a broad cut-copper header, extending the exposed masonry to the right edge and removing the unwanted right post, both right iron caps/feet and the bottom sill. Four rotations generated. Neighbor/roof assets changed only for hidden face partitioning; all neighboring *outward* faces remain identical. Still awaiting in-game sign-off before other blocks are touched.
+
+### 2026-10-24 — Retort V3.16 restore brick relief, preserve front-left frame
+
+The user confirmed V3.15 framing is placed correctly, while the 3D brick effect became too weak. V3.16 leaves the copper L-frame unchanged, increases the original staggered brick courses to 1.25/1.50px relief above the mortar (brick Z15.45/15.70, mortar Z14.2), and changes nothing beyond the four directional versions of this one authored Y2 block and four hidden-contact center-neighbor meshes. All Y3 roof assets remain byte-identical. Pending in-game acceptance and Forge build.
