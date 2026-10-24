@@ -359,3 +359,7 @@ User requested **one physical block at a time**: edit only Y2 SOUTH-local x=-1,z
 ### 2026-10-24 — Retort V3.12 one-block masonry right-edge fill
 
 Fixed only the small void next to the front-left Y2 block's inner copper divider by adding a 2px-wide brick return (local X 11..13, Y 3..13, Z 13..15), preserving the recessed center panel at Z=13. Exactly four facing-specific versions of **the same one block** regenerate; all adjacent parts and collision remain unchanged. Pending one-block screenshot sign-off and Forge build.
+
+### 2026-10-24 — Retort V3.13 first left upper brick block (pending review)
+
+Changed only the front-left Y2 brick cell from a 3px-deep alcove to a continuous near-flush brick wall (face at Z15) with copper and iron supports protruding to Z16, retaining a modest 3D effect. Removed the old side reveals, right fill patch and stepped lower sill; neighboring center/roof files regenerate only for hidden face culling. No gameplay/collision alterations. Await in-game acceptance of this single block.

@@ -451,69 +451,60 @@ for(const dir of dirs){
 // culling; their visible top, groove and fascia faces are identical.
 // Physical Y=1 modules and Y=3 chimney/roof grooves are independently
 // preserved by the byte-for-byte diff scope check used when committing.
-// V3.11: one physical front-left Y=2 block is reviewed at a time.
-// There must be a brick face inset ~3px behind the copper outer post,
-// a separate outer metal bracket with rivet, a lower iron foot and
-// a second inner copper separator. Preserve these parts in every facing.
-const v311LeftParts={
+// V3.13 — the accepted reference shows an almost-solid brick face,
+// NOT a 3px inset. One front-left Y=2 cell is the only authored part.
+// Four rotated versions should have structural masonry at DEPTH 15,
+// with raised metal/copper elements ending at DEPTH 16. No small fill
+// patch or deep alcove must survive this pass.
+const retortLeftParts={
   south:'-1_2_0',west:'0_2_-1',north:'1_2_0',east:'0_2_1'
 };
-for(const [dir,offset] of Object.entries(v311LeftParts)){
-  const left=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
-    +dir+'/part_'+offset+'.json');
-  const front=left.elements.filter(e=>e.faces[dir]);
-  const depth=(e)=>dir==='south'?e.to[2]:
-    dir==='north'?16-e.from[2]:
-    dir==='west'?16-e.from[0]:e.to[0];
-  const has=(material,predicate)=>front.some(e=>e.faces[dir].texture===material &&
-     predicate(e));
-  assert(has('#brick',e=>depth(e)<=13.001 &&
-     e.to[1]-e.from[1]>=9),
-     'V3.11 missing recessed brick panel '+dir);
-  assert(has('#bronze',e=>depth(e)>=15.999 &&
-     e.from[1]>=3 && e.to[1]<=13.001),
-     'V3.11 missing raised copper pilaster '+dir);
-  assert(has('#metal',e=>depth(e)>=15.999 &&
-     e.from[1]>=12),
-     'V3.11 missing top-left iron bracket '+dir);
-  assert(has('#stone',e=>depth(e)>=15.999 &&
-     e.from[1]>=13),
-     'V3.11 missing darker center of bracket '+dir);
-  assert(has('#join',e=>depth(e)>=15.999 &&
-     e.from[1]>=12),
-     'V3.11 missing bracket frame '+dir);
-  assert(has('#metal',e=>depth(e)>=15.999 &&
-     e.to[1]<=3),
-     'V3.11 missing lower iron foot '+dir);
-  for(const part of left.elements)for(const [side,face] of Object.entries(part.faces)){
-    assert(face.texture&&left.textures[face.texture.replace(/^#/,'')],
-      'Unresolved Y2 left block material '+dir+'/'+side);
-    assert(part.from.every((v,i)=>v>=0 && part.to[i]<=16 && part.to[i]>v),
-      'V3.11 facade escaped its one-block footprint');
-  }
-}
-// V3.12: fix only the right-hand masonry return of the single
-// front-left Y2 cell. The central panel remains recessed to depth 13,
-// and a continuous BRICK return now meets the copper divider at depth 15.
-for(const [dir,part] of Object.entries(v311LeftParts)){
-  const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
-    +dir+'/part_'+part+'.json');
+for(const [dir,offset] of Object.entries(retortLeftParts)){
+  const panel=json(resource+
+    'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+    '/part_'+offset+'.json');
+  const front=panel.elements.filter(e=>e.faces[dir]);
   const depth=e=>dir==='south'?e.to[2]:
-    dir==='west'?16-e.from[0]:dir==='north'?16-e.from[2]:e.to[0];
-  const visible=m.elements.filter(e=>e.faces[dir]?.texture==='#brick');
-  assert(visible.some(e=>Math.abs(depth(e)-13)<0.00001 &&
-    e.to[1]-e.from[1]>=9),
-    'V3.12 preserve the 3px recessed brick face: '+dir);
-  const filled=visible.filter(e=>Math.abs(depth(e)-15)<0.00001 &&
-    e.from[1]===3 && e.to[1]===13 &&
-    (dir==='south'||dir==='north'?
-      e.to[0]-e.from[0]===2:e.to[2]-e.from[2]===2));
-  assert.equal(filled.length,1,
-    'V3.12 right-side brick return must connect to copper divider: '+dir);
-  const returnFace=filled[0].faces[dir];
-  assert(Math.abs(returnFace.uv[2]-returnFace.uv[0])===2 &&
-    Math.abs(returnFace.uv[3]-returnFace.uv[1])===10,
-    'V3.12 right-side brick return has stretched texture: '+dir);
+     dir==='north'?16-e.from[2]:
+     dir==='west'?16-e.from[0]:e.to[0];
+  const horizontalWidth=e=>dir==='south'||dir==='north'?
+    e.to[0]-e.from[0]:e.to[2]-e.from[2];
+  const brick=front.filter(e=>e.faces[dir].texture==='#brick');
+  const metal=front.filter(e=>e.faces[dir].texture==='#metal');
+  const copper=front.filter(e=>e.faces[dir].texture==='#bronze');
+  const visibleBrickArea=brick.filter(e=>depth(e)===15)
+    .reduce((sum,e)=>sum+horizontalWidth(e)*(e.to[1]-e.from[1]),0);
+  assert(visibleBrickArea>=120,
+    'V3.13 brick should read as full masonry, not a hollow recess: '+dir);
+  assert(brick.every(e=>depth(e)===15),
+    'V3.13 unexpected inset brick return or three-pixel cavity: '+dir);
+  assert(copper.some(e=>depth(e)===16 && e.from[1]>=3 &&
+    e.to[1]<=13),'V3.13 raised copper support missing: '+dir);
+  assert(metal.some(e=>depth(e)===16 && e.from[1]>=12),
+    'V3.13 top iron bracket missing: '+dir);
+  assert(metal.some(e=>depth(e)===16 && e.to[1]<=3),
+    'V3.13 lower iron foot missing: '+dir);
+  assert(front.some(e=>e.faces[dir].texture==='#join'&&depth(e)===16),
+    'V3.13 riveted bracket frame missing: '+dir);
+  assert(front.some(e=>e.faces[dir].texture==='#stone'&&depth(e)===16),
+    'V3.13 dark bracket center missing: '+dir);
+  // Every cuboid and UV must stay within the standard 16px block model.
+  const faceAxes={north:[0,1],south:[0,1],
+    east:[2,1],west:[2,1],up:[0,2],down:[0,2]};
+  for(const element of panel.elements){
+    assert(element.from.every((v,i)=>v>=0&&element.to[i]<=16&&
+      element.to[i]>v),'Retort panel escaped its own block cell: '+dir);
+    for(const [side,face] of Object.entries(element.faces)){
+      assert(panel.textures[face.texture.replace(/^#/,'')],
+        'Missing texture for V3.13 '+dir+' '+side);
+      const axes=faceAxes[side];
+      const expected=axes.map(i=>element.to[i]-element.from[i]);
+      const uv=[Math.abs(face.uv[2]-face.uv[0]),
+        Math.abs(face.uv[3]-face.uv[1])];
+      assert(expected.every((v,i)=>Math.abs(v-uv[i])<0.00001),
+        'Stretched masonry or metal texture: '+dir+' '+side);
+    }
+  }
 }
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));

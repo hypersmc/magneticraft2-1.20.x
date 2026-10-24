@@ -59,45 +59,32 @@ export function applyRetortV3(files) {
     // approved roof remain unchanged until this left panel is accepted.
     const leftFacade=front&&x===-1;
     if(leftFacade){
-      // 3D masonry: full structural backing with a brick panel recessed
-      // 3 pixels behind the front-facing copper/iron framing. Preserve
-      // the previous contact at all four shared block-cell boundaries.
-      solid(c,"brick",[0,0,0],[16,1,13]);
-      solid(c,"brick",[0,1,0],[16,15,13]);
-      solid(c,"brick",[0,15,0],[16,16,13]);
-      // Structural reveals prevent the inset from resembling a hole.
-      solid(c,"brick",[0,1,13],[3,15,16]);
-      solid(c,"brick",[13,1,13],[16,15,16]);
-      solid(c,"brick",[3,1,13],[13,3,14.5]);
-      solid(c,"brick",[3,13,13],[13,15,14.5]);
-      // Close the accidental hollow beside the RIGHT separator:
-      // fill the wall's inner return from X=11..13, to Z=15.
-      // The central brick field still ends at Z=13 (3px recessed),
-      // while this narrow return meets the raised copper frame at X=13.
-      // Y=3..13 stays inside this one block, so the seams, roof,
-      // center grille and lower neighboring blocks cannot be affected.
-      solid(c,"brick",[11,3,13],[13,13,15]);
-      // Lock the two neighboring-boundary contact rails first; the
-      // visible bracket/rivet geometry is applied AFTER these rails.
+      // V3.13 — ONE-BLOCK repair. The reference is a SOLID masonry face
+      // with shallow raised copper framing, NOT an inset compartment.
+      // The wall is one continuous structural volume with a front face
+      // at Z=15. The copper and iron trim finish at Z=16, leaving only
+      // 1px of relief rather than a hollow 3px-deep brick alcove.
+      solid(c,"brick",[0,0,0],[16,16,15]);
+      // Preserve the established corner's concealed upper and lower
+      // metal contacts. These are structure, not a new under-roof stripe.
       solid(c,"metal",[0,13,0],[3,16,16]);
       solid(c,"metal",[0,0,0],[3,3,16]);
-      // Left external copper pilaster, substantially in front of the
-      // recessed masonry. Copper cap, dark iron foot and single large
-      // corner bracket are deliberately individual 3D solids.
+      // Left outer load-bearing copper pillar and its substantial
+      // dark iron fixing beneath the accepted roof line.
       solid(c,"bronze",[0.5,3,14],[3,13,16]);
       solid(c,"bronze",[0,3,14],[4,4.5,16]);
       solid(c,"metal",[0,0,14],[4,3,16]);
       solid(c,"metal",[0,12,14],[4,16,16]);
       solid(c,"join",[0.5,12.5,15],[3.5,15.5,16]);
-      solid(c,"stone",[1,13,15.5],[3,15,16]); // dark bracket boss
-      // Right boundary of this ONE wall panel: copper separator against
-      // the still-unchanged center-vent block, with visible iron foot.
+      solid(c,"stone",[1,13,15.5],[3,15,16]);
+      // Copper divider adjacent to the separate, UNCHANGED vent block.
+      // It overlays the solid brick, without cutting an empty pocket.
       solid(c,"bronze",[13,3,14],[15,13,16]);
       solid(c,"metal",[13,0,14],[15.5,3,16]);
       solid(c,"metal",[13,13,14],[15.5,15,16]);
-      // Only a short copper bottom sill, not another full-width band.
-      solid(c,"bronze",[4,0.5,14.5],[13,1.75,16]);
-
+      // Single thin bottom sill sitting on the solid masonry, not a
+      // multi-step ledge suspended across an open void.
+      solid(c,"bronze",[4,1,15],[13,2,16]);
     }else if(front&&x===0){
       // Front-only reference pass: five recessed dark vertical slots
       // bounded by a copper lintel and shallow iron side clamps.
