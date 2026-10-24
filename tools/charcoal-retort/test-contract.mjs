@@ -357,13 +357,15 @@ for(const dir of dirs){
       assert.equal(id,'B','Y2 construction stays entirely masonry: '+dir);
       masonryCount++;
       const chamber=json(modelPath);
-      // Three front-facing masonry blocks use readable mortar courses
-      // from the original reference. Side/rear materials remain the
-      // existing Retort refractory for this front-only iteration.
-      const expectedBrick=z===2 && dir==='south' ? 'minecraft:block/bricks':
-        z===0 && dir==='north' ? 'minecraft:block/bricks':
-        x===0 && dir==='west' ? 'minecraft:block/bricks':
-        x===2 && dir==='east' ? 'minecraft:block/bricks':
+      // Front cells use vanilla masonry. Side/rear structural
+      // backing keeps Retort refractory; raised right-side face bricks
+      // use a separate sideBrick texture key in V3.23.
+      const frontBrick=(z===2&&dir==='south')||
+        (z===0&&dir==='north')||
+        (x===0&&dir==='west')||
+        (x===2&&dir==='east');
+      const expectedBrick=frontBrick?
+        'minecraft:block/bricks':
         'magneticraft2:block/charcoal_retort/refractory';
       assert.equal(chamber.textures.brick,expectedBrick,
         'V3.10 front brick material mismatch: '+dir+' x='+x+' z='+z);
@@ -892,6 +894,74 @@ for(const [dir,id] of Object.entries(retortRight)){
 }
 // Asset diff checks also verify that the center outward grille, all
 // approved roof top/sides, formation/ports and collision are unchanged.
+// V3.23 — RIGHT HAND SIDE Y2 brick wall, two cells deep.
+// Screenshot reference: raised, staggered brickwork without wide
+// horizontal dark iron strips. Only the right wall changes now;
+// rear-corner metal/copper fittings and front corner remain anchored.
+const v323RightSide={
+  south:{side:'east',parts:['1_2_-2','1_2_-1']},
+  west:{side:'south',parts:['2_2_1','1_2_1']},
+  north:{side:'west',parts:['-1_2_2','-1_2_1']},
+  east:{side:'north',parts:['-2_2_-1','-1_2_-1']}
+};
+for(const [orientation,cfg] of Object.entries(v323RightSide)){
+  const face=cfg.side;
+  const n=(face==='east'||face==='west')?0:2;
+  const positive=face==='east'||face==='south';
+  const h=n===0?2:0;
+  const depth=e=>positive?e.to[n]:16-e.from[n];
+  const details=[];
+  let sidePieces=0,realBricks=0,recessedMortar=0,rearCorners=0;
+  const yLevels=new Set(),brickDepths=new Set();
+  for(const part of cfg.parts){
+    const model=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+      orientation+'/part_'+part+'.json');
+    assert.equal(model.textures.brick,'magneticraft2:block/charcoal_retort/refractory',
+      'V3.23 structural backing/rear exterior must retain refractory '+orientation+'/'+part);
+    assert.equal(model.textures.sideBrick,'minecraft:block/bricks',
+      'V3.23 raised side faces must match upper front bricks '+orientation+'/'+part);
+    assert.equal(model.textures.mortar,'minecraft:block/stone',
+      'V3.23 side mortar backing missing '+orientation+'/'+part);
+    const visible=model.elements.filter(e=>e.faces[face]);
+    sidePieces++;
+    for(const e of visible){
+      const mat=e.faces[face].texture;
+      if(mat==='#sideBrick'&&depth(e)>15.4){
+        realBricks++;
+        brickDepths.add(+depth(e).toFixed(2));
+        for(const y of [0.25,3.25,6.3,9.35,12.4])
+          if(e.from[1]-0.00001<=y&&e.to[1]>=y+0.1)yLevels.add(y);
+      }
+      if(mat==='#mortar'&&Math.abs(depth(e)-14.2)<0.00001)
+        recessedMortar++;
+      if(mat==='#bronze'&&depth(e)===16)rearCorners++;
+      // The V3.22 rejected side wall had full-length top and bottom
+      // steel rails. Narrow rear-edge caps are allowed; long rails
+      // spanning half a block or more are not.
+      if(mat==='#metal'){
+        const span=e.to[h]-e.from[h];
+        const upper=e.from[1]<16&&e.to[1]>13;
+        const lower=e.from[1]<3&&e.to[1]>0;
+        assert(!(span>=8&&(upper||lower)),
+          'V3.23 full-width dark side-wall stripe returned: '+
+          orientation+'/'+part);
+      }
+    }
+  }
+  assert.equal(sidePieces,2,'V3.23 right wall must have two upper side cells');
+  assert(realBricks>=25,
+    'V3.23 side brick faces still look like a flat wallpaper panel '+orientation);
+  assert(recessedMortar>=8,
+    'V3.23 exposed recessed mortar joints are missing '+orientation);
+  assert.deepEqual([...brickDepths].sort((a,b)=>a-b),[15.45,15.7],
+    'V3.23 individual brick depth relief must alternate '+orientation);
+  assert.deepEqual([...yLevels].sort((a,b)=>a-b),[0.25,3.25,6.3,9.35,12.4],
+    'V3.23 all five side masonry courses required '+orientation);
+  assert(rearCorners>0,
+    'V3.23 rear copper corner anchor removed '+orientation);
+}
+// Neighboring roof non-bottom faces, Y1 outer side surfaces and the
+// front-right outward face are compared to previous assets before commit.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

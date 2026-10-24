@@ -285,9 +285,48 @@ export function applyRetortV3(files) {
       solid(c,"join",[13,12.5,15.25],[15,13,16]);
       solid(c,"join",[13,15,15.25],[15,15.5,16]);
       solid(c,"stone",[13,13,15.25],[15,15,15.65]);
+    }else if(x===1 && !front){
+      // V3.23 RIGHT SIDE WALL (upper Y2 layer, two blocks long).
+      // The reference is continuous raised brick masonry, NOT the
+      // old broad iron rails at top and bottom. The structural core
+      // remains solid and the visible outer surface faces X=16.
+      solid(c,"brick",[0,0,0],[14,16,16]);
+      solid(c,"mortar",[14,0,0],[14.2,16,16]);
+      // Five physical horizontal masonry courses, intentionally
+      // staggered differently in the middle and rear side blocks.
+      // Their Z endpoints almost meet at both cell boundaries so
+      // no hollow space or disconnected masonry appears at seams.
+      const sideCourses=z===-1 ? [
+        {y0:0.25,y1:2.8,spans:[[0.15,4.9],[5.35,10.75],[11.2,15.85]]},
+        {y0:3.25,y1:5.85,spans:[[0.15,2.65],[3.1,8.6],[9.05,14.35],[14.8,15.85]]},
+        {y0:6.3,y1:8.9,spans:[[0.15,5.75],[6.2,11.85],[12.3,15.85]]},
+        {y0:9.35,y1:11.95,spans:[[0.15,3.8],[4.25,9.75],[10.2,15.85]]},
+        {y0:12.4,y1:15.75,spans:[[0.15,6.1],[6.55,12.05],[12.5,15.85]]}
+      ] : [
+        {y0:0.25,y1:2.8,spans:[[0.15,3.1],[3.55,9.05],[9.5,15.85]]},
+        {y0:3.25,y1:5.85,spans:[[0.15,5.1],[5.55,10.8],[11.25,15.85]]},
+        {y0:6.3,y1:8.9,spans:[[0.15,3.65],[4.1,9.55],[10,15.85]]},
+        {y0:9.35,y1:11.95,spans:[[0.15,5.9],[6.35,12.15],[12.6,15.85]]},
+        {y0:12.4,y1:15.75,spans:[[0.15,3.2],[3.65,8.9],[9.35,15.85]]}
+      ];
+      for(const [courseIndex,row] of sideCourses.entries()){
+        for(const [brickIndex,span] of row.spans.entries()){
+          const depth=(courseIndex+brickIndex)%2===0?15.7:15.45;
+          solid(c,"sideBrick",[14.2,row.y0,span[0]],[depth,row.y1,span[1]]);
+        }
+      }
+      // Retain ONLY the rear corner's original upright copper fixing.
+      // It ties this wall into the rear surface without recreating
+      // the rejected continuous dark Y=0..3 / Y=13..16 bands.
+      if(rear){
+        solid(c,"bronze",[13,3,0],[16,14,2]);
+        // Rear-corner iron caps remain, but only as a short 0.5px
+        // return at the rear edge, never a stripe across the side.
+        solid(c,"metal",[13,0,0],[16,3,0.5]);
+        solid(c,"metal",[13,14,0],[16,16,0.5]);
+      }
     }else if(outer){
-      // Keep the previously accepted Y1/Y3 contact shape so face
-      // culling never alters those already-approved adjacent layers.
+      // Other chamber walls remain on the previous accepted path.
       solid(c,"brick",[x===-1?1.5:0,0,0],
                        [x===1?14.5:16,16,16]);
     }else{
@@ -310,7 +349,7 @@ export function applyRetortV3(files) {
       // Low brick course becomes a stronger masonry sill on each side.
       solid(c,"bronze",[3,0,14],[13,1.5,16]);
     }
-    if(outer&&!leftFacade&&!(front&&x===1)){
+    if(outer&&!leftFacade&&!(x===1)){
       // Preserve exactly the prior side contacts at the top and bottom
       // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;
@@ -527,12 +566,16 @@ export function applyRetortV3(files) {
   if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
   if(c.y===2 && c.k==="B")m.textures={
     ...m.textures,
-    // Only three FRONT blocks get the mortar-lined masonry of the
-    // reference; sides/rear remain byte-for-byte unchanged.
+    // Keep structural side/rear backing on the original Retort brick.
+    // Only physically raised RIGHT SIDE faces use vanilla sideBrick;
+    // this avoids recoloring the rear exterior/corner wall as a
+    // side effect of the visual front/side masonry cleanup.
     brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron",
-    ...(c.z===0 ? {mortar:"minecraft:block/stone"} : {})
+    ...(c.z===0 ? {mortar:"minecraft:block/stone"} : {}),
+    ...(c.x===1 && c.z<0 ?
+      {mortar:"minecraft:block/stone",sideBrick:"minecraft:block/bricks"} : {})
   };
   files.set(path,json(m));
   if(byPort){
