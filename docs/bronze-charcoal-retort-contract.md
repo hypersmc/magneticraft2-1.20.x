@@ -128,3 +128,15 @@ After the user's close-up screenshot showed stretched-looking pixels, a dark/unt
 - The four chimney meshes are regenerated in SOUTH/NORTH/EAST/WEST with fewer elements; collision, the 3x3 copper-slab roof, inset bands, Y=0–2 details, real input/output modules, machine functions, recipes and structure JSON are unchanged.
 
 Still **pending actual Forge compilation and in-game screenshot acceptance**. No changes to the other Bronze machines. Roof-only visual iteration remains in effect.
+
+### 2026-10-24 — V3.6 flush chimney seat + fully copper-textured inner shaft
+
+User screenshots of V3.5 revealed two distinct remaining defects: the central chimney looked like it was **floating over an unfilled roof-cell gap**, and the inside walls looked black/untextured. The center roof cell was previously visualized only at local **Y=10..16**, while eight neighboring copper-slab roof cells had their top at **Y=10**.
+
+The chimney AIR-host now includes **four copper surface segments** covering the entire center roof cell from Y=0 to Y=10, **except for the 6x6 open shaft (X/Z=5..11)**. Its exposed top is therefore **flush** with the eight real surrounding Cut Copper roof models, rather than a second raised collar/platform. The chimney walls still begin above the same Y=10 roof surface; the two genuine vent rows and open top remain.
+
+The inner faces at X/Z=5 and 11 now use `#roof`, which resolves to Minecraft's Cut Copper texture in the roof models, including inside the new support down to the roof underside. This replaces the near-black soot-textured faces that visually resembled untextured/missing geometry. The shaft itself remains physically empty. No new overlay quads were added.
+
+**Collision alignment:** the center AIR roof proxy's former four coarse wall boxes are replaced with eight collision boxes: four flush copper seat segments (Y=0..10) and four upper chimney-wall regions (Y=10..16), retaining an open 6x6 chimney interior. Total Retort voxel shapes change **34 -> 38**. The eight genuine copper roof slabs retain their height, as do the recessed dark channels. **Existing formed machines must be unformed and re-formed** to load the new stored voxel collision.
+
+Scope: the **center roof model in four directions** plus neighboring Y=3 model files automatically updated by face culling at their touching edges; this does **not** alter neighboring copper slab geometry/texture or the lower three layers, ports, formation blueprint, processing, fuel, or recipes. Four-orientation visual acceptance and an actual Forge build remain pending.

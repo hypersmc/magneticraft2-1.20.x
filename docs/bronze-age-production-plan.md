@@ -331,3 +331,7 @@ The center roof chimney model now has real inset-through-wall vent apertures (tw
 ### 2026-10-24 — Retort V3.5 chimney-only texture and geometry cleanup
 
 Removed the visually distracting floating mounting ring, rebuilt the vent wall with integer-pixel geometry, preserved two genuine vent rows and the hollow opening, and gave interior/exposed underside faces properly mapped textures without extra overlapping planes. Only four chimney models plus their generator/tests/docs changed; roof slabs, lower three layers, collision, ports and production are untouched. **Minecraft appearance and Gradle build still require verification.**
+
+### 2026-10-24 — Retort V3.6 flush chimney integration
+
+Corrected floating chimney by filling the *center AIR-host model only* with four flush Cut Copper roof-seat segments at Y=0..10 while preserving the open 6x6 flue. Inner faces now use copper rather than near-black soot. The center seat updates voxel collisions (34 -> 38), so re-form existing Retorts. Adjacent roof-part face culling is regenerated but their shape/texture, real ports, lower layers, structure JSON and recipes remain unchanged. Screenshot approval and Gradle build pending.

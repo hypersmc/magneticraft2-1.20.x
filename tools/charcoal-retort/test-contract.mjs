@@ -242,7 +242,8 @@ for (const dir of dirs) {
   assert.equal(grooves,6,'Two unbroken 3-block channels per facing');
 }
 const profileRoof=json(resource+'data/magneticraft2/multiblock_voxels/charcoal_retort.json');
-assert.equal(profileRoof.collision.length,34,'Keep voxel component count');
+assert.equal(profileRoof.collision.length,38,
+ 'Four flush copper chimney-seat segments replace four old suspended-wall boxes');
 const roofCollision=profileRoof.collision.filter(box=>
   box[1]===48 && box[3]-box[0]===16 && box[5]-box[2]===16);
 assert.equal(roofCollision.length,8,'Expected eight roof slabs');
@@ -285,18 +286,38 @@ for(const dir of dirs){
  const model=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
     dir+'/part_'+offset+'.json');
  assert(Math.max(...model.elements.map(e=>e.to[1]))===16,'chimney rim at 16px');
- assert(model.elements.every(e=>e.from[1]>=10),
-   'Removed collar must not dip below the roof Y=10: '+dir);
- assert(model.elements.length<100,'V3.5 chimney should avoid tiny fragmented trim');
- for(const [i,box] of [...v35OpenSlots,[6.1,10.1,6.1,9.9,15.9,9.9]].entries()){
+ // The center AIR-host is now the missing 9th roof surface: four copper
+ // quarters go from Y=0..10 and are flush with the eight roof slab tiles.
+ // They are NOT a raised platform and do not cover the 6x6 chimney hole.
+ assert(Math.min(...model.elements.map(e=>e.from[1]))===0,
+   'Central roof cell must connect down to the actual roof layer: '+dir);
+ assert(model.elements.some(e=>e.to[1]===10&&e.faces.up?.texture==='#roof'),
+   'Central copper roof seat must finish flush at Y=10: '+dir);
+ assert(model.elements.length<120,'Chimney model should avoid runaway mesh fragments');
+ for(const [i,box] of [...v35OpenSlots,[6.1,0.1,6.1,9.9,15.9,9.9]].entries()){
    const rotated=chimneyRotateBox(box,dir);
    assert(!model.elements.some(e=>chimneyOverlaps(e,rotated)),
      'V3.5 chimney vent or central shaft blocked: '+dir+' region '+i);
  }
+
+ // Regress the originally missing copper roof seat around the open shaft:
+ // the center cell's top must have material at every outside corner.
+ for(const [x,z] of [[1,1],[1,14],[14,1],[14,14]]){
+   const r=chimneyRotateBox([x,9.8,z,x+0.5,10.1,z+0.5],dir);
+   assert(model.elements.some(e=>chimneyOverlaps(e,r)),
+     'Floating chimney: center roof corner has no copper support '+dir);
+ }
  assert(model.elements.some(e=>e.faces.down?.texture==='#roof'),
    'Exposed top-rim and chimney underside must have copper texture');
- assert(model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#soot')),
-   'Chimney inner walls must have material, not bare missing faces');
+ const inwardCopper=model.elements.some(e=>Object.entries(e.faces).some(([side,face])=>{
+   const [x,y,z]=e.from,[X,Y,Z]=e.to;
+   const inward= (side==='east'&&X===5&&z>=5&&Z<=11)||
+     (side==='west'&&x===11&&z>=5&&Z<=11)||
+     (side==='south'&&Z===5&&x>=5&&X<=11)||
+     (side==='north'&&z===11&&x>=5&&X<=11);
+   return inward&&face.texture==='#roof';
+ }));
+ assert(inwardCopper,'Chimney inner walls must have visible copper UV texture');
  for(const e of model.elements)for(const [side,face] of Object.entries(e.faces)){
    assert(model.textures[face.texture.replace(/^#/,'')],
      'Unresolved chimney face texture: '+dir+' '+side);

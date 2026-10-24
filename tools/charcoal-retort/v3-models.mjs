@@ -129,6 +129,16 @@ export function applyRetortV3(files) {
     solid(c,"roof",[0,8,0],[16,10,16]);
    }
   } else if(k==="A"&&y===3){
+   // V3.6: a CONTINUOUS COPPER ROOF around the center air throat.
+   // All four model segments sit flush with adjacent Y=3 copper roof at
+   // local Y=10. This is not a raised shelf/collar: the center A cell
+   // simply has its own roof surface around the 6x6 open flue.
+   // These vertical copper inner-wall faces also cover the otherwise
+   // untextured-looking gap from the roof's underside to the chimney.
+   for(const [f,t] of [
+     [[0,0,0],[5,10,16]],  [[11,0,0],[16,10,16]],
+     [[5,0,0],[11,10,5]], [[5,0,11],[11,10,16]]
+   ])solid(c,"roof",f,t);
    // V3.5 chimney-only cleanup: block-local, INTEGER-pixel copper.
    // The copper walls begin directly at roof Y=10, without the extra
    // floating lower collar. All exposed undersides get normal face UVs.
@@ -251,9 +261,13 @@ export function applyRetortV3(files) {
   if(["S","B","P","C"].includes(c.k)){
    physical.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,c.y*16+(c.k==="P"?10:16),(c.z+1)*16]);
   }else if(c.k==="A"&&c.y===3){
+   // Match the contiguous 10px roof seat, keep the 6x6 shaft empty.
+   // Above the copper slab, four coarse chimney walls occupy y=10..16.
    for(const [f,t]of [
-    [[2,4,2],[5,16,14]],[[11,4,2],[14,16,14]],
-    [[5,4,2],[11,16,5]],[[5,4,11],[11,16,14]]
+    [[0,0,0],[5,10,16]], [[11,0,0],[16,10,16]],
+    [[5,0,0],[11,10,5]], [[5,0,11],[11,10,16]],
+    [[3,10,3],[5,16,13]], [[11,10,3],[13,16,13]],
+    [[5,10,3],[11,16,5]], [[5,10,11],[11,16,13]]
    ])physical.push([...f.map((v,i)=>v+[c.x,c.y,c.z][i]*16),...t.map((v,i)=>v+[c.x,c.y,c.z][i]*16)]);
   }
  }
@@ -299,13 +313,13 @@ export function textureRetortChimneyInteriors(files) {
        ["north",f[2]===11,f[0]>=5&&t[0]<=11]
      ];
      for(const [side,onPlane,inSpan] of inside){
-       if(onPlane&&inSpan&&f[1]>=10&&t[1]<=15&&element.faces[side]){
-         element.faces[side].texture="#soot";
+       if(onPlane&&inSpan&&f[1]>=0&&t[1]<=15&&element.faces[side]){
+         element.faces[side].texture="#roof";
          shaded++;
        }
      }
    }
-   if(shaded===0)throw Error("Chimney has no visible inner faces: "+dir);
+   if(shaded===0)throw Error("Chimney missing inner copper wall faces: "+dir);
    files.set(path,JSON.stringify(model)+"\n");
    changed++;
  }
