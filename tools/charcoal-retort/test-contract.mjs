@@ -51,6 +51,42 @@ for(let y=0;y<4;y++) {
 }
 assert.equal(buildPage.multiblock.pattern[2][2], 'OBU');
 
+
+const states = json(resource+'assets/magneticraft2/blockstates/charcoal_retort.json');
+const textureRoles = json(resource+'assets/magneticraft2/models/block/charcoal_retort_controller.json').textures;
+for(const role of ['stone','metal','join','bronze','brick','roof','soot','vent','off','on']) {
+  assert(textureRoles[role], 'Missing V2 material '+role);
+}
+const sourceBlueprint = json(resource+'data/magneticraft2/multiblocks/charcoal_retort_south.json');
+const rot=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:d==='north'?[-x,-z]:[z,-x];
+for(const dir of dirs){
+  const lit = states.variants[`facing=${dir},is_formed=true,lit=true`];
+  const cold = states.variants[`facing=${dir},is_formed=true,lit=false`];
+  assert(lit && cold);
+  assert(!Object.hasOwn(cold, 'y'), dir+' has double Y rotation');
+  assert(!Object.hasOwn(lit, 'y'), dir+' has double Y rotation');
+  const layout=sourceBlueprint.structure.layout;
+  for(let y=0;y<4;y++)for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+    const k=layout['layer'+(y+1)][z][x];
+    const [rx,rz]=rot(x-1,z-2,dir);
+    const rel=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/part_'+rx+'_'+y+'_'+rz+'.json';
+    if(['U','O','Y'].includes(k)){
+      assert(!fs.existsSync(new URL(rel, root)), 'V2 fake model hides working '+k+' module');
+      continue;
+    }
+    if(k==='A'&&y!==3)continue;
+    assert(fs.existsSync(new URL(rel, root)), 'V2 missing part '+rel);
+    const m=json(rel);
+    assert(Array.isArray(m.elements)&&m.elements.length>0,'Empty V2 part '+rel);
+    for(const e of m.elements){
+      for(let i=0;i<3;i++) assert(e.from[i]>=0&&e.to[i]<=16&&e.from[i]<e.to[i],
+        'V2 model outside local cell: '+rel);
+    }
+  }
+}
+assert(fs.existsSync(new URL('tools/charcoal-retort/build.mjs', root)),
+  'Retort generator must be checked for drift with --check');
+
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

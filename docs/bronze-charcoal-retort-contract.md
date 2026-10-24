@@ -42,3 +42,20 @@ The **three real working modules** are: logs at the front-left Item Input, charc
 8. Inspect full 3x4x3 model from all sides and FPS impact. V1 reuses native Minecraft masonry/metal tiles to prove layout; new pixel-art styling remains a separate visual-review task.
 
 **No production-readiness claims until compilation and live acceptance.**
+
+## 2026-10-24 — Copper-clad V2 visual model (review pending)
+
+The original formed model was effectively a plain 3×4×3 brick box with a full-block copper roof. V2 is modeled after the approved **direction** of the single-machine concept (not yet a visual sign-off):
+
+- Lower dark stone foundation with narrow bronze/iron bands and a separate recessed, status-lit controller firebox.
+- Recessed central sealed hatch, distinct upper ventilation grille, reddish refractory masonry courses and reinforced side corner details.
+- Thinner tiled copper roof with raised corner/edge caps and a real hollow square chimney in its single designated AIR proxy.
+- Six original 16×16 native-pixel material textures. The exposed metal frame and foundation reuse established Settling Tank material roles. UV coordinates are cropped to each element; no full texture compressed over narrow bars.
+- Original **3×4×3 JSON construction and all three real modules unchanged**. No decorative inventory, extra fake pipes, hidden module overlays or moved block positions.
+- Per-facing parts are rotated by the generated models; formed controller blockstates do not apply a second Y rotation. An unformed standalone controller still uses its normal facing rotation.
+- Runtime ore/fuel/charcoal/tar recipe, capacity, burn timer and output reservation remain unchanged.
+- The new Voxel V2 profile follows the shortened roof, hollow chimney and front-center recessed hatch at a coarse physical level. **Safely unform and re-form existing machines** to rebuild the Voxel V2 collision snapshots; the blueprint blocks themselves do not need rearranging.
+
+Reproducible model build: `node tools/charcoal-retort/build.mjs`, and drift validation via `node tools/charcoal-retort/build.mjs --check`. Existing `node tools/charcoal-retort/test-contract.mjs` checks the base process/guide contract plus V2 asset integrity.
+
+**Not claimed:** completed Forge `./gradlew build`, FPS acceptance, in-game appearance, or final user-approved textures. V2 is a playable art prototype for screenshot-based iteration. Remember to check first-person interaction with all three real modules and the firebox at all facings.

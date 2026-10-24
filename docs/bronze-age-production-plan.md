@@ -303,3 +303,7 @@ After the final V5.1 visual review, the **Water Settling Tank V5.1 appearance is
 ### 2026-10-24 — Charcoal Retort first source implementation
 
 A source-only 3x4x3 Charcoal Retort has been added to the draft Bronze PR #11: manual fuel queue, 4 burnable logs -> 4 charcoal + 1 Wood Tar in 720 active ticks, output reservation, real item I/O modules, persisted fuel and batch progress, lit chimney smoke, four rotated JSON layouts and Voxel V2 collision, JEI and construction instructions. Wood Tar can be reused as 200-tick fuel in this Retort. The V1 model is a deliberately basic vanilla brick/copper prototype; **do not mark visually accepted, compiled or gameplay validated**. The subsequent Refractory Kiln is the intended next candidate once this machine passes integration testing.
+
+### 2026-10-24 — Retort copper-clad V2 visual prototype
+
+The formable Charcoal Retort now has a regenerated static shell with separate dark foundation, recessed kiln door, inspection grille, native 16×16 refractory/bronze art, layered copper roof and open framed chimney. Four facing-specific block-local model sets and the Voxel V2 profile were updated together. The real Input, Charcoal Output and Wood Tar Output **remain unchanged and never receive fake replacement models**; formation JSON, Patchouli recipe, processing and firebox logic are unchanged. Existing formed V1 instances must be safely unformed and re-formed to refresh physical collision. **Visual/Forge/gameplay acceptance remains pending.**
