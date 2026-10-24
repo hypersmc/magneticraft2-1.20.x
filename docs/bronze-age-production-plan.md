@@ -339,3 +339,7 @@ Corrected floating chimney by filling the *center AIR-host model only* with four
 ### 2026-10-24 — Retort V3.7 Y2 chamber (visual review)
 
 Copper roof/chimney are **visually accepted and locked** after user approval. The next pass changes **only the eight Y=2 brick chamber models for each of four orientations** (32 generated model files): tiled brick walls, stronger corner brackets and a recessed five-slot copper/iron vent. The user's marked region partly crosses into Y=1, which remains for a subsequent isolated pass. JSON formation, lower machine, real ports, process/fuel, collision and roof model bytes are unchanged. In-game Y2 acceptance and Gradle compilation pending.
+
+### 2026-10-24 — Retort Y2 V3.8 reference alignment (visual review pending)
+
+Corrected the visually wrong Y2 materials and missing industrial details: native refractory masonry again, cut-copper pilasters/vent bars/sill, dark iron fasteners, and a larger recessed five-slot vent. Exactly 32 upper-layer model outputs change. The approved Y3 roof/chimney, real ports and Y0/Y1 lower parts, JSON formation, recipes, and collision are unchanged. **Await side/front/reference comparison before accepting this layer.**

@@ -50,48 +50,70 @@ export function applyRetortV3(files) {
    solid(c,"join",[6,1,15],[10,4,16]);
   } else if(k==="B"){
    if(y===2){
-    // Y=2 only. Rebuild the upper masonry, narrow front grille and
-    // front corner fixings. Y=1 and the accepted copper roof stay frozen.
+    // V3.8: reference-led BRICK CHAMBER ONLY. The copper roof and the
+    // real Y=1 hatches/ports are locked. All new detail is contained
+    // inside the eight Y=2 brick positions, never in neighboring cells.
     const front=z===0,outer=x!==0,rear=z===-2;
     if(front&&x===0){
-      // True inset grille: thick masonry reveals rather than a
-      // dark sticker applied to an opaque solid brick front.
+      // Recessed five-slot copper vent, not grey grilles in wood-colored
+      // trim. The surrounding wall is real masonry with a deep aperture.
       solid(c,"brick",[0,0,0],[16,16,8]);
       solid(c,"brick",[0,0,8],[3,16,16]);
       solid(c,"brick",[13,0,8],[16,16,16]);
       solid(c,"brick",[3,0,8],[13,8,16]);
       solid(c,"brick",[3,15,8],[13,16,16]);
       solid(c,"soot",[3,8,8],[13,15,10]);
-      for(const xx of [5,7,9,11])
-       solid(c,"metal",[xx,10,11],[xx+0.75,14,14]);
-      solid(c,"bronze",[2,8,12],[4,15,16]);
-      solid(c,"bronze",[12,8,12],[14,15,16]);
-      solid(c,"bronze",[4,14,12],[12,16,16]);
-      solid(c,"bronze",[4,8,12],[12,9,16]);
-      solid(c,"metal",[4,9,11],[12,10,13]);
+      // Bronze (Copper Age) face of the actual furnace grille.
+      // Leave the soot backing visible through all five slots.
+      // A top panel across the vent, and a strong lower copper sill.
+      solid(c,"bronze",[3,13.5,11],[13,15,15]);
+      solid(c,"bronze",[3,8,11],[13,9,16]);
+      solid(c,"metal",[2,8,12],[3,15,16]);
+      solid(c,"metal",[13,8,12],[14,15,16]);
+      // Four copper uprights produce five separate black vent slots.
+      // Slots stay visibly deep between bars (not a flat decal).
+      for(const xx of [4.5,6.5,8.5,10.5])
+        solid(c,"bronze",[xx,9,12],[xx+1,13.5,14.5]);
+      solid(c,"bronze",[3,14.5,12],[13,16,16]);
     }else if(front){
       solid(c,"brick",[0,0,0],[16,16,13]);
     }else if(outer){
-      solid(c,"brick",[x===-1?1.5:0,0,0],[x===1?14.5:16,16,16]);
-    }else solid(c,"brick",[0,0,0],[16,16,16]);
+      // Keep the previously accepted Y1/Y3 contact shape so face
+      // culling never alters those already-approved adjacent layers.
+      solid(c,"brick",[x===-1?1.5:0,0,0],
+                       [x===1?14.5:16,16,16]);
+    }else{
+      solid(c,"brick",[0,0,0],[16,16,16]);
+    }
     if(front&&outer){
-      // Riveted dark square just below the roof, with bronze corner
-      // pilaster descending through this level only.
-      const xx=x===-1?0:13;
-      solid(c,"bronze",[xx,3,13],[xx+3,15,16]);
-      solid(c,"metal",[xx,0,0],[xx+3,3,16]);
-      solid(c,"metal",[xx,11,14],[xx+3,16,16]);
-      solid(c,"join",[xx+1,12,15],[xx+3,14,16]);
+      const corner=x===-1?0:13;
+      const inside=x===-1?13:1;
+      // Outside edge: copper column with a substantial square iron
+      // bracket beneath the roof, not a strip of exposed wood.
+      solid(c,"bronze",[corner,3,13],[corner+3,15,16]);
+      solid(c,"metal",[corner,0,0],[corner+3,3,16]);
+      solid(c,"metal",[corner,11,14],[corner+3,16,16]);
+      solid(c,"join",[corner+1,12,15],[corner+3,14,16]);
+      // Inside edge: slim copper reinforcing pilaster on the front,
+      // stopping just below the roof and finishing in a dark metal foot.
+      solid(c,"bronze",[inside,3,13],[inside+2,13,16]);
+      solid(c,"metal",[inside,0,13],[inside+2,3,16]);
+      solid(c,"bronze",[inside,13,13],[inside+2,15,16]);
+      // Low brick course becomes a stronger masonry sill on each side.
+      solid(c,"bronze",[3,0,14],[13,1.5,16]);
     }
     if(outer){
+      // Preserve exactly the prior side contacts at the top and bottom
+      // to lock the Y=1 and Y=3 neighboring part meshes.
       const xx=x===-1?0:13;
-      // Match the Y=1/roof seam coverage of the previous renderer,
-      // while giving this level a dark iron corner band.
       solid(c,"metal",[xx,13,0],[xx+3,16,16]);
       solid(c,"metal",[xx,0,0],[xx+3,3,16]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
     }
-    if(front&&x===0)solid(c,"metal",[0,14,15],[16,15,16]);
+    if(front&&x===0){
+      // Dark fascia isolates the upper vent from the copper roof.
+      solid(c,"metal",[0,14,15],[16,15,16]);
+    }
    }else{
    const front=z===0,side=x!==0,rear=z===-2;
    // The important front openings are hollow/recessed masonry, not painted
@@ -285,7 +307,12 @@ export function applyRetortV3(files) {
   // Keep only this layer's texture change. The other three layers use
   // their old shared material map and generated JSON byte-for-byte.
   if(c.y===3)m.textures={...m.textures,roof:"minecraft:block/cut_copper"};
-  if(c.y===2 && c.k==="B")m.textures={...m.textures,brick:"minecraft:block/bricks"};
+  if(c.y===2 && c.k==="B")m.textures={
+    ...m.textures,
+    brick:"magneticraft2:block/charcoal_retort/refractory",
+    bronze:"minecraft:block/cut_copper",
+    join:"magneticraft2:block/settling_tank/riveted_iron"
+  };
   files.set(path,json(m));
   if(byPort){
    ports.push({dir,role:c.k==="U"?"input":c.k==="O"?"primary":"byproduct",path});

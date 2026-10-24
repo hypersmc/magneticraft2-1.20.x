@@ -336,7 +336,7 @@ for(const dir of dirs){
 // V3.5 affects only the chimney model. The roof's long inset grooves
 // continue to be tested above independently.
 
-// V3.7 — upper refractory chamber only. Do not make model edits to
+// V3.8 — restore missing upper-chamber detailing and correct material roles. Do not make model edits to
 // accepted copper roof Y=3 or service-layer Y=1 when reviewing Y=2.
 for(const dir of dirs){
   const def=json(resource+'data/magneticraft2/multiblocks/charcoal_retort_'+dir+'.json');
@@ -357,8 +357,14 @@ for(const dir of dirs){
       assert.equal(id,'B','Y2 construction stays entirely masonry: '+dir);
       masonryCount++;
       const chamber=json(modelPath);
-      assert.equal(chamber.textures.brick,'minecraft:block/bricks',
-        'Y2 brickwork must use native Minecraft tile scale: '+dir);
+      assert.equal(chamber.textures.brick,
+        'magneticraft2:block/charcoal_retort/refractory',
+        'Y2 must use the established warm masonry, not vanilla red bricks: '+dir);
+      assert.equal(chamber.textures.bronze,'minecraft:block/cut_copper',
+        'Y2 copper details must match the accepted roof, not appear wooden: '+dir);
+      assert.equal(chamber.textures.join,
+        'magneticraft2:block/settling_tank/riveted_iron',
+        'Y2 corner fasteners must have iron material: '+dir);
       assert(chamber.elements.length>0,'Empty chamber model: '+modelPath);
       for(const e of chamber.elements){
         assert(e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v),
@@ -371,10 +377,10 @@ for(const dir of dirs){
 }
 const upperFront = southModel('part_0_2_0');
 const ventDividers=upperFront.elements.filter(e=>
-  e.faces.south?.texture==='#metal' && e.from[0]>=5 &&
-  e.to[0]<=12 && e.from[1]>=9);
-assert(ventDividers.length>=4,
-  'Upper chamber must have four grille bars with five open slots');
+  e.faces.south?.texture==='#bronze' && e.from[0]>=4.5 &&
+  e.to[0]<=11.5 && e.from[1]>=9 && e.to[1]<=13.5);
+assert.equal(ventDividers.length,4,
+  'Copper upper grille must contain four bars leaving five dark slots');
 assert(upperFront.elements.some(e=>
   e.faces.south?.texture==='#soot' && e.to[2]<=10),
   'Upper vent must have dark recessed backing, not painted-on bars');
@@ -382,7 +388,10 @@ for(const x of [-1,1]){
   const shoulder=southModel('part_'+x+'_2_0');
   assert(shoulder.elements.some(e=>
     Object.values(e.faces).some(f=>f.texture==='#join')),
-    'Front Y2 corner should retain its riveted iron bracket');
+    'Front Y2 corner should retain its dark riveted iron bracket');
+  assert(shoulder.elements.some(e=>e.faces.south?.texture==='#bronze' &&
+    e.from[1]>=3 && e.to[1]<=15),
+    'Upper front shoulder must have real copper pilaster geometry');
 }
 // V3.7 keeps Y1 and Y3 geometry as-is; this is verified by asset-delta
 // comparison during commit staging, while these assertions pin Y2 intent.
