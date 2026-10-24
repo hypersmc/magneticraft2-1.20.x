@@ -117,3 +117,9 @@ The user video shows protruding port components and dense overlapping bands. Dis
 6. Run contract/build checks, compare in-game images and footage with target, and iterate **before** marking visuals approved.
 
 **This document is a design contract and task plan, not an assertion that V3 has been implemented or accepted.**
+
+### 2026-10-24 — V2 geometry-placement repair, not a new layout
+
+The user's later close-up shows the real block construction is correct: the fault is overlapping **baked model geometry**. A generator audit found 39 intersecting cuboid pairs in 13 SOUTH model files (and their rotated counterparts): lower stone footplates, controller button, middle hatch, side trim and chimney. For example a stone foundation [0,0,0]..[16,12,16] intersected two front bands in the same cell.
+
+`tools/charcoal-retort/build.mjs` now partitions later trim from earlier opaque material and bakes only actually exposed surfaces, including shared multiblock filler boundaries. The repaired models stay strictly inside their respective 16×16×16 block cells with no runtime per-frame re-meshing. No JSON construction, I/O, recipe, copper/brick texture, or Voxel profile changes are needed. The previous V3 visual concept remains **optional after** the user inspects this corrected V2 result in Minecraft. **Neither appearance nor Forge compilation is yet signed off.**

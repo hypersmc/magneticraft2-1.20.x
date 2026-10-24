@@ -125,7 +125,136 @@ function makeAssets() {
  for(const c of cells)if("UOY".includes(c.k)&&shapes.has(key(c)))throw Error("Real port blocked: "+key(c));
  return {files,stats:{files:files.size,models:[...files.keys()].filter(s=>s.includes("/models/multiblock/")).length,collision:collision.length}};
 }
+
+/**
+ * Repair malformed V2 retort geometry at asset-build time.
+ * Later decorative pieces carve their volumes out of underlying solids.
+ * Surface quads are emitted only where actually visible, including at
+ * adjacent V2 filler boundaries. This does NOT move construction blocks.
+ */
+function repairRetortMeshes(files){
+ const EPS=1e-6;
+ const base="src/main/resources/assets/magneticraft2/";
+ const modelPart=/^models\/multiblock\/charcoal_retort_(south|west|north|east)\/part_(-?\d+)_(-?\d+)_(-?\d+)(_lit)?\.json$/;
+ const controller=/^models\/block\/charcoal_retort_controller(?:_lit)?\.json$/;
+ const sides={
+  north:[2,0,1,-1],south:[2,0,1,1],west:[0,2,1,-1],
+  east:[0,2,1,1],down:[1,0,2,-1],up:[1,0,2,1]
+ };
+ const near=(a,b)=>Math.abs(a-b)<EPS;
+ function cut3(a,b){
+  const f=a.from,t=a.to;
+  const l=f.map((v,i)=>Math.max(v,b.from[i])),h=t.map((v,i)=>Math.min(v,b.to[i]));
+  if(l.some((v,i)=>h[i]-v<=EPS))return[a];
+  const out=[];
+  function append(p,q){if(p.every((v,i)=>q[i]-v>EPS))out.push({...a,from:p,to:q});}
+  append([f[0],f[1],f[2]],[l[0],t[1],t[2]]);
+  append([h[0],f[1],f[2]],[t[0],t[1],t[2]]);
+  append([l[0],f[1],f[2]],[h[0],l[1],t[2]]);
+  append([l[0],h[1],f[2]],[h[0],t[1],t[2]]);
+  append([l[0],l[1],f[2]],[h[0],h[1],l[2]]);
+  append([l[0],l[1],h[2]],[h[0],h[1],t[2]]);
+  return out;
+ }
+ function cut2(r,b){
+  const x=Math.max(r[0],b[0]),y=Math.max(r[1],b[1]),
+        u=Math.min(r[2],b[2]),v=Math.min(r[3],b[3]);
+  if(u-x<=EPS||v-y<=EPS)return[r];
+  const out=[];
+  if(x-r[0]>EPS)out.push([r[0],r[1],x,r[3]]);
+  if(r[2]-u>EPS)out.push([u,r[1],r[2],r[3]]);
+  if(y-r[1]>EPS)out.push([x,r[1],u,y]);
+  if(r[3]-v>EPS)out.push([x,v,u,r[3]]);
+  return out;
+ }
+ function uvs(f,t){
+  return {
+   north:[16-t[0],16-t[1],16-f[0],16-f[1]],
+   south:[f[0],16-t[1],t[0],16-f[1]],
+   east:[16-t[2],16-t[1],16-f[2],16-f[1]],
+   west:[f[2],16-t[1],t[2],16-f[1]],
+   up:[f[0],f[2],t[0],t[2]],
+   down:[f[0],16-t[2],t[0],16-f[2]]
+  };
+ }
+ function resolve(boxes){
+  let solids=[];
+  for(const e of boxes){
+   const materials=[...new Set(Object.values(e.faces).map(f=>f.texture))];
+   if(materials.length!==1)throw Error("Retort box contains mixed textures");
+   const next={from:e.from,to:e.to,material:materials[0]};
+   solids=solids.flatMap(old=>cut3(old,next));
+   solids.push(next);
+  }
+  for(let i=0;i<solids.length;i++)for(let j=i+1;j<solids.length;j++){
+   const a=solids[i],b=solids[j];
+   if(a.from.every((v,k)=>Math.min(a.to[k],b.to[k])-Math.max(v,b.from[k])>EPS))
+    throw Error("Retort boxes still intersect after geometry repair");
+  }
+  return solids;
+ }
+ const all=new Map(),ordinary=new Map();
+ for(const [path,content]of files){
+  if(!path.startsWith(base))continue;
+  const tail=path.slice(base.length),m=modelPart.exec(tail);
+  if(!m&&!controller.test(tail))continue;
+  const model=JSON.parse(content);
+  const cell=m?[+m[2],+m[3],+m[4]]:null;
+  const entry={path,model,cell,dir:m?.[1]||null,boxes:resolve(model.elements)};
+  all.set(path,entry);
+  if(m&&!m[5])ordinary.set(m[1]+":"+cell.join(","),entry);
+ }
+ let totalQuads=0;
+ for(const entry of all.values()){
+  const candidates=[...entry.boxes];
+  if(entry.cell)for(const shift of [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]){
+   const coord=entry.cell.map((v,i)=>v+shift[i]);
+   const neighbor=ordinary.get(entry.dir+":"+coord.join(","));
+   if(!neighbor)continue;
+   for(const b of neighbor.boxes)candidates.push({
+    from:b.from.map((v,i)=>v+shift[i]*16),
+    to:b.to.map((v,i)=>v+shift[i]*16)
+   });
+  }
+  const elements=[];
+  for(const box of entry.boxes){
+   const whole={};
+   for(const [side,[axis,u,v,direction]] of Object.entries(sides)){
+    const plane=direction===1?box.to[axis]:box.from[axis];
+    const original=[box.from[u],box.from[v],box.to[u],box.to[v]];
+    let visible=[original];
+    for(const other of candidates){
+     if(other===box)continue;
+     if(!near(direction===1?other.from[axis]:other.to[axis],plane))continue;
+     const coverage=[other.from[u],other.from[v],other.to[u],other.to[v]];
+     visible=visible.flatMap(r=>cut2(r,coverage));
+     if(!visible.length)break;
+    }
+    if(visible.length===1&&visible[0].every((z,i)=>near(z,original[i]))){
+     whole[side]={texture:box.material,uv:uvs(box.from,box.to)[side]};
+     totalQuads++;
+    } else for(const rect of visible){
+     const f=[...box.from],t=[...box.to];
+     f[u]=rect[0];t[u]=rect[2];f[v]=rect[1];t[v]=rect[3];
+     elements.push({from:f,to:t,faces:{[side]:{
+      texture:box.material,uv:uvs(f,t)[side]
+     }}});
+     totalQuads++;
+    }
+   }
+   if(Object.keys(whole).length)elements.push({from:box.from,to:box.to,faces:whole});
+  }
+  if(!elements.length)throw Error("Retort part has no visible faces "+entry.path);
+  for(const e of elements)if(e.from.some((v,i)=>v<-EPS||e.to[i]>16+EPS||e.to[i]-v<=EPS))
+   throw Error("Retort part protrudes into adjacent real block "+entry.path);
+  entry.model.elements=elements;
+  files.set(entry.path,JSON.stringify(entry.model)+"\n");
+ }
+ return {modelCount:all.size,visibleQuads:totalQuads};
+}
+
 const {files,stats}=makeAssets();
+repairRetortMeshes(files);
 const check=process.argv.includes("--check");
 let errors=0;
 for(const [relative,source] of files){

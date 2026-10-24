@@ -87,6 +87,56 @@ for(const dir of dirs){
 assert(fs.existsSync(new URL('tools/charcoal-retort/build.mjs', root)),
   'Retort generator must be checked for drift with --check');
 
+
+// The generator's output is the committed model contract: check mesh surfaces,
+// not just box counts. Front trim must no longer draw coplanar intersecting
+// quads and no Retort part may render inside a real item-port cell.
+const faceAxes={
+ north:[2,0,1],south:[2,0,1],
+ west:[0,2,1],east:[0,2,1],
+ down:[1,0,2],up:[1,0,2]
+};
+for(const dir of dirs){
+ const blueprint=json(resource+'data/magneticraft2/multiblocks/charcoal_retort_'+dir+'.json');
+ const flat=[];
+ for(let y=0;y<4;y++)for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+  const key=blueprint.structure.layout['layer'+(y+1)][z][x];
+  if(['U','O','Y','A'].includes(key)&&!(key==='A'&&y===3))continue;
+  const absolute='src/main/resources/assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/';
+  // The per-facing offset is determined relative to the actual controller.
+  const p=blueprint.structure.layout.layer1;
+  const origin={x:0,z:0};
+  for(let zz=0;zz<3;zz++)for(let xx=0;xx<3;xx++)if(p[zz][xx]==='C'){
+   origin.x=xx;origin.z=zz;
+  }
+  const rel='part_'+(x-origin.x)+'_'+y+'_'+(z-origin.z)+'.json';
+  const file=absolute+rel;
+  assert(fs.existsSync(new URL(file,root)),'Missing Retort V2 model '+file);
+  const body=json(file);
+  for(const e of body.elements){
+    for(let i=0;i<3;i++)assert(e.from[i]>=0&&e.to[i]<=16&&e.to[i]>e.from[i],
+     'Retort element leaked into adjacent block: '+file);
+    for(const [side,spec] of Object.entries(e.faces)){
+     const [axis,u,v]=faceAxes[side];
+     const coord=['east','up','south'].includes(side)?e.to[axis]:e.from[axis];
+     flat.push({plane:axis+':'+(coord+([x-origin.x,y,z-origin.z][axis])*16),
+       rect:[e.from[u]+([x-origin.x,y,z-origin.z][u])*16,
+             e.from[v]+([x-origin.x,y,z-origin.z][v])*16,
+             e.to[u]+([x-origin.x,y,z-origin.z][u])*16,
+             e.to[v]+([x-origin.x,y,z-origin.z][v])*16]});
+    }
+  }
+ }
+ const groups=new Map();
+ for(const face of flat){if(!groups.has(face.plane))groups.set(face.plane,[]);groups.get(face.plane).push(face.rect);}
+ for(const [plane,faces] of groups)for(let i=0;i<faces.length;i++)for(let j=i+1;j<faces.length;j++){
+  const a=faces[i],b=faces[j];
+  const sharedX=Math.min(a[2],b[2])-Math.max(a[0],b[0]);
+  const sharedY=Math.min(a[3],b[3])-Math.max(a[1],b[1]);
+  assert(!(sharedX>0.00001&&sharedY>0.00001),'Coplanar overlapping Retort faces at '+dir+': '+plane);
+ }
+}
+
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));
