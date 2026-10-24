@@ -384,13 +384,13 @@ for(const dir of dirs){
 }
 const upperFront = southModel('part_0_2_0');
 const ventDividers=upperFront.elements.filter(e=>
-  e.faces.south?.texture==='#bronze' && e.from[0]>=4.5 &&
-  e.to[0]<=11.5 && e.from[1]>=9 && e.to[1]<=14);
+  e.faces.south?.texture==='#bronze' && e.from[1]===11.3 &&
+  e.to[1]===14.1 && Math.abs(e.to[0]-e.from[0]-0.55)<0.00001);
 assert.equal(ventDividers.length,4,
-  'Copper upper grille must contain four bars leaving five dark slots');
+  'Copper upper grille must have four integrated mullions and five dark slots');
 assert(upperFront.elements.some(e=>
-  e.faces.south?.texture==='#soot' && e.to[2]<=10),
-  'Upper vent must have dark recessed backing, not painted-on bars');
+  e.faces.south?.texture==='#soot' && Math.abs(e.to[2]-13.75)<0.00001),
+  'Upper vent must have actual recessed soot backing, not rods in empty air');
 for(const x of [-1,1]){
   const shoulder=southModel('part_'+x+'_2_0');
   assert(shoulder.elements.some(e=>
@@ -586,6 +586,61 @@ for(const [dir,part] of Object.entries(v314LeftParts)){
  assert(has('#bronze',e=>e.from[1]>=12.25&&e.to[1]===16&&
    depth(e)===16),
    'V3.17 copper L-header disappeared '+dir);
+}
+// V3.18 center upper-front block: actual five-slot faceplate, raised
+// left/right copper supports and a low copper arch — NO free-floating
+// bars in a roof cavity. Only this center physical cell is authored.
+// Test every facing from the same outward camera-relative direction.
+for(const dir of dirs){
+  const center=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+    +dir+'/part_0_2_0.json');
+  const horizontal=(dir==='south'||dir==='north')?0:2;
+  const normal=(dir==='south'||dir==='north')?2:0;
+  const positive=(dir==='south'||dir==='east');
+  const depth=e=>positive?e.to[normal]:16-e.from[normal];
+  const front=center.elements.filter(e=>e.faces[dir]);
+  const material=e=>e.faces[dir].texture;
+  const mullions=front.filter(e=>material(e)==='#bronze' &&
+    e.from[1]===11.3 && e.to[1]===14.1 &&
+    Math.abs(e.to[horizontal]-e.from[horizontal]-0.55)<0.00001)
+    .map(e=>[e.from[horizontal],e.to[horizontal]])
+    .sort((a,b)=>a[0]-b[0]);
+  assert.equal(mullions.length,4,
+    'Center vent should have four copper mullions '+dir);
+  const frontAt=(x,y)=>{
+    const covering=front.filter(e=>e.from[horizontal]<x &&
+      x<e.to[horizontal] && e.from[1]<y && y<e.to[1])
+      .sort((a,b)=>depth(b)-depth(a));
+    return covering[0] ? {
+      texture:material(covering[0]),depth:depth(covering[0])
+    }:null;
+  };
+  const slots=[mullions[0][0]-0.45,
+    ...[0,1,2].map(i=>(mullions[i][1]+mullions[i+1][0])/2),
+    mullions[3][1]+0.45];
+  for(const x of slots){
+    const hit=frontAt(x,12.7);
+    assert(hit && hit.texture==='#soot' &&
+      Math.abs(hit.depth-13.75)<0.00001,
+      'Vent slot is blocked, empty or too deeply recessed: '+dir+'/'+x);
+  }
+  for(const [x0,x1] of mullions){
+    const hit=frontAt((x0+x1)/2,12.7);
+    assert(hit && hit.texture==='#bronze' && hit.depth===16,
+      'Vent bar not integrated into front copper plate: '+dir+'/'+x0);
+  }
+  const ironBosses=front.filter(e=>material(e)==='#stone' &&
+    e.from[1]===12.2 && Math.abs(depth(e)-15.65)<0.00001);
+  assert.equal(ironBosses.length,2,'Both vent end fittings need dark insets '+dir);
+  const pillars=front.filter(e=>material(e)==='#bronze' &&
+    e.from[1]<=3.3 && e.to[1]>=7 && depth(e)===16);
+  assert(pillars.length>=2,'Missing paired copper supports below vent '+dir);
+  assert(front.some(e=>material(e)==='#bronze' &&
+    e.from[1]<=2 && e.to[1]>=2 && depth(e)===16),
+    'Low stepped copper arch missing '+dir);
+  assert(center.elements.every(e=>e.from.every((v,i)=>
+    v>=0&&e.to[i]<=16&&e.to[i]>v)),
+    'One-block center facade overflow '+dir);
 }
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));

@@ -379,3 +379,7 @@ The user confirmed V3.15 framing is placed correctly, while the 3D brick effect 
 ### 2026-10-24 — Charcoal Retort V3.17 top bracket + lower copper shoulder (review pending)
 
 User highlighted two front-left Y2 differences: top iron corner must be a recessed-square fixing rather than plain cap, and lower projecting shoulder must be copper with a smaller dark metal foot beneath. Rebuilt only those two fittings, leaving staggered raised masonry and correctly positioned copper L-frame identical in source. Roof, chimney, other layers, real ports, collision and gameplay unchanged; visual sign-off pending.
+
+### 2026-10-24 — Retort V3.18 upper front-center block only (await screenshot)
+
+Following the single-block approach, rebuilt the center Y2 block from the reference: five-slot copper grille backed by recessed soot, inset iron mounting plates on both ends, solid brick lower field, two copper load-bearing uprights, short stepped copper arch and dark feet. Single-authored part in four orientations; 16 adjacent Y1/Y2/Y3 meshes regenerated only for shared hidden-face culling, with their outward front geometry unchanged. Left/right front facades, accepted copper roof/chimney and all structure, ports, recipes and collision untouched. Gradle/in-game confirmation pending; do not advance to right block yet.

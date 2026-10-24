@@ -139,25 +139,60 @@ export function applyRetortV3(files) {
       // those formed the unintended U-shape in V3.14. The masonry
       // continues through X=16 to meet the unchanged center block.
     }else if(front&&x===0){
-      // Front-only reference pass: five recessed dark vertical slots
-      // bounded by a copper lintel and shallow iron side clamps.
-      // No extra full-width band across the chamber under the roof.
-      solid(c,"brick",[0,0,0],[16,16,8]);
-      solid(c,"brick",[0,0,8],[3,16,16]);
-      solid(c,"brick",[13,0,8],[16,16,16]);
-      solid(c,"brick",[3,0,8],[13,8,16]);
-      solid(c,"brick",[3,15,8],[13,16,16]);
-      solid(c,"soot",[3,8,8],[13,15,10]);
-      // The lintel/sill are inside this one front cell; the four slim
-      // copper dividers do not cover up the deeper soot backing.
-      solid(c,"bronze",[3,14,12],[13,15,16]);
-      solid(c,"bronze",[3,8,12],[13,9,16]);
-      solid(c,"metal",[2,9,13],[3,15,16]);
-      solid(c,"metal",[13,9,13],[14,15,16]);
-      for(const xx of [4.5,6.5,8.5,10.5])
-        solid(c,"bronze",[xx,9,12],[xx+0.75,14,14]);
-      // Short copper brow over the vent itself, no continuous iron strip.
-      solid(c,"bronze",[3,15,12],[13,16,16]);
+      // V3.18: FRONT-CENTER Y2 block, rebuilt as one coherent furnace
+      // facade. The user's right reference has a copper grille with
+      // five dark slots, dark iron clamps, two copper side supports and
+      // a low stepped arch. All geometry stays in this 16px block.
+      //
+      // Genuine inset: a solid brick structure extends behind the grille
+      // (to Z=9); the middle opening has no opaque wall at the front.
+      solid(c,"brick",[0,0,0],[16,16,9]);
+      solid(c,"brick",[0,0,9],[16,10.5,15]);
+      solid(c,"brick",[0,15,9],[16,16,15]);
+      solid(c,"brick",[0,10.5,9],[3.1,15,15]);
+      solid(c,"brick",[12.9,10.5,9],[16,15,15]);
+
+      // Recessed soot visible through five copper-fronted vent slots,
+      // not free-floating metal bars. The copper facade ends at Z=16.
+      solid(c,"soot",[3.1,10.5,9],[12.9,15,13.75]);
+      // Main copper lintel and sill define a rectangular vent casing.
+      solid(c,"bronze",[2.5,14.1,14.5],[13.5,16,16]);
+      solid(c,"bronze",[2.5,10.5,14.5],[13.5,11.3,16]);
+      solid(c,"bronze",[2.5,11.3,14.5],[4,14.1,16]);
+      solid(c,"bronze",[12.45,11.3,14.5],[13.5,14.1,16]);
+      // Four integrated copper stanchions -> five true dark slots.
+      // Slots: 4..5.25; 5.8..7.05; 7.6..8.85;
+      //        9.4..10.65; 11.2..12.45.
+      for(const xx of [5.25,7.05,8.85,10.65])
+        solid(c,"bronze",[xx,11.3,14.5],[xx+0.55,14.1,16]);
+      // Iron mounting brackets on each end, raised 1px over brick.
+      // Both plates use a solid rear and four iron border rails,
+      // exposing a physically recessed dark boss instead of burying
+      // it behind a full face metal cube.
+      for(const bx of [0.6,13.5]){
+        solid(c,"metal",[bx,11.5,14.5],[bx+1.9,16,15.2]);
+        solid(c,"metal",[bx,11.5,15.2],[bx+1.9,12.2,16]);
+        solid(c,"metal",[bx,15.3,15.2],[bx+1.9,16,16]);
+        solid(c,"metal",[bx,12.2,15.2],[bx+0.45,15.3,16]);
+        solid(c,"metal",[bx+1.45,12.2,15.2],[bx+1.9,15.3,16]);
+        solid(c,"stone",[bx+0.45,12.2,15.2],[bx+1.45,15.3,15.65]);
+      }
+
+      // Brick front directly beneath the vent: solid masonry, slightly
+      // behind the framing so the side supports cast shadows.
+      // Core face Z=15 is only 1px back from copper, NOT a hollow alcove.
+      // Copper vertical ribs along both sides tie the vent to arch.
+      solid(c,"bronze",[1.7,2.3,14.5],[2.8,11.2,16]);
+      solid(c,"bronze",[13.2,2.3,14.5],[14.3,11.2,16]);
+      solid(c,"metal",[1.5,0,14.5],[3,2.4,16]);
+      solid(c,"metal",[13,0,14.5],[14.5,2.4,16]);
+
+      // Low stepped copper arch above the lower Y1 furnace hatch.
+      // The steps deliberately terminate INSIDE the one center cell.
+      solid(c,"bronze",[3.5,0.7,14.75],[12.5,2.1,16]);
+      solid(c,"bronze",[2.8,1.5,14.75],[4.7,3.2,16]);
+      solid(c,"bronze",[11.3,1.5,14.75],[13.2,3.2,16]);
+      solid(c,"bronze",[4.0,2.0,14.75],[12.0,2.8,16]);
     }else if(front){
       // V3.9: the face used to stop at Z=13, leaving a 3px deep
       // hollow-looking gap behind the copper pilasters. Keep the old
