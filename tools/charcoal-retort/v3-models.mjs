@@ -129,69 +129,49 @@ export function applyRetortV3(files) {
     solid(c,"roof",[0,8,0],[16,10,16]);
    }
   } else if(k==="A"&&y===3){
-   // CHIMNEY-ONLY V3.4: real negative-space ventilation, not painted
-   // horizontal lines. There is NO full solid copper wall hiding the cuts.
-   // Four corner columns carry the chimney, and its broad front/back/side
-   // faces are split at the two actual open slots. The center 6x6 shaft
-   // remains completely open through the top.
-   const slots=[[11,12.25],[13.25,14.5]];
-   const wallCourses=[[2,11],[12.25,13.25],[14.5,16]];
-   // Solid corners keep the retort flue mechanically legible.
-   for(const [xx,zz] of [[2,2],[11,2],[2,11],[11,11]]){
-     solid(c,"roof",[xx,2,zz],[xx+3,16,zz+3]);
-   }
-   // Front and back: four-pixel-long horizontal apertures spanning the
-   // full three-pixel wall depth. Side apertures use the same proportions.
-   for(const [za,zb] of [[2,5],[11,14]]){
-     for(const [ya,yb] of wallCourses){
-       solid(c,"roof",[5,ya,za],[11,yb,zb]);
+   // V3.5 chimney-only cleanup: block-local, INTEGER-pixel copper.
+   // The copper walls begin directly at roof Y=10, without the extra
+   // floating lower collar. All exposed undersides get normal face UVs.
+   // Two real horizontal vent rows cut all four walls (Y=11..12,
+   // Y=13..14); the middle 6x6 shaft stays open.
+   const courses=[[10,11],[12,13],[14,15]];
+   const gaps=[[11,12],[13,14]];
+   // Continuous structural corners: 3px-long solid posts at front/back.
+   for(const [xa,xb] of [[3,6],[10,13]]){
+     for(const [za,zb] of [[3,5],[11,13]]){
+       solid(c,"roof",[xa,10,za],[xb,15,zb]);
      }
-     for(const [ya,yb] of slots){
-       // Small copper uprights at either end of the cut-out; center
-       // x=6..10 is actually EMPTY in both vent rows.
+   }
+   // The two long front/back walls. The center of each window is AIR,
+   // with short copper end posts retained on either side.
+   for(const [za,zb] of [[3,5],[11,13]]){
+     for(const [ya,yb] of courses)
+       solid(c,"roof",[6,ya,za],[10,yb,zb]);
+   }
+   // Side walls match the front/back construction and have matching
+   // two-row slots. No solid wall is hidden behind the apertures.
+   for(const [xa,xb] of [[3,5],[11,13]]){
+     for(const [ya,yb] of courses)
+       solid(c,"roof",[xa,ya,5],[xb,yb,11]);
+   }
+   // Very small remaining wall returns at the ends of each vent row.
+   // These are part of the chimney body, not decorative floating strips.
+   for(const [ya,yb] of gaps){
+     for(const [za,zb] of [[3,5],[11,13]]){
        solid(c,"roof",[5,ya,za],[6,yb,zb]);
        solid(c,"roof",[10,ya,za],[11,yb,zb]);
      }
-   }
-   for(const [xa,xb] of [[2,5],[11,14]]){
-     for(const [ya,yb] of wallCourses){
-       solid(c,"roof",[xa,ya,5],[xb,yb,11]);
-     }
-     for(const [ya,yb] of slots){
-       // The side-wall slots are also physically open (z=6..10).
+     for(const [xa,xb] of [[3,5],[11,13]]){
        solid(c,"roof",[xa,ya,5],[xb,yb,6]);
        solid(c,"roof",[xa,ya,10],[xb,yb,11]);
      }
    }
-   // Broader lower seat gives the chimney an intentional transition to
-   // the copper slab. It stays BELOW the first slot, so it cannot cover it.
+   // A single 1px-thick copper top lip (Y=15..16), with a proper
+   // downward face exposed on its overhang. No dark band beneath it.
    for(const [f,t] of [
-     [[1,9.5,1],[5,10.75,15]],[[11,9.5,1],[15,10.75,15]],
-     [[5,9.5,1],[11,10.75,5]],[[5,9.5,11],[11,10.75,15]]
-   ])solid(c,"bronze",f,t);
-   // A slightly wider copper rim makes the open top a formed collar,
-   // rather than an unframed 1x1 box. Center shaft stays open.
-   for(const [f,t] of [
-     [[1,15,1],[5,16,15]],[[11,15,1],[15,16,15]],
-     [[5,15,1],[11,16,5]],[[5,15,11],[11,16,15]]
+     [[2,15,2],[5,16,14]], [[11,15,2],[14,16,14]],
+     [[5,15,2],[11,16,5]], [[5,15,11],[11,16,14]]
    ])solid(c,"roof",f,t);
-   // Inner soot / heat staining is on the real INNER wall surfaces,
-   // never a dark plate stretched across the vent openings.
-   for(const [ya,yb] of wallCourses){
-     const bottom=Math.max(ya,5);
-     if(bottom>=yb)continue;
-     for(const [f,t] of [
-       [[5,bottom,5],[5.25,yb,11]],
-       [[10.75,bottom,5],[11,yb,11]],
-       [[5,bottom,5],[11,yb,5.25]],
-       [[5,bottom,10.75],[11,yb,11]]
-     ])solid(c,"soot",f,t);
-   }
-   // One restrained narrow dark line BELOW the top lip (no filled throat).
-   for(const [f,t] of [
-     [[1,14.75,1],[5,15.25,15]],[[11,14.75,1],[15,15.25,15]],
-     [[5,14.75,1],[11,15.25,5]],[[5,14.75,11],[11,15.25,15]]
-   ])solid(c,"metal",f,t);
   } else if(["U","O","Y"].includes(k)){
    // These are not fillers. The real item port BE selects this baked model.
    // Left log hopper vs right charcoal drawer vs rear tar port remain distinct.
@@ -291,4 +271,43 @@ export function finalizeRetortV3(files,ports){
   files.set(target,model);
   files.delete(path); // critical: the real block, not a V2 filler, renders this model
  }
+}
+/**
+ * Shade exposed INNER wall faces without inserting coplanar texture plates.
+ * This runs AFTER the V2 geometry partitioner so its mixed-material faces
+ * cannot be mistaken for overlapping solid cuboids during generation.
+ * The 6x6 chimney aperture is symmetric under all horizontal rotations.
+ */
+export function textureRetortChimneyInteriors(files) {
+ const prefix="src/main/resources/assets/magneticraft2/models/multiblock/";
+ let changed=0;
+ for(const [dir,offset] of Object.entries({
+   south:"0_3_-1",north:"0_3_1",west:"1_3_0",east:"-1_3_0"
+ })){
+   const path=prefix+"charcoal_retort_"+dir+"/part_"+offset+".json";
+   const model=JSON.parse(files.get(path)||"null");
+   if(!model||!Array.isArray(model.elements))throw Error("No chimney mesh for "+dir);
+   let shaded=0;
+   for(const element of model.elements){
+     const f=element.from,t=element.to;
+     // Assign soot exactly to *visible* inward faces on the shaft wall.
+     // Existing face UVs remain in 1-model-pixel-per-texel scale.
+     const inside=[
+       ["east",t[0]===5,f[2]>=5&&t[2]<=11],
+       ["west",f[0]===11,f[2]>=5&&t[2]<=11],
+       ["south",t[2]===5,f[0]>=5&&t[0]<=11],
+       ["north",f[2]===11,f[0]>=5&&t[0]<=11]
+     ];
+     for(const [side,onPlane,inSpan] of inside){
+       if(onPlane&&inSpan&&f[1]>=10&&t[1]<=15&&element.faces[side]){
+         element.faces[side].texture="#soot";
+         shaded++;
+       }
+     }
+   }
+   if(shaded===0)throw Error("Chimney has no visible inner faces: "+dir);
+   files.set(path,JSON.stringify(model)+"\n");
+   changed++;
+ }
+ return changed;
 }

@@ -115,3 +115,16 @@ The copper slab roof and its twin inset grooves are unchanged. **Only the centra
 - **Scope**: precisely four chimney `part_*.json` files plus generator/tests/docs. No change to 8 copper roof slabs, inset grooves, real item ports, 3x4x3 formation, processes, item/fluid contracts or other multiblocks.
 
 **Visual acceptance pending Minecraft screenshots**, particularly the front and both sides from a high enough angle to see the vent apertures, lower seat and lip. Forge build not claimed.
+
+### 2026-10-24 — V3.5 chimney cleanup: UVs, inner faces and lower collar
+
+After the user's close-up screenshot showed stretched-looking pixels, a dark/untextured-looking underside, and a strange protruding base platform, the chimney was simplified **without touching any other Retort layer**.
+
+- **No lower collar:** the old floating, four-piece bronze platform at Y=9.5–10.75 is removed. The plain copper chimney body now begins directly at the copper roof top **Y=10**.
+- **Clean rectangular vent openings:** four walls have two actual rectangular cuts in the copper geometry at Y=11–12 and Y=13–14, with no soot or copper panel hiding the slots.
+- **One-piece visual language:** solid structural corner posts, narrow horizontal copper courses, and one consistent 1px-high top lip at Y=15–16. The hollow central throat stays genuinely open.
+- **No texture distortion:** model geometry is pixel-aligned (integer local positions), the generator retains per-face UVs sized to each face in model pixels, and an automated test verifies 1:1 UV span and within-atlas boundaries for every rendered chimney face.
+- **Inside/underside fixed:** the open inner shaft gets a soot finish by changing the texture of its **existing inward-facing quads after geometry partitioning**—no thin coplanar overlay geometry. All exposed lower and overhanging rim faces keep explicit copper textures and UVs.
+- The four chimney meshes are regenerated in SOUTH/NORTH/EAST/WEST with fewer elements; collision, the 3x3 copper-slab roof, inset bands, Y=0–2 details, real input/output modules, machine functions, recipes and structure JSON are unchanged.
+
+Still **pending actual Forge compilation and in-game screenshot acceptance**. No changes to the other Bronze machines. Roof-only visual iteration remains in effect.

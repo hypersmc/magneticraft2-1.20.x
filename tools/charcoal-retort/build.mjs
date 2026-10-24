@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import fs from "node:fs";
 import path from "node:path";
-import {applyRetortV3,finalizeRetortV3} from "./v3-models.mjs";
+import {applyRetortV3,finalizeRetortV3,textureRetortChimneyInteriors} from "./v3-models.mjs";
 // Retort shell V2: deterministic block-local models and Voxel V2 profile.
 // The JSON formation layout, module blocks and machine recipes are unchanged.
 function makeAssets() {
@@ -258,6 +258,7 @@ const {files,stats}=makeAssets();
 repairRetortMeshes(files);
 const v3=applyRetortV3(files);
 repairRetortMeshes(files);
+textureRetortChimneyInteriors(files);
 finalizeRetortV3(files,v3.ports);
 const check=process.argv.includes("--check");
 let errors=0;

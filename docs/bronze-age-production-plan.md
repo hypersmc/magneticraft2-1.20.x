@@ -327,3 +327,7 @@ The two lengthwise dark roof lines now sit in **recessed grooves (Y=8.75)** cut 
 ### 2026-10-24 — Retort V3.4 chimney-only vent correction
 
 The center roof chimney model now has real inset-through-wall vent apertures (two rows on all four exposed sides), an anchoring copper base, stronger open top lip and limited internal soot details. All eight grooved copper roof tiles, Y=0–2 models, working modules, formation layout and recipe system are unchanged; the existing coarse collision profile is intentionally preserved. Static tests ensure four directional variants, clear slots/throat, and zero overlapping rendered faces. **In-game screenshot and Gradle acceptance pending.**
+
+### 2026-10-24 — Retort V3.5 chimney-only texture and geometry cleanup
+
+Removed the visually distracting floating mounting ring, rebuilt the vent wall with integer-pixel geometry, preserved two genuine vent rows and the hollow opening, and gave interior/exposed underside faces properly mapped textures without extra overlapping planes. Only four chimney models plus their generator/tests/docs changed; roof slabs, lower three layers, collision, ports and production are untouched. **Minecraft appearance and Gradle build still require verification.**
