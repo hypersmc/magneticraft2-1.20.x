@@ -317,3 +317,27 @@ Precise authored SOUTH-facing Y2 details in local 0–16 model coordinates:
 Each of these edits rotates into SOUTH/WEST/NORTH/EAST automatically. The source only adds center/right details, because the left already touches its seam. The generator regenerates **12 Y2 models and eight roof Y3 hidden-face meshes** (20 model assets); the accepted left block's outward face, roof top/grooves, and all Y3 non-bottom visible geometry are unchanged. All Y0/Y1 service blocks, ports, multiblock formation blueprint, recipes, item/water/heat/power processing, chimney and voxel collision remain untouched.
 
 **Static QA:** all four facings were checked over 192 interior samples along the full 48px front upper-header line (Y15.7, local front depth Z16). Every sample resolves to `#bronze` or `#metal`; both inter-block seams have no holes. UV sizes remain proportional and no coplanar overlapping faces were detected. The existing five-slot grille and curved V3.19 arch must remain unchanged; the test contract includes these. This is **pending in-game comparison** and no full Forge `./gradlew build` was executed here.
+
+### 2026-10-24 — V3.21: wider center supports and real 3D center masonry
+
+User supplied a frontal in-game screenshot after V3.20 and marked the **two upper iron vent mountings**, **vertical copper braces** and **dark iron lower feet** as too narrow; the center section also lost the physical masonry depth already established on the front-left block. The user requested an actual implementation as well as a concrete build specification.
+
+**Precisely one authored physical cell:** front-center upper chamber `SOUTH x=0,y=2,z=0`, automatically rotated to other facings. Only the center's visible design changes. Three outer-front blocks remain mechanically and structurally identical; the accepted roof, chimney and left-front 3D masonry remain unchanged.
+
+SOUTH-local implementation:
+- Under the center front vent: replace the flat 16×10.5 brick face (to Z15) with structural brick ending at **Z14**, plus two narrow solid brick edge returns to Z15; these keep the wall solid at the perimeter, not a deep alcove.
+- Recessed mortar `[3.15,3.9,14]→[12.85,10.45,14.2]`, `minecraft:block/stone` scoped ONLY to the center and the original front-left brick cells.
+- Nine physically raised individual bricks (three staggered courses):
+  - Y4.05–5.85, X [3.25,6.1], [6.5,9.25], [9.65,12.75]
+  - Y6.2–8.1, X [3.25,4.55], [4.95,8.25], [8.65,12.75]
+  - Y8.45–10.25, X [3.25,6.9], [7.3,10.05], [10.45,12.75].
+  - Rear starts at Z14.2; brick faces terminate at Z15.45 or Z15.70 for **1.25/1.50px of visible depth** over mortar. Front copper ends at Z16. Physical gaps between bricks expose recessed mortar and preserve natural side shadows.
+- Both upper dark iron grille mountings widen from 1.9 to **2.5px**, at X0.25..2.75 and X13.25..15.75. Their raised four-sided iron frames preserve visible dark stone inset bosses Z15.65. The existing five recessed soot slots and all four 0.55px copper dividers are untouched. Grille lintel/sill and side copper casing slightly narrow at their edges to avoid covering the wider brackets.
+- Two continuous vertical copper uprights widen 1.1→**1.9px**, to X1.05..2.95 and X13.05..14.95 (Y2.3..11.5, Z14.5..16). Their tops continue to meet the dark iron bracket bottom rails at Y11.5.
+- Two lower iron mounting feet widen 1.5→**2.25px**, to X0.95..3.2 and X12.8..15.05 (Y0..2.4, Z14.5..16). Some exposed front faces are naturally occluded by the existing arch; don't count mesh fragments to measure physical widths.
+- The V3.20 copper header still touches both neighboring front blocks continuously. Its center seam returns are now X0..0.25 and X15.75..16, adjoining the new 2.5px iron plates; center lintel is X2.75..13.25. At Y15.7 the continuous copper/iron front remains at Z16 without air gaps.
+- The **seven-segment V3.19 curved copper arch is unchanged**. All accepted roof top, grooved copper roof, chimney, left and right facades, real block ports, multiblock JSON, recipes, processing and voxel collision remain untouched.
+
+**Generated assets:** four Y2 center models (one per facing) and four Y1 center contact models re-partitioned for internal face culling. No other generated models changed. Verified front-visible lower Y1 model surfaces must match the previous commit. Static checks: V3.18 five soot slots, V3.19 seven arch segments/iron-copper contact, V3.20 48px three-block header continuity and V3.21 masonry depth/wider trim pass in all four facings. No global coplanar overlaps, UV stretching, or model-cuboid bounds errors.
+
+**Status: visual candidate awaiting user in-game sign-off, not accepted.** Full `./gradlew build` and Minecraft in-game rendering have not been executed in this workflow. Do not expand scope to other front blocks or layers until the user approves.

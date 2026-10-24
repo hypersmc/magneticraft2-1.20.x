@@ -139,18 +139,35 @@ export function applyRetortV3(files) {
       // those formed the unintended U-shape in V3.14. The masonry
       // continues through X=16 to meet the unchanged center block.
     }else if(front&&x===0){
-      // V3.19: FRONT-CENTER Y2 block, rebuilt as one coherent furnace
-      // facade. The user's right reference has a copper grille with
-      // five dark slots, dark iron clamps, two copper side supports and
-      // a low stepped arch. All geometry stays in this 16px block.
-      //
-      // Genuine inset: a solid brick structure extends behind the grille
-      // (to Z=9); the middle opening has no opaque wall at the front.
+      // V3.21: center Y2 ONLY. Retain V3.20 cross-block copper header,
+      // five recessed grille slots and V3.19 stepped copper arch.
+      // Restore the LEFT facade's actual raised-brick + mortar depth,
+      // not a flat brick texture on a 16px full front wall.
       solid(c,"brick",[0,0,0],[16,16,9]);
-      solid(c,"brick",[0,0,9],[16,10.5,15]);
+      // Solid structural wall immediately behind new shallow masonry.
+      solid(c,"brick",[0,0,9],[16,10.5,14]);
+      // Side returns meet the iron/copper framing so this is a SOLID
+      // wall, not the rejected deep alcove. The middle brick field
+      // remains recessed ~0.3..0.55px below the copper/iron trim.
+      solid(c,"brick",[0,0,14],[3.15,10.5,15]);
+      solid(c,"brick",[12.85,0,14],[16,10.5,15]);
       solid(c,"brick",[0,15,9],[16,16,15]);
       solid(c,"brick",[0,10.5,9],[3.1,15,15]);
       solid(c,"brick",[12.9,10.5,9],[16,15,15]);
+
+      // Real 3D masonry: stone mortar exposed between nine staggered
+      // raised brick solids. All geometry stays inside 1 block and
+      // uses native-proportional per-face UVs.
+      solid(c,"mortar",[3.15,3.9,14],[12.85,10.45,14.2]);
+      const centerBrickCourses=[
+        {y0:4.05,y1:5.85,spans:[[3.25,6.1],[6.5,9.25],[9.65,12.75]]},
+        {y0:6.2,y1:8.1,spans:[[3.25,4.55],[4.95,8.25],[8.65,12.75]]},
+        {y0:8.45,y1:10.25,spans:[[3.25,6.9],[7.3,10.05],[10.45,12.75]]}
+      ];
+      for(const row of centerBrickCourses)for(const [x0,x1] of row.spans){
+        const front=x0===3.25?15.7:15.45;
+        solid(c,"brick",[x0,row.y0,14.2],[x1,row.y1,front]);
+      }
 
       // Recessed soot visible through five copper-fronted vent slots,
       // not free-floating metal bars. The copper facade ends at Z=16.
@@ -160,14 +177,14 @@ export function applyRetortV3(files) {
       // leaving two visible 2.5px gaps at the inter-block seams.
       // Add real end returns flush with the outer face at Z=16.
       // Keep the dark iron end mountings on top, not buried in copper.
-      solid(c,"bronze",[0,14.1,14.5],[0.6,16,16]);
-      solid(c,"bronze",[15.4,14.1,14.5],[16,16,16]);
+      solid(c,"bronze",[0,14.1,14.5],[0.25,16,16]);
+      solid(c,"bronze",[15.75,14.1,14.5],[16,16,16]);
       // The central grille header is the uninterrupted copper span
       // between the two iron mountings; five vent slots sit below.
-      solid(c,"bronze",[2.5,14.1,14.5],[13.5,16,16]);
-      solid(c,"bronze",[2.5,10.5,14.5],[13.5,11.3,16]);
-      solid(c,"bronze",[2.5,11.3,14.5],[4,14.1,16]);
-      solid(c,"bronze",[12.45,11.3,14.5],[13.5,14.1,16]);
+      solid(c,"bronze",[2.75,14.1,14.5],[13.25,16,16]);
+      solid(c,"bronze",[2.75,10.5,14.5],[13.25,11.3,16]);
+      solid(c,"bronze",[2.75,11.3,14.5],[4,14.1,16]);
+      solid(c,"bronze",[12.45,11.3,14.5],[13.25,14.1,16]);
       // Four integrated copper stanchions -> five true dark slots.
       // Slots: 4..5.25; 5.8..7.05; 7.6..8.85;
       //        9.4..10.65; 11.2..12.45.
@@ -177,13 +194,16 @@ export function applyRetortV3(files) {
       // Both plates use a solid rear and four iron border rails,
       // exposing a physically recessed dark boss instead of burying
       // it behind a full face metal cube.
-      for(const bx of [0.6,13.5]){
-        solid(c,"metal",[bx,11.5,14.5],[bx+1.9,16,15.2]);
-        solid(c,"metal",[bx,11.5,15.2],[bx+1.9,12.2,16]);
-        solid(c,"metal",[bx,15.3,15.2],[bx+1.9,16,16]);
-        solid(c,"metal",[bx,12.2,15.2],[bx+0.45,15.3,16]);
-        solid(c,"metal",[bx+1.45,12.2,15.2],[bx+1.9,15.3,16]);
-        solid(c,"stone",[bx+0.45,12.2,15.2],[bx+1.45,15.3,15.65]);
+      // Widen iron mountings 1.90 -> 2.50 px, while keeping their
+      // inset dark center physically behind the raised border.
+      // They stop short of all five real vent slots.
+      for(const bx of [0.25,13.25]){
+        solid(c,"metal",[bx,11.5,14.5],[bx+2.5,16,15.2]);
+        solid(c,"metal",[bx,11.5,15.2],[bx+2.5,12.2,16]);
+        solid(c,"metal",[bx,15.3,15.2],[bx+2.5,16,16]);
+        solid(c,"metal",[bx,12.2,15.2],[bx+0.5,15.3,16]);
+        solid(c,"metal",[bx+2,12.2,15.2],[bx+2.5,15.3,16]);
+        solid(c,"stone",[bx+0.5,12.2,15.2],[bx+2,15.3,15.65]);
       }
 
       // Brick front directly beneath the vent: solid masonry, slightly
@@ -193,10 +213,13 @@ export function applyRetortV3(files) {
       // of the two iron grille mountings at Y=11.5, without the V3.18
       // 0.3px air gap. They meet the bracket bottom rails at a real
       // geometric seam; the copper does not protrude in front of iron.
-      solid(c,"bronze",[1.7,2.3,14.5],[2.8,11.5,16]);
-      solid(c,"bronze",[13.2,2.3,14.5],[14.3,11.5,16]);
-      solid(c,"metal",[1.5,0,14.5],[3,2.4,16]);
-      solid(c,"metal",[13,0,14.5],[14.5,2.4,16]);
+      // Widen copper uprights 1.1 -> 1.9px and iron feet 1.5 ->
+      // 2.25px. They still meet the bottom rails of both iron plates,
+      // without touching any of the five grille openings.
+      solid(c,"bronze",[1.05,2.3,14.5],[2.95,11.5,16]);
+      solid(c,"bronze",[13.05,2.3,14.5],[14.95,11.5,16]);
+      solid(c,"metal",[0.95,0,14.5],[3.2,2.4,16]);
+      solid(c,"metal",[12.8,0,14.5],[15.05,2.4,16]);
 
       // Seven symmetric voussoir-like segments form a shallow RISING
       // COPPER ARCH over the Y1 hatch. Both the upper and lower
@@ -476,7 +499,7 @@ export function applyRetortV3(files) {
     brick:c.z===0?"minecraft:block/bricks":"magneticraft2:block/charcoal_retort/refractory",
     bronze:"minecraft:block/cut_copper",
     join:"magneticraft2:block/settling_tank/riveted_iron",
-    ...(c.x===-1 && c.z===0 ? {mortar:"minecraft:block/stone"} : {})
+    ...((c.x===-1 || c.x===0) && c.z===0 ? {mortar:"minecraft:block/stone"} : {})
   };
   files.set(path,json(m));
   if(byPort){

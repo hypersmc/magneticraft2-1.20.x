@@ -391,3 +391,7 @@ The front-center Y2 block's two copper uprights now meet their iron vent mountin
 ### 2026-10-24 — Retort V3.20 connect the full front copper header (review pending)
 
 After V3.19, horizontal left–center–right connection remained missing. V3.20 retains the left Y2 L-frame, fills the two 0..0.6 / 15.4..16 px copper gaps at the center grille edges, and adds a matching cut-copper header to the right front Y2 block while setting brick back behind it. Iron grille mountings remain visible and correctly interrupt the copper. No new dark roof strip. All four facings pass a 48px continuity sampling test; 12 Y2 meshes and 8 roof underside-only meshes regenerate, with no visible roof/left-front change. Grille and curved arch retained; game logic, lower ports, collision unchanged. Await in-game screenshot and build verification.
+
+### 2026-10-24 — Retort V3.21 center width + physical 3D brickwork (visual review pending)
+
+On the front-center Y2 cell only, widen the two iron mounting brackets 1.9→2.5px, copper uprights 1.1→1.9px and dark feet 1.5→2.25px; replace flat brick front with nine raised staggered bricks over a Z14.2 mortar backing, with Z15.45/Z15.70 faces. Preserve the five recessed grille slots, V3.19 seven-piece arch and V3.20 cross-block copper header. Four center Y2 assets plus four contact-only Y1 meshes regenerate. Roof, left/right facade, parts/ports, recipes, collision and gameplay unchanged. Static model checks passing; in-game comparison and Gradle build outstanding.

@@ -664,16 +664,24 @@ for(const dir of dirs){
    depth(e)===16);
  const brackets=front.filter(e=>e.faces[dir].texture==='#metal' &&
    e.from[1]===11.5&&e.to[1]===12.2&&depth(e)===16);
- const supports=copper.filter(e=>e.to[1]===11.5&&e.from[1]<=2.4);
+ // Inspect the VISIBLE seam, not the number of mesh rectangles:
+ // wider V3.21 copper uprights are split around the curved apron by
+ // automatic face partitioning, but remain one connected structure.
+ const connectedAt=(x,y)=>{
+   const faces=front.filter(e=>e.from[horizontal]<x &&
+     x<e.to[horizontal] && e.from[1]<y && y<e.to[1])
+     .sort((a,b)=>depth(b)-depth(a));
+   return faces.length ? {texture:faces[0].faces[dir].texture,
+     depth:depth(faces[0])}:null;
+ };
  assert.equal(brackets.length,2,
    'V3.19 two upper iron fixing bottom rails required '+dir);
- assert.equal(supports.length,2,
-   'V3.19 both copper ribs must physically reach the brackets '+dir);
- for(const support of supports){
-   const overlap=brackets.some(bracket=>
-     Math.min(bracket.to[horizontal],support.to[horizontal])-
-     Math.max(bracket.from[horizontal],support.from[horizontal])>0.1);
-   assert(overlap,'V3.19 copper rib hangs below mounting plate '+dir);
+ for(const x of [1.6,14.4]){
+   const lower=connectedAt(x,11.45);
+   const upper=connectedAt(x,11.55);
+   assert(lower&&lower.texture==='#bronze'&&lower.depth===16 &&
+     upper&&upper.texture==='#metal'&&upper.depth===16,
+     'V3.19 copper rib must touch its upper iron mounting '+dir+'/'+x);
  }
  const arch=copper.filter(e=>e.from[1]>=0.9-0.00001 &&
    e.to[1]<=3.85+0.00001 &&
@@ -755,6 +763,65 @@ for(const [dir,ids] of Object.entries(v320FrontParts)){
 }
 // Roof top/grooves and left outward faces are also compared
 // byte-for-byte by the generator asset-diff check before commit.
+// V3.21: center-only 3D masonry and stronger structural proportions.
+// Brick faces must physically rise ahead of gray mortar at two depths,
+// and both wide copper pillars / end brackets must be visible without
+// erasing the five V3.18 vent slots or V3.19 shallow curved arch.
+for(const dir of dirs){
+  const m=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+    +dir+'/part_0_2_0.json');
+  const h=(dir==='south'||dir==='north')?0:2;
+  const n=(dir==='south'||dir==='north')?2:0;
+  const positive=dir==='south'||dir==='east';
+  const depth=e=>positive?e.to[n]:16-e.from[n];
+  const f=m.elements.filter(e=>e.faces[dir]),mat=e=>e.faces[dir].texture;
+  assert.equal(m.textures.mortar,'minecraft:block/stone',
+    'Center mortar texture must exist only where authored '+dir);
+  const course=f.filter(e=>mat(e)==='#brick'&&
+    e.from[1]>=4.05&&e.to[1]<=10.25&&depth(e)>=15.45);
+  const mortar=f.filter(e=>mat(e)==='#mortar'&&
+    Math.abs(depth(e)-14.2)<0.00001);
+  assert(course.length>=9,
+    'V3.21 visible physical bricks disappeared '+dir);
+  for(const y of [4.05,6.2,8.45]){
+    assert(course.some(e=>Math.abs(e.from[1]-y)<0.00001),
+      'V3.21 staggered row missing at Y='+y+' '+dir);
+  }
+  const relief=[...new Set(course.map(e=>+depth(e).toFixed(2)))].sort();
+  assert.deepEqual(relief,[15.45,15.7],
+    'V3.21 brick face relief should alternate '+dir);
+  assert(mortar.length>=8,
+    'V3.21 recessed mortar not visible between real bricks '+dir);
+  const at=(x,y)=>{
+    const hit=f.filter(e=>e.from[h]<x&&x<e.to[h]&&
+      e.from[1]<y&&y<e.to[1])
+      .sort((a,b)=>depth(b)-depth(a))[0];
+    return hit&&{texture:mat(hit),depth:depth(hit)};
+  };
+  // These points fall outside the narrower V3.20 copper/iron fittings.
+  for(const x of [1.2,2.88,13.12,14.8]){
+    const upper=at(x,8);
+    assert(upper&&upper.texture==='#bronze'&&upper.depth===16,
+      'V3.21 copper upright not broad enough at '+dir+'/'+x);
+  }
+  for(const x of [1.2,2.9,13.1,14.8]){
+    const base=at(x,0.6);
+    assert(base&&base.texture==='#metal'&&base.depth===16,
+      'V3.21 wide lower iron foot missing at '+dir+'/'+x);
+  }
+  for(const x of [0.35,2.65,13.35,15.65]){
+    const bracket=at(x,12.4);
+    assert(bracket&&bracket.texture==='#metal'&&bracket.depth===16,
+      'V3.21 wide vent bracket missing at '+dir+'/'+x);
+  }
+  for(const x of [1.6,14.4]){
+    assert(at(x,11.45)?.texture==='#bronze'&&
+      at(x,11.55)?.texture==='#metal',
+      'V3.21 widened support is disconnected from metal fitting '+dir);
+  }
+  // V3.18, V3.19 and V3.20 checks immediately above prove the grille,
+  // seven arch segments and continuous 48px front header stay intact.
+}
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));
