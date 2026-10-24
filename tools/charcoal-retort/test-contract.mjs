@@ -395,6 +395,32 @@ for(const x of [-1,1]){
 }
 // V3.7 keeps Y1 and Y3 geometry as-is; this is verified by asset-delta
 // comparison during commit staging, while these assertions pin Y2 intent.
+
+// V3.9: two roof groove lines must CONTINUE DOWN THE FRONT COPPER LIP.
+// The previous roof pass had dark channels on the horizontal copper
+// surface but stopped at the vertical face. Also verify the Y=2 front
+// brick shoulders are actually visible at the face rather than terminating
+// three pixels behind their copper ornamentation.
+const v39Rotate=(x,z,dir)=>dir==='south'?[x,z]:
+  dir==='west'?[-z,x]:dir==='north'?[-x,-z]:[z,-x];
+for(const dir of dirs)for(const side of [-1,1]){
+  const [rx,rz]=v39Rotate(side,0,dir);
+  const roof=json(resource+
+      'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+      '/part_'+rx+'_3_'+rz+'.json');
+  const ends=roof.elements.filter(e=>e.faces[dir]?.texture==='#metal'
+        && e.from[1]===3 && e.to[1]>=8);
+  assert(ends.length>=1,
+      'Dark grooved roof band must continue down its front copper lip: '+dir+' '+side);
+  const brick=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'
+      +dir+'/part_'+rx+'_2_'+rz+'.json');
+  const forwardWall=brick.elements.filter(e=>e.faces[dir]?.texture==='#brick'
+       && e.to[1]>=10 && e.from[1]<=5);
+  assert(forwardWall.length>=1,
+      'Y2 front shoulders should have a continuous visible masonry field: '+dir+' '+side);
+}
+// Physical Y=1 modules and Y=3 chimney/roof grooves are independently
+// preserved by the byte-for-byte diff scope check used when committing.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

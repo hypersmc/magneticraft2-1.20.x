@@ -343,3 +343,7 @@ Copper roof/chimney are **visually accepted and locked** after user approval. Th
 ### 2026-10-24 — Retort Y2 V3.8 reference alignment (visual review pending)
 
 Corrected the visually wrong Y2 materials and missing industrial details: native refractory masonry again, cut-copper pilasters/vent bars/sill, dark iron fasteners, and a larger recessed five-slot vent. Exactly 32 upper-layer model outputs change. The approved Y3 roof/chimney, real ports and Y0/Y1 lower parts, JSON formation, recipes, and collision are unchanged. **Await side/front/reference comparison before accepting this layer.**
+
+### 2026-10-24 — Retort V3.9 front masonry and roof-lip line fix (review pending)
+
+Fixed an actual missing Y2 front-wall field: the shoulder brick base ended at Z=13, leaving the decorated front 3px hollow. Its visible middle now reaches the face without altering adjoining layer contacts. The two accepted roof grooves now also continue down the front copper fascia, at the user's marked positions, while their horizontal paths, chimney and all other roof cells remain intact. Generated change: 12 Y2 front models plus 8 roof-front models only. No structural, I/O, process, or collision changes. In-game approval pending.

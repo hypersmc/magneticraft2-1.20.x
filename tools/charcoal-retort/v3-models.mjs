@@ -76,7 +76,13 @@ export function applyRetortV3(files) {
         solid(c,"bronze",[xx,9,12],[xx+1,13.5,14.5]);
       solid(c,"bronze",[3,14.5,12],[13,16,16]);
     }else if(front){
-      solid(c,"brick",[0,0,0],[16,16,13]);
+      // V3.9: the face used to stop at Z=13, leaving a 3px deep
+      // hollow-looking gap behind the copper pilasters. Keep the old
+      // lower/top contact footprints to leave Y=1/Y=3 baked assets
+      // unchanged, but bring the visible wall field forward to Z=16.
+      solid(c,"brick",[0,0,0],[16,1,13]);
+      solid(c,"brick",[0,1,0],[16,15,16]);
+      solid(c,"brick",[0,15,0],[16,16,13]);
     }else if(outer){
       // Keep the previously accepted Y1/Y3 contact shape so face
       // culling never alters those already-approved adjacent layers.
@@ -110,10 +116,10 @@ export function applyRetortV3(files) {
       solid(c,"metal",[xx,0,0],[xx+3,3,16]);
       if(rear)solid(c,"bronze",[xx,3,0],[xx+3,14,2]);
     }
-    if(front&&x===0){
-      // Dark fascia isolates the upper vent from the copper roof.
-      solid(c,"metal",[0,14,15],[16,15,16]);
-    }
+    // A single continuous under-roof iron course. It follows the
+    // front line across all three physical Y=2 brick cells.
+    // Kept strictly below Y=16 so the accepted Y=3 roof meshes stay locked.
+    if(front)solid(c,"metal",[0,14,15.25],[16,15,16]);
    }else{
    const front=z===0,side=x!==0,rear=z===-2;
    // The important front openings are hollow/recessed masonry, not painted
@@ -181,7 +187,18 @@ export function applyRetortV3(files) {
    // in each outer roof column, for every rotated machine orientation.
    // The 3x3 JSON still contains eight roof blocks plus chimney AIR.
    solid(c,"bronze",[0,0,0],[16,3,16]);
-   solid(c,"roof",[0,3,0],[16,8,16]);  // supporting copper slab
+   if(z===0&&x!==0){
+     // Front-facing continuation of the two inset longitudinal grooves.
+     // Do NOT overlay iron onto a full copper cube: carve the front
+     // fascia into left copper, recessed iron channel, right copper.
+     const lo=x===-1?12:2,hi=x===-1?14:4;
+     solid(c,"roof",[0,3,0],[16,8,15.5]);
+     solid(c,"roof",[0,3,15.5],[lo,8,16]);
+     solid(c,"roof",[hi,3,15.5],[16,8,16]);
+     solid(c,"metal",[lo,3,15.5],[hi,8.75,15.75]);
+   }else{
+     solid(c,"roof",[0,3,0],[16,8,16]);
+   }
    if(x===-1){
     // Left seam, cut 1.25px below the 10px copper walking surface.
     solid(c,"roof",[0,8,0],[12,10,16]);
