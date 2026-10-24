@@ -248,6 +248,50 @@ const roofCollision=profileRoof.collision.filter(box=>
 assert.equal(roofCollision.length,8,'Expected eight roof slabs');
 assert(roofCollision.every(box=>box[4]===58),
   'Voxel roof height must match the 10px copper slab, not old raised bands');
+
+// V3.4: the copper vent collar has actual slots THROUGH the four walls,
+// not opaque copper cubes with dark line textures painted over the faces.
+// Probe the center of both slot rows from front/back/left/right; all four
+// facings must preserve those openings after their single model rotation.
+const v34Rotate=(x,z,dir)=>dir==='south'?[x,z]:
+  dir==='west'?[16-z,x]:dir==='north'?[16-x,16-z]:[z,16-x];
+const v34RotateBox=(box,dir)=>{
+  const [x0,y0,z0,x1,y1,z1]=box;
+  const corners=[[x0,z0],[x0,z1],[x1,z0],[x1,z1]]
+      .map(([x,z])=>v34Rotate(x,z,dir));
+  return [Math.min(...corners.map(p=>p[0])),y0,
+    Math.min(...corners.map(p=>p[1])),
+    Math.max(...corners.map(p=>p[0])),y1,
+    Math.max(...corners.map(p=>p[1]))];
+};
+const v34SolidOverlap=(e,b)=>e.from.every((v,i)=>
+  Math.min(e.to[i],b[i+3])-Math.max(v,b[i])>0.00001);
+const v34OpenSlots=[
+  [7,11.05,11.25,9,12.20,13.75],
+  [7,11.05,2.25,9,12.20,4.75],
+  [2.25,11.05,7,4.75,12.20,9],
+  [11.25,11.05,7,13.75,12.20,9],
+  [7,13.30,11.25,9,14.45,13.75],
+  [7,13.30,2.25,9,14.45,4.75],
+  [2.25,13.30,7,4.75,14.45,9],
+  [11.25,13.30,7,13.75,14.45,9]
+];
+for(const dir of dirs){
+  const chimneyOffset={
+    south:'0_3_-1',north:'0_3_1',west:'1_3_0',east:'-1_3_0'
+  }[dir];
+  const chimney=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+
+      dir+'/part_'+chimneyOffset+'.json');
+  assert.equal(Math.max(...chimney.elements.map(e=>e.to[1])),16,
+    'Retort V3.4 top rim must be full 16px height');
+  for(const [i,local] of [...v34OpenSlots,[6,5,6,10,16,10]].entries()){
+    const region=v34RotateBox(local,dir);
+    assert(!chimney.elements.some(e=>v34SolidOverlap(e,region)),
+       'Chimney slot/central throat blocked: '+dir+' opening '+i);
+  }
+}
+// V3.4 affects only the chimney model. The roof's long inset grooves
+// continue to be tested above independently.
 const be=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/CharcoalRetortBlockEntity.java');
 assert(be.includes('insertItem(1, result, true)')&&be.includes('insertItem(2, tar, true)'));
 assert(be.includes('RetortBurnRemaining')&&be.includes('RetortProgress'));

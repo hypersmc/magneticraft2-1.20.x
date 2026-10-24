@@ -323,3 +323,7 @@ As requested, the next visual prototype replaces **only the Y=3 roof** with cont
 ### 2026-10-24 — Retort V3.3 inset roof channels
 
 The two lengthwise dark roof lines now sit in **recessed grooves (Y=8.75)** cut into the **copper slab surface (Y=10)** instead of raised straps. Only top-layer models and roof Voxel collision were updated. Real modules, lower three layers, recipes and formation JSON are unchanged. Await screenshot-based roof sign-off before touching the next layer.
+
+### 2026-10-24 — Retort V3.4 chimney-only vent correction
+
+The center roof chimney model now has real inset-through-wall vent apertures (two rows on all four exposed sides), an anchoring copper base, stronger open top lip and limited internal soot details. All eight grooved copper roof tiles, Y=0–2 models, working modules, formation layout and recipe system are unchanged; the existing coarse collision profile is intentionally preserved. Static tests ensure four directional variants, clear slots/throat, and zero overlapping rendered faces. **In-game screenshot and Gradle acceptance pending.**

@@ -129,22 +129,69 @@ export function applyRetortV3(files) {
     solid(c,"roof",[0,8,0],[16,10,16]);
    }
   } else if(k==="A"&&y===3){
-   // One open square chimney, not a solid model painted with a hole.
-   // The interior is empty through the full 6x6 central aperture.
+   // CHIMNEY-ONLY V3.4: real negative-space ventilation, not painted
+   // horizontal lines. There is NO full solid copper wall hiding the cuts.
+   // Four corner columns carry the chimney, and its broad front/back/side
+   // faces are split at the two actual open slots. The center 6x6 shaft
+   // remains completely open through the top.
+   const slots=[[11,12.25],[13.25,14.5]];
+   const wallCourses=[[2,11],[12.25,13.25],[14.5,16]];
+   // Solid corners keep the retort flue mechanically legible.
+   for(const [xx,zz] of [[2,2],[11,2],[2,11],[11,11]]){
+     solid(c,"roof",[xx,2,zz],[xx+3,16,zz+3]);
+   }
+   // Front and back: four-pixel-long horizontal apertures spanning the
+   // full three-pixel wall depth. Side apertures use the same proportions.
+   for(const [za,zb] of [[2,5],[11,14]]){
+     for(const [ya,yb] of wallCourses){
+       solid(c,"roof",[5,ya,za],[11,yb,zb]);
+     }
+     for(const [ya,yb] of slots){
+       // Small copper uprights at either end of the cut-out; center
+       // x=6..10 is actually EMPTY in both vent rows.
+       solid(c,"roof",[5,ya,za],[6,yb,zb]);
+       solid(c,"roof",[10,ya,za],[11,yb,zb]);
+     }
+   }
+   for(const [xa,xb] of [[2,5],[11,14]]){
+     for(const [ya,yb] of wallCourses){
+       solid(c,"roof",[xa,ya,5],[xb,yb,11]);
+     }
+     for(const [ya,yb] of slots){
+       // The side-wall slots are also physically open (z=6..10).
+       solid(c,"roof",[xa,ya,5],[xb,yb,6]);
+       solid(c,"roof",[xa,ya,10],[xb,yb,11]);
+     }
+   }
+   // Broader lower seat gives the chimney an intentional transition to
+   // the copper slab. It stays BELOW the first slot, so it cannot cover it.
    for(const [f,t] of [
-    [[2,4,2],[5,16,14]],[[11,4,2],[14,16,14]],
-    [[5,4,2],[11,16,5]],[[5,4,11],[11,16,14]]
+     [[1,9.5,1],[5,10.75,15]],[[11,9.5,1],[15,10.75,15]],
+     [[5,9.5,1],[11,10.75,5]],[[5,9.5,11],[11,10.75,15]]
+   ])solid(c,"bronze",f,t);
+   // A slightly wider copper rim makes the open top a formed collar,
+   // rather than an unframed 1x1 box. Center shaft stays open.
+   for(const [f,t] of [
+     [[1,15,1],[5,16,15]],[[11,15,1],[15,16,15]],
+     [[5,15,1],[11,16,5]],[[5,15,11],[11,16,15]]
    ])solid(c,"roof",f,t);
-   // Simple reinforcing ring at its upper rim.
+   // Inner soot / heat staining is on the real INNER wall surfaces,
+   // never a dark plate stretched across the vent openings.
+   for(const [ya,yb] of wallCourses){
+     const bottom=Math.max(ya,5);
+     if(bottom>=yb)continue;
+     for(const [f,t] of [
+       [[5,bottom,5],[5.25,yb,11]],
+       [[10.75,bottom,5],[11,yb,11]],
+       [[5,bottom,5],[11,yb,5.25]],
+       [[5,bottom,10.75],[11,yb,11]]
+     ])solid(c,"soot",f,t);
+   }
+   // One restrained narrow dark line BELOW the top lip (no filled throat).
    for(const [f,t] of [
-    [[2,13,2],[5,15,14]],[[11,13,2],[14,15,14]],
-    [[5,13,2],[11,15,5]],[[5,13,11],[11,15,14]]
+     [[1,14.75,1],[5,15.25,15]],[[11,14.75,1],[15,15.25,15]],
+     [[5,14.75,1],[11,15.25,5]],[[5,14.75,11],[11,15.25,15]]
    ])solid(c,"metal",f,t);
-   // Blackened inner wall lining, no geometry across the open shaft.
-   for(const [f,t] of [
-    [[4.5,5,5],[5,13,11]],[[11,5,5],[11.5,13,11]],
-    [[5,5,4.5],[11,13,5]],[[5,5,11],[11,13,11.5]]
-   ])solid(c,"soot",f,t);
   } else if(["U","O","Y"].includes(k)){
    // These are not fillers. The real item port BE selects this baked model.
    // Left log hopper vs right charcoal drawer vs rear tar port remain distinct.

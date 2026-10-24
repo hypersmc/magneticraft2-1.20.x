@@ -102,3 +102,16 @@ The reference roof's two dark lengthwise lines are **carved grooves**, not raise
 The previous roof collision slab is reduced from 12 to 10 model pixels to match the real copper surface. Exactly eight roof collision cells remain. All Y=0–2 model assets, port skins, formation patterns, process recipes, fuel logic, JEI and Patchouli data are **identical to the previous commit**. Re-form an existing machine to refresh stored voxel collision; use top and front three-quarter screenshots to accept this one roof detail before moving down a layer.
 
 **Status:** model geometry statically verified; Minecraft render appearance and `./gradlew build` not yet verified.
+
+### 2026-10-24 — V3.4 chimney-only copper vent collar
+
+The copper slab roof and its twin inset grooves are unchanged. **Only the central roof AIR-host model** is altered, with one generated model for each SOUTH/NORTH/EAST/WEST orientation.
+
+- **Seat**: wider but block-local copper lower mounting ring (local Y 9.5–10.75), meeting the actual roof surface at Y=10.
+- **Vent body**: four strong corner posts joined by separate wall courses. Front, back, left and right have **two genuine horizontal rectangular cut-outs** each, at local Y 11–12.25 and 13.25–14.5. The wall geometry is absent inside each aperture, rather than an opaque wall textured dark.
+- **Top lip**: copper collar widened 1px inside its designated AIR-host block (local X/Z 1–15) at Y=15–16, with a restrained dark line immediately below it.
+- **Interior**: limited soot texturing on inner wall courses only; the central 6x6 chimney throat has no solid geometry and remains open. No smoke source or machine behavior was changed.
+- **Safety**: no element extends beyond its own [0,16] block coordinates, and the model generator's face partitioner avoids overlapping quads. Coarse chimney collision is intentionally unchanged, since these narrow openings do not admit a player.
+- **Scope**: precisely four chimney `part_*.json` files plus generator/tests/docs. No change to 8 copper roof slabs, inset grooves, real item ports, 3x4x3 formation, processes, item/fluid contracts or other multiblocks.
+
+**Visual acceptance pending Minecraft screenshots**, particularly the front and both sides from a high enough angle to see the vent apertures, lower seat and lip. Forge build not claimed.
