@@ -530,8 +530,16 @@ export function applyRetortV3(files) {
    if(front&&x===0&&(y===1||y===2)){
     const opening=y===1?{lo:2,hi:14,bottom:2,top:15}:{lo:3,hi:13,bottom:6,top:12};
     solid(c,"brick",[0,0,0],[16,16,8]);
-    solid(c,"brick",[0,0,8],[opening.lo,16,16]);
-    solid(c,"brick",[opening.hi,0,8],[16,16,16]);
+    if(y===1){
+     // Reserve visible front space for two narrow copper door jambs.
+     solid(c,"brick",[0,0,8],[.75,16,16]);
+     solid(c,"brick",[.75,0,8],[2,16,12.4]);
+     solid(c,"brick",[14,0,8],[15.25,16,12.4]);
+     solid(c,"brick",[15.25,0,8],[16,16,16]);
+    }else{
+     solid(c,"brick",[0,0,8],[opening.lo,16,16]);
+     solid(c,"brick",[opening.hi,0,8],[16,16,16]);
+    }
     solid(c,"brick",[opening.lo,0,8],[opening.hi,opening.bottom,16]);
     solid(c,"brick",[opening.lo,opening.top,8],[opening.hi,16,16]);
    }else if(front){
@@ -555,41 +563,32 @@ export function applyRetortV3(files) {
     }
    }
    if(front&&x===0&&y===1){
-    // Dominant sealed door with copper jambs, side hinges and dark central grate.
-    // A deep, wide opening. Dark recess sits behind discrete iron grating;
-    // it is not another solid texture covering the whole opening.
-    solid(c,"soot",[2.5,2.5,8],[13.5,14.5,10]);
-    solid(c,"metal",[3,3,10],[13,13.5,11]);
-    solid(c,"soot",[3.5,3.5,11],[12.5,12.5,12]);
-    // V3.36: three recessed bars stay INSIDE a framed iron door,
-    // not free-floating above the open furnace recess.
-    for(const [xa,xb] of [[5.05,5.8],[7.625,8.375],[10.2,10.95]])
-      solid(c,"metal",[xa,4.25,12.4],[xb,11.75,15.2]);
-    solid(c,"metal",[3,3,12],[13,4,14]);
-    solid(c,"metal",[3,12,12],[13,13,14]);
-    solid(c,"bronze",[1,1,12],[3.5,15,16]);
-    solid(c,"bronze",[12.5,1,12],[15,15,16]);
-    // V3.36: dark inset under the stepped copper crown already in
-    // the Y2 block. Do not recreate the rejected full copper sill.
-    solid(c,"metal",[3.5,13.5,12],[12.5,16,15.15]);
-    solid(c,"soot",[4.1,13.85,15.15],[11.9,15.5,15.35]);
-    solid(c,"metal",[3.5,1,12],[12.5,3,16]);
-    // V3.36: a squared industrial iron furnace-door bezel, built
-    // as four rails so the central recess remains visible.
-    solid(c,"metal",[3.5,2.75,13.5],[12.5,4.05,15.9]);
-    solid(c,"metal",[3.5,11.95,13.5],[12.5,13.25,15.9]);
-    solid(c,"metal",[3.5,4.05,13.5],[4.65,11.95,15.9]);
-    solid(c,"metal",[11.35,4.05,13.5],[12.5,11.95,15.9]);
-    // Two shallow bevels set below the thick bezel perimeter.
-    solid(c,"stone",[4.65,11.6,14.4],[11.35,11.95,15.65]);
-    solid(c,"stone",[4.65,4.05,14.4],[11.35,4.35,15.65]);
-    // Copper shoulders and distinct dark feet: still confined to
-    // this single Y1 center cell, not the Y0 lit controller.
-    solid(c,"bronze",[1,1.1,14],[3.5,2.8,16]);
-    solid(c,"bronze",[12.5,1.1,14],[15,2.8,16]);
-    solid(c,"metal",[1,0,14],[3.5,1.1,16]);
-    solid(c,"metal",[12.5,0,14],[15,1.1,16]);
-    solid(c,"join",[12.4,7.2,15],[14,9.1,16]);
+    // V3.37: a broad iron furnace door with THREE short recessed
+    // windows. Unlit by default: real LIT-state fire is Y0 controlled.
+    solid(c,"soot",[2.2,2.45,7.5],[13.8,13.5,13.25]);
+    solid(c,"metal",[2.2,2.45,13.25],[13.8,13.5,15.15]);
+    solid(c,"metal",[3.35,4.05,15.15],[12.65,11.45,15.47]);
+    for(const [xa,xb] of [[4.05,5.55],[7.25,8.75],[10.45,11.95]])
+      solid(c,"soot",[xa,5.15,15.47],[xb,10.05,15.60]);
+    // Four substantial perimeter rails: iron, not copper.
+    solid(c,"metal",[2.1,2.2,14],[13.9,3.85,15.96]);
+    solid(c,"metal",[2.1,11.65,14],[13.9,13.3,15.96]);
+    solid(c,"metal",[2.1,3.85,14],[3.5,11.65,15.96]);
+    solid(c,"metal",[12.5,3.85,14],[13.9,11.65,15.96]);
+    solid(c,"stone",[3.5,3.85,15.1],[12.5,4.15,15.69]);
+    solid(c,"stone",[3.5,11.35,15.1],[12.5,11.65,15.69]);
+    solid(c,"stone",[3.5,4.15,15.1],[3.75,11.35,15.69]);
+    solid(c,"stone",[12.25,4.15,15.1],[12.5,11.35,15.69]);
+    // Dark upper iron housing, BELOW the accepted stepped Y2 hood.
+    solid(c,"metal",[2.2,13.3,13],[13.8,15.75,15.08]);
+    solid(c,"soot",[3.3,13.75,15.08],[12.7,15.35,15.30]);
+    // Small copper structural jambs exposed by the changed Y1
+    // brick backing; retain the original dark feet and small latch.
+    solid(c,"bronze",[.75,1.4,12.4],[2.1,15.5,15.90]);
+    solid(c,"bronze",[13.9,1.4,12.4],[15.25,15.5,15.90]);
+    solid(c,"metal",[.75,0,14],[2.1,1.4,15.95]);
+    solid(c,"metal",[13.9,0,14],[15.25,1.4,15.95]);
+    solid(c,"join",[12.9,7.2,15.7],[13.75,8.7,16]);
    } else if(front&&x===0&&y===2){
     // Small upper vent deliberately subordinate to the one-block door below.
     solid(c,"soot",[3,6,9],[13,12,11]);

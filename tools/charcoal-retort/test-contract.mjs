@@ -1267,43 +1267,49 @@ for(const dir of dirs)for(const x of [-1,1]){
   assert(firstSlot&&firstSlot.material==='#soot'&&firstSlot.depth<15,
     'V3.35 rear corner fitting blocks the first side vent '+dir+'/'+x);
 }
-// V3.36 — only Y1 front-center gains the framed iron furnace
-// housing. Its recessed bars, bezel, upper dark inset and copper
-// palette must survive four rotations and generator regeneration.
+// V3.37 — widen the Y1 iron firebox, shorten its THREE dark vents,
+// and expose two thin copper supports. Never bake a permanent fire
+// texture into the static upper furnace door.
 for(const dir of dirs){
-  const p=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
-    '/part_0_1_0.json';
-  const m=json(p);
+  const root=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/part_0_';
+  const m=json(root+'1_0.json');
   assert.equal(m.textures.bronze,'minecraft:block/cut_copper',
-    'V3.36 lower center copper no longer matches accepted Y2 '+dir);
-  assert.equal(m.textures.join,'magneticraft2:block/settling_tank/riveted_iron',
-    'V3.36 iron latch mapping changed '+dir);
-  const ax=(dir==='south'||dir==='north')?0:2;
-  const norm=ax===0?2:0;
-  const forward=(dir==='south'||dir==='east');
+    'V3.37 must use the accepted copper palette '+dir);
+  assert(!m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#on')),
+    'V3.37 stationary Y1 door must not be permanently lit '+dir);
+  const ax=(dir==='south'||dir==='north')?0:2,n=ax===0?2:0;
+  const front=(dir==='south'||dir==='east');
   const reverse=(dir==='north'||dir==='east');
   const at=(x,y)=>{
-    const coord=reverse?16-x:x;
-    const list=m.elements.filter(e=>e.faces[dir]&&
-      e.from[ax]<coord&&coord<e.to[ax]&&
-      e.from[1]<y&&y<e.to[1]);
-    list.sort((a,b)=>forward?b.to[norm]-a.to[norm]:a.from[norm]-b.from[norm]);
-    const e=list[0];
-    return e&&{material:e.faces[dir].texture,
-      depth:forward?e.to[norm]:16-e.from[norm]};
+    const u=reverse?16-x:x;
+    const e=m.elements.filter(v=>v.faces[dir]&&
+      v.from[ax]<u&&u<v.to[ax]&&v.from[1]<y&&y<v.to[1])
+      .sort((a,b)=>front?b.to[n]-a.to[n]:a.from[n]-b.from[n])[0];
+    return e&&{
+      mat:e.faces[dir].texture,
+      depth:front?e.to[n]:16-e.from[n]};
   };
-  for(const [x,y,material,depth] of [
-    [2,8,'#bronze',16],[8,3.3,'#metal',15.9],
-    [4,7,'#metal',15.9],[12,7,'#metal',15.9],
-    [8,12.6,'#metal',15.9],[8,4.3,'#stone',15.65],
-    [8,7,'#metal',15.2],[5.4,7,'#metal',15.2],
-    [8,14.8,'#soot',15.35]
+  for(const [x,y,mat,depth]of [
+    [1.4,8,'#bronze',15.9],[14.6,8,'#bronze',15.9],
+    [2.7,8,'#metal',15.96],[12.7,8,'#metal',15.96],
+    [13.3,8,'#join',16],
+    [8,3,'#metal',15.96],[8,12,'#metal',15.96],
+    [4.8,7.2,'#soot',15.6],[8,7.2,'#soot',15.6],
+    [11.1,7.2,'#soot',15.6],
+    [6.4,7.2,'#metal',15.47],[9.5,7.2,'#metal',15.47],
+    [8,10.4,'#metal',15.47],[8,4.7,'#metal',15.47]
   ]){
-    assert.deepEqual(at(x,y),{material,depth},
-      'V3.36 furnace bezel/grille visibility '+dir+'/'+x+'/'+y);
+    assert.deepEqual(at(x,y),{mat,depth},
+      'V3.37 door geometry mismatch '+dir+'/'+x+'/'+y);
   }
-  assert.notEqual(at(6.4,7)?.material,'#bronze',
-    'V3.36 center opening buried behind copper '+dir);
+  assert(m.elements.every(e=>e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v)),
+    'V3.37 center furnace part exceeds its 16px cell '+dir);
+  for(const element of m.elements)
+    for(const face of Object.values(element.faces)){
+      if(face.texture.startsWith('#'))
+        assert(m.textures[face.texture.slice(1)],
+          'V3.37 unbound furnace texture '+face.texture+' '+dir);
+    }
 }
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.
