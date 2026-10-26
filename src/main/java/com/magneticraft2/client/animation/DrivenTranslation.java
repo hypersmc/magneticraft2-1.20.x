@@ -27,7 +27,13 @@ public final class DrivenTranslation {
     /** Slide along a fixed principal axis in the PARENT local frame. */
     public static void apply(PoseStack pose, AnimationDefinition.TranslationTrack track,
                              float angleDegrees) {
-        double travel = distance(track, angleDegrees);
+        applyDistance(pose, track, distance(track, angleDegrees));
+    }
+
+    /** Reuse an already evaluated scene displacement (including item effects). */
+    public static void applyDistance(PoseStack pose,
+                                     AnimationDefinition.TranslationTrack track,
+                                     double travel) {
         switch (track.axis()) {
             case X -> pose.translate(travel, 0D, 0D);
             case Y -> pose.translate(0D, travel, 0D);
