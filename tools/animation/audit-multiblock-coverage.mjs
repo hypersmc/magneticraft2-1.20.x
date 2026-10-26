@@ -85,8 +85,13 @@ for (const machine of machines) {
         mechanicalCount++;
         if (hasAnimation) mechanicalJsonCount++;
     }
+    const visualManifestPath = join(assets, "machine_visuals", machine.name + ".json");
+    if (hasAnimation) {
+        assert.ok(existsSync(visualManifestPath),
+            `${machine.name}: missing resource-pack machine visual manifest`);
+    }
     if (hasAnimation && rendererPath != null &&
-        !readFileSync(rendererPath, "utf8").includes("AnimatedComponentRenderer")) {
+        !readFileSync(rendererPath, "utf8").includes("MachineVisualRenderer")) {
         fail(`${machine.name}: animation JSON exists but its renderer is not opted in`);
     }
 
@@ -146,7 +151,19 @@ for (const machine of machines) {
 
     let animatedParts = 0;
     if (hasAnimation) {
+        const manifest = readJson(visualManifestPath);
+        assert.equal(manifest.format, "magneticraft2:machine_visual",
+            `${machine.name}: unexpected visual manifest format`);
+        assert.equal(manifest.format_version, 1);
+        assert.equal(manifest.animation, "magneticraft2:" + machine.name,
+            `${machine.name}: default machine visual points to a different scene`);
+        assert.ok(manifest.angle_channels && manifest.integer_channels,
+            `${machine.name}: missing typed input channel mappings`);
         const animation = readJson(anim);
+        for (const input of Object.values(animation.inputs)) {
+            assert.ok(Object.hasOwn(manifest.angle_channels,input.module),
+                `${machine.name}: unknown angle alias ${input.module}`);
+        }
         assert.equal(animation.format, "magneticraft2:visual_animation",
             `${machine.name}: wrong animation schema`);
         assert.equal(animation.format_version, 1,
@@ -172,6 +189,11 @@ for (const machine of machines) {
                 assert.ok(Array.isArray(part[field]) && part[field].length === 3 &&
                     part[field].every(n => Number.isFinite(n) && Math.abs(n)<=256),
                     `${machine.name}: ${id} invalid ${field}`);
+            }
+            if (part.model_variants) {
+                assert.ok(Object.hasOwn(manifest.integer_channels,
+                    part.model_variants.source),
+                    `${machine.name}: ${id} unknown integer alias ${part.model_variants.source}`);
             }
             const refs=[part.model,...Object.values(part.model_variants?.models??{})].filter(Boolean);
             for (const model of refs) {
