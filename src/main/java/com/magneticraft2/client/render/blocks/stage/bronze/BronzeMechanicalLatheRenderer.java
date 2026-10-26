@@ -1,7 +1,7 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
-import com.magneticraft2.client.animation.DrivenRotation;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -76,27 +76,32 @@ public final class BronzeMechanicalLatheRenderer
         pose.translate(0D, 0D, -2D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME));
-
-        pose.pushPose();
-        // JSON pilot: actual Gear V2 angle drives a typed rotation track.
-        // Invalid/missing pack data leaves the original rendering untouched.
-        if (!DrivenRotation.apply(pose, ANIMATION, "input_rotor", INPUT_ROTOR,
-                "mechanical_input", inputAngle)) {
-            pose.translate(.5D, .5D, .5D);
-            pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
-            pose.translate(-.5D,-.5D,-.5D);
-        }
-        model(pose,source,light,overlay,
-                Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
         pose.popPose();
 
+        // Render directly from the pack-selected model in controller-relative
+        // coordinates. A different model, position, pivot, axis or layer now
+        // needs JSON only; the actual mechanical phase still comes from Gear V2.
+        if (!AnimatedComponentRenderer.renderDriven(ANIMATION, "input_rotor",
+                "mechanical_input", inputAngle, state,
+                pose, source, light, overlay)) {
+            // Keep the original behavior if a pack definition/model is bad.
+            pose.pushPose();
+            pose.translate(0D, 0D, -2D);
+            pose.translate(.5D, .5D, .5D);
+            pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
+            pose.translate(-.5D, -.5D, -.5D);
+            model(pose,source,light,overlay,
+                    Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
+            pose.popPose();
+        }
+
         pose.pushPose();
+        pose.translate(0D, 0D, -2D);
         pose.translate(.5D,.5D,.5D);
         pose.mulPose(Axis.XP.rotationDegrees(-inputAngle));
         pose.translate(-.5D,-.5D,-.5D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_OUTPUT_ROTOR));
-        pose.popPose();
         pose.popPose();
 
         // The continuous spindle is seated inside the LEFT headstock bearing;
