@@ -94,6 +94,6 @@ assert.equal(pack.components.shaft_marker.parent, 'input_rotor');
 assert.equal(pack.components.shaft_marker.visible_when, 'running');
 xyz(pose(base,'input_rotor',[1,.5,.5],90),[.5,1,-1.5]);
 xyz(pose(pack,'input_rotor',[1,.5,.5],90),[.5,0,-1.5]);
-xyz(pose(base,'input_output_rotor',[.5,1,.5],90),[.5,.5,-2.5]);
+xyz(pose(base,'input_output_rotor',[.5,1,.5],90),[.5,.5,-2]);
 xyz(pose(pack,'shaft_marker',[1,.5,.5],90,'running'),[.5,0,-1.5]);
 console.log('Animation JSON hierarchy/state/pose fixtures passed');
