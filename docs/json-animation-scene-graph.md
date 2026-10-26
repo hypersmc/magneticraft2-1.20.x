@@ -1,5 +1,14 @@
 # Magneticraft2 JSON animation scene graph (Forge 1.20.1)
 
+> **Stacked PR update:** `feature/json-mechanical-motion-tracks` adds
+> reusable `phase_degrees` on rotation tracks and
+> `property: "translation"` with bounded `sine`/`cosine` cam
+> followers. The Bronze Stamp Mill moves its three cams and hammers to
+> JSON, and ore dust follows the same evaluated displacement.
+> See [json-animation-motion-tracks.md](json-animation-motion-tracks.md).
+> This child PR remains draft pending Forge and in-game validation.
+
+
 > **PR #12 update:** This document explains the original Lathe/Sifter scene graph.
 > The same format now also drives selected mechanical parts of the Primitive
 > Grinder, Ore Washer, Stamp Mill and Rotary Classifier. For the current
