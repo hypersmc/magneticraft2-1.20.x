@@ -1,0 +1,8 @@
+{
+  "parent": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+  "textures": {
+    "metal": "minecraft:block/redstone_block",
+    "bronze": "minecraft:block/cut_copper",
+    "particle": "minecraft:block/redstone_block"
+  }
+}
