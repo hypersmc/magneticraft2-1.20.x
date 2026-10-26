@@ -1,6 +1,10 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
+import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,7 +21,9 @@ import net.minecraft.resources.ResourceLocation;
 
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
@@ -25,6 +31,17 @@ import java.util.WeakHashMap;
  * V2 geometry regeneration. World/guide frame is rendered by V2 fillers.
  */
 public final class BronzeStampMillRenderer implements BlockEntityRenderer<BronzeStampMillBlockEntity> {
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "bronze_stamp_mill");
+    // Reject partial/legacy resource-pack definitions instead of drawing
+    // both incomplete JSON and a fallback powertrain.
+    private static final Set<String> DRIVE_PARTS = Set.of(
+            "gearbox_frame", "cross_bearing", "side_lower_mount",
+            "input_coupler", "input_shaft", "input_spindle", "input_bevel",
+            "output_bevel", "lower_spindle", "lower_drive_shaft",
+            "lower_shaft_tip", "lower_pulley", "upper_pulley",
+            "upper_shaft_start", "upper_shaft_zero",
+            "upper_shaft_middle", "upper_shaft_end", "upper_shaft_tip");
     private static final ResourceLocation HAMMER =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer");
     private static final ResourceLocation WORN_HAMMER =
@@ -160,6 +177,28 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // give matching tangential velocities (a true 1:1 bevel drive).
 
 
+        // A single JSON scene selects all 18 model parts and typed shaft
+        // transforms. The two independent angle inputs are supplied by the
+        // existing Gear V2-facing-aware bevel geometry, NOT a new clock.
+        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition drawn = null;
+        if (definition != null && definition.componentNames().containsAll(DRIVE_PARTS)) {
+            EnumSet<AnimationDefinition.State> states = EnumSet.of(
+                    mill.isProcessing()
+                            ? AnimationDefinition.State.RUNNING
+                            : AnimationDefinition.State.STOPPED);
+            if (mill.needsMaintenance()) {
+                states.add(AnimationDefinition.State.WORN);
+            }
+            drawn = AnimatedComponentRenderer.render(ANIMATION,
+                    new AnimationFrame(Map.of(
+                            "mechanical_input", inputAngle,
+                            "output_shaft", driveAngle), states),
+                    state, pose, buffers, light, overlay);
+        }
+
+        if (drawn == null) {
+            // Exact pre-JSON fallback for the whole drivetrain.
         // Static bronze/wood gearbox is connected to the frame's two
         // underside girders, with midshaft and side bearing supports.
         part(pose,buffers,light,overlay,GEARBOX_FRAME,
@@ -201,15 +240,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
-        // Render the actual MOVING leather loop, not the old stationary
-        // baked belt faces. One continuous UV path covers both straight
-        // flights and both pulley wraps. Shaft stops -> leather freezes;
-        // reverse input -> leather travels in the opposite direction.
-        BronzeStampMillBeltRenderer.render(
-                pose, buffers, light,
-                beltTravel.computeIfAbsent(mill, unused -> new BeltTravel())
-                        .sample(driveAngle));
-
         // One continuous drive axis through all four fixed crank pillows.
         // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
         // Every upper shaft segment and eccentric uses the signed output
@@ -222,6 +252,16 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         }
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,upperY,lowerZ,Axis.XP,driveAngle);
+
+        }
+
+        // The leather path travels continuously with the real shaft phase.
+        // Its repeat UVs, topology and worn texture remain Java-specialized.
+        BronzeStampMillBeltRenderer.render(
+                pose, buffers, light,
+                beltTravel.computeIfAbsent(mill, unused -> new BeltTravel())
+                        .sample(driveAngle));
+
 
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
