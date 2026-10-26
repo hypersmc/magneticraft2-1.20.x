@@ -1,0 +1,47 @@
+{
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "input_rotor": {
+      "model": "magneticraft2:multiblock/bronze_mechanical_lathe_input_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {
+    "input_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_rotor",
+          "property": "rotation",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "input": "drive_angle",
+          "scale": 1
+        }
+      ]
+    }
+  }
+}
