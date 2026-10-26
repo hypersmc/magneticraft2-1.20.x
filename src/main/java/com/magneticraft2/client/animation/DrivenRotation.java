@@ -30,10 +30,18 @@ public final class DrivenRotation {
     public static void apply(PoseStack pose, AnimationDefinition.Component component,
                              AnimationDefinition.RotationTrack track, float angleDegrees,
                              AnimationDefinition.TranslationTrack translation, float translationAngle) {
+        applyDistance(pose, component, track, angleDegrees, translation,
+                translation == null ? 0D : DrivenTranslation.distance(translation, translationAngle));
+    }
+
+    /** Single evaluated displacement shared with procedural ore/impact FX. */
+    public static void applyDistance(PoseStack pose, AnimationDefinition.Component component,
+                                     AnimationDefinition.RotationTrack track, float angleDegrees,
+                                     AnimationDefinition.TranslationTrack translation, double displacement) {
         Vec3 offset = component.modelOffset();
         pose.translate(offset.x, offset.y, offset.z);
         if (translation != null) {
-            DrivenTranslation.apply(pose, translation, translationAngle);
+            DrivenTranslation.applyDistance(pose, translation, displacement);
         }
 
         AnimationDefinition.StaticRotation fixed = component.staticRotation();
