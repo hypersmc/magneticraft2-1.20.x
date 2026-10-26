@@ -58,7 +58,20 @@ public final class AnimatedComponentRenderer {
                                           BlockState blockState,
                                           PoseStack pose, MultiBufferSource buffers,
                                           int light, int overlay) {
-        AnimationDefinition definition = AnimationResourceLoader.get(animation);
+        return renderScene(AnimationResourceLoader.get(animation), frame,
+                blockState, pose, buffers, light, overlay);
+    }
+
+    /**
+     * Render an already resolved, immutable animation scene. Machine visual
+     * manifests can select the scene without adding another model rendering
+     * implementation or re-parsing anything on the render thread.
+     */
+    public static SceneResult renderScene(AnimationDefinition definition,
+                                          AnimationFrame frame,
+                                          BlockState blockState,
+                                          PoseStack pose, MultiBufferSource buffers,
+                                          int light, int overlay) {
         if (definition == null) return null;
 
         Map<String, SliderCrankSolver.Sample> poses = new HashMap<>();
