@@ -98,7 +98,7 @@ a functional steam/hydraulic power connection.
 
 ## Stamp Mill model contract
 
-The existing 18-part V2 powertrain JSON is unchanged. This milestone adds
+The existing 18-part V2 powertrain component IDs are unchanged. This milestone adds
 nine more animation components:
 
 | Station | Cam | Hammer | Wear plate | Phase |
