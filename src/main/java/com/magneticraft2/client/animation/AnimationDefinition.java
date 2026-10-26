@@ -8,58 +8,112 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Immutable, validated client animation definition.
+ * Immutable, validated client-side animation scene graph.
  *
- * Milestone 1 deliberately accepts only mechanical-angle-driven rotations.
- * Do not evaluate expressions from resource packs. Future keyframes and
- * constraints should be additional typed track implementations.
+ * Only typed, whitelisted mechanics and states are accepted. JSON cannot
+ * execute script, invent server-side power, or alter multiblock collisions.
+ * The original one-shaft v1 definition remains valid.
  */
 public final class AnimationDefinition {
-    public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot, RenderLayer layer) {}
     public enum RenderLayer { SOLID, CUTOUT, TRANSLUCENT }
+    public enum State { RUNNING, STOPPED, OVERLOADED, WORN }
+    public enum Condition {
+        ALWAYS, RUNNING, STOPPED, OVERLOADED, WORN;
+
+        public boolean matches(Set<State> active) {
+            return this == ALWAYS || active.contains(State.valueOf(name()));
+        }
+
+        static Condition parse(String name) {
+            return switch (name) {
+                case "always" -> ALWAYS;
+                case "running" -> RUNNING;
+                case "stopped" -> STOPPED;
+                case "overloaded" -> OVERLOADED;
+                case "worn" -> WORN;
+                default -> throw new JsonParseException("Unknown machine state: " + name);
+            };
+        }
+    }
+    /** Null model is a transform-only parent node; parent is null for roots. */
+    public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot,
+                            RenderLayer layer, String parent, Condition visibleWhen) {}
     public record Input(String source, String module) {}
-    public record RotationTrack(String target, String input, Direction.Axis axis, double scale) {}
+    public record RotationTrack(String target, String input, Direction.Axis axis,
+                                double scale, Condition when) {}
     private record AxisSpec(Direction.Axis axis, double sign) {}
 
     private final Map<String, Component> components;
     private final Map<String, Input> inputs;
-    private final Map<String, RotationTrack> rotations;
+    private final Map<String, Map<Condition, RotationTrack>> rotations;
+    private final Map<String, List<String>> children;
+    private final List<String> roots;
 
     private AnimationDefinition(Map<String, Component> components,
                                 Map<String, Input> inputs,
-                                Map<String, RotationTrack> rotations) {
+                                Map<String, Map<Condition, RotationTrack>> rotations,
+                                Map<String, List<String>> children, List<String> roots) {
         this.components = Map.copyOf(components);
         this.inputs = Map.copyOf(inputs);
         this.rotations = Map.copyOf(rotations);
+        this.children = Map.copyOf(children);
+        this.roots = List.copyOf(roots);
     }
 
     public Component component(String name) {
         return components.get(name);
     }
 
-    /** All validated model references to register before Minecraft model baking. */
     public Collection<Component> components() {
         return components.values();
+    }
+
+    public Set<String> componentNames() {
+        return components.keySet();
+    }
+
+    public List<String> roots() {
+        return roots;
+    }
+
+    public List<String> children(String name) {
+        return children.getOrDefault(name, List.of());
     }
 
     public Input input(String name) {
         return inputs.get(name);
     }
 
-    public RotationTrack rotation(String name) {
-        return rotations.get(name);
+    /**
+     * Most-specific matching state overrides the unconditional track.
+     * Stalled/worn flags have higher priority than an active "running" flag,
+     * which can coexist with wear on the same machine.
+     */
+    public RotationTrack rotation(String name, Set<State> activeStates) {
+        Map<Condition, RotationTrack> candidates = rotations.get(name);
+        if (candidates == null) return null;
+        for (Condition condition : List.of(Condition.OVERLOADED, Condition.WORN,
+                Condition.RUNNING, Condition.STOPPED, Condition.ALWAYS)) {
+            if (condition.matches(activeStates)) {
+                RotationTrack track = candidates.get(condition);
+                if (track != null) return track;
+            }
+        }
+        return null;
     }
 
     public static AnimationDefinition parse(JsonElement element) {
         JsonObject root = asObject(element, "animation root");
-        // A schema identifier disambiguates this format from other mods'
-        // animation JSON (notably GeckoLib's format_version files). Older
-        // resource packs without it remain compatible.
         if (root.has("format") && !"magneticraft2:visual_animation".equals(
                 string(root, "format", "animation root"))) {
             throw new JsonParseException("Unsupported animation format: " + root.get("format"));
@@ -75,8 +129,8 @@ public final class AnimationDefinition {
         if (!"blocks".equals(string(coordinates, "units", "coordinate_system"))
                 || !"controller".equals(string(coordinates, "origin", "coordinate_system"))
                 || !"south".equals(string(coordinates, "reference_facing", "coordinate_system"))) {
-            throw new JsonParseException(
-                    "Only block units, controller origin and canonical south facing are supported");
+            throw new JsonParseException("Only block units, controller origin "
+                    + "and canonical south facing are supported");
         }
 
         Map<String, Component> components = new HashMap<>();
@@ -87,10 +141,13 @@ public final class AnimationDefinition {
         for (Map.Entry<String, JsonElement> entry : parts.entrySet()) {
             String name = identifier(entry.getKey(), "component");
             JsonObject data = asObject(entry.getValue(), "component " + name);
-            String modelId = string(data, "model", "component " + name);
-            ResourceLocation model = ResourceLocation.tryParse(modelId);
-            if (model == null) {
-                throw new JsonParseException("Invalid model resource location for " + name + ": " + modelId);
+            ResourceLocation model = null;
+            if (data.has("model") && !data.get("model").isJsonNull()) {
+                String modelId = string(data, "model", "component " + name);
+                model = ResourceLocation.tryParse(modelId);
+                if (model == null) {
+                    throw new JsonParseException("Invalid model resource location for " + name + ": " + modelId);
+                }
             }
             Vec3 offset = vector(required(data, "model_offset", name), name + ".model_offset");
             Vec3 pivot = vector(required(data, "pivot", name), name + ".pivot");
@@ -102,13 +159,49 @@ public final class AnimationDefinition {
                 case "translucent" -> RenderLayer.TRANSLUCENT;
                 default -> throw new JsonParseException("Unknown render_layer for " + name + ": " + layerName);
             };
-            components.put(name, new Component(model, offset, pivot, layer));
+            String parent = data.has("parent") && !data.get("parent").isJsonNull()
+                    ? identifier(string(data, "parent", name), "parent") : null;
+            Condition visible = data.has("visible_when")
+                    ? Condition.parse(string(data, "visible_when", name)) : Condition.ALWAYS;
+            components.put(name, new Component(model, offset, pivot, layer, parent, visible));
+        }
+
+        // Parent links are resolved once when resources are loaded, never per
+        // render frame. Reject missing links and cycles before publishing.
+        Map<String, List<String>> childBuilder = new HashMap<>();
+        List<String> roots = new ArrayList<>();
+        for (String name : components.keySet()) {
+            Component component = components.get(name);
+            if (component.parent() == null) {
+                roots.add(name);
+            } else {
+                if (!components.containsKey(component.parent())) {
+                    throw new JsonParseException("Unknown parent " + component.parent() + " of " + name);
+                }
+                if (name.equals(component.parent())) {
+                    throw new JsonParseException("Component " + name + " parents itself");
+                }
+                childBuilder.computeIfAbsent(component.parent(), ignored -> new ArrayList<>()).add(name);
+            }
+        }
+        Collections.sort(roots);
+        Map<String, List<String>> children = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : childBuilder.entrySet()) {
+            entry.getValue().sort(String::compareTo);
+            children.put(entry.getKey(), List.copyOf(entry.getValue()));
+        }
+        int visited = 0;
+        for (String name : roots) {
+            visited += verifyTreeDepth(name, children, 1);
+        }
+        if (visited != components.size()) {
+            throw new JsonParseException("Component parent cycle detected");
         }
 
         Map<String, Input> inputs = new HashMap<>();
         JsonObject declaredInputs = asObject(required(root, "inputs", "animation root"), "inputs");
-        if (declaredInputs.size() == 0 || declaredInputs.size() > 64) {
-            throw new JsonParseException("inputs must contain 1..64 entries");
+        if (declaredInputs.size() > 64) {
+            throw new JsonParseException("inputs cannot exceed 64 entries");
         }
         for (Map.Entry<String, JsonElement> entry : declaredInputs.entrySet()) {
             String name = identifier(entry.getKey(), "input");
@@ -121,18 +214,17 @@ public final class AnimationDefinition {
             inputs.put(name, new Input(source, module));
         }
 
-        Map<String, RotationTrack> rotations = new HashMap<>();
-        JsonObject animations = asObject(
-                required(root, "animations", "animation root"), "animations");
-        if (animations.size() == 0 || animations.size() > 128) {
-            throw new JsonParseException("animations must contain 1..128 entries");
+        Map<String, Map<Condition, RotationTrack>> rotations = new HashMap<>();
+        JsonObject animations = asObject(required(root, "animations", "animation root"), "animations");
+        if (animations.size() > 128) {
+            throw new JsonParseException("animations cannot exceed 128 entries");
         }
         int trackCount = 0;
         for (Map.Entry<String, JsonElement> entry : animations.entrySet()) {
             String animationName = identifier(entry.getKey(), "animation");
             JsonObject animation = asObject(entry.getValue(), "animation " + animationName);
             if (!"driven".equals(string(animation, "type", animationName))) {
-                throw new JsonParseException("Only driven tracks are supported in animation v1 pilot");
+                throw new JsonParseException("Only typed driven tracks are supported");
             }
             JsonElement trackValue = required(animation, "tracks", animationName);
             if (!trackValue.isJsonArray()) {
@@ -151,26 +243,44 @@ public final class AnimationDefinition {
                             "Track references unknown component or input: " + target + "/" + inputName);
                 }
                 if (!"rotation".equals(string(track, "property", animationName))) {
-                    throw new JsonParseException("Only rotation tracks are supported in the pilot");
+                    throw new JsonParseException("Only rotation tracks are supported");
                 }
                 AxisSpec axis = axis(required(track, "axis", animationName));
                 double scale = track.has("scale")
-                        ? finiteNumber(track.get("scale"), "track scale")
-                        : 1.0D;
+                        ? finiteNumber(track.get("scale"), "track scale") : 1.0D;
                 if (Math.abs(scale) > 128.0D) {
                     throw new JsonParseException("Rotation track scale exceeds 128");
                 }
+                Condition when = track.has("when")
+                        ? Condition.parse(string(track, "when", animationName)) : Condition.ALWAYS;
                 RotationTrack compiled = new RotationTrack(
-                        target, inputName, axis.axis(), axis.sign() * scale);
-                if (rotations.putIfAbsent(target, compiled) != null) {
-                    throw new JsonParseException("Duplicate rotation track for " + target);
+                        target, inputName, axis.axis(), axis.sign() * scale, when);
+                Map<Condition, RotationTrack> candidates =
+                        rotations.computeIfAbsent(target, ignored -> new EnumMap<>(Condition.class));
+                if (candidates.putIfAbsent(when, compiled) != null) {
+                    throw new JsonParseException("Duplicate rotation track for " + target + "/" + when);
                 }
             }
         }
-        if (rotations.isEmpty()) {
-            throw new JsonParseException("Animation has no supported rotation tracks");
+        if (trackCount == 0) {
+            throw new JsonParseException("Animation has no rotation tracks");
         }
-        return new AnimationDefinition(components, inputs, rotations);
+        Map<String, Map<Condition, RotationTrack>> frozen = new HashMap<>();
+        for (Map.Entry<String, Map<Condition, RotationTrack>> entry : rotations.entrySet()) {
+            frozen.put(entry.getKey(), Map.copyOf(entry.getValue()));
+        }
+        return new AnimationDefinition(components, inputs, frozen, children, roots);
+    }
+
+    private static int verifyTreeDepth(String name, Map<String, List<String>> children, int depth) {
+        if (depth > 32) {
+            throw new JsonParseException("Component hierarchy exceeds depth 32 at " + name);
+        }
+        int count = 1;
+        for (String child : children.getOrDefault(name, List.of())) {
+            count += verifyTreeDepth(child, children, depth + 1);
+        }
+        return count;
     }
 
     private static JsonObject asObject(JsonElement element, String context) {
@@ -250,6 +360,6 @@ public final class AnimationDefinition {
         if (direction.x == 0D && direction.y == 0D && Math.abs(direction.z) == 1D) {
             return new AxisSpec(Direction.Axis.Z, Math.signum(direction.z));
         }
-        throw new JsonParseException("The first animation milestone supports only principal rotation axes");
+        throw new JsonParseException("This version supports only principal rotation axes");
     }
 }
