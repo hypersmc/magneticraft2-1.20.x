@@ -1,0 +1,8 @@
+{
+  "parent": "magneticraft2:multiblock/mechanical_sifter_connecting_rod",
+  "textures": {
+    "wood": "minecraft:block/redstone_block",
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/redstone_block"
+  }
+}
