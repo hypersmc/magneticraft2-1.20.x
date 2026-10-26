@@ -19,6 +19,12 @@ mechanical load calculations, and Voxel V2 do not change.
   from `BronzeMechanicalLatheBlockEntity.getInputRotation(partial)`.
 - `assets/magneticraft2/animations/bronze_mechanical_lathe.json`
   describes named model components and their typed animation tracks.
+- Every new animation document should declare
+  `"format": "magneticraft2:visual_animation"`. The identifier is separate
+  from integer `format_version: 1` and prevents Magneticraft2 from
+  accidentally treating other mods' unrelated animation files as ours.
+  Previously authored animation JSON without `format` remains supported
+  when it uses the documented Magneticraft2 fields.
 - The **component name** `input_rotor` is the stable interface between
   the Java machine and the resource pack. The model resource location in the
   definition is **not** hardcoded in the generic renderer.
@@ -48,8 +54,15 @@ JSON reload listener, so the first bake and F3+T do not depend on a
 resource location provided by the enabled pack stack.
 
 The client reload listener validates and publishes an immutable definition
-map on reload. Missing baked-model warnings are limited to once per model
-per reload; the renderer never loads or parses JSON each frame.
+map on reload. Model discovery and reload use the same ownership test:
+all `magneticraft2`-namespace files in this directory are validated;
+other namespaces are accepted only if they declare the Magneticraft2
+`format` identifier or contain all four legacy fields
+(`coordinate_system`, `components`, `inputs`, `animations`).
+Unrelated GeckoLib `animations/*.animation.json` resources are ignored
+silently rather than logged as invalid. Missing baked-model warnings are
+limited to once per model per reload; the renderer never loads or parses
+JSON each frame.
 
 **Important:** An external pack must include the actual model file at
 `assets/<model_namespace>/models/<model_path>.json`. A JSON animation
@@ -101,10 +114,14 @@ to verify that the JSON-driven registration works.
 8. Corrupt `format_version`, `axis`, `render_layer` or `input` in a
    separate copy, reload and confirm an actionable error and the same
    Java fallback.
-9. Verify the model/animation across chunk boundaries, rejoining the world,
+9. With GeckoLib enabled (as in the normal developer environment), check
+   that loading and F3+T do **not** print `Rejected animation geckolib:`
+   or `Cannot register animated models from geckolib:`. Check that
+   `Loaded 1 Magneticraft2 JSON animation definitions` is still logged.
+10. Verify the model/animation across chunk boundaries, rejoining the world,
    with two differently oriented Lathes simultaneously, and around a
    vanilla resource pack reload.
-10. Compare FPS and render bounds with PR #11. Verify the Copper Washer,
+11. Compare FPS and render bounds with PR #11. Verify the Copper Washer,
     Sifter, Bronze Stamp Mill, classifier, static V2 geometry, saved voxel
     collision and recipe processing are unchanged.
 
