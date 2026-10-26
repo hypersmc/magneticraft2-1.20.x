@@ -1,10 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
-import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
-import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
@@ -123,7 +122,7 @@ public final class RotaryOreClassifierRenderer
         // The drum's THREE discrete segments share one actual Gear V2 phase.
         // Each section keeps its original pivot and worn-mesh variant; the
         // stones/fines still use the existing specialized physics simulation.
-        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimationDefinition drawn = null;
         if (definition != null
                 && definition.component("drum_rear") != null
@@ -140,7 +139,7 @@ public final class RotaryOreClassifierRenderer
             if (input != null && input.isClientOverloaded()) {
                 states.add(AnimationDefinition.State.OVERLOADED);
             }
-            drawn = AnimatedComponentRenderer.render(ANIMATION,
+            drawn = MachineVisualRenderer.render(ANIMATION,
                     new AnimationFrame(Map.of("drum", angle), states,
                             Map.of("classifier.wear_stage",
                                     Math.max(0, Math.min(5, classifier.getPartWearStage())))),
