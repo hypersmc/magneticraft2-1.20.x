@@ -2,6 +2,7 @@ package com.magneticraft2.client.animation;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.mojang.logging.LogUtils;
@@ -40,6 +41,36 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
     }
 
     /**
+     * "animations" is a shared resource-pack directory, also used by
+     * GeckoLib and other mods. Never treat an unrelated file as a broken
+     * Magneticraft2 animation. Still validate all files in our own namespace
+     * (even malformed ones), and accept explicit schema markers from any
+     * other namespace for third-party authored animations.
+     *
+     * The legacy structural check allows older correctly formed third-party
+     * packs written before the explicit "format" marker existed.
+     */
+    private static boolean isOurAnimation(ResourceLocation location, JsonElement source) {
+        if ("magneticraft2".equals(location.getNamespace())) {
+            return true;
+        }
+        if (source == null || !source.isJsonObject()) {
+            return false;
+        }
+        JsonObject root = source.getAsJsonObject();
+        JsonElement explicitFormat = root.get("format");
+        if (explicitFormat != null) {
+            return explicitFormat.isJsonPrimitive()
+                    && explicitFormat.getAsJsonPrimitive().isString()
+                    && "magneticraft2:visual_animation".equals(explicitFormat.getAsString());
+        }
+        return root.has("coordinate_system")
+                && root.has("components")
+                && root.has("inputs")
+                && root.has("animations");
+    }
+
+    /**
      * Called during ModelEvent.RegisterAdditional, BEFORE models are baked.
      * Loading only the already-compiled definitions here would lag one reload
      * behind; instead read the current pack resources and register their model
@@ -52,8 +83,11 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
                         location -> location.getPath().endsWith(".json"));
         for (Map.Entry<ResourceLocation, Resource> entry : files.entrySet()) {
             try (Reader reader = entry.getValue().openAsReader()) {
-                AnimationDefinition definition =
-                        AnimationDefinition.parse(JsonParser.parseReader(reader));
+                JsonElement source = JsonParser.parseReader(reader);
+                if (!isOurAnimation(entry.getKey(), source)) {
+                    continue;
+                }
+                AnimationDefinition definition = AnimationDefinition.parse(source);
                 for (AnimationDefinition.Component component : definition.components()) {
                     event.register(component.model());
                 }
@@ -77,6 +111,9 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
                          ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, AnimationDefinition> compiled = new HashMap<>();
         for (Map.Entry<ResourceLocation, JsonElement> entry : resources.entrySet()) {
+            if (!isOurAnimation(entry.getKey(), entry.getValue())) {
+                continue;
+            }
             try {
                 compiled.put(entry.getKey(), AnimationDefinition.parse(entry.getValue()));
             } catch (JsonParseException | IllegalArgumentException e) {
