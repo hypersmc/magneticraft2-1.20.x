@@ -114,7 +114,9 @@ public final class AnimatedComponentRenderer {
                     definition.translation(component, frame.states());
             if (slide != null) {
                 AnimationDefinition.Input input = definition.input(slide.input());
-                float angle = frame.angle(input.module());
+                if (input == null) return null;
+                Float angle = frame.angle(input.module());
+                if (angle == null || !Float.isFinite(angle)) return null;
                 double displacement = DrivenTranslation.distance(slide, angle);
                 if (!Double.isFinite(displacement)) return null;
                 travel.put(component, displacement);
