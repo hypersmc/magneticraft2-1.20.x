@@ -125,7 +125,17 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
                 continue;
             }
             try {
-                compiled.put(entry.getKey(), AnimationDefinition.parse(entry.getValue()));
+                AnimationDefinition definition = AnimationDefinition.parse(entry.getValue());
+                // Dynamic belt texture IDs are NOT block models and therefore
+                // are not registered in the ModelEvent bake pass. Validate
+                // their real client resources on reload, so missing textures
+                // reject the entire scene before the renderer emits geometry.
+                for (AnimationDefinition.BeltLoop loop : definition.beltLoops().values()) {
+                    if (resourceManager.getResource(loop.texture()).isEmpty()) {
+                        throw new JsonParseException("Missing belt texture " + loop.texture());
+                    }
+                }
+                compiled.put(entry.getKey(), definition);
             } catch (JsonParseException | IllegalArgumentException e) {
                 LOGGER.error("Rejected animation {}: {}", entry.getKey(), e.getMessage());
             }
