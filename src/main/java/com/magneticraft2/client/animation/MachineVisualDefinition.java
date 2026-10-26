@@ -59,12 +59,14 @@ public record MachineVisualDefinition(ResourceLocation animation,
         }
         Map<String, String> channels = new HashMap<>();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            String alias = identifier(entry.getKey(), key + " alias");
+            String alias = identifier(entry.getKey(), key + " alias",
+                    "integer_channels".equals(key));
             if (!entry.getValue().isJsonPrimitive()
                     || !entry.getValue().getAsJsonPrimitive().isString()) {
                 throw new JsonParseException(key + "." + alias + " must name an exposed input");
             }
-            String physical = identifier(entry.getValue().getAsString(), key + " source");
+            String physical = identifier(entry.getValue().getAsString(), key + " source",
+                    "integer_channels".equals(key));
             channels.put(alias, physical);
         }
         return channels;
@@ -79,10 +81,11 @@ public record MachineVisualDefinition(ResourceLocation animation,
         return value.getAsString();
     }
 
-    private static String identifier(String value, String description) {
-        // Dots are allowed for typed integer selector keys, e.g.
-        // sifter.wear_stage; Java remains responsible for supplying them.
-        if (value.length() > 128 || !value.matches("[a-z][a-z0-9_.]*")) {
+    private static String identifier(String value, String description, boolean dotted) {
+        // Animation module names are simple identifiers, whereas typed integer
+        // selectors may contain a dot (e.g. "sifter.wear_stage").
+        String rule = dotted ? "[a-z][a-z0-9_.]*" : "[a-z][a-z0-9_]*";
+        if (value.length() > 128 || !value.matches(rule)) {
             throw new JsonParseException("Invalid " + description + ": " + value);
         }
         return value;
