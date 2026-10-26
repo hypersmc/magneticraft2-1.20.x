@@ -1,6 +1,7 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -76,7 +77,7 @@ final class BronzeStampMillOreVisuals {
 
     void render(BronzeStampMillBlockEntity mill, float partial,
                 PoseStack pose, MultiBufferSource buffers,
-                int light, int overlay) {
+                int light, int overlay, AnimatedComponentRenderer.SceneResult animation) {
         if (mill.getLevel() == null) return;
         double now = mill.getLevel().getGameTime() + (double) partial;
         VisualState state = states.computeIfAbsent(mill, unused -> new VisualState());
@@ -112,7 +113,7 @@ final class BronzeStampMillOreVisuals {
         // visible ore piece is still travelling in from the real port.
         if (!input.isEmpty() && state.workpieceReachedTray) {
             renderCrushing(mill, partial, pose, buffers, light, overlay,
-                    input, state.crushedPreview, progress);
+                    input, state.crushedPreview, progress, animation);
         }
 
         renderOutput(mill, pose, buffers, light, overlay, primary,
@@ -120,7 +121,7 @@ final class BronzeStampMillOreVisuals {
         renderOutput(mill, pose, buffers, light, overlay, byproduct,
                 state.byproductDischarge, now, 8D);
 
-        emitImpactDust(mill, partial, state, now, input, progress);
+        emitImpactDust(mill, partial, state, now, input, progress, animation);
     }
 
     private static void observeInventory(BronzeStampMillBlockEntity mill,
@@ -225,11 +226,12 @@ final class BronzeStampMillOreVisuals {
                                       float partial, PoseStack pose,
                                       MultiBufferSource buffers, int light,
                                       int overlay, ItemStack input,
-                                      ItemStack preview, float progress) {
+                                      ItemStack preview, float progress,
+                                      AnimatedComponentRenderer.SceneResult animation) {
         if (progress < 0.34F) {
             // Whole ore beneath the first working shoe.
             double tremor = mill.isProcessing()
-                    ? 0.05D * (1D - mill.getHammerLift(partial, 0)/0.32D)
+                    ? 0.05D * (1D - hammerLift(mill, partial, 0, animation)/0.32D)
                     : 0D;
             drawItem(mill,pose,buffers,light,overlay,input,
                     -8D,24.05D+tremor,-10D,0.51F,0F);
@@ -298,9 +300,24 @@ final class BronzeStampMillOreVisuals {
         pose.popPose();
     }
 
+    /** The real rendered hammer displacement, or the original Java fallback. */
+    private static float hammerLift(BronzeStampMillBlockEntity mill, float partial,
+                                    int index,
+                                    AnimatedComponentRenderer.SceneResult animation) {
+        if (animation == null) return mill.getHammerLift(partial, index);
+        String id = switch (index) {
+            case 0 -> "hammer_left";
+            case 1 -> "hammer_middle";
+            case 2 -> "hammer_right";
+            default -> throw new IllegalArgumentException("Unexpected hammer " + index);
+        };
+        return (float) animation.translationOffset(id);
+    }
+
     private static void emitImpactDust(BronzeStampMillBlockEntity mill,
                                        float partial, VisualState state,
-                                       double now, ItemStack input, float progress) {
+                                       double now, ItemStack input, float progress,
+                                       AnimatedComponentRenderer.SceneResult animation) {
         if (mill.getLevel() == null) return;
         if (!mill.isProcessing() || input.isEmpty()) {
             for (int i=0;i<3;i++) state.oldLift[i] = Float.NaN;
@@ -309,7 +326,7 @@ final class BronzeStampMillOreVisuals {
 
         int activeLane = progress < 0.34F ? 0 : progress < 0.68F ? 1 : 2;
         for (int i=0;i<3;i++) {
-            float lift = mill.getHammerLift(partial,i);
+            float lift = hammerLift(mill, partial, i, animation);
             float previous = state.oldLift[i];
             state.oldLift[i] = lift;
             if (i != activeLane || Float.isNaN(previous)

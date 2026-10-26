@@ -24,14 +24,21 @@ public final class AnimatedComponentRenderer {
     private AnimatedComponentRenderer() {}
 
     public record SceneResult(AnimationDefinition definition,
-                              Map<String, SliderCrankSolver.Sample> mechanismPoses) {
+                              Map<String, SliderCrankSolver.Sample> mechanismPoses,
+                              Map<String, Double> componentTravel) {
         public SceneResult {
             mechanismPoses = Map.copyOf(mechanismPoses);
+            componentTravel = Map.copyOf(componentTravel);
         }
 
         public double sliderOffset(String mechanismName) {
             SliderCrankSolver.Sample sample = mechanismPoses.get(mechanismName);
             return sample == null ? 0.0D : sample.stroke();
+        }
+
+        /** Exact evaluated local cam/follower travel used by rendered models. */
+        public double translationOffset(String componentName) {
+            return componentTravel.getOrDefault(componentName, 0.0D);
         }
     }
 
@@ -99,11 +106,28 @@ public final class AnimatedComponentRenderer {
             }
         }
 
+        Map<String, Double> travel = new HashMap<>();
+        // Evaluate each active cam/follower track ONCE per frame, so geometry
+        // and impact/item visuals consume precisely the same displacement.
+        for (String component : definition.componentNames()) {
+            AnimationDefinition.TranslationTrack slide =
+                    definition.translation(component, frame.states());
+            if (slide != null) {
+                AnimationDefinition.Input input = definition.input(slide.input());
+                if (input == null) return null;
+                Float angle = frame.angle(input.module());
+                if (angle == null || !Float.isFinite(angle)) return null;
+                double displacement = DrivenTranslation.distance(slide, angle);
+                if (!Double.isFinite(displacement)) return null;
+                travel.put(component, displacement);
+            }
+        }
+
         for (String root : definition.roots()) {
-            renderSubtree(definition, root, frame, poses, blockState,
+            renderSubtree(definition, root, frame, poses, travel, blockState,
                     pose, buffers, minecraft, modelManager, light, overlay);
         }
-        return new SceneResult(definition, poses);
+        return new SceneResult(definition, poses, travel);
     }
 
     private static ResourceLocation modelFor(AnimationDefinition.Component component,
@@ -145,6 +169,19 @@ public final class AnimatedComponentRenderer {
                 return false;
             }
         }
+        AnimationDefinition.TranslationTrack slide =
+                definition.translation(name, frame.states());
+        if (slide != null) {
+            AnimationDefinition.Input input = definition.input(slide.input());
+            if (input == null || !"mechanical.visual_angle_degrees".equals(input.source())) {
+                return false;
+            }
+            Float angle = frame.angle(input.module());
+            if (angle == null || !Float.isFinite(angle)
+                    || !Double.isFinite(DrivenTranslation.distance(slide, angle))) {
+                return false;
+            }
+        }
         for (String child : definition.children(name)) {
             if (!validateSubtree(definition, child, frame, models)) return false;
         }
@@ -154,6 +191,7 @@ public final class AnimatedComponentRenderer {
     private static void renderSubtree(AnimationDefinition definition, String name,
                                       AnimationFrame frame,
                                       Map<String, SliderCrankSolver.Sample> mechanismPoses,
+                                      Map<String, Double> travel,
                                       BlockState blockState,
                                       PoseStack pose, MultiBufferSource buffers,
                                       Minecraft minecraft, ModelManager models,
@@ -174,7 +212,10 @@ public final class AnimatedComponentRenderer {
             AnimationDefinition.RotationTrack track = definition.rotation(name, frame.states());
             float angle = track == null
                     ? 0F : frame.angle(definition.input(track.input()).module());
-            DrivenRotation.apply(pose, component, track, angle);
+            AnimationDefinition.TranslationTrack slide =
+                    definition.translation(name, frame.states());
+            DrivenRotation.applyDistance(pose, component, track, angle, slide,
+                    travel.getOrDefault(name, 0.0D));
 
             ResourceLocation modelId = modelFor(component, frame);
             if (modelId != null) {
@@ -188,7 +229,7 @@ public final class AnimatedComponentRenderer {
                         models.getModel(modelId), 1F, 1F, 1F, light, overlay);
             }
             for (String child : definition.children(name)) {
-                renderSubtree(definition, child, frame, mechanismPoses, blockState,
+                renderSubtree(definition, child, frame, mechanismPoses, travel, blockState,
                         pose, buffers, minecraft, models, light, overlay);
             }
         } finally {

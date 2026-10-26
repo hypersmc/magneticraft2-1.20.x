@@ -6,5 +6,7 @@
     "mechanical_input": "mechanical_input",
     "output_shaft": "output_shaft"
   },
-  "integer_channels": {}
+  "integer_channels": {
+    "stamp_mill.wear_stage": "stamp_mill.wear_stage"
+  }
 }

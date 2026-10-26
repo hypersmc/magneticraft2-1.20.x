@@ -258,6 +258,159 @@
         0.5
       ],
       "render_layer": "cutout"
+    },
+    "plate_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        -1,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        -1,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        -1,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
+    },
+    "plate_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        0,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        0,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        0,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
+    },
+    "plate_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        1,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        1,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        1,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
     }
   },
   "inputs": {
@@ -378,6 +531,74 @@
           "axis": "x",
           "input": "output_phase",
           "scale": 1
+        }
+      ]
+    },
+    "stamp_heads": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "cam_left",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 0
+        },
+        {
+          "target": "hammer_left",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 0,
+          "when": "running"
+        },
+        {
+          "target": "cam_middle",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 120
+        },
+        {
+          "target": "hammer_middle",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 120,
+          "when": "running"
+        },
+        {
+          "target": "cam_right",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 240
+        },
+        {
+          "target": "hammer_right",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 240,
+          "when": "running"
         }
       ]
     }

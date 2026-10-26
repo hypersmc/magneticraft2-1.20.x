@@ -52,7 +52,10 @@ const expectedComponents = {
     primitive_grinder: ["input_axle","grinding_rotor"],
     mechanical_ore_washer: ["drum"],
     bronze_stamp_mill: ["input_coupler","input_shaft","input_bevel",
-        "output_bevel","lower_pulley","upper_pulley","upper_shaft_tip"],
+        "output_bevel","lower_pulley","upper_pulley","upper_shaft_tip",
+        "plate_left","plate_middle","plate_right",
+        "cam_left","cam_middle","cam_right",
+        "hammer_left","hammer_middle","hammer_right"],
     rotary_ore_classifier: ["drum_rear","drum_middle","drum_front"]
 };
 const horizontal = ["north", "east", "south", "west"];
