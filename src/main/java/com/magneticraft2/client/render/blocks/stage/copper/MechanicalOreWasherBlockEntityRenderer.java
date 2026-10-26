@@ -1,6 +1,10 @@
 package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalOreWasherBlock;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
+import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltPath;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -26,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +38,8 @@ import java.util.Map;
 public class MechanicalOreWasherBlockEntityRenderer
         implements BlockEntityRenderer<MechanicalOreWasherBlockEntity> {
 
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "mechanical_ore_washer");
     private static final ResourceLocation ROTOR_MODEL =
             new ResourceLocation("magneticraft2", "multiblock/mechanical_ore_washer_rotor");
     private static final ResourceLocation SMALL_PULLEY_MODEL =
@@ -169,20 +176,36 @@ public class MechanicalOreWasherBlockEntityRenderer
                 washer.getPartWearStage()
         );
 
-        poseStack.pushPose();
-        poseStack.translate(0.5D, 0.90625D, 0.5D);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(drumRotation));
-        poseStack.translate(-0.5D, -0.90625D, -0.5D);
-
-        renderModel(
-                ROTOR_MODEL,
-                RenderType.solid(),
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
+        // Only the trommel's baked geometry/pivot is data-driven here.
+        // Keep both physical pulleys, the continuously advancing belt UVs,
+        // water, ore display and wear in the existing specialized renderer.
+        // Drum phase comes from the SAME continuous BeltPath-driven output
+        // angle as the former Java path (including its facing correction).
+        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition drawn = null;
+        if (definition != null && definition.component("drum") != null) {
+            EnumSet<AnimationDefinition.State> states = EnumSet.of(
+                    washer.isProcessing()
+                            ? AnimationDefinition.State.RUNNING
+                            : AnimationDefinition.State.STOPPED);
+            if (washer.getPartWearStage() > 0) {
+                states.add(AnimationDefinition.State.WORN);
+            }
+            drawn = AnimatedComponentRenderer.render(ANIMATION,
+                    new AnimationFrame(Map.of("trommel", drumRotation), states),
+                    formedState, poseStack, buffer, packedLight, packedOverlay);
+        }
+        if (drawn == null) {
+            // Restore the exact original moving drum when JSON is absent,
+            // malformed or refers to an unavailable model/driver.
+            poseStack.pushPose();
+            poseStack.translate(0.5D, 0.90625D, 0.5D);
+            poseStack.mulPose(Axis.ZP.rotationDegrees(drumRotation));
+            poseStack.translate(-0.5D, -0.90625D, -0.5D);
+            renderModel(ROTOR_MODEL, RenderType.solid(),
+                    poseStack, buffer, packedLight, packedOverlay);
+            poseStack.popPose();
+        }
 
         if (washer.hasWaterSupply()) {
             renderWaterSurface(
