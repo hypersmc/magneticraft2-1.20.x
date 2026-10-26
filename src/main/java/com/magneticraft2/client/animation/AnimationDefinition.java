@@ -8,6 +8,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +20,8 @@ import java.util.Map;
  * constraints should be additional typed track implementations.
  */
 public final class AnimationDefinition {
-    public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot) {}
+    public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot, RenderLayer layer) {}
+    public enum RenderLayer { SOLID, CUTOUT, TRANSLUCENT }
     public record Input(String source, String module) {}
     public record RotationTrack(String target, String input, Direction.Axis axis, double scale) {}
     private record AxisSpec(Direction.Axis axis, double sign) {}
@@ -38,6 +40,11 @@ public final class AnimationDefinition {
 
     public Component component(String name) {
         return components.get(name);
+    }
+
+    /** All validated model references to register before Minecraft model baking. */
+    public Collection<Component> components() {
+        return components.values();
     }
 
     public Input input(String name) {
@@ -80,7 +87,15 @@ public final class AnimationDefinition {
             }
             Vec3 offset = vector(required(data, "model_offset", name), name + ".model_offset");
             Vec3 pivot = vector(required(data, "pivot", name), name + ".pivot");
-            components.put(name, new Component(model, offset, pivot));
+            String layerName = data.has("render_layer")
+                    ? string(data, "render_layer", "component " + name) : "cutout";
+            RenderLayer layer = switch (layerName) {
+                case "solid" -> RenderLayer.SOLID;
+                case "cutout" -> RenderLayer.CUTOUT;
+                case "translucent" -> RenderLayer.TRANSLUCENT;
+                default -> throw new JsonParseException("Unknown render_layer for " + name + ": " + layerName);
+            };
+            components.put(name, new Component(model, offset, pivot, layer));
         }
 
         Map<String, Input> inputs = new HashMap<>();
