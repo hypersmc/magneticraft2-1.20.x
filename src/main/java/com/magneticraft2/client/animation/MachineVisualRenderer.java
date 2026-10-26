@@ -31,6 +31,25 @@ public final class MachineVisualRenderer {
         return visual == null ? null : AnimationResourceLoader.get(visual.animation());
     }
 
+    /**
+     * Resolve a typed animation input to the real shaft angle used by Java.
+     * This also supports procedural belt paths rendered by a specialized
+     * machine stage after the full scene geometry has passed preflight.
+     */
+    public static Float physicalAngle(ResourceLocation machineId,
+                                      AnimationDefinition definition,
+                                      String inputName,
+                                      AnimationFrame physicalInputs) {
+        MachineVisualDefinition visual = MachineVisualResourceLoader.get(machineId);
+        AnimationDefinition.Input input = definition.input(inputName);
+        if (visual == null || input == null
+                || !"mechanical.visual_angle_degrees".equals(input.source())) {
+            return null;
+        }
+        String physicalName = visual.angleChannels().get(input.module());
+        return physicalName == null ? null : physicalInputs.angle(physicalName);
+    }
+
     public static AnimationDefinition render(ResourceLocation machineId,
                                              AnimationFrame physicalInputs,
                                              BlockState blockState,
