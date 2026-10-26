@@ -61,13 +61,36 @@ public final class AnimationDefinition {
                               String follower, String slider) {}
     public record MechanismRole(String mechanismId, SliderCrankRole role) {}
     public record Input(String source, String module) {}
+    /** Rotation phase is added AFTER the input angle has been scaled. */
     public record RotationTrack(String target, String input, Direction.Axis axis,
-                                double scale, Condition when) {}
+                                double scale, double phaseDegrees, Condition when) {}
+
+    public enum Waveform {
+        COSINE, SINE;
+        static Waveform parse(String value) {
+            return switch (value) {
+                case "cosine" -> COSINE;
+                case "sine" -> SINE;
+                default -> throw new JsonParseException("Unsupported translation waveform: " + value);
+            };
+        }
+    }
+
+    /**
+     * A linear slide along a principal machine axis, driven by a real phase.
+     * displacement = distance * (bias + amplitude * wave(angle*scale + phase)).
+     * A missing conditionally active track means zero displacement.
+     */
+    public record TranslationTrack(String target, String input, Direction.Axis axis,
+                                   double distance, double scale, double amplitude,
+                                   double bias, double phaseDegrees, Waveform waveform,
+                                   Condition when) {}
     private record AxisSpec(Direction.Axis axis, double sign) {}
 
     private final Map<String, Component> components;
     private final Map<String, Input> inputs;
     private final Map<String, Map<Condition, RotationTrack>> rotations;
+    private final Map<String, Map<Condition, TranslationTrack>> translations;
     private final Map<String, List<String>> children;
     private final List<String> roots;
     private final Map<String, SliderCrank> sliderCranks;
@@ -76,12 +99,14 @@ public final class AnimationDefinition {
     private AnimationDefinition(Map<String, Component> components,
                                 Map<String, Input> inputs,
                                 Map<String, Map<Condition, RotationTrack>> rotations,
+                                Map<String, Map<Condition, TranslationTrack>> translations,
                                 Map<String, List<String>> children, List<String> roots,
                                 Map<String, SliderCrank> sliderCranks,
                                 Map<String, MechanismRole> mechanismRoles) {
         this.components = Map.copyOf(components);
         this.inputs = Map.copyOf(inputs);
         this.rotations = Map.copyOf(rotations);
+        this.translations = Map.copyOf(translations);
         this.children = Map.copyOf(children);
         this.roots = List.copyOf(roots);
         this.sliderCranks = Map.copyOf(sliderCranks);
@@ -137,6 +162,20 @@ public final class AnimationDefinition {
                 Condition.RUNNING, Condition.STOPPED, Condition.ALWAYS)) {
             if (condition.matches(activeStates)) {
                 RotationTrack track = candidates.get(condition);
+                if (track != null) return track;
+            }
+        }
+        return null;
+    }
+
+    /** Return the most-specific active linear translation, or null for rest. */
+    public TranslationTrack translation(String name, Set<State> activeStates) {
+        Map<Condition, TranslationTrack> candidates = translations.get(name);
+        if (candidates == null) return null;
+        for (Condition condition : List.of(Condition.OVERLOADED, Condition.WORN,
+                Condition.RUNNING, Condition.STOPPED, Condition.ALWAYS)) {
+            if (condition.matches(activeStates)) {
+                TranslationTrack track = candidates.get(condition);
                 if (track != null) return track;
             }
         }
@@ -301,6 +340,7 @@ public final class AnimationDefinition {
         }
 
         Map<String, Map<Condition, RotationTrack>> rotations = new HashMap<>();
+        Map<String, Map<Condition, TranslationTrack>> translations = new HashMap<>();
         JsonObject animations = asObject(required(root, "animations", "animation root"), "animations");
         if (animations.size() > 128) {
             throw new JsonParseException("animations cannot exceed 128 entries");
@@ -328,23 +368,54 @@ public final class AnimationDefinition {
                     throw new JsonParseException(
                             "Track references unknown component or input: " + target + "/" + inputName);
                 }
-                if (!"rotation".equals(string(track, "property", animationName))) {
-                    throw new JsonParseException("Only rotation tracks are supported");
-                }
+                String property = string(track, "property", animationName);
                 AxisSpec axis = axis(required(track, "axis", animationName));
                 double scale = track.has("scale")
                         ? finiteNumber(track.get("scale"), "track scale") : 1.0D;
                 if (Math.abs(scale) > 128.0D) {
-                    throw new JsonParseException("Rotation track scale exceeds 128");
+                    throw new JsonParseException("Track angle scale exceeds 128");
+                }
+                double phase = track.has("phase_degrees")
+                        ? finiteNumber(track.get("phase_degrees"), "track phase_degrees") : 0.0D;
+                if (Math.abs(phase) > 3600.0D) {
+                    throw new JsonParseException("Track phase_degrees exceeds 3600");
                 }
                 Condition when = track.has("when")
                         ? Condition.parse(string(track, "when", animationName)) : Condition.ALWAYS;
-                RotationTrack compiled = new RotationTrack(
-                        target, inputName, axis.axis(), axis.sign() * scale, when);
-                Map<Condition, RotationTrack> candidates =
-                        rotations.computeIfAbsent(target, ignored -> new EnumMap<>(Condition.class));
-                if (candidates.putIfAbsent(when, compiled) != null) {
-                    throw new JsonParseException("Duplicate rotation track for " + target + "/" + when);
+
+                switch (property) {
+                    case "rotation" -> {
+                        RotationTrack compiled = new RotationTrack(target, inputName,
+                                axis.axis(), axis.sign() * scale, axis.sign() * phase, when);
+                        Map<Condition, RotationTrack> candidates =
+                                rotations.computeIfAbsent(target, ignored -> new EnumMap<>(Condition.class));
+                        if (candidates.putIfAbsent(when, compiled) != null) {
+                            throw new JsonParseException("Duplicate rotation track for " + target + "/" + when);
+                        }
+                    }
+                    case "translation" -> {
+                        double distance = finiteNumber(required(track, "distance", animationName),
+                                "track distance");
+                        double amplitude = track.has("amplitude")
+                                ? finiteNumber(track.get("amplitude"), "track amplitude") : 1.0D;
+                        double bias = track.has("bias")
+                                ? finiteNumber(track.get("bias"), "track bias") : 0.0D;
+                        Waveform waveform = Waveform.parse(string(track, "waveform", animationName));
+                        if (Math.abs(distance) > 16.0D || Math.abs(amplitude) > 4.0D
+                                || Math.abs(bias) > 4.0D
+                                || Math.abs(distance) * (Math.abs(amplitude) + Math.abs(bias)) > 16.0D) {
+                            throw new JsonParseException("Translation track would leave the 16-block bound");
+                        }
+                        TranslationTrack compiled = new TranslationTrack(target, inputName,
+                                axis.axis(), axis.sign() * distance, scale, amplitude,
+                                bias, phase, waveform, when);
+                        Map<Condition, TranslationTrack> candidates =
+                                translations.computeIfAbsent(target, ignored -> new EnumMap<>(Condition.class));
+                        if (candidates.putIfAbsent(when, compiled) != null) {
+                            throw new JsonParseException("Duplicate translation track for " + target + "/" + when);
+                        }
+                    }
+                    default -> throw new JsonParseException("Unsupported animation track property: " + property);
                 }
             }
         }
@@ -397,8 +468,9 @@ public final class AnimationDefinition {
                         throw new JsonParseException(name + " role " + roles[i]
                                 + " must reference an existing root component: " + target);
                     }
-                    if (rotations.containsKey(target)) {
-                        throw new JsonParseException(name + " conflicts with rotation track on " + target);
+                    if (rotations.containsKey(target) || translations.containsKey(target)) {
+                        throw new JsonParseException(name
+                                + " conflicts with driven tracks on slider-crank role " + target);
                     }
                     if (mechanismRoles.putIfAbsent(target, new MechanismRole(name, roles[i])) != null) {
                         throw new JsonParseException("Component " + target
@@ -416,8 +488,12 @@ public final class AnimationDefinition {
         for (Map.Entry<String, Map<Condition, RotationTrack>> entry : rotations.entrySet()) {
             frozen.put(entry.getKey(), Map.copyOf(entry.getValue()));
         }
-        return new AnimationDefinition(components, inputs, frozen, children, roots,
-                mechanisms, mechanismRoles);
+        Map<String, Map<Condition, TranslationTrack>> frozenTranslations = new HashMap<>();
+        for (Map.Entry<String, Map<Condition, TranslationTrack>> entry : translations.entrySet()) {
+            frozenTranslations.put(entry.getKey(), Map.copyOf(entry.getValue()));
+        }
+        return new AnimationDefinition(components, inputs, frozen, frozenTranslations,
+                children, roots, mechanisms, mechanismRoles);
     }
 
     private static int verifyTreeDepth(String name, Map<String, List<String>> children, int depth) {
