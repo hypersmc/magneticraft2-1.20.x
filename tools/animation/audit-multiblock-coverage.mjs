@@ -12,7 +12,8 @@
  *
  * A missing animation definition is NOT an error for legacy renderers:
  * migrating them is a separate, deliberate task. Use
- * --require-mechanical-json to fail until every mechanical family is migrated.
+ * --require-mechanical-json to require at least one JSON visual entry point
+ * for each mechanical family; it does not mean every component is migrated.
  */
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -42,6 +43,18 @@ const machines = [
       renderer: "bronze/RotaryOreClassifierRenderer.java" },
     { name: "water_settling_tank",         orientations: "all", mode: "specialized" },
 ];
+// Stable visual component IDs are the machine/pack interface. Validate the
+// expected defaults so a refactor cannot silently leave only a partial scene.
+const expectedComponents = {
+    bronze_mechanical_lathe: ["input_rotor","input_output_rotor"],
+    mechanical_sifter: ["sieve_crank","sieve_rod","sieve_follower","sieve_carriage",
+        "upper_tray","slide_shoes"],
+    primitive_grinder: ["input_axle","grinding_rotor"],
+    mechanical_ore_washer: ["drum"],
+    bronze_stamp_mill: ["input_coupler","input_shaft","input_bevel",
+        "output_bevel","lower_pulley","upper_pulley","upper_shaft_tip"],
+    rotary_ore_classifier: ["drum_rear","drum_middle","drum_front"]
+};
 const horizontal = ["north", "east", "south", "west"];
 const readJson = p => JSON.parse(readFileSync(p, "utf8"));
 const fail = message => {throw new Error(message)};
@@ -144,6 +157,10 @@ for (const machine of machines) {
         const parts = animation.components;
         assert.ok(parts && typeof parts==="object" && Object.keys(parts).length>0,
             `${machine.name}: empty animated scene`);
+        for (const required of expectedComponents[machine.name] ?? []) {
+            assert.ok(Object.hasOwn(parts,required),
+                `${machine.name}: missing required visual component ${required}`);
+        }
         for (const [id, part] of Object.entries(parts)) {
             assert.ok(/^[a-z][a-z0-9_]*$/.test(id),
                 `${machine.name}: invalid component ID ${id}`);
@@ -178,7 +195,7 @@ console.log("\nMagneticraft2 multiblock compatibility audit");
 console.table(report);
 console.log(`Validated ${machines.length} families, ${checkedVariants} formation JSON variants, `+
     `${checkedModels} static model selections and ${checkedAnimatedComponents} animated model references.`);
-console.log(`JSON mechanical coverage: ${mechanicalJsonCount}/${mechanicalCount} families.`);
+console.log(`JSON mechanical entry-point coverage: ${mechanicalJsonCount}/${mechanicalCount} families.`);
 if (mechanicalJsonCount < mechanicalCount) {
     console.log("Unmigrated mechanical families retain their existing Java renderers.");
 }
