@@ -1,6 +1,10 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
+import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
@@ -19,6 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import java.util.EnumSet;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
@@ -39,6 +45,8 @@ public final class RotaryOreClassifierRenderer
     private final WeakHashMap<RotaryOreClassifierBlockEntity, RotaryClassifierOreMotion>
             oreStates = new WeakHashMap<>();
 
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "rotary_ore_classifier");
     private static final ResourceLocation[] DRUM = {
             new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_rear"),
             new ResourceLocation("magneticraft2", "multiblock/rotary_ore_classifier_drum_middle"),
@@ -112,17 +120,46 @@ public final class RotaryOreClassifierRenderer
         // Gear V2 supplies the only real rotating phase: never spin from
         // world time. The shaft in the mechanical-input module is separate.
         float angle = classifier.getDrumRotationDegrees(partialTicks);
-        ResourceLocation[] models =
-                classifier.getPartWearStage() >= 2 ? WORN_DRUM : DRUM;
-        for (int dz = -2; dz <= 0; dz++) {
-            BakedModel model = Minecraft.getInstance().getModelManager()
-                    .getModel(models[dz + 2]);
-            pose.pushPose();
-            pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D);
-            pose.mulPose(Axis.ZP.rotationDegrees(angle));
-            pose.translate(-0.5D, -0.5D, -0.5D);
-            drawBaked(model, pose, buffers, packedLight, packedOverlay);
-            pose.popPose();
+        // The drum's THREE discrete segments share one actual Gear V2 phase.
+        // Each section keeps its original pivot and worn-mesh variant; the
+        // stones/fines still use the existing specialized physics simulation.
+        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition drawn = null;
+        if (definition != null
+                && definition.component("drum_rear") != null
+                && definition.component("drum_middle") != null
+                && definition.component("drum_front") != null) {
+            EnumSet<AnimationDefinition.State> states = EnumSet.of(
+                    classifier.isProcessing()
+                            ? AnimationDefinition.State.RUNNING
+                            : AnimationDefinition.State.STOPPED);
+            if (classifier.getPartWearStage() >= 2) {
+                states.add(AnimationDefinition.State.WORN);
+            }
+            MechanicalInputModuleBlockEntity input = classifier.getMechanicalInput();
+            if (input != null && input.isClientOverloaded()) {
+                states.add(AnimationDefinition.State.OVERLOADED);
+            }
+            drawn = AnimatedComponentRenderer.render(ANIMATION,
+                    new AnimationFrame(Map.of("drum", angle), states,
+                            Map.of("classifier.wear_stage",
+                                    Math.max(0, Math.min(5, classifier.getPartWearStage())))),
+                    classifier.getBlockState(), pose, buffers, packedLight, packedOverlay);
+        }
+        if (drawn == null) {
+            // Complete legacy model fallback when any JSON part/model fails.
+            ResourceLocation[] models =
+                    classifier.getPartWearStage() >= 2 ? WORN_DRUM : DRUM;
+            for (int dz = -2; dz <= 0; dz++) {
+                BakedModel model = Minecraft.getInstance().getModelManager()
+                        .getModel(models[dz + 2]);
+                pose.pushPose();
+                pose.translate(0.5D, DRUM_AXIS_Y, dz + 0.5D);
+                pose.mulPose(Axis.ZP.rotationDegrees(angle));
+                pose.translate(-0.5D, -0.5D, -0.5D);
+                drawBaked(model, pose, buffers, packedLight, packedOverlay);
+                pose.popPose();
+            }
         }
 
         ItemStack input = classifier.getInputStack();
