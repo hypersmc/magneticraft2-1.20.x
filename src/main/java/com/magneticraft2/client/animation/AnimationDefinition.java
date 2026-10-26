@@ -207,7 +207,11 @@ public final class AnimationDefinition {
                 }
                 JsonObject variant = asObject(data.get("model_variants"), name + ".model_variants");
                 String selector = string(variant, "source", name + ".model_variants");
-                if (!"sifter.wear_stage".equals(selector)) {
+                // Only real, explicitly bound machine wear inputs are
+                // allowed. Packs cannot ask for arbitrary game-state reads.
+                if (!"sifter.wear_stage".equals(selector)
+                        && !"classifier.wear_stage".equals(selector)
+                        && !"stamp_mill.wear_stage".equals(selector)) {
                     throw new JsonParseException("Unsupported model variant selector: " + selector);
                 }
                 JsonObject models = asObject(required(variant, "models", name), name + ".models");
