@@ -2,6 +2,7 @@ package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.client.animation.MachineVisualRenderer;
+import com.magneticraft2.client.animation.AnimatedBeltLoopRenderer;
 import com.magneticraft2.client.animation.AnimatedComponentRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -91,36 +93,54 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_side_lower_mount");
     private static final ResourceLocation PULLEY =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
-    // Weak keys avoid retaining unloaded multiblocks. The value keeps a
-    // continuous unwrapped texture phase while Gear V2 reports 0..360.
-    private final Map<BronzeStampMillBlockEntity, BeltTravel> beltTravel =
+    // Weak keys avoid retaining unloaded machines. One phase tracker per
+    // typed physical input keeps belt UVs continuous across 0/360 wraps.
+    // Resource reload changes the animation definition identity, resetting
+    // the tracked phase rather than mixing old and new pack contracts.
+    private final Map<BronzeStampMillBlockEntity, BeltVisualState> beltTravel =
             new WeakHashMap<>();
     private final BronzeStampMillOreVisuals oreVisuals =
             new BronzeStampMillOreVisuals();
 
+    private static final class BeltVisualState {
+        private AnimationDefinition lastScene;
+        private final Map<String, BeltTravel> drives = new HashMap<>();
+
+        void scene(AnimationDefinition scene) {
+            if (lastScene != scene) {
+                lastScene = scene;
+                drives.clear();
+            }
+        }
+
+        double phase(String input, float visualAngle) {
+            return drives.computeIfAbsent(input, ignored -> new BeltTravel())
+                    .sampleDegrees(visualAngle);
+        }
+    }
+
     private static final class BeltTravel {
         private boolean initialized;
         private float previousAngle;
-        private double travel;
+        private double cumulativeDegrees;
 
-        private double sample(float driveAngle) {
+        private double sampleDegrees(float angle) {
             if (!initialized) {
                 initialized = true;
-                previousAngle = driveAngle;
-                travel = BronzeStampMillBeltRenderer.distanceForDegrees(driveAngle);
+                previousAngle = angle;
+                cumulativeDegrees = angle;
             } else {
-                float delta = (driveAngle - previousAngle) % 360F;
+                float delta = (angle - previousAngle) % 360F;
                 if (delta > 180F) delta -= 360F;
                 else if (delta < -180F) delta += 360F;
-                previousAngle = driveAngle;
-                // Uses the exact SAME angle as both drums. Signed deltas
-                // move the +Z flight down for positive X, and reverse
-                // immediately if Gear V2 reverses direction.
-                travel += BronzeStampMillBeltRenderer.distanceForDegrees(delta);
+                previousAngle = angle;
+                // Signed, unwrapped DOUBLE shaft phase. The JSON belt's
+                // own driving radius turns this into surface distance;
+                // no additional clock and no cumulative float precision
+                // loss when a world runs for many hours.
+                cumulativeDegrees += delta;
             }
-            // Pattern repeats every block. Bounds never grow over long plays.
-            travel %= 1.0D;
-            return travel;
+            return cumulativeDegrees;
         }
     }
 
@@ -272,12 +292,52 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
 
         }
 
-        // The leather path travels continuously with the real shaft phase.
-        // Its repeat UVs, topology and worn texture remain Java-specialized.
-        BronzeStampMillBeltRenderer.render(
-                pose, buffers, light,
-                beltTravel.computeIfAbsent(mill, unused -> new BeltTravel())
-                        .sample(driveAngle));
+        // Open belt loops now use the same JSON scene and real shaft inputs.
+        // Paths are built by BeltPath on pack reload, not during rendering.
+        // Old 18-part packs without belt_loops keep their original leather
+        // renderer, including its UV tiling, phase and no-stretch behavior.
+        AnimationFrame physicalFrame = new AnimationFrame(
+                Map.of("mechanical_input", inputAngle,
+                        "output_shaft", driveAngle),
+                EnumSet.of(mill.isProcessing()
+                        ? AnimationDefinition.State.RUNNING
+                        : AnimationDefinition.State.STOPPED),
+                Map.of("stamp_mill.wear_stage",
+                        Math.max(0, Math.min(5, mill.getPartWearStage()))));
+        AnimationDefinition beltScene = drawn == null ? null : drawn.definition();
+        BeltVisualState driveState = beltTravel.computeIfAbsent(
+                mill, ignored -> new BeltVisualState());
+        driveState.scene(beltScene);
+        Map<String, Float> inputAngles = new HashMap<>();
+        boolean useJsonBelt = beltScene != null && !beltScene.beltLoops().isEmpty();
+        if (useJsonBelt) {
+            // Validate every loop BEFORE emitting any belt vertices.
+            for (AnimationDefinition.BeltLoop loop : beltScene.beltLoops().values()) {
+                Float angle = MachineVisualRenderer.physicalAngle(
+                        ANIMATION, beltScene, loop.input(), physicalFrame);
+                if (angle == null || !Float.isFinite(angle)) {
+                    useJsonBelt = false;
+                    break;
+                }
+                inputAngles.put(loop.input(), angle);
+            }
+        }
+        if (useJsonBelt) {
+            Map<String, Double> unwrapped = new HashMap<>();
+            for (Map.Entry<String, AnimationDefinition.BeltLoop> entry
+                    : beltScene.beltLoops().entrySet()) {
+                AnimationDefinition.BeltLoop loop = entry.getValue();
+                double phase = unwrapped.computeIfAbsent(loop.input(),
+                        name -> driveState.phase(name, inputAngles.get(name)));
+                AnimatedBeltLoopRenderer.render(loop, phase, pose, buffers, light);
+            }
+        } else {
+            // Full, byte-for-byte-compatible legacy belt surface geometry
+            // and texture repeat when an old pack omits belt definitions.
+            double phase = driveState.phase("output_phase", driveAngle);
+            BronzeStampMillBeltRenderer.render(pose, buffers, light,
+                    BronzeStampMillBeltRenderer.distanceForDegrees(phase) % 1.0D);
+        }
 
 
         if (drawn == null || !allHeads) {
