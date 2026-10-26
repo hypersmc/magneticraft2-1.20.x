@@ -68,6 +68,22 @@ public final class MachineVisualRenderer {
             }
             integers.put(binding.getKey(), value);
         }
+        // Validate the whole declared contract before drawing any geometry.
+        // In particular, an unknown integer wear selector must not silently
+        // switch a damaged mesh back to its fresh base model.
+        for (AnimationDefinition.Input input : definition.inputs()) {
+            if (!angles.containsKey(input.module())) {
+                MachineVisualResourceLoader.warnUnavailableInput(machineId, input.module());
+                return null;
+            }
+        }
+        for (AnimationDefinition.Component component : definition.components()) {
+            AnimationDefinition.ModelVariants variants = component.modelVariants();
+            if (variants != null && !integers.containsKey(variants.source())) {
+                MachineVisualResourceLoader.warnUnavailableInput(machineId, variants.source());
+                return null;
+            }
+        }
         // Preserve exactly the real, synchronized machine states. The visual
         // pack has no means of changing running, overload, or wear authority.
         AnimationFrame rebound = new AnimationFrame(angles, physicalInputs.states(), integers);
