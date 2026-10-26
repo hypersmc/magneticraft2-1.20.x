@@ -89,7 +89,11 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
                 }
                 AnimationDefinition definition = AnimationDefinition.parse(source);
                 for (AnimationDefinition.Component component : definition.components()) {
-                    event.register(component.model());
+                    // A transform-only hierarchy node intentionally has no
+                    // model to bake; its children provide the geometry.
+                    if (component.model() != null) {
+                        event.register(component.model());
+                    }
                 }
             } catch (IOException | JsonParseException | IllegalArgumentException ex) {
                 LOGGER.warn("Cannot register animated models from {}: {}",
