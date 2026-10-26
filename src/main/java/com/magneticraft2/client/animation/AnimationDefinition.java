@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.magneticraft2.common.systems.GEAR.BeltPath;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
@@ -61,6 +62,28 @@ public final class AnimationDefinition {
                               String follower, String slider) {}
     public record MechanismRole(String mechanismId, SliderCrankRole role) {}
     public record Input(String source, String module) {}
+
+    /**
+     * An immutable, precomputed loop of UV-tiled belt geometry. JSON controls
+     * geometry and appearance; the machine supplies a real, cumulative signed
+     * shaft angle on its client renderer. Path segments are built on reload,
+     * never once per render frame.
+     *
+     * centerRadius specifies the ACTUAL rendered belt centerline radius.
+     * BeltPath internally adds BELT_CLEARANCE to its radius arguments, so
+     * we subtract that constant when generating the visual-only path.
+     */
+    public record BeltLoop(String input, ResourceLocation texture,
+                           Vec3 startCenter, Vec3 endCenter, Direction.Axis axis,
+                           double startRadius, double endRadius,
+                           double driveRadius, double halfWidth,
+                           double halfThickness, double textureRepeat,
+                           double speedScale, double textureOffset,
+                           List<BeltPath.Segment> segments) {
+        public BeltLoop {
+            segments = List.copyOf(segments);
+        }
+    }
     /** Rotation phase is added AFTER the input angle has been scaled. */
     public record RotationTrack(String target, String input, Direction.Axis axis,
                                 double scale, double phaseDegrees, Condition when) {}
@@ -95,6 +118,7 @@ public final class AnimationDefinition {
     private final List<String> roots;
     private final Map<String, SliderCrank> sliderCranks;
     private final Map<String, MechanismRole> mechanismRoles;
+    private final Map<String, BeltLoop> beltLoops;
 
     private AnimationDefinition(Map<String, Component> components,
                                 Map<String, Input> inputs,
@@ -102,7 +126,8 @@ public final class AnimationDefinition {
                                 Map<String, Map<Condition, TranslationTrack>> translations,
                                 Map<String, List<String>> children, List<String> roots,
                                 Map<String, SliderCrank> sliderCranks,
-                                Map<String, MechanismRole> mechanismRoles) {
+                                Map<String, MechanismRole> mechanismRoles,
+                                Map<String, BeltLoop> beltLoops) {
         this.components = Map.copyOf(components);
         this.inputs = Map.copyOf(inputs);
         this.rotations = Map.copyOf(rotations);
@@ -111,6 +136,7 @@ public final class AnimationDefinition {
         this.roots = List.copyOf(roots);
         this.sliderCranks = Map.copyOf(sliderCranks);
         this.mechanismRoles = Map.copyOf(mechanismRoles);
+        this.beltLoops = Map.copyOf(beltLoops);
     }
 
     public Component component(String name) {
@@ -148,6 +174,11 @@ public final class AnimationDefinition {
 
     public MechanismRole mechanismRole(String componentName) {
         return mechanismRoles.get(componentName);
+    }
+
+    /** Named, immutable loop definitions used by any opted-in machine renderer. */
+    public Map<String, BeltLoop> beltLoops() {
+        return beltLoops;
     }
 
     /**
@@ -419,6 +450,87 @@ public final class AnimationDefinition {
                 }
             }
         }
+        // Continuous loop geometry uses the shared physical BeltPath.
+        // These optional visual loops do NOT change the server's belt/collision
+        // geometry or create Gear V2 connections.
+        Map<String, BeltLoop> beltLoops = new HashMap<>();
+        if (root.has("belt_loops")) {
+            JsonObject loops = asObject(root.get("belt_loops"), "belt_loops");
+            if (loops.size() > 8) {
+                throw new JsonParseException("belt_loops cannot exceed 8 loops");
+            }
+            for (Map.Entry<String, JsonElement> entry : loops.entrySet()) {
+                String name = identifier(entry.getKey(), "belt loop");
+                JsonObject data = asObject(entry.getValue(), "belt loop " + name);
+                if (!"open_belt".equals(string(data, "type", name))) {
+                    throw new JsonParseException("Unsupported belt type in " + name);
+                }
+                String inputName = identifier(string(data, "input", name), "belt input");
+                Input input = inputs.get(inputName);
+                if (input == null || !"mechanical.visual_angle_degrees".equals(input.source())) {
+                    throw new JsonParseException(name
+                            + " requires a real visual-angle input from the machine");
+                }
+                String textureId = string(data, "texture", name);
+                ResourceLocation texture = ResourceLocation.tryParse(textureId);
+                if (texture == null
+                        || !texture.getPath().startsWith("textures/")
+                        || !texture.getPath().endsWith(".png")) {
+                    throw new JsonParseException(name
+                            + " requires a full texture resource location under textures/*.png");
+                }
+                Vec3 start = vector(required(data, "start_center", name),
+                        name + ".start_center");
+                Vec3 end = vector(required(data, "end_center", name),
+                        name + ".end_center");
+                AxisSpec axis = axis(required(data, "rotation_axis", name));
+                if (axis.sign() != 1.0D) {
+                    throw new JsonParseException(name + " needs a positive principal axis");
+                }
+                double r1 = finiteNumber(required(data, "start_radius", name),
+                        name + ".start_radius");
+                double r2 = finiteNumber(required(data, "end_radius", name),
+                        name + ".end_radius");
+                double driveRadius = data.has("drive_radius")
+                        ? finiteNumber(data.get("drive_radius"), name + ".drive_radius") : r1;
+                double halfWidth = finiteNumber(required(data, "half_width", name),
+                        name + ".half_width");
+                double halfThickness = finiteNumber(required(data, "half_thickness", name),
+                        name + ".half_thickness");
+                double repeat = finiteNumber(required(data, "texture_repeat", name),
+                        name + ".texture_repeat");
+                double speed = data.has("speed_scale")
+                        ? finiteNumber(data.get("speed_scale"), name + ".speed_scale") : 1.0D;
+                double textureOffset = data.has("texture_offset")
+                        ? finiteNumber(data.get("texture_offset"), name + ".texture_offset") : 0.0D;
+                double centerDist = start.distanceTo(end);
+                if (r1 <= BeltPath.BELT_CLEARANCE || r2 <= BeltPath.BELT_CLEARANCE
+                        || driveRadius <= 0D || r1 > 4D || r2 > 4D
+                        || driveRadius > 4D || halfWidth <= 0D || halfWidth > 0.5D
+                        || halfThickness <= 0D || halfThickness > 0.5D
+                        || repeat < 0.0625D || repeat > 4D
+                        || Math.abs(speed) > 16D || Math.abs(textureOffset) > 64D
+                        || centerDist < 0.125D || centerDist > 16D
+                        || centerDist <= Math.abs(r1 - r2)) {
+                    throw new JsonParseException(name
+                            + " has invalid radii, thickness, tile repeat, travel or span");
+                }
+                // Explicitly reject geometry that collides with the pulley
+                // axis and causes BeltPath to return no tangent segments.
+                List<BeltPath.Segment> segments = BeltPath.createVisualSegments(
+                        start, end, axis.axis(),
+                        r1 - BeltPath.BELT_CLEARANCE,
+                        r2 - BeltPath.BELT_CLEARANCE);
+                if (segments.isEmpty()) {
+                    throw new JsonParseException(name
+                            + " could not produce a valid BeltPath loop");
+                }
+                beltLoops.put(name, new BeltLoop(inputName, texture, start, end,
+                        axis.axis(), r1, r2, driveRadius, halfWidth,
+                        halfThickness, repeat, speed, textureOffset, segments));
+            }
+        }
+
         // Mechanisms bind rigid components to a single typed input. Only the
         // X-axis crank and Z-axis slider are currently supported; other axes
         // must get an explicit tested solver rather than guessed transforms.
@@ -493,7 +605,7 @@ public final class AnimationDefinition {
             frozenTranslations.put(entry.getKey(), Map.copyOf(entry.getValue()));
         }
         return new AnimationDefinition(components, inputs, frozen, frozenTranslations,
-                children, roots, mechanisms, mechanismRoles);
+                children, roots, mechanisms, mechanismRoles, beltLoops);
     }
 
     private static int verifyTreeDepth(String name, Map<String, List<String>> children, int depth) {
