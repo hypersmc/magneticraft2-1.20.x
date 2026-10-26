@@ -1,10 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.stone;
 
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
-import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
-import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -71,7 +70,7 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
         // mechanical input phase: +X horizontal axle, -Y grinding rotor.
         // Keep the legacy models if the pack is missing the expected named
         // components or a required baked model/driver fails validation.
-        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimationDefinition rendered = null;
         if (definition != null
                 && definition.component("input_axle") != null
@@ -83,7 +82,7 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
             if (blockEntity.isMechanicalInputOverloaded()) {
                 states.add(AnimationDefinition.State.OVERLOADED);
             }
-            rendered = AnimatedComponentRenderer.render(
+            rendered = MachineVisualRenderer.render(
                     ANIMATION,
                     new AnimationFrame(Map.of("mechanical_input", inputRotation), states),
                     blockEntity.getBlockState(),
