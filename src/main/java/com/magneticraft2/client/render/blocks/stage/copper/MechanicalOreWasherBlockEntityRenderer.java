@@ -76,7 +76,10 @@ public class MechanicalOreWasherBlockEntityRenderer
                     DRIVEN_PULLEY_RADIUS
             );
 
-    private final Map<ResourceLocation, List<BakedQuad>> quadCache =
+    // Renderer instances survive F3+T. Keep model identity with the cached
+    // quads so a newly baked resource-pack model invalidates the old buffer.
+    private record CachedQuads(BakedModel model, List<BakedQuad> quads) {}
+    private final Map<ResourceLocation, CachedQuads> quadCache =
             new HashMap<>();
     private final Map<Long, Long> processingEffectTicks =
             new HashMap<>();
@@ -762,28 +765,19 @@ public class MechanicalOreWasherBlockEntityRenderer
             MultiBufferSource buffer,
             int packedLight,
             int packedOverlay) {
-        List<BakedQuad> quads =
-                quadCache.computeIfAbsent(
-                        modelLocation,
-                        location -> {
-                            BakedModel model =
-                                    Minecraft.getInstance()
-                                            .getModelManager()
-                                            .getModel(location);
-
-                            if (model == null) {
-                                return List.of();
-                            }
-
-                            return List.copyOf(
-                                    model.getQuads(
-                                            (BlockState) null,
-                                            (Direction) null,
-                                            RandomSource.create(0L)
-                                    )
-                            );
-                        }
-                );
+        BakedModel model = Minecraft.getInstance()
+                .getModelManager().getModel(modelLocation);
+        CachedQuads cached = quadCache.get(modelLocation);
+        if (cached == null || cached.model() != model) {
+            // F3+T changes baked model identities; do not retain the old
+            // geometry or old texture-atlas sprite references after reload.
+            List<BakedQuad> baked = model == null ? List.of()
+                    : List.copyOf(model.getQuads((BlockState) null,
+                            (Direction) null, RandomSource.create(0L)));
+            cached = new CachedQuads(model, baked);
+            quadCache.put(modelLocation, cached);
+        }
+        List<BakedQuad> quads = cached.quads();
 
         if (quads.isEmpty()) {
             return;
