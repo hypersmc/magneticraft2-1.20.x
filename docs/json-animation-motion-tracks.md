@@ -127,6 +127,14 @@ visualization reads it. When JSON fails, that path uses the original
 `BronzeStampMillBlockEntity.getHammerLift` formula instead. This keeps
 dust/tremor synchronized if a resource pack shifts a cam/hammer pair.
 
+**Backward compatibility:** The previous `json-animation-multiblock-pack`
+example contains only the old **18** Stamp Mill powertrain components.
+That pack continues to render its customized JSON drivetrain, while the
+original Java renderer supplies the three complete cam/hammer/plate
+stations and their ore FX. A new **27**-component scene instead renders
+the complete mechanism through JSON. A partially defined head set is
+rejected *before drawing*, to avoid duplicated or unconnected heads.
+
 The module's structural V2 meshes, Gear V2 behavior, leather belt
 UV-tiling renderer, inventory ports, recipe progress, collision,
 rotation sign and ore positions are otherwise unchanged.
