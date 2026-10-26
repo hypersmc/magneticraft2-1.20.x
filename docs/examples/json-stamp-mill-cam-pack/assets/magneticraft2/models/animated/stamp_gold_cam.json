@@ -1,0 +1,8 @@
+{
+  "parent": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+  "textures": {
+    "bronze": "minecraft:block/gold_block",
+    "metal": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}
