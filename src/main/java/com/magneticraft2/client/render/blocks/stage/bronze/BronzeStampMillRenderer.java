@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,15 +34,18 @@ import java.util.WeakHashMap;
 public final class BronzeStampMillRenderer implements BlockEntityRenderer<BronzeStampMillBlockEntity> {
     private static final ResourceLocation ANIMATION =
             new ResourceLocation("magneticraft2", "bronze_stamp_mill");
-    // Require the entire drivetrain and three contact-aligned stamp stations.
-    // A partial pack must not draw half a linkage and double-render the rest.
-    private static final Set<String> SCENE_PARTS = Set.of(
+    // Preserve v1 resource packs containing only the original 18 drivetrain
+    // parts. Those packs still render the whole drive in JSON and fall back
+    // to Java for ALL stamp heads. Never combine a partial JSON stamp head
+    // with a full legacy stamp head, which would duplicate the mechanism.
+    private static final Set<String> DRIVE_PARTS = Set.of(
             "gearbox_frame", "cross_bearing", "side_lower_mount",
             "input_coupler", "input_shaft", "input_spindle", "input_bevel",
             "output_bevel", "lower_spindle", "lower_drive_shaft",
             "lower_shaft_tip", "lower_pulley", "upper_pulley",
             "upper_shaft_start", "upper_shaft_zero",
-            "upper_shaft_middle", "upper_shaft_end", "upper_shaft_tip",
+            "upper_shaft_middle", "upper_shaft_end", "upper_shaft_tip");
+    private static final Set<String> HEAD_PARTS = Set.of(
             "plate_left", "plate_middle", "plate_right",
             "cam_left", "cam_middle", "cam_right",
             "hammer_left", "hammer_middle", "hammer_right");
@@ -187,7 +191,13 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Belt UVs and in-world ore rendering remain specialized Java paths.
         AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimatedComponentRenderer.SceneResult drawn = null;
-        if (definition != null && definition.componentNames().containsAll(SCENE_PARTS)) {
+        boolean allHeads = definition != null
+                && definition.componentNames().containsAll(HEAD_PARTS);
+        boolean noHeads = definition != null
+                && Collections.disjoint(definition.componentNames(), HEAD_PARTS);
+        if (definition != null
+                && definition.componentNames().containsAll(DRIVE_PARTS)
+                && (allHeads || noHeads)) {
             EnumSet<AnimationDefinition.State> states = EnumSet.of(
                     mill.isProcessing()
                             ? AnimationDefinition.State.RUNNING
@@ -270,7 +280,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                         .sample(driveAngle));
 
 
-        if (drawn == null) {
+        if (drawn == null || !allHeads) {
             // Original Java path for the three cams/hammer heads and wear
             // plates. This fallback is used together with the old drivetrain
             // whenever the selected JSON scene or required model fails.
@@ -306,7 +316,10 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Port-aligned feed, progressive crushing and two real output
         // chutes. The existing functional item ports continue owning
         // all inventory state; no client-side item transport is invented.
-        oreVisuals.render(mill,partial,pose,buffers,light,overlay,drawn);
+        // An older drivetrain-only pack still uses Java hammer travel for
+        // ore/dust effects; new full scenes share the sampled JSON travel.
+        oreVisuals.render(mill,partial,pose,buffers,light,overlay,
+                allHeads ? drawn : null);
         pose.popPose();
     }
 }
