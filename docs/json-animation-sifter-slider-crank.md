@@ -4,9 +4,12 @@
 `feature/json-driven-animation` (animation PR #12), which is based on
 `feature/bronze-age-foundry` (Bronze PR #11).
 
-**Status:** Java and asset changes committed; source inspection and numerical
-fixtures completed. **Not compiled or visually tested in Minecraft in this
-environment**. This child PR must remain draft until tested in-game.
+**Status:** Merged into animation PR #12. The developer has visually confirmed
+that the Sifter's test-pack crank/rod mechanism cycles in Minecraft and works
+in all four compass directions. The known wooden-frame clipping is accepted
+and deferred. The numerical fixture passed, but the fresh full Gradle build,
+malformed-pack fallbacks and performance checks are not independently verified.
+
 
 ## Why this is a different milestone
 
