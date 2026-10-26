@@ -57,6 +57,13 @@ public final class AnimationDefinition {
 
     public static AnimationDefinition parse(JsonElement element) {
         JsonObject root = asObject(element, "animation root");
+        // A schema identifier disambiguates this format from other mods'
+        // animation JSON (notably GeckoLib's format_version files). Older
+        // resource packs without it remain compatible.
+        if (root.has("format") && !"magneticraft2:visual_animation".equals(
+                string(root, "format", "animation root"))) {
+            throw new JsonParseException("Unsupported animation format: " + root.get("format"));
+        }
         JsonElement version = required(root, "format_version", "animation root");
         if (!version.isJsonPrimitive() || !version.getAsJsonPrimitive().isNumber()
                 || version.getAsDouble() != 1.0D) {
