@@ -1,7 +1,7 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
-import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
@@ -95,7 +95,7 @@ public final class BronzeMechanicalLatheRenderer
         }
         AnimationFrame frame = new AnimationFrame(
                 Map.of("mechanical_input", inputAngle, "spindle", angle), states);
-        AnimationDefinition drawn = AnimatedComponentRenderer.render(
+        AnimationDefinition drawn = MachineVisualRenderer.render(
                 ANIMATION, frame, state, pose, source, light, overlay);
 
         // Backward compatibility: the already-shipped single-rotor resource
