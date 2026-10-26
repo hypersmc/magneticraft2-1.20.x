@@ -86,5 +86,23 @@ for(let i=0;i<3;i++) {
  }
 }
 assert.equal(poses,3*inputAngleSamples.length*4);
+
+// Compatibility with the original four-machine gold resource pack (PR #12),
+// which predates cam/hammer scene components. Old 18-part scenes must render
+// their custom drivetrain without duplicating or losing the Java stamp heads.
+const oldPack=json("../../docs/examples/json-animation-multiblock-pack/assets/magneticraft2/animations/bronze_stamp_mill.json");
+const driveNames=Object.keys(oldPack.components);
+const headNames=stationNames.flatMap(name=>["cam_","hammer_","plate_"].map(p=>p+name));
+const containsAll=(scene,names)=>names.every(n=>Object.hasOwn(scene.components,n));
+const containsAny=(scene,names)=>names.some(n=>Object.hasOwn(scene.components,n));
+assert.equal(driveNames.length,18,"Older Stamp Mill override must still have 18 drivetrain parts");
+assert.ok(containsAll(scene,driveNames),"New scene preserves old drivetrain stable IDs");
+assert.ok(!containsAny(oldPack,headNames),"Old pack did not define stamp heads");
+assert.ok(containsAll(scene,headNames),"New scene defines every stamp head");
+const partial=structuredClone(oldPack);
+partial.components.cam_middle=scene.components.cam_middle;
+assert.ok(containsAny(partial,headNames) && !containsAll(partial,headNames),
+    "Partial-head packs must be rejected to avoid duplicate cams");
+
 console.log(`Stamp Mill JSON motion: 3 cams + 3 hammers; ${poses} `+
-  "facing/angle poses match original lift and 120-degree phase offsets.");
+  "facing/angle poses, 18-part pack compatibility, and partial-head rejection checked.");
