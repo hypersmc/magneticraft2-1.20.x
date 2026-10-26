@@ -1,83 +1,127 @@
-# JSON animation runtime — Java milestone 1
+# JSON animation runtime — Java milestone 1: resource-pack model overrides
 
 **Base branch:** `feature/bronze-age-foundry` (Bronze PR #11)
 **Feature branch:** `feature/json-driven-animation`
-**Status:** first implementation; requires Gradle build and in-game verification.
+**Status:** source implementation; `./gradlew build` and Minecraft acceptance tests outstanding.
 
-## Scope
+## Goal
 
-The existing Bronze Mechanical Lathe's input rotor is the pilot. Its
-`getInputRotation(partial)` still obtains the mechanically accurate interpolated
-Gear V2 angle, including network stop and overload behavior. The renderer now
-evaluates a typed rotation track from
-`assets/magneticraft2/animations/bronze_mechanical_lathe.json`.
+Prove that a modder can replace **both the animated model and its motion**
+using a normal client resource pack, with no change to Java or Gear V2.
 
-The first definition describes one component, one module-backed input,
-and one driven rotation track. A reload listener parses and validates client
-resource-pack JSON once per reload. Definitions are published atomically as
-immutable maps. Missing/invalid definitions leave the original Java input-rotor
-transform in place. Other Lathe parts, Ore Washer, Sifter, belt texture movement,
-item rendering, models, server mechanics and Voxel V2 are unchanged.
+The Bronze Mechanical Lathe's **input rotor** is the first opt-in component.
+Other Lathe visuals, Washer, Sifter, the Studio, multiblock construction,
+mechanical load calculations, and Voxel V2 do not change.
 
-Resource-pack override location:
-`assets/<namespace>/animations/<name>.json`
-(for this pilot, namespace and name must remain
-`magneticraft2:bronze_mechanical_lathe`).
+## Contract and ownership
 
-## Animation v1 pilot contract
+- The Java machine continues to supply the true interpolated mechanical angle
+  from `BronzeMechanicalLatheBlockEntity.getInputRotation(partial)`.
+- `assets/magneticraft2/animations/bronze_mechanical_lathe.json`
+  describes named model components and their typed animation tracks.
+- The **component name** `input_rotor` is the stable interface between
+  the Java machine and the resource pack. The model resource location in the
+  definition is **not** hardcoded in the generic renderer.
+- `model_offset` and `pivot` are **controller-relative block coordinates**,
+  in the canonical south-facing frame. The default rotor is at
+  `[0, 0, -2]` (its input module sits two cells behind the controller), and
+  rotates about the model-local point `[0.5, 0.5, 0.5]`.
+- The machine's parent transform rotates all content for NORTH/WEST/EAST
+  exactly once, matching the existing V2 renderer conventions.
+- The initial typed `mechanical.visual_angle_degrees` input is sampled in
+  Java. No arbitrary JSON scripting, extra clocks, or authority transfer.
+- The generic renderer resolves `component.model` through `ModelManager`,
+  and uses the component's `render_layer` (`solid`, `cutout`, or
+  `translucent`; default `cutout`). The renderer draws it after applying
+  `T(model_offset) T(pivot) R(axis, angle * scale) T(-pivot)`.
+- If the animation definition, required input, track or baked model is
+  missing/invalid, the old hardcoded Lathe input rotor render path is used.
 
-- `format_version: 1` and `coordinate_system: { units: "blocks", origin:
-  "controller", reference_facing: "south" }`.
-- `components.<name>`: baked `model` resource location, `model_offset`
-  and `pivot`, each a three-number vector in block units.
-- `inputs.<name>`: `source: "mechanical.visual_angle_degrees"` and
-  named `module: "mechanical_input"`.
-- `animations.<name>`: `type: "driven"`; `tracks` contain `target`,
-  `property: "rotation"`, `input`, `axis` (one principal axis)
-  and `scale`.
-- Axes are in the model's **canonical south-facing local frame**, before the
-  machine's parent facing transform; positive degrees follow Minecraft's
-  PoseStack right-handed rotation. The client is not an authority for
-  mechanical simulation.
-- The initial evaluator accepts a single matching rotation for a component,
-  uses typed data, and does not evaluate expressions or user-supplied code.
-  Future animation types require explicit new parser/evaluator support.
-- Model IDs referenced by animation JSON must already be registered for
-  baking via Forge's `ModelEvent.RegisterAdditional`. This pilot reuses the
-  already registered Lathe input rotor; hot-loading a previously unknown
-  model is not supported.
+## Model discovery and hot reload
 
-## Manual verification
+`ModelEvent.RegisterAdditional` loads the animation definitions from the
+**current resource pack stack** and registers every validated component
+`model` ID **before Forge bakes models**. This is separate from the normal
+JSON reload listener, so the first bake and F3+T do not depend on a
+*previous* generation of compiled definitions. A pack may reference
+`magneticraft2:animated/...`, `othermod:custom/...`, or another valid
+resource location provided by the enabled pack stack.
 
-1. On a checkout of this feature branch, run `./gradlew build`. Do **not**
-   declare it compiling until the complete build passes.
-2. Load an existing world and form the Bronze Mechanical Lathe in all four
-   orientations. Verify its input rotor and outer gearbox have the same
-   orientation, position and rotation as before.
-3. Apply an actual Gear V2 drive. Compare rotor angle with other connected
-   machines. Stop, overload, reverse, reconnect and vary speed. The rotor
-   must not free-run from a made-up client animation timer.
-4. Apply a resource pack with `scale: -1` in the pilot definition, then use
-   F3+T. Only the pilot input rotor's direction should invert.
-5. Apply a pack with an invalid `format_version`, an unknown source,
-   missing component or bad axis. The log should identify the rejected JSON;
-   the old Java rotor animation should still be visible.
-6. Remove the pack and reload. Confirm the original direction returns,
-   including when standing near chunk boundaries or after world rejoin.
-7. Compare FPS and render bounds with the base Bronze PR. Confirm no
-   magenta missing-model textures or texture distortion.
-8. Verify no machine logic, structure, static V2 geometry or voxel collision
-   changes and that the Copper Washer/Sifter continue to render unchanged.
+The client reload listener validates and publishes an immutable definition
+map on reload. Missing baked-model warnings are limited to once per model
+per reload; the renderer never loads or parses JSON each frame.
 
-## Limitations
+**Important:** An external pack must include the actual model file at
+`assets/<model_namespace>/models/<model_path>.json`. A JSON animation
+reference does not synthesize geometry. The animation asset itself stays
+client-side; gameplay and collision definitions are server/datapack concerns.
 
-This is intentionally not a complete scene graph, procedural geometry system,
-keyframe editor, or generalized constraint solver. The first renderer call
-site passes the actual angle and a known module name. Definition lookup and
-immutable track access should allocate no per-frame JSON structures. The
-resource loader compiles only on reload. Studio's `native-linux` branch is
-not changed here.
+## Working example pack
 
-**Validation performed:** inspected source and created the GitHub branch and
-commits. `./gradlew build` and Minecraft gameplay tests were **not run** in
-the current environment (repository download and dependencies unavailable).
+A test pack is checked in under
+`docs/examples/json-animation-lathe-pack/`. To try it, copy that **directory**
+to Minecraft's `resourcepacks` folder (or zip its contents with
+`pack.mcmeta` at the zip root), enable it in Resource Packs and press F3+T.
+
+The pack supplies:
+- `assets/magneticraft2/animations/bronze_mechanical_lathe.json`:
+  keeps `input_rotor` and the real Gear V2 input, but selects
+  `magneticraft2:animated/lathe_gold_input_rotor`, and sets `scale: -1`.
+- `assets/magneticraft2/models/animated/lathe_gold_input_rotor.json`:
+  inherits the original rotor geometry but switches the metal textures
+  to gold for a visually obvious change.
+- `pack.mcmeta` for Minecraft 1.20.1 (resource pack format 15).
+
+**Why `models/animated`?** The mod's old `Clientsetup` only scans
+`models/multiblock` in addition to explicitly registered model IDs.
+This example deliberately places its NEW model outside that scanned folder
+to verify that the JSON-driven registration works.
+
+## Manual validation matrix
+
+1. Check out the feature branch and run `./gradlew build`. Do not claim
+   compilation until it passes.
+2. With **no test pack**, form the Bronze Mechanical Lathe facing SOUTH,
+   NORTH, WEST and EAST. Verify the input rotor and its gearbox connection,
+   angle, pivots and textures are unchanged compared with Bronze PR #11.
+3. Power it from an actual Gear V2 drive. Stop, overload, reverse, and alter
+   RPM; inspect the shaft and output for consistent real mechanical phase.
+4. Enable the provided test pack: the input rotor should use the **gold**
+   model and rotate with reversed sign, without altering the output rotor,
+   frame, machine logic, or other instances in the world.
+5. Remove the pack and press F3+T; the original rotor model and direction
+   should return. Re-enable it and press F3+T again. Verify there are no
+   missing-model cubes or stale baked models after the second reload.
+6. Override `model_offset` and `pivot` in a copy of the test pack; confirm
+   its model physically moves and the pivot changes without Java changes.
+7. Override the pack's animation model ID with a nonexistent
+   `magneticraft2:animated/not_present` path, reload, and inspect logs.
+   Only one missing-model warning per reload is expected. The **original**
+   Java rotor should render, not a pink-and-black missing-model cube.
+8. Corrupt `format_version`, `axis`, `render_layer` or `input` in a
+   separate copy, reload and confirm an actionable error and the same
+   Java fallback.
+9. Verify the model/animation across chunk boundaries, rejoining the world,
+   with two differently oriented Lathes simultaneously, and around a
+   vanilla resource pack reload.
+10. Compare FPS and render bounds with PR #11. Verify the Copper Washer,
+    Sifter, Bronze Stamp Mill, classifier, static V2 geometry, saved voxel
+    collision and recipe processing are unchanged.
+
+## Current limits / next milestones
+
+This pilot covers one connected input rotor, one typed rotation track,
+and a JSON-specified baked model. It does **not** migrate the entire Lathe
+or support keyframes, model hierarchies, slider-crank constraints,
+independently animated meshes, or generic binding of *new* machines to
+animation definitions. A new machine still needs a renderer to opt in
+to a stable component ID; the per-part geometry is no longer hardcoded.
+
+Next: verify this resource-pack contract in Forge, then widen to a
+scene-graph/component registry and integrate the Studio's `native-linux`
+exporter using the same stable component names and coordinate system.
+
+**Validation performed in this environment:** connector-side source and
+resource inspection and GitHub commits. The full repository and ForgeGradle
+dependencies are inaccessible from the execution container; `./gradlew build`
+and live Minecraft rendering have **not** been run.
