@@ -1,0 +1,11 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:rotary_ore_classifier",
+  "angle_channels": {
+    "drum": "drum"
+  },
+  "integer_channels": {
+    "classifier.wear_stage": "classifier.wear_stage"
+  }
+}
