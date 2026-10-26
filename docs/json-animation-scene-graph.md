@@ -1,5 +1,12 @@
 # Magneticraft2 JSON animation scene graph (Forge 1.20.1)
 
+> **PR #12 update:** This document explains the original Lathe/Sifter scene graph.
+> The same format now also drives selected mechanical parts of the Primitive
+> Grinder, Ore Washer, Stamp Mill and Rotary Classifier. For the current
+> 12-family coverage audit, see [json-animation-multiblock-coverage.md](json-animation-multiblock-coverage.md).
+> These additional render paths have not yet received in-game verification.
+
+
 **Development:** `feature/json-driven-animation`, child of Bronze PR #11.
 **Status:** source implementation; user validated the first gold rotor and reversed
 rotation in Minecraft. The multi-part scene graph extension still needs a new
