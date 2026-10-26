@@ -2,9 +2,9 @@ package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
 import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
-import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -137,13 +137,13 @@ public class MechanicalSifterBlockEntityRenderer
                 Map.of("mechanical_input", driveAngle),
                 states,
                 Map.of("sifter.wear_stage", wearStage));
-        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         // Reject a valid but incompatible resource-pack definition BEFORE
         // emitting any quads. Otherwise it could draw unrelated geometry
         // and then also trigger the complete legacy Sifter fallback.
         AnimatedComponentRenderer.SceneResult scene =
                 definition != null && definition.sliderCranks().containsKey("sieve_drive")
-                        ? AnimatedComponentRenderer.renderScene(ANIMATION, frame, formedState,
+                        ? MachineVisualRenderer.renderScene(ANIMATION, frame, formedState,
                                 poseStack, buffer, packedLight, packedOverlay)
                         : null;
 
