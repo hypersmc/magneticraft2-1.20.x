@@ -36,9 +36,9 @@ function turn(p,axis,deg) {
     }
 }
 function world(p,yaw) {
-    const adjusted=p.map((v,i)=>v-(i===0||i===2?.5:0));
+    const adjusted=p.map((v,i)=>v-((i===0 || i===2) ? 0.5 : 0));
     const rotated=turn(adjusted,"y",yaw);
-    return rotated.map((v,i)=>v+(i===0||i===2?.5:0));
+    return rotated.map((v,i)=>v+((i===0 || i===2) ? 0.5 : 0));
 }
 const poses=Object.create(null);
 let modelChecks=0,poseChecks=0,checkedParts=0;
