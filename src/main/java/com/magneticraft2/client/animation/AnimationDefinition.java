@@ -112,6 +112,11 @@ public final class AnimationDefinition {
         return inputs.get(name);
     }
 
+    /** Typed visual inputs, checked against a real Java-supplied frame. */
+    public Collection<Input> inputs() {
+        return inputs.values();
+    }
+
     public Map<String, SliderCrank> sliderCranks() {
         return sliderCranks;
     }
