@@ -17,10 +17,24 @@ import net.minecraft.world.phys.Vec3;
 public final class DrivenRotation {
     private DrivenRotation() {}
 
+    /** Original rotation-only entry point for existing consumers. */
     public static void apply(PoseStack pose, AnimationDefinition.Component component,
                              AnimationDefinition.RotationTrack track, float angleDegrees) {
+        apply(pose, component, track, angleDegrees, null, 0F);
+    }
+
+    /**
+     * Apply the linear slide before local model rotations so a cam follower
+     * travels along its guide, not along a shaft's rotated coordinate axis.
+     */
+    public static void apply(PoseStack pose, AnimationDefinition.Component component,
+                             AnimationDefinition.RotationTrack track, float angleDegrees,
+                             AnimationDefinition.TranslationTrack translation, float translationAngle) {
         Vec3 offset = component.modelOffset();
         pose.translate(offset.x, offset.y, offset.z);
+        if (translation != null) {
+            DrivenTranslation.apply(pose, translation, translationAngle);
+        }
 
         AnimationDefinition.StaticRotation fixed = component.staticRotation();
         if (fixed != null) {
@@ -29,7 +43,7 @@ public final class DrivenRotation {
         }
         if (track != null) {
             rotateAboutPivot(pose, component.pivot(), track.axis(),
-                    (float) (angleDegrees * track.scale()));
+                    (float) (angleDegrees * track.scale() + track.phaseDegrees()));
         }
     }
 
