@@ -58,8 +58,7 @@ public final class SliderCrankSolver {
         // The rod end is constrained to the slider rail centerline. Its exact
         // closure defines the tray stroke, not an approximation or sine wave.
         double endZ = pinZ + Math.sqrt(length * length - lateral * lateral);
-        double followerZ = mechanism.center().z + length
-                + (endZ - mechanism.center().z - length);
+        double followerZ = endZ;
         double stroke = endZ - mechanism.center().z - length;
         return new Sample(crankAngle, pinY, pinZ, rodAngle, followerZ, stroke);
     }
