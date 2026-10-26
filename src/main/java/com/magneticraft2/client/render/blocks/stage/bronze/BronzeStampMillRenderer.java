@@ -2,6 +2,7 @@ package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.client.animation.MachineVisualRenderer;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
@@ -185,7 +186,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // use reusable cosine linear tracks with the ORIGINAL 0.32-block lift.
         // Belt UVs and in-world ore rendering remain specialized Java paths.
         AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
-        AnimationDefinition drawn = null;
+        AnimatedComponentRenderer.SceneResult drawn = null;
         if (definition != null && definition.componentNames().containsAll(SCENE_PARTS)) {
             EnumSet<AnimationDefinition.State> states = EnumSet.of(
                     mill.isProcessing()
@@ -194,7 +195,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             if (mill.needsMaintenance()) {
                 states.add(AnimationDefinition.State.WORN);
             }
-            drawn = MachineVisualRenderer.render(ANIMATION,
+            drawn = MachineVisualRenderer.renderScene(ANIMATION,
                     new AnimationFrame(Map.of(
                             "mechanical_input", inputAngle,
                             "output_shaft", driveAngle), states,
@@ -305,7 +306,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Port-aligned feed, progressive crushing and two real output
         // chutes. The existing functional item ports continue owning
         // all inventory state; no client-side item transport is invented.
-        oreVisuals.render(mill,partial,pose,buffers,light,overlay);
+        oreVisuals.render(mill,partial,pose,buffers,light,overlay,drawn);
         pose.popPose();
     }
 }
