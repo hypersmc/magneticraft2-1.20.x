@@ -46,8 +46,20 @@ public final class AnimationDefinition {
         }
     }
     /** Null model is a transform-only parent node; parent is null for roots. */
+    public record StaticRotation(Direction.Axis axis, double degrees) {}
+    public record ModelVariants(String source, Map<Integer, ResourceLocation> models) {
+        public ModelVariants {
+            models = Map.copyOf(models);
+        }
+    }
     public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot,
-                            RenderLayer layer, String parent, Condition visibleWhen) {}
+                            RenderLayer layer, String parent, Condition visibleWhen,
+                            StaticRotation staticRotation, ModelVariants modelVariants) {}
+    public enum SliderCrankRole { CRANK, ROD, FOLLOWER, SLIDER }
+    public record SliderCrank(String input, Vec3 center, double radius, double rodLength,
+                              double phaseDegrees, String crank, String rod,
+                              String follower, String slider) {}
+    public record MechanismRole(String mechanismId, SliderCrankRole role) {}
     public record Input(String source, String module) {}
     public record RotationTrack(String target, String input, Direction.Axis axis,
                                 double scale, Condition when) {}
@@ -58,16 +70,22 @@ public final class AnimationDefinition {
     private final Map<String, Map<Condition, RotationTrack>> rotations;
     private final Map<String, List<String>> children;
     private final List<String> roots;
+    private final Map<String, SliderCrank> sliderCranks;
+    private final Map<String, MechanismRole> mechanismRoles;
 
     private AnimationDefinition(Map<String, Component> components,
                                 Map<String, Input> inputs,
                                 Map<String, Map<Condition, RotationTrack>> rotations,
-                                Map<String, List<String>> children, List<String> roots) {
+                                Map<String, List<String>> children, List<String> roots,
+                                Map<String, SliderCrank> sliderCranks,
+                                Map<String, MechanismRole> mechanismRoles) {
         this.components = Map.copyOf(components);
         this.inputs = Map.copyOf(inputs);
         this.rotations = Map.copyOf(rotations);
         this.children = Map.copyOf(children);
         this.roots = List.copyOf(roots);
+        this.sliderCranks = Map.copyOf(sliderCranks);
+        this.mechanismRoles = Map.copyOf(mechanismRoles);
     }
 
     public Component component(String name) {
@@ -92,6 +110,14 @@ public final class AnimationDefinition {
 
     public Input input(String name) {
         return inputs.get(name);
+    }
+
+    public Map<String, SliderCrank> sliderCranks() {
+        return sliderCranks;
+    }
+
+    public MechanismRole mechanismRole(String componentName) {
+        return mechanismRoles.get(componentName);
     }
 
     /**
@@ -163,7 +189,57 @@ public final class AnimationDefinition {
                     ? identifier(string(data, "parent", name), "parent") : null;
             Condition visible = data.has("visible_when")
                     ? Condition.parse(string(data, "visible_when", name)) : Condition.ALWAYS;
-            components.put(name, new Component(model, offset, pivot, layer, parent, visible));
+            StaticRotation staticRotation = null;
+            if (data.has("static_rotation")) {
+                JsonObject rotation = asObject(data.get("static_rotation"), name + ".static_rotation");
+                AxisSpec localAxis = axis(required(rotation, "axis", name + ".static_rotation"));
+                double degrees = finiteNumber(required(rotation, "degrees",
+                        name + ".static_rotation"), "static rotation degrees");
+                if (Math.abs(degrees) > 3600.0D) {
+                    throw new JsonParseException("Static rotation exceeds 3600 degrees for " + name);
+                }
+                staticRotation = new StaticRotation(localAxis.axis(), degrees * localAxis.sign());
+            }
+            ModelVariants variants = null;
+            if (data.has("model_variants")) {
+                if (model == null) {
+                    throw new JsonParseException(name + " needs a base model for model_variants fallback");
+                }
+                JsonObject variant = asObject(data.get("model_variants"), name + ".model_variants");
+                String selector = string(variant, "source", name + ".model_variants");
+                if (!"sifter.wear_stage".equals(selector)) {
+                    throw new JsonParseException("Unsupported model variant selector: " + selector);
+                }
+                JsonObject models = asObject(required(variant, "models", name), name + ".models");
+                if (models.size() == 0 || models.size() > 6) {
+                    throw new JsonParseException(name + " model_variants must contain 1..6 stages");
+                }
+                Map<Integer, ResourceLocation> byStage = new HashMap<>();
+                for (Map.Entry<String, JsonElement> modelEntry : models.entrySet()) {
+                    int stage;
+                    try {
+                        stage = Integer.parseInt(modelEntry.getKey());
+                    } catch (NumberFormatException exception) {
+                        throw new JsonParseException("Invalid wear stage " + modelEntry.getKey(), exception);
+                    }
+                    if (stage < 0 || stage > 5 || !Integer.toString(stage).equals(modelEntry.getKey())) {
+                        throw new JsonParseException("Wear stage must be between 0 and 5: " + stage);
+                    }
+                    if (!modelEntry.getValue().isJsonPrimitive()
+                            || !modelEntry.getValue().getAsJsonPrimitive().isString()) {
+                        throw new JsonParseException("Variant model for stage " + stage + " must be an ID");
+                    }
+                    String resource = modelEntry.getValue().getAsString();
+                    ResourceLocation stageModel = ResourceLocation.tryParse(resource);
+                    if (stageModel == null) {
+                        throw new JsonParseException("Invalid variant model " + resource);
+                    }
+                    byStage.put(stage, stageModel);
+                }
+                variants = new ModelVariants(selector, byStage);
+            }
+            components.put(name, new Component(model, offset, pivot, layer, parent, visible,
+                    staticRotation, variants));
         }
 
         // Parent links are resolved once when resources are loaded, never per
@@ -262,14 +338,76 @@ public final class AnimationDefinition {
                 }
             }
         }
-        if (trackCount == 0) {
-            throw new JsonParseException("Animation has no rotation tracks");
+        // Mechanisms bind rigid components to a single typed input. Only the
+        // X-axis crank and Z-axis slider are currently supported; other axes
+        // must get an explicit tested solver rather than guessed transforms.
+        Map<String, SliderCrank> mechanisms = new HashMap<>();
+        Map<String, MechanismRole> mechanismRoles = new HashMap<>();
+        if (root.has("mechanisms")) {
+            JsonObject definitions = asObject(root.get("mechanisms"), "mechanisms");
+            if (definitions.size() > 16) {
+                throw new JsonParseException("Too many mechanisms (maximum 16)");
+            }
+            for (Map.Entry<String, JsonElement> entry : definitions.entrySet()) {
+                String name = identifier(entry.getKey(), "mechanism");
+                JsonObject data = asObject(entry.getValue(), "mechanism " + name);
+                if (!"slider_crank".equals(string(data, "type", name))) {
+                    throw new JsonParseException("Unsupported mechanism type in " + name);
+                }
+                String inputName = identifier(string(data, "input", name), "mechanism input");
+                if (!inputs.containsKey(inputName)) {
+                    throw new JsonParseException("Unknown mechanism input " + inputName);
+                }
+                if (!"x".equals(string(data, "rotation_axis", name))
+                        || !"z".equals(string(data, "slide_axis", name))) {
+                    throw new JsonParseException(name + " requires X rotation and Z slider axes");
+                }
+                Vec3 center = vector(required(data, "center", name), name + ".center");
+                double radius = finiteNumber(required(data, "radius", name), name + ".radius");
+                double length = finiteNumber(required(data, "rod_length", name), name + ".rod_length");
+                if (radius <= 0.0D || radius > 16.0D || length <= radius || length > 16.0D) {
+                    throw new JsonParseException(name + " requires 0 < radius < rod_length <= 16");
+                }
+                double phase = data.has("phase_degrees")
+                        ? finiteNumber(data.get("phase_degrees"), name + ".phase_degrees") : 0.0D;
+                if (Math.abs(phase) > 3600.0D) {
+                    throw new JsonParseException(name + " phase_degrees exceeds 3600");
+                }
+                JsonObject partsByRole = asObject(required(data, "parts", name), name + ".parts");
+                String crank = identifier(string(partsByRole, "crank", name), "crank component");
+                String rod = identifier(string(partsByRole, "rod", name), "rod component");
+                String follower = identifier(string(partsByRole, "follower", name), "follower component");
+                String slider = identifier(string(partsByRole, "slider", name), "slider component");
+                String[] roleNames = { crank, rod, follower, slider };
+                SliderCrankRole[] roles = SliderCrankRole.values();
+                for (int i = 0; i < roleNames.length; i++) {
+                    String target = roleNames[i];
+                    Component targetPart = components.get(target);
+                    if (targetPart == null || targetPart.parent() != null) {
+                        throw new JsonParseException(name + " role " + roles[i]
+                                + " must reference an existing root component: " + target);
+                    }
+                    if (rotations.containsKey(target)) {
+                        throw new JsonParseException(name + " conflicts with rotation track on " + target);
+                    }
+                    if (mechanismRoles.putIfAbsent(target, new MechanismRole(name, roles[i])) != null) {
+                        throw new JsonParseException("Component " + target
+                                + " is bound to multiple mechanism roles");
+                    }
+                }
+                mechanisms.put(name, new SliderCrank(inputName, center, radius, length,
+                        phase, crank, rod, follower, slider));
+            }
+        }
+        if (trackCount == 0 && mechanisms.isEmpty()) {
+            throw new JsonParseException("Animation has no driven tracks or mechanisms");
         }
         Map<String, Map<Condition, RotationTrack>> frozen = new HashMap<>();
         for (Map.Entry<String, Map<Condition, RotationTrack>> entry : rotations.entrySet()) {
             frozen.put(entry.getKey(), Map.copyOf(entry.getValue()));
         }
-        return new AnimationDefinition(components, inputs, frozen, children, roots);
+        return new AnimationDefinition(components, inputs, frozen, children, roots,
+                mechanisms, mechanismRoles);
     }
 
     private static int verifyTreeDepth(String name, Map<String, List<String>> children, int depth) {

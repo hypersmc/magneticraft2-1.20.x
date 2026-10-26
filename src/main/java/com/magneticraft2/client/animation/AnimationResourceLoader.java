@@ -94,6 +94,12 @@ public final class AnimationResourceLoader extends SimpleJsonResourceReloadListe
                     if (component.model() != null) {
                         event.register(component.model());
                     }
+                    AnimationDefinition.ModelVariants variants = component.modelVariants();
+                    if (variants != null) {
+                        for (ResourceLocation variantModel : variants.models().values()) {
+                            event.register(variantModel);
+                        }
+                    }
                 }
             } catch (IOException | JsonParseException | IllegalArgumentException ex) {
                 LOGGER.warn("Cannot register animated models from {}: {}",
