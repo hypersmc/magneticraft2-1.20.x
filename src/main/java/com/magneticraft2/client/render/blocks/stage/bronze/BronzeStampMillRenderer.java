@@ -211,6 +211,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Belt UVs and in-world ore rendering remain specialized Java paths.
         AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimatedComponentRenderer.SceneResult drawn = null;
+        AnimationFrame physicalFrame = null;
         boolean allHeads = definition != null
                 && definition.componentNames().containsAll(HEAD_PARTS);
         boolean noHeads = definition != null
@@ -225,12 +226,12 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             if (mill.needsMaintenance()) {
                 states.add(AnimationDefinition.State.WORN);
             }
-            drawn = MachineVisualRenderer.renderScene(ANIMATION,
-                    new AnimationFrame(Map.of(
-                            "mechanical_input", inputAngle,
-                            "output_shaft", driveAngle), states,
-                            Map.of("stamp_mill.wear_stage",
-                                    Math.max(0, Math.min(5, mill.getPartWearStage())))),
+            physicalFrame = new AnimationFrame(
+                    Map.of("mechanical_input", inputAngle, "output_shaft", driveAngle),
+                    states,
+                    Map.of("stamp_mill.wear_stage",
+                            Math.max(0, Math.min(5, mill.getPartWearStage()))));
+            drawn = MachineVisualRenderer.renderScene(ANIMATION, physicalFrame,
                     state, pose, buffers, light, overlay);
         }
 
@@ -296,14 +297,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // Paths are built by BeltPath on pack reload, not during rendering.
         // Old 18-part packs without belt_loops keep their original leather
         // renderer, including its UV tiling, phase and no-stretch behavior.
-        AnimationFrame physicalFrame = new AnimationFrame(
-                Map.of("mechanical_input", inputAngle,
-                        "output_shaft", driveAngle),
-                EnumSet.of(mill.isProcessing()
-                        ? AnimationDefinition.State.RUNNING
-                        : AnimationDefinition.State.STOPPED),
-                Map.of("stamp_mill.wear_stage",
-                        Math.max(0, Math.min(5, mill.getPartWearStage()))));
         AnimationDefinition beltScene = drawn == null ? null : drawn.definition();
         BeltVisualState driveState = beltTravel.computeIfAbsent(
                 mill, ignored -> new BeltVisualState());
