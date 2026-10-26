@@ -140,6 +140,11 @@ public class Clientsetup {
         LOGGER.info("Models are being registered!");
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+        // Register every model referenced by a validated animation JSON from
+        // the CURRENT resource-pack stack before Forge bakes the models.
+        // This allows packs to select new model ids, not just retexture the
+        // models hardcoded by Java. Never use the previous reload's definitions.
+        AnimationResourceLoader.registerModels(event, resourceManager);
         String folderPath = "models/multiblock";
 
         // Get all resources in the multiblock folder
