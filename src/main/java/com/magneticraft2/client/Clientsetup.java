@@ -1,6 +1,8 @@
 package com.magneticraft2.client;
 
 import com.magneticraft2.client.model.MultiBlockModelLoader;
+import com.magneticraft2.client.animation.AnimationResourceLoader;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearBlock_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearWithHandleBlock_woodRenderer;
@@ -239,6 +241,11 @@ public class Clientsetup {
             event.register(modelResourceLocation);
             LOGGER.info("Registered model: " + modelResourceLocation);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterAnimationReloaders(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new AnimationResourceLoader());
     }
 
     @SubscribeEvent
