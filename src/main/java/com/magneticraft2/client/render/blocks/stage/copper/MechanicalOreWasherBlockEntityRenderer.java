@@ -1,10 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalOreWasherBlock;
-import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
-import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalOreWasherBlockEntity;
 import com.magneticraft2.common.systems.GEAR.BeltPath;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -184,7 +183,7 @@ public class MechanicalOreWasherBlockEntityRenderer
         // water, ore display and wear in the existing specialized renderer.
         // Drum phase comes from the SAME continuous BeltPath-driven output
         // angle as the former Java path (including its facing correction).
-        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimationDefinition drawn = null;
         if (definition != null && definition.component("drum") != null) {
             EnumSet<AnimationDefinition.State> states = EnumSet.of(
@@ -194,7 +193,7 @@ public class MechanicalOreWasherBlockEntityRenderer
             if (washer.getPartWearStage() > 0) {
                 states.add(AnimationDefinition.State.WORN);
             }
-            drawn = AnimatedComponentRenderer.render(ANIMATION,
+            drawn = MachineVisualRenderer.render(ANIMATION,
                     new AnimationFrame(Map.of("trommel", drumRotation), states),
                     formedState, poseStack, buffer, packedLight, packedOverlay);
         }
