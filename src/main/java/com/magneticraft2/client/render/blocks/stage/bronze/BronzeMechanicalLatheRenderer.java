@@ -1,6 +1,7 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
+import com.magneticraft2.client.animation.DrivenRotation;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -40,6 +41,8 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_spindle");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_lathe");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
 
     private static void model(PoseStack pose,MultiBufferSource source,int light,int overlay,
@@ -75,9 +78,14 @@ public final class BronzeMechanicalLatheRenderer
                 Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME));
 
         pose.pushPose();
-        pose.translate(.5D, .5D, .5D);
-        pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
-        pose.translate(-.5D,-.5D,-.5D);
+        // JSON pilot: actual Gear V2 angle drives a typed rotation track.
+        // Invalid/missing pack data leaves the original rendering untouched.
+        if (!DrivenRotation.apply(pose, ANIMATION, "input_rotor", INPUT_ROTOR,
+                "mechanical_input", inputAngle)) {
+            pose.translate(.5D, .5D, .5D);
+            pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
+            pose.translate(-.5D,-.5D,-.5D);
+        }
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
         pose.popPose();
