@@ -7,18 +7,62 @@
     "reference_facing": "south"
   },
   "components": {
-    "input_rotor": {
-      "model": "magneticraft2:animated/lathe_gold_input_rotor",
+    "gearbox_joint": {
       "model_offset": [
         0,
         0,
         -2
       ],
       "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    "input_rotor": {
+      "model": "magneticraft2:animated/lathe_gold_input_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
         0.5,
         0.5,
         0.5
       ],
+      "render_layer": "cutout",
+      "parent": "gearbox_joint"
+    },
+    "input_output_rotor": {
+      "model": "magneticraft2:multiblock/bronze_mechanical_lathe_input_output_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "parent": "gearbox_joint",
+      "render_layer": "cutout"
+    },
+    "shaft_marker": {
+      "model": "magneticraft2:animated/lathe_shaft_marker",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "parent": "input_rotor",
+      "visible_when": "running",
       "render_layer": "cutout"
     }
   },
@@ -39,6 +83,22 @@
             0,
             0,
             1
+          ],
+          "input": "drive_angle",
+          "scale": -1
+        }
+      ]
+    },
+    "output_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_output_rotor",
+          "property": "rotation",
+          "axis": [
+            1,
+            0,
+            0
           ],
           "input": "drive_angle",
           "scale": -1
