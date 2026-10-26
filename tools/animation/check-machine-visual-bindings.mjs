@@ -19,7 +19,7 @@ const contracts=[
  {id:"mechanical_sifter",angles:["mechanical_input"],integers:["sifter.wear_stage"]},
  {id:"primitive_grinder",angles:["mechanical_input"],integers:[]},
  {id:"mechanical_ore_washer",angles:["trommel"],integers:[]},
- {id:"bronze_stamp_mill",angles:["mechanical_input","output_shaft"],integers:[]},
+ {id:"bronze_stamp_mill",angles:["mechanical_input","output_shaft"],integers:["stamp_mill.wear_stage"]},
  {id:"rotary_ore_classifier",angles:["drum"],integers:["classifier.wear_stage"]}
 ];
 const machinePath=id=>join(assets,"machine_visuals",id+".json");
