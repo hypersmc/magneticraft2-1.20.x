@@ -1,10 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
-import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationFrame;
-import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -180,7 +179,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // A single JSON scene selects all 18 model parts and typed shaft
         // transforms. The two independent angle inputs are supplied by the
         // existing Gear V2-facing-aware bevel geometry, NOT a new clock.
-        AnimationDefinition definition = AnimationResourceLoader.get(ANIMATION);
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
         AnimationDefinition drawn = null;
         if (definition != null && definition.componentNames().containsAll(DRIVE_PARTS)) {
             EnumSet<AnimationDefinition.State> states = EnumSet.of(
@@ -190,7 +189,7 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             if (mill.needsMaintenance()) {
                 states.add(AnimationDefinition.State.WORN);
             }
-            drawn = AnimatedComponentRenderer.render(ANIMATION,
+            drawn = MachineVisualRenderer.render(ANIMATION,
                     new AnimationFrame(Map.of(
                             "mechanical_input", inputAngle,
                             "output_shaft", driveAngle), states),
