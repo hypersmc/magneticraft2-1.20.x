@@ -34,20 +34,23 @@ JSON animation `feature/json-driven-animation` (PR #12), and Sifter
 | Rotary Ore Classifier | N, E, S, W | Rendering V2; Gear V2 drum, ore simulation and mesh wear | **PR #12:** three JSON drum segments with worn variants; ore simulation stays Java |
 | Water Settling Tank | N, E, S, W | Rendering V2; fluid surfaces and transfer visuals | Specialized fluid renderer retained |
 
-**Important:** A V2 formed machine intentionally has no giant
+**Important:** The six mechanical machines now have **separate resource-pack machine visual manifests** under `assets/magneticraft2/machine_visuals/`. A manifest selects which animation JSON to use and maps its named visual inputs to values the machine's Java renderer actually exposes. A pack can redirect a machine to an entirely different animation resource ID and model set without a Java edit; see [json-machine-visual-packages.md](json-machine-visual-packages.md).
+
+A V2 formed machine intentionally has no giant
 `models/multiblock/<machine>_<facing>.json` file. Static geometry is in
 `models/multiblock/<machine>_<facing>/part_*.json`, distributed among
 controller/filler cells. The automatic audit validates **both** forms.
 
 ## Automated compatibility checks
 
-After PR #13 merges into the PR #12 branch, run:
+With PR #13 already merged into the PR #12 branch, run:
 
 ```bash
 node tools/animation/audit-multiblock-coverage.mjs
 node tools/animation/check-scene-fixtures.mjs
 node tools/animation/check-sifter-slider-crank.mjs
 node tools/animation/check-mechanical-drives.mjs
+node tools/animation/check-machine-visual-bindings.mjs
 node tools/multiblock-models/build-designs.mjs --check
 node tools/multiblock-models/generate.mjs --check
 ./gradlew build
@@ -62,7 +65,7 @@ It validates:
   defined palette roles.
 - Every formation points to an available legacy formed model or has valid
   Rendering V2 per-cell model files.
-- An opted-in animation renderer actually calls the generic scene renderer.
+- An opted-in animation renderer uses `MachineVisualRenderer` and has a valid `machine_visuals/<machine>.json` manifest selecting its scene and real typed input channels.
 - Default animation resource-pack model references exist; nested parent
   references, pivots and canonical coordinate system are structurally valid.
 - Coverage is visible: machines that still use existing Java animation
@@ -123,4 +126,4 @@ tree, including the per-cell static V2 directories. The 42 construction
 files' dimensions, palette cells and layer shapes were individually
 reviewed through the repository connector, with no mismatches detected.
 
-The automated scripts, default model bindings, and origin/pivot constants were reviewed through GitHub; 24 additional components were compared against their original Java transform constants. A full local execution of the scripts, `./gradlew build`, and in-game verification of the four new integration points have **not** been completed in this environment. Keep PR #12 draft until verified.
+The automated scripts, default model bindings, and origin/pivot constants were reviewed through GitHub; 24 additional components were compared against their original Java transform constants. All six default machine manifest contracts (33 component references) and a custom Primitive Grinder scene redirect were also checked structurally. A full local execution of the scripts, `./gradlew build`, and in-game verification of the four new integration points have **not** been completed in this environment. Keep PR #12 draft until verified.
