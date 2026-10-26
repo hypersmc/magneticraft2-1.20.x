@@ -1,6 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MechanicalSifterBlock;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalSifterBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -18,6 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +71,8 @@ public class MechanicalSifterBlockEntityRenderer
     private static final ResourceLocation FOLLOWER = new ResourceLocation("magneticraft2", "multiblock/mechanical_sifter_follower");
     private static final float SCREEN_TILT_DEGREES =
             10.0F;
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "mechanical_sifter");
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -106,72 +112,59 @@ public class MechanicalSifterBlockEntityRenderer
                 facing
         );
 
-        double shake =
-                sifter.getShakeOffset(
-                        partialTicks
-                );
-
         float driveAngle = sifter.getDriveRotationDegrees(partialTicks);
-        renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
+        int wearStage = Math.max(0, Math.min(5, sifter.getPartWearStage()));
 
-        // These tracks do NOT shake; their ends land on the existing
-        // stationary lower crossbeams, outside the fines catch pan.
+        // A single client snapshot supplies the real Gear V2 phase, actual
+        // processing/overload state and the current replaceable mesh wear.
+        // The JSON constraint solver owns the relative poses of the crank,
+        // rigid rod, follower, sliding shoes and inclined sieve.
+        EnumSet<AnimationDefinition.State> states =
+                EnumSet.of(sifter.isProcessing()
+                        ? AnimationDefinition.State.RUNNING
+                        : AnimationDefinition.State.STOPPED);
+        if (sifter.isInputOverloadedForAnimation()) {
+            states.add(AnimationDefinition.State.OVERLOADED);
+        }
+        if (sifter.needsMaintenance()) {
+            states.add(AnimationDefinition.State.WORN);
+        }
+        AnimationFrame frame = new AnimationFrame(
+                Map.of("mechanical_input", driveAngle),
+                states,
+                Map.of("sifter.wear_stage", wearStage));
+        AnimatedComponentRenderer.SceneResult scene =
+                AnimatedComponentRenderer.renderScene(ANIMATION, frame, formedState,
+                        poseStack, buffer, packedLight, packedOverlay);
+
+        // The exact slider displacement also drives visible processing items.
+        // If a resource pack's definition/model is rejected, keep the former
+        // completely functioning Java visual as a safety fallback.
+        double shake;
+        if (scene == null || !scene.definition().sliderCranks().containsKey("sieve_drive")) {
+            shake = sifter.getShakeOffset(partialTicks);
+            renderCrankLinkage(driveAngle, shake, poseStack, buffer, packedLight, packedOverlay);
+
+            poseStack.pushPose();
+            poseStack.translate(0D, 0D, shake);
+            poseStack.translate(0.50D, 0.78D, 1.20D);
+            poseStack.mulPose(Axis.XP.rotationDegrees(SCREEN_TILT_DEGREES));
+            poseStack.translate(-0.50D, -0.78D, -1.20D);
+            renderModel(UPPER_TRAY_BY_WEAR[wearStage], poseStack, buffer, packedLight, packedOverlay);
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            poseStack.translate(0D, 0D, shake);
+            renderModel(SLIDE_SHOES, poseStack, buffer, packedLight, packedOverlay);
+            poseStack.popPose();
+        } else {
+            shake = scene.sliderOffset("sieve_drive");
+        }
+
+        // These are STATIONARY members, separate from the JSON-controlled
+        // carriage. The lower fines pan never follows the shaking sieve.
         renderModel(GUIDE_RAILS, poseStack, buffer, packedLight, packedOverlay);
-
-        poseStack.pushPose();
-        poseStack.translate(
-                0.0D,
-                0.0D,
-                shake
-        );
-
-        // One coherent inclined sieve: rear/high under the hopper, front/low
-        // toward the coarse discharge. Rotating the complete tray avoids the
-        // staircase look the previous JSON-only slope had.
-        poseStack.translate(
-                0.50D,
-                0.78D,
-                1.20D
-        );
-        poseStack.mulPose(
-                Axis.XP.rotationDegrees(
-                        SCREEN_TILT_DEGREES
-                )
-        );
-        poseStack.translate(
-                -0.50D,
-                -0.78D,
-                -1.20D
-        );
-
-        int stage = Math.max(0, Math.min(5, sifter.getPartWearStage()));
-        renderModel(
-                UPPER_TRAY_BY_WEAR[stage],
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
-
-        poseStack.pushPose();
-        renderModel(
-                LOWER_TRAY,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
-        poseStack.popPose();
-
-        // Unlike the guide rails, the four copper sliding shoes, wooden
-        // uprights and two cross braces ride with the inclined sieve.
-        // The uprights have different heights to meet its rotated underside,
-        // but slide horizontally so they stay seated on level guide rails.
-        poseStack.pushPose();
-        poseStack.translate(0.0D, 0.0D, shake);
-        renderModel(SLIDE_SHOES, poseStack, buffer, packedLight, packedOverlay);
-        poseStack.popPose();
+        renderModel(LOWER_TRAY, poseStack, buffer, packedLight, packedOverlay);
 
         renderInputItems(
                 sifter,
