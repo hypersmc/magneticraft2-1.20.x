@@ -1,5 +1,12 @@
 # JSON animation runtime — Java milestone 1: resource-pack model overrides
 
+> **Update — scene graph milestone:** This document records the original
+> single-shaft pilot. The branch now includes multiple components, a parent
+> hierarchy, typed machine states and a cross-repository Studio export bridge.
+> The **current** format, migration behavior, test pack and acceptance matrix
+> are in [json-animation-scene-graph.md](json-animation-scene-graph.md).
+> Earlier statements below that only one rotor is supported are historical.
+
 **Base branch:** `feature/bronze-age-foundry` (Bronze PR #11)
 **Feature branch:** `feature/json-driven-animation`
 **Status:** source implementation; `./gradlew build` and Minecraft acceptance tests outstanding.
