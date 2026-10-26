@@ -409,9 +409,9 @@ public final class AnimationDefinition {
                         phase, crank, rod, follower, slider));
             }
         }
-        if (trackCount == 0 && mechanisms.isEmpty()) {
-            throw new JsonParseException("Animation has no driven tracks or mechanisms");
-        }
+        // Static-only scenes are valid too: a visual pack may provide
+        // decorative model components without making up a mechanical clock.
+        // Machine renderers still decide which legacy parts are required.
         Map<String, Map<Condition, RotationTrack>> frozen = new HashMap<>();
         for (Map.Entry<String, Map<Condition, RotationTrack>> entry : rotations.entrySet()) {
             frozen.put(entry.getKey(), Map.copyOf(entry.getValue()));
