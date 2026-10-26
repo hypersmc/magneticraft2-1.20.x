@@ -60,9 +60,11 @@ public final class AnimatedBeltLoopRenderer {
                 double phase = positiveModulo(
                         textureDistance + segment.startDistance() + cursor,
                         repeat);
-                double leftInTile = repeat - phase;
-                if (leftInTile < EPS) leftInTile = repeat;
-                double step = Math.min(length - cursor, leftInTile);
+                // A value 0.999999999... is the start of the NEXT repeat,
+                // not permission to emit a quad whose UVs run from 1 to 2.
+                // Normalize the tiny rounding tail to the seam at zero.
+                if (repeat - phase < EPS) phase = 0.0D;
+                double step = Math.min(length - cursor, repeat - phase);
                 Vec3 from = segment.from().add(tangent.scale(cursor));
                 Vec3 to = segment.from().add(tangent.scale(cursor + step));
                 renderSection(consumer, pose, from, to,
