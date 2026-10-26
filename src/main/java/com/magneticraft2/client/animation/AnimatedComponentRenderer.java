@@ -145,6 +145,19 @@ public final class AnimatedComponentRenderer {
                 return false;
             }
         }
+        AnimationDefinition.TranslationTrack slide =
+                definition.translation(name, frame.states());
+        if (slide != null) {
+            AnimationDefinition.Input input = definition.input(slide.input());
+            if (input == null || !"mechanical.visual_angle_degrees".equals(input.source())) {
+                return false;
+            }
+            Float angle = frame.angle(input.module());
+            if (angle == null || !Float.isFinite(angle)
+                    || !Double.isFinite(DrivenTranslation.distance(slide, angle))) {
+                return false;
+            }
+        }
         for (String child : definition.children(name)) {
             if (!validateSubtree(definition, child, frame, models)) return false;
         }
@@ -174,7 +187,11 @@ public final class AnimatedComponentRenderer {
             AnimationDefinition.RotationTrack track = definition.rotation(name, frame.states());
             float angle = track == null
                     ? 0F : frame.angle(definition.input(track.input()).module());
-            DrivenRotation.apply(pose, component, track, angle);
+            AnimationDefinition.TranslationTrack slide =
+                    definition.translation(name, frame.states());
+            float slideAngle = slide == null
+                    ? 0F : frame.angle(definition.input(slide.input()).module());
+            DrivenRotation.apply(pose, component, track, angle, slide, slideAngle);
 
             ResourceLocation modelId = modelFor(component, frame);
             if (modelId != null) {
