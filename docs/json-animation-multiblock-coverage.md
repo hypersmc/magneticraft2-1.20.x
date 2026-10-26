@@ -24,14 +24,14 @@ JSON animation `feature/json-driven-animation` (PR #12), and Sifter
 | Blueprint Maker | N, E, S, W | Legacy static model/structure | Not needed for mechanical motion |
 | Bronze Foundry | N, E, S, W | Rendering V2 static cells; custom molten/heat/items | Custom dynamic renderer retained |
 | Bronze Mechanical Lathe | N, E, S, W | Rendering V2; Gear V2 drivetrain, clutched spindle and carriage | **PR #12:** input and output gearbox shafts in JSON; other dynamic visuals still Java |
-| Bronze Stamp Mill | N, E, S, W | Rendering V2; Gear V2 cams/stamps/belts and wear | Legacy dynamic; migration candidate |
+| Bronze Stamp Mill | N, E, S, W | Rendering V2; Gear V2 cams/stamps/belts and wear | **PR #12:** 18 powertrain model parts in JSON; cams, hammers and repeating belts stay Java |
 | Charcoal Retort | N, E, S, W | Rendering V2 static cells | Existing behavior retained |
-| Mechanical Ore Washer | N, E, S, W | Gear V2-driven drum/belt; fluids, item positions, mesh wear | Legacy dynamic; migration candidate |
-| Mechanical Sifter | N, E, S, W | Gear V2 slider-crank; inclined sieve + six wear stages | **PR #13:** exact JSON mechanism, parented carriage and model variants |
+| Mechanical Ore Washer | N, E, S, W | Gear V2-driven drum/belt; fluids, item positions, mesh wear | **PR #12:** drum model/rotation in JSON; pulleys, belt UVs, fluids and items stay Java |
+| Mechanical Sifter | N, E, S, W | Gear V2 slider-crank; inclined sieve + six wear stages | **Merged PR #13:** exact JSON mechanism, parented carriage and model variants |
 | Primitive Furnace | N, E, S, W | Legacy model; heating and item render feedback | Existing specialized renderer retained |
-| Primitive Grinder | Any | Gear V2 rotor/axle plus workpiece and output | Legacy dynamic; simplest next migration candidate |
+| Primitive Grinder | Any | Gear V2 rotor/axle plus workpiece and output | **PR #12:** both rotor and axle in JSON; workpiece/output stay Java |
 | Primitive Storage Cellar | West only | Legacy formed storage structure | Existing behavior retained |
-| Rotary Ore Classifier | N, E, S, W | Rendering V2; Gear V2 drum, ore simulation and mesh wear | Legacy dynamic; migrate drum only initially |
+| Rotary Ore Classifier | N, E, S, W | Rendering V2; Gear V2 drum, ore simulation and mesh wear | **PR #12:** three JSON drum segments with worn variants; ore simulation stays Java |
 | Water Settling Tank | N, E, S, W | Rendering V2; fluid surfaces and transfer visuals | Specialized fluid renderer retained |
 
 **Important:** A V2 formed machine intentionally has no giant
@@ -47,14 +47,13 @@ After PR #13 merges into the PR #12 branch, run:
 node tools/animation/audit-multiblock-coverage.mjs
 node tools/animation/check-scene-fixtures.mjs
 node tools/animation/check-sifter-slider-crank.mjs
+node tools/animation/check-mechanical-drives.mjs
 node tools/multiblock-models/build-designs.mjs --check
 node tools/multiblock-models/generate.mjs --check
 ./gradlew build
 ```
 
-The **first script is added directly to PR #12** and is safe to run before
-PR #13 merges; it reports 1/6 mechanical JSON coverage today. After
-merging #13, it should report 2/6.
+After #13 merged, the current PR #12 includes JSON entry points for **all six mechanically animated families**. The first script should report 6/6 machine entry-point coverage. This **does not mean every individual moving part has migrated**: pulleys, cams, hammers, belts, fluid/ore effects and some Lathe parts remain in their previous specialized Java paths.
 
 It validates:
 - Every expected multiblock family and facing is present (including
@@ -69,9 +68,7 @@ It validates:
 - Coverage is visible: machines that still use existing Java animation
   are **reported**, not silently counted as migrated.
 
-An optional `--require-mechanical-json` flag intentionally fails until
-all six mechanical families actually use JSON; do not use that flag in
-normal CI until the migration is completed.
+An optional `--require-mechanical-json` flag verifies all six machine renderers have a JSON entry point. It should now pass on PR #12. It does **not** prove that all moving parts or specialized effects are controlled by JSON.
 
 **Automated asset checks cannot prove Minecraft formation, loading, UV
 correctness, animation synchronization, collision or FPS.** These still
@@ -108,21 +105,13 @@ For **performance**, a JSON definition should be compiled once on reload,
 models prebaked and poses evaluated per frame. Do not rebuild V2 static
 geometry per frame or allocate unbounded render-instance state.
 
-## What to migrate next (not automatically in this audit)
+## Remaining migrations and deliberately specialized visuals
 
-1. **Primitive Grinder:** rotor and axle are simple Gear V2 rotations.
-2. **Mechanical Ore Washer:** drive pulley/drum first, retaining specialized
-   water, item motion, mesh wear and repeating belt texture logic.
-3. **Bronze Stamp Mill:** shafts/cams first. Stamp travel and belt UV
-   animation should remain typed/procedural until modeled as proper
-   constraints, not approximated with independent sine curves.
-4. **Rotary Ore Classifier:** drum segments driven by the real shaft,
-   while ore particle simulation and worn mesh stay specialized.
-5. Complete **Lathe** spindle and carriage animation through typed
-   additional inputs/tracks where fidelity is proven.
-6. Add optional visual-only mappings to **Foundry, Settling Tank and
-   Primitive Furnace** only where relevant; never force fluids/heat or
-   item rendering into a rotation-only JSON schema.
+1. **Mechanical Ore Washer:** the two pulleys still use Java's scale/orientation and the repeat-UV belt path. A future typed scale/UV-track primitive could make them configurable without stretching texture coordinates.
+2. **Bronze Stamp Mill:** the 18-piece powertrain is JSON; the three phase-staggered cams and lifting hammers still require typed phase-offset and reciprocating follower support. Do not replace physical stamp travel with independent sine curves.
+3. **Rotary Ore Classifier:** the three worn/normal drum segments are JSON; ore contact simulation and staged item movement must stay specialized until a faithful typed representation exists.
+4. **Bronze Lathe:** complete spindle/chuck and cross-slide motion with typed tracks when the transformation matches its existing accurate machine state.
+5. **Static/specialized machines:** Foundry, Settling Tank and Primitive Furnace may use JSON for optional decorative moving parts later, but fluid, flame and item simulation should not be shoehorned into a generic rotation track.
 
 The guiding rule is **data-driven visual models and typed movements, not
 an arbitrary replacement of every specialized renderer**.
@@ -134,6 +123,4 @@ tree, including the per-cell static V2 directories. The 42 construction
 files' dimensions, palette cells and layer shapes were individually
 reviewed through the repository connector, with no mismatches detected.
 
-The automated script is committed, but a full local execution of that
-script, `./gradlew build`, and gameplay regression tests have **not**
-been completed in this environment. Keep PR #12 draft until verified.
+The automated scripts, default model bindings, and origin/pivot constants were reviewed through GitHub; 24 additional components were compared against their original Java transform constants. A full local execution of the scripts, `./gradlew build`, and in-game verification of the four new integration points have **not** been completed in this environment. Keep PR #12 draft until verified.
