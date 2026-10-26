@@ -1,0 +1,9 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:demo/primitive_grinder_restyle",
+  "angle_channels": {
+    "rebranded_shaft": "mechanical_input"
+  },
+  "integer_channels": {}
+}
