@@ -454,6 +454,7 @@ public final class AnimationDefinition {
         // These optional visual loops do NOT change the server's belt/collision
         // geometry or create Gear V2 connections.
         Map<String, BeltLoop> beltLoops = new HashMap<>();
+        double totalEstimatedBeltTiles = 0.0D;
         if (root.has("belt_loops")) {
             JsonObject loops = asObject(root.get("belt_loops"), "belt_loops");
             if (loops.size() > 8) {
@@ -509,6 +510,8 @@ public final class AnimationDefinition {
                         || driveRadius > 4D || halfWidth <= 0D || halfWidth > 0.5D
                         || halfThickness <= 0D || halfThickness > 0.5D
                         || repeat < 0.0625D || repeat > 4D
+                        || halfWidth * 2.0D > repeat
+                        || halfThickness * 2.0D > repeat
                         || Math.abs(speed) > 16D || Math.abs(textureOffset) > 64D
                         || centerDist < 0.125D || centerDist > 16D
                         || centerDist <= Math.abs(r1 - r2)) {
@@ -524,6 +527,15 @@ public final class AnimationDefinition {
                 if (segments.isEmpty()) {
                     throw new JsonParseException(name
                             + " could not produce a valid BeltPath loop");
+                }
+                // Bound path tessellation and UV tile-splitting cost for
+                // custom resource packs. No unbounded per-frame quads.
+                double length = segments.get(segments.size() - 1).endDistance();
+                double estimatedTiles = segments.size() + length / repeat + 1.0D;
+                totalEstimatedBeltTiles += estimatedTiles;
+                if (estimatedTiles > 192.0D || totalEstimatedBeltTiles > 512.0D) {
+                    throw new JsonParseException(name
+                            + " exceeds per-frame visual belt tile budget");
                 }
                 beltLoops.put(name, new BeltLoop(inputName, texture, start, end,
                         axis.axis(), r1, r2, driveRadius, halfWidth,
