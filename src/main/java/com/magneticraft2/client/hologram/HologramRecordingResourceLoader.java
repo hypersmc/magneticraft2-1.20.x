@@ -53,17 +53,25 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         }
     }
 
+    /**
+     * Audio belongs to the recorded film, not the mechanical simulation.
+     * Each cue fires at most once per continuous client observation.
+     */
+    public record AudioCue(int tick, ResourceLocation sound, float volume, float pitch) {}
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
                             Map<String, RecordingTimeline.Track> channels,
                             Map<String, RecordingTimeline.DiscreteTrack> visualChannels,
                             List<Transition> transitions,
+                            List<AudioCue> audioCues,
                             Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
             visualChannels = Map.copyOf(visualChannels);
             transitions = List.copyOf(transitions);
+            audioCues = List.copyOf(audioCues);
         }
 
         public RecordingTimeline.Frame sample(double elapsedTicks) {
@@ -167,7 +175,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         List<Transition> transitions = parseTransitions(root, duration);
         return new Recording(archive, title, animation, duration,
                 xyz[0], xyz[1], xyz[2], channels, visualChannels,
-                transitions, parseAppearance(root));
+                transitions, parseAudioCues(root, duration), parseAppearance(root));
     }
 
     /**
@@ -225,6 +233,56 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             }
         }
         return List.copyOf(transitions);
+    }
+
+    /**
+     * Strictly bounded sound events, evaluated on the synchronized
+     * recording timeline. Resource packs may swap their sound IDs, but
+     * they cannot trigger arbitrary code, music streaming or world events.
+     */
+    private static List<AudioCue> parseAudioCues(JsonObject root, int duration) {
+        if (!root.has("audio_cues")) return List.of();
+        JsonArray source = array(root.get("audio_cues"), "audio_cues");
+        if (source.size() > 32) {
+            throw new JsonParseException("audio_cues supports at most 32 entries");
+        }
+        List<AudioCue> result = new ArrayList<>();
+        for (JsonElement entry : source) {
+            JsonObject item = object(entry, "audio cue");
+            int tick = number(item, "tick");
+            if (tick < 0 || tick >= duration) {
+                throw new JsonParseException("Audio cue tick outside recording duration");
+            }
+            ResourceLocation sound = ResourceLocation.tryParse(text(item, "sound"));
+            if (sound == null) {
+                throw new JsonParseException("Invalid audio cue sound ID");
+            }
+            float volume = item.has("volume")
+                    ? normalized(item.get("volume"), "audio cue volume") : 0.25F;
+            if (volume <= 0F || volume > 0.65F) {
+                throw new JsonParseException("Audio cue volume must be (0, 0.65]");
+            }
+            float pitch = 1F;
+            if (item.has("pitch")) {
+                JsonElement value = item.get("pitch");
+                if (value == null || !value.isJsonPrimitive()
+                        || !value.getAsJsonPrimitive().isNumber()) {
+                    throw new JsonParseException("Audio cue pitch must be numeric");
+                }
+                pitch = value.getAsFloat();
+                if (!Float.isFinite(pitch) || pitch < 0.5F || pitch > 2F) {
+                    throw new JsonParseException("Audio cue pitch must be within 0.5..2");
+                }
+            }
+            result.add(new AudioCue(tick, sound, volume, pitch));
+        }
+        result.sort(java.util.Comparator.comparingInt(AudioCue::tick));
+        for (int i = 1; i < result.size(); i++) {
+            if (result.get(i).tick() == result.get(i - 1).tick()) {
+                throw new JsonParseException("Multiple audio cues at one tick are not allowed");
+            }
+        }
+        return List.copyOf(result);
     }
 
     private static Appearance parseAppearance(JsonObject root) {
