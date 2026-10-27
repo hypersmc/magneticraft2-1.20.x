@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * Sparse local audio for prerecorded hologram films.
+ * Sparse local audio and visual event scheduling for prerecorded films.
  *
  * <p>Sounds are scheduled from the same server-start-time-derived timeline as
  * the geometry. No new entities, server packets or per-frame sound instances.
@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
  * past (late join, chunk load or returning to range).
  *
  * <p>Invoked from the client-only BE ticker, never from its renderer: frame
- * rate, frustum culling and graphics settings cannot duplicate sound cues.
+ * rate, frustum culling and graphics settings cannot duplicate cue events.
  */
 public final class HologramSoundPlayback {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -79,7 +79,8 @@ public final class HologramSoundPlayback {
         }
         HologramRecordingResourceLoader.Recording visual =
                 HologramRecordingResourceLoader.get(projector.recording());
-        if (visual == null || visual.audioCues().isEmpty()) {
+        if (visual == null
+                || (visual.audioCues().isEmpty() && visual.visualEvents().isEmpty())) {
             CURSORS.remove(projector);
             return;
         }
@@ -106,13 +107,17 @@ public final class HologramSoundPlayback {
         if (delta <= 0L || delta > MAX_CATCHUP_TICKS
                 || filmTick - previousFilmTick > MAX_CATCHUP_TICKS) return;
 
-        if (Minecraft.getInstance().player == null
-                || Minecraft.getInstance().player.distanceToSqr(
+        // Sparse particle effects have their own visual range (32 blocks);
+        // audio has the shorter 24-block range. Neither is linked to the
+        // camera frustum or how often the BER draws the actual models.
+        HologramVisualEffects.emit(projector, visual, previousFilmTick, filmTick);
+
+        boolean audible = Minecraft.getInstance().player != null
+                && Minecraft.getInstance().player.distanceToSqr(
                     projector.getBlockPos().getX() + .5D,
                     projector.getBlockPos().getY() + .5D,
-                    projector.getBlockPos().getZ() + .5D) > MAX_HEAR_DISTANCE_SQUARED) {
-            return;
-        }
+                    projector.getBlockPos().getZ() + .5D) <= MAX_HEAR_DISTANCE_SQUARED;
+        if (!audible) return;
 
         for (HologramRecordingResourceLoader.AudioCue cue : visual.audioCues()) {
             if (cue.tick() > previousFilmTick && cue.tick() <= filmTick) {
