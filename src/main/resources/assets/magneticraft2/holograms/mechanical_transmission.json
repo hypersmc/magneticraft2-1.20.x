@@ -165,31 +165,56 @@
       "tick": 75,
       "sound": "minecraft:block.wooden_button.click_on",
       "volume": 0.25,
-      "pitch": 0.82
+      "pitch": 0.82,
+      "position": [
+        0.5,
+        1.15,
+        0.5
+      ]
     },
     {
       "tick": 355,
       "sound": "minecraft:block.piston.extend",
       "volume": 0.28,
-      "pitch": 0.65
+      "pitch": 0.65,
+      "position": [
+        1.03,
+        1.28,
+        0.5
+      ]
     },
     {
       "tick": 430,
       "sound": "minecraft:block.note_block.bell",
       "volume": 0.18,
-      "pitch": 0.75
+      "pitch": 0.75,
+      "position": [
+        1.03,
+        1.3,
+        0.5
+      ]
     },
     {
       "tick": 460,
       "sound": "minecraft:block.anvil.land",
       "volume": 0.25,
-      "pitch": 0.65
+      "pitch": 0.65,
+      "position": [
+        1.03,
+        1.22,
+        0.5
+      ]
     },
     {
       "tick": 615,
       "sound": "minecraft:block.amethyst_block.chime",
       "volume": 0.3,
-      "pitch": 1.35
+      "pitch": 1.35,
+      "position": [
+        0.5,
+        1.55,
+        0.5
+      ]
     },
     {
       "tick": 840,
