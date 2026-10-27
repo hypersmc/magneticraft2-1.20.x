@@ -434,15 +434,17 @@ not a replacement for Archive 017.
 The assembly uses eight genuine `gear_medium_wood` visual models,
 a genuine raised `gear_large_wood` drive wheel and wooden drive shaft.
 A T-shaped multi-stage distribution routes motion from a long five-gear
-cross-shaft into a three-gear rear branch. Following the first in-game
-screenshot, the unnecessary enclosed scaffold was pared back to an
-**open L-shaped gantry** with three corner supports and a rear/right
-cross-member, leaving the raised drive wheel accessible. Its footprint
-remains roughly seven blocks wide and five blocks deep, with the upper
-disconnect adding vertical height. The mechanism includes an actual
-Mechanical Brake frame, vertical Wooden Shaft, and model variants from
-the existing Overload Disconnect. This is intentionally larger and
-more involved than the twin gears in Archive 017.
+cross-shaft into a three-gear rear branch. Following two in-game
+screenshots, the **entire custom hologram gantry and all eight custom
+bearing pedestals were removed**. The multi-stage gear train now rests
+on **the real Mechanical Input Module baked models** at each shaft.
+The repaired branch uses the real Flywheel frame rather than a made-up
+bearing hub. The raised assembly includes the actual Mechanical Brake
+frame, Wooden Shafts and the existing vertical (up-facing)
+Overload Disconnect models. Its visible footprint is still
+roughly seven blocks across and five blocks deep, with the elevated
+disconnect over four blocks tall. This is intentionally larger than
+the twin gears in Archive 017.
 
 The film starts the gear assembly, applies load to the existing brake
 frame on the rear branch, highlights stress with a copper-colored
@@ -460,10 +462,14 @@ The original custom brake-jaw models (`power_overload_jaw` and
 existing mechanics. This film reuses the actual models
 `mechanical_brake_wood_frame_y`, `shaft_wood`,
 `overload_disconnect_wood_open` and `overload_disconnect_wood_closed`.
-The unique `power_*` models that remain are **hologram-only scenery**
-such as support piers, the simplified timber gantry, stress outline,
-and repaired bearing detail: they are **not registered placeable blocks**
-or invented gameplay machines.
+**No `power_*` custom models remain in the active scene**.
+The dedicated `power_pier`, `power_gantry_*`, `power_stress_outline`
+and `power_reinforced_hub` model assets have now been deleted.
+The recording reuses actual Copper Age models plus only the
+`hologram/gear_medium_damaged` mesh (a modified original wooden gear)
+and the empty projection placeholder for model variants. None are new
+placeable gameplay blocks. The stress effect is timed amber particles,
+not a fake "warning block".
 
 **Important limitation:** the real brake's wooden drum and leather shoes
 are drawn procedurally by its block-entity renderer, whereas the
@@ -529,3 +535,46 @@ guessing which resource is involved.
 A separate render-quality pass may still be needed: translucent faces
 blend with the surrounding hologram, so a visually complicated object
 can be hard to decipher even when its models are technically correct.
+
+### Archive 042 — second screenshot corrective pass
+
+A second screenshot showed a **textbook purple/black missing-texture
+checkerboard** in the raised drivetrain and the supporting scaffolding
+still read as invented gameplay blocks. The follow-up on 27 October:
+
+- **Removed every custom `power_*` model reference** and deleted seven
+  unused `power_*` model assets from the branch. Eight authentic
+  `block/mechanical_input_module` models now form the lower shaft
+  supports rather than `hologram/power_pier`. The elevated frame,
+  bearings and brake are likewise existing Magneticraft2 block models.
+- Replaced the previously rotated horizontal
+  `overload_disconnect_wood_closed/open` models with the correct
+  *already-existing up-facing* `overload_disconnect_wood_closed_y`
+  and `overload_disconnect_wood_open_y`. This is a scene-only change
+  and does not modify any player machine blocks.
+- Added explicit standalone baking registration for the real block
+  models referenced by the recording; `AnimationResourceLoader` keeps
+  its generic JSON model scan so third-party archives remain possible.
+- Added a **hologram-only missing atlas sprite fallback**: a projected
+  vertex sampling Minecraft's missing-texture checkerboard instead
+  samples the neutral white-concrete sprite, keeping a cyan hologram
+  while logging a warning. Normal source textures and UVs are not
+  altered, and actual machine block rendering is untouched.
+- Replaced the custom repaired bearing hub with the real
+  `flywheel_wood_frame_y` baked model. Removed the custom bearing
+  outline model, retaining amber stress particles and sound cues.
+
+The original screenshot does not conclusively identify *which* model
+was failing, so this pass fixes the native vertical-model selection,
+ensures its models are baked, and adds a fallback. If the geometry
+still looks like a cube, save `logs/latest.log` and inspect which model
+reported an atlas warning.
+
+**Tests:** `./gradlew build`; re-run Archive 042 and check the purple
+checkerboard is gone, the eight gear shafts visibly meet the existing
+Mechanical Input Module supports, the raised disconnect's red
+indicator is legible, the repair frame fits the branch, and no
+hologram-only gantry appears. Verify 34-second overload and 46.5-second
+reconstruction, four facings, F3+T, FPS, Archive 017 regression and
+the one-item return. Neither the Java code nor the new scene have
+been independently compiled or observed in-game from this environment.
