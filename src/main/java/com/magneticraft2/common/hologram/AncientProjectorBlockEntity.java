@@ -113,6 +113,18 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         return result;
     }
 
+    /**
+     * Client-only playback clock. Sound scheduling must never run from the
+     * renderer, which can draw several times per tick and is frustum culled.
+     * The client class is resolved only when this client-side ticker runs.
+     */
+    public static void clientTick(Level level, BlockPos pos, BlockState state,
+                                  AncientProjectorBlockEntity entity) {
+        if (level.isClientSide) {
+            com.magneticraft2.client.hologram.HologramSoundPlayback.tick(entity);
+        }
+    }
+
     public static void tick(Level level, BlockPos pos, BlockState state, AncientProjectorBlockEntity entity) {
         if (entity.itemReturned) return;
         if (entity.startTime < 0L) {
