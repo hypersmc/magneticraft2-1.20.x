@@ -40,7 +40,7 @@ public final class HologramRenderType extends RenderType {
                     // hide later transparent world geometry.
                     .setWriteMaskState(COLOR_WRITE)
                     .setLightmapState(LIGHTMAP)
-                    .setCullState(NO_CULL)
+                    .setCullState(CULL)
                     .setOutputState(TRANSLUCENT_TARGET)
                     .createCompositeState(true));
 
