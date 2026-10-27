@@ -59,6 +59,19 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
      */
     public record AudioCue(int tick, ResourceLocation sound, float volume, float pitch) {}
 
+    /**
+     * Bounded visual cue in scene-local block coordinates (canonical south).
+     * Effects are CLIENT-ONLY and never produce actual electric power, damage
+     * or other world changes. Duration is an inclusive visual time span.
+     */
+    public record VisualEvent(int tick, int durationTicks, int intervalTicks,
+                              String kind, double x, double y, double z,
+                              int count, float spread, float red, float green, float blue) {
+        public int lastTick() {
+            return tick + durationTicks;
+        }
+    }
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
@@ -66,12 +79,14 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                             Map<String, RecordingTimeline.DiscreteTrack> visualChannels,
                             List<Transition> transitions,
                             List<AudioCue> audioCues,
+                            List<VisualEvent> visualEvents,
                             Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
             visualChannels = Map.copyOf(visualChannels);
             transitions = List.copyOf(transitions);
             audioCues = List.copyOf(audioCues);
+            visualEvents = List.copyOf(visualEvents);
         }
 
         public RecordingTimeline.Frame sample(double elapsedTicks) {
@@ -175,7 +190,8 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         List<Transition> transitions = parseTransitions(root, duration);
         return new Recording(archive, title, animation, duration,
                 xyz[0], xyz[1], xyz[2], channels, visualChannels,
-                transitions, parseAudioCues(root, duration), parseAppearance(root));
+                transitions, parseAudioCues(root, duration),
+                parseVisualEvents(root, duration), parseAppearance(root));
     }
 
     /**
@@ -283,6 +299,90 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             }
         }
         return List.copyOf(result);
+    }
+
+    /**
+     * Visual events are deliberately small, local and bounded. A resource pack
+     * may place a few sparks near a recorded machine component, but cannot
+     * define arbitrary particle identifiers or unbounded repeated emissions.
+     */
+    private static List<VisualEvent> parseVisualEvents(JsonObject root, int duration) {
+        if (!root.has("visual_events")) return List.of();
+        JsonArray entries = array(root.get("visual_events"), "visual_events");
+        if (entries.size() > 24) {
+            throw new JsonParseException("visual_events supports at most 24 entries");
+        }
+        List<VisualEvent> events = new ArrayList<>();
+        for (JsonElement element : entries) {
+            JsonObject cue = object(element, "visual event");
+            int tick = number(cue, "tick");
+            int life = cue.has("duration_ticks") ? number(cue, "duration_ticks") : 0;
+            int interval = cue.has("interval_ticks") ? number(cue, "interval_ticks") : 6;
+            int count = cue.has("count") ? number(cue, "count") : 5;
+            if (tick < 1 || tick >= duration || life < 0 || life > 120
+                    || (long) tick + life >= duration
+                    || interval < 4 || interval > 40 || count < 1 || count > 10) {
+                throw new JsonParseException(
+                        "Invalid visual event time, repeat interval or particle count");
+            }
+
+            String kind = text(cue, "kind");
+            if (!"spark".equals(kind) && !"warning".equals(kind)
+                    && !"reconstruct".equals(kind)) {
+                throw new JsonParseException("Unknown hologram visual kind " + kind);
+            }
+            JsonArray pos = array(cue.get("position"), "visual event position");
+            if (pos.size() != 3) {
+                throw new JsonParseException("visual event position needs three coordinates");
+            }
+            double[] xyz = new double[3];
+            for (int i = 0; i < 3; i++) {
+                JsonElement val = pos.get(i);
+                if (!val.isJsonPrimitive() || !val.getAsJsonPrimitive().isNumber()) {
+                    throw new JsonParseException("Visual position must be numeric");
+                }
+                xyz[i] = val.getAsDouble();
+                if (!Double.isFinite(xyz[i]) || Math.abs(xyz[i]) > 64D) {
+                    throw new JsonParseException("Visual position outside +/-64 blocks");
+                }
+            }
+            float spread = 0.35F;
+            if (cue.has("spread")) {
+                spread = boundedFloat(cue.get("spread"), "visual event spread", 0F, 1.5F);
+            }
+            float[] rgb = switch (kind) {
+                case "warning" -> new float[]{1.0F, 0.42F, 0.16F};
+                case "reconstruct" -> new float[]{0.26F, 0.93F, 1.0F};
+                default -> new float[]{0.48F, 0.84F, 1.0F};
+            };
+            if (cue.has("color")) {
+                JsonArray color = array(cue.get("color"), "visual event color");
+                if (color.size() != 3) {
+                    throw new JsonParseException("visual event color requires RGB");
+                }
+                for (int i = 0; i < 3; i++) {
+                    rgb[i] = normalized(color.get(i), "visual event RGB");
+                }
+            }
+            events.add(new VisualEvent(tick, life, interval, kind,
+                    xyz[0], xyz[1], xyz[2], count, spread,
+                    rgb[0], rgb[1], rgb[2]));
+        }
+        events.sort(java.util.Comparator.comparingInt(VisualEvent::tick));
+        return List.copyOf(events);
+    }
+
+    private static float boundedFloat(JsonElement value, String name,
+                                      float min, float max) {
+        if (value == null || !value.isJsonPrimitive()
+                || !value.getAsJsonPrimitive().isNumber()) {
+            throw new JsonParseException(name + " must be numeric");
+        }
+        double n = value.getAsDouble();
+        if (!Double.isFinite(n) || n < min || n > max) {
+            throw new JsonParseException(name + " out of range");
+        }
+        return (float) n;
     }
 
     private static Appearance parseAppearance(JsonObject root) {
