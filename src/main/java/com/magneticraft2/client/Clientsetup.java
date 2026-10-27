@@ -3,6 +3,7 @@ package com.magneticraft2.client;
 import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.client.hologram.HologramRecordingResourceLoader;
+import com.magneticraft2.client.hologram.AncientProjectorRenderer;
 import com.magneticraft2.client.animation.MachineVisualResourceLoader;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
@@ -95,6 +96,7 @@ public class Clientsetup {
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
         LOGGER.info("Renders are being registered!");
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.ANCIENT_PROJECTOR_BE.get(), AncientProjectorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
