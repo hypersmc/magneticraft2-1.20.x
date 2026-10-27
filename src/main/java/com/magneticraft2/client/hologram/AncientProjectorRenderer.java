@@ -30,7 +30,8 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         if (recording == null) return;
         double elapsed = projector.getLevel().getGameTime() - projector.startTime() + partialTick;
         if (elapsed < 0 || elapsed >= recording.durationTicks()) return;
-        float opacity = projectionOpacity(elapsed, recording.durationTicks());
+        float opacity = projectionOpacity(elapsed, recording.durationTicks(),
+                recording.appearance());
         if (opacity <= 0F) return;
         Direction facing = projector.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         pose.pushPose();
@@ -42,7 +43,10 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
             AnimatedComponentRenderer.renderScene(recording.animation(),
                     HologramAnimationBridge.frame(recording.channels(), elapsed),
                     Blocks.STONE.defaultBlockState(), pose,
-                    new HologramBufferSource(buffers, opacity),
+                    new HologramBufferSource(buffers, opacity,
+                            recording.appearance().red(),
+                            recording.appearance().green(),
+                            recording.appearance().blue()),
                     LightTexture.FULL_BRIGHT, overlay);
         } finally {
             pose.popPose();
@@ -53,19 +57,26 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
      * Gentle materialization and dissolve, driven only by synchronized recording
      * time. The small deterministic shimmer does not alter the machine's motion.
      */
-    static float projectionOpacity(double elapsed, int duration) {
+    static float projectionOpacity(double elapsed, int duration,
+                                   HologramRecordingResourceLoader.Appearance appearance) {
         if (!Double.isFinite(elapsed) || duration <= 0
                 || elapsed <= 0D || elapsed >= duration) {
             return 0F;
         }
-        double fadeIn = Math.min(1D, elapsed / 24D);
-        double fadeOut = Math.min(1D, (duration - elapsed) / 36D);
+        double fadeIn = appearance.fadeInTicks() == 0 ? 1D
+                : Math.min(1D, elapsed / appearance.fadeInTicks());
+        double fadeOut = appearance.fadeOutTicks() == 0 ? 1D
+                : Math.min(1D, (duration - elapsed) / appearance.fadeOutTicks());
         fadeIn = fadeIn * fadeIn * (3D - 2D * fadeIn);
         fadeOut = fadeOut * fadeOut * (3D - 2D * fadeOut);
-        double shimmer = 0.965D
-                + 0.018D * Math.sin(elapsed * 0.31D)
-                + 0.012D * Math.sin(elapsed * 1.12D);
-        return (float) (0.55D * fadeIn * fadeOut * shimmer);
+
+        // Fully deterministic and intentionally subtle: no random events,
+        // screen flashes, or updates to the physical machine simulation.
+        double shimmer = 1D + appearance.flicker()
+                * (0.60D * Math.sin(elapsed * 0.31D)
+                    + 0.40D * Math.sin(elapsed * 1.12D));
+        return (float) Math.max(0D, Math.min(1D,
+                appearance.opacity() * fadeIn * fadeOut * shimmer));
     }
 
     @Override
