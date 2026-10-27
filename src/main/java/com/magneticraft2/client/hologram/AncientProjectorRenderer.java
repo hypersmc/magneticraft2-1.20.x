@@ -28,10 +28,18 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         HologramRecordingResourceLoader.Recording recording =
                 HologramRecordingResourceLoader.get(projector.recording());
         if (recording == null) return;
+        int serverDuration = projector.durationTicks();
+        if (serverDuration <= 0) return;
+        // Every client receives the server's latched start time and duration
+        // through the BE update packet, including players joining mid-film.
         double elapsed = projector.getLevel().getGameTime() - projector.startTime() + partialTick;
-        if (elapsed < 0 || elapsed >= recording.durationTicks()) return;
-        float opacity = projectionOpacity(elapsed, recording.durationTicks(),
-                recording.appearance()) * recording.visibility(elapsed);
+        if (elapsed < 0D || elapsed >= serverDuration) return;
+        // A datapack can override playback length without modifying the
+        // corresponding client resource-pack animation. The visual timeline
+        // is rescaled, while completion ALWAYS belongs to the server.
+        double sceneTick = elapsed * recording.durationTicks() / serverDuration;
+        float opacity = projectionOpacity(sceneTick, recording.durationTicks(),
+                recording.appearance()) * recording.visibility(sceneTick);
         if (opacity <= 0F) return;
         Direction facing = projector.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         pose.pushPose();
@@ -42,7 +50,7 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
             pose.translate(recording.offsetX(), recording.offsetY(), recording.offsetZ());
             AnimatedComponentRenderer.renderScene(recording.animation(),
                     HologramAnimationBridge.frame(recording.channels(),
-                            recording.visualChannels(), elapsed),
+                            recording.visualChannels(), sceneTick),
                     Blocks.STONE.defaultBlockState(), pose,
                     new HologramBufferSource(buffers, opacity,
                             recording.appearance().red(),
