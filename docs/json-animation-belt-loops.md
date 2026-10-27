@@ -124,8 +124,18 @@ center radius `(4.08 + 5.45)/32`, half-width
 
 ## Visual resource-pack test
 
-`docs/examples/json-belt-loop-pack/` overrides the Stamp Mill
-animation scene with:
+`docs/examples/json-belt-loop-pack/` now uses a **separate
+machine-visual manifest redirect** to select its own animation scene at
+`magneticraft2:demo/bronze_stamp_mill_blue_belt`, rather than replacing
+the shared default `animations/bronze_stamp_mill.json` file. This is
+important: the earlier gold-cam/red-hammer test pack and the old
+four-machine pack also override that default file. If they took precedence,
+they would mask the belt test completely, making the belt look unchanged
+despite the new pack being enabled.
+
+The revised diagnostic pack sets:
+- an **emerald-green upper pulley model** as a distinct sign that
+  the demo animation scene and its model registry were selected correctly
 - `minecraft:textures/block/light_blue_wool.png` instead of leather
 - slightly broader `half_width: 0.0625`
 - `speed_scale: -1`, which **intentionally reverses the visual texture**
