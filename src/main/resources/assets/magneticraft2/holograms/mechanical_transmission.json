@@ -69,6 +69,7 @@
     "fade_in_ticks": 24,
     "fade_out_ticks": 36,
     "flicker": 0.28,
-    "preserve_texture": true
+    "preserve_texture": true,
+    "shader_effect": true
   }
 }
