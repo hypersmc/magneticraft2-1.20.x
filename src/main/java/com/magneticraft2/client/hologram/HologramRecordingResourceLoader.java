@@ -9,6 +9,7 @@ import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.hologram.RecordingTimeline;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -57,7 +58,12 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
      * Audio belongs to the recorded film, not the mechanical simulation.
      * Each cue fires at most once per continuous client observation.
      */
-    public record AudioCue(int tick, ResourceLocation sound, float volume, float pitch) {}
+    /**
+     * Position is optional for compatibility: absent positions play at the
+     * physical artifact, authored positions play at the filmed mechanism.
+     */
+    public record AudioCue(int tick, ResourceLocation sound, float volume,
+                           float pitch, Vec3 position) {}
 
     /**
      * Bounded visual cue in scene-local block coordinates (canonical south).
@@ -293,7 +299,11 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                     throw new JsonParseException("Audio cue pitch must be within 0.5..2");
                 }
             }
-            result.add(new AudioCue(tick, sound, volume, pitch));
+            Vec3 position = null;
+            if (item.has("position")) {
+                position = scenePosition(item.get("position"), "audio cue position");
+            }
+            result.add(new AudioCue(tick, sound, volume, pitch, position));
         }
         result.sort(java.util.Comparator.comparingInt(AudioCue::tick));
         for (int i = 1; i < result.size(); i++) {
@@ -334,21 +344,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                     && !"reconstruct".equals(kind)) {
                 throw new JsonParseException("Unknown hologram visual kind " + kind);
             }
-            JsonArray pos = array(cue.get("position"), "visual event position");
-            if (pos.size() != 3) {
-                throw new JsonParseException("visual event position needs three coordinates");
-            }
-            double[] xyz = new double[3];
-            for (int i = 0; i < 3; i++) {
-                JsonElement val = pos.get(i);
-                if (!val.isJsonPrimitive() || !val.getAsJsonPrimitive().isNumber()) {
-                    throw new JsonParseException("Visual position must be numeric");
-                }
-                xyz[i] = val.getAsDouble();
-                if (!Double.isFinite(xyz[i]) || Math.abs(xyz[i]) > 64D) {
-                    throw new JsonParseException("Visual position outside +/-64 blocks");
-                }
-            }
+            Vec3 xyz = scenePosition(cue.get("position"), "visual event position");
             float spread = 0.35F;
             if (cue.has("spread")) {
                 spread = boundedFloat(cue.get("spread"), "visual event spread", 0F, 1.5F);
@@ -368,11 +364,37 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                 }
             }
             events.add(new VisualEvent(tick, life, interval, kind,
-                    xyz[0], xyz[1], xyz[2], count, spread,
+                    xyz.x, xyz.y, xyz.z, count, spread,
                     rgb[0], rgb[1], rgb[2]));
         }
         events.sort(java.util.Comparator.comparingInt(VisualEvent::tick));
         return List.copyOf(events);
+    }
+
+    /**
+     * One coordinate rule shared by audio and visual tracks. Values are
+     * relative to the animation scene and may include fractional block
+     * offsets, but cannot place effects arbitrarily far into the world.
+     */
+    private static Vec3 scenePosition(JsonElement element, String name) {
+        JsonArray values = array(element, name);
+        if (values.size() != 3) {
+            throw new JsonParseException(name + " must contain exactly three coordinates");
+        }
+        double[] xyz = new double[3];
+        for (int i = 0; i < xyz.length; i++) {
+            JsonElement entry = values.get(i);
+            if (entry == null || !entry.isJsonPrimitive()
+                    || !entry.getAsJsonPrimitive().isNumber()) {
+                throw new JsonParseException(name + " coordinates must be numeric");
+            }
+            double value = entry.getAsDouble();
+            if (!Double.isFinite(value) || Math.abs(value) > 64D) {
+                throw new JsonParseException(name + " coordinates must be within +/-64");
+            }
+            xyz[i] = value;
+        }
+        return new Vec3(xyz[0], xyz[1], xyz[2]);
     }
 
     private static float boundedFloat(JsonElement value, String name,
