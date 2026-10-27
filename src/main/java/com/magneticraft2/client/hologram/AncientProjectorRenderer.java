@@ -53,17 +53,21 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
             pose.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
             pose.translate(-.5D, 0D, -.5D);
             pose.translate(recording.offsetX(), recording.offsetY(), recording.offsetZ());
+            HologramBufferSource projected = new HologramBufferSource(
+                    buffers, opacity,
+                    recording.appearance().red(),
+                    recording.appearance().green(),
+                    recording.appearance().blue(),
+                    recording.appearance().preserveSourceTexture(),
+                    recording.appearance().shaderEffect());
             AnimatedComponentRenderer.renderScene(recording.animation(),
                     HologramAnimationBridge.frame(recording.channels(),
                             recording.visualChannels(), sceneTick),
-                    Blocks.STONE.defaultBlockState(), pose,
-                    new HologramBufferSource(buffers, opacity,
-                            recording.appearance().red(),
-                            recording.appearance().green(),
-                            recording.appearance().blue(),
-                            recording.appearance().preserveSourceTexture(),
-                            recording.appearance().shaderEffect()),
-                    LightTexture.FULL_BRIGHT, overlay);
+                    Blocks.STONE.defaultBlockState(), pose, projected,
+                    LightTexture.FULL_BRIGHT, overlay,
+                    recording.proceduralParts().isEmpty() ? null
+                            : new HologramProceduralAttachment(
+                                    recording, projected, sceneTick));
         } finally {
             pose.popPose();
         }
