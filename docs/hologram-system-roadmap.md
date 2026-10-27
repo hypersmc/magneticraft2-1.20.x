@@ -46,9 +46,14 @@ These are acceptance criteria, **not claims of completed testing**.
 - [x] Existing Copper Age machine models for normal components in Archive 042
 - [ ] Confirm all four facings, world depth occlusion, thin-part visibility,
       shader/fallback rendering and resource reload in Minecraft
-- [ ] Project or faithfully adapt the real procedurally rendered machine
-      subcomponents (brake drum/leather shoes, etc.) **without inventing
-      incompatible gameplay machine designs**
+- [x] The real Mechanical Brake's drum, leather shoes and copper clamp arms
+      now share the exact live renderer geometry with holograms, using
+      resource-pack-authored procedural attachment points and timing
+- [ ] Verify the shared brake procedural geometry renders correctly with
+      holographic transparency and its real wood/leather/copper textures
+      in-game, without clipping or floating when the models animate
+- [ ] Extend the same opt-in shared-visual approach to other dynamically
+      rendered Magneticraft2 parts only when a recording needs them
 - [ ] Fix remaining depth sorting / transparent surface overdraw if profiling
       and screenshots show it makes the mechanism illegible
 - [ ] Verify render-radius AABB covers the whole scene at every facing
@@ -62,7 +67,10 @@ These are acceptance criteria, **not claims of completed testing**.
       reconstruction fades, bounded positional visual events and one-shot sounds
 - [x] Shared immutable PR #12 scene definition and generic model registration
 - [x] Cross-resource validation catches missing mechanical channels, unused
-      visual tracks, invalid model-variant stages and missing scene definitions
+      visual tracks, invalid model-variant stages, missing scene definitions,
+      and invalid procedural attachment references/stages
+- [x] Bounded `procedural_parts` whitelists the real mechanical brake
+      component, axis, phase driver, visibility stage and clamping interval
 - [ ] Test malformed, conflicting and incomplete packs: wrong IDs, missing
       resources, unsupported schema versions, invalid sound IDs, missing models
       and texture atlas sprites; errors must name the source and remain safe
@@ -127,9 +135,13 @@ Desired workflow:
    code required for each new recording. Future optional live preview can be
    evaluated separately rather than coupling the editor to gameplay.
 
-Potential home: a standalone local Magneticraft2 Studio utility. **No choice of
-framework, UI, hosting, plugin API or distribution mechanism has been made.**
-Do not infer this is approved for implementation merely from the design notes.
+**Preferred direction to explore:** add the Hologram Recording Builder as a
+module inside the existing **MGC2 Studio**, reusing its established asset
+workflow rather than launching an unrelated standalone program. This is a
+suggestion, not a committed editor architecture or an implementation task yet.
+Assess Studio's current capabilities and architecture *after* runtime and
+recording schema stabilization. No framework, UI, packaging, plugin API or
+editor workflow has been approved for implementation.
 
 ## Release gate
 
