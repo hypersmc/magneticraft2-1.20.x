@@ -189,3 +189,85 @@ Timed completion and early removal now share one server-side `onRemove` path. Th
 - Local `./gradlew build` and live in-game visual verification of these latest film/return changes.
 - Server-side recording duration currently uses a fixed **900 ticks**. The client JSON duration matches this for Archive 017 but cannot yet govern the server's expiration for arbitrary future recordings.
 - Visual cue sound effects, additional recording films, measured multiplayer late-join behavior, all four rotations, and frame-time performance profiling.
+
+## Recording reliability and extensibility — current branch update
+
+### Dedicated server recording catalog
+
+The server now loads versioned datapack metadata from
+`data/<namespace>/hologram_recordings/<id>.json`. Each definition declares:
+
+```json
+{
+  "format": "magneticraft2:hologram_recording",
+  "format_version": 1,
+  "archive": "017",
+  "title": "Mechanical Transmission",
+  "duration_ticks": 900
+}
+```
+
+The server accepts **1–12000 ticks**. New archives are created by combining a server datapack definition with corresponding client assets:
+`assets/<namespace>/holograms/<id>.json` (visual film) and its referenced
+`assets/<namespace>/animations/<scene>.json` plus models. The ID is stored
+unchanged in the projector item as `Recording` NBT.
+
+The per-block-entity duration is **latched at placement**, included in update
+packets and save data, and never read from client assets for authoritative
+completion. An in-progress recording is unaffected by `/reload` changes
+to its datapack definition. For compatibility, old projectors without stored
+duration retain the original 900-tick default. Unknown/missing server
+recordings preserve their IDs but use the legacy duration until a matching
+datapack returns. Do not distribute missing-ID artifacts intentionally.
+
+The client receives the server's `startTime` and `durationTicks` through
+Minecraft's standard block-entity update tag/packet. It evaluates at:
+`sceneTick = (clientGameTime - startTime + partialTick) *
+clientVisualDuration / serverDuration`.
+This keeps the requested scene shape while allowing server datapacks to
+select longer or shorter films. No separate entity-per-component or
+per-frame network packets are required.
+
+### Archive-specific tooltip and dimensions
+
+The item tooltip now uses a client-only Forge tooltip event:
+- Detects the fixed `Recording` ID, or the default Archive 017 for plain
+  creative items
+- Retrieves archive number, title, and animation ID from the client recording
+  resource rather than hardcoding Mechanical Transmission in the item
+- Preserves the partially obfuscated teaser styling
+- Computes the rounded-up projected W × H × D from **actual baked models**
+  and their JSON offsets, considering all model variants and the radial sweep
+  of driven rotations; this is cached per animation and invalidated when
+  resources reload
+
+The bound calculation is conservative by design, and complex nested
+parented animations/sliding components may need more precise authored
+bounds support later. Missing client models display unknown engraving rather
+than an invented size. Dimensions are local to the scene and intentionally
+exclude the empty offset between the physical projector and projected scene.
+
+### In-game QA scenarios
+
+1. **Ordinary Archive 017:** `/give @p magneticraft2:ancient_projector`;
+   verify the film remains 45 seconds and returns one item.
+2. **Datapack override:** Change only `duration_ticks` to `1200` in the
+   server datapack, `/reload`, place a **new** projector; it should last 60s
+   with the same film rescaled. Existing playing projectors keep their
+   previously latched duration.
+3. **Persistence:** Start playback, save/quit and rejoin; playback resumes
+   from the saved start time without restarting or creating another item.
+4. **Chunk unload:** Leave range and return; playback follows server world
+   time and doesn't spawn a second artifact.
+5. **Multiplayer:** Join midway from another client, verify the same visual
+   stage and final completion; the client may differ by network-clock latency
+   but the server controls lifecycle.
+6. **New recording ID:** Add both the server datapack metadata and client
+   visual scene in a resource pack; use an item with
+   `{Recording:"namespace:archive_id"}`; no Java registry change needed.
+7. **Visuals:** Check engraving matches the approximate actual footprint,
+   swap a model via F3+T and verify the cache is refreshed, and confirm
+   malformed data is logged and skipped safely.
+
+Status: structural verification only until a new Gradle build and the in-game
+scenarios pass; PR #16 remains draft.
