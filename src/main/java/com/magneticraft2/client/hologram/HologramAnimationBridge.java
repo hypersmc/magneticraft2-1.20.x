@@ -5,6 +5,7 @@ import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.hologram.RecordingTimeline;
 
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +21,13 @@ public final class HologramAnimationBridge {
 
     public static AnimationFrame frame(Map<String, RecordingTimeline.Track> tracks,
                                        double elapsedTicks) {
+        return frame(tracks, Map.of(), elapsedTicks);
+    }
+
+    public static AnimationFrame frame(
+            Map<String, RecordingTimeline.Track> tracks,
+            Map<String, RecordingTimeline.DiscreteTrack> visualChannels,
+            double elapsedTicks) {
         RecordingTimeline.Frame sampled = RecordingTimeline.sample(tracks, elapsedTicks);
         Set<AnimationDefinition.State> states =
                 EnumSet.noneOf(AnimationDefinition.State.class);
@@ -30,6 +38,11 @@ public final class HologramAnimationBridge {
         } else {
             states.add(AnimationDefinition.State.STOPPED);
         }
-        return new AnimationFrame(sampled.angles(), states, Map.of());
+        Map<String, Integer> modelStages = new HashMap<>();
+        for (Map.Entry<String, RecordingTimeline.DiscreteTrack> entry
+                : visualChannels.entrySet()) {
+            modelStages.put(entry.getKey(), entry.getValue().sample(elapsedTicks));
+        }
+        return new AnimationFrame(sampled.angles(), states, modelStages);
     }
 }
