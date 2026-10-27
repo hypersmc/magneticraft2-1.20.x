@@ -1,0 +1,70 @@
+# Ancient holographic recordings — implementation design (Forge 1.20.1)
+
+Status: design contract, **not yet implemented or build-verified**.
+Base: `feature/bronze-age-foundry` after merged PR #12.
+
+## Player contract
+
+- A discoverable, reusable Ancient Holographic Projector item has exactly one immutable recording ID.
+- Right-click a supporting block face to place the device, oriented toward the player-selected direction; playback begins automatically without a GUI.
+- A 1:1-scale, non-colliding, non-interactable 3D recorded scene appears in the world. Players can walk around and through it. World geometry occludes the projection normally.
+- Playback is predetermined. It can show correct operations, failures, repairs and consequences, but cannot change the real world or machine state.
+- On normal completion the projector removes itself and drops an item preserving the recording ID; breaking it early also drops the same item and stops playback.
+- Every nearby client sees the same server-authoritative playback time, including late joiners. Leaving range unloads visuals; returning resumes at the current time.
+- Each recording has a computed integer bounding box. Tooltip lore presents an understated `W × H × D` engraving with no explanatory label. Dimension convention is local scene X/Y/Z, rotated with projector facing.
+- Recordings are optional learning and exploration rewards, never progression gates. Book and multiblock blueprint projector remain independent.
+
+## Integration with merged PR #12
+
+PR #12 provides `assets/<namespace>/animations/*.json`, scene hierarchy, model references, typed driven tracks, `AnimationFrame`, `AnimationResourceLoader`, and `MachineVisualResourceLoader`.
+
+Do **not** fork that evaluator or create a second per-machine renderer. Introduce a recording playback adapter that constructs an `AnimationFrame` from a deterministic recording clock and timeline. The adapter must feed explicitly authored named angles, integer inputs and states into the existing scene evaluation/render path. Real machine manifests are bound to actual Java-supplied channels and should **not** be used as the recording data schema. No gameplay inputs are invented for actual machines.
+
+Static multiblock geometry and specialized Java effects are not fully controlled by PR #12. Start with explicit scene models and existing animation components, then add narrowly scoped visual adapters for fluids/items as needed. Resource-pack overrides must remain supported. Model registration must happen before baking, consistent with the existing resource reload lifecycle.
+
+## Suggested recording resource
+
+`assets/magneticraft2/holograms/mechanical_transmission.json` is a **proposed** resource location, not an existing loader contract.
+
+A recording references:
+- stable ID and archive number;
+- optional display translation keys;
+- a local 3D scene layout and placement anchor;
+- existing animation scene IDs and static baked models;
+- finite duration in ticks;
+- keyed timeline channels and visibility changes;
+- optional effects (particles, sound, callouts) with explicit limits.
+
+Bounds are derived from actual scene extents at authoring/load time, including moving components where possible, rather than entered as arbitrary lore. Validate finite values, resource existence, total extent, total components, animation keys, and duration. Reject malformed resources safely without crashing the client.
+
+## Playback and synchronization
+
+Server block entity owns `recordingId`, `startGameTime`, `facing` and lifecycle. Never spawn real tutorial blocks or per-block entities. Clients render from `serverGameTime - startGameTime + partialTick` and evaluate the timeline directly, so skipped frames do not desynchronize motion. On expiry, the server performs a single idempotent item drop/removal. Early break uses normal loot handling without duplication. On chunk unload do not duplicate drops; document whether playback pauses or continues, and use a consistent server-time policy.
+
+Scene visibility should use ordinary depth testing, appropriate transparency sorting, frustum/distance culling and cached static geometry. Do not render through terrain or walls. Avoid per-tick allocations and bound the number of simultaneously rendered recordings.
+
+## First vertical slice
+
+1. One projector item/block with fixed recording `mechanical_transmission`.
+2. Placement and drop lifecycle (including break, chunk unload and multiplayer).
+3. One static 1:1 scene of a crank, shaft and gears with proper world occlusion.
+4. Deterministic rotation and overload/stop/recovery timeline using the PR #12 animation scene renderer.
+5. Tooltip engraving computed from scene dimensions.
+6. Resource reload and missing-model fallback.
+7. Loot distribution and more recordings only after the runtime is proven.
+
+## Acceptance tests
+
+- `./gradlew build` succeeds on the feature branch.
+- Place projector in all four horizontal directions; scene rotates without double-facing transforms.
+- Hologram is walk-through and cannot be clicked/harvested as machinery.
+- Existing world blocks occlude the projection; no blocks are modified.
+- Two clients and a late joiner see matching phase and completion.
+- Completion and early break each return exactly one projector with its original recording.
+- Save/reload, chunk unload/reload, and F3+T do not crash or duplicate drops.
+- Missing/invalid JSON fails gracefully; other machine visuals remain unchanged.
+- Verify FPS with multiple projected scenes; avoid regression to earlier multiblock rendering issues.
+
+## Open implementation details
+
+Confirm the current `AnimationResourceLoader` and `AnimatedComponentRenderer` APIs before writing the playback adapter. Confirm client model registration and whether the current scene evaluator accepts a supplied `AnimationFrame` without a live machine block entity. Do not silently claim specialized washer fluids or ore physics work in holograms.
