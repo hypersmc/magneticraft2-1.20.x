@@ -91,6 +91,62 @@ public final class RecordingTimeline {
         }
     }
 
+    /**
+     * A stepwise, resource-pack-authored scene property. Values 0..5 map to
+     * PR #12's baked model variants. Each sample is stateless: late joiners,
+     * seeking or frame skipping reconstruct the same model at the same tick.
+     */
+    public record DiscreteKeyframe(int tick, int value) {
+        public DiscreteKeyframe {
+            if (tick < 0 || value < 0 || value > 5) {
+                throw new IllegalArgumentException("Invalid recorded model stage");
+            }
+        }
+    }
+
+    public static final class DiscreteTrack {
+        private final int durationTicks;
+        private final List<DiscreteKeyframe> frames;
+
+        public DiscreteTrack(int durationTicks, List<DiscreteKeyframe> keyframes) {
+            if (durationTicks < 1 || durationTicks > 12000) {
+                throw new IllegalArgumentException("Invalid recording duration");
+            }
+            if (keyframes == null || keyframes.isEmpty() || keyframes.size() > 128) {
+                throw new IllegalArgumentException("Expected 1..128 discrete keyframes");
+            }
+            List<DiscreteKeyframe> ordered = new ArrayList<>(keyframes);
+            ordered.sort(Comparator.comparingInt(DiscreteKeyframe::tick));
+            if (ordered.get(0).tick() != 0) {
+                throw new IllegalArgumentException("First model stage must start at tick zero");
+            }
+            for (int i = 0; i < ordered.size(); i++) {
+                if (ordered.get(i).tick() >= durationTicks
+                        || (i > 0 && ordered.get(i).tick() == ordered.get(i - 1).tick())) {
+                    throw new IllegalArgumentException(
+                            "Discrete keyframes must be unique and before recording completion");
+                }
+            }
+            this.durationTicks = durationTicks;
+            this.frames = List.copyOf(ordered);
+        }
+
+        public int sample(double elapsedTicks) {
+            if (!Double.isFinite(elapsedTicks)) {
+                throw new IllegalArgumentException("Recording time must be finite");
+            }
+            double tick = Math.max(0D, Math.min(durationTicks, elapsedTicks));
+            int lo = 0;
+            int hi = frames.size() - 1;
+            while (lo < hi) {
+                int mid = (lo + hi + 1) >>> 1;
+                if (frames.get(mid).tick() <= tick) lo = mid;
+                else hi = mid - 1;
+            }
+            return frames.get(lo).value();
+        }
+    }
+
     /** Named animation inputs for the PR #12 scene graph. */
     public record Frame(Map<String, Float> angles, Set<String> states,
                         boolean finished) {
