@@ -3,5 +3,6 @@
   "format_version": 1,
   "archive": "017",
   "title": "Mechanical Transmission",
-  "duration_ticks": 900
+  "duration_ticks": 900,
+  "render_radius_blocks": 8
 }
