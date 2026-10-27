@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.block.general.*;
+import com.magneticraft2.common.hologram.AncientProjectorBlock;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
@@ -78,6 +79,7 @@ public class BlockRegistry {
 
     public static final RegistryObject<Block> rice_plant = registerBlockWithoutBlockItem("rice_plant", () -> new RicePlantBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
+    public static final RegistryObject<AncientProjectorBlock> ANCIENT_PROJECTOR = BLOCKS.register("ancient_projector", AncientProjectorBlock::new);
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
     public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
     public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
