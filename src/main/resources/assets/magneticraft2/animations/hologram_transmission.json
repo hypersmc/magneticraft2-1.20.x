@@ -10,8 +10,8 @@
     "base_left": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        0.5,
-        0,
+        -0.75,
+        -0.5,
         0
       ],
       "pivot": [
@@ -19,13 +19,13 @@
         0,
         0
       ],
-      "render_layer": "translucent"
+      "render_layer": "cutout"
     },
     "base_right": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        0.5,
-        0,
+        0.75,
+        -0.5,
         0
       ],
       "pivot": [
@@ -33,13 +33,13 @@
         0,
         0
       ],
-      "render_layer": "translucent"
+      "render_layer": "cutout"
     },
     "left_gear": {
-      "model": "magneticraft2:hologram/gear_wheel",
+      "model": "magneticraft2:block/gear_medium_wood",
       "model_offset": [
-        -0.5,
-        1,
+        -0.75,
+        0.55,
         0
       ],
       "pivot": [
@@ -47,13 +47,13 @@
         0.5,
         0.5
       ],
-      "render_layer": "translucent"
+      "render_layer": "cutout"
     },
     "right_gear": {
-      "model": "magneticraft2:hologram/gear_wheel",
+      "model": "magneticraft2:block/gear_medium_wood",
       "model_offset": [
-        0.5,
-        1,
+        0.75,
+        0.55,
         0
       ],
       "pivot": [
@@ -61,10 +61,10 @@
         0.5,
         0.5
       ],
-      "render_layer": "translucent"
+      "render_layer": "cutout"
     },
     "left_axle": {
-      "model": "magneticraft2:hologram/gear_axle",
+      "model": null,
       "model_offset": [
         -0.5,
         1,
@@ -78,7 +78,7 @@
       "render_layer": "translucent"
     },
     "right_axle": {
-      "model": "magneticraft2:hologram/gear_axle",
+      "model": null,
       "model_offset": [
         0.5,
         1,
@@ -105,16 +105,17 @@
         {
           "target": "left_gear",
           "property": "rotation",
-          "axis": "z",
+          "axis": "y",
           "input": "shaft_phase",
           "scale": 1
         },
         {
           "target": "right_gear",
           "property": "rotation",
-          "axis": "z",
+          "axis": "y",
           "input": "shaft_phase",
-          "scale": -1
+          "scale": -1,
+          "phase_degrees": 22.5
         }
       ]
     }
