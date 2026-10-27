@@ -96,8 +96,8 @@
     "brake_load": {
       "model": "magneticraft2:hologram/empty_projection",
       "model_offset": [
-        1.58,
-        0.55,
+        0.53,
+        1.55,
         0
       ],
       "pivot": [
@@ -118,8 +118,8 @@
     "brake_shaft": {
       "model": "magneticraft2:block/shaft_wood",
       "model_offset": [
-        1.58,
-        0.55,
+        0.53,
+        1.15,
         0
       ],
       "pivot": [
