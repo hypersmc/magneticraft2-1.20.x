@@ -30,10 +30,19 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
     private static final Logger LOGGER = LogUtils.getLogger();
     private static volatile Map<ResourceLocation, Recording> recordings = Map.of();
 
+    /** Client-side resource-pack controlled projection material and timings. */
+    public record Appearance(float red, float green, float blue,
+                             float opacity, int fadeInTicks, int fadeOutTicks,
+                             float flicker) {}
+
+    private static final Appearance DEFAULT_APPEARANCE =
+            new Appearance(0.27F, 0.83F, 1.0F, 0.55F, 24, 36, 0.03F);
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
-                            Map<String, RecordingTimeline.Track> channels) {
+                            Map<String, RecordingTimeline.Track> channels,
+                            Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
         }
@@ -124,7 +133,55 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             channels.put(input.getKey(), new RecordingTimeline.Track(duration, frames));
         }
         return new Recording(archive, title, animation, duration,
-                xyz[0], xyz[1], xyz[2], channels);
+                xyz[0], xyz[1], xyz[2], channels, parseAppearance(root));
+    }
+
+    private static Appearance parseAppearance(JsonObject root) {
+        if (!root.has("appearance")) return DEFAULT_APPEARANCE;
+        JsonObject json = object(root.get("appearance"), "appearance");
+        float red = DEFAULT_APPEARANCE.red();
+        float green = DEFAULT_APPEARANCE.green();
+        float blue = DEFAULT_APPEARANCE.blue();
+        if (json.has("tint")) {
+            JsonArray tint = array(json.get("tint"), "appearance.tint");
+            if (tint.size() != 3) {
+                throw new JsonParseException("appearance.tint requires RGB values");
+            }
+            red = normalized(tint.get(0), "appearance.tint[0]");
+            green = normalized(tint.get(1), "appearance.tint[1]");
+            blue = normalized(tint.get(2), "appearance.tint[2]");
+        }
+
+        float opacity = json.has("opacity")
+                ? normalized(json.get("opacity"), "appearance.opacity")
+                : DEFAULT_APPEARANCE.opacity();
+        int fadeIn = json.has("fade_in_ticks")
+                ? number(json, "fade_in_ticks") : DEFAULT_APPEARANCE.fadeInTicks();
+        int fadeOut = json.has("fade_out_ticks")
+                ? number(json, "fade_out_ticks") : DEFAULT_APPEARANCE.fadeOutTicks();
+        if (fadeIn < 0 || fadeIn > 200 || fadeOut < 0 || fadeOut > 200) {
+            throw new JsonParseException("appearance fade timings must be 0..200 ticks");
+        }
+        float flicker = json.has("flicker")
+                ? normalized(json.get("flicker"), "appearance.flicker")
+                : DEFAULT_APPEARANCE.flicker();
+        if (flicker > 0.08F) {
+            throw new JsonParseException("appearance.flicker must be <= 0.08");
+        }
+        return new Appearance(red, green, blue, opacity,
+                fadeIn, fadeOut, flicker);
+    }
+
+    private static float normalized(JsonElement value, String field) {
+        if (value == null || !value.isJsonPrimitive()
+                || !value.getAsJsonPrimitive().isNumber()) {
+            throw new JsonParseException(field + " must be numeric");
+        }
+        double n = value.getAsDouble();
+        if (!Double.isFinite(n) || n < 0D || n > 1D) {
+            throw new JsonParseException(field + " must be a finite value from 0 to 1");
+        }
+        return (float) n;
     }
 
     private static JsonObject object(JsonElement value, String name) {
