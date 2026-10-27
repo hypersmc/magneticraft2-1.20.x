@@ -3,7 +3,7 @@
   "format_version": 1,
   "archive": "017",
   "title": "Mechanical Transmission",
-  "animation": "magneticraft2:primitive_grinder",
+  "animation": "magneticraft2:hologram_transmission",
   "duration_ticks": 900,
   "placement": {
     "reference_facing": "south",
