@@ -61,7 +61,15 @@
         0.5,
         0.5
       ],
-      "render_layer": "cutout"
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "gear_condition",
+        "models": {
+          "0": "magneticraft2:block/gear_medium_wood",
+          "1": "magneticraft2:hologram/gear_medium_damaged",
+          "2": "magneticraft2:block/gear_medium_wood"
+        }
+      }
     },
     "frame_tie": {
       "model": "magneticraft2:hologram/transmission_bridge",
@@ -75,7 +83,37 @@
         0,
         0
       ],
-      "render_layer": "cutout"
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "frame_condition",
+        "models": {
+          "0": "magneticraft2:hologram/transmission_bridge",
+          "1": "magneticraft2:hologram/transmission_bridge",
+          "2": "magneticraft2:hologram/transmission_bridge_reinforced"
+        }
+      }
+    },
+    "brake_load": {
+      "model": "magneticraft2:hologram/empty_projection",
+      "model_offset": [
+        1.05,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "brake_condition",
+        "models": {
+          "0": "magneticraft2:hologram/empty_projection",
+          "1": "magneticraft2:hologram/transmission_brake_load",
+          "2": "magneticraft2:hologram/empty_projection"
+        }
+      }
     }
   },
   "inputs": {
