@@ -40,6 +40,9 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         float opacity = projectionOpacity(sceneTick, recording.durationTicks(),
                 recording.appearance()) * recording.visibility(sceneTick);
         if (opacity <= 0F) return;
+        // Once per scene/reload: log the exact baked model responsible if
+        // its atlas sprite is the purple/black missing-texture checkerboard.
+        HologramModelDiagnostics.check(recording.animation());
         Direction facing = projector.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         pose.pushPose();
         try {
