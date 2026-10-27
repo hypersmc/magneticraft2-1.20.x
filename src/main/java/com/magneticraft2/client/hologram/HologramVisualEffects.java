@@ -7,7 +7,6 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 /**
@@ -32,9 +31,7 @@ public final class HologramVisualEffects {
         Level level = projector.getLevel();
         if (level == null || !level.isClientSide
                 || Minecraft.getInstance().player == null
-                || recording.visualEvents().isEmpty()
-                || Minecraft.getInstance().player.distanceToSqr(
-                    Vec3.atCenterOf(projector.getBlockPos())) > MAX_DISTANCE_SQUARED) {
+                || recording.visualEvents().isEmpty()) {
             return;
         }
 
@@ -54,12 +51,13 @@ public final class HologramVisualEffects {
             if (pulseTick > event.lastTick()) continue;
             int count = Math.min(event.count(), budget);
             if (count <= 0) continue;
-            emitOne(level, projector, recording, event, pulseTick, count);
-            budget -= count;
+            if (emitOne(level, projector, recording, event, pulseTick, count)) {
+                budget -= count;
+            }
         }
     }
 
-    private static void emitOne(Level level, AncientProjectorBlockEntity projector,
+    private static boolean emitOne(Level level, AncientProjectorBlockEntity projector,
                                 HologramRecordingResourceLoader.Recording recording,
                                 HologramRecordingResourceLoader.VisualEvent event,
                                 int pulseTick, int count) {
@@ -76,6 +74,11 @@ public final class HologramVisualEffects {
         double y = projector.getBlockPos().getY() + recording.offsetY() + event.y();
         double z = projector.getBlockPos().getZ() + 0.5D
                 - sine * localX + cosine * localZ;
+
+        // Test the actual projected event's position, not the tiny
+        // emitter: large records can extend far from their projector.
+        if (Minecraft.getInstance().player.distanceToSqr(x, y, z)
+                > MAX_DISTANCE_SQUARED) return false;
 
         // All clients sampling the same recorded pulse get the same positions.
         // The game may render particles at different frame rates, but the
@@ -108,11 +111,11 @@ public final class HologramVisualEffects {
             if ("warning".equals(event.kind())) {
                 dy *= 0.17D;
             } else if ("reconstruct".equals(event.kind())) {
-                radial *= 0.4D;
                 dx *= 0.4D;
                 dz *= 0.4D;
             }
             level.addParticle(dust, x + dx, y + dy, z + dz, vx, vy, vz);
         }
+        return true;
     }
 }
