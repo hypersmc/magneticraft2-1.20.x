@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -110,11 +109,10 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
 
     @Override
     public boolean shouldRenderOffScreen(AncientProjectorBlockEntity projector) {
-        return true;
-    }
-
-    public AABB getRenderBoundingBox(AncientProjectorBlockEntity projector) {
-        return new AABB(projector.getBlockPos()).inflate(16);
+        // Let Forge cull using the enlarged AABB on the BLOCK ENTITY.
+        // Returning true here previously forced every nearby projector to
+        // submit its entire animated scene even while completely off-screen.
+        return false;
     }
 
     @Override
