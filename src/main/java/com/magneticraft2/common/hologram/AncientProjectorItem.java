@@ -37,6 +37,6 @@ public class AncientProjectorItem extends BlockItem {
     public void appendHoverText(ItemStack stack, Level level, List<Component> lines, TooltipFlag flag) {
         lines.add(Component.literal("Archive 017 - Mechanical Transmission").withStyle(net.minecraft.ChatFormatting.GRAY));
         lines.add(Component.literal("An inscription is etched along its side.").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
-        lines.add(Component.literal("8 x 4 x 7").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+        lines.add(Component.literal("3 x 2 x 2").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
     }
 }
