@@ -7,16 +7,44 @@ Zip the **contents of this folder** so `pack.mcmeta` is at the ZIP
 root; place the ZIP in your Minecraft development instance's
 `resourcepacks/` folder, select it and press **F3+T**.
 
+### Pack conflict discovered during in-game testing
+
+The first version of this pack changed
+`assets/magneticraft2/animations/bronze_stamp_mill.json`, the **same**
+file changed by the earlier gold-cam/red-hammer and four-machine packs.
+If either earlier pack was higher in Minecraft's pack list, its version
+would win and omit `belt_loops`, causing the correctly working Java
+fallback to draw the **original dark leather belt** instead.
+
+**The revised pack avoids that collision entirely.** It changes
+`assets/magneticraft2/machine_visuals/bronze_stamp_mill.json` to select
+`magneticraft2:demo/bronze_stamp_mill_blue_belt`, a UNIQUE animation
+resource stored under `animations/demo/`. Earlier packs can still
+override the original `animations/bronze_stamp_mill.json` without
+replacing this new scene.
+
+The revised scene also changes the **upper pulley rim to emerald green**
+via a new inherited model. This is a diagnostic marker:
+- **Green upper pulley AND blue belt:** scene selection and belt rendering work.
+- **Green upper pulley, DARK belt:** scene and its models loaded; investigate
+  the loop texture/binding/rendering route.
+- **Neither changes:** the new manifest/scene is missing, invalid,
+  overridden by another manifest, or the mod is using fallback. Check
+  `logs/latest.log` for `Rejected animation`, `belt` or `machine visual`.
+
+Do not confuse this **demo green pulley** with a new production model.
+
 ### Expected visual change
 
 The Stamp Mill's original leather loop should become a **light blue**
-loop using Minecraft's built-in wool texture. The strip is slightly
+loop using Minecraft's built-in wool texture, and its upper pulley
+should get an **emerald green rim** as the scene-selection marker. The strip is slightly
 wider than the original, and the texture deliberately travels **in the
 opposite direction** of the bronze pulley rotation. That reverse
 motion is intentional for this proof pack (`speed_scale: -1`) and
 does NOT change the physical machine's power direction.
 
-The three cams, three hammers, powertrain shafts, ore visuals, wear,
+The three cams, three hammers, other powertrain shafts, ore visuals, wear,
 recipes and formed V2 geometry are otherwise unchanged.
 
 ### Things to look for
