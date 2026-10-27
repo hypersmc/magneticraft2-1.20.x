@@ -10,7 +10,7 @@
     "base_left": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        -1,
+        0.5,
         0,
         0
       ],
@@ -24,7 +24,7 @@
     "base_right": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        1,
+        0.5,
         0,
         0
       ],
@@ -38,7 +38,7 @@
     "left_gear": {
       "model": "magneticraft2:hologram/gear_wheel",
       "model_offset": [
-        -1,
+        -0.5,
         1,
         0
       ],
@@ -52,7 +52,7 @@
     "right_gear": {
       "model": "magneticraft2:hologram/gear_wheel",
       "model_offset": [
-        1,
+        0.5,
         1,
         0
       ],
@@ -66,7 +66,7 @@
     "left_axle": {
       "model": "magneticraft2:hologram/gear_axle",
       "model_offset": [
-        -1,
+        -0.5,
         1,
         0
       ],
@@ -80,7 +80,7 @@
     "right_axle": {
       "model": "magneticraft2:hologram/gear_axle",
       "model_offset": [
-        1,
+        0.5,
         1,
         0
       ],
