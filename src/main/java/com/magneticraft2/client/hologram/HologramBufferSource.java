@@ -16,6 +16,10 @@ import net.minecraft.resources.ResourceLocation;
  * The vanilla translucent block layer uses normal depth testing, so solid
  * world geometry hides the projection. Never use see-through/outline types.
  *
+ * <p>An optional Forge-registered GLSL material adds a scrolling raster and
+ * silhouette highlights. Vanilla RenderType.translucent() remains available
+ * as a per-recording fallback if the shader is disabled or not registered.
+ *
  * <p>Normal recordings retain the baked model's original UVs, allowing the
  * underlying wood, stone and gear textures to remain readable through the
  * tint. Flat/silhouette mode can still sample a neutral atlas texel instead.
@@ -29,7 +33,8 @@ public final class HologramBufferSource implements MultiBufferSource {
 
     public HologramBufferSource(MultiBufferSource downstream, float opacity,
                                float red, float green, float blue,
-                               boolean preserveSourceTexture) {
+                               boolean preserveSourceTexture,
+                               boolean shaderEffect) {
         // Avoid texture lookups in the common detailed mode. The original
         // atlas UVs are already encoded in the baked quads from PR #12.
         float centerU = 0F;
@@ -42,7 +47,9 @@ public final class HologramBufferSource implements MultiBufferSource {
             centerV = (sprite.getV0() + sprite.getV1()) * 0.5F;
         }
         consumer = new HologramVertexConsumer(
-                downstream.getBuffer(RenderType.translucent()),
+                downstream.getBuffer(shaderEffect
+                        ? HologramRenderType.projection()
+                        : RenderType.translucent()),
                 centerU, centerV, Math.max(0F, Math.min(1F, opacity)),
                 red, green, blue, preserveSourceTexture);
     }
