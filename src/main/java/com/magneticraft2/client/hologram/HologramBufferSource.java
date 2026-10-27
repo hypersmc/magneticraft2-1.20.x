@@ -35,7 +35,16 @@ public final class HologramBufferSource implements MultiBufferSource {
     private static final AtomicBoolean WARNED_MISSING_SPRITE = new AtomicBoolean();
     private static final ResourceLocation NEUTRAL_SPRITE =
             new ResourceLocation("minecraft", "block/white_concrete");
+    private static final ResourceLocation FLAT_TEXTURE =
+            new ResourceLocation("minecraft", "textures/block/white_concrete.png");
+    private final MultiBufferSource downstream;
     private final VertexConsumer consumer;
+    private final float opacity;
+    private final float red;
+    private final float green;
+    private final float blue;
+    private final boolean preserveSourceTexture;
+    private final boolean shaderEffect;
 
     /** Called on the client recording resource-reload path. */
     public static void resetMissingSpriteWarning() {
@@ -53,6 +62,13 @@ public final class HologramBufferSource implements MultiBufferSource {
         // remain a readable *blue hologram* instead of projecting that debug
         // checkerboard into the world. This is a fallback, not a replacement
         // for fixing the offending source model.
+        this.downstream = downstream;
+        this.opacity = Math.max(0F, Math.min(1F, opacity));
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.preserveSourceTexture = preserveSourceTexture;
+        this.shaderEffect = shaderEffect;
         var atlas = Minecraft.getInstance()
                 .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
         TextureAtlasSprite neutral = atlas.apply(NEUTRAL_SPRITE);
@@ -66,8 +82,7 @@ public final class HologramBufferSource implements MultiBufferSource {
                 centerU, centerV,
                 missing.getU0(), missing.getU1(),
                 missing.getV0(), missing.getV1(),
-                Math.max(0F, Math.min(1F, opacity)),
-                red, green, blue, preserveSourceTexture);
+                this.opacity, red, green, blue, preserveSourceTexture, true);
     }
 
     /**
@@ -77,6 +92,22 @@ public final class HologramBufferSource implements MultiBufferSource {
     @Override
     public VertexConsumer getBuffer(RenderType requested) {
         return consumer;
+    }
+
+    /**
+     * The real machine's procedural geometry uses normalized 0..1 UVs and
+     * separate PNG textures, unlike baked atlas models. Rebind the original
+     * machine texture to our holographic shader and apply the SAME translucent
+     * material settings. Never transform these UVs as block atlas samples.
+     */
+    public VertexConsumer textured(ResourceLocation machineTexture) {
+        ResourceLocation texture = preserveSourceTexture ? machineTexture : FLAT_TEXTURE;
+        VertexConsumer material = downstream.getBuffer(shaderEffect
+                ? HologramRenderType.projection(texture)
+                : RenderType.entityTranslucent(texture));
+        return new HologramVertexConsumer(
+                material, 0F, 0F, 0F, -1F, 0F, -1F,
+                opacity, red, green, blue, true, false);
     }
 
     private static final class HologramVertexConsumer implements VertexConsumer {
@@ -89,6 +120,7 @@ public final class HologramBufferSource implements MultiBufferSource {
         private final float missingV1;
         private final float opacity;
         private final boolean preserveSourceTexture;
+        private final boolean atlasUV;
         private final float red;
         private final float green;
         private final float blue;
@@ -99,7 +131,8 @@ public final class HologramBufferSource implements MultiBufferSource {
                                        float missingV0, float missingV1,
                                        float opacity,
                                        float red, float green, float blue,
-                                       boolean preserveSourceTexture) {
+                                       boolean preserveSourceTexture,
+                                       boolean atlasUV) {
             this.delegate = delegate;
             this.spriteU = spriteU;
             this.spriteV = spriteV;
@@ -109,6 +142,7 @@ public final class HologramBufferSource implements MultiBufferSource {
             this.missingV1 = missingV1;
             this.opacity = opacity;
             this.preserveSourceTexture = preserveSourceTexture;
+            this.atlasUV = atlasUV;
             this.red = Math.max(0F, Math.min(1F, red));
             this.green = Math.max(0F, Math.min(1F, green));
             this.blue = Math.max(0F, Math.min(1F, blue));
@@ -141,7 +175,7 @@ public final class HologramBufferSource implements MultiBufferSource {
             // specific quad uses the missing atlas sprite, redirect only
             // THAT quad's samples to a neutral real texture. Keep all valid
             // gear, shaft and wood UVs untouched.
-            boolean missingSprite = preserveSourceTexture
+            boolean missingSprite = atlasUV && preserveSourceTexture
                     && u >= missingU0 && u <= missingU1
                     && v >= missingV0 && v <= missingV1;
             if (missingSprite && WARNED_MISSING_SPRITE.compareAndSet(false, true)) {
