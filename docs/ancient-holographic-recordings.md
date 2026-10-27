@@ -353,3 +353,140 @@ become noisy with several active projectors.
 
 Not yet compiled or tested from this environment. Sound levels are
 intentionally conservative and may need an in-game balance pass.
+
+## Visual-event tracks and large Archive 042 (prototype)
+
+### Generic client-side event format
+
+Recording resource packs can now add an optional `visual_events` array,
+independent of the animation model's normal rotation and selection channels:
+
+```json
+"visual_events": [
+  {
+    "tick": 575,
+    "duration_ticks": 90,
+    "interval_ticks": 10,
+    "kind": "warning",
+    "position": [0.5, 1.35, 2.6],
+    "count": 7,
+    "spread": 0.62
+  },
+  {
+    "tick": 680,
+    "duration_ticks": 12,
+    "interval_ticks": 4,
+    "kind": "spark",
+    "position": [0.5, 1.4, 2.6],
+    "count": 10,
+    "spread": 0.45
+  },
+  {
+    "tick": 929,
+    "duration_ticks": 36,
+    "interval_ticks": 9,
+    "kind": "reconstruct",
+    "position": [0.5, 1.4, 1.55],
+    "count": 9,
+    "spread": 0.8
+  }
+]
+```
+
+The effect kinds are a deliberately **closed whitelist**:
+`spark` emits a brief cyan outward spray; `warning` produces a low,
+warm-colored stress ring; `reconstruct` sends a few cool particles
+upward. Each supports an optional `color: [red,green,blue]` with
+normalized components. `position` is in the same scene-local block
+coordinates used by the animation, then transformed through the recording
+placement offset and the physical block's horizontal facing. There are no
+physical entities, actual sparks, powered wires, block updates, or game logic.
+
+This implementation supports up to 24 event definitions per recording.
+Events must start at a tick >= 1 and end before the film duration, repeat
+for at most 120 ticks with an authored 4–40 tick interval, emit 1–10
+particles per pulse with spread 0..1.5 blocks, and specify a location
+within +/-64 blocks per axis. The emitter enforces a **24 particles per
+projector/client tick** ceiling and rejects cues beyond 32 blocks from
+the viewer's **actual projected event position**. Late joins, resource
+reloads, clock jumps and unloaded chunks skip historical events. No
+continuous high-frequency flashing or separate game-entity render loops.
+
+Archive 017 now demonstrates three small effects at its existing stress,
+gear failure and reconstruction moments. Its mechanics, model and
+duration have not changed.
+
+### Archive 042 — Multi-Stage Power Distribution
+
+The larger second recording is a 60-second (1200 tick) engineering film,
+not a replacement for Archive 017.
+
+- Resource pack film: `assets/magneticraft2/holograms/power_distribution.json`
+- Reusable visual scene: `assets/magneticraft2/animations/hologram_power_distribution.json`
+- Authoritative server metadata:
+  `data/magneticraft2/hologram_recordings/power_distribution.json`
+- Example film for pack authors:
+  `docs/examples/hologram-recordings/power_distribution.json`
+
+The assembly uses eight genuine `gear_medium_wood` visual models,
+a genuine raised `gear_large_wood` drive wheel and wooden drive shaft.
+A T-shaped multi-stage distribution routes motion from a long five-gear
+cross-shaft into a three-gear rear branch. A **three-block-high gantry**
+surrounds the mechanism, with separate corner posts, timber
+cross-members, bearings, and a load/brake assembly. Its footprint is
+roughly **7 blocks across, 4 blocks tall and 5 blocks deep** including
+its structural frame. This is intentionally larger and more involved
+than the twin gears in Archive 017.
+
+The film starts the gear assembly, introduces load against the rear
+output, highlights stress with a persistent copper-colored bearing
+outline and intermittent warning particles, then shows gear-tooth
+failure and overload shutdown. The image reconstructs into an intact
+rear gear and reinforced branch bearing before the entire distribution
+train resumes. All eight connected gears turn with alternating signs
+and matching phases, while the raised flywheel rotates in the same
+direction as its attached drive shaft. This is a **recorded illustration**
+of mechanical behavior, not a real simulation.
+
+Visual model assets for the supports, gantry, load jaw, bearing
+reinforcement and stress outline are separate vanilla block-model JSON,
+with individual UVs that remain within 16x16 texture coordinates.
+Variants are driven through the existing PR #12 scene graph and the
+recording's `visual_channels`. There are no new ghost blocks or
+independent entity renderers.
+
+Seven visual-event tracks, ten low-volume audio cues, four discrete
+visual channels and one reconstruction transition are provided in this
+second film.
+
+### How to test Archive 042
+
+This mod targets Forge **1.20.1**, so the old-style item NBT /give
+syntax applies:
+
+```mcfunction
+/give @p magneticraft2:ancient_projector{Recording:"magneticraft2:power_distribution"} 1
+```
+
+- Look at the artifact tooltip: it should show **Archive 042** and
+  larger model-derived dimensions than Archive 017, retaining the
+  scrambled inscription.
+- Place it in the open with at least an 8x6 block area and watch for
+  all eight gears, the raised large wheel, shaft, supports and overhead
+  timber frame. Check for unwanted gear/model intersection.
+- At ~27 seconds a load jaw engages; a copper stress outline and amber
+  warning pulses should appear near the rear branch. Around ~34 seconds
+  the output gear breaks with blue spark particles and the drive stops.
+- At ~46.5 seconds the assembly should fade/reconstruct with stronger
+  bearing supports, then restart; the final fade completes at 60 seconds,
+  returning **exactly one** projector containing Archive 042.
+- Walk around the projection and verify normal world occlusion, every
+  facing, relative particle positions, and FPS against Archive 017.
+- Join a multiplayer world halfway through playback: no backlog of
+  sound/particle events should fire. Repeat with particles set to Minimal,
+  F3+T resource reload, pause/save/reload, and early break.
+- If the film is not visible, check the client log for baked
+  animation/model errors (especially new `power_* ` models).
+
+**Verification status:** source and JSON integration only until the
+user's `./gradlew build` and in-game test pass. PR #16 remains a draft.
