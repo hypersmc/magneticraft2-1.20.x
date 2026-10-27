@@ -36,7 +36,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                              float flicker, boolean preserveSourceTexture) {}
 
     private static final Appearance DEFAULT_APPEARANCE =
-            new Appearance(0.38F, 0.90F, 1.0F, 0.32F, 24, 36, 0.02F, true);
+            new Appearance(0.38F, 0.90F, 1.0F, 0.32F, 24, 36, 0.28F, true);
 
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
@@ -165,8 +165,8 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         float flicker = json.has("flicker")
                 ? normalized(json.get("flicker"), "appearance.flicker")
                 : DEFAULT_APPEARANCE.flicker();
-        if (flicker > 0.08F) {
-            throw new JsonParseException("appearance.flicker must be <= 0.08");
+        if (flicker > 0.40F) {
+            throw new JsonParseException("appearance.flicker must be <= 0.40");
         }
         boolean preserveSourceTexture = json.has("preserve_texture")
                 ? bool(json, "preserve_texture")
