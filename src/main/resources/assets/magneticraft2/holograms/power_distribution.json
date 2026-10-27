@@ -354,5 +354,16 @@
       "count": 4,
       "spread": 0.25
     }
+  ],
+  "procedural_parts": [
+    {
+      "component": "branch_load_indicator",
+      "type": "magneticraft2:mechanical_brake_wood",
+      "axis": "y",
+      "angle_channel": "mechanical_input",
+      "angle_scale": 1,
+      "clamp_from_tick": 530,
+      "clamp_until_tick": 930
+    }
   ]
 }
