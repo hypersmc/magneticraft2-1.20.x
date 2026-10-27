@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 public class AncientProjectorBlockEntity extends BlockEntity {
@@ -21,6 +22,7 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     private ResourceLocation recording = DEFAULT_RECORDING;
     /** Latches the datapack definition at placement and is synced to clients. */
     private int durationTicks = 900;
+    private int renderRadiusBlocks = HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
     private long startTime = -1L;
     // Removal can be triggered by a break, replacement or normal completion.
     // Only one of those paths is allowed to return the artifact.
@@ -33,6 +35,17 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     public ResourceLocation recording() { return recording; }
     public long startTime() { return startTime; }
     public int durationTicks() { return durationTicks; }
+    public int renderRadiusBlocks() { return renderRadiusBlocks; }
+
+    /**
+     * Forge 1.20.1's frustum culling uses the BlockEntity bounds, not a
+     * getRenderBoundingBox method on the BER. The physical artifact is small
+     * but its hologram can extend many blocks into the world.
+     */
+    @Override
+    public AABB getRenderBoundingBox() {
+        return new AABB(worldPosition).inflate(renderRadiusBlocks);
+    }
 
     /**
      * The item permanently owns its recording. A new placement resolves the
@@ -41,7 +54,10 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     public void setRecording(ResourceLocation id) {
         if (level == null || level.isClientSide || startTime >= 0L) return;
         recording = id == null ? DEFAULT_RECORDING : id;
-        durationTicks = HologramRecordingCatalog.getOrFallback(recording).durationTicks();
+        HologramRecordingCatalog.RecordingInfo metadata =
+                HologramRecordingCatalog.getOrFallback(recording);
+        durationTicks = metadata.durationTicks();
+        renderRadiusBlocks = metadata.renderRadiusBlocks();
         setChanged();
         sync();
     }
@@ -73,8 +89,12 @@ public class AncientProjectorBlockEntity extends BlockEntity {
             entity.startTime = level.getGameTime();
             // Plain creative /give items have no Recording NBT. Resolve their
             // default archive before the first playback tick.
-            entity.durationTicks = HologramRecordingCatalog
-                    .getOrFallback(entity.recording).durationTicks();
+            // Resolve both the timeline and culling bounds on the first
+            // server tick, including creative projectors without NBT.
+            HologramRecordingCatalog.RecordingInfo metadata =
+                    HologramRecordingCatalog.getOrFallback(entity.recording);
+            entity.durationTicks = metadata.durationTicks();
+            entity.renderRadiusBlocks = metadata.renderRadiusBlocks();
             entity.setChanged();
             entity.sync();
         }
@@ -91,6 +111,7 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         tag.putString("Recording", recording.toString());
         tag.putLong("StartTime", startTime);
         tag.putInt("DurationTicks", durationTicks);
+        tag.putInt("RenderRadiusBlocks", renderRadiusBlocks);
         tag.putBoolean("ReturnedArtifact", itemReturned);
     }
 
@@ -107,6 +128,11 @@ public class AncientProjectorBlockEntity extends BlockEntity {
                 ? tag.getInt("DurationTicks") : 900;
         durationTicks = savedDuration >= 1 && savedDuration <= 12000
                 ? savedDuration : 900;
+        int savedRadius = tag.contains("RenderRadiusBlocks", 3)
+                ? tag.getInt("RenderRadiusBlocks")
+                : HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
+        renderRadiusBlocks = savedRadius >= 1 && savedRadius <= 64
+                ? savedRadius : HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
         itemReturned = tag.getBoolean("ReturnedArtifact");
     }
 
