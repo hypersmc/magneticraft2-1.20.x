@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
@@ -113,15 +114,20 @@ public final class HologramSoundPlayback {
         // camera frustum or how often the BER draws the actual models.
         HologramVisualEffects.emit(projector, visual, previousFilmTick, filmTick);
 
-        boolean audible = Minecraft.getInstance().player != null
-                && Minecraft.getInstance().player.distanceToSqr(
-                    projector.getBlockPos().getX() + .5D,
-                    projector.getBlockPos().getY() + .5D,
-                    projector.getBlockPos().getZ() + .5D) <= MAX_HEAR_DISTANCE_SQUARED;
-        if (!audible) return;
+        if (Minecraft.getInstance().player == null) return;
 
         for (HologramRecordingResourceLoader.AudioCue cue : visual.audioCues()) {
             if (cue.tick() > previousFilmTick && cue.tick() <= filmTick) {
+                // Default sound originates at the small physical artifact,
+                // but an author may bind a cue to the point where a recorded
+                // brake, gear or bearing actually fails. The same transform
+                // powers particle effects, for all horizontal facings.
+                Vec3 source = cue.position() == null
+                        ? Vec3.atCenterOf(projector.getBlockPos())
+                        : HologramSceneCoordinates.toWorld(projector, visual,
+                                cue.position());
+                if (Minecraft.getInstance().player.distanceToSqr(source)
+                        > MAX_HEAR_DISTANCE_SQUARED) continue;
                 SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(cue.sound());
                 if (sound == null) {
                     if (MISSING_SOUNDS.add(cue.sound())) {
@@ -131,9 +137,7 @@ public final class HologramSoundPlayback {
                     continue;
                 }
                 level.playLocalSound(
-                        projector.getBlockPos().getX() + .5D,
-                        projector.getBlockPos().getY() + .5D,
-                        projector.getBlockPos().getZ() + .5D,
+                        source.x, source.y, source.z,
                         sound, SoundSource.BLOCKS,
                         cue.volume(), cue.pitch(), false);
                 // Even when a datapack compresses playback dramatically,
