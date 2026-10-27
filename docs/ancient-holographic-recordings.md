@@ -271,3 +271,28 @@ exclude the empty offset between the physical projector and projected scene.
 
 Status: structural verification only until a new Gradle build and the in-game
 scenarios pass; PR #16 remains draft.
+
+## Projection visibility and collectible-item preservation
+
+### Frustum culling
+
+Forge 1.20.1 obtains BlockEntityRenderer visibility bounds from the **BlockEntity**'s `getRenderBoundingBox()` (not a method with that signature on the renderer). Projector `shouldRenderOffScreen` is now `false`, allowing normal frustum culling of projects that are entirely outside the camera view. The expanded block-entity bounding box includes the recording's distant scene rather than merely the compact physical projector.
+
+The server recording metadata supports an optional `render_radius_blocks` field, integer **1..64**, with a default of **8**; the value is latched, saved and synced to clients along with playback duration. The installed Mechanical Transmission archive declares `8`. This is a conservative **visibility radius**, not the item's 3D engraved dimensions. Pack authors creating much larger or offset recordings must increase the value so projections aren't culled while still visible. Do not use excessively large radii without a reason; the purpose is to avoid rendering lots of unseen animated holograms.
+
+### The same physical artifact returns
+
+The original ItemStack's **full item NBT** is captured on placement into `ArtifactItemTag` in the projector block entity and restored on normal finish or early break. A canonical `Recording` tag is always rewritten using the block entity's stored recording ID, so arbitrary custom tags cannot switch the permanent archive. This preserves anvil-assigned names and item-defined custom lore, rather than returning a blank new item containing only the archive ID. Older worlds without `ArtifactItemTag` remain compatible: they return a default projector preserving the saved recording ID.
+
+Exactly one return is still coordinated by the existing `itemReturned` guard and shared `onRemove` path. Unloading chunks does not return an artifact or stop the server's world-time-based recording clock.
+
+### In-game tests for this iteration
+
+- Pull current PR #16 and run `./gradlew build`, then place Archive 017 near a wall. Walk around it: the projection should remain visible when the tiny physical disc is outside the camera frustum but the **recorded gears** are in view.
+- Look away so both disc and full projection leave the camera. Check F3 or a profiler with multiple active nearby projectors; the off-screen renderer should now be skipped. Compare identical scenarios, not just headline FPS.
+- Test all four facing directions; projections must not disappear from incorrect culling bounds.
+- In an anvil, name a projector (e.g. `Archive Recovery 017`). Place it, break it early and pick up its drop. The name and selected recording ID must remain. Repeat with a second named projector allowed to finish its 45-second film.
+- Save and reload during a named recording; break afterwards. Verify original name/custom lore survives the block entity serialization.
+- For a modpack archive that projects farther away, specify a larger `render_radius_blocks` in the server datapack. Verify a previously placed projector retains its own latched radius after `/reload`.
+
+These checks are not yet build/in-game verified in this environment. Keep PR #16 draft; world generation, additional archives, audiovisual cues and Studio authoring remain separate future work.
