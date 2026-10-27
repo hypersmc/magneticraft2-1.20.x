@@ -77,8 +77,11 @@ These are acceptance criteria, **not claims of completed testing**.
 - [x] Audio and particles are client-only, sparse, bounded and based on the
       synced recording clock (not frame rate)
 - [x] Late joins and frame/time skips do not burst-play historical cues
-- [ ] Verify sound/event positions track the **actual recorded machinery** in
-      large scenes, not merely the projector's block position
+- [x] Optional scene-relative 3D sound cue positions added; audio and visual
+      cues share the exact scene-to-world transform, with fallback sounds at
+      the physical emitter for backward compatibility
+- [ ] In-game verification that sound/event positions track the **actual
+      recorded machinery** in all four horizontal facing directions
 - [ ] Multiplayer test: mid-recording join, /reload, resource reload, client
       distance changes, chunk unload/reload, and different FPS
 - [ ] Test pause/alt-tab, unusual server durations, missing sound events and
