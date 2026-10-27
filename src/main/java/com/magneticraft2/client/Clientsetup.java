@@ -2,6 +2,7 @@ package com.magneticraft2.client;
 
 import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.animation.AnimationResourceLoader;
+import com.magneticraft2.client.hologram.HologramRecordingResourceLoader;
 import com.magneticraft2.client.animation.MachineVisualResourceLoader;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
@@ -255,6 +256,7 @@ public class Clientsetup {
         // Load machine -> scene input bindings from the same active client
         // resource-pack stack, independently of the animation definition.
         event.registerReloadListener(new MachineVisualResourceLoader());
+        event.registerReloadListener(new HologramRecordingResourceLoader());
     }
 
     @SubscribeEvent
