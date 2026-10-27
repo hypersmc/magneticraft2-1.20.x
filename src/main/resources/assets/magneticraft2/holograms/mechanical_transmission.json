@@ -22,38 +22,74 @@
         "overloaded": false
       },
       {
-        "tick": 160,
+        "tick": 75,
         "angle_degrees": 0,
         "running": true,
         "overloaded": false
       },
       {
+        "tick": 200,
+        "angle_degrees": 720,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 345,
+        "angle_degrees": 1620,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 405,
+        "angle_degrees": 1920,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 445,
+        "angle_degrees": 2010,
+        "running": true,
+        "overloaded": false
+      },
+      {
         "tick": 460,
-        "angle_degrees": 1440,
+        "angle_degrees": 2040,
         "running": false,
         "overloaded": true
       },
       {
         "tick": 560,
-        "angle_degrees": 1440,
+        "angle_degrees": 2040,
+        "running": false,
+        "overloaded": true
+      },
+      {
+        "tick": 600,
+        "angle_degrees": 2040,
+        "running": false,
+        "overloaded": false
+      },
+      {
+        "tick": 615,
+        "angle_degrees": 2040,
         "running": true,
         "overloaded": false
       },
       {
-        "tick": 720,
-        "angle_degrees": 2160,
+        "tick": 790,
+        "angle_degrees": 2720,
         "running": true,
         "overloaded": false
       },
       {
-        "tick": 820,
-        "angle_degrees": 2400,
+        "tick": 840,
+        "angle_degrees": 2920,
         "running": false,
         "overloaded": false
       },
       {
         "tick": 900,
-        "angle_degrees": 2400,
+        "angle_degrees": 2920,
         "running": false,
         "overloaded": false
       }
@@ -71,5 +107,51 @@
     "flicker": 0.28,
     "preserve_texture": true,
     "shader_effect": true
-  }
+  },
+  "visual_channels": {
+    "gear_condition": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 460,
+        "value": 1
+      },
+      {
+        "tick": 615,
+        "value": 2
+      }
+    ],
+    "frame_condition": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 615,
+        "value": 2
+      }
+    ],
+    "brake_condition": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 355,
+        "value": 1
+      },
+      {
+        "tick": 615,
+        "value": 2
+      }
+    ]
+  },
+  "transitions": [
+    {
+      "tick": 615,
+      "fade_ticks": 12
+    }
+  ]
 }
