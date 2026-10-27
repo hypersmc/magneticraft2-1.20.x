@@ -152,6 +152,24 @@ public class Clientsetup {
         // This allows packs to select new model ids, not just retexture the
         // models hardcoded by Java. Never use the previous reload's definitions.
         AnimationResourceLoader.registerModels(event, resourceManager);
+        // Hologram BERs request these same real Copper Age block models by
+        // their standalone model IDs. Normal blockstate baking alone does not
+        // guarantee the bare ModelManager key exists for a scene renderer.
+        // Keep the data-driven scan above for packs adding their own scenes;
+        // these explicit registrations protect the shipped example archives
+        // on first load and after F3+T.
+        for (String model : new String[]{
+                "block/gear_large_wood",
+                "block/mechanical_input_module",
+                "block/mechanical_brake_wood_frame_y",
+                "block/flywheel_wood_frame_y",
+                "block/overload_disconnect_wood_open_y",
+                "block/overload_disconnect_wood_closed_y",
+                "hologram/gear_medium_damaged",
+                "hologram/empty_projection"
+        }) {
+            event.register(new ResourceLocation(MOD_ID, model));
+        }
         String folderPath = "models/multiblock";
 
         // Get all resources in the multiblock folder
