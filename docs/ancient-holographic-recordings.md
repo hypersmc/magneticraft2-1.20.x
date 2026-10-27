@@ -580,3 +580,70 @@ hologram-only gantry appears. Verify 34-second overload and 46.5-second
 reconstruction, four facings, F3+T, FPS, Archive 017 regression and
 the one-item return. Neither the Java code nor the new scene have
 been independently compiled or observed in-game from this environment.
+
+### Scene-relative audio positions (optional)
+
+Audio cues now accept an optional `position` in the **same scene-relative
+coordinate system** as `visual_events`. This is important for larger
+archives: a mechanical failure sound should originate at the failing
+machine, not at the small artifact placed several blocks away.
+
+```json
+{
+  "tick": 680,
+  "sound": "minecraft:block.anvil.land",
+  "volume": 0.35,
+  "pitch": 0.7,
+  "position": [0.5, 1.4, 2.6]
+}
+```
+
+The optional `position` is `[x,y,z]` in full Minecraft block units relative
+to the recording's canonical south-facing scene; each coordinate must be a
+finite number within +/-64 blocks. The projection placement offset and
+the projector's facing are applied by the **same utility used by
+holographic sparks and stress indicators**. This avoids particles being
+on one side of a machine while sounds come from the other.
+
+Without `position`, cues remain backwards-compatible: they play at the
+physical projector's center. Sounds are checked against the listener's
+24-block hearing radius using their **actual world-space source**, not the
+projector's origin. Existing cue limits, time scaling, and skip-on-late-join
+behavior remain in effect.
+
+Archive 017 positions its brake and repair cues at the small mechanism;
+Archive 042 positions the mechanical-load, break and reconstruction cues
+near their filmed components. Startup and shutdown remain centered
+on the artifact. **Real in-game positional audio checks are still needed.**
+
+### Client-visible metadata isolation
+
+The projector preserves the full `ArtifactItemTag` on the **server** so
+anvil names, custom lore and non-archive tags survive early breaking or
+normal completion. Client `getUpdateTag()` and block-entity update
+packets now omit `ArtifactItemTag` and `ReturnedArtifact` entirely.
+The packet receiver consumes only recording ID, start time, duration
+and render radius, preventing a partial network update from overwriting
+the saved collectible metadata. Chunk load still receives sufficient
+playback fields.
+
+### Recording/animation cross-file validation
+
+A syntactically correct client film JSON can still refer to a missing
+animation, a mechanical input not present in `channels`, or a
+`model_variants` source whose stepwise `visual_channels` track is
+missing. A model stage may exist for one component but not another
+component sharing the same track.
+
+`HologramRecordingValidator` now checks these cross-resource
+relationships before cue playback and scene rendering. Invalid pairings
+are logged by recording ID and rejected rather than producing an
+unpredictable partial film. Checks are cached by immutable loaded
+resource definitions and recalculated when client resources reload;
+the same constraint definitions should eventually be used by the
+standalone recording builder, which remains **out of scope** for PR #16
+until the runtime is reliable.
+
+The test data for Archives 017 and 042 has passed structural
+cross-file validation. That does **not** replace `./gradlew build`
+or manual tests of model baking and rendering.
