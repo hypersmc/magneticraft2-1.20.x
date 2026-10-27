@@ -296,3 +296,60 @@ Exactly one return is still coordinated by the existing `itemReturned` guard and
 - For a modpack archive that projects farther away, specify a larger `render_radius_blocks` in the server datapack. Verify a previously placed projector retains its own latched radius after `/reload`.
 
 These checks are not yet build/in-game verified in this environment. Keep PR #16 draft; world generation, additional archives, audiovisual cues and Studio authoring remain separate future work.
+
+## Prerecorded audio cues (experimental)
+
+Optional `audio_cues` on the **client** recording JSON allows films to play sparse,
+localized audio synchronized with their authoritative server clock:
+
+```json
+"audio_cues": [
+  {"tick": 8, "sound": "minecraft:block.beacon.activate", "volume": 0.16, "pitch": 1.65},
+  {"tick": 355, "sound": "minecraft:block.piston.extend", "volume": 0.28, "pitch": 0.65},
+  {"tick": 460, "sound": "minecraft:block.anvil.land", "volume": 0.25, "pitch": 0.65},
+  {"tick": 615, "sound": "minecraft:block.amethyst_block.chime", "volume": 0.30, "pitch": 1.35}
+]
+```
+
+The built-in Mechanical Transmission film has seven cues in total: archive
+power-on, transmission engagement, brake load, pre-failure warning,
+mechanical failure, reconstruction, and shutdown. These are deliberately
+**one-shot** cues; we are not playing an endless gear loop that would
+become noisy with several active projectors.
+
+- JSON validation: 0..32 entries; cue ticks `0 <= tick < duration_ticks`, no
+  duplicate ticks; sound IDs must be valid resource locations;
+  `0 < volume <= 0.65`; `0.5 <= pitch <= 2.0`.
+- Sounds resolve through the client's installed Forge sound registry. Missing
+  events are logged and skipped, never silently replaced by a different
+  machine sound. Resource packs can provide sound definitions/overrides.
+- Audio is ticked **once per client game tick through the projector BE**, not
+  once per rendered frame. Existing hologram geometry, shader and
+  synchronized animation remain unaffected.
+- The first observation of a projector begins *silently at the current
+  point in the film*. This prevents a late joiner or newly loaded chunk
+  from replaying sounds from 20 seconds ago.
+- Sound playback is local, positional and within 24 blocks of the player's
+  client; it creates no server entities and sends no per-event network
+  packets. Cues while the listener is outside range are intentionally skipped.
+- Clock jumps, resource reloads, rewind and invalid server durations reset
+  or skip cue playback to prevent bursts. At most one sound is submitted per
+  projector per client tick, including strongly time-scaled datapack recordings.
+
+### Test this audio pass
+
+1. `./gradlew build` and place Archive 017. Listen for the quiet startup
+   chime, engagement, load, warning, break, rebuild, and shutdown cues at
+   approximately 0.4, 3.75, 17.75, 21.5, 23, 30.75 and 42 seconds.
+2. Watch a projector while facing away. Audio should continue while the
+   chunk is loaded, independent of whether the full model is on screen.
+3. Reload resource packs (`F3+T`) during playback and join from another
+   client midway. Historical sounds must not replay as a burst.
+4. Leave hearing range and return later; old events must not catch up.
+5. Change server `duration_ticks` to `1200`, `/reload`, place a new
+   projector: cue moments should scale to the 60-second playback.
+6. Place several projectors. The short effects may overlap naturally;
+   no cue should be emitted every frame.
+
+Not yet compiled or tested from this environment. Sound levels are
+intentionally conservative and may need an in-game balance pass.
