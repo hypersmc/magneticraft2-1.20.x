@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.RegisterShadersEvent;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Projection-only material; ordinary PR #12 machines keep the vanilla shader.
@@ -19,6 +21,11 @@ import java.io.IOException;
  */
 public final class HologramRenderType extends RenderType {
     private static ShaderInstance hologramShader;
+    // Procedural machine renderers use individual textures rather than the
+    // block atlas. Each texture gets one cached projection render layer; no
+    // RenderType objects are constructed every rendered frame.
+    private static final Map<ResourceLocation, RenderType> TEXTURED = new ConcurrentHashMap<>();
+
 
     // Supplier, rather than a captured instance, survives resource reloads.
     private static final ShaderStateShard HOLOGRAM_SHADER =
@@ -55,6 +62,37 @@ public final class HologramRenderType extends RenderType {
         // Safe during startup or an interrupted reload. Client fallback
         // remains vanilla depth-tested translucent rendering.
         return hologramShader != null ? PROJECTION : RenderType.translucent();
+    }
+
+    /**
+     * Same shader, depth, fog, tint and translucency as baked projections,
+     * but with an individual machine texture bound to Sampler0.
+     *
+     * The real brake renderer produces normalized UVs for oak, leather and
+     * copper. Those UVs are NOT block-atlas coordinates; they must not be
+     * routed through the block-atlas projection layer.
+     */
+    public static RenderType projection(ResourceLocation texture) {
+        if (hologramShader == null) {
+            return RenderType.entityTranslucent(texture);
+        }
+        return TEXTURED.computeIfAbsent(texture, id -> RenderType.create(
+                "magneticraft2:hologram_procedural/" + id.toString().replace(':', '_'),
+                DefaultVertexFormat.BLOCK,
+                VertexFormat.Mode.QUADS,
+                32768,
+                true,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(HOLOGRAM_SHADER)
+                        .setTextureState(new TextureStateShard(id, false, false))
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setDepthTestState(LEQUAL_DEPTH_TEST)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .setLightmapState(LIGHTMAP)
+                        .setCullState(NO_CULL)
+                        .setOutputState(TRANSLUCENT_TARGET)
+                        .createCompositeState(true)));
     }
 
     public static void registerShaders(RegisterShadersEvent event) throws IOException {
