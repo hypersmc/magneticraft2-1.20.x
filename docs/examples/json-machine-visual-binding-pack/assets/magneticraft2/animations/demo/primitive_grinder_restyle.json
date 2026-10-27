@@ -1,0 +1,66 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "input_axle": {
+      "model": "magneticraft2:multiblock/primitive_grinder_axle",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0.5,
+        0.5
+      ],
+      "render_layer": "solid"
+    },
+    "grinding_rotor": {
+      "model": "magneticraft2:animated/restyled_grinder_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0,
+        0.5
+      ],
+      "render_layer": "solid"
+    }
+  },
+  "inputs": {
+    "custom_drive": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "rebranded_shaft"
+    }
+  },
+  "animations": {
+    "custom_powertrain": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_axle",
+          "property": "rotation",
+          "axis": "x",
+          "input": "custom_drive",
+          "scale": 1
+        },
+        {
+          "target": "grinding_rotor",
+          "property": "rotation",
+          "axis": "y",
+          "input": "custom_drive",
+          "scale": 0
+        }
+      ]
+    }
+  }
+}

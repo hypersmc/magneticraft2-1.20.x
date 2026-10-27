@@ -1,6 +1,11 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
+import com.magneticraft2.client.animation.AnimatedBeltLoopRenderer;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,7 +22,11 @@ import net.minecraft.resources.ResourceLocation;
 
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
@@ -25,6 +34,23 @@ import java.util.WeakHashMap;
  * V2 geometry regeneration. World/guide frame is rendered by V2 fillers.
  */
 public final class BronzeStampMillRenderer implements BlockEntityRenderer<BronzeStampMillBlockEntity> {
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "bronze_stamp_mill");
+    // Preserve v1 resource packs containing only the original 18 drivetrain
+    // parts. Those packs still render the whole drive in JSON and fall back
+    // to Java for ALL stamp heads. Never combine a partial JSON stamp head
+    // with a full legacy stamp head, which would duplicate the mechanism.
+    private static final Set<String> DRIVE_PARTS = Set.of(
+            "gearbox_frame", "cross_bearing", "side_lower_mount",
+            "input_coupler", "input_shaft", "input_spindle", "input_bevel",
+            "output_bevel", "lower_spindle", "lower_drive_shaft",
+            "lower_shaft_tip", "lower_pulley", "upper_pulley",
+            "upper_shaft_start", "upper_shaft_zero",
+            "upper_shaft_middle", "upper_shaft_end", "upper_shaft_tip");
+    private static final Set<String> HEAD_PARTS = Set.of(
+            "plate_left", "plate_middle", "plate_right",
+            "cam_left", "cam_middle", "cam_right",
+            "hammer_left", "hammer_middle", "hammer_right");
     private static final ResourceLocation HAMMER =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_hammer");
     private static final ResourceLocation WORN_HAMMER =
@@ -67,36 +93,54 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_side_lower_mount");
     private static final ResourceLocation PULLEY =
             new ResourceLocation("magneticraft2","multiblock/bronze_stamp_mill_drive_pulley");
-    // Weak keys avoid retaining unloaded multiblocks. The value keeps a
-    // continuous unwrapped texture phase while Gear V2 reports 0..360.
-    private final Map<BronzeStampMillBlockEntity, BeltTravel> beltTravel =
+    // Weak keys avoid retaining unloaded machines. One phase tracker per
+    // typed physical input keeps belt UVs continuous across 0/360 wraps.
+    // Resource reload changes the animation definition identity, resetting
+    // the tracked phase rather than mixing old and new pack contracts.
+    private final Map<BronzeStampMillBlockEntity, BeltVisualState> beltTravel =
             new WeakHashMap<>();
     private final BronzeStampMillOreVisuals oreVisuals =
             new BronzeStampMillOreVisuals();
 
+    private static final class BeltVisualState {
+        private AnimationDefinition lastScene;
+        private final Map<String, BeltTravel> drives = new HashMap<>();
+
+        void scene(AnimationDefinition scene) {
+            if (lastScene != scene) {
+                lastScene = scene;
+                drives.clear();
+            }
+        }
+
+        double phase(String input, float visualAngle) {
+            return drives.computeIfAbsent(input, ignored -> new BeltTravel())
+                    .sampleDegrees(visualAngle);
+        }
+    }
+
     private static final class BeltTravel {
         private boolean initialized;
         private float previousAngle;
-        private double travel;
+        private double cumulativeDegrees;
 
-        private double sample(float driveAngle) {
+        private double sampleDegrees(float angle) {
             if (!initialized) {
                 initialized = true;
-                previousAngle = driveAngle;
-                travel = BronzeStampMillBeltRenderer.distanceForDegrees(driveAngle);
+                previousAngle = angle;
+                cumulativeDegrees = angle;
             } else {
-                float delta = (driveAngle - previousAngle) % 360F;
+                float delta = (angle - previousAngle) % 360F;
                 if (delta > 180F) delta -= 360F;
                 else if (delta < -180F) delta += 360F;
-                previousAngle = driveAngle;
-                // Uses the exact SAME angle as both drums. Signed deltas
-                // move the +Z flight down for positive X, and reverse
-                // immediately if Gear V2 reverses direction.
-                travel += BronzeStampMillBeltRenderer.distanceForDegrees(delta);
+                previousAngle = angle;
+                // Signed, unwrapped DOUBLE shaft phase. The JSON belt's
+                // own driving radius turns this into surface distance;
+                // no additional clock and no cumulative float precision
+                // loss when a world runs for many hours.
+                cumulativeDegrees += delta;
             }
-            // Pattern repeats every block. Bounds never grow over long plays.
-            travel %= 1.0D;
-            return travel;
+            return cumulativeDegrees;
         }
     }
 
@@ -160,6 +204,39 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         // give matching tangential velocities (a true 1:1 bevel drive).
 
 
+        // All 27 moving/static mechanical scene parts now come from JSON.
+        // Gear V2 still supplies the two facing-correct shaft phases. The
+        // three cams use 0/120/240-degree track phase offsets; the hammers
+        // use reusable cosine linear tracks with the ORIGINAL 0.32-block lift.
+        // Belt UVs and in-world ore rendering remain specialized Java paths.
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
+        AnimatedComponentRenderer.SceneResult drawn = null;
+        AnimationFrame physicalFrame = null;
+        boolean allHeads = definition != null
+                && definition.componentNames().containsAll(HEAD_PARTS);
+        boolean noHeads = definition != null
+                && Collections.disjoint(definition.componentNames(), HEAD_PARTS);
+        if (definition != null
+                && definition.componentNames().containsAll(DRIVE_PARTS)
+                && (allHeads || noHeads)) {
+            EnumSet<AnimationDefinition.State> states = EnumSet.of(
+                    mill.isProcessing()
+                            ? AnimationDefinition.State.RUNNING
+                            : AnimationDefinition.State.STOPPED);
+            if (mill.needsMaintenance()) {
+                states.add(AnimationDefinition.State.WORN);
+            }
+            physicalFrame = new AnimationFrame(
+                    Map.of("mechanical_input", inputAngle, "output_shaft", driveAngle),
+                    states,
+                    Map.of("stamp_mill.wear_stage",
+                            Math.max(0, Math.min(5, mill.getPartWearStage()))));
+            drawn = MachineVisualRenderer.renderScene(ANIMATION, physicalFrame,
+                    state, pose, buffers, light, overlay);
+        }
+
+        if (drawn == null) {
+            // Exact pre-JSON fallback for the whole drivetrain.
         // Static bronze/wood gearbox is connected to the frame's two
         // underside girders, with midshaft and side bearing supports.
         part(pose,buffers,light,overlay,GEARBOX_FRAME,
@@ -201,15 +278,6 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
                 pulleyX,inputY,lowerZ,Axis.XP,driveAngle);
         part(pose,buffers,light,overlay,PULLEY,
                 pulleyX,upperY,lowerZ,Axis.XP,driveAngle);
-        // Render the actual MOVING leather loop, not the old stationary
-        // baked belt faces. One continuous UV path covers both straight
-        // flights and both pulley wraps. Shaft stops -> leather freezes;
-        // reverse input -> leather travels in the opposite direction.
-        BronzeStampMillBeltRenderer.render(
-                pose, buffers, light,
-                beltTravel.computeIfAbsent(mill, unused -> new BeltTravel())
-                        .sample(driveAngle));
-
         // One continuous drive axis through all four fixed crank pillows.
         // Four 16px lengths [-24..40] and a short [40..47.2] end spindle.
         // Every upper shaft segment and eccentric uses the signed output
@@ -223,6 +291,52 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
         part(pose,buffers,light,overlay,SHAFT_TIP,
                 40D/16D,upperY,lowerZ,Axis.XP,driveAngle);
 
+        }
+
+        // Open belt loops now use the same JSON scene and real shaft inputs.
+        // Paths are built by BeltPath on pack reload, not during rendering.
+        // Old 18-part packs without belt_loops keep their original leather
+        // renderer, including its UV tiling, phase and no-stretch behavior.
+        AnimationDefinition beltScene = drawn == null ? null : drawn.definition();
+        BeltVisualState driveState = beltTravel.computeIfAbsent(
+                mill, ignored -> new BeltVisualState());
+        driveState.scene(beltScene);
+        Map<String, Float> inputAngles = new HashMap<>();
+        boolean useJsonBelt = beltScene != null && !beltScene.beltLoops().isEmpty();
+        if (useJsonBelt) {
+            // Validate every loop BEFORE emitting any belt vertices.
+            for (AnimationDefinition.BeltLoop loop : beltScene.beltLoops().values()) {
+                Float angle = MachineVisualRenderer.physicalAngle(
+                        ANIMATION, beltScene, loop.input(), physicalFrame);
+                if (angle == null || !Float.isFinite(angle)) {
+                    useJsonBelt = false;
+                    break;
+                }
+                inputAngles.put(loop.input(), angle);
+            }
+        }
+        if (useJsonBelt) {
+            Map<String, Double> unwrapped = new HashMap<>();
+            for (Map.Entry<String, AnimationDefinition.BeltLoop> entry
+                    : beltScene.beltLoops().entrySet()) {
+                AnimationDefinition.BeltLoop loop = entry.getValue();
+                double phase = unwrapped.computeIfAbsent(loop.input(),
+                        name -> driveState.phase(name, inputAngles.get(name)));
+                AnimatedBeltLoopRenderer.render(loop, phase, pose, buffers, light);
+            }
+        } else {
+            // Full, byte-for-byte-compatible legacy belt surface geometry
+            // and texture repeat when an old pack omits belt definitions.
+            double phase = driveState.phase("output_phase", driveAngle);
+            BronzeStampMillBeltRenderer.render(pose, buffers, light,
+                    BronzeStampMillBeltRenderer.distanceForDegrees(phase) % 1.0D);
+        }
+
+
+        if (drawn == null || !allHeads) {
+            // Original Java path for the three cams/hammer heads and wear
+            // plates. This fallback is used together with the old drivetrain
+            // whenever the selected JSON scene or required model fails.
         BakedModel stamp=Minecraft.getInstance().getModelManager().getModel(
                 mill.getPartWearStage()>=2?WORN_HAMMER:HAMMER);
         BakedModel cam=Minecraft.getInstance().getModelManager().getModel(CAM);
@@ -251,10 +365,14 @@ public final class BronzeStampMillRenderer implements BlockEntityRenderer<Bronze
             renderModel(pose,buffers,light,overlay,cam);
             pose.popPose();
         }
+        } // end complete legacy stamp-head fallback
         // Port-aligned feed, progressive crushing and two real output
         // chutes. The existing functional item ports continue owning
         // all inventory state; no client-side item transport is invented.
-        oreVisuals.render(mill,partial,pose,buffers,light,overlay);
+        // An older drivetrain-only pack still uses Java hammer travel for
+        // ore/dust effects; new full scenes share the sampled JSON travel.
+        oreVisuals.render(mill,partial,pose,buffers,light,overlay,
+                allHeads ? drawn : null);
         pose.popPose();
     }
 }

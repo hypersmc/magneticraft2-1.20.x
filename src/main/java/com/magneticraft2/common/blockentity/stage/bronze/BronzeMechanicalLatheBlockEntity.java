@@ -59,6 +59,21 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public ItemStack getCutter(){return cutter;}
     public ItemStack getOutput(){return output;}
     public boolean isRunning(){return running;}
+    /** Exposes Gear V2's actual synchronized overload flag to the client
+     * animation bridge; this is not inferred from machining progress. */
+    public boolean isInputOverloadedForAnimation() {
+        MechanicalInputModuleBlockEntity input = getMechanicalInput();
+        if (input == null) return false;
+        GearNode node = input.getOrCreateGearNode();
+        return level != null && level.isClientSide
+                ? node.isClientOverloaded() : node.isOverloaded();
+    }
+    /** A worn visual state is based on actual cutter durability, not a timer. */
+    public boolean isCutterWornForAnimation() {
+        return !cutter.isEmpty() && cutter.isDamageableItem()
+                && cutter.getMaxDamage() > 0
+                && cutter.getDamageValue() * 4 >= cutter.getMaxDamage() * 3;
+    }
     public float getProgress(){return machiningTicks/(float)CYCLE_TICKS;}
     /** Staged feed: 0..15% approach, 15..85% cutting traverse, 85..100% retract. */
     public float getToolFeed(){

@@ -1,0 +1,10 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:bronze_mechanical_lathe",
+  "angle_channels": {
+    "mechanical_input": "mechanical_input",
+    "spindle": "spindle"
+  },
+  "integer_channels": {}
+}

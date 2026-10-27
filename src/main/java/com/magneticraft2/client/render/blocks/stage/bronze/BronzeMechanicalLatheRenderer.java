@@ -1,6 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -19,6 +22,8 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import java.util.EnumSet;
+import java.util.Map;
 
 /** V2 static frame, formed module gearbox, rotating arbor and cross-fed tool.
  * All visible drive axes share the current Gear V2 network rotation. */
@@ -40,6 +45,8 @@ public final class BronzeMechanicalLatheRenderer
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_spindle");
     private static final ResourceLocation CHUCK =
             new ResourceLocation("magneticraft2", "multiblock/bronze_mechanical_lathe_chuck");
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_lathe");
     public BronzeMechanicalLatheRenderer(BlockEntityRendererProvider.Context ignored){}
 
     private static void model(PoseStack pose,MultiBufferSource source,int light,int overlay,
@@ -73,23 +80,49 @@ public final class BronzeMechanicalLatheRenderer
         pose.translate(0D, 0D, -2D);
         model(pose,source,light,overlay,
                 Minecraft.getInstance().getModelManager().getModel(INPUT_FRAME));
-
-        pose.pushPose();
-        pose.translate(.5D, .5D, .5D);
-        pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
-        pose.translate(-.5D,-.5D,-.5D);
-        model(pose,source,light,overlay,
-                Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
         pose.popPose();
 
-        pose.pushPose();
-        pose.translate(.5D,.5D,.5D);
-        pose.mulPose(Axis.XP.rotationDegrees(-inputAngle));
-        pose.translate(-.5D,-.5D,-.5D);
-        model(pose,source,light,overlay,
-                Minecraft.getInstance().getModelManager().getModel(INPUT_OUTPUT_ROTOR));
-        pose.popPose();
-        pose.popPose();
+        // One coherent machine sample drives every JSON component. A pack can
+        // add children, alternate models and state-conditional decorations
+        // without introducing any more hardcoded draw calls.
+        EnumSet<AnimationDefinition.State> states = EnumSet.of(lathe.isRunning()
+                ? AnimationDefinition.State.RUNNING : AnimationDefinition.State.STOPPED);
+        if (lathe.isInputOverloadedForAnimation()) {
+            states.add(AnimationDefinition.State.OVERLOADED);
+        }
+        if (lathe.isCutterWornForAnimation()) {
+            states.add(AnimationDefinition.State.WORN);
+        }
+        AnimationFrame frame = new AnimationFrame(
+                Map.of("mechanical_input", inputAngle, "spindle", angle), states);
+        AnimationDefinition drawn = MachineVisualRenderer.render(
+                ANIMATION, frame, state, pose, source, light, overlay);
+
+        // Backward compatibility: the already-shipped single-rotor resource
+        // pack omits input_output_rotor, so only that part uses legacy Java.
+        // An invalid model aborts the entire JSON scene BEFORE drawing, then
+        // both legacy rotor paths are used.
+        if (drawn == null || drawn.component("input_rotor") == null) {
+            pose.pushPose();
+            pose.translate(0D, 0D, -2D);
+            pose.translate(.5D, .5D, .5D);
+            pose.mulPose(Axis.ZP.rotationDegrees(inputAngle));
+            pose.translate(-.5D, -.5D, -.5D);
+            model(pose,source,light,overlay,
+                    Minecraft.getInstance().getModelManager().getModel(INPUT_ROTOR));
+            pose.popPose();
+        }
+
+        if (drawn == null || drawn.component("input_output_rotor") == null) {
+            pose.pushPose();
+            pose.translate(0D, 0D, -2D);
+            pose.translate(.5D,.5D,.5D);
+            pose.mulPose(Axis.XP.rotationDegrees(-inputAngle));
+            pose.translate(-.5D,-.5D,-.5D);
+            model(pose,source,light,overlay,
+                    Minecraft.getInstance().getModelManager().getModel(INPUT_OUTPUT_ROTOR));
+            pose.popPose();
+        }
 
         // The continuous spindle is seated inside the LEFT headstock bearing;
         // the clutch stops it in place when machining is idle.

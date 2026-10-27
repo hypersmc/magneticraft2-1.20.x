@@ -1,0 +1,7 @@
+{
+  "parent": "magneticraft2:multiblock/rotary_ore_classifier_drum_middle",
+  "textures": {
+    "mesh": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}
