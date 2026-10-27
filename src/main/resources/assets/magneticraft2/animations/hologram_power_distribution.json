@@ -518,6 +518,20 @@
           "2": "magneticraft2:block/overload_disconnect_wood_closed"
         }
       }
+    },
+    "drive_upshaft_upper": {
+      "model": "magneticraft2:block/shaft_wood",
+      "model_offset": [
+        -2.1,
+        2.55,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
     }
   },
   "inputs": {
@@ -599,6 +613,13 @@
         },
         {
           "target": "branch_brake_spindle",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "drive_upshaft_upper",
           "property": "rotation",
           "axis": "y",
           "input": "drive_angle",
