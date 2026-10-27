@@ -177,6 +177,21 @@ for (const machine of machines) {
         const parts = animation.components;
         assert.ok(parts && typeof parts==="object" && Object.keys(parts).length>0,
             `${machine.name}: empty animated scene`);
+        for (const [id, belt] of Object.entries(animation.belt_loops??{})) {
+            assert.ok(animation.inputs[belt.input],
+                `${machine.name}: belt ${id} references unknown input`);
+            assert.equal(belt.type,"open_belt");
+            assert.ok(belt.texture.startsWith("magneticraft2:textures/")
+                || belt.texture.startsWith("minecraft:textures/"),
+                `${machine.name}: belt ${id} has unexpected texture ID`);
+            if (belt.texture.startsWith("magneticraft2:")) {
+                const texturePath = join(root,
+                    "src/main/resources/assets/magneticraft2",
+                    belt.texture.split(":")[1]);
+                assert.ok(existsSync(texturePath),
+                    `${machine.name}: belt ${id} missing texture ${texturePath}`);
+            }
+        }
         for (const required of expectedComponents[machine.name] ?? []) {
             assert.ok(Object.hasOwn(parts,required),
                 `${machine.name}: missing required visual component ${required}`);
