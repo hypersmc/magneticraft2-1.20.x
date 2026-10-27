@@ -1,0 +1,318 @@
+{
+  "format": "magneticraft2:hologram_recording",
+  "format_version": 1,
+  "archive": "042",
+  "title": "Multi-Stage Power Distribution",
+  "animation": "magneticraft2:hologram_power_distribution",
+  "duration_ticks": 1200,
+  "placement": {
+    "reference_facing": "south",
+    "offset": [
+      0,
+      0,
+      4
+    ]
+  },
+  "channels": {
+    "mechanical_input": [
+      {
+        "tick": 0,
+        "angle_degrees": 0,
+        "running": false,
+        "overloaded": false
+      },
+      {
+        "tick": 80,
+        "angle_degrees": 0,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 260,
+        "angle_degrees": 720,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 420,
+        "angle_degrees": 1350,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 530,
+        "angle_degrees": 1650,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 600,
+        "angle_degrees": 1750,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 650,
+        "angle_degrees": 1800,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 680,
+        "angle_degrees": 1810,
+        "running": false,
+        "overloaded": true
+      },
+      {
+        "tick": 840,
+        "angle_degrees": 1810,
+        "running": false,
+        "overloaded": true
+      },
+      {
+        "tick": 910,
+        "angle_degrees": 1810,
+        "running": false,
+        "overloaded": false
+      },
+      {
+        "tick": 930,
+        "angle_degrees": 1810,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 1120,
+        "angle_degrees": 2600,
+        "running": true,
+        "overloaded": false
+      },
+      {
+        "tick": 1160,
+        "angle_degrees": 2780,
+        "running": false,
+        "overloaded": false
+      },
+      {
+        "tick": 1200,
+        "angle_degrees": 2780,
+        "running": false,
+        "overloaded": false
+      }
+    ]
+  },
+  "visual_channels": {
+    "gear_integrity": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 680,
+        "value": 1
+      },
+      {
+        "tick": 930,
+        "value": 2
+      }
+    ],
+    "load_stage": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 530,
+        "value": 1
+      },
+      {
+        "tick": 930,
+        "value": 2
+      }
+    ],
+    "repair_stage": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 930,
+        "value": 2
+      }
+    ]
+  },
+  "transitions": [
+    {
+      "tick": 930,
+      "fade_ticks": 16
+    }
+  ],
+  "appearance": {
+    "tint": [
+      0.38,
+      0.9,
+      1
+    ],
+    "opacity": 0.34,
+    "fade_in_ticks": 35,
+    "fade_out_ticks": 45,
+    "flicker": 0.25,
+    "preserve_texture": true,
+    "shader_effect": true
+  },
+  "audio_cues": [
+    {
+      "tick": 16,
+      "sound": "minecraft:block.beacon.activate",
+      "volume": 0.16,
+      "pitch": 1.3
+    },
+    {
+      "tick": 80,
+      "sound": "minecraft:block.wooden_button.click_on",
+      "volume": 0.26,
+      "pitch": 0.8
+    },
+    {
+      "tick": 310,
+      "sound": "minecraft:block.piston.extend",
+      "volume": 0.2,
+      "pitch": 0.9
+    },
+    {
+      "tick": 530,
+      "sound": "minecraft:block.piston.extend",
+      "volume": 0.25,
+      "pitch": 0.6
+    },
+    {
+      "tick": 615,
+      "sound": "minecraft:block.note_block.bell",
+      "volume": 0.22,
+      "pitch": 0.75
+    },
+    {
+      "tick": 680,
+      "sound": "minecraft:block.anvil.land",
+      "volume": 0.35,
+      "pitch": 0.7
+    },
+    {
+      "tick": 830,
+      "sound": "minecraft:block.note_block.bell",
+      "volume": 0.15,
+      "pitch": 0.6
+    },
+    {
+      "tick": 930,
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 0.3,
+      "pitch": 1.3
+    },
+    {
+      "tick": 1100,
+      "sound": "minecraft:block.wooden_button.click_off",
+      "volume": 0.18,
+      "pitch": 1
+    },
+    {
+      "tick": 1160,
+      "sound": "minecraft:block.beacon.deactivate",
+      "volume": 0.16,
+      "pitch": 1.25
+    }
+  ],
+  "visual_events": [
+    {
+      "tick": 18,
+      "duration_ticks": 20,
+      "interval_ticks": 10,
+      "kind": "reconstruct",
+      "position": [
+        -1.6,
+        2.1,
+        0.5
+      ],
+      "count": 6,
+      "spread": 0.5
+    },
+    {
+      "tick": 575,
+      "duration_ticks": 90,
+      "interval_ticks": 10,
+      "kind": "warning",
+      "position": [
+        0.5,
+        1.35,
+        2.6
+      ],
+      "count": 7,
+      "spread": 0.62
+    },
+    {
+      "tick": 680,
+      "duration_ticks": 12,
+      "interval_ticks": 4,
+      "kind": "spark",
+      "position": [
+        0.5,
+        1.4,
+        2.6
+      ],
+      "count": 10,
+      "spread": 0.45
+    },
+    {
+      "tick": 720,
+      "duration_ticks": 25,
+      "interval_ticks": 8,
+      "kind": "warning",
+      "position": [
+        0.5,
+        1.25,
+        2.6
+      ],
+      "count": 6,
+      "spread": 0.5
+    },
+    {
+      "tick": 929,
+      "duration_ticks": 36,
+      "interval_ticks": 9,
+      "kind": "reconstruct",
+      "position": [
+        0.5,
+        1.4,
+        1.55
+      ],
+      "count": 9,
+      "spread": 0.8
+    },
+    {
+      "tick": 945,
+      "duration_ticks": 24,
+      "interval_ticks": 8,
+      "kind": "reconstruct",
+      "position": [
+        0.5,
+        2,
+        2.6
+      ],
+      "count": 8,
+      "spread": 0.9
+    },
+    {
+      "tick": 1090,
+      "duration_ticks": 8,
+      "interval_ticks": 4,
+      "kind": "spark",
+      "position": [
+        1.55,
+        1.3,
+        2.6
+      ],
+      "count": 4,
+      "spread": 0.25
+    }
+  ]
+}
