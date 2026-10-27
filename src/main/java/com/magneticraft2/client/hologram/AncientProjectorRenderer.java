@@ -49,7 +49,6 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         return true;
     }
 
-    @Override
     public AABB getRenderBoundingBox(AncientProjectorBlockEntity projector) {
         return new AABB(projector.getBlockPos()).inflate(16);
     }
