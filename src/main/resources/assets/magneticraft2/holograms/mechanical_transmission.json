@@ -68,7 +68,7 @@
     "opacity": 0.32,
     "fade_in_ticks": 24,
     "fade_out_ticks": 36,
-    "flicker": 0.02,
+    "flicker": 0.28,
     "preserve_texture": true
   }
 }
