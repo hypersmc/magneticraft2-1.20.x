@@ -64,6 +64,7 @@ public class ItemRegistry {
     public static final RegistryObject<MBdebugger> item_mbdebugger = ITEMS.register("mbdebugger", MBdebugger::new);
     //Blocks to items
 //    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock); no reason to have a pitkiln block as its never a block that should be set.
+    public static final RegistryObject<Item> ITEM_ANCIENT_PROJECTOR = ITEMS.register("ancient_projector", () -> new com.magneticraft2.common.hologram.AncientProjectorItem(BlockRegistry.ANCIENT_PROJECTOR.get()));
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
