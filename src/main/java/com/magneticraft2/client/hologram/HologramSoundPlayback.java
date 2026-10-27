@@ -103,7 +103,8 @@ public final class HologramSoundPlayback {
         cursor.lastFilmTick = filmTick;
         // Significant time skips should never make several old warnings and
         // mechanical impacts fire at once when a chunk or client catches up.
-        if (delta <= 0L || delta > MAX_CATCHUP_TICKS) return;
+        if (delta <= 0L || delta > MAX_CATCHUP_TICKS
+                || filmTick - previousFilmTick > MAX_CATCHUP_TICKS) return;
 
         if (Minecraft.getInstance().player == null
                 || Minecraft.getInstance().player.distanceToSqr(
@@ -129,6 +130,9 @@ public final class HologramSoundPlayback {
                         projector.getBlockPos().getZ() + .5D,
                         sound, SoundSource.BLOCKS,
                         cue.volume(), cue.pitch(), false);
+                // Even when a datapack compresses playback dramatically,
+                // never burst several recorded impacts in one client tick.
+                break;
             }
         }
     }
