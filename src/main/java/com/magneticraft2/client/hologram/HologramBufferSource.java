@@ -5,6 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+import java.util.concurrent.atomic.AtomicBoolean;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 
@@ -27,9 +31,16 @@ import net.minecraft.resources.ResourceLocation;
  * intended for models baked into Minecraft's block atlas.
  */
 public final class HologramBufferSource implements MultiBufferSource {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final AtomicBoolean WARNED_MISSING_SPRITE = new AtomicBoolean();
     private static final ResourceLocation NEUTRAL_SPRITE =
             new ResourceLocation("minecraft", "block/white_concrete");
     private final VertexConsumer consumer;
+
+    /** Called on the client recording resource-reload path. */
+    public static void resetMissingSpriteWarning() {
+        WARNED_MISSING_SPRITE.set(false);
+    }
 
     public HologramBufferSource(MultiBufferSource downstream, float opacity,
                                float red, float green, float blue,
@@ -37,20 +48,25 @@ public final class HologramBufferSource implements MultiBufferSource {
                                boolean shaderEffect) {
         // Avoid texture lookups in the common detailed mode. The original
         // atlas UVs are already encoded in the baked quads from PR #12.
-        float centerU = 0F;
-        float centerV = 0F;
-        if (!preserveSourceTexture) {
-            TextureAtlasSprite sprite = Minecraft.getInstance()
-                    .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
-                    .apply(NEUTRAL_SPRITE);
-            centerU = (sprite.getU0() + sprite.getU1()) * 0.5F;
-            centerV = (sprite.getV0() + sprite.getV1()) * 0.5F;
-        }
+        // Broken or unbaked block models can provide the distinctive
+        // magenta/black missing-texture atlas sprite. A recording must
+        // remain a readable *blue hologram* instead of projecting that debug
+        // checkerboard into the world. This is a fallback, not a replacement
+        // for fixing the offending source model.
+        var atlas = Minecraft.getInstance()
+                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS);
+        TextureAtlasSprite neutral = atlas.apply(NEUTRAL_SPRITE);
+        TextureAtlasSprite missing = atlas.apply(MissingTextureAtlasSprite.getLocation());
+        float centerU = (neutral.getU0() + neutral.getU1()) * 0.5F;
+        float centerV = (neutral.getV0() + neutral.getV1()) * 0.5F;
         consumer = new HologramVertexConsumer(
                 downstream.getBuffer(shaderEffect
                         ? HologramRenderType.projection()
                         : RenderType.translucent()),
-                centerU, centerV, Math.max(0F, Math.min(1F, opacity)),
+                centerU, centerV,
+                missing.getU0(), missing.getU1(),
+                missing.getV0(), missing.getV1(),
+                Math.max(0F, Math.min(1F, opacity)),
                 red, green, blue, preserveSourceTexture);
     }
 
@@ -67,6 +83,10 @@ public final class HologramBufferSource implements MultiBufferSource {
         private final VertexConsumer delegate;
         private final float spriteU;
         private final float spriteV;
+        private final float missingU0;
+        private final float missingU1;
+        private final float missingV0;
+        private final float missingV1;
         private final float opacity;
         private final boolean preserveSourceTexture;
         private final float red;
@@ -74,12 +94,19 @@ public final class HologramBufferSource implements MultiBufferSource {
         private final float blue;
 
         private HologramVertexConsumer(VertexConsumer delegate, float spriteU,
-                                       float spriteV, float opacity,
+                                       float spriteV,
+                                       float missingU0, float missingU1,
+                                       float missingV0, float missingV1,
+                                       float opacity,
                                        float red, float green, float blue,
                                        boolean preserveSourceTexture) {
             this.delegate = delegate;
             this.spriteU = spriteU;
             this.spriteV = spriteV;
+            this.missingU0 = missingU0;
+            this.missingU1 = missingU1;
+            this.missingV0 = missingV0;
+            this.missingV1 = missingV1;
             this.opacity = opacity;
             this.preserveSourceTexture = preserveSourceTexture;
             this.red = Math.max(0F, Math.min(1F, red));
@@ -110,8 +137,19 @@ public final class HologramBufferSource implements MultiBufferSource {
 
         @Override
         public VertexConsumer uv(float u, float v) {
-            delegate.uv(preserveSourceTexture ? u : spriteU,
-                    preserveSourceTexture ? v : spriteV);
+            // Atlas coordinates are already supplied by baked quads. If a
+            // specific quad uses the missing atlas sprite, redirect only
+            // THAT quad's samples to a neutral real texture. Keep all valid
+            // gear, shaft and wood UVs untouched.
+            boolean missingSprite = preserveSourceTexture
+                    && u >= missingU0 && u <= missingU1
+                    && v >= missingV0 && v <= missingV1;
+            if (missingSprite && WARNED_MISSING_SPRITE.compareAndSet(false, true)) {
+                LOGGER.warn("Hologram encountered a missing block atlas texture. "
+                        + "Using a neutral hologram sample; check baked model or texture logs.");
+            }
+            delegate.uv(preserveSourceTexture && !missingSprite ? u : spriteU,
+                    preserveSourceTexture && !missingSprite ? v : spriteV);
             return this;
         }
 
