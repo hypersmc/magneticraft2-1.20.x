@@ -131,6 +131,11 @@ public final class RecordingTimeline {
             this.frames = List.copyOf(ordered);
         }
 
+        /** Immutable model-stage cues for checking pack/scene compatibility. */
+        public List<DiscreteKeyframe> keyframes() {
+            return frames;
+        }
+
         public int sample(double elapsedTicks) {
             if (!Double.isFinite(elapsedTicks)) {
                 throw new IllegalArgumentException("Recording time must be finite");
