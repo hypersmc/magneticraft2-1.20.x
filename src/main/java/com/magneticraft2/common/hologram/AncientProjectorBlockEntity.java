@@ -181,9 +181,21 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         itemReturned = tag.getBoolean("ReturnedArtifact");
     }
 
+    /**
+     * The client only needs enough information to synchronize playback and
+     * culling. The server retains the original collectible's full item NBT,
+     * including player-assigned names and custom lore, for eventual return.
+     *
+     * Using the usual save format as the starting point keeps the vanilla
+     * block-entity sync metadata, but strips the potentially large item tag.
+     * This applies to both chunk initial sync and incremental BE packets.
+     */
     @Override
     public CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+        CompoundTag syncTag = saveWithoutMetadata();
+        syncTag.remove("ArtifactItemTag");
+        syncTag.remove("ReturnedArtifact");
+        return syncTag;
     }
 
     @Nullable
@@ -194,6 +206,29 @@ public class AncientProjectorBlockEntity extends BlockEntity {
 
     @Override
     public void onDataPacket(Connection connection, ClientboundBlockEntityDataPacket packet) {
-        if (packet.getTag() != null) load(packet.getTag());
+        if (packet.getTag() != null) {
+            // Network-only fields; never let a partial packet replace the
+            // authoritative server-side copy of the collectible artifact.
+            readPlaybackData(packet.getTag());
+        }
+    }
+
+    /**
+     * Shared client playback fields. Does not touch ArtifactItemTag or the
+     * one-shot return guard; both belong solely to the server lifecycle.
+     */
+    private void readPlaybackData(CompoundTag tag) {
+        ResourceLocation parsed = ResourceLocation.tryParse(tag.getString("Recording"));
+        recording = parsed == null ? DEFAULT_RECORDING : parsed;
+        startTime = tag.contains("StartTime", 4) ? tag.getLong("StartTime") : -1L;
+        int candidateDuration = tag.contains("DurationTicks", 3)
+                ? tag.getInt("DurationTicks") : 900;
+        durationTicks = candidateDuration >= 1 && candidateDuration <= 12000
+                ? candidateDuration : 900;
+        int candidateRadius = tag.contains("RenderRadiusBlocks", 3)
+                ? tag.getInt("RenderRadiusBlocks")
+                : HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
+        renderRadiusBlocks = candidateRadius >= 1 && candidateRadius <= 64
+                ? candidateRadius : HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
     }
 }
