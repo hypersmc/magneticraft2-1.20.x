@@ -1,0 +1,675 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "gear_west_outer_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        -2.1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_west_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        -2.1,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_west_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        -1.05,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_west": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        -1.05,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_center_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_center": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        1.05,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        1.05,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_outer_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        2.1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        2.1,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_inner_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        0,
+        0,
+        1.05
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_inner": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        1.05
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_outer_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        0,
+        0,
+        2.1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        2.1
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "gear_integrity",
+        "models": {
+          "0": "magneticraft2:block/gear_medium_wood",
+          "1": "magneticraft2:hologram/gear_medium_damaged",
+          "2": "magneticraft2:block/gear_medium_wood"
+        }
+      }
+    },
+    "gear_rear_output_pier": {
+      "model": "magneticraft2:hologram/power_pier",
+      "model_offset": [
+        1.05,
+        0,
+        2.1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_output": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        1.05,
+        0.65,
+        2.1
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "vertical_drive_shaft": {
+      "model": "magneticraft2:block/shaft_wood",
+      "model_offset": [
+        -2.1,
+        1.05,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "elevated_drive_wheel": {
+      "model": "magneticraft2:block/gear_large_wood",
+      "model_offset": [
+        -2.1,
+        1.73,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_column_near_west": {
+      "model": "magneticraft2:hologram/power_gantry_column",
+      "model_offset": [
+        -3.05,
+        0,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_top_near_west": {
+      "model": "magneticraft2:hologram/power_gantry_top",
+      "model_offset": [
+        -3.05,
+        2,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_column_far_west": {
+      "model": "magneticraft2:hologram/power_gantry_column",
+      "model_offset": [
+        -3.05,
+        0,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_top_far_west": {
+      "model": "magneticraft2:hologram/power_gantry_top",
+      "model_offset": [
+        -3.05,
+        2,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_column_near_east": {
+      "model": "magneticraft2:hologram/power_gantry_column",
+      "model_offset": [
+        2.9,
+        0,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_top_near_east": {
+      "model": "magneticraft2:hologram/power_gantry_top",
+      "model_offset": [
+        2.9,
+        2,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_column_far_east": {
+      "model": "magneticraft2:hologram/power_gantry_column",
+      "model_offset": [
+        2.9,
+        0,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_top_far_east": {
+      "model": "magneticraft2:hologram/power_gantry_top",
+      "model_offset": [
+        2.9,
+        2,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_near_0": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        -3.05,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_near_1": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        -1.05,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_near_2": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        0.95,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_far_0": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        -3.05,
+        3,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_far_1": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        -1.05,
+        3,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_long_far_2": {
+      "model": "magneticraft2:hologram/power_gantry_span_x",
+      "model_offset": [
+        0.95,
+        3,
+        3.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_west_0": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        -3.05,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_west_1": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        -3.05,
+        3,
+        1.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_center_0": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        -0.05,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_center_1": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        -0.05,
+        3,
+        1.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_east_0": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        2.9,
+        3,
+        -0.85
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gantry_cross_east_1": {
+      "model": "magneticraft2:hologram/power_gantry_span_z",
+      "model_offset": [
+        2.9,
+        3,
+        1.15
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "branch_load_indicator": {
+      "model": "magneticraft2:hologram/empty_projection",
+      "model_offset": [
+        0,
+        0,
+        2.1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "load_stage",
+        "models": {
+          "0": "magneticraft2:hologram/empty_projection",
+          "1": "magneticraft2:hologram/power_overload_jaw",
+          "2": "magneticraft2:hologram/empty_projection"
+        }
+      }
+    },
+    "branch_reinforcement": {
+      "model": "magneticraft2:hologram/empty_projection",
+      "model_offset": [
+        0,
+        0,
+        1.05
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "repair_stage",
+        "models": {
+          "0": "magneticraft2:hologram/empty_projection",
+          "1": "magneticraft2:hologram/empty_projection",
+          "2": "magneticraft2:hologram/power_reinforced_hub"
+        }
+      }
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {
+    "distribution": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "gear_west_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_west",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_center",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_east",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_east_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_rear_inner",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_rear_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_rear_output",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "elevated_drive_wheel",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        }
+      ]
+    }
+  }
+}
