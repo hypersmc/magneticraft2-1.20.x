@@ -40,6 +40,9 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         float opacity = projectionOpacity(sceneTick, recording.durationTicks(),
                 recording.appearance()) * recording.visibility(sceneTick);
         if (opacity <= 0F) return;
+        // Validate archive/animation cross-references once per resource set.
+        // A broken authored film never submits partial or misleading geometry.
+        if (!HologramRecordingValidator.isUsable(projector.recording(), recording)) return;
         // Once per scene/reload: log the exact baked model responsible if
         // its atlas sprite is the purple/black missing-texture checkerboard.
         HologramModelDiagnostics.check(recording.animation());
