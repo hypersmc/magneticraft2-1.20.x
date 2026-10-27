@@ -25,18 +25,23 @@ import java.util.Map;
 public final class HologramRecordingCatalog extends SimpleJsonResourceReloadListener {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int MAX_TICKS = 12000;
+    private static final int MAX_RENDER_RADIUS = 64;
+    public static final int DEFAULT_RENDER_RADIUS = 8;
 
     public static final ResourceLocation DEFAULT_RECORDING =
             new ResourceLocation("magneticraft2", "mechanical_transmission");
     private static final RecordingInfo LEGACY_DEFAULT =
-            new RecordingInfo("017", "Mechanical Transmission", 900);
+            new RecordingInfo("017", "Mechanical Transmission", 900,
+                    DEFAULT_RENDER_RADIUS);
     private static volatile Map<ResourceLocation, RecordingInfo> recordings = Map.of();
 
-    public record RecordingInfo(String archive, String title, int durationTicks) {
+    public record RecordingInfo(String archive, String title, int durationTicks,
+                                int renderRadiusBlocks) {
         public RecordingInfo {
             if (archive == null || archive.isBlank() || archive.length() > 32
                     || title == null || title.isBlank() || title.length() > 128
-                    || durationTicks < 1 || durationTicks > MAX_TICKS) {
+                    || durationTicks < 1 || durationTicks > MAX_TICKS
+                    || renderRadiusBlocks < 1 || renderRadiusBlocks > MAX_RENDER_RADIUS) {
                 throw new IllegalArgumentException("Invalid hologram recording metadata");
             }
         }
@@ -87,8 +92,13 @@ public final class HologramRecordingCatalog extends SimpleJsonResourceReloadList
                 || integer(json, "format_version") != 1) {
             throw new JsonParseException("Invalid hologram recording format/version");
         }
+        // Projected geometry can extend far beyond the physical artifact.
+        // This server-owned, saved value controls Forge's BE frustum bounds.
+        // Defaults to eight blocks for old and resource-pack-only archives.
+        int radius = json.has("render_radius_blocks")
+                ? integer(json, "render_radius_blocks") : DEFAULT_RENDER_RADIUS;
         return new RecordingInfo(string(json, "archive"), string(json, "title"),
-                integer(json, "duration_ticks"));
+                integer(json, "duration_ticks"), radius);
     }
 
     private static String string(JsonObject json, String name) {
