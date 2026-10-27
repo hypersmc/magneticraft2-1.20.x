@@ -9,6 +9,7 @@ import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.common.hologram.RecordingTimeline;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -78,6 +79,20 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         }
     }
 
+    /**
+     * A strictly whitelisted shared, real-machine procedural renderer
+     * attached at a PR #12 component's evaluated pose. The recording
+     * drives a film state; there is no physical machine simulation.
+     *
+     * A visible stage is optional: absent means the static baked component
+     * always exists. Clamp interval is [from, until) on the visual timeline.
+     */
+    public record ProceduralPart(String component, String type,
+                                 Direction.Axis axis, String angleChannel,
+                                 float angleScale, String visibleChannel,
+                                 int visibleStage, int clampFromTick,
+                                 int clampUntilTick) {}
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
@@ -86,6 +101,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                             List<Transition> transitions,
                             List<AudioCue> audioCues,
                             List<VisualEvent> visualEvents,
+                            List<ProceduralPart> proceduralParts,
                             Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
@@ -93,6 +109,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             transitions = List.copyOf(transitions);
             audioCues = List.copyOf(audioCues);
             visualEvents = List.copyOf(visualEvents);
+            proceduralParts = List.copyOf(proceduralParts);
         }
 
         public RecordingTimeline.Frame sample(double elapsedTicks) {
@@ -200,7 +217,8 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         return new Recording(archive, title, animation, duration,
                 xyz[0], xyz[1], xyz[2], channels, visualChannels,
                 transitions, parseAudioCues(root, duration),
-                parseVisualEvents(root, duration), parseAppearance(root));
+                parseVisualEvents(root, duration),
+                parseProceduralParts(root, duration), parseAppearance(root));
     }
 
     /**
@@ -408,6 +426,74 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             throw new JsonParseException(name + " out of range");
         }
         return (float) n;
+    }
+
+    /**
+     * Only real, explicitly approved Magneticraft2 visuals may be projected
+     * as procedural attachments. No arbitrary Java class, block entity,
+     * model type or executable resource identifier may be loaded from JSON.
+     */
+    private static List<ProceduralPart> parseProceduralParts(JsonObject root,
+                                                             int duration) {
+        if (!root.has("procedural_parts")) return List.of();
+        JsonArray data = array(root.get("procedural_parts"), "procedural_parts");
+        if (data.size() > 8) {
+            throw new JsonParseException("procedural_parts supports at most 8 entries");
+        }
+
+        List<ProceduralPart> parts = new ArrayList<>();
+        java.util.Set<String> seenComponents = new java.util.HashSet<>();
+        for (JsonElement element : data) {
+            JsonObject part = object(element, "procedural part");
+            String component = text(part, "component");
+            String type = text(part, "type");
+            String axis = text(part, "axis");
+            String angleChannel = text(part, "angle_channel");
+            float angleScale = boundedFloat(part.get("angle_scale"),
+                    "procedural angle_scale", -8F, 8F);
+            if (angleScale == 0F
+                    || !component.matches("[a-z][a-z0-9_.]{0,127}")
+                    || !angleChannel.matches("[a-z][a-z0-9_.]{0,127}")
+                    || !seenComponents.add(component)) {
+                throw new JsonParseException(
+                        "Invalid or duplicated procedural component/angle channel");
+            }
+            if (!"magneticraft2:mechanical_brake_wood".equals(type)) {
+                throw new JsonParseException("Unsupported procedural machine: " + type);
+            }
+            Direction.Axis direction = switch (axis) {
+                case "x" -> Direction.Axis.X;
+                case "y" -> Direction.Axis.Y;
+                case "z" -> Direction.Axis.Z;
+                default -> throw new JsonParseException(
+                        "Unsupported procedural axis: " + axis);
+            };
+
+            String visibleChannel = part.has("visible_channel")
+                    ? text(part, "visible_channel") : null;
+            int visibleStage = part.has("visible_stage")
+                    ? number(part, "visible_stage") : -1;
+            if ((visibleChannel == null) != (visibleStage == -1)
+                    || (visibleChannel != null
+                        && (!visibleChannel.matches("[a-z][a-z0-9_.]{0,127}")
+                            || visibleStage < 0 || visibleStage > 5))) {
+                throw new JsonParseException(
+                        "visible_channel and visible_stage must both be supplied, "
+                                + "and visible_stage must be between 0 and 5");
+            }
+
+            int clampFrom = number(part, "clamp_from_tick");
+            int clampUntil = number(part, "clamp_until_tick");
+            if (clampFrom < 0 || clampUntil < clampFrom
+                    || clampUntil > duration) {
+                throw new JsonParseException(
+                        "Invalid procedural brake clamp time interval");
+            }
+            parts.add(new ProceduralPart(component, type, direction,
+                    angleChannel, angleScale, visibleChannel,
+                    visibleStage, clampFrom, clampUntil));
+        }
+        return List.copyOf(parts);
     }
 
     private static Appearance parseAppearance(JsonObject root) {
