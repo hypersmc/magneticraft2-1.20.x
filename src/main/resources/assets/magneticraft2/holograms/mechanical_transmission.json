@@ -197,5 +197,46 @@
       "volume": 0.15,
       "pitch": 1.25
     }
+  ],
+  "visual_events": [
+    {
+      "tick": 405,
+      "duration_ticks": 44,
+      "interval_ticks": 9,
+      "kind": "warning",
+      "position": [
+        1.03,
+        1.28,
+        0.5
+      ],
+      "count": 6,
+      "spread": 0.42
+    },
+    {
+      "tick": 460,
+      "duration_ticks": 12,
+      "interval_ticks": 4,
+      "kind": "spark",
+      "position": [
+        1.03,
+        1.22,
+        0.5
+      ],
+      "count": 8,
+      "spread": 0.36
+    },
+    {
+      "tick": 615,
+      "duration_ticks": 32,
+      "interval_ticks": 8,
+      "kind": "reconstruct",
+      "position": [
+        0.5,
+        1.55,
+        0.5
+      ],
+      "count": 9,
+      "spread": 0.65
+    }
   ]
 }
