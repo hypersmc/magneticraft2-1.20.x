@@ -1,0 +1,39 @@
+{
+  "textures": {
+    "particle": "minecraft:block/oxidized_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        5
+      ],
+      "to": [
+        11,
+        14,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#particle"
+        },
+        "south": {
+          "texture": "#particle"
+        },
+        "east": {
+          "texture": "#particle"
+        },
+        "west": {
+          "texture": "#particle"
+        },
+        "up": {
+          "texture": "#particle"
+        },
+        "down": {
+          "texture": "#particle"
+        }
+      }
+    }
+  ]
+}
