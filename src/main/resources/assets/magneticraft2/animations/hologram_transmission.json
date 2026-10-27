@@ -1,0 +1,122 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "base_left": {
+      "model": "magneticraft2:hologram/gear_support",
+      "model_offset": [
+        -1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "translucent"
+    },
+    "base_right": {
+      "model": "magneticraft2:hologram/gear_support",
+      "model_offset": [
+        1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "translucent"
+    },
+    "left_gear": {
+      "model": "magneticraft2:hologram/gear_wheel",
+      "model_offset": [
+        -1,
+        1,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "translucent"
+    },
+    "right_gear": {
+      "model": "magneticraft2:hologram/gear_wheel",
+      "model_offset": [
+        1,
+        1,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "translucent"
+    },
+    "left_axle": {
+      "model": "magneticraft2:hologram/gear_axle",
+      "model_offset": [
+        -1,
+        1,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "translucent"
+    },
+    "right_axle": {
+      "model": "magneticraft2:hologram/gear_axle",
+      "model_offset": [
+        1,
+        1,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "translucent"
+    }
+  },
+  "inputs": {
+    "shaft_phase": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {
+    "transmission": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "left_gear",
+          "property": "rotation",
+          "axis": "z",
+          "input": "shaft_phase",
+          "scale": 1
+        },
+        {
+          "target": "right_gear",
+          "property": "rotation",
+          "axis": "z",
+          "input": "shaft_phase",
+          "scale": -1
+        }
+      ]
+    }
+  }
+}
