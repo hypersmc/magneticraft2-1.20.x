@@ -1,12 +1,12 @@
 {
   "textures": {
-    "housing": "minecraft:block/polished_blackstone",
-    "rim": "minecraft:block/polished_deepslate",
-    "trim": "minecraft:block/iron_block",
-    "blue": "minecraft:block/blue_ice",
-    "emitter": "minecraft:block/sea_lantern",
-    "glow": "minecraft:block/blue_ice",
-    "particle": "minecraft:block/polished_deepslate"
+    "housing": "magneticraft2:block/ancient_projector_housing",
+    "rim": "magneticraft2:block/ancient_projector_rim",
+    "trim": "magneticraft2:block/ancient_projector_rim",
+    "blue": "magneticraft2:block/ancient_projector_emitter",
+    "emitter": "magneticraft2:block/ancient_projector_emitter",
+    "glow": "magneticraft2:block/ancient_projector_emitter",
+    "particle": "magneticraft2:block/ancient_projector_housing"
   },
   "ambientocclusion": false,
   "elements": [
