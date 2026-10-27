@@ -9,7 +9,6 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,6 +21,9 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     public static final int FIRST_RECORDING_TICKS = 900;
     private ResourceLocation recording = DEFAULT_RECORDING;
     private long startTime = -1L;
+    // Removal can be triggered by a break, replacement or normal completion.
+    // Only one of those paths is allowed to return the artifact.
+    private boolean itemReturned = false;
 
     public AncientProjectorBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.ANCIENT_PROJECTOR_BE.get(), pos, state);
@@ -35,6 +37,20 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    /**
+     * Server-only, one-shot transfer of the contained recording back to an
+     * item. Called by AncientProjectorBlock.onRemove before the BE is discarded.
+     */
+    public ItemStack takeArtifact() {
+        if (itemReturned || level == null || level.isClientSide) {
+            return ItemStack.EMPTY;
+        }
+        itemReturned = true;
+        ItemStack result = new ItemStack(ItemRegistry.ITEM_ANCIENT_PROJECTOR.get());
+        result.getOrCreateTag().putString("Recording", recording.toString());
+        return result;
+    }
+
     public static void tick(Level level, BlockPos pos, BlockState state, AncientProjectorBlockEntity entity) {
         if (entity.startTime < 0L) {
             entity.startTime = level.getGameTime();
@@ -42,13 +58,9 @@ public class AncientProjectorBlockEntity extends BlockEntity {
             level.sendBlockUpdated(pos, state, state, 3);
         }
         if (level.getGameTime() - entity.startTime >= FIRST_RECORDING_TICKS) {
-            // Remove the block without loot drops, then return exactly one artifact.
-            ItemStack stack = new ItemStack(ItemRegistry.ITEM_ANCIENT_PROJECTOR.get());
-            CompoundTag tag = stack.getOrCreateTag();
-            tag.putString("Recording", entity.recording.toString());
+            // onRemove handles the return for BOTH completion and early break.
+            // Never also spawn a duplicate from the ticker.
             level.removeBlock(pos, false);
-            level.addFreshEntity(new ItemEntity(level, pos.getX() + .5, pos.getY() + .3,
-                    pos.getZ() + .5, stack));
         }
     }
 
@@ -57,6 +69,7 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
         tag.putString("Recording", recording.toString());
         tag.putLong("StartTime", startTime);
+        tag.putBoolean("ReturnedArtifact", itemReturned);
     }
 
     @Override
@@ -65,6 +78,7 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         ResourceLocation id = ResourceLocation.tryParse(tag.getString("Recording"));
         recording = id == null ? DEFAULT_RECORDING : id;
         startTime = tag.contains("StartTime") ? tag.getLong("StartTime") : -1L;
+        itemReturned = tag.getBoolean("ReturnedArtifact");
     }
 
     @Override
