@@ -14,7 +14,7 @@
       {"tick": 0, "angle_degrees": 0, "running": false, "overloaded": false},
       {"tick": 160, "angle_degrees": 0, "running": true, "overloaded": false},
       {"tick": 460, "angle_degrees": 1440, "running": false, "overloaded": true},
-      {"tick": 560, "angle_degrees": 1440, "running": false, "overloaded": false},
+      {"tick": 560, "angle_degrees": 1440, "running": true, "overloaded": false},
       {"tick": 720, "angle_degrees": 2160, "running": true, "overloaded": false},
       {"tick": 820, "angle_degrees": 2400, "running": false, "overloaded": false},
       {"tick": 900, "angle_degrees": 2400, "running": false, "overloaded": false}
