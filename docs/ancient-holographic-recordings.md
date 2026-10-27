@@ -143,3 +143,49 @@ The built-in Mechanical Transmission recording enables the shader:
 7. Verify full 45-second playback and the projector item return once. Breaking early, late-join synchronization and other lifecycle cases remain separately unverified.
 
 The current core shader is an **attempt at a cinematic 3D projection look**, not actual volumetric light simulation or order-independent transparency. Shader availability, alpha sorting, graphics-mode differences and texture-pack compatibility require a real in-game test before PR #16 can be merged.
+
+## Archive 017 — Mechanical Transmission film (prototype)
+
+The first recording is now authored as a **45-second non-interactive film**, using the existing PR #12 scene graph. No real gear network runs during playback, and none of these states affect world blocks.
+
+| Tick (time) | Recorded visual |
+| --- | --- |
+| 0 (0s) | Hologram materializes; intact wooden transmission at rest |
+| 75 (3.75s) | Gears begin turning in opposite directions |
+| 200–345 (10–17.25s) | Transmission runs at steady load |
+| 355 (17.75s) | Brake load is introduced against the right gear |
+| 405–460 (20.25–23s) | Machine slows; at tick 460 the right gear loses teeth and the shaft stops under overload |
+| 460–600 (23–30s) | Broken gear remains visible, illustrating the failure |
+| 615 (30.75s) | Scene briefly fades out and reconstructs with an intact gear and reinforced timber bridge; brake load removed |
+| 615–840 (30.75–42s) | Corrected transmission resumes |
+| 840–900 (42–45s) | Transmission stops; hologram dissolves and projector returns as an item |
+
+### Data-driven filming extensions
+
+- `visual_channels`: optional mapping of **named integer scene inputs** to stepwise frames. Example:
+
+  ```json
+  "visual_channels": {
+    "gear_condition": [
+      {"tick": 0, "value": 0},
+      {"tick": 460, "value": 1},
+      {"tick": 615, "value": 2}
+    ]
+  }
+  ```
+
+  Each value is in 0..5, begins at tick 0, and selects one of the corresponding PR #12 `model_variants` options. Up to 16 tracks and 128 keyframes per track. All are fully stateless and deterministic with respect to the recording clock.
+
+- `transitions`: optional brief reconstruction-fade moments, e.g. `{"tick":615,"fade_ticks":12}`. The scene fades to zero at the boundary so replacement geometry is not seen snapping in place, then fades back in. Fade windows are validated not to overlap, are limited to 1..40 ticks per side, and stay inside the recording duration.
+- Source wooden gear UVs remain unchanged in the 20-element damaged variant; it has five missing tooth pieces compared with the intact model. The reinforced bridge is a separate model and can be replaced independently by a resource pack. A short-lived, stone-and-metal brake component illustrates increased mechanical load. Empty variants contain no geometry.
+- No new hardcoded animation geometry or independent rendering engine was introduced.
+
+### Projector drop lifecycle
+
+Timed completion and early removal now share one server-side `onRemove` path. The block entity returns at most one item bearing its `Recording` NBT, while normal block loot returns no extra duplicate. The block entity persists a one-shot return guard; chunk unload does not itself call `onRemove` or create an artifact.
+
+### Still pending
+
+- Local `./gradlew build` and live in-game visual verification of these latest film/return changes.
+- Server-side recording duration currently uses a fixed **900 ticks**. The client JSON duration matches this for Archive 017 but cannot yet govern the server's expiration for arbitrary future recordings.
+- Visual cue sound effects, additional recording films, measured multiplayer late-join behavior, all four rotations, and frame-time performance profiling.
