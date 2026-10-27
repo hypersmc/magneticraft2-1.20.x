@@ -2,11 +2,10 @@ package com.magneticraft2.client.hologram;
 
 import com.magneticraft2.common.hologram.AncientProjectorBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3f;
 
 /**
@@ -61,19 +60,11 @@ public final class HologramVisualEffects {
                                 HologramRecordingResourceLoader.Recording recording,
                                 HologramRecordingResourceLoader.VisualEvent event,
                                 int pulseTick, int count) {
-        Direction facing = projector.getBlockState().getValue(
-                BlockStateProperties.HORIZONTAL_FACING);
-        double radians = Math.toRadians(-facing.toYRot());
-        double cosine = Math.cos(radians);
-        double sine = Math.sin(radians);
-
-        double localX = recording.offsetX() + event.x() - 0.5D;
-        double localZ = recording.offsetZ() + event.z() - 0.5D;
-        double x = projector.getBlockPos().getX() + 0.5D
-                + cosine * localX + sine * localZ;
-        double y = projector.getBlockPos().getY() + recording.offsetY() + event.y();
-        double z = projector.getBlockPos().getZ() + 0.5D
-                - sine * localX + cosine * localZ;
+        Vec3 point = HologramSceneCoordinates.toWorld(projector, recording,
+                new Vec3(event.x(), event.y(), event.z()));
+        double x = point.x;
+        double y = point.y;
+        double z = point.z;
 
         // Test the actual projected event's position, not the tiny
         // emitter: large records can extend far from their projector.
