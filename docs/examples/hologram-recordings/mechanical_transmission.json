@@ -10,7 +10,7 @@
     "offset": [0, 0, 2]
   },
   "channels": {
-    "drive_shaft": [
+    "mechanical_input": [
       {"tick": 0, "angle_degrees": 0, "running": false, "overloaded": false},
       {"tick": 160, "angle_degrees": 0, "running": true, "overloaded": false},
       {"tick": 460, "angle_degrees": 1440, "running": false, "overloaded": true},
