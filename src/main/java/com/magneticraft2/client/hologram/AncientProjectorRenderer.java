@@ -46,7 +46,8 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
                     new HologramBufferSource(buffers, opacity,
                             recording.appearance().red(),
                             recording.appearance().green(),
-                            recording.appearance().blue()),
+                            recording.appearance().blue(),
+                            recording.appearance().preserveSourceTexture()),
                     LightTexture.FULL_BRIGHT, overlay);
         } finally {
             pose.popPose();
