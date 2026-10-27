@@ -4,6 +4,9 @@ import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.animation.AnimationResourceLoader;
 import com.magneticraft2.client.hologram.HologramRecordingResourceLoader;
 import com.magneticraft2.client.hologram.AncientProjectorRenderer;
+import com.magneticraft2.client.hologram.HologramRenderType;
+import net.minecraftforge.client.event.RegisterShadersEvent;
+import java.io.IOException;
 import com.magneticraft2.client.animation.MachineVisualResourceLoader;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
@@ -250,6 +253,13 @@ public class Clientsetup {
             event.register(modelResourceLocation);
             LOGGER.info("Registered model: " + modelResourceLocation);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterHologramShaders(RegisterShadersEvent event) throws IOException {
+        // Only the ancient hologram renderer opts into this shader.
+        // Real machines continue using their original vanilla render states.
+        HologramRenderType.registerShaders(event);
     }
 
     @SubscribeEvent
