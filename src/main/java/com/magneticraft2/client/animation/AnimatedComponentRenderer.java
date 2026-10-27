@@ -23,6 +23,21 @@ import java.util.Map;
 public final class AnimatedComponentRenderer {
     private AnimatedComponentRenderer() {}
 
+    /**
+     * Optional projection-only attachment drawn at a component's exact
+     * evaluated pose (including hierarchy, pivots and animation tracks).
+     * Existing PR #12 machine renderers pass null and remain unchanged.
+     *
+     * This allows shared real machine procedural parts (brake shoes, drum,
+     * etc.) without introducing a second scene graph or ghost entities.
+     */
+    @FunctionalInterface
+    public interface ComponentAttachment {
+        void render(String name, AnimationDefinition.Component component,
+                    AnimationFrame frame, PoseStack pose,
+                    MultiBufferSource buffers, int light, int overlay);
+    }
+
     public record SceneResult(AnimationDefinition definition,
                               Map<String, SliderCrankSolver.Sample> mechanismPoses,
                               Map<String, Double> componentTravel) {
@@ -66,7 +81,18 @@ public final class AnimatedComponentRenderer {
                                           PoseStack pose, MultiBufferSource buffers,
                                           int light, int overlay) {
         return renderScene(AnimationResourceLoader.get(animation), frame,
-                blockState, pose, buffers, light, overlay);
+                blockState, pose, buffers, light, overlay, null);
+    }
+
+    /** Attach procedural details at the same component pose as baked models. */
+    public static SceneResult renderScene(ResourceLocation animation,
+                                          AnimationFrame frame,
+                                          BlockState blockState,
+                                          PoseStack pose, MultiBufferSource buffers,
+                                          int light, int overlay,
+                                          ComponentAttachment attachment) {
+        return renderScene(AnimationResourceLoader.get(animation), frame,
+                blockState, pose, buffers, light, overlay, attachment);
     }
 
     /**
@@ -79,6 +105,16 @@ public final class AnimatedComponentRenderer {
                                           BlockState blockState,
                                           PoseStack pose, MultiBufferSource buffers,
                                           int light, int overlay) {
+        return renderScene(definition, frame, blockState, pose, buffers,
+                light, overlay, null);
+    }
+
+    public static SceneResult renderScene(AnimationDefinition definition,
+                                          AnimationFrame frame,
+                                          BlockState blockState,
+                                          PoseStack pose, MultiBufferSource buffers,
+                                          int light, int overlay,
+                                          ComponentAttachment attachment) {
         if (definition == null) return null;
 
         Map<String, SliderCrankSolver.Sample> poses = new HashMap<>();
@@ -125,7 +161,7 @@ public final class AnimatedComponentRenderer {
 
         for (String root : definition.roots()) {
             renderSubtree(definition, root, frame, poses, travel, blockState,
-                    pose, buffers, minecraft, modelManager, light, overlay);
+                    pose, buffers, minecraft, modelManager, light, overlay, attachment);
         }
         return new SceneResult(definition, poses, travel);
     }
@@ -195,7 +231,8 @@ public final class AnimatedComponentRenderer {
                                       BlockState blockState,
                                       PoseStack pose, MultiBufferSource buffers,
                                       Minecraft minecraft, ModelManager models,
-                                      int light, int overlay) {
+                                      int light, int overlay,
+                                      ComponentAttachment attachment) {
         AnimationDefinition.Component component = definition.component(name);
         if (!component.visibleWhen().matches(frame.states())) return;
 
@@ -228,9 +265,13 @@ public final class AnimatedComponentRenderer {
                         pose.last(), buffers.getBuffer(layer), blockState,
                         models.getModel(modelId), 1F, 1F, 1F, light, overlay);
             }
+            if (attachment != null) {
+                // Same transformed PoseStack as this component's baked model.
+                attachment.render(name, component, frame, pose, buffers, light, overlay);
+            }
             for (String child : definition.children(name)) {
                 renderSubtree(definition, child, frame, mechanismPoses, travel, blockState,
-                        pose, buffers, minecraft, models, light, overlay);
+                        pose, buffers, minecraft, models, light, overlay, attachment);
             }
         } finally {
             pose.popPose();
