@@ -10,8 +10,8 @@
     "base_left": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        -0.75,
-        -0.5,
+        -0.53,
+        0,
         0
       ],
       "pivot": [
@@ -24,8 +24,8 @@
     "base_right": {
       "model": "magneticraft2:hologram/gear_support",
       "model_offset": [
-        0.75,
-        -0.5,
+        0.53,
+        0,
         0
       ],
       "pivot": [
@@ -38,7 +38,7 @@
     "left_gear": {
       "model": "magneticraft2:block/gear_medium_wood",
       "model_offset": [
-        -0.75,
+        -0.53,
         0.55,
         0
       ],
@@ -52,7 +52,7 @@
     "right_gear": {
       "model": "magneticraft2:block/gear_medium_wood",
       "model_offset": [
-        0.75,
+        0.53,
         0.55,
         0
       ],
@@ -63,11 +63,11 @@
       ],
       "render_layer": "cutout"
     },
-    "left_axle": {
-      "model": null,
+    "frame_tie": {
+      "model": "magneticraft2:hologram/transmission_bridge",
       "model_offset": [
-        -0.5,
-        1,
+        0,
+        0,
         0
       ],
       "pivot": [
@@ -75,21 +75,7 @@
         0,
         0
       ],
-      "render_layer": "translucent"
-    },
-    "right_axle": {
-      "model": null,
-      "model_offset": [
-        0.5,
-        1,
-        0
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "translucent"
+      "render_layer": "cutout"
     }
   },
   "inputs": {
