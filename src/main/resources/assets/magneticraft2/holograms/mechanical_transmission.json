@@ -263,5 +263,18 @@
       "count": 9,
       "spread": 0.65
     }
+  ],
+  "procedural_parts": [
+    {
+      "component": "brake_load",
+      "type": "magneticraft2:mechanical_brake_wood",
+      "axis": "y",
+      "angle_channel": "mechanical_input",
+      "angle_scale": -1,
+      "visible_channel": "brake_condition",
+      "visible_stage": 1,
+      "clamp_from_tick": 355,
+      "clamp_until_tick": 615
+    }
   ]
 }
