@@ -13,7 +13,8 @@ import { join } from "node:path";
 const root = fileURLToPath(new URL("../../", import.meta.url));
 const parse = p => JSON.parse(readFileSync(join(root,p),"utf8"));
 const base = parse("src/main/resources/assets/magneticraft2/animations/bronze_stamp_mill.json");
-const demo = parse("docs/examples/json-belt-loop-pack/assets/magneticraft2/animations/bronze_stamp_mill.json");
+const demo = parse("docs/examples/json-belt-loop-pack/assets/magneticraft2/animations/demo/bronze_stamp_mill_blue_belt.json");
+const packManifest = parse("docs/examples/json-belt-loop-pack/assets/magneticraft2/machine_visuals/bronze_stamp_mill.json");
 const oldScene = parse("docs/examples/json-animation-multiblock-pack/assets/magneticraft2/animations/bronze_stamp_mill.json");
 const stampPack = parse("docs/examples/json-stamp-mill-cam-pack/assets/magneticraft2/animations/bronze_stamp_mill.json");
 const b = base.belt_loops?.drive_belt;
@@ -27,6 +28,19 @@ assert.equal(base.inputs[b.input].source,"mechanical.visual_angle_degrees");
 assert.equal(b.rotation_axis,"x");
 assert.equal(b.texture,"magneticraft2:textures/block/bronze_stamp_mill_drive_belt.png");
 assert.ok(existsSync(join(root,"src/main/resources/assets/magneticraft2",b.texture.split(":")[1])));
+assert.equal(packManifest.format,"magneticraft2:machine_visual");
+assert.equal(packManifest.animation,"magneticraft2:demo/bronze_stamp_mill_blue_belt");
+assert.equal(packManifest.angle_channels.output_shaft,"output_shaft");
+assert.equal(packManifest.integer_channels["stamp_mill.wear_stage"],
+    "stamp_mill.wear_stage");
+assert.ok(!existsSync(join(root,
+    "docs/examples/json-belt-loop-pack/assets/magneticraft2/animations/bronze_stamp_mill.json")),
+    "Test pack must not override the older cam pack's animation ID");
+assert.equal(demo.components.upper_pulley.model,
+    "magneticraft2:animated/belt_probe_upper_pulley");
+const marker = parse("docs/examples/json-belt-loop-pack/assets/magneticraft2/models/animated/belt_probe_upper_pulley.json");
+assert.equal(marker.parent,"magneticraft2:multiblock/bronze_stamp_mill_drive_pulley");
+assert.equal(marker.textures.bronze,"minecraft:block/emerald_block");
 assert.equal(test.texture,"minecraft:textures/block/light_blue_wool.png");
 assert.equal(test.speed_scale,-1);
 assert.equal(test.half_width,0.0625);
@@ -126,4 +140,4 @@ assert.equal(samples,481*4);
 assert.ok(tiles>samples,"Long belt sections must be split into tiled parts");
 console.log(`Belt-loop fixture: ${samples} angle/facing samples, ${tiles} `+
     "tile segments; wrap/reverse, default geometry, exact UV density, " +
-    "legacy pack fallback, and blue/reversed resource-pack override passed.");
+    "legacy pack fallback, conflict-free redirected scene, green pulley marker, and blue/reversed pack passed.");
