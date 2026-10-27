@@ -79,6 +79,35 @@ public final class HologramRecordingValidator {
             return "missing recording or animation scene";
         }
 
+        for (HologramRecordingResourceLoader.ProceduralPart part
+                : film.proceduralParts()) {
+            AnimationDefinition.Component owner = scene.component(part.component());
+            if (owner == null) {
+                return "procedural part refers to missing scene component '"
+                        + part.component() + "'";
+            }
+            if (!film.channels().containsKey(part.angleChannel())) {
+                return "procedural part '" + part.component()
+                        + "' refers to missing angle channel '" + part.angleChannel() + "'";
+            }
+            if (part.visibleChannel() != null) {
+                RecordingTimeline.DiscreteTrack active =
+                        film.visualChannels().get(part.visibleChannel());
+                if (active == null) {
+                    return "procedural part '" + part.component()
+                            + "' has missing visibility channel '"
+                            + part.visibleChannel() + "'";
+                }
+                AnimationDefinition.ModelVariants variants = owner.modelVariants();
+                if (variants == null || !part.visibleChannel().equals(variants.source())
+                        || !variants.models().containsKey(part.visibleStage())) {
+                    return "procedural part '" + part.component()
+                            + "' has no matching scene model variant for "
+                            + part.visibleChannel() + "=" + part.visibleStage();
+                }
+            }
+        }
+
         for (AnimationDefinition.Input input : scene.inputs()) {
             if ("mechanical.visual_angle_degrees".equals(input.source())
                     && !film.channels().containsKey(input.module())) {
