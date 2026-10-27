@@ -47,7 +47,8 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
                             recording.appearance().red(),
                             recording.appearance().green(),
                             recording.appearance().blue(),
-                            recording.appearance().preserveSourceTexture()),
+                            recording.appearance().preserveSourceTexture(),
+                            recording.appearance().shaderEffect()),
                     LightTexture.FULL_BRIGHT, overlay);
         } finally {
             pose.popPose();
