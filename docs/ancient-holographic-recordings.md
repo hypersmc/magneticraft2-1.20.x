@@ -177,7 +177,7 @@ The first recording is now authored as a **45-second non-interactive film**, usi
   Each value is in 0..5, begins at tick 0, and selects one of the corresponding PR #12 `model_variants` options. Up to 16 tracks and 128 keyframes per track. All are fully stateless and deterministic with respect to the recording clock.
 
 - `transitions`: optional brief reconstruction-fade moments, e.g. `{"tick":615,"fade_ticks":12}`. The scene fades to zero at the boundary so replacement geometry is not seen snapping in place, then fades back in. Fade windows are validated not to overlap, are limited to 1..40 ticks per side, and stay inside the recording duration.
-- Source wooden gear UVs remain unchanged in the 20-element damaged variant; it has five missing tooth pieces compared with the intact model. The reinforced bridge is a separate model and can be replaced independently by a resource pack. A short-lived, stone-and-metal brake component illustrates increased mechanical load. Empty variants contain no geometry.
+- Source wooden gear UVs remain unchanged in the 20-element damaged variant; it has five missing tooth pieces compared with the intact model. The reinforced bridge is a separate model and can be replaced independently by a resource pack. The existing real Mechanical Brake frame and the shared live brake drum/shoe renderer illustrate load; empty model variants contain no geometry.
 - No new hardcoded animation geometry or independent rendering engine was introduced.
 
 ### Projector drop lifecycle
@@ -471,14 +471,17 @@ and the empty projection placeholder for model variants. None are new
 placeable gameplay blocks. The stress effect is timed amber particles,
 not a fake "warning block".
 
-**Important limitation:** the real brake's wooden drum and leather shoes
-are drawn procedurally by its block-entity renderer, whereas the
-hologram's JSON scene renders baked models. Archive 042 currently
-shows the correct real frame and shaft plus recording stress/overload
-cues, **not the moving brake shoes**. A reusable hook to project actual
-BE procedural mechanisms could be added later rather than inventing a
-second brake design. The JSON scene still uses PR #12, with no new
-ghost block entities or independent scene renderer.
+**Shared procedural parts (current):** The real brake's wooden drum,
+leather-lined shoes and copper clamp arms are now projected by invoking
+`MechanicalBrakeBlockEntity_woodRenderer.renderProcedural` from the PR #12
+scene renderer at the exact authored component pose. The same drawing method
+is invoked by an actual placed Mechanical Brake, supplied with its real
+block entity rotation and braking state. For holograms, the film provides
+the rotation and engagement window instead. This uses the same geometry and
+real textures, not a fake brake block, cloned machine model, or additional
+entity renderer. The dedicated hologram RenderType binds the brake's
+individual texture PNGs rather than treating their UVs as block-atlas UVs.
+**Compilation and in-game positioning/texture verification are still pending.**
 
 Seven visual-event tracks, ten low-volume audio cues, three discrete
 visual channels and one reconstruction transition are provided in this
@@ -647,3 +650,66 @@ until the runtime is reliable.
 The test data for Archives 017 and 042 has passed structural
 cross-file validation. That does **not** replace `./gradlew build`
 or manual tests of model baking and rendering.
+
+### Reusing live machine geometry — real Mechanical Brake
+
+A JSON recording can now opt into a small, strictly validated list of
+procedural visual attachments. Currently the only allowed type is the
+actual `magneticraft2:mechanical_brake_wood` renderer:
+
+```json
+"procedural_parts": [
+  {
+    "component": "brake_load",
+    "type": "magneticraft2:mechanical_brake_wood",
+    "axis": "y",
+    "angle_channel": "mechanical_input",
+    "angle_scale": -1,
+    "visible_channel": "brake_condition",
+    "visible_stage": 1,
+    "clamp_from_tick": 355,
+    "clamp_until_tick": 615
+  }
+]
+```
+
+- **component:** existing component name in the PR #12 animation scene.
+  Geometry is emitted at that component's fully evaluated pose, so model
+  offsets, parent transforms, pivots and projector facing are respected.
+- **type:** explicitly whitelisted real machine visual. JSON cannot load
+  arbitrary Java classes, create block entities or alter game mechanics.
+- **axis:** `x`, `y` or `z`, just like a placed Mechanical Brake.
+- **angle_channel:** real recording angle input, with bounded
+  **angle_scale** between -8 and +8 (not zero).
+- **visible_channel / visible_stage:** optional pair restricting the
+  attachment to a particular discrete visual stage (Archive 017 uses
+  `brake_condition=1`). If omitted, the attachment draws throughout
+  the film (Archive 042's stationary frame).
+- **clamp_from_tick / clamp_until_tick:** half-open interval when the
+  real shoes close against the rotating wooden drum. The drum's
+  rotational angle always follows the recorded phase, independent of
+  the brake's load state.
+
+Maximum eight procedural attachments per recording. Invalid types,
+unsupported axes, missing components, unrecognized angle channels,
+unavailable stages and invalid clamp intervals are rejected. The live
+brake itself still draws through the same geometry routine using its
+actual mechanical states.
+
+Because the live brake uses separately bound PNG textures (oak planks,
+leather belt and copper), procedural holograms have a **textured projection
+render layer** with the recording's familiar depth-tested transparency,
+blue tint and optional scanline shader. This layer is cached per texture
+and does not change normal machine renderers.
+
+Both Archive 017 and Archive 042 now use this hook. The 017 brake drum
+clamps while braking is shown (~17.75–30.75s), whereas 042's shoes clamp
+from ~26.5–46.5s during the load/failure portion. This is visually
+authored playback only, not simulated brake torque.
+
+**QA:** Rebuild, check the actual brake block still draws and animates
+normally, then compare its drum and shoes with those projected in Archives
+017 and 042. Verify all four facings, original wood/leather/copper textures,
+correct clamp motion, no floating geometry, hologram transparency,
+performance and F3+T reload behavior. Build and live verification
+are not claimed yet.
