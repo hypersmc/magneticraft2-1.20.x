@@ -31,7 +31,7 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         double elapsed = projector.getLevel().getGameTime() - projector.startTime() + partialTick;
         if (elapsed < 0 || elapsed >= recording.durationTicks()) return;
         float opacity = projectionOpacity(elapsed, recording.durationTicks(),
-                recording.appearance());
+                recording.appearance()) * recording.visibility(elapsed);
         if (opacity <= 0F) return;
         Direction facing = projector.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
         pose.pushPose();
@@ -41,7 +41,8 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
             pose.translate(-.5D, 0D, -.5D);
             pose.translate(recording.offsetX(), recording.offsetY(), recording.offsetZ());
             AnimatedComponentRenderer.renderScene(recording.animation(),
-                    HologramAnimationBridge.frame(recording.channels(), elapsed),
+                    HologramAnimationBridge.frame(recording.channels(),
+                            recording.visualChannels(), elapsed),
                     Blocks.STONE.defaultBlockState(), pose,
                     new HologramBufferSource(buffers, opacity,
                             recording.appearance().red(),
