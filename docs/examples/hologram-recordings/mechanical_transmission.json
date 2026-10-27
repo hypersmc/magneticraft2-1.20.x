@@ -1,0 +1,23 @@
+{
+  "format": "magneticraft2:hologram_recording",
+  "format_version": 1,
+  "archive": "017",
+  "title": "Mechanical Transmission",
+  "animation": "magneticraft2:primitive_grinder",
+  "duration_ticks": 900,
+  "placement": {
+    "reference_facing": "south",
+    "offset": [0, 0, 2]
+  },
+  "channels": {
+    "drive_shaft": [
+      {"tick": 0, "angle_degrees": 0, "running": false, "overloaded": false},
+      {"tick": 160, "angle_degrees": 0, "running": true, "overloaded": false},
+      {"tick": 460, "angle_degrees": 1440, "running": false, "overloaded": true},
+      {"tick": 560, "angle_degrees": 1440, "running": false, "overloaded": false},
+      {"tick": 720, "angle_degrees": 2160, "running": true, "overloaded": false},
+      {"tick": 820, "angle_degrees": 2400, "running": false, "overloaded": false},
+      {"tick": 900, "angle_degrees": 2400, "running": false, "overloaded": false}
+    ]
+  }
+}
