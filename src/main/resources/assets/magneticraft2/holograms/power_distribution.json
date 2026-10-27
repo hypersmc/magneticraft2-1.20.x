@@ -116,20 +116,6 @@
         "value": 2
       }
     ],
-    "load_stage": [
-      {
-        "tick": 0,
-        "value": 0
-      },
-      {
-        "tick": 530,
-        "value": 1
-      },
-      {
-        "tick": 930,
-        "value": 2
-      }
-    ],
     "repair_stage": [
       {
         "tick": 0,
@@ -147,6 +133,20 @@
       },
       {
         "tick": 575,
+        "value": 1
+      },
+      {
+        "tick": 930,
+        "value": 2
+      }
+    ],
+    "trip_stage": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 680,
         "value": 1
       },
       {
