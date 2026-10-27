@@ -2,6 +2,7 @@ package com.magneticraft2.client.hologram;
 
 import com.magneticraft2.client.animation.AnimationDefinition;
 import com.magneticraft2.client.animation.AnimationResourceLoader;
+import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
@@ -17,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import org.slf4j.Logger;
 
 /**
  * Derives a conservative world-space AABB from the actual baked models used by
@@ -30,7 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * inscription always rounds UP to whole blocks.
  */
 public final class HologramSceneBounds {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static final Map<ResourceLocation, Dimensions> CACHE = new ConcurrentHashMap<>();
+    private static final Set<ResourceLocation> REPORTED = ConcurrentHashMap.newKeySet();
     public record Dimensions(int width, int height, int depth) {
         public String engraving() {
             return width + " x " + height + " x " + depth;
@@ -41,12 +45,26 @@ public final class HologramSceneBounds {
 
     public static void clearCache() {
         CACHE.clear();
+        REPORTED.clear();
     }
 
     public static Dimensions get(ResourceLocation animation) {
+        if (animation == null) return null;
         AnimationDefinition definition = AnimationResourceLoader.get(animation);
-        if (definition == null) return null;
-        return CACHE.computeIfAbsent(animation, ignored -> calculate(definition));
+        if (definition == null || Minecraft.getInstance().getModelManager() == null) {
+            return null;
+        }
+        try {
+            return CACHE.computeIfAbsent(animation, ignored -> calculate(definition));
+        } catch (RuntimeException ex) {
+            // A malformed or advanced custom baked model must never crash the
+            // game just because somebody hovered over a collectible artifact.
+            if (REPORTED.add(animation)) {
+                LOGGER.warn("Could not derive hologram bounds for {}: {}",
+                        animation, ex.getMessage());
+            }
+            return null;
+        }
     }
 
     private static Dimensions calculate(AnimationDefinition definition) {
