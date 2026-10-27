@@ -39,17 +39,43 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
     private static final Appearance DEFAULT_APPEARANCE =
             new Appearance(0.38F, 0.90F, 1.0F, 0.32F, 24, 36, 0.28F, true, true);
 
+    /**
+     * Scene reconstruction moment: fade to zero at tick, swap the model variant
+     * at that same tick, then fade the replacement back in. Never changes the
+     * actual time or any physical block in the world.
+     */
+    public record Transition(int tick, int fadeTicks) {
+        public float visibility(double elapsedTicks) {
+            double distance = Math.abs(elapsedTicks - tick);
+            if (distance >= fadeTicks) return 1F;
+            double x = distance / fadeTicks;
+            return (float) (x * x * (3D - 2D * x));
+        }
+    }
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
                             Map<String, RecordingTimeline.Track> channels,
+                            Map<String, RecordingTimeline.DiscreteTrack> visualChannels,
+                            List<Transition> transitions,
                             Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
+            visualChannels = Map.copyOf(visualChannels);
+            transitions = List.copyOf(transitions);
         }
 
         public RecordingTimeline.Frame sample(double elapsedTicks) {
             return RecordingTimeline.sample(channels, elapsedTicks);
+        }
+
+        public float visibility(double elapsedTicks) {
+            float opacity = 1F;
+            for (Transition transition : transitions) {
+                opacity = Math.min(opacity, transition.visibility(elapsedTicks));
+            }
+            return opacity;
         }
     }
 
@@ -133,8 +159,69 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             }
             channels.put(input.getKey(), new RecordingTimeline.Track(duration, frames));
         }
+        Map<String, RecordingTimeline.DiscreteTrack> visualChannels =
+                parseVisualChannels(root, duration);
+        List<Transition> transitions = parseTransitions(root, duration);
         return new Recording(archive, title, animation, duration,
-                xyz[0], xyz[1], xyz[2], channels, parseAppearance(root));
+                xyz[0], xyz[1], xyz[2], channels, visualChannels,
+                transitions, parseAppearance(root));
+    }
+
+    /**
+     * Discrete scene cues are NOT gameplay inputs: they only select whitelisted
+     * model variants through PR #12's already-baked visual scene graph.
+     */
+    private static Map<String, RecordingTimeline.DiscreteTrack> parseVisualChannels(
+            JsonObject root, int duration) {
+        if (!root.has("visual_channels")) return Map.of();
+        JsonObject inputs = object(root.get("visual_channels"), "visual_channels");
+        if (inputs.size() > 16) {
+            throw new JsonParseException("Too many visual_channels (max 16)");
+        }
+        Map<String, RecordingTimeline.DiscreteTrack> tracks = new HashMap<>();
+        for (Map.Entry<String, JsonElement> input : inputs.entrySet()) {
+            if (!input.getKey().matches("[a-z][a-z0-9_.]{0,127}")) {
+                throw new JsonParseException("Invalid visual channel " + input.getKey());
+            }
+            JsonArray keyframes = array(input.getValue(), input.getKey());
+            List<RecordingTimeline.DiscreteKeyframe> frames = new ArrayList<>();
+            for (JsonElement element : keyframes) {
+                JsonObject key = object(element, "visual keyframe");
+                frames.add(new RecordingTimeline.DiscreteKeyframe(
+                        number(key, "tick"), number(key, "value")));
+            }
+            tracks.put(input.getKey(), new RecordingTimeline.DiscreteTrack(duration, frames));
+        }
+        return Map.copyOf(tracks);
+    }
+
+    private static List<Transition> parseTransitions(JsonObject root, int duration) {
+        if (!root.has("transitions")) return List.of();
+        JsonArray input = array(root.get("transitions"), "transitions");
+        if (input.size() > 32) {
+            throw new JsonParseException("Too many scene transitions (max 32)");
+        }
+        List<Transition> transitions = new ArrayList<>();
+        for (JsonElement element : input) {
+            JsonObject t = object(element, "transition");
+            int tick = number(t, "tick");
+            int fadeTicks = number(t, "fade_ticks");
+            if (fadeTicks < 1 || fadeTicks > 40 || tick < fadeTicks
+                    || tick + fadeTicks >= duration) {
+                throw new JsonParseException(
+                        "Transition must have a 1..40 tick half-fade inside recording duration");
+            }
+            transitions.add(new Transition(tick, fadeTicks));
+        }
+        transitions.sort(java.util.Comparator.comparingInt(Transition::tick));
+        for (int i = 1; i < transitions.size(); i++) {
+            Transition last = transitions.get(i - 1);
+            Transition current = transitions.get(i);
+            if (current.tick() - current.fadeTicks() <= last.tick() + last.fadeTicks()) {
+                throw new JsonParseException("Reconstruction fade windows cannot overlap");
+            }
+        }
+        return List.copyOf(transitions);
     }
 
     private static Appearance parseAppearance(JsonObject root) {
