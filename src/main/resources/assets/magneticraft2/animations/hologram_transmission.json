@@ -96,8 +96,8 @@
     "brake_load": {
       "model": "magneticraft2:hologram/empty_projection",
       "model_offset": [
-        1.05,
-        0,
+        1.58,
+        0.55,
         0
       ],
       "pivot": [
@@ -110,7 +110,29 @@
         "source": "brake_condition",
         "models": {
           "0": "magneticraft2:hologram/empty_projection",
-          "1": "magneticraft2:hologram/transmission_brake_load",
+          "1": "magneticraft2:block/mechanical_brake_wood_frame_y",
+          "2": "magneticraft2:hologram/empty_projection"
+        }
+      }
+    },
+    "brake_shaft": {
+      "model": "magneticraft2:block/shaft_wood",
+      "model_offset": [
+        1.58,
+        0.55,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "brake_condition",
+        "models": {
+          "0": "magneticraft2:hologram/empty_projection",
+          "1": "magneticraft2:block/shaft_wood",
           "2": "magneticraft2:hologram/empty_projection"
         }
       }
@@ -135,6 +157,14 @@
         },
         {
           "target": "right_gear",
+          "property": "rotation",
+          "axis": "y",
+          "input": "shaft_phase",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "brake_shaft",
           "property": "rotation",
           "axis": "y",
           "input": "shaft_phase",
