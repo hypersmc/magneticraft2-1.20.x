@@ -101,6 +101,7 @@ This feature still reuses the exact existing PR #12 baked-model/animation scene.
 ### Physical projector
 
 - Placed model is a **small octagonal disc**, approximately 9/16 block wide and less than 4/16 block high, with a graphite-toned casing, metallic retaining ring, recessed blue energy lens and four blue status markers.
+- Three custom **16 × 16 pixel-art PNG textures** now supply a graphite casing, brushed metal frame and bright blue plasma emitter (`ancient_projector_housing`, `ancient_projector_rim`, `ancient_projector_emitter`). The model keeps block-model JSON geometry and standard Minecraft texture-atlas lookup. These replace the temporary vanilla blackstone/ice textures.
 - Models remain resource-pack JSON; no GeckoLib or runtime entity animation is added to the item.
 - The placed block has a matching compact voxel selection/collision shape and emits a modest block light level of 8.
 - The handheld, inventory, dropped and frame display transforms are defined in `models/item/ancient_projector.json`. The item should read as a portable high-technology artifact, not a 1-block pedestal.
