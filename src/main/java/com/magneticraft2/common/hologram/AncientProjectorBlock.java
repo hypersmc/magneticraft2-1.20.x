@@ -11,6 +11,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootParams;
+import java.util.List;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -50,6 +54,34 @@ public class AncientProjectorBlock extends BaseEntityBlock {
     public VoxelShape getCollisionShape(BlockState state, BlockGetter world,
                                         BlockPos pos, CollisionContext context) {
         return SHAPE;
+    }
+
+    /**
+     * All projector removals return the original artifact through one path.
+     * The block entity is available until BaseEntityBlock.onRemove runs.
+     * Neither breaking nor the timed completion should issue loot separately.
+     */
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos,
+                         BlockState nextState, boolean moving) {
+        if (!state.is(nextState.getBlock()) && !level.isClientSide) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof AncientProjectorBlockEntity projector) {
+                ItemStack artifact = projector.takeArtifact();
+                if (!artifact.isEmpty()) {
+                    level.addFreshEntity(new ItemEntity(level,
+                            pos.getX() + 0.5D, pos.getY() + 0.3D,
+                            pos.getZ() + 0.5D, artifact));
+                }
+            }
+        }
+        super.onRemove(state, level, pos, nextState, moving);
+    }
+
+    /** The artifact is returned by onRemove; vanilla loot must not duplicate it. */
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+        return List.of();
     }
 
     @Override
