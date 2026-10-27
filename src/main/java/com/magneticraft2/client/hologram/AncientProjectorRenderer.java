@@ -55,8 +55,9 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
     }
 
     /**
-     * Gentle materialization and dissolve, driven only by synchronized recording
-     * time. The small deterministic shimmer does not alter the machine's motion.
+     * Materialization and dissolve, with occasional smoothly eased recording
+     * signal dips. All effects depend only on synchronized playback time and
+     * cannot alter the machine simulation.
      */
     static float projectionOpacity(double elapsed, int duration,
                                    HologramRecordingResourceLoader.Appearance appearance) {
@@ -71,13 +72,30 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
         fadeIn = fadeIn * fadeIn * (3D - 2D * fadeIn);
         fadeOut = fadeOut * fadeOut * (3D - 2D * fadeOut);
 
-        // Fully deterministic and intentionally subtle: no random events,
-        // screen flashes, or updates to the physical machine simulation.
-        double shimmer = 1D + appearance.flicker()
-                * (0.60D * Math.sin(elapsed * 0.31D)
-                    + 0.40D * Math.sin(elapsed * 1.12D));
+        // The old +/-2% oscillation was almost invisible at low-alpha
+        // hologram settings. Keep a very gentle continuous drift and add
+        // an occasional *brief, smoothly eased* signal dip. This happens
+        // once per roughly six seconds, never rapid full-frame flashing.
+        //
+        // All timing is based on the server-synchronized recording clock:
+        // two clients rendering the same tick see the same signal quality.
+        // A zero flicker setting disables both effects.
+        double drift = 0.5D + 0.5D * Math.sin(
+                elapsed * 0.12D + 1.4D * Math.sin(elapsed * 0.031D));
+        long cycle = (long) Math.floor(elapsed / 117D);
+        double cycleTime = elapsed - cycle * 117D;
+        double dipCenter = 31D + (cycle * 37L % 53L);
+        double distance = Math.abs(cycleTime - dipCenter);
+        double signalDip = 0D;
+        if (distance < 5D) {
+            double proximity = 1D - distance / 5D;
+            signalDip = proximity * proximity * (3D - 2D * proximity);
+        }
+
+        double signalStrength = 1D - appearance.flicker()
+                * (0.08D * drift + 0.92D * signalDip);
         return (float) Math.max(0D, Math.min(1D,
-                appearance.opacity() * fadeIn * fadeOut * shimmer));
+                appearance.opacity() * fadeIn * fadeOut * signalStrength));
     }
 
     @Override
