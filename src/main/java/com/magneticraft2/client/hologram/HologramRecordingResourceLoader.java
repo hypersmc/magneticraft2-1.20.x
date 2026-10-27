@@ -107,6 +107,9 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
             }
         }
         recordings = Map.copyOf(loaded);
+        // A resource pack may replace any animation/model/variant. Never
+        // retain dimensions computed from the previous baked model set.
+        HologramSceneBounds.clearCache();
         LOGGER.info("Loaded {} hologram recordings", recordings.size());
     }
 
