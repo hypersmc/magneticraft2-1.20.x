@@ -133,6 +133,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         // A resource pack may replace any animation/model/variant. Never
         // retain dimensions computed from the previous baked model set.
         HologramSceneBounds.clearCache();
+        HologramRecordingValidator.clearCache();
         HologramModelDiagnostics.clearCache();
         HologramBufferSource.resetMissingSpriteWarning();
         LOGGER.info("Loaded {} hologram recordings", recordings.size());
