@@ -324,5 +324,7 @@
   "message.magneticraft2.charcoal_retort.incomplete": "Incomplete Charcoal Retort: use the Bronze Age Visualize blueprint.",
   "message.magneticraft2.charcoal_retort.fuel_added": "Added one fuel item to the sealed Retort firebox.",
   "message.magneticraft2.charcoal_retort.fuel_rejected": "Not a valid fuel or the firebox queue is full.",
-  "message.magneticraft2.charcoal_retort.status": "Fuel: %s | Burn: %s ticks | Logs: %s | Charcoal: %s | Tar: %s | Cycle: %s/%s"
+  "message.magneticraft2.charcoal_retort.status": "Fuel: %s | Burn: %s ticks | Logs: %s | Charcoal: %s | Tar: %s | Cycle: %s/%s",
+  "block.magneticraft2.ancient_projector": "Ancient Holographic Projector",
+  "item.magneticraft2.ancient_projector": "Ancient Holographic Projector"
 }
