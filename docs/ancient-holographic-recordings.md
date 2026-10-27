@@ -480,7 +480,7 @@ BE procedural mechanisms could be added later rather than inventing a
 second brake design. The JSON scene still uses PR #12, with no new
 ghost block entities or independent scene renderer.
 
-Seven visual-event tracks, ten low-volume audio cues, four discrete
+Seven visual-event tracks, ten low-volume audio cues, three discrete
 visual channels and one reconstruction transition are provided in this
 second film.
 
@@ -514,7 +514,9 @@ syntax applies:
   sound/particle events should fire. Repeat with particles set to Minimal,
   F3+T resource reload, pause/save/reload, and early break.
 - If the film is not visible, check the client log for baked
-  animation/model errors (especially new `power_* ` models).
+  animation/model errors (especially the native `_y` overload disconnect models).
+  The one-time hologram model diagnostic now logs the exact model ID if a
+  baked quad uses the missing-texture sprite.
 
 **Verification status:** source and JSON integration only until the
 user's `./gradlew build` and in-game test pass. PR #16 remains a draft.
