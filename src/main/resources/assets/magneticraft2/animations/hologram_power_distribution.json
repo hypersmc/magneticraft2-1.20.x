@@ -8,7 +8,7 @@
   },
   "components": {
     "gear_west_outer_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         -2.1,
         0,
@@ -36,7 +36,7 @@
       "render_layer": "cutout"
     },
     "gear_west_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         -1.05,
         0,
@@ -64,7 +64,7 @@
       "render_layer": "cutout"
     },
     "gear_center_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         0,
         0,
@@ -92,7 +92,7 @@
       "render_layer": "cutout"
     },
     "gear_east_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         1.05,
         0,
@@ -120,7 +120,7 @@
       "render_layer": "cutout"
     },
     "gear_east_outer_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         2.1,
         0,
@@ -148,7 +148,7 @@
       "render_layer": "cutout"
     },
     "gear_rear_inner_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         0,
         0,
@@ -176,7 +176,7 @@
       "render_layer": "cutout"
     },
     "gear_rear_outer_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         0,
         0,
@@ -212,7 +212,7 @@
       }
     },
     "gear_rear_output_pier": {
-      "model": "magneticraft2:hologram/power_pier",
+      "model": "magneticraft2:block/mechanical_input_module",
       "model_offset": [
         1.05,
         0,
@@ -267,160 +267,6 @@
       ],
       "render_layer": "cutout"
     },
-    "gantry_column_far_west": {
-      "model": "magneticraft2:hologram/power_gantry_column",
-      "model_offset": [
-        -3.05,
-        0,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_top_far_west": {
-      "model": "magneticraft2:hologram/power_gantry_top",
-      "model_offset": [
-        -3.05,
-        2,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_column_near_east": {
-      "model": "magneticraft2:hologram/power_gantry_column",
-      "model_offset": [
-        2.9,
-        0,
-        -0.85
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_top_near_east": {
-      "model": "magneticraft2:hologram/power_gantry_top",
-      "model_offset": [
-        2.9,
-        2,
-        -0.85
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_column_far_east": {
-      "model": "magneticraft2:hologram/power_gantry_column",
-      "model_offset": [
-        2.9,
-        0,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_top_far_east": {
-      "model": "magneticraft2:hologram/power_gantry_top",
-      "model_offset": [
-        2.9,
-        2,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_long_far_0": {
-      "model": "magneticraft2:hologram/power_gantry_span_x",
-      "model_offset": [
-        -3.05,
-        3,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_long_far_1": {
-      "model": "magneticraft2:hologram/power_gantry_span_x",
-      "model_offset": [
-        -1.05,
-        3,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_long_far_2": {
-      "model": "magneticraft2:hologram/power_gantry_span_x",
-      "model_offset": [
-        0.95,
-        3,
-        3.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_cross_east_0": {
-      "model": "magneticraft2:hologram/power_gantry_span_z",
-      "model_offset": [
-        2.9,
-        3,
-        -0.85
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "gantry_cross_east_1": {
-      "model": "magneticraft2:hologram/power_gantry_span_z",
-      "model_offset": [
-        2.9,
-        3,
-        1.15
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
     "branch_load_indicator": {
       "model": "magneticraft2:block/mechanical_brake_wood_frame_y",
       "model_offset": [
@@ -453,29 +299,7 @@
         "models": {
           "0": "magneticraft2:hologram/empty_projection",
           "1": "magneticraft2:hologram/empty_projection",
-          "2": "magneticraft2:hologram/power_reinforced_hub"
-        }
-      }
-    },
-    "branch_stress_outline": {
-      "model": "magneticraft2:hologram/empty_projection",
-      "model_offset": [
-        0,
-        0.65,
-        2.1
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout",
-      "model_variants": {
-        "source": "stress_stage",
-        "models": {
-          "0": "magneticraft2:hologram/empty_projection",
-          "1": "magneticraft2:hologram/power_stress_outline",
-          "2": "magneticraft2:hologram/empty_projection"
+          "2": "magneticraft2:block/flywheel_wood_frame_y"
         }
       }
     },
@@ -494,7 +318,7 @@
       "render_layer": "cutout"
     },
     "drive_overload_disconnect": {
-      "model": "magneticraft2:block/overload_disconnect_wood_closed",
+      "model": "magneticraft2:block/overload_disconnect_wood_closed_y",
       "model_offset": [
         -2.1,
         3.15,
@@ -506,16 +330,12 @@
         0.5
       ],
       "render_layer": "cutout",
-      "static_rotation": {
-        "axis": "z",
-        "degrees": 90
-      },
       "model_variants": {
         "source": "trip_stage",
         "models": {
-          "0": "magneticraft2:block/overload_disconnect_wood_closed",
-          "1": "magneticraft2:block/overload_disconnect_wood_open",
-          "2": "magneticraft2:block/overload_disconnect_wood_closed"
+          "0": "magneticraft2:block/overload_disconnect_wood_closed_y",
+          "1": "magneticraft2:block/overload_disconnect_wood_open_y",
+          "2": "magneticraft2:block/overload_disconnect_wood_closed_y"
         }
       }
     },
