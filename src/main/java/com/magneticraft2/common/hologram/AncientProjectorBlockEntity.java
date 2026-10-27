@@ -20,6 +20,11 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     public static final ResourceLocation DEFAULT_RECORDING =
             HologramRecordingCatalog.DEFAULT_RECORDING;
     private ResourceLocation recording = DEFAULT_RECORDING;
+    /**
+     * The exact original artifact metadata (display name, custom lore, etc.).
+     * Recording itself is separately validated and always authoritative.
+     */
+    private CompoundTag artifactItemTag = new CompoundTag();
     /** Latches the datapack definition at placement and is synced to clients. */
     private int durationTicks = 900;
     private int renderRadiusBlocks = HologramRecordingCatalog.DEFAULT_RENDER_RADIUS;
@@ -62,6 +67,28 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         sync();
     }
 
+    /**
+     * Capture the player's actual collectible artifact before BlockItem
+     * consumes it. The same item tags are handed back after playback or
+     * early removal, including anvil names and pack-defined lore.
+     */
+    public void setArtifactItem(ItemStack source) {
+        if (source == null || source.isEmpty() || level == null
+                || level.isClientSide || startTime >= 0L || itemReturned) return;
+        if (!source.is(ItemRegistry.ITEM_ANCIENT_PROJECTOR.get())) return;
+
+        artifactItemTag = source.hasTag()
+                ? source.getTag().copy() : new CompoundTag();
+        ResourceLocation id = DEFAULT_RECORDING;
+        if (artifactItemTag.contains("Recording", 8)) {
+            ResourceLocation parsed = ResourceLocation.tryParse(
+                    artifactItemTag.getString("Recording"));
+            if (parsed != null) id = parsed;
+        }
+        // Resolve server duration, render bounds, and notify all clients once.
+        setRecording(id);
+    }
+
     private void sync() {
         if (level != null && !level.isClientSide) {
             BlockState state = getBlockState();
@@ -79,6 +106,9 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         }
         itemReturned = true;
         ItemStack result = new ItemStack(ItemRegistry.ITEM_ANCIENT_PROJECTOR.get());
+        result.setTag(artifactItemTag.copy());
+        // Item metadata is preserved, but no custom tag can override the
+        // permanent archive selected by this block entity.
         result.getOrCreateTag().putString("Recording", recording.toString());
         return result;
     }
@@ -109,6 +139,7 @@ public class AncientProjectorBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         tag.putString("Recording", recording.toString());
+        tag.put("ArtifactItemTag", artifactItemTag.copy());
         tag.putLong("StartTime", startTime);
         tag.putInt("DurationTicks", durationTicks);
         tag.putInt("RenderRadiusBlocks", renderRadiusBlocks);
@@ -120,6 +151,8 @@ public class AncientProjectorBlockEntity extends BlockEntity {
         super.load(tag);
         ResourceLocation id = ResourceLocation.tryParse(tag.getString("Recording"));
         recording = id == null ? DEFAULT_RECORDING : id;
+        artifactItemTag = tag.contains("ArtifactItemTag", 10)
+                ? tag.getCompound("ArtifactItemTag").copy() : new CompoundTag();
         startTime = tag.contains("StartTime") ? tag.getLong("StartTime") : -1L;
         // Older worlds have only StartTime; their legacy recording was 900
         // ticks. Invalid saved values are never allowed to keep a BE alive
