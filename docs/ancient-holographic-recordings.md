@@ -412,9 +412,12 @@ the viewer's **actual projected event position**. Late joins, resource
 reloads, clock jumps and unloaded chunks skip historical events. No
 continuous high-frequency flashing or separate game-entity render loops.
 
-Archive 017 now demonstrates three small effects at its existing stress,
-gear failure and reconstruction moments. Its mechanics, model and
-duration have not changed.
+Archive 017 demonstrates three small effects at its existing stress,
+gear failure and reconstruction moments. Its 45-second storyline and
+gear animations remain unchanged. Its former invented brake-jaw
+stand-in has been replaced by the **existing Mechanical Brake Y-axis
+frame** and a driven Wooden Shaft model, positioned on the right gear's
+vertical output axis.
 
 ### Archive 042 — Multi-Stage Power Distribution
 
@@ -431,29 +434,45 @@ not a replacement for Archive 017.
 The assembly uses eight genuine `gear_medium_wood` visual models,
 a genuine raised `gear_large_wood` drive wheel and wooden drive shaft.
 A T-shaped multi-stage distribution routes motion from a long five-gear
-cross-shaft into a three-gear rear branch. A **three-block-high gantry**
-surrounds the mechanism, with separate corner posts, timber
-cross-members, bearings, and a load/brake assembly. Its footprint is
-roughly **7 blocks across, 4 blocks tall and 5 blocks deep** including
-its structural frame. This is intentionally larger and more involved
-than the twin gears in Archive 017.
+cross-shaft into a three-gear rear branch. Following the first in-game
+screenshot, the unnecessary enclosed scaffold was pared back to an
+**open L-shaped gantry** with three corner supports and a rear/right
+cross-member, leaving the raised drive wheel accessible. Its footprint
+remains roughly seven blocks wide and five blocks deep, with the upper
+disconnect adding vertical height. The mechanism includes an actual
+Mechanical Brake frame, vertical Wooden Shaft, and model variants from
+the existing Overload Disconnect. This is intentionally larger and
+more involved than the twin gears in Archive 017.
 
-The film starts the gear assembly, introduces load against the rear
-output, highlights stress with a persistent copper-colored bearing
-outline and intermittent warning particles, then shows gear-tooth
-failure and overload shutdown. The image reconstructs into an intact
-rear gear and reinforced branch bearing before the entire distribution
-train resumes. All eight connected gears turn with alternating signs
-and matching phases, while the raised flywheel rotates in the same
-direction as its attached drive shaft. This is a **recorded illustration**
-of mechanical behavior, not a real simulation.
+The film starts the gear assembly, applies load to the existing brake
+frame on the rear branch, highlights stress with a copper-colored
+bearing outline and intermittent warning particles, and then shows
+gear-tooth failure accompanied by the upstream **real Overload Disconnect
+model opening**. The image reconstructs an intact rear gear and
+reinforced bearing while the disconnect returns to its closed model,
+before the distribution train resumes. All eight connected gears turn
+with alternating signs and phases, and the raised wheel follows the
+vertical drive shaft. This is a **recorded illustration** of mechanical
+behavior, not a real simulation.
 
-Visual model assets for the supports, gantry, load jaw, bearing
-reinforcement and stress outline are separate vanilla block-model JSON,
-with individual UVs that remain within 16x16 texture coordinates.
-Variants are driven through the existing PR #12 scene graph and the
-recording's `visual_channels`. There are no new ghost blocks or
-independent entity renderers.
+The original custom brake-jaw models (`power_overload_jaw` and
+`transmission_brake_load`) were **deleted** after reviewing Magneticraft2's
+existing mechanics. This film reuses the actual models
+`mechanical_brake_wood_frame_y`, `shaft_wood`,
+`overload_disconnect_wood_open` and `overload_disconnect_wood_closed`.
+The unique `power_*` models that remain are **hologram-only scenery**
+such as support piers, the simplified timber gantry, stress outline,
+and repaired bearing detail: they are **not registered placeable blocks**
+or invented gameplay machines.
+
+**Important limitation:** the real brake's wooden drum and leather shoes
+are drawn procedurally by its block-entity renderer, whereas the
+hologram's JSON scene renders baked models. Archive 042 currently
+shows the correct real frame and shaft plus recording stress/overload
+cues, **not the moving brake shoes**. A reusable hook to project actual
+BE procedural mechanisms could be added later rather than inventing a
+second brake design. The JSON scene still uses PR #12, with no new
+ghost block entities or independent scene renderer.
 
 Seven visual-event tracks, ten low-volume audio cues, four discrete
 visual channels and one reconstruction transition are provided in this
@@ -474,9 +493,12 @@ syntax applies:
 - Place it in the open with at least an 8x6 block area and watch for
   all eight gears, the raised large wheel, shaft, supports and overhead
   timber frame. Check for unwanted gear/model intersection.
-- At ~27 seconds a load jaw engages; a copper stress outline and amber
-  warning pulses should appear near the rear branch. Around ~34 seconds
-  the output gear breaks with blue spark particles and the drive stops.
+- The real Mechanical Brake frame should be visibly mounted above the
+  rear branch with its driven shaft. At ~27 seconds, braking load is
+  indicated by the audio cue; the copper stress outline and amber
+  warning pulses follow at ~29 seconds. Around ~34 seconds, the
+  output gear breaks with cyan spark particles, the upstream real
+  Overload Disconnect switches to its open model, and the drive stops.
 - At ~46.5 seconds the assembly should fade/reconstruct with stronger
   bearing supports, then restart; the final fade completes at 60 seconds,
   returning **exactly one** projector containing Archive 042.
@@ -490,3 +512,20 @@ syntax applies:
 
 **Verification status:** source and JSON integration only until the
 user's `./gradlew build` and in-game test pass. PR #16 remains a draft.
+
+### Archive 042 screenshot follow-up
+
+The first test screenshot showed too much translucent gantry geometry
+and a possible purple/magenta missing-texture/model region. The 27 October
+cleanup removed nine unnecessary scaffold components, retaining only
+the connected rear/right L-shaped supports. Because the purple patch
+might also be unrelated background geometry, its source **has not
+been proven**. The next in-game run should inspect that area with the
+projector isolated from other test blocks. If it persists, check
+`latest.log` for `Unable to load model`, `missing model`,
+`MissingTexture`, or `hologram_power_distribution` warnings before
+guessing which resource is involved.
+
+A separate render-quality pass may still be needed: translucent faces
+blend with the surrounding hologram, so a visually complicated object
+can be hard to decipher even when its models are technically correct.
