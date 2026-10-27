@@ -139,6 +139,20 @@
         "tick": 930,
         "value": 2
       }
+    ],
+    "stress_stage": [
+      {
+        "tick": 0,
+        "value": 0
+      },
+      {
+        "tick": 575,
+        "value": 1
+      },
+      {
+        "tick": 930,
+        "value": 2
+      }
     ]
   },
   "transitions": [
