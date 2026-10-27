@@ -33,10 +33,10 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
     /** Client-side resource-pack controlled projection material and timings. */
     public record Appearance(float red, float green, float blue,
                              float opacity, int fadeInTicks, int fadeOutTicks,
-                             float flicker) {}
+                             float flicker, boolean preserveSourceTexture) {}
 
     private static final Appearance DEFAULT_APPEARANCE =
-            new Appearance(0.27F, 0.83F, 1.0F, 0.55F, 24, 36, 0.03F);
+            new Appearance(0.38F, 0.90F, 1.0F, 0.32F, 24, 36, 0.02F, true);
 
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
@@ -168,8 +168,11 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
         if (flicker > 0.08F) {
             throw new JsonParseException("appearance.flicker must be <= 0.08");
         }
+        boolean preserveSourceTexture = json.has("preserve_texture")
+                ? bool(json, "preserve_texture")
+                : DEFAULT_APPEARANCE.preserveSourceTexture();
         return new Appearance(red, green, blue, opacity,
-                fadeIn, fadeOut, flicker);
+                fadeIn, fadeOut, flicker, preserveSourceTexture);
     }
 
     private static float normalized(JsonElement value, String field) {
