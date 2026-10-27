@@ -80,6 +80,7 @@ public final class HologramSoundPlayback {
         HologramRecordingResourceLoader.Recording visual =
                 HologramRecordingResourceLoader.get(projector.recording());
         if (visual == null
+                || !HologramRecordingValidator.isUsable(projector.recording(), visual)
                 || (visual.audioCues().isEmpty() && visual.visualEvents().isEmpty())) {
             CURSORS.remove(projector);
             return;
