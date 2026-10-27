@@ -117,6 +117,11 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
 
     @Override
     public boolean shouldRender(AncientProjectorBlockEntity projector, Vec3 cameraPos) {
-        return cameraPos.distanceToSqr(Vec3.atCenterOf(projector.getBlockPos())) < 64 * 64;
+        // Extremely large archives can extend beyond the usual 64-block
+        // block-entity viewing distance. Keep a modest distance allowance so
+        // a visible projection is not cut off by its tiny physical emitter.
+        int maxDistance = Math.max(64, projector.renderRadiusBlocks() + 16);
+        return cameraPos.distanceToSqr(Vec3.atCenterOf(projector.getBlockPos()))
+                < (double) maxDistance * maxDistance;
     }
 }
