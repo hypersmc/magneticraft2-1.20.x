@@ -24,13 +24,10 @@ import net.minecraft.resources.ResourceLocation;
 public final class HologramBufferSource implements MultiBufferSource {
     private static final ResourceLocation NEUTRAL_SPRITE =
             new ResourceLocation("minecraft", "block/white_concrete");
-    private static final float RED = 0.27F;
-    private static final float GREEN = 0.83F;
-    private static final float BLUE = 1.00F;
-
     private final VertexConsumer consumer;
 
-    public HologramBufferSource(MultiBufferSource downstream, float opacity) {
+    public HologramBufferSource(MultiBufferSource downstream, float opacity,
+                               float red, float green, float blue) {
         TextureAtlasSprite sprite = Minecraft.getInstance()
                 .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
                 .apply(NEUTRAL_SPRITE);
@@ -39,7 +36,8 @@ public final class HologramBufferSource implements MultiBufferSource {
         float centerV = (sprite.getV0() + sprite.getV1()) * 0.5F;
         consumer = new HologramVertexConsumer(
                 downstream.getBuffer(RenderType.translucent()),
-                centerU, centerV, Math.max(0F, Math.min(1F, opacity)));
+                centerU, centerV, Math.max(0F, Math.min(1F, opacity)),
+                red, green, blue);
     }
 
     /**
@@ -56,13 +54,20 @@ public final class HologramBufferSource implements MultiBufferSource {
         private final float spriteU;
         private final float spriteV;
         private final float opacity;
+        private final float red;
+        private final float green;
+        private final float blue;
 
         private HologramVertexConsumer(VertexConsumer delegate, float spriteU,
-                                       float spriteV, float opacity) {
+                                       float spriteV, float opacity,
+                                       float red, float green, float blue) {
             this.delegate = delegate;
             this.spriteU = spriteU;
             this.spriteV = spriteV;
             this.opacity = opacity;
+            this.red = Math.max(0F, Math.min(1F, red));
+            this.green = Math.max(0F, Math.min(1F, green));
+            this.blue = Math.max(0F, Math.min(1F, blue));
         }
 
         private static int channel(float value) {
@@ -79,9 +84,9 @@ public final class HologramBufferSource implements MultiBufferSource {
         public VertexConsumer color(int red, int green, int blue, int alpha) {
             // Preserve vanilla per-face/AO light shading, but not the
             // underlying material's brown/gray color.
-            delegate.color(channel(red * RED),
-                    channel(green * GREEN),
-                    channel(blue * BLUE),
+            delegate.color(channel(red * this.red),
+                    channel(green * this.green),
+                    channel(blue * this.blue),
                     channel(alpha * opacity));
             return this;
         }
@@ -117,9 +122,9 @@ public final class HologramBufferSource implements MultiBufferSource {
 
         @Override
         public void defaultColor(int red, int green, int blue, int alpha) {
-            delegate.defaultColor(channel(red * RED),
-                    channel(green * GREEN),
-                    channel(blue * BLUE),
+            delegate.defaultColor(channel(red * this.red),
+                    channel(green * this.green),
+                    channel(blue * this.blue),
                     channel(alpha * opacity));
         }
 
