@@ -13,16 +13,16 @@ import net.minecraft.world.phys.Vec3;
  * A lightweight visual connection between the small physical ancient artifact
  * and its distant, full-size recorded scene.
  *
- * Geometry: four extremely faint tapered projection sheets, four brighter
- * pencil-thin light strands, one advancing raster/sync plane and a tiny
- * animated emitter ring. These are translucent quads, not extra entities,
+ * Geometry: eight extremely faint curved-envelope projection sheets, four
+ * pencil-thin light strands, one advancing circular raster/sync ring and a
+ * tiny animated emitter ring. These are translucent quads, not extra entities,
  * point lights, particles, fog, world blocks or ray tracing.
  *
  * The caller has already applied the projector-facing rotation but has NOT
  * translated the pose into the scene's placement offset. Everything here is
  * drawn in canonical south-facing block coordinates.
  *
- * Bounded cost: 21 quads / 84 vertices per visible projector per frame.
+ * Bounded cost: 32 quads / 128 vertices per visible projector per frame.
  * Nothing is submitted when recording projection_field is absent or faded.
  */
 public final class HologramProjectionField {
@@ -30,6 +30,7 @@ public final class HologramProjectionField {
             new ResourceLocation("minecraft", "textures/block/white_concrete.png");
     private static final Vec3 EMITTER = new Vec3(0.5D, 0.272D, 0.5D);
     private static final int EMITTER_SEGMENTS = 12;
+    private static final int FIELD_SEGMENTS = 8;
 
     private HologramProjectionField() {}
 
@@ -63,25 +64,25 @@ public final class HologramProjectionField {
         double halfWidth = settings.width() * 0.5D;
         double halfHeight = settings.height() * 0.5D;
 
-        // Four corners at the tiny blue emitter opening and the front plane
-        // of the recorded machine. The source stays inside the 9x9-pixel disc.
-        Vec3[] near = rectangle(EMITTER, 0.05D, 0.035D);
-        Vec3[] far = rectangle(focus, halfWidth, halfHeight);
+        // A rounded, eight-sided light cone instead of a rectangular
+        // frame around the machinery. It emerges through the small blue
+        // aperture and spreads toward the recording's front plane.
+        Vec3[] near = ellipse(EMITTER, 0.05D, 0.035D, FIELD_SEGMENTS);
+        Vec3[] far = ellipse(focus, halfWidth, halfHeight, FIELD_SEGMENTS);
 
-        // The nearly transparent fan explains HOW the distant full-size scene
-        // originates at the disc. Visible at oblique angles, deliberately
-        // dim enough to preserve mechanical detail through its surfaces.
-        for (int i = 0; i < 4; i++) {
-            int next = (i + 1) & 3;
+        // Very faint envelope sheets: this should read as light in the air,
+        // not another set of glass blocks hiding the mechanism.
+        for (int i = 0; i < FIELD_SEGMENTS; i++) {
+            int next = (i + 1) % FIELD_SEGMENTS;
             quadGradient(pose, sink, near[i], near[next], far[next], far[i],
-                    0.10F * strength, 0.028F * strength,
+                    0.09F * strength, 0.024F * strength,
                     0.31F, 0.81F, 1.0F);
         }
 
-        // Four sharper boundary rays: paired, very narrow translucent ribbons
-        // instead of expensive glowing particle trails or thousands of voxels.
+        // Four brighter paths connect the emitter to the projection.
+        // Narrow ribbons are much cheaper than long particle trails.
         double beamThickness = 0.012D;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < FIELD_SEGMENTS; i += 2) {
             Vec3 a = near[i];
             Vec3 b = far[i];
             quadGradient(pose, sink, a.add(-beamThickness, 0, 0),
@@ -93,15 +94,21 @@ public final class HologramProjectionField {
                     0.25F, 0.88F, 1.0F);
         }
 
-        // A slowly travelling raster plane, expanding outwards as it moves
-        // down the projected light path. No strobing or world light updates.
+        // An expanding elliptical signal ring moves from emitter to the
+        // recording front. An open ring reads more like a scan wave than
+        // an opaque glass wall crossing the machine.
         Vec3 plane = EMITTER.lerp(focus, pulse);
         double w = 0.05D + halfWidth * pulse;
         double h = 0.04D + halfHeight * pulse;
-        Vec3[] sweep = rectangle(plane, w, h);
-        quad(pose, sink, sweep[0], sweep[1], sweep[2], sweep[3],
-                (float) (0.22D * strength * (1D - 0.32D * pulse)),
-                0.46F, 0.95F, 1.0F);
+        Vec3[] outer = ellipse(plane, w, h, FIELD_SEGMENTS);
+        Vec3[] inner = ellipse(plane, Math.max(0.008D, w - 0.05D),
+                Math.max(0.008D, h - 0.05D), FIELD_SEGMENTS);
+        for (int i = 0; i < FIELD_SEGMENTS; i++) {
+            int next = (i + 1) % FIELD_SEGMENTS;
+            quad(pose, sink, inner[i], outer[i], outer[next], inner[next],
+                    (float) (0.26D * strength * (1D - 0.30D * pulse)),
+                    0.46F, 0.95F, 1.0F);
+        }
 
         // A fine cyan ring on the disc's actual upper emitter surface. This
         // remains the most obvious light source when viewed from above.
@@ -124,14 +131,15 @@ public final class HologramProjectionField {
                 EMITTER.y + 0.009D, EMITTER.z + Math.sin(angle) * r);
     }
 
-    private static Vec3[] rectangle(Vec3 center, double halfWidth,
-                                    double halfHeight) {
-        return new Vec3[]{
-                center.add(-halfWidth, -halfHeight, 0),
-                center.add( halfWidth, -halfHeight, 0),
-                center.add( halfWidth,  halfHeight, 0),
-                center.add(-halfWidth,  halfHeight, 0)
-        };
+    private static Vec3[] ellipse(Vec3 center, double xRadius,
+                                  double yRadius, int segments) {
+        Vec3[] vertices = new Vec3[segments];
+        for (int i = 0; i < segments; i++) {
+            double angle = 2D * Math.PI * i / segments;
+            vertices[i] = center.add(Math.cos(angle) * xRadius,
+                    Math.sin(angle) * yRadius, 0D);
+        }
+        return vertices;
     }
 
     private static void quad(PoseStack pose, VertexConsumer sink, Vec3 a, Vec3 b,
