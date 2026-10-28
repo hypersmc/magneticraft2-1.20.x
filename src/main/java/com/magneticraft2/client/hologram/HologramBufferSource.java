@@ -78,7 +78,7 @@ public final class HologramBufferSource implements MultiBufferSource {
         consumer = new HologramVertexConsumer(
                 downstream.getBuffer(shaderEffect
                         ? HologramRenderType.projection()
-                        : RenderType.translucent()),
+                        : HologramRenderType.projectionFallback()),
                 centerU, centerV,
                 missing.getU0(), missing.getU1(),
                 missing.getV0(), missing.getV1(),
@@ -104,7 +104,7 @@ public final class HologramBufferSource implements MultiBufferSource {
         ResourceLocation texture = preserveSourceTexture ? machineTexture : FLAT_TEXTURE;
         VertexConsumer material = downstream.getBuffer(shaderEffect
                 ? HologramRenderType.projection(texture)
-                : RenderType.entityTranslucent(texture));
+                : HologramRenderType.projectionTexturedFallback(texture));
         return new HologramVertexConsumer(
                 material, 0F, 0F, 0F, -1F, 0F, -1F,
                 opacity, red, green, blue, true, false);
