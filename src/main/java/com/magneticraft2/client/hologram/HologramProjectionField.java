@@ -4,9 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -26,8 +24,6 @@ import net.minecraft.world.phys.Vec3;
  * Nothing is submitted when recording projection_field is absent or faded.
  */
 public final class HologramProjectionField {
-    private static final ResourceLocation WHITE =
-            new ResourceLocation("minecraft", "textures/block/white_concrete.png");
     private static final Vec3 EMITTER = new Vec3(0.5D, 0.272D, 0.5D);
     private static final int EMITTER_SEGMENTS = 12;
     private static final int FIELD_SEGMENTS = 8;
@@ -56,7 +52,9 @@ public final class HologramProjectionField {
         if (focus.distanceToSqr(EMITTER) < 0.5D
                 || focus.distanceToSqr(EMITTER) > 64D * 64D) return;
 
-        VertexConsumer sink = buffers.getBuffer(RenderType.entityTranslucent(WHITE));
+        // Never write depth: even an almost-invisible beam must not punch
+        // rectangular holes in the transparent machinery behind it.
+        VertexConsumer sink = buffers.getBuffer(HologramRenderType.projectionBeam());
         double t = filmTick / settings.pulseTicks();
         double pulse = t - Math.floor(t);
         double shimmer = 0.92D + 0.08D * Math.sin(filmTick * 0.09D);
