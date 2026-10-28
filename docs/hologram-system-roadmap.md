@@ -45,6 +45,10 @@ These are acceptance criteria, **not claims of completed testing**.
 - [x] Recording-defined emitter-to-scene light field and wider placement
       offsets; 33 bounded translucent quads and synchronized raster pulse,
       with no new entities/real light sources
+- [x] Beam, baked scene and procedural shader/fallback render layers all
+      retain LEQUAL depth testing and use COLOR_WRITE (no depth-buffer writes)
+- [ ] Confirm in-game that projection light no longer hides gears, objects
+      or terrain behind it, both with shader_effect true and false
 - [ ] In-game visual approval of projection field, especially emitter
       attachment, directional alignment, wall occlusion, readability and FPS
 - [x] One-time missing-model/missing-atlas diagnostics and scoped fallback
