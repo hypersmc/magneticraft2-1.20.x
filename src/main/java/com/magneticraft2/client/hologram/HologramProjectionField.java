@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec3;
  * translated the pose into the scene's placement offset. Everything here is
  * drawn in canonical south-facing block coordinates.
  *
- * Bounded cost: 32 quads / 128 vertices per visible projector per frame.
+ * Bounded cost: 33 quads / 132 vertices per visible projector per frame.
  * Nothing is submitted when recording projection_field is absent or faded.
  */
 public final class HologramProjectionField {
@@ -109,6 +109,18 @@ public final class HologramProjectionField {
                     (float) (0.26D * strength * (1D - 0.30D * pulse)),
                     0.46F, 0.95F, 1.0F);
         }
+
+        // A second tiny raster stroke lies horizontally. The elliptical
+        // ring is viewed edge-on from overhead; this stroke keeps the
+        // travelling data pulse readable from the player's top-down view.
+        double lineHalfDepth = 0.035D;
+        quad(pose, sink,
+                new Vec3(plane.x - w, plane.y, plane.z - lineHalfDepth),
+                new Vec3(plane.x + w, plane.y, plane.z - lineHalfDepth),
+                new Vec3(plane.x + w, plane.y, plane.z + lineHalfDepth),
+                new Vec3(plane.x - w, plane.y, plane.z + lineHalfDepth),
+                (float) (0.18D * strength * (1D - 0.35D * pulse)),
+                0.43F, 0.95F, 1.0F);
 
         // A fine cyan ring on the disc's actual upper emitter surface. This
         // remains the most obvious light source when viewed from above.
