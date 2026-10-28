@@ -756,3 +756,99 @@ The archive should still recover at 46.5s and drop one item after 60s.
 
 This layout and JSON passed a static reference/grid/gear-rotation check.
 It has **not** been built or tested in Minecraft by the assistant.
+
+## Emitter-to-scene projection field — Archive 017 and Archive 042
+
+**User screenshot feedback (28 October 2026):** Archive 042 was visibly too
+close to the physical blue disc, and the animation looked like transparent
+gameplay blocks rather than an emitted holographic recording. The scene
+renderer now adds a small **projector-side visual bridge** from the disc to
+the machine, without changing the gear network or the mechanical film.
+
+### Placement distances
+
+- **Archive 017**: its south-facing recording offset moves from
+  `[0,0,2]` to **`[0,0,4]`**, giving the small film more breathing room.
+- **Archive 042**: its offset moves from `[0,0,4]` to **`[0,0,8]`**,
+  leaving a meaningful gap for the wider, nine-gear scene. All gear
+  geometry, animation stages and mechanical timings are unchanged.
+- Both still rotate around the physical artifact's center for every
+  horizontal facing. The previous `render_radius_blocks` values of 8
+  and 14 already contain the new distant footprints.
+
+### Configurable projection effect
+
+The optional `projection_field` object in client
+`assets/<namespace>/holograms/<id>.json` defines the cinematic
+visual bridge independently from the recorded machine:
+
+```json
+"placement": {"reference_facing": "south", "offset": [0, 0, 8]},
+"projection_field": {
+  "focus": [0.0, 1.2, 0.6],
+  "width": 6.8,
+  "height": 2.2,
+  "intensity": 0.72,
+  "pulse_ticks": 120
+}
+```
+
+- `focus`: scene-local location of the projection's target plane
+  (before applying placement offset and projector facing), with
+  each coordinate in **-64..+64 blocks**.
+- `width` and `height`: approximate width/height of a faint
+  rectangular projection fan at the front of the recording
+  (0.5..12 and 0.5..6 blocks respectively); these do **not**
+  change model geometry or engraved dimensions.
+- `intensity`: 0..1; 0 disables the field without affecting the
+  actual recorded scene.
+- `pulse_ticks`: slow travelling raster/energy pulse period,
+  30..240 film ticks. Synchronized to the same server-defined recording
+  clock and the data-driven client timeline.
+
+The light field contains four very faint transparent tapered sheets,
+four narrow bright cyan edge strands, one advancing raster plane,
+and a small animated ring exactly on the physical emitter. Light
+strength **falls off from the artifact toward the machinery**, making
+the source read clearly while avoiding a bright sheet over the gears.
+The translucent material samples a **single neutral texture texel**
+instead of stretching pixels over a multi-block-wide fan.
+
+All of this is **visual-only**: 21 translucent quads / 84 vertices
+per visible projector, no new particles per frame, no entities, no
+glow lights, no level updates and no machine simulation. Normal
+terrain depth testing still hides the light path when a wall blocks it.
+The beam itself uses vanilla translucent rendering so it stays available
+even if the custom scene GLSL shader is disabled. Existing archives
+omitting `projection_field` remain fully supported and do not emit it.
+
+This is an **optical volume approximation**, not physically correct
+volumetric scattering, soft bloom, or an X-ray effect. It has to be
+evaluated visually in Forge 1.20.1; source checks alone cannot prove
+that it looks like the intended game-style hologram.
+
+### New visual acceptance tests
+
+1. Place Archive 042 in an open area, preferably daytime and nighttime.
+   The physical blue disc should be visibly separated from the machine.
+   A weak cyan projection fan and brighter light strands should connect
+   the disc to the front of the recorded gear assembly.
+2. View from overhead, low oblique and directly along the projection.
+   The disc should remain an obvious source, but gears must still be
+   readable through the light field.
+3. Observe a complete 60-second playback. The light field should
+   materialize and dissolve with the hologram, and a pulse should move
+   slowly from the disc toward the machine. No rapid flashing.
+4. Rotate the projector through all four horizontal facings; the
+   source ring and projection path must point in the correct direction.
+5. Repeat with Archive 017 (smaller, four-block offset). Its more compact
+   fan must not wash out the brake/gear demonstration.
+6. Check wall occlusion, F3+T, `shader_effect:false`, resource
+   packs, and F3/frame-time difference with 1/4/8 projectors.
+7. Set `intensity:0` or omit `projection_field` in a test resource pack;
+   the beam should disappear while the archived machine still renders.
+8. Verify Archive 042 still trips at ~34s, reconstructs at ~46.5s,
+   and returns exactly one recording item after 60s.
+
+**Status:** feature authored and JSON references updated; requires
+`./gradlew build` and user in-game visual verification before approval.
