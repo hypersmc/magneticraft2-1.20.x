@@ -31,6 +31,35 @@ public final class HologramRenderType extends RenderType {
     private static final ShaderStateShard HOLOGRAM_SHADER =
             new ShaderStateShard(() -> hologramShader);
 
+    /**
+     * The beam is a visual overlay INSIDE the world, not solid geometry.
+     *
+     * Vanilla entityTranslucent writes depth in this pipeline, causing its
+     * nearly invisible cone faces to occlude later gears, shafts and terrain.
+     * Keep LEQUAL depth TESTING for world occlusion, but write COLOR ONLY.
+     * NEW_ENTITY matches the beam vertex layout (UV0, overlay, UV2, normal).
+     */
+    private static final RenderType PROJECTION_BEAM = RenderType.create(
+            "magneticraft2:hologram_projection_beam",
+            DefaultVertexFormat.NEW_ENTITY,
+            VertexFormat.Mode.QUADS,
+            2048,
+            false,
+            true,
+            RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+                    .setTextureState(new TextureStateShard(
+                            new ResourceLocation("minecraft",
+                                    "textures/block/white_concrete.png"), false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .setCullState(NO_CULL)
+                    .setOutputState(TRANSLUCENT_TARGET)
+                    .createCompositeState(true));
+
     private static final RenderType PROJECTION = RenderType.create(
             "magneticraft2:hologram_projection",
             DefaultVertexFormat.BLOCK,
@@ -56,6 +85,11 @@ public final class HologramRenderType extends RenderType {
                               boolean sortOnUpload, Runnable setup, Runnable clear) {
         super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload,
                 setup, clear);
+    }
+
+    /** A depth-tested, no-depth-write material specifically for light cones. */
+    public static RenderType projectionBeam() {
+        return PROJECTION_BEAM;
     }
 
     public static RenderType projection() {
