@@ -239,34 +239,6 @@
       ],
       "render_layer": "cutout"
     },
-    "vertical_drive_shaft": {
-      "model": "magneticraft2:block/shaft_wood",
-      "model_offset": [
-        -2.1,
-        1.05,
-        0
-      ],
-      "pivot": [
-        0,
-        0,
-        0
-      ],
-      "render_layer": "cutout"
-    },
-    "elevated_drive_wheel": {
-      "model": "magneticraft2:block/gear_large_wood",
-      "model_offset": [
-        -2.1,
-        1.73,
-        0
-      ],
-      "pivot": [
-        0.5,
-        0.5,
-        0.5
-      ],
-      "render_layer": "cutout"
-    },
     "branch_load_indicator": {
       "model": "magneticraft2:block/mechanical_brake_wood_frame_y",
       "model_offset": [
@@ -317,17 +289,45 @@
       ],
       "render_layer": "cutout"
     },
-    "drive_overload_disconnect": {
-      "model": "magneticraft2:block/overload_disconnect_wood_closed_y",
+    "input_large_gear": {
+      "model": "magneticraft2:block/gear_large_wood",
       "model_offset": [
-        -2.1,
-        3.15,
-        0
+        -3.1,
+        0.65,
+        1
       ],
       "pivot": [
         0.5,
         0.5,
         0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_large_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        -3.1,
+        0,
+        1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "output_overload_disconnect": {
+      "model": "magneticraft2:block/overload_disconnect_wood_closed_y",
+      "model_offset": [
+        1.05,
+        1.65,
+        2.1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
       ],
       "render_layer": "cutout",
       "model_variants": {
@@ -338,20 +338,6 @@
           "2": "magneticraft2:block/overload_disconnect_wood_closed_y"
         }
       }
-    },
-    "drive_upshaft_upper": {
-      "model": "magneticraft2:block/shaft_wood",
-      "model_offset": [
-        -2.1,
-        2.55,
-        0
-      ],
-      "pivot": [
-        0.5,
-        0.5,
-        0.5
-      ],
-      "render_layer": "cutout"
     }
   },
   "inputs": {
@@ -425,13 +411,6 @@
           "phase_degrees": 22.5
         },
         {
-          "target": "elevated_drive_wheel",
-          "property": "rotation",
-          "axis": "y",
-          "input": "drive_angle",
-          "scale": 1
-        },
-        {
           "target": "branch_brake_spindle",
           "property": "rotation",
           "axis": "y",
@@ -439,11 +418,12 @@
           "scale": 1
         },
         {
-          "target": "drive_upshaft_upper",
+          "target": "input_large_gear",
           "property": "rotation",
           "axis": "y",
           "input": "drive_angle",
-          "scale": 1
+          "scale": -0.5,
+          "phase_degrees": 11.25
         }
       ]
     }
