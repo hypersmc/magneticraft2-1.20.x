@@ -93,6 +93,14 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                                  int visibleStage, int clampFromTick,
                                  int clampUntilTick) {}
 
+    /**
+     * A small, translucent projector-to-recording light field. The focus is
+     * expressed in scene-local BLOCK units before placement offset/facing.
+     * Omitted completely for resource packs using the old rendering style.
+     */
+    public record ProjectionField(Vec3 focus, float width, float height,
+                                  float intensity, int pulseTicks) {}
+
     public record Recording(String archive, String title,
                             ResourceLocation animation, int durationTicks,
                             int offsetX, int offsetY, int offsetZ,
@@ -102,6 +110,7 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                             List<AudioCue> audioCues,
                             List<VisualEvent> visualEvents,
                             List<ProceduralPart> proceduralParts,
+                            ProjectionField projectionField,
                             Appearance appearance) {
         public Recording {
             channels = Map.copyOf(channels);
@@ -218,7 +227,8 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                 xyz[0], xyz[1], xyz[2], channels, visualChannels,
                 transitions, parseAudioCues(root, duration),
                 parseVisualEvents(root, duration),
-                parseProceduralParts(root, duration), parseAppearance(root));
+                parseProceduralParts(root, duration),
+                parseProjectionField(root), parseAppearance(root));
     }
 
     /**
@@ -494,6 +504,29 @@ public final class HologramRecordingResourceLoader extends SimpleJsonResourceRel
                     visibleStage, clampFrom, clampUntil));
         }
         return List.copyOf(parts);
+    }
+
+    /**
+     * A narrow, capped optical projection volume. The actual machine model
+     * remains fully separate; this adds no geometry to the recording scene
+     * and cannot create lights or change world blocks.
+     */
+    private static ProjectionField parseProjectionField(JsonObject root) {
+        if (!root.has("projection_field")) return null;
+        JsonObject field = object(root.get("projection_field"), "projection_field");
+        Vec3 focus = scenePosition(field.get("focus"), "projection_field.focus");
+        float width = boundedFloat(field.get("width"), "projection_field.width",
+                0.5F, 12F);
+        float height = boundedFloat(field.get("height"), "projection_field.height",
+                0.5F, 6F);
+        float intensity = boundedFloat(field.get("intensity"),
+                "projection_field.intensity", 0F, 1F);
+        int pulseTicks = number(field, "pulse_ticks");
+        if (pulseTicks < 30 || pulseTicks > 240) {
+            throw new JsonParseException(
+                    "projection_field.pulse_ticks must be between 30 and 240");
+        }
+        return new ProjectionField(focus, width, height, intensity, pulseTicks);
     }
 
     private static Appearance parseAppearance(JsonObject root) {
