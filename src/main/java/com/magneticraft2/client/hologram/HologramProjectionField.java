@@ -125,14 +125,14 @@ public final class HologramProjectionField {
         // A fine cyan ring on the disc's actual upper emitter surface. This
         // remains the most obvious light source when viewed from above.
         double radius = 0.16D + 0.015D * Math.sin(filmTick * 0.07D);
-        double inner = radius - 0.015D;
+        double innerRadius = radius - 0.015D;
         for (int i = 0; i < EMITTER_SEGMENTS; i++) {
             double a = i * 2D * Math.PI / EMITTER_SEGMENTS;
             double b = (i + 1) * 2D * Math.PI / EMITTER_SEGMENTS;
-            Vec3 innerA = ringPoint(inner, a);
+            Vec3 innerA = ringPoint(innerRadius, a);
             Vec3 outerA = ringPoint(radius, a);
             Vec3 outerB = ringPoint(radius, b);
-            Vec3 innerB = ringPoint(inner, b);
+            Vec3 innerB = ringPoint(innerRadius, b);
             quad(pose, sink, innerA, outerA, outerB, innerB,
                     0.55F * strength, 0.34F, 0.92F, 1.0F);
         }
