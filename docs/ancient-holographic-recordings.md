@@ -431,31 +431,36 @@ not a replacement for Archive 017.
 - Example film for pack authors:
   `docs/examples/hologram-recordings/power_distribution.json`
 
-The assembly uses eight genuine `gear_medium_wood` visual models,
-a genuine raised `gear_large_wood` drive wheel and wooden drive shaft.
-A T-shaped multi-stage distribution routes motion from a long five-gear
-cross-shaft into a three-gear rear branch. Following two in-game
-screenshots, the **entire custom hologram gantry and all eight custom
-bearing pedestals were removed**. The multi-stage gear train now rests
-on **the real Mechanical Input Module baked models** at each shaft.
-The repaired branch uses the real Flywheel frame rather than a made-up
-bearing hub. The raised assembly includes the actual Mechanical Brake
-frame, Wooden Shafts and the existing vertical (up-facing)
-Overload Disconnect models. Its visible footprint is still
-roughly seven blocks across and five blocks deep, with the elevated
-disconnect over four blocks tall. This is intentionally larger than
-the twin gears in Archive 017.
+The assembly has **eight genuine 8-tooth wooden medium gears** in a
+T-shaped distribution network and **one genuine 16-tooth large wooden
+input gear**, all on the **same horizontal gear plane**. A five-gear
+cross-shaft branches into a three-gear output. Its nine gear centers
+are now aligned to the actual Minecraft 1x1 placement grid. The large
+input gear connects diagonally by one block in X and one in Z, exactly
+as `GearPlacementValidator.isValidExternalMeshOffset` requires, and
+rotates in the opposite direction at half its driven neighbor's speed.
+The original raised drive-wheel tower and its two long shaft components
+were **removed** following the 28 October screenshot showing a
+floating-looking assembly. The large gear is now supported by an actual
+Mechanical Input Module, like all eight medium gears. The existing
+Mechanical Brake frame remains on the rear branch, while the real
+up-facing Overload Disconnect is installed **directly on the rear
+output gear's shaft**, not four blocks into the air. There is no
+fabricated gantry or extra brake shaft overlapping the real brake's
+drum. The repaired branch can show the existing Flywheel frame.
+The footprint is roughly seven blocks wide and five deep, but no longer
+has the excessively tall projected tower.
 
-The film starts the gear assembly, applies load to the existing brake
-frame on the rear branch, highlights stress with a copper-colored
-bearing outline and intermittent warning particles, and then shows
-gear-tooth failure accompanied by the upstream **real Overload Disconnect
-model opening**. The image reconstructs an intact rear gear and
-reinforced bearing while the disconnect returns to its closed model,
-before the distribution train resumes. All eight connected gears turn
-with alternating signs and phases, and the raised wheel follows the
-vertical drive shaft. This is a **recorded illustration** of mechanical
-behavior, not a real simulation.
+The film starts the gear assembly, applies load to the real brake
+frame on the rear branch, and highlights stress with amber particles
+and warning audio before showing gear-tooth failure. The real
+**output-mounted Overload Disconnect opens** as the gear train stops.
+The image reconstructs an intact rear gear and supporting frame
+while the disconnect returns to its closed model, before the
+distribution train resumes. Eight medium gears rotate with alternating
+signs and matched phases. The larger input gear has the correct
+opposite-direction 8T:16T ratio. This is a **recorded illustration**
+of mechanical behavior, not a real simulation.
 
 The original custom brake-jaw models (`power_overload_jaw` and
 `transmission_brake_load`) were **deleted** after reviewing Magneticraft2's
@@ -499,15 +504,18 @@ syntax applies:
 - Look at the artifact tooltip: it should show **Archive 042** and
   larger model-derived dimensions than Archive 017, retaining the
   scrambled inscription.
-- Place it in the open with at least an 8x6 block area and watch for
-  all eight gears, the raised large wheel, shaft, supports and overhead
-  timber frame. Check for unwanted gear/model intersection.
-- The real Mechanical Brake frame should be visibly mounted above the
-  rear branch with its driven shaft. At ~27 seconds, braking load is
-  indicated by the audio cue; the copper stress outline and amber
-  warning pulses follow at ~29 seconds. Around ~34 seconds, the
-  output gear breaks with cyan spark particles, the upstream real
-  Overload Disconnect switches to its open model, and the drive stops.
+- Place it in the open with at least an 8x6 block area. Confirm all
+  eight medium gears and the ninth, **large input gear**, sit on the
+  same level. Check that the large gear meshes diagonally with the
+  westmost medium gear and rotates **in the opposite direction at
+  half the speed**. Each gear should visibly sit on a genuine
+  Mechanical Input Module, without an unrelated tall shaft tower.
+- The real Mechanical Brake frame and shared procedural drum/shoes
+  should sit on the rear branch. The Overload Disconnect should be
+  mounted directly above the **rear output gear**. At ~27 seconds the
+  brake loads, amber warnings begin near ~29 seconds, and around
+  ~34 seconds the damaged gear and cyan sparks appear while the
+  output disconnect switches to its open model and the drive stops.
 - At ~46.5 seconds the assembly should fade/reconstruct with stronger
   bearing supports, then restart; the final fade completes at 60 seconds,
   returning **exactly one** projector containing Archive 042.
@@ -713,3 +721,38 @@ normally, then compare its drum and shoes with those projected in Archives
 correct clamp motion, no floating geometry, hologram transparency,
 performance and F3+T reload behavior. Build and live verification
 are not claimed yet.
+
+### Archive 042 — real gear-plane correction (28 October 2026)
+
+The latest screenshot after shared brake rendering showed the projector
+working without the earlier purple/black checkerboard, but the elevated
+large wheel, tall drive shaft and Overload Disconnect formed an awkward,
+floating-looking tower detached from the lower gear train.
+
+The scene now follows the **existing gear placement rules**, not a
+hologram-only invented connection: an 8T medium and 16T large gear mesh
+diagonally one block across X and Z and rotate in opposite directions,
+with a **1:2 angular-speed relationship**. The large 16T gear was moved
+to the lower plane and given a real `mechanical_input_module` support.
+All eight medium shafts, their real supports, the large gear and the
+output disconnect were snapped to integer X/Z locations. The former
+upper shaft components were removed. The native up-facing Overload
+Disconnect is now on the rear output shaft, at the same X/Z as that
+gear, one block above it. The unnecessary extra shaft drawn *inside*
+the real procedural Mechanical Brake was removed, avoiding doubled
+overlapping wood surfaces.
+
+Audio cues and colored visual events were adjusted to the new gear
+positions. The source definitions still have the same duration and
+failure/recovery schedule; only the arrangement and scene-relative
+effect coordinates have changed.
+
+**Acceptance tests:** the nine gears must look physically connected,
+particularly the diagonal large-to-medium mesh. Confirm all parts are
+on supported real module shafts; the brake and output safety device
+must not hover; verify all horizontal facings, shared brake visuals,
+relative sound/sparks, no missing-texture checkerboard and sensible FPS.
+The archive should still recover at 46.5s and drop one item after 60s.
+
+This layout and JSON passed a static reference/grid/gear-rotation check.
+It has **not** been built or tested in Minecraft by the assistant.
