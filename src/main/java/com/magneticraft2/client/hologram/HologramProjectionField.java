@@ -73,8 +73,9 @@ public final class HologramProjectionField {
         // dim enough to preserve mechanical detail through its surfaces.
         for (int i = 0; i < 4; i++) {
             int next = (i + 1) & 3;
-            quad(pose, sink, near[i], near[next], far[next], far[i],
-                    0.065F * strength, 0.31F, 0.81F, 1.0F);
+            quadGradient(pose, sink, near[i], near[next], far[next], far[i],
+                    0.10F * strength, 0.028F * strength,
+                    0.31F, 0.81F, 1.0F);
         }
 
         // Four sharper boundary rays: paired, very narrow translucent ribbons
@@ -83,11 +84,12 @@ public final class HologramProjectionField {
         for (int i = 0; i < 4; i++) {
             Vec3 a = near[i];
             Vec3 b = far[i];
-            quad(pose, sink, a.add(-beamThickness, 0, 0),
+            quadGradient(pose, sink, a.add(-beamThickness, 0, 0),
                     a.add(beamThickness, 0, 0),
                     b.add(beamThickness, 0, 0),
                     b.add(-beamThickness, 0, 0),
-                    (float) (0.32D * strength * shimmer),
+                    (float) (0.52D * strength * shimmer),
+                    0.095F * strength,
                     0.25F, 0.88F, 1.0F);
         }
 
@@ -135,12 +137,29 @@ public final class HologramProjectionField {
     private static void quad(PoseStack pose, VertexConsumer sink, Vec3 a, Vec3 b,
                              Vec3 c, Vec3 d, float alpha,
                              float red, float green, float blue) {
-        if (alpha <= 0F) return;
-        int opacity = Math.max(0, Math.min(255, (int) (alpha * 255F)));
-        vertex(pose, sink, a, red, green, blue, opacity, 0F, 0F);
-        vertex(pose, sink, b, red, green, blue, opacity, 1F, 0F);
-        vertex(pose, sink, c, red, green, blue, opacity, 1F, 1F);
-        vertex(pose, sink, d, red, green, blue, opacity, 0F, 1F);
+        quadGradient(pose, sink, a, b, c, d, alpha, alpha, red, green, blue);
+    }
+
+    /**
+     * The beam is brighter by the physical emitter and falls off before
+     * reaching the hologram, rather than tinting the entire scene blue.
+     * All UVs sample the same neutral texel: unlike mechanical block models,
+     * no bitmap is stretched over the cone's many-block-wide surfaces.
+     */
+    private static void quadGradient(PoseStack pose, VertexConsumer sink,
+                                     Vec3 a, Vec3 b, Vec3 c, Vec3 d,
+                                     float nearAlpha, float farAlpha,
+                                     float red, float green, float blue) {
+        int near = opacity(nearAlpha);
+        int far = opacity(farAlpha);
+        vertex(pose, sink, a, red, green, blue, near, 0.5F, 0.5F);
+        vertex(pose, sink, b, red, green, blue, near, 0.5F, 0.5F);
+        vertex(pose, sink, c, red, green, blue, far, 0.5F, 0.5F);
+        vertex(pose, sink, d, red, green, blue, far, 0.5F, 0.5F);
+    }
+
+    private static int opacity(float alpha) {
+        return Math.max(0, Math.min(255, Math.round(alpha * 255F)));
     }
 
     private static void vertex(PoseStack pose, VertexConsumer sink, Vec3 point,
