@@ -806,17 +806,20 @@ visual bridge independently from the recorded machine:
   30..240 film ticks. Synchronized to the same server-defined recording
   clock and the data-driven client timeline.
 
-The light field contains four very faint transparent tapered sheets,
-four narrow bright cyan edge strands, one advancing raster plane,
-and a small animated ring exactly on the physical emitter. Light
-strength **falls off from the artifact toward the machinery**, making
-the source read clearly while avoiding a bright sheet over the gears.
-The translucent material samples a **single neutral texture texel**
-instead of stretching pixels over a multi-block-wide fan.
+The light field contains eight very faint transparent tapered
+**rounded-cone sheets** (rather than box-like glass panels), four narrow
+bright cyan light strands, an advancing elliptical raster ring with
+a thin horizontal stroke readable from overhead, and a small animated
+ring exactly on the physical emitter. Light strength **falls off from
+the artifact toward the machinery**, making the source read clearly
+without placing a bright sheet over the gears. The translucent
+material samples a **single neutral texture texel**, so no texture
+is stretched or compressed across multi-block-wide geometry.
 
-All of this is **visual-only**: 21 translucent quads / 84 vertices
-per visible projector, no new particles per frame, no entities, no
-glow lights, no level updates and no machine simulation. Normal
+All of this is **visual-only**: at most 33 translucent quads /
+132 vertices per visible projector per frame, no new particles per
+frame, no entities, no real glow lights, no level updates and no
+machine simulation. Normal
 terrain depth testing still hides the light path when a wall blocks it.
 The beam itself uses vanilla translucent rendering so it stays available
 even if the custom scene GLSL shader is disabled. Existing archives
@@ -836,9 +839,10 @@ that it looks like the intended game-style hologram.
 2. View from overhead, low oblique and directly along the projection.
    The disc should remain an obvious source, but gears must still be
    readable through the light field.
-3. Observe a complete 60-second playback. The light field should
-   materialize and dissolve with the hologram, and a pulse should move
-   slowly from the disc toward the machine. No rapid flashing.
+3. Observe a complete 60-second playback. The rounded light cone
+   should materialize and dissolve with the hologram. A moving elliptical
+   raster ring and thin overhead-visible sweep should travel slowly from
+   the emitter toward the recorded machine. No rapid flashing.
 4. Rotate the projector through all four horizontal facings; the
    source ring and projection path must point in the correct direction.
 5. Repeat with Archive 017 (smaller, four-block offset). Its more compact
