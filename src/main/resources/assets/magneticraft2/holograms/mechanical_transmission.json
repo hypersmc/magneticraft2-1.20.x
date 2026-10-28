@@ -10,7 +10,7 @@
     "offset": [
       0,
       0,
-      2
+      4
     ]
   },
   "channels": {
@@ -276,5 +276,16 @@
       "clamp_from_tick": 355,
       "clamp_until_tick": 615
     }
-  ]
+  ],
+  "projection_field": {
+    "focus": [
+      0.5,
+      1.22,
+      0.5
+    ],
+    "width": 2.6,
+    "height": 1.95,
+    "intensity": 0.62,
+    "pulse_ticks": 100
+  }
 }
