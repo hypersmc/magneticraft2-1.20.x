@@ -163,20 +163,6 @@
         }
       }
     },
-    "branch_brake_spindle": {
-      "model": "magneticraft2:block/shaft_wood",
-      "model_offset": [
-        0,
-        1.65,
-        2
-      ],
-      "pivot": [
-        0.5,
-        0.5,
-        0.5
-      ],
-      "render_layer": "cutout"
-    },
     "input_large_gear": {
       "model": "magneticraft2:block/gear_large_wood",
       "model_offset": [
@@ -409,13 +395,6 @@
           "input": "drive_angle",
           "scale": -1,
           "phase_degrees": 22.5
-        },
-        {
-          "target": "branch_brake_spindle",
-          "property": "rotation",
-          "axis": "y",
-          "input": "drive_angle",
-          "scale": 1
         },
         {
           "target": "input_large_gear",
