@@ -52,6 +52,13 @@ public final class AncientProjectorRenderer implements BlockEntityRenderer<Ancie
             pose.translate(.5D, 0D, .5D);
             pose.mulPose(Axis.YP.rotationDegrees(-facing.toYRot()));
             pose.translate(-.5D, 0D, -.5D);
+
+            // Draw the optical field BEFORE moving to the distant scene.
+            // Its emitter sits directly on the physical disc, while its
+            // focus uses the same placement offsets as the recording.
+            HologramProjectionField.render(pose, buffers, recording,
+                    sceneTick, opacity);
+
             pose.translate(recording.offsetX(), recording.offsetY(), recording.offsetZ());
             HologramBufferSource projected = new HologramBufferSource(
                     buffers, opacity,
