@@ -42,6 +42,11 @@ These are acceptance criteria, **not claims of completed testing**.
 - [x] Existing PR #12 animation and baked models for hologram visuals
 - [x] Shader-enhanced but fallback-capable translucent, depth-tested material
 - [x] Enlarged block entity frustum bounds with per-recording radius
+- [x] Recording-defined emitter-to-scene light field and wider placement
+      offsets; 21 bounded translucent quads and synchronized raster pulse,
+      with no new entities/real light sources
+- [ ] In-game visual approval of projection field, especially emitter
+      attachment, directional alignment, wall occlusion, readability and FPS
 - [x] One-time missing-model/missing-atlas diagnostics and scoped fallback
 - [x] Existing Copper Age machine models for normal components in Archive 042
 - [ ] Confirm all four facings, world depth occlusion, thin-part visibility,
