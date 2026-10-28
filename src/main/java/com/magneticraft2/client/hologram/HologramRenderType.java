@@ -25,6 +25,8 @@ public final class HologramRenderType extends RenderType {
     // block atlas. Each texture gets one cached projection render layer; no
     // RenderType objects are constructed every rendered frame.
     private static final Map<ResourceLocation, RenderType> TEXTURED = new ConcurrentHashMap<>();
+    private static final Map<ResourceLocation, RenderType> TEXTURED_FALLBACK =
+            new ConcurrentHashMap<>();
 
 
     // Supplier, rather than a captured instance, survives resource reloads.
@@ -57,6 +59,29 @@ public final class HologramRenderType extends RenderType {
                     .setLightmapState(LIGHTMAP)
                     .setOverlayState(OVERLAY)
                     .setCullState(NO_CULL)
+                    .setOutputState(TRANSLUCENT_TARGET)
+                    .createCompositeState(true));
+
+    /**
+     * Shader-disabled recordings must still be true ghosts. Minecraft's
+     * normal translucent block layer may write depth, so do NOT fall back
+     * to RenderType.translucent() for an off-world hologram.
+     */
+    private static final RenderType PROJECTION_FALLBACK = RenderType.create(
+            "magneticraft2:hologram_projection_fallback",
+            DefaultVertexFormat.BLOCK,
+            VertexFormat.Mode.QUADS,
+            131072,
+            true,
+            true,
+            RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
+                    .setTextureState(BLOCK_SHEET_MIPPED)
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .setLightmapState(LIGHTMAP)
+                    .setCullState(CULL)
                     .setOutputState(TRANSLUCENT_TARGET)
                     .createCompositeState(true));
 
@@ -95,7 +120,33 @@ public final class HologramRenderType extends RenderType {
     public static RenderType projection() {
         // Safe during startup or an interrupted reload. Client fallback
         // remains vanilla depth-tested translucent rendering.
-        return hologramShader != null ? PROJECTION : RenderType.translucent();
+        return hologramShader != null ? PROJECTION : PROJECTION_FALLBACK;
+    }
+
+    /** Use when a recording explicitly disables the scanline shader. */
+    public static RenderType projectionFallback() {
+        return PROJECTION_FALLBACK;
+    }
+
+    /** Procedural brake fallback that also preserves the world depth buffer. */
+    public static RenderType projectionTexturedFallback(ResourceLocation texture) {
+        return TEXTURED_FALLBACK.computeIfAbsent(texture, id -> RenderType.create(
+                "magneticraft2:hologram_procedural_fallback/" + id.toString().replace(':', '_'),
+                DefaultVertexFormat.BLOCK,
+                VertexFormat.Mode.QUADS,
+                32768,
+                true,
+                true,
+                RenderType.CompositeState.builder()
+                        .setShaderState(RENDERTYPE_TRANSLUCENT_SHADER)
+                        .setTextureState(new TextureStateShard(id, false, false))
+                        .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                        .setDepthTestState(LEQUAL_DEPTH_TEST)
+                        .setWriteMaskState(COLOR_WRITE)
+                        .setLightmapState(LIGHTMAP)
+                        .setCullState(NO_CULL)
+                        .setOutputState(TRANSLUCENT_TARGET)
+                        .createCompositeState(true)));
     }
 
     /**
@@ -108,7 +159,7 @@ public final class HologramRenderType extends RenderType {
      */
     public static RenderType projection(ResourceLocation texture) {
         if (hologramShader == null) {
-            return RenderType.entityTranslucent(texture);
+            return projectionTexturedFallback(texture);
         }
         return TEXTURED.computeIfAbsent(texture, id -> RenderType.create(
                 "magneticraft2:hologram_procedural/" + id.toString().replace(':', '_'),
