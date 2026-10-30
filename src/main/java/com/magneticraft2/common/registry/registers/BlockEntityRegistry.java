@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.blockentity.general.*;
+import com.magneticraft2.common.hologram.AncientProjectorBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
@@ -66,6 +67,7 @@ public class BlockEntityRegistry {
 
     public static final RegistryObject<BlockEntityType<PitKilnBlockEntity>> PitKilnblockEntity = BLOCK_ENTITIES.register("pitkilnblockentity", () -> BlockEntityType.Builder.of(PitKilnBlockEntity::new, BlockRegistry.PitKilnblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<stonepebbleBlockEntity>> stonepebbleBlockEntity = BLOCK_ENTITIES.register("stonepebbleblockentity", () -> BlockEntityType.Builder.of(stonepebbleBlockEntity::new, BlockRegistry.stonepebble.get()).build(null));
+    public static final RegistryObject<BlockEntityType<AncientProjectorBlockEntity>> ANCIENT_PROJECTOR_BE = BLOCK_ENTITIES.register("ancient_projector", () -> BlockEntityType.Builder.of(AncientProjectorBlockEntity::new, BlockRegistry.ANCIENT_PROJECTOR.get()).build(null));
     public static final RegistryObject<BlockEntityType<projectortestBlockEntity>> projectortestBlockEntity = BLOCK_ENTITIES.register("projectortestblockentity", () -> BlockEntityType.Builder.of(projectortestBlockEntity::new, BlockRegistry.protectortest.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpowermodule>> testpowermodule = BLOCK_ENTITIES.register("testpowermodule", () -> BlockEntityType.Builder.of(testpowermodule::new, BlockRegistry.testpowermoduleblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpollutionblockentity>> testpollutionblock = BLOCK_ENTITIES.register("testpollutionblock", () -> BlockEntityType.Builder.of(testpollutionblockentity::new, BlockRegistry.testpollutionblock.get()).build(null));

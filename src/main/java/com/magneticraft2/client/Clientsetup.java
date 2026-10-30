@@ -2,6 +2,11 @@ package com.magneticraft2.client;
 
 import com.magneticraft2.client.model.MultiBlockModelLoader;
 import com.magneticraft2.client.animation.AnimationResourceLoader;
+import com.magneticraft2.client.hologram.HologramRecordingResourceLoader;
+import com.magneticraft2.client.hologram.AncientProjectorRenderer;
+import com.magneticraft2.client.hologram.HologramRenderType;
+import net.minecraftforge.client.event.RegisterShadersEvent;
+import java.io.IOException;
 import com.magneticraft2.client.animation.MachineVisualResourceLoader;
 import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
@@ -94,6 +99,7 @@ public class Clientsetup {
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
         LOGGER.info("Renders are being registered!");
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.ANCIENT_PROJECTOR_BE.get(), AncientProjectorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
@@ -146,6 +152,24 @@ public class Clientsetup {
         // This allows packs to select new model ids, not just retexture the
         // models hardcoded by Java. Never use the previous reload's definitions.
         AnimationResourceLoader.registerModels(event, resourceManager);
+        // Hologram BERs request these same real Copper Age block models by
+        // their standalone model IDs. Normal blockstate baking alone does not
+        // guarantee the bare ModelManager key exists for a scene renderer.
+        // Keep the data-driven scan above for packs adding their own scenes;
+        // these explicit registrations protect the shipped example archives
+        // on first load and after F3+T.
+        for (String model : new String[]{
+                "block/gear_large_wood",
+                "block/mechanical_input_module",
+                "block/mechanical_brake_wood_frame_y",
+                "block/flywheel_wood_frame_y",
+                "block/overload_disconnect_wood_open_y",
+                "block/overload_disconnect_wood_closed_y",
+                "hologram/gear_medium_damaged",
+                "hologram/empty_projection"
+        }) {
+            event.register(new ResourceLocation(MOD_ID, model));
+        }
         String folderPath = "models/multiblock";
 
         // Get all resources in the multiblock folder
@@ -250,11 +274,19 @@ public class Clientsetup {
     }
 
     @SubscribeEvent
+    public static void onRegisterHologramShaders(RegisterShadersEvent event) throws IOException {
+        // Only the ancient hologram renderer opts into this shader.
+        // Real machines continue using their original vanilla render states.
+        HologramRenderType.registerShaders(event);
+    }
+
+    @SubscribeEvent
     public static void onRegisterAnimationReloaders(RegisterClientReloadListenersEvent event) {
         event.registerReloadListener(new AnimationResourceLoader());
         // Load machine -> scene input bindings from the same active client
         // resource-pack stack, independently of the animation definition.
         event.registerReloadListener(new MachineVisualResourceLoader());
+        event.registerReloadListener(new HologramRecordingResourceLoader());
     }
 
     @SubscribeEvent

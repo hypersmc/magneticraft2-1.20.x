@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import java.util.function.Function;
 import net.minecraft.world.level.block.DirectionalBlock;
 
 /**
@@ -55,18 +56,29 @@ public class MechanicalBrakeBlockEntity_woodRenderer
             MultiBufferSource bufferSource,
             int packedLight,
             int packedOverlay) {
-
         Direction.Axis axis = brake.getBlockState()
-                .getValue(DirectionalBlock.FACING)
-                .getAxis();
+                .getValue(DirectionalBlock.FACING).getAxis();
+        renderProcedural(stack, texture ->
+                        bufferSource.getBuffer(RenderType.entityCutoutNoCull(texture)),
+                packedLight, axis, brake.getVisualRotationDegrees(partialTicks),
+                brake.isBraking());
+    }
 
+    /**
+     * Shared geometry of the REAL mechanical brake. A live block and any
+     * client-side recorded projection call this exact code; only the material
+     * consumer and playback state differ. No fake brake entity or cloned model.
+     *
+     * textureConsumer is responsible for selecting a material for the
+     * original wood, copper and leather textures. The hologram renderer
+     * uses its own translucent projection material.
+     */
+    public static void renderProcedural(
+            PoseStack stack, Function<ResourceLocation, VertexConsumer> textureConsumer,
+            int packedLight, Direction.Axis axis, float angle, boolean braking) {
         stack.pushPose();
         stack.translate(0.5D, 0.5D, 0.5D);
         orientLocalXToAxis(stack, axis);
-
-        float angle = brake.getVisualRotationDegrees(
-                partialTicks
-        );
 
         stack.pushPose();
         stack.mulPose(
@@ -74,11 +86,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         );
 
         VertexConsumer drumConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                DRUM_TEXTURE
-                        )
-                );
+                textureConsumer.apply(DRUM_TEXTURE);
 
         drawCylinderSides(
                 stack.last(),
@@ -99,16 +107,10 @@ public class MechanicalBrakeBlockEntity_woodRenderer
 
         stack.popPose();
 
-        double shoeY = brake.isBraking()
-                ? 0.345D
-                : 0.435D;
+        double shoeY = braking ? 0.345D : 0.435D;
 
         VertexConsumer leatherConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                LEATHER_TEXTURE
-                        )
-                );
+                textureConsumer.apply(LEATHER_TEXTURE);
 
         renderBrakeShoe(
                 stack,
@@ -124,11 +126,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         );
 
         VertexConsumer copperConsumer =
-                bufferSource.getBuffer(
-                        RenderType.entityCutoutNoCull(
-                                COPPER_TEXTURE
-                        )
-                );
+                textureConsumer.apply(COPPER_TEXTURE);
 
         renderClampArm(
                 stack,
@@ -148,7 +146,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private void renderBrakeShoe(
+    private static void renderBrakeShoe(
             PoseStack stack,
             VertexConsumer consumer,
             int packedLight,
@@ -169,7 +167,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private void renderClampArm(
+    private static void renderClampArm(
             PoseStack stack,
             VertexConsumer consumer,
             int packedLight,
@@ -220,7 +218,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private void orientLocalXToAxis(
+    private static void orientLocalXToAxis(
             PoseStack stack,
             Direction.Axis axis) {
         switch (axis) {
@@ -235,7 +233,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         }
     }
 
-    private void drawCylinderSides(
+    private static void drawCylinderSides(
             PoseStack.Pose pose,
             VertexConsumer consumer,
             int packedLight,
@@ -279,7 +277,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         }
     }
 
-    private void drawCylinderEnds(
+    private static void drawCylinderEnds(
             PoseStack.Pose pose,
             VertexConsumer consumer,
             int packedLight,
@@ -326,7 +324,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
         }
     }
 
-    private void drawBox(
+    private static void drawBox(
             PoseStack stack,
             VertexConsumer consumer,
             int packedLight,
@@ -369,7 +367,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
                 -1.0F, 0.0F, 0.0F);
     }
 
-    private void triangle(
+    private static void triangle(
             VertexConsumer consumer,
             PoseStack.Pose pose,
             int packedLight,
@@ -394,7 +392,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
                 nx, ny, nz);
     }
 
-    private void quad(
+    private static void quad(
             VertexConsumer consumer,
             PoseStack.Pose pose,
             int packedLight,
@@ -418,7 +416,7 @@ public class MechanicalBrakeBlockEntity_woodRenderer
                 nx, ny, nz);
     }
 
-    private void vertex(
+    private static void vertex(
             VertexConsumer consumer,
             PoseStack.Pose pose,
             int packedLight,
