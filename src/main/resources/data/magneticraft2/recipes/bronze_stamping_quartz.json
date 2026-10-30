@@ -1,0 +1,22 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_stamp_mill",
+  "input": {
+    "item": "magneticraft2:quartz_ore"
+  },
+  "input_count": 2,
+  "output": {
+    "item": "magneticraft2:crushed_quartz",
+    "count": 2
+  },
+  "byproduct": {
+    "item": "minecraft:gravel",
+    "count": 1
+  },
+  "byproduct_chance": 0.2,
+  "process_time": 115,
+  "mechanical": {
+    "min_speed": 24,
+    "torque": 6
+  }
+}

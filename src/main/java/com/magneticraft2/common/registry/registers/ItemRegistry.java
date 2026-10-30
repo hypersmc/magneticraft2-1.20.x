@@ -8,6 +8,7 @@ import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -63,6 +64,7 @@ public class ItemRegistry {
     public static final RegistryObject<MBdebugger> item_mbdebugger = ITEMS.register("mbdebugger", MBdebugger::new);
     //Blocks to items
 //    public static final RegistryObject<Item> item_pitkiln = fromBlock(PitKilnblock); no reason to have a pitkiln block as its never a block that should be set.
+    public static final RegistryObject<Item> ITEM_ANCIENT_PROJECTOR = ITEMS.register("ancient_projector", () -> new com.magneticraft2.common.hologram.AncientProjectorItem(BlockRegistry.ANCIENT_PROJECTOR.get()));
     public static final RegistryObject<Item> item_projector = fromBlock(protectortest);
     public static final RegistryObject<Item> item_testpowermoduleblock = fromBlock(testpowermoduleblock);
     public static final RegistryObject<Item> item_testpollutionblock = fromBlock(testpollutionblock);
@@ -100,6 +102,49 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_TIN_INGOT = ITEMS.register("tin_ingot", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_CHARGE = ITEMS.register("bronze_charge", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_INGOT = ITEMS.register("bronze_ingot", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WOODEN_GEAR_PATTERN =
+            ITEMS.register("wooden_gear_pattern", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_WOODEN_BEARING_PATTERN =
+            ITEMS.register("wooden_bearing_pattern", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BRONZE_PATTERN_MAKER = fromBlock(BRONZE_PATTERN_MAKER);
+    public static final RegistryObject<Item> ITEM_BRONZE_MOLD_TABLE = fromBlock(BRONZE_MOLD_TABLE);
+    public static final RegistryObject<Item> ITEM_BRONZE_MECHANICAL_LATHE = fromBlock(BRONZE_MECHANICAL_LATHE);
+    public static final RegistryObject<Item> ITEM_BRONZE_STAMP_MILL = fromBlock(BRONZE_STAMP_MILL);
+    public static final RegistryObject<Item> ITEM_ROTARY_ORE_CLASSIFIER = fromBlock(ROTARY_ORE_CLASSIFIER);
+    public static final RegistryObject<Item> ITEM_WATER_SETTLING_TANK = fromBlock(WATER_SETTLING_TANK);
+    public static final RegistryObject<Item> ITEM_CHARCOAL_RETORT = fromBlock(CHARCOAL_RETORT);
+    public static final RegistryObject<Item> ITEM_WOOD_TAR =
+            ITEMS.register("wood_tar", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_SETTLED_SEDIMENT =
+            ITEMS.register("settled_sediment", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CLASSIFIER_SCREEN =
+            ITEMS.register("bronze_classifier_screen", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_CLASSIFIED_CHALCOCITE =
+            ITEMS.register("classified_chalcocite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CLASSIFIED_CASSITERITE =
+            ITEMS.register("classified_cassiterite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_CLASSIFIED_QUARTZ =
+            ITEMS.register("classified_quartz", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BRONZE_STAMP_SHOE =
+            ITEMS.register("bronze_stamp_shoe", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY = fromBlock(BRONZE_FOUNDRY);
+    public static final RegistryObject<Item> ITEM_BRONZE_CASTING_BASIN = fromBlock(BRONZE_CASTING_BASIN);
+    public static final RegistryObject<BronzePouringLadleItem> ITEM_BRONZE_POURING_LADLE =
+            ITEMS.register("bronze_pouring_ladle", BronzePouringLadleItem::new);
+    public static final RegistryObject<Item> ITEM_LATHE_CUTTER =
+            ITEMS.register("bronze_lathe_cutter", () -> new Item(new Item.Properties().durability(64)));
+    public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_GEAR =
+            ITEMS.register("precision_bronze_gear", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_BEARING =
+            ITEMS.register("precision_bronze_bearing", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_GEAR =
+            ITEMS.register("rough_bronze_gear", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_ROUGH_BRONZE_BEARING =
+            ITEMS.register("rough_bronze_bearing", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_GEAR_SAND_MOLD =
+            ITEMS.register("gear_sand_mold", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BEARING_SAND_MOLD =
+            ITEMS.register("bearing_sand_mold", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_BASE = fromBlock(primitive_grinder_bmultiblock);
     public static final RegistryObject<Item> ITEM_PRIMITIVE_GRINDER_TOP = fromBlock(primitive_grindertop);
     public static final RegistryObject<Item> ITEM_GEAR_MEDIUM_WOOD = fromBlock(GEAR_MEDIUM_WOOD);

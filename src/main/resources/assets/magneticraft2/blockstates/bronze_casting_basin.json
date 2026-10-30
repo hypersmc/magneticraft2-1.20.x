@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magneticraft2:block/bronze_casting_basin"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/bronze_casting_basin",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/bronze_casting_basin",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/bronze_casting_basin",
+      "y": 270
+    }
+  }
+}

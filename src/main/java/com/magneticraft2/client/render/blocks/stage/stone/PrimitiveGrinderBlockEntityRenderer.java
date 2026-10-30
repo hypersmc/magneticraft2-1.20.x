@@ -1,6 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.stone;
 
 import com.magneticraft2.common.blockentity.stage.stone.PrimitiveGrinderBMultiblockEntity;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -22,8 +25,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
 
 import java.util.List;
+import java.util.Map;
+import java.util.EnumSet;
 
 public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<PrimitiveGrinderBMultiblockEntity> {
+    private static final ResourceLocation ANIMATION =
+            new ResourceLocation("magneticraft2", "primitive_grinder");
     private static final ResourceLocation ROTOR_MODEL =
             new ResourceLocation("magneticraft2", "multiblock/primitive_grinder_rotor");
     private static final ResourceLocation AXLE_MODEL =
@@ -59,34 +66,41 @@ public class PrimitiveGrinderBlockEntityRenderer implements BlockEntityRenderer<
 
         float inputRotation = getInputRotation(blockEntity, partialTick);
 
-        // The horizontal input axle follows the exact Gear V2 shaft rotation.
-        renderRotatingModel(
-                AXLE_MODEL,
-                Axis.XP,
-                inputRotation,
-                0.0D,
-                0.5D,
-                0.5D,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
+        // The JSON scene drives both moving models from the SAME actual
+        // mechanical input phase: +X horizontal axle, -Y grinding rotor.
+        // Keep the legacy models if the pack is missing the expected named
+        // components or a required baked model/driver fails validation.
+        AnimationDefinition definition = MachineVisualRenderer.definition(ANIMATION);
+        AnimationDefinition rendered = null;
+        if (definition != null
+                && definition.component("input_axle") != null
+                && definition.component("grinding_rotor") != null) {
+            EnumSet<AnimationDefinition.State> states = EnumSet.of(
+                    blockEntity.isCrushing()
+                            ? AnimationDefinition.State.RUNNING
+                            : AnimationDefinition.State.STOPPED);
+            if (blockEntity.isMechanicalInputOverloaded()) {
+                states.add(AnimationDefinition.State.OVERLOADED);
+            }
+            rendered = MachineVisualRenderer.render(
+                    ANIMATION,
+                    new AnimationFrame(Map.of("mechanical_input", inputRotation), states),
+                    blockEntity.getBlockState(),
+                    poseStack, buffer, packedLight, packedOverlay);
+        }
 
-        // Internal right-angle gearing is represented as a 1:1 direction change.
-        // The upper grinding assembly therefore rotates around Y in the opposite direction.
-        renderRotatingModel(
-                ROTOR_MODEL,
-                Axis.YP,
-                -inputRotation,
-                0.5D,
-                0.0D,
-                0.5D,
-                poseStack,
-                buffer,
-                packedLight,
-                packedOverlay
-        );
+        if (rendered == null) {
+            // Original Java path (same pivots/axes): a malformed/missing
+            // animation must never make a working Grinder visually disappear.
+            renderRotatingModel(
+                    AXLE_MODEL, Axis.XP, inputRotation,
+                    0.0D, 0.5D, 0.5D,
+                    poseStack, buffer, packedLight, packedOverlay);
+            renderRotatingModel(
+                    ROTOR_MODEL, Axis.YP, -inputRotation,
+                    0.5D, 0.0D, 0.5D,
+                    poseStack, buffer, packedLight, packedOverlay);
+        }
 
         renderInputWorkpiece(
                 blockEntity,

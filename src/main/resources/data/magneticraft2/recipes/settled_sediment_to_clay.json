@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SS",
+    "SS"
+  ],
+  "key": {
+    "S": {
+      "item": "magneticraft2:settled_sediment"
+    }
+  },
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 1
+  }
+}

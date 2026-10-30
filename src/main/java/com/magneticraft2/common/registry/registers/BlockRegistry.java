@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.block.general.*;
+import com.magneticraft2.common.hologram.AncientProjectorBlock;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
@@ -32,6 +33,15 @@ import com.magneticraft2.common.block.stage.copper.ShaftBlock_wood;
 import com.magneticraft2.common.block.stage.copper.WaterWheelBlock;
 import com.magneticraft2.common.block.stage.copper.WaterWheelFillerBlock;
 import com.magneticraft2.common.block.stage.stone.*;
+import com.magneticraft2.common.block.stage.bronze.BronzePatternMakerBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeMoldTableBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
+import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
+import com.magneticraft2.common.block.stage.bronze.WaterSettlingTankBlock;
+import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -69,6 +79,7 @@ public class BlockRegistry {
 
     public static final RegistryObject<Block> rice_plant = registerBlockWithoutBlockItem("rice_plant", () -> new RicePlantBlock(BlockBehaviour.Properties.of().noOcclusion()));
 
+    public static final RegistryObject<AncientProjectorBlock> ANCIENT_PROJECTOR = BLOCKS.register("ancient_projector", AncientProjectorBlock::new);
     public static final RegistryObject<projectortest> protectortest = BLOCKS.register("projector", projectortest::new);
     public static final RegistryObject<testpowermoduleblock> testpowermoduleblock = BLOCKS.register("testpowermodule", testpowermoduleblock::new);
     public static final RegistryObject<testpollutionblock> testpollutionblock = BLOCKS.register("testpollutionblock", testpollutionblock::new);
@@ -102,6 +113,24 @@ public class BlockRegistry {
     public static final RegistryObject<FlywheelBlock_wood> FLYWHEEL_WOOD = BLOCKS.register("flywheel_wood", FlywheelBlock_wood::new);
     public static final RegistryObject<MechanicalOreWasherBlock> MECHANICAL_ORE_WASHER = BLOCKS.register("mechanical_ore_washer", MechanicalOreWasherBlock::new);
     public static final RegistryObject<MechanicalSifterBlock> MECHANICAL_SIFTER = BLOCKS.register("mechanical_sifter", MechanicalSifterBlock::new);
+    public static final RegistryObject<BronzePatternMakerBlock> BRONZE_PATTERN_MAKER =
+            BLOCKS.register("bronze_pattern_maker", BronzePatternMakerBlock::new);
+    public static final RegistryObject<BronzeMoldTableBlock> BRONZE_MOLD_TABLE =
+            BLOCKS.register("bronze_mold_table", BronzeMoldTableBlock::new);
+    public static final RegistryObject<BronzeMechanicalLatheBlock> BRONZE_MECHANICAL_LATHE =
+            BLOCKS.register("bronze_mechanical_lathe", BronzeMechanicalLatheBlock::new);
+    public static final RegistryObject<BronzeStampMillBlock> BRONZE_STAMP_MILL =
+            BLOCKS.register("bronze_stamp_mill", BronzeStampMillBlock::new);
+    public static final RegistryObject<RotaryOreClassifierBlock> ROTARY_ORE_CLASSIFIER =
+            BLOCKS.register("rotary_ore_classifier", RotaryOreClassifierBlock::new);
+    public static final RegistryObject<WaterSettlingTankBlock> WATER_SETTLING_TANK =
+            BLOCKS.register("water_settling_tank", WaterSettlingTankBlock::new);
+    public static final RegistryObject<CharcoalRetortBlock> CHARCOAL_RETORT =
+            BLOCKS.register("charcoal_retort", CharcoalRetortBlock::new);
+    public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
+            BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
+    public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
+            BLOCKS.register("bronze_casting_basin", BronzeCastingBasinBlock::new);
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(

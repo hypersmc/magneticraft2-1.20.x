@@ -1,6 +1,14 @@
 package com.magneticraft2.client;
 
 import com.magneticraft2.client.model.MultiBlockModelLoader;
+import com.magneticraft2.client.animation.AnimationResourceLoader;
+import com.magneticraft2.client.hologram.HologramRecordingResourceLoader;
+import com.magneticraft2.client.hologram.AncientProjectorRenderer;
+import com.magneticraft2.client.hologram.HologramRenderType;
+import net.minecraftforge.client.event.RegisterShadersEvent;
+import java.io.IOException;
+import com.magneticraft2.client.animation.MachineVisualResourceLoader;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import com.magneticraft2.client.render.blocks.*;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearBlock_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.LargeGearWithHandleBlock_woodRenderer;
@@ -20,6 +28,16 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArm
 import com.magneticraft2.client.render.blocks.stage.copper.CopperFluidTankBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModuleBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeStampMillRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.RotaryOreClassifierRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.WaterSettlingTankRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
+import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
+import net.minecraft.client.renderer.item.ItemProperties;
 import com.magneticraft2.client.render.blocks.stage.copper.CrankBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.ShaftBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.WaterWheelBlockEntityRenderer;
@@ -69,12 +87,19 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
 public class Clientsetup {
     private static final Logger LOGGER = LogManager.getLogger("magneticraft2_clientsetup");
     public static void init(FMLClientSetupEvent e){
-
+        // Built-in item predicate: empty and filled ladles use different
+        // baked models. The server-synced held ItemStack NBT drives the state.
+        e.enqueueWork(() -> ItemProperties.register(
+                ItemRegistry.ITEM_BRONZE_POURING_LADLE.get(),
+                new ResourceLocation(MOD_ID, "filled"),
+                (stack, world, entity, seed) ->
+                        BronzePouringLadleItem.hasMetal(stack) ? 1F : 0F));
     }
     @SubscribeEvent
     public static void onRegisterRenderer(EntityRenderersEvent.RegisterRenderers event) {
         LOGGER.info("Renders are being registered!");
         event.registerBlockEntityRenderer(BlockEntityRegistry.PitKilnblockEntity.get(), PitKilnBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.ANCIENT_PROJECTOR_BE.get(), AncientProjectorRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.projectortestBlockEntity.get(), ProjectorBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.blueprintmultiblockentity.get(), BlueprintMultiblockRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.primitivefurnacemultiblockentity.get(), PrimitiveFurnaceBlockEntityRenderer::new);
@@ -98,6 +123,13 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(), CopperFluidTankBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_INPUT_MODULE_BE.get(), MechanicalInputModuleBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get(), BronzeStampMillRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(), RotaryOreClassifierRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_SETTLING_TANK_BE.get(), WaterSettlingTankRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.PULLEY_BE_WOOD.get(), PulleyBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), ConveyorRollerBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), GearboxBlockEntity_woodRenderer::new);
@@ -115,18 +147,96 @@ public class Clientsetup {
         LOGGER.info("Models are being registered!");
 
         ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+        // Register every model referenced by a validated animation JSON from
+        // the CURRENT resource-pack stack before Forge bakes the models.
+        // This allows packs to select new model ids, not just retexture the
+        // models hardcoded by Java. Never use the previous reload's definitions.
+        AnimationResourceLoader.registerModels(event, resourceManager);
+        // Hologram BERs request these same real Copper Age block models by
+        // their standalone model IDs. Normal blockstate baking alone does not
+        // guarantee the bare ModelManager key exists for a scene renderer.
+        // Keep the data-driven scan above for packs adding their own scenes;
+        // these explicit registrations protect the shipped example archives
+        // on first load and after F3+T.
+        for (String model : new String[]{
+                "block/gear_large_wood",
+                "block/mechanical_input_module",
+                "block/mechanical_brake_wood_frame_y",
+                "block/flywheel_wood_frame_y",
+                "block/overload_disconnect_wood_open_y",
+                "block/overload_disconnect_wood_closed_y",
+                "hologram/gear_medium_damaged",
+                "hologram/empty_projection"
+        }) {
+            event.register(new ResourceLocation(MOD_ID, model));
+        }
         String folderPath = "models/multiblock";
 
         // Get all resources in the multiblock folder
         // BER-only block models are requested directly from ModelManager by
         // ResourceLocation. Register them as top-level models so the baked model
         // lookup cannot fall back to an empty/missing entry.
+
+        // V3 Retort formed-state models are owned by the real port BEs.
+        // Register all facings so ModelManager never falls back to a missing cube.
+        for (String direction : new String[]{"south", "west", "north", "east"}) {
+            for (String role : new String[]{"input", "primary", "byproduct"}) {
+                event.register(new ResourceLocation(MOD_ID,
+                        "multiblock/charcoal_retort_" + direction + "/port_" + role));
+            }
+        }
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
         event.register(new ResourceLocation(MOD_ID, "block/gear_medium_wood"));
+        // Tank-only port wall inserts are BER-rendered inside the REAL
+        // fluid module cells. Explicit registration prevents a missing-model
+        // cube after resource reload; shared module blockstates are unchanged.
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_input_port_insert"));
+        event.register(new ResourceLocation(MOD_ID,
+                "multiblock/water_settling_tank_output_port_insert"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_carriage"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_cross_slide"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_rotor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_input_output_rotor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_arbor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_spindle"));
+        // Register all six cutout models explicitly: relying solely on
+        // the dynamic models folder scan can show missing-model cubes.
+        for (String section : new String[]{"rear", "middle", "front"}) {
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section));
+            event.register(new ResourceLocation(MOD_ID,
+                    "multiblock/rotary_ore_classifier_drum_" + section + "_worn"));
+        }
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame_detail"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_cam"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_start"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_shaft"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel_x"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_input_coupler"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_lower_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_gearbox_frame"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_cross_bearing"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_side_lower_mount"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_upper"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_shaft_tip"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_bevel"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_pulley"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_straight"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_drive_belt_wrap"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_drive_coupling"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_lathe_chuck"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_crank_arm"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_connecting_rod"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/mechanical_sifter_follower"));
@@ -161,6 +271,22 @@ public class Clientsetup {
             event.register(modelResourceLocation);
             LOGGER.info("Registered model: " + modelResourceLocation);
         }
+    }
+
+    @SubscribeEvent
+    public static void onRegisterHologramShaders(RegisterShadersEvent event) throws IOException {
+        // Only the ancient hologram renderer opts into this shader.
+        // Real machines continue using their original vanilla render states.
+        HologramRenderType.registerShaders(event);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterAnimationReloaders(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new AnimationResourceLoader());
+        // Load machine -> scene input bindings from the same active client
+        // resource-pack stack, independently of the animation definition.
+        event.registerReloadListener(new MachineVisualResourceLoader());
+        event.registerReloadListener(new HologramRecordingResourceLoader());
     }
 
     @SubscribeEvent

@@ -1,0 +1,114 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "drum_rear": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_drum_rear",
+      "model_offset": [
+        0,
+        1,
+        -2
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "classifier.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/rotary_ore_classifier_drum_rear_worn",
+          "3": "magneticraft2:multiblock/rotary_ore_classifier_drum_rear_worn",
+          "4": "magneticraft2:multiblock/rotary_ore_classifier_drum_rear_worn",
+          "5": "magneticraft2:multiblock/rotary_ore_classifier_drum_rear_worn"
+        }
+      }
+    },
+    "drum_middle": {
+      "model": "magneticraft2:animated/classifier_gold_middle_drum",
+      "model_offset": [
+        0,
+        1,
+        -1
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "classifier.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/rotary_ore_classifier_drum_middle_worn",
+          "3": "magneticraft2:multiblock/rotary_ore_classifier_drum_middle_worn",
+          "4": "magneticraft2:multiblock/rotary_ore_classifier_drum_middle_worn",
+          "5": "magneticraft2:multiblock/rotary_ore_classifier_drum_middle_worn"
+        }
+      }
+    },
+    "drum_front": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_drum_front",
+      "model_offset": [
+        0,
+        1,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "classifier.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/rotary_ore_classifier_drum_front_worn",
+          "3": "magneticraft2:multiblock/rotary_ore_classifier_drum_front_worn",
+          "4": "magneticraft2:multiblock/rotary_ore_classifier_drum_front_worn",
+          "5": "magneticraft2:multiblock/rotary_ore_classifier_drum_front_worn"
+        }
+      }
+    }
+  },
+  "inputs": {
+    "drum_phase": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "drum"
+    }
+  },
+  "animations": {
+    "drum_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "drum_rear",
+          "property": "rotation",
+          "axis": "z",
+          "input": "drum_phase",
+          "scale": 1
+        },
+        {
+          "target": "drum_middle",
+          "property": "rotation",
+          "axis": "z",
+          "input": "drum_phase",
+          "scale": 1
+        },
+        {
+          "target": "drum_front",
+          "property": "rotation",
+          "axis": "z",
+          "input": "drum_phase",
+          "scale": 1
+        }
+      ]
+    }
+  }
+}

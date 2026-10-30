@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "meaning": "Earliest intended useful processing/extraction unlock. It does NOT gate worldgen, ore mining, JEI, or game progression.",
+  "mining_policy": "All registered ore blocks currently self-drop with a stone-tier pickaxe baseline. Do not impose metal-tool gating that would softlock the first iron bloom; revisit only with tested metal tool progression.",
+  "quality_policy": "Preserve current copper/tin/bronze recipes and the already agreed quality concept. No new grade math or low-grade ingot substitution without a separate decision.",
+  "ages": [
+    {
+      "age": "Stone",
+      "ores": [
+        "kaolinite",
+        "lignite"
+      ],
+      "state": "planned",
+      "purpose": "Basic ceramic feed and low-grade fuel; no production recipe is active yet."
+    },
+    {
+      "age": "Copper",
+      "ores": [
+        "chalcocite",
+        "cassiterite",
+        "quartz"
+      ],
+      "state": "implemented",
+      "purpose": "Copper and Tin concentrates, plus quartz via Grinder → Washer → Sifter."
+    },
+    {
+      "age": "Bronze",
+      "ores": [
+        "magnetite",
+        "hematite",
+        "limonite",
+        "galena"
+      ],
+      "state": "planned",
+      "purpose": "Iron-mineral preparation for the Bloomery; Lead is an optional early byproduct chain, not a bloom requirement."
+    },
+    {
+      "age": "Iron",
+      "ores": [
+        "graphite",
+        "anthracite",
+        "sphalerite",
+        "silver"
+      ],
+      "state": "planned",
+      "purpose": "Carbon processing, high-grade fuels, Zinc/Brass and precious metals."
+    },
+    {
+      "age": "Steel",
+      "ores": [
+        "manganese",
+        "chromite",
+        "garnierite",
+        "kimberlite"
+      ],
+      "state": "planned",
+      "purpose": "Steel alloy additions, Chromium, Nickel and recovered industrial diamonds."
+    },
+    {
+      "age": "Steam",
+      "ores": [
+        "sulfur",
+        "saltpeter",
+        "apatite",
+        "cinnabar"
+      ],
+      "state": "planned",
+      "purpose": "Bulk chemical feedstocks, fertilizer materials and controlled Mercury processing."
+    },
+    {
+      "age": "Gasoline",
+      "ores": [],
+      "state": "planned",
+      "purpose": "Liquid hydrocarbons, petroleum refining and lubrication; no new mandatory ore deposit."
+    },
+    {
+      "age": "Electric Generator",
+      "ores": [
+        "bauxite",
+        "cryolite",
+        "silicium",
+        "titanite",
+        "wolframite",
+        "tantalite",
+        "cobaltite",
+        "platinium"
+      ],
+      "state": "planned",
+      "purpose": "Electric metallurgy, Aluminum and Silicon, specialty metals and electronics."
+    },
+    {
+      "age": "Nuclear",
+      "ores": [
+        "uraninite",
+        "osmiridium"
+      ],
+      "state": "planned",
+      "purpose": "Fuel-cycle metallurgy and endgame advanced materials."
+    }
+  ]
+}

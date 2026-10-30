@@ -1,0 +1,139 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "sieve_crank": {
+      "model": "magneticraft2:animated/sifter_gold_crank",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "sieve_rod": {
+      "model": "magneticraft2:animated/sifter_red_rod",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "sieve_follower": {
+      "model": "magneticraft2:multiblock/mechanical_sifter_follower",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "sieve_carriage": {
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "upper_tray": {
+      "model": "magneticraft2:multiblock/mechanical_sifter_upper_tray",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.78,
+        1.2
+      ],
+      "parent": "sieve_carriage",
+      "render_layer": "solid",
+      "static_rotation": {
+        "axis": "x",
+        "degrees": 10
+      },
+      "model_variants": {
+        "source": "sifter.wear_stage",
+        "models": {
+          "1": "magneticraft2:multiblock/mechanical_sifter_upper_tray_wear_1",
+          "2": "magneticraft2:multiblock/mechanical_sifter_upper_tray_wear_2",
+          "3": "magneticraft2:multiblock/mechanical_sifter_upper_tray_wear_3",
+          "4": "magneticraft2:multiblock/mechanical_sifter_upper_tray_wear_4",
+          "5": "magneticraft2:multiblock/mechanical_sifter_upper_tray_wear_5"
+        }
+      }
+    },
+    "slide_shoes": {
+      "model": "magneticraft2:multiblock/mechanical_sifter_slide_shoes",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "parent": "sieve_carriage",
+      "render_layer": "solid"
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {},
+  "mechanisms": {
+    "sieve_drive": {
+      "type": "slider_crank",
+      "input": "drive_angle",
+      "rotation_axis": "x",
+      "slide_axis": "z",
+      "center": [
+        0.925,
+        0.5,
+        0.5
+      ],
+      "radius": 0.12,
+      "rod_length": 0.4375,
+      "phase_degrees": 90,
+      "parts": {
+        "crank": "sieve_crank",
+        "rod": "sieve_rod",
+        "follower": "sieve_follower",
+        "slider": "sieve_carriage"
+      }
+    }
+  }
+}

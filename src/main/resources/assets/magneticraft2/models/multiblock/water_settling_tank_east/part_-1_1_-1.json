@@ -1,0 +1,222 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "foundation": "magneticraft2:block/settling_tank/foundation",
+    "refractory": "magneticraft2:block/settling_tank/refractory",
+    "lining": "magneticraft2:block/settling_tank/lining",
+    "basin_floor": "magneticraft2:block/settling_tank/basin_floor",
+    "bronze": "magneticraft2:block/settling_tank/bronze",
+    "bronze_joint": "magneticraft2:block/settling_tank/bronze_joint",
+    "riveted_iron": "magneticraft2:block/settling_tank/riveted_iron",
+    "grate": "magneticraft2:block/settling_tank/grate",
+    "sludge": "magneticraft2:block/settling_tank/sludge",
+    "particle": "magneticraft2:block/settling_tank/foundation"
+  },
+  "elements": [
+    {
+      "from": [
+        14,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        9,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#refractory",
+          "uv": [
+            0,
+            7,
+            2,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#refractory",
+          "uv": [
+            14,
+            7,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#refractory",
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#refractory",
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#refractory",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#refractory",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        9,
+        0
+      ],
+      "to": [
+        16,
+        10,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            6,
+            2,
+            7
+          ]
+        },
+        "south": {
+          "texture": "#lining",
+          "uv": [
+            14,
+            6,
+            16,
+            7
+          ]
+        },
+        "east": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            6,
+            16,
+            7
+          ]
+        },
+        "west": {
+          "texture": "#lining",
+          "uv": [
+            0,
+            6,
+            16,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#lining",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#lining",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        10,
+        0
+      ],
+      "to": [
+        16,
+        11,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            5,
+            3,
+            6
+          ]
+        },
+        "south": {
+          "texture": "#riveted_iron",
+          "uv": [
+            13,
+            5,
+            16,
+            6
+          ]
+        },
+        "east": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            5,
+            16,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#riveted_iron",
+          "uv": [
+            0,
+            5,
+            16,
+            6
+          ]
+        },
+        "up": {
+          "texture": "#riveted_iron",
+          "uv": [
+            13,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#riveted_iron",
+          "uv": [
+            13,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

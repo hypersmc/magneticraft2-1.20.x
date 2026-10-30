@@ -1,0 +1,998 @@
+{
+  "schema": 5,
+  "name": "rotary_ore_classifier",
+  "description": "3x3x5 classifier V5: drive module at rear center already has its own working copper bearing and axial shaft. No duplicate stationary bearing ring or dark transverse braces inside the drum. Both rear and front rotating rim surfaces roll on externally mounted ground-supported bronze rollers. The inlet from actual item input remains a short open throat; exposed U/I/O/Y modules, 14 AIR V2 anchors, original recipes and drum axial animation remain unchanged.",
+  "dimensions": [
+    3,
+    3,
+    5
+  ],
+  "layers": [
+    [
+      "SSS",
+      "SAS",
+      "SAS",
+      "SCS",
+      "OAY"
+    ],
+    [
+      "UIA",
+      "PAP",
+      "AAA",
+      "PAP",
+      "AAA"
+    ],
+    [
+      "AAA",
+      "AAA",
+      "AAA",
+      "AAA",
+      "AAA"
+    ]
+  ],
+  "blocks": {
+    "S": "minecraft:stone_bricks",
+    "P": "minecraft:oak_planks",
+    "C": "magneticraft2:rotary_ore_classifier",
+    "U": "magneticraft2:multiblock_item_input",
+    "I": "magneticraft2:mechanical_input_module",
+    "O": "magneticraft2:multiblock_item_primary_output",
+    "Y": "magneticraft2:multiblock_item_byproduct_output",
+    "A": "minecraft:air"
+  },
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "bearing": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "liner": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "drum": {
+    "segments": [
+      -2,
+      -1,
+      0
+    ],
+    "axis": "z",
+    "pivot": [
+      8,
+      8,
+      8
+    ],
+    "centerY": 24,
+    "facetOffset": 11.05,
+    "facetWidth": 9,
+    "skinThickness": 0.85,
+    "bandThickness": 1.1,
+    "inletInset": 2.1
+  },
+  "boxes": [
+    {
+      "name": "stone_rail_west",
+      "material": "stone",
+      "from": [
+        -15,
+        0,
+        -48
+      ],
+      "to": [
+        -5,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "stone_rail_east",
+      "material": "stone",
+      "from": [
+        21,
+        0,
+        -48
+      ],
+      "to": [
+        31,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "rear_stone_tie",
+      "material": "stone",
+      "from": [
+        -5,
+        0,
+        -48
+      ],
+      "to": [
+        21,
+        4.25,
+        -43
+      ]
+    },
+    {
+      "name": "front_stone_tie",
+      "material": "stone",
+      "from": [
+        -5,
+        0,
+        10
+      ],
+      "to": [
+        21,
+        4.25,
+        16
+      ]
+    },
+    {
+      "name": "left_iron_sill",
+      "material": "iron",
+      "from": [
+        -11,
+        4.25,
+        -42
+      ],
+      "to": [
+        -6,
+        8.5,
+        15
+      ]
+    },
+    {
+      "name": "right_iron_sill",
+      "material": "iron",
+      "from": [
+        22,
+        4.25,
+        -42
+      ],
+      "to": [
+        27,
+        8.5,
+        15
+      ]
+    },
+    {
+      "name": "tray_underpan",
+      "material": "bronze",
+      "from": [
+        -6,
+        6,
+        -32
+      ],
+      "to": [
+        22,
+        7.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_wear_lining",
+      "material": "liner",
+      "from": [
+        -5,
+        7.5,
+        -31
+      ],
+      "to": [
+        21,
+        7.75,
+        15
+      ],
+      "collision": false
+    },
+    {
+      "name": "tray_west_lip",
+      "material": "bronze",
+      "from": [
+        -6,
+        7.5,
+        -31
+      ],
+      "to": [
+        -4.75,
+        11.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_east_lip",
+      "material": "bronze",
+      "from": [
+        20.75,
+        7.5,
+        -31
+      ],
+      "to": [
+        22,
+        11.5,
+        16
+      ]
+    },
+    {
+      "name": "tray_cross_rib_-29",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        -29
+      ],
+      "to": [
+        22,
+        6,
+        -27
+      ]
+    },
+    {
+      "name": "tray_cross_rib_-12",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        -12
+      ],
+      "to": [
+        22,
+        6,
+        -10
+      ]
+    },
+    {
+      "name": "tray_cross_rib_7",
+      "material": "iron",
+      "from": [
+        -6,
+        4.3,
+        7
+      ],
+      "to": [
+        22,
+        6,
+        9
+      ]
+    },
+    {
+      "name": "w_rear_timber_post",
+      "material": "timber",
+      "from": [
+        -13,
+        4.25,
+        -31
+      ],
+      "to": [
+        -9,
+        28.2,
+        -27
+      ]
+    },
+    {
+      "name": "w_rear_foot_collar",
+      "material": "bronze",
+      "from": [
+        -13.75,
+        4.25,
+        -31.75
+      ],
+      "to": [
+        -8.25,
+        7,
+        -26.25
+      ]
+    },
+    {
+      "name": "w_rear_upper_clamp",
+      "material": "bronze",
+      "from": [
+        -14,
+        25.5,
+        -31.8
+      ],
+      "to": [
+        -8,
+        28.7,
+        -26.2
+      ]
+    },
+    {
+      "name": "w_rear_top_endgrain",
+      "material": "end",
+      "from": [
+        -13,
+        28.2,
+        -31
+      ],
+      "to": [
+        -9,
+        28.45,
+        -27
+      ],
+      "collision": false
+    },
+    {
+      "name": "w_front_timber_post",
+      "material": "timber",
+      "from": [
+        -13,
+        4.25,
+        7
+      ],
+      "to": [
+        -9,
+        28.2,
+        11
+      ]
+    },
+    {
+      "name": "w_front_foot_collar",
+      "material": "bronze",
+      "from": [
+        -13.75,
+        4.25,
+        6.25
+      ],
+      "to": [
+        -8.25,
+        7,
+        11.75
+      ]
+    },
+    {
+      "name": "w_front_upper_clamp",
+      "material": "bronze",
+      "from": [
+        -14,
+        25.5,
+        6.2
+      ],
+      "to": [
+        -8,
+        28.7,
+        11.8
+      ]
+    },
+    {
+      "name": "w_front_top_endgrain",
+      "material": "end",
+      "from": [
+        -13,
+        28.2,
+        7
+      ],
+      "to": [
+        -9,
+        28.45,
+        11
+      ],
+      "collision": false
+    },
+    {
+      "name": "w_low_longitudinal_girder",
+      "material": "iron",
+      "from": [
+        -13,
+        10,
+        -27
+      ],
+      "to": [
+        -9,
+        13,
+        7
+      ]
+    },
+    {
+      "name": "e_rear_timber_post",
+      "material": "timber",
+      "from": [
+        25,
+        4.25,
+        -31
+      ],
+      "to": [
+        29,
+        28.2,
+        -27
+      ]
+    },
+    {
+      "name": "e_rear_foot_collar",
+      "material": "bronze",
+      "from": [
+        24.25,
+        4.25,
+        -31.75
+      ],
+      "to": [
+        29.75,
+        7,
+        -26.25
+      ]
+    },
+    {
+      "name": "e_rear_upper_clamp",
+      "material": "bronze",
+      "from": [
+        24,
+        25.5,
+        -31.8
+      ],
+      "to": [
+        30,
+        28.7,
+        -26.2
+      ]
+    },
+    {
+      "name": "e_rear_top_endgrain",
+      "material": "end",
+      "from": [
+        25,
+        28.2,
+        -31
+      ],
+      "to": [
+        29,
+        28.45,
+        -27
+      ],
+      "collision": false
+    },
+    {
+      "name": "e_front_timber_post",
+      "material": "timber",
+      "from": [
+        25,
+        4.25,
+        7
+      ],
+      "to": [
+        29,
+        28.2,
+        11
+      ]
+    },
+    {
+      "name": "e_front_foot_collar",
+      "material": "bronze",
+      "from": [
+        24.25,
+        4.25,
+        6.25
+      ],
+      "to": [
+        29.75,
+        7,
+        11.75
+      ]
+    },
+    {
+      "name": "e_front_upper_clamp",
+      "material": "bronze",
+      "from": [
+        24,
+        25.5,
+        6.2
+      ],
+      "to": [
+        30,
+        28.7,
+        11.8
+      ]
+    },
+    {
+      "name": "e_front_top_endgrain",
+      "material": "end",
+      "from": [
+        25,
+        28.2,
+        7
+      ],
+      "to": [
+        29,
+        28.45,
+        11
+      ],
+      "collision": false
+    },
+    {
+      "name": "e_low_longitudinal_girder",
+      "material": "iron",
+      "from": [
+        25,
+        10,
+        -27
+      ],
+      "to": [
+        29,
+        13,
+        7
+      ]
+    },
+    {
+      "name": "bronze_roller_w_rear",
+      "material": "bearing",
+      "from": [
+        -9,
+        15.2,
+        -31
+      ],
+      "to": [
+        -4.25,
+        18.5,
+        -25
+      ]
+    },
+    {
+      "name": "bronze_roller_e_rear",
+      "material": "bearing",
+      "from": [
+        20.25,
+        15.2,
+        -31
+      ],
+      "to": [
+        25,
+        18.5,
+        -25
+      ]
+    },
+    {
+      "name": "iron_roller_axle_w_rear",
+      "material": "iron",
+      "from": [
+        -7.3,
+        18.5,
+        -30.2
+      ],
+      "to": [
+        -6.3,
+        20,
+        -25.8
+      ],
+      "collision": false
+    },
+    {
+      "name": "iron_roller_axle_e_rear",
+      "material": "iron",
+      "from": [
+        22.3,
+        18.5,
+        -30.2
+      ],
+      "to": [
+        23.3,
+        20,
+        -25.8
+      ],
+      "collision": false
+    },
+    {
+      "name": "bronze_roller_w_front",
+      "material": "bearing",
+      "from": [
+        -9,
+        15.2,
+        7
+      ],
+      "to": [
+        -4.25,
+        18.5,
+        13
+      ]
+    },
+    {
+      "name": "bronze_roller_e_front",
+      "material": "bearing",
+      "from": [
+        20.25,
+        15.2,
+        7
+      ],
+      "to": [
+        25,
+        18.5,
+        13
+      ]
+    },
+    {
+      "name": "iron_roller_axle_w_front",
+      "material": "iron",
+      "from": [
+        -7.3,
+        18.5,
+        7.8
+      ],
+      "to": [
+        -6.3,
+        20,
+        12.2
+      ],
+      "collision": false
+    },
+    {
+      "name": "iron_roller_axle_e_front",
+      "material": "iron",
+      "from": [
+        22.3,
+        18.5,
+        7.8
+      ],
+      "to": [
+        23.3,
+        20,
+        12.2
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_outer",
+      "material": "bronze",
+      "from": [
+        -5.8,
+        22,
+        -32
+      ],
+      "to": [
+        -1,
+        23.1,
+        -29.95
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_machined_band",
+      "material": "bearing",
+      "from": [
+        -6.05,
+        22,
+        -30.5
+      ],
+      "to": [
+        -5.8,
+        27,
+        -29.95
+      ],
+      "collision": false
+    },
+    {
+      "name": "rear_feed_support_w",
+      "material": "iron",
+      "from": [
+        -10,
+        23,
+        -30.8
+      ],
+      "to": [
+        -5.25,
+        25.6,
+        -27.2
+      ]
+    },
+    {
+      "name": "front_guide_roller_w",
+      "material": "bearing",
+      "from": [
+        -6.5,
+        17,
+        12
+      ],
+      "to": [
+        -3.46,
+        20.8,
+        15.7
+      ]
+    },
+    {
+      "name": "front_guide_roller_e",
+      "material": "bearing",
+      "from": [
+        19.46,
+        17,
+        12
+      ],
+      "to": [
+        22.5,
+        20.8,
+        15.7
+      ]
+    },
+    {
+      "name": "fine_outlet_guide_plate",
+      "material": "bronze",
+      "from": [
+        -10.5,
+        8,
+        10
+      ],
+      "to": [
+        -5.2,
+        8.65,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "fine_outlet_guide_rib",
+      "material": "bearing",
+      "from": [
+        -10.25,
+        8.2,
+        10.1
+      ],
+      "to": [
+        -9.55,
+        9.9,
+        15.7
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_outlet_guide_plate",
+      "material": "bronze",
+      "from": [
+        20.5,
+        8.1,
+        10
+      ],
+      "to": [
+        25.9,
+        8.75,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_outlet_guide_rib",
+      "material": "bearing",
+      "from": [
+        25.05,
+        8.65,
+        10.1
+      ],
+      "to": [
+        25.75,
+        10,
+        15.7
+      ],
+      "collision": false
+    },
+    {
+      "name": "coarse_drop_rib",
+      "material": "bronze",
+      "from": [
+        20.7,
+        9,
+        12.3
+      ],
+      "to": [
+        21.5,
+        19.2,
+        15.85
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_top_lip",
+      "material": "bronze",
+      "from": [
+        -5.8,
+        26,
+        -32
+      ],
+      "to": [
+        -1,
+        27,
+        -29.95
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_left_wall",
+      "material": "bronze",
+      "from": [
+        -5.65,
+        23.08,
+        -31.9
+      ],
+      "to": [
+        -5.05,
+        26,
+        -30
+      ],
+      "collision": false
+    },
+    {
+      "name": "feed_coupler_right_wall",
+      "material": "bronze",
+      "from": [
+        -1.82,
+        23.08,
+        -31.9
+      ],
+      "to": [
+        -1.08,
+        26,
+        -30
+      ],
+      "collision": false
+    },
+    {
+      "name": "rear_guide_roller_w",
+      "material": "bearing",
+      "from": [
+        -6.5,
+        17,
+        -30.1
+      ],
+      "to": [
+        -3.46,
+        20.8,
+        -26.4
+      ]
+    },
+    {
+      "name": "rear_guide_roller_e",
+      "material": "bearing",
+      "from": [
+        19.46,
+        17,
+        -30.1
+      ],
+      "to": [
+        22.5,
+        20.8,
+        -26.4
+      ]
+    }
+  ],
+  "collisionExtras": [
+    {
+      "name": "drum_floor_contact",
+      "from": [
+        -3.2,
+        11.8,
+        -32
+      ],
+      "to": [
+        19.2,
+        13.6,
+        16
+      ]
+    },
+    {
+      "name": "drum_crown",
+      "from": [
+        -3.2,
+        34.1,
+        -32
+      ],
+      "to": [
+        19.2,
+        36,
+        16
+      ]
+    },
+    {
+      "name": "drum_west_wall",
+      "from": [
+        -4,
+        14,
+        -32
+      ],
+      "to": [
+        -2.5,
+        34.1,
+        16
+      ]
+    },
+    {
+      "name": "drum_east_wall",
+      "from": [
+        18.5,
+        14,
+        -32
+      ],
+      "to": [
+        20,
+        34.1,
+        16
+      ]
+    }
+  ],
+  "anchors": [
+    [
+      0,
+      0,
+      -2
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      -2
+    ],
+    [
+      -1,
+      1,
+      -1
+    ],
+    [
+      1,
+      1,
+      -1
+    ],
+    [
+      -1,
+      2,
+      -2
+    ],
+    [
+      0,
+      2,
+      -2
+    ],
+    [
+      1,
+      2,
+      -2
+    ],
+    [
+      -1,
+      2,
+      -1
+    ],
+    [
+      0,
+      2,
+      -1
+    ],
+    [
+      1,
+      2,
+      -1
+    ],
+    [
+      -1,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      0
+    ]
+  ],
+  "supportContract": {
+    "roots": [
+      "stone_rail_west",
+      "stone_rail_east",
+      "rear_stone_tie",
+      "front_stone_tie"
+    ],
+    "driveBearingOwnedByModule": true,
+    "rearSupportRollers": [
+      "rear_guide_roller_w",
+      "rear_guide_roller_e"
+    ],
+    "feedSupport": "rear_feed_support_w",
+    "frontSupportRollers": [
+      "front_guide_roller_w",
+      "front_guide_roller_e"
+    ],
+    "frontOutputGuides": [
+      "fine_outlet_guide_plate",
+      "coarse_outlet_guide_plate"
+    ],
+    "frontOpenEnd": true
+  }
+}

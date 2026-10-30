@@ -1,0 +1,93 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "gearbox_joint": {
+      "model_offset": [
+        0,
+        0,
+        -2
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ]
+    },
+    "input_rotor": {
+      "model": "magneticraft2:multiblock/bronze_mechanical_lathe_input_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "parent": "gearbox_joint"
+    },
+    "input_output_rotor": {
+      "model": "magneticraft2:multiblock/bronze_mechanical_lathe_input_output_rotor",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "parent": "gearbox_joint",
+      "render_layer": "cutout"
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {
+    "input_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_rotor",
+          "property": "rotation",
+          "axis": [
+            0,
+            0,
+            1
+          ],
+          "input": "drive_angle",
+          "scale": 1
+        }
+      ]
+    },
+    "output_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_output_rotor",
+          "property": "rotation",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "input": "drive_angle",
+          "scale": -1
+        }
+      ]
+    }
+  }
+}

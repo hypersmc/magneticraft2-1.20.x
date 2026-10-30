@@ -1,0 +1,351 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        6.75,
+        6.75,
+        6.75
+      ],
+      "to": [
+        9.25,
+        9.25,
+        9.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            6.75,
+            6.75,
+            9.25,
+            9.25
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        6.25,
+        6.25
+      ],
+      "to": [
+        6.75,
+        9.75,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            6.25,
+            6.75,
+            9.75
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            6.25,
+            6.75,
+            9.75
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            6.25,
+            6.75,
+            9.75
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            5,
+            6.25,
+            6.75,
+            9.75
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        9.25,
+        6.25,
+        6.25
+      ],
+      "to": [
+        11,
+        9.75,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            9.25,
+            6.25,
+            11,
+            9.75
+          ]
+        },
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            9.25,
+            6.25,
+            11,
+            9.75
+          ]
+        },
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            9.25,
+            6.25,
+            11,
+            9.75
+          ]
+        },
+        "down": {
+          "texture": "#bronze",
+          "uv": [
+            9.25,
+            6.25,
+            11,
+            9.75
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.25,
+        5.5,
+        6.25
+      ],
+      "to": [
+        9.75,
+        6.25,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            5.5,
+            9.75,
+            6.25
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            5.5,
+            9.75,
+            6.25
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            5.5,
+            9.75,
+            6.25
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            5.5,
+            9.75,
+            6.25
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.25,
+        9.75,
+        6.25
+      ],
+      "to": [
+        9.75,
+        10.5,
+        9.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            9.75,
+            9.75,
+            10.5
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            9.75,
+            9.75,
+            10.5
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            9.75,
+            9.75,
+            10.5
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            9.75,
+            9.75,
+            10.5
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            6.25,
+            6.25,
+            9.75,
+            9.75
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "variants": {
+    "facing=south,is_formed=true": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_south/part_0_0_0"
+    },
+    "facing=south,is_formed=false": {
+      "model": "magneticraft2:block/rotary_ore_classifier_controller",
+      "y": 0
+    },
+    "facing=west,is_formed=true": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_west/part_0_0_0"
+    },
+    "facing=west,is_formed=false": {
+      "model": "magneticraft2:block/rotary_ore_classifier_controller",
+      "y": 90
+    },
+    "facing=north,is_formed=true": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_north/part_0_0_0"
+    },
+    "facing=north,is_formed=false": {
+      "model": "magneticraft2:block/rotary_ore_classifier_controller",
+      "y": 180
+    },
+    "facing=east,is_formed=true": {
+      "model": "magneticraft2:multiblock/rotary_ore_classifier_east/part_0_0_0"
+    },
+    "facing=east,is_formed=false": {
+      "model": "magneticraft2:block/rotary_ore_classifier_controller",
+      "y": 270
+    }
+  }
+}

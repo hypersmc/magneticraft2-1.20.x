@@ -15,8 +15,382 @@
     {
       "type": "text",
       "text": "$(bold)Bronze alloy$()$(br2)Prepare one Bronze Alloy Charge from three Copper Ingots and one Tin Ingot, then fire it with coal in the Primitive Furnace. One charge produces four Bronze Ingots and Slag.$(br2)Bronze machinery and tools will build from this point."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Wooden patterns$()$(br2)The Pattern Maker is the first Bronze Age bench. Craft it using your first Bronze Ingot, Copper Plates, and a sturdy wooden frame.$(br2)Place the bench, then sneak-right-click with an empty hand to select a gear or bearing pattern. Right-click the bench with a plank to cut a reusable wooden pattern.$(br2)The cutter and selected pattern are represented on the bench itself."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Pattern Maker",
+      "recipe": "magneticraft2:bronze_pattern_maker",
+      "text": "A single-block workbench for reusable gear and bearing patterns. These patterns will be pressed into molds at the Mold Table before casting."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)The Mold Table$()$(br2)Insert a wooden gear or bearing pattern, then Sand (or Red Sand) and a Clay Ball.$(br2)With an empty hand, right-click four times to press the mold. Collect the finished Green Sand Mold by right-clicking empty-handed.$(br2)Sneak-right-click with an empty hand to recover the pattern or unused input materials. The wooden pattern is reusable; one Sand and one Clay Ball are consumed per mold. Install the finished mold into a Bronze Casting Basin to receive one ladle of molten bronze."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mold Table",
+      "recipe": "magneticraft2:bronze_mold_table",
+      "text": "A hand-operated, GUI-less sand molding station. The materials and finished mold are displayed directly on the workbench."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze Foundry$()$(br2)The lower recessed firebox burns solid furnace fuels. The upper refractory crucible accepts Bronze Ingots after you form the structure.$(br2)Fuel warms a persistent brick heat mass. At the configured heat threshold a stored ingot is consumed and one equivalent bronze unit appears in the crucible. Its quality data is retained; unlike an ordinary furnace, the Foundry does not immediately output finished castings."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Foundry Controller",
+      "recipe": "magneticraft2:bronze_foundry",
+      "text": "This crafts only the controller, not the full machine. Place fifteen Bricks blocks and use Visualize on the next page to guide construction."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Foundry",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "B_B"
+          ],
+          [
+            "BBB",
+            "BBB",
+            "B0B"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_foundry",
+          "B": "minecraft:bricks"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the same 3x2x3 foundation: fifteen Bricks blocks and the Foundry Controller, leaving upper centre and upper front-middle air. Right-click the controller to form. Insert fuel by right-clicking the lower firebox, and Bronze Ingots by right-clicking the upper crucible."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Heating the Foundry$()$(br2)Right-click the firebox with solid furnace fuel. Right-click the crucible with a Bronze Ingot to load its charge. Empty-hand clicks show heat, stored charge and crucible contents. Sneak-right-click with an empty hand to recover unused fuel or unmelted ingots from the corresponding opening.$(br2)Heat rises while fuel burns and dissipates when idle; cooling below the lower HEAT threshold solidifies bronze inside the crucible; reheating to the melting threshold liquefies it again without consuming another ingot."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)First melting test$()$(br2)The molten amount is counted in $(italic)ingot-equivalents$(), not fluid millibuckets. Bronze with different quality metadata cannot mix in one batch. The hot/solidified surface changes visually as the heat level changes.$(br2)Use an empty Refractory Pouring Ladle at the tapping valve to extract one molten unit, then pour into a Green Sand Mold in the Casting Basin. Breaking the Foundry returns any unpoured bronze as the original ingots; the new casting stations are explained on the following pages."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Pouring and casting$()$(br2)Craft a Refractory Pouring Ladle and a Bronze Casting Basin. The Foundry's tapping valve now transfers $(bold)one$() hot bronze unit into an empty ladle. The ladle retains the source ingot's quality and cools if you carry it too long.$(br2)A cold, filled ladle cannot be poured. Sneak-right-click it in the air to recover the original Bronze Ingot; the ladle can then be reused."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Refractory Pouring Ladle",
+      "recipe": "magneticraft2:bronze_pouring_ladle",
+      "text": "A refractory cup and bronze fitting for safe manual handling. Holds exactly one ingot-equivalent of molten bronze."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Casting Basin",
+      "recipe": "magneticraft2:bronze_casting_basin",
+      "text": "A one-block refractory receiver with a copper rim. It accepts the Green Sand Gear and Bearing Molds made at the Mold Table."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Casting steps$()$(br2)1. Insert a Gear or Bearing Green Sand Mold into an empty Casting Basin.$(br)2. Either position the Basin directly under the Foundry tap and empty-hand click the valve, or fill a ladle at the valve and right-click the Basin with it.$(br)3. Wait for cooling and collect a Rough Bronze Gear or Bearing Casting.$(br2)Each pour consumes one mold and one molten bronze ingot-equivalent; the wooden pattern remains reusable. Finish rough castings with the Mechanical Lathe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Material accounting$()$(br2)Bronze quality information is carried from ingot to crucible, ladle and rough casting. The Basin doesn't turn bronze directly into precision machine components.$(br2)Unpoured molds may be removed by sneaking with an empty hand. Breaking a Basin during cooling returns the original bronze ingot-equivalent, but the poured sand mold is lost. Breaking after cooling drops the finished rough casting. No fluid pipes transport molten metal."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Mechanical Lathe$()$(br2)Bronze parts cast in sand molds are rough and must be machined before precision use. Build a 5-wide, 3-deep, 2-high Lathe structure from Stone Bricks, Oak Planks and Cut Copper, with a Gear V2 Mechanical Input Module at the lower rear center. Place the controller at the lower front center. Right-click the controller to form.$(br2)Install a cutting tool and supply Gear V2 power to machine rough castings into precision parts. Workpiece, headstock and cutting movement are visible on the formed Lathe."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Controller",
+      "recipe": "magneticraft2:bronze_mechanical_lathe",
+      "text": "Craft the controller, then build the larger 5×2×3 structure shown on the next page. The controller alone cannot turn bronze."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Lathe",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "H___H",
+            "_____"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_lathe",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "H": "minecraft:cut_copper"
+        },
+        "symmetrical": false
+      },
+      "text": "View from the controller-facing side: rear lower center is the Mechanical Input Module. Upper rear row is five Oak Planks; upper middle has Cut Copper at both ends and air between; entire upper front row stays air. The controller is on the lower front middle."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Lathe Cutting Tool",
+      "recipe": "magneticraft2:bronze_lathe_cutter",
+      "text": "Install this replaceable Bronze/Flint cutting tool into the formed Lathe. It wears by one use per finished workpiece, never from idle time."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Using the Lathe$()$(br2)Mount a Rough Bronze Gear or Bearing Casting by right-clicking the formed Lathe. Install a cutting tool. Supply at least 12 RPM and 2.5 torque with Gear V2 at the rear input. The first test cycle takes 160 ticks and stalls without sufficient load supply.$(br2)Empty-hand right-click checks progress and collects finished Precision Bronze Gears/Bearings. Sneak-empty-hand retrieves an unfinished casting or installed cutter. Full source material quality survives machining."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Industrial Ore Breaking$()$(br2)The Stamp Mill does not replace the Copper Grinder: it breaks batches of raw ore much faster, but requires a heavier Gear V2 network and serviceable stamp shoes.$(br2)Crushed ore still goes to the Mechanical Ore Washer and then the Sifter. Your existing Copper production line becomes the foundation of the Bronze factory."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Stamp Mill Controller",
+      "recipe": "magneticraft2:bronze_stamp_mill",
+      "text": "Craft the Bronze Stamp Mill controller using precision bronze components. The formed machine is five blocks wide, four deep and three tall, including a front service shelf that holds the full-size input and output blocks."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Stamp Mill",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBB",
+            "P_PP",
+            "P_PP",
+            "P_PP",
+            "BBBB"
+          ],
+          [
+            "PBBB",
+            "P___",
+            "P___",
+            "P___",
+            "PBBB"
+          ],
+          [
+            "SSSS",
+            "SSSU",
+            "IS0Y",
+            "SSSO",
+            "SSSS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_stamp_mill",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:mechanical_input_module",
+          "P": "minecraft:oak_planks",
+          "B": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "This 5-wide, 4-deep, 3-high Stamp Mill has three complete 1x1 I/O MODULE BLOCKS at GROUND LEVEL in an open service row, one block SOUTH of the controller. Their default wooden/copper ports remain visible for player or conveyor access. Ore input, tailings, and crushed-ore product are left to right from the South. The controller is in the original front-center bottom row and the Gear V2 input sits at the rear center. Keep all 12 specified AIR cells clear; nine of these become V2 render proxies when formed. Build exactly as Visualize shows."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Stamp Shoes",
+      "recipe": "magneticraft2:bronze_stamp_shoe",
+      "text": "The three stamp heads share one replaceable shoe maintenance counter. Each successful two-ore batch consumes one service cycle; a fully worn shoe stops further processing without wasting ore. Right-click with a fresh shoe to service; sneak-right-click empty-handed to inspect wear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Running the Stamp Mill$()$(br2)Feed TWO Chalcocite Ore or TWO Cassiterite Ore to the item input. Gear V2 must supply at least 24 RPM and 6 torque. A 115-tick cycle outputs two units of the corresponding crushed ore; gravel tailings have a 20% chance.$(br2)If the output or tailings port is blocked, the machine waits without consuming more ore. Stop the gears and the cycle pauses. Continue with your existing Washer and Sifter, rather than bypassing separation."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Additional Stamp Mill materials$()$(br2)Two Quartz Ore or two Deepslate Quartz Ore produce two Crushed Quartz in 115 ticks, with a 20% chance of Gravel tailings. Continue through the Ore Washer and Sifter to recover Nether Quartz.$(br2)Two Cobblestone or two Cobbled Deepslate become two Gravel, with no additional tailings. Gravel can then be sifted into Sand with a 25% chance of Flint.$(br2)All Stamp Mill batches need at least 24 RPM and 6 torque. The Mill is a coarse crusher, not a substitute for washing, sorting or later metallurgy."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Rotary Ore Classification$()$(br2)The Stamp Mill is still the bulk ore breaker. The Rotary Ore Classifier is an optional sizing stage before washing: its driven bronze mesh separates fine mineral grains from coarse returns without replacing the Copper Washer or Sifter.$(br2)Screen four Crushed Chalcocite, Cassiterite or Quartz to receive three Screened Fines plus one of the original Crushed Ore in the coarse outlet. The coarse return can be washed normally or collected for another classification batch."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Rotary Ore Classifier",
+      "recipe": "magneticraft2:rotary_ore_classifier",
+      "text": "Compact 3×3×5 bronze screening machine with an open rotating drum and a low internal fines pan. Material enters through the REAL rear-left Item Input module and leaves through the two REAL front Item Output modules. The real Gear V2 module supplies the rear central bearing; external roller cradles support both the rear and front bronze rims, while the short feed sleeve stays attached; the model adds no extra inventory hoppers or collection bins. With Gear V2 power, crushed material feeds through the real item input, tumbles through the bronze screen, and sheds fine grit into the lower pan. Only completed products appear at the two front modules."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Rotary Ore Classifier",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "_____",
+            "_____",
+            "_____"
+          ],
+          [
+            "UP_P_",
+            "I____",
+            "_P_P_"
+          ],
+          [
+            "SSSSO",
+            "S__0_",
+            "SSSSY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:rotary_ore_classifier",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "U": "magneticraft2:multiblock_item_input",
+          "I": "magneticraft2:mechanical_input_module",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Visualize shows all required blocks. Item Input is elevated at the rear-left beside the Gear V2 Mechanical Input; both are actual usable modules. Fines Output (front-left) and Coarse Output (front-right) are the only item collection points—click/automate those blocks, not the internal screen pan. The upper input stays interactable, and a short, braced hollow metal throat leads into the rear drum. The AIR cells are required; fourteen receive transparent V2 display/collision proxies after forming. Rotate Gear V2 shaft along the drum. Both bronze drum rims rest on roller cradles connected to the timber frame. The rear mechanical module provides the only central drive bearing; no fixed bars cross the screen opening. The front remains open for coarse discharge. During a running batch you can follow the ore from the rear inlet, through the rotating drum, to the open discharge end. Fine dust and gravel rattling are light visual/audio feedback from dry screening, not new item drops. Stalled processing freezes material travel and stops those effects."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Bronze Screen",
+      "recipe": "magneticraft2:bronze_classifier_screen",
+      "text": "Install a bronze screen in the formed classifier. The drum mesh visibly wears after successful batches and stops the machine when expired. Right-click with a fresh screen to replace it; old material is not silently consumed while idle."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Screening and washing$()$(br2)Supply Gear V2 at the elevated rear input: at least 24 RPM and 4 torque. A 180-tick screen batch yields three Screened Fines and one coarse Crushed Ore return, exactly conserving four input units.$(br2)Three Screened Fines wash together in 240 ticks using 600 mB clean Water and producing 600 mB Dirty Water. This is faster and uses less water per unit than ordinary crushed-ore washing; both routes produce the same three Washed Ore units. Sift Washed Ore normally for concentrates and final yields.$(br2)Full ports, worn screens or absent Gear V2 power pause the process. No free yield is created by recirculating coarse returns."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Water Recovery$()$(br2)The Water Settling Tank makes the Ore Washer's Dirty Water useful again. Wastewater enters a large REAR settling pool, heavier solids collect at the bottom, and a LOW transverse weir separates it from the smaller clean-water channel at the FRONT.$(br2)This is a passive process, not a powered mixer: every 240 ticks, 600 mB Dirty Water becomes 480 mB ordinary Water and one wet Settled Sediment. The unrecovered 120 mB stays with the sediment. You can see each reservoir's actual stored water level."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Water Settling Tank",
+      "recipe": "magneticraft2:water_settling_tank",
+      "text": "Craft a controller and build a low 5×2×5 settling basin. The controller sits at front-centre on the stone foundation. The Dirty Water inlet belongs in the REAR upper wall, the sediment hatch in the FRONT upper wall and the clean-water outlet in the RIGHT/EAST upper side wall. Every port sits on a Stone Brick support. Follow the next Visualize page for exact placements; do not reuse the old floor-mounted port positions."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Water Settling Tank",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "SSSSS",
+            "S___P",
+            "I___S",
+            "S___S",
+            "SSSOS"
+          ],
+          [
+            "SSSSS",
+            "SSSSS",
+            "SSSS0",
+            "SSSSS",
+            "SSSSS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:water_settling_tank",
+          "S": "minecraft:stone_bricks",
+          "I": "magneticraft2:multiblock_fluid_input",
+          "P": "magneticraft2:multiblock_item_primary_output",
+          "O": "magneticraft2:multiblock_fluid_output"
+        },
+        "symmetrical": false
+      },
+      "text": "$(bold)Water Settling Tank (5×2×5)$()$(br2)The bottom layer is STONE BRICKS except the front-centre Controller (0). The three real ports sit on the UPPER perimeter walls, supported by solid masonry. The Dirty Fluid Input (I) goes in the REAR centre, auto-facing NORTH; the wooden Primary Sediment Output (P) goes at the FRONT-left; and the clean-water Fluid Output (O) goes in the RIGHT/EAST wall, near the clean-water channel, where it automatically faces EAST toward open space. Place both fluid pipes on their outward-facing sides. All other solid cells are Stone Bricks. Keep all A cells empty when building: only SIX are filled on formation to make the low weir and retaining lip. The inlet and clean-water output have matching bronze/masonry wall pieces INSIDE their own real fluid module block spaces, not in adjacent air cells. Their center openings and outward pipe connections remain unobstructed. The copper-coloured rim and corner joints are model details, NOT extra blocks. Right-click the controller to form. Old tanks with floor-level modules must be rebuilt."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Closing the Water Loop$()$(br2)Connect Dirty Water from the Washer to the real upper rear Fluid Input, facing out through the back. Extract sediment from the REAL Primary Item Output in the upper front-left wall. Connect clean Water from the real Fluid Output in the upper RIGHT side wall, facing east toward open space, back to the Washer's water supply.$(br2)The rear Dirty Water Input and right-side clean-water Fluid Output are integrated into the tank walls: each gets two slim wall pieces INSIDE the existing module block, with a top trim and bottom sill. No special substitute block is used. The dirty-water surface stays behind the real inlet block, while clarified water collects in the short front channel. Processing remains 600 mB Dirty Water to 480 mB clean Water and 1 Settled Sediment in 240 ticks; blocked outputs preserve water and progress."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Reclaim Clay from Sediment",
+      "recipe": "magneticraft2:settled_sediment_to_clay",
+      "text": "Four units of wet Settled Sediment give one Clay Ball. This gives sediment a real use without returning the 120 mB unrecovered water from each settling batch."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Charcoal Retort$()$(br2)The sealed Retort produces charcoal fuel for refractory processing and later iron reduction. It takes four burnable logs per 720-tick cycle and burns a SEPARATE solid fuel supply. Each completed cycle yields four Charcoal and one Wood Tar. Wood Tar can be burned in the Retort for 200 ticks; it cannot fuel a complete batch by itself."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Charcoal Retort Controller",
+      "recipe": "magneticraft2:charcoal_retort",
+      "text": "The controller is only one block of a 3x4x3 sealed masonry retort. Use the construction Visualize on the next page."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Charcoal Retort",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P_P",
+            "PPP"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BYB",
+            "B_B",
+            "OBU"
+          ],
+          [
+            "SSS",
+            "SSS",
+            "S0S"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:charcoal_retort",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "P": "minecraft:cut_copper",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Build exactly as Visualize shows. The Patchouli projection reverses row columns relative to the SOUTH JSON blueprint; the actual front ports remain Log Input on the left and Charcoal Output on the right when facing the controller, with Wood Tar collected at the rear. All three are real interactable modules. Keep every required AIR cell clear, including the roof chimney. Right-click the controller to form; supply solid fuel at the controller."
     }
   ],
   "sortnum": 3,
-  "read_by_default": true
+  "read_by_default": true,
+  "extra_recipe_mappings": {
+    "magneticraft2:bronze_foundry": 8,
+    "magneticraft2:bronze_mechanical_lathe": 18,
+    "magneticraft2:bronze_stamp_mill": 23,
+    "magneticraft2:quartz_ore": 27,
+    "magneticraft2:quartz_deepslate_ore": 27,
+    "magneticraft2:rotary_ore_classifier": 29,
+    "magneticraft2:water_settling_tank": 34
+  },
+  "mappings": {
+    "magneticraft2:bronze_pouring_ladle": 13,
+    "magneticraft2:bronze_casting_basin": 14,
+    "magneticraft2:bronze_lathe_cutter": 20,
+    "magneticraft2:bronze_classifier_screen": 31,
+    "magneticraft2:settled_sediment": 37
+  }
 }
