@@ -96,8 +96,17 @@ for(let y=0;y<4;y++){
  const pageLayer=page.multiblock.pattern[3-y];
  for(let iz=0;iz<5;iz++){
   const row=canonical.structure.layout['layer'+(y+1)][iz];
-  const reversed=[...row].reverse().map(x=>x==='C'?'0':x).join('');
+  const reversed=[...row].reverse().map(x=>x==='C'?'0':x==='A'?'_':x).join('');
   assert.equal(pageLayer[iz],reversed,'Patchouli projection drift at '+y+'/'+iz);
+ }
+}
+// Patchouli reserves '_' for empty cells; every other symbol needs a mapping.
+for (const page of book.pages.filter(p=>p.type==='patchouli:multiblock')) {
+ const {pattern,mapping}=page.multiblock;
+ for (const layer of pattern) for (const row of layer) for (const symbol of row) {
+  if (symbol==='_' || symbol===' ') continue;
+  assert.ok(Object.hasOwn(mapping,symbol),
+   'Unmapped Patchouli multiblock symbol '+symbol+' on page '+page.name);
  }
 }
 assert.equal(j(resource+'models/item/refractory_kiln.json').parent,
