@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -46,7 +46,7 @@
       "from": [
         0,
         0,
-        3
+        4
       ],
       "to": [
         16,
@@ -57,7 +57,7 @@
         "west": {
           "texture": "#brick",
           "uv": [
-            3,
+            4,
             0,
             16,
             16
@@ -72,35 +72,62 @@
         0
       ],
       "to": [
-        0.8,
+        4,
         16,
-        3
+        4
       ],
       "faces": {
-        "west": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            3,
-            16
-          ]
-        },
         "north": {
-          "texture": "#iron",
+          "texture": "#timberEnd",
           "uv": [
-            15.2,
+            12,
             0,
             16,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#timberEnd",
           "uv": [
             0,
             0,
-            0.8,
+            4,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#timberEnd",
+          "uv": [
+            12,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            0,
+            4,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            12,
+            4,
             16
           ]
         }

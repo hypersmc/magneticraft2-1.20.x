@@ -110,8 +110,41 @@ assert.deepEqual(custom,[],'Machine-specific custom textures on baked body');
 for(const name of [
  'minecraft:block/bricks','minecraft:block/stone_bricks','minecraft:block/magma',
  'minecraft:block/black_concrete','minecraft:block/polished_deepslate',
- 'minecraft:block/iron_block'])
+ 'minecraft:block/polished_blackstone'])
  assert.ok(materialTextures.has(name),'Missing intended vanilla texture '+name);
+
+/** Screenshot-driven structure checks: strong jointed supports, dark grilles,
+ * front gable, real door and narrower brick chimney, all four orientations. */
+const at=(x,y,z)=>assets.get(base+
+ 'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_'+x+'_'+y+'_'+z+'.json');
+const contains=(m,from,to,texture)=>m.elements.some(e=>
+ e.from.every((n,i)=>Math.abs(n-from[i])<.001)&&
+ e.to.every((n,i)=>Math.abs(n-to[i])<.001)&&
+ Object.values(e.faces).some(f=>f.texture==='#'+texture));
+assert.ok(contains(at(2,2,-3),[12,0,0],[16,16,4],'timberEnd'),
+ 'Structural pier post missing between roasting bays');
+assert.ok(contains(at(2,3,-3),[12,12,0],[16,16,16],'timber'),
+ 'Continuous side roof-bearing beam missing');
+assert.ok(contains(at(2,3,-1),[13,12,0],[16,16,16],'timber'),
+ 'Arched opening lacks connected timber header');
+assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),
+ 'Front gable horizontal beam missing');
+assert.ok(contains(at(0,2,0),[4,1,14],[12,15,15],'iron'),
+ 'Recessed charging-door plate missing');
+const frontRoof=at(0,4,0);
+assert.ok(frontRoof.elements.some(e=>e.from[2]===14&&e.to[2]===16&&
+  Object.values(e.faces).some(f=>f.texture==='#roofTrim')),
+ 'Solid front-gable roof fascia missing');
+assert.ok(contains(at(-1,6,-7),[12,0,0],[16,16,16],'brick'),
+ 'Chimney left flank must be narrow brick masonry, not an oversized tower');
+assert.ok(contains(at(1,6,-7),[0,0,0],[4,16,16],'brick'),
+ 'Chimney right flank must retain 4px real wall thickness');
+const chimneyBoxes=assets.get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json').collision;
+assert.ok(chimneyBoxes.some(b=>b[1]===96&&b[4]===112&&b[3]-b[0]===4),
+ 'Chimney collision must match narrowed baked chimney shape');
+assert.ok(chimneyBoxes.some(b=>b[1]===96&&b[4]===112&&b[5]-b[2]===4),
+ 'Chimney collision side wall must be only 4px deep');
+
 const voxel=get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json');
 assert.equal(voxel.collision.length,169);
 assert.deepEqual(voxel.selection,voxel.collision);

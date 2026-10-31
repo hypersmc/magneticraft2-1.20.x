@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -163,7 +163,7 @@
       ],
       "to": [
         3,
-        16,
+        12,
         6
       ],
       "faces": {
@@ -171,7 +171,7 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
+            4,
             6,
             16
           ]
@@ -180,7 +180,7 @@
           "texture": "#brick",
           "uv": [
             10,
-            0,
+            4,
             16,
             16
           ]
@@ -189,7 +189,7 @@
           "texture": "#brick",
           "uv": [
             13,
-            0,
+            4,
             16,
             16
           ]
@@ -198,7 +198,7 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
+            4,
             3,
             16
           ]
@@ -227,7 +227,7 @@
       "from": [
         3,
         12,
-        0
+        3
       ],
       "to": [
         16,
@@ -238,7 +238,7 @@
         "west": {
           "texture": "#brick",
           "uv": [
-            0,
+            3,
             0,
             6,
             4
@@ -249,7 +249,7 @@
           "uv": [
             10,
             0,
-            16,
+            13,
             4
           ]
         },
@@ -275,7 +275,7 @@
           "texture": "#brick",
           "uv": [
             3,
-            0,
+            3,
             16,
             6
           ]
@@ -286,7 +286,7 @@
             3,
             10,
             16,
-            16
+            13
           ]
         }
       }
@@ -304,7 +304,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             0,
             4,
@@ -313,7 +313,7 @@
           ]
         },
         "east": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             10,
             4,
@@ -322,7 +322,7 @@
           ]
         },
         "north": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             9,
             4,
@@ -331,7 +331,7 @@
           ]
         },
         "south": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             3,
             4,
@@ -340,7 +340,7 @@
           ]
         },
         "up": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             3,
             0,
@@ -349,11 +349,79 @@
           ]
         },
         "down": {
-          "texture": "#refractory",
+          "texture": "#brick",
           "uv": [
             3,
             10,
             7,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        3
+      ],
+      "faces": {
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            3,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            13,
+            0,
+            16,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        },
+        "down": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            13,
+            16,
             16
           ]
         }
@@ -491,38 +559,6 @@
             12,
             13.25,
             15
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        12,
-        0.09999999999999964
-      ],
-      "to": [
-        16,
-        15,
-        0.9000000000000004
-      ],
-      "faces": {
-        "north": {
-          "texture": "#timber",
-          "uv": [
-            0,
-            1,
-            16,
-            4
-          ]
-        },
-        "up": {
-          "texture": "#timber",
-          "uv": [
-            0,
-            0.09999999999999964,
-            16,
-            0.9000000000000004
           ]
         }
       }

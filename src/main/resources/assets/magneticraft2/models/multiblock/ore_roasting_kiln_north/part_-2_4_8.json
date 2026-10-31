@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -28,16 +28,16 @@
       "to": [
         16,
         7,
-        16
+        14
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             12,
             0,
             16,
-            16
+            14
           ]
         }
       }
@@ -51,15 +51,15 @@
       "to": [
         16,
         7,
-        16
+        14
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             9,
-            16,
+            14,
             10
           ]
         }
@@ -69,7 +69,7 @@
       "from": [
         12,
         0,
-        0
+        14
       ],
       "to": [
         16,
@@ -77,13 +77,54 @@
         16
       ],
       "faces": {
+        "up": {
+          "texture": "#roofTrim",
+          "uv": [
+            12,
+            14,
+            16,
+            16
+          ]
+        },
         "south": {
-          "texture": "#brick",
+          "texture": "#roofTrim",
           "uv": [
             12,
             9,
             16,
             16
+          ]
+        },
+        "north": {
+          "texture": "#roofTrim",
+          "uv": [
+            0,
+            9,
+            4,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        6,
+        14
+      ],
+      "to": [
+        16,
+        7,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#roofTrim",
+          "uv": [
+            14,
+            9,
+            16,
+            10
           ]
         }
       }
@@ -97,16 +138,16 @@
       "to": [
         12,
         6,
-        16
+        14
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             8,
             0,
             12,
-            16
+            14
           ]
         }
       }
@@ -120,15 +161,15 @@
       "to": [
         12,
         6,
-        16
+        14
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             10,
-            16,
+            14,
             12
           ]
         }
@@ -138,7 +179,7 @@
       "from": [
         8,
         0,
-        0
+        14
       ],
       "to": [
         12,
@@ -146,13 +187,54 @@
         16
       ],
       "faces": {
+        "up": {
+          "texture": "#roofTrim",
+          "uv": [
+            8,
+            14,
+            12,
+            16
+          ]
+        },
         "south": {
-          "texture": "#brick",
+          "texture": "#roofTrim",
           "uv": [
             8,
             10,
             12,
             16
+          ]
+        },
+        "north": {
+          "texture": "#roofTrim",
+          "uv": [
+            4,
+            10,
+            8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        4,
+        14
+      ],
+      "to": [
+        12,
+        6,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#roofTrim",
+          "uv": [
+            14,
+            10,
+            16,
+            12
           ]
         }
       }
@@ -166,16 +248,16 @@
       "to": [
         8,
         4,
-        16
+        14
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             4,
             0,
             8,
-            16
+            14
           ]
         }
       }
@@ -189,15 +271,15 @@
       "to": [
         8,
         4,
-        16
+        14
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             12,
-            16,
+            14,
             13
           ]
         }
@@ -207,7 +289,7 @@
       "from": [
         4,
         0,
-        0
+        14
       ],
       "to": [
         8,
@@ -215,13 +297,54 @@
         16
       ],
       "faces": {
+        "up": {
+          "texture": "#roofTrim",
+          "uv": [
+            4,
+            14,
+            8,
+            16
+          ]
+        },
         "south": {
-          "texture": "#brick",
+          "texture": "#roofTrim",
           "uv": [
             4,
             12,
             8,
             16
+          ]
+        },
+        "north": {
+          "texture": "#roofTrim",
+          "uv": [
+            8,
+            12,
+            12,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        14
+      ],
+      "to": [
+        8,
+        4,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#roofTrim",
+          "uv": [
+            14,
+            12,
+            16,
+            13
           ]
         }
       }
@@ -231,6 +354,52 @@
         0,
         0,
         0
+      ],
+      "to": [
+        4,
+        3,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#roof",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        4,
+        3,
+        14
+      ],
+      "faces": {
+        "west": {
+          "texture": "#roof",
+          "uv": [
+            0,
+            13,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        14
       ],
       "to": [
         4,
@@ -242,29 +411,24 @@
           "texture": "#roofTrim",
           "uv": [
             0,
-            0,
+            14,
             4,
             16
           ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        0,
-        0
-      ],
-      "to": [
-        4,
-        3,
-        16
-      ],
-      "faces": {
-        "west": {
+        },
+        "south": {
           "texture": "#roofTrim",
           "uv": [
             0,
+            13,
+            4,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#roofTrim",
+          "uv": [
+            12,
             13,
             16,
             16
@@ -276,7 +440,7 @@
       "from": [
         0,
         0,
-        0
+        14
       ],
       "to": [
         4,
@@ -284,12 +448,12 @@
         16
       ],
       "faces": {
-        "south": {
-          "texture": "#brick",
+        "west": {
+          "texture": "#roofTrim",
           "uv": [
-            0,
+            14,
             13,
-            4,
+            16,
             16
           ]
         }

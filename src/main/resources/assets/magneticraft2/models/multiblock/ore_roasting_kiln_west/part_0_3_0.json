@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -50,7 +50,7 @@
       ],
       "to": [
         16,
-        16,
+        12,
         16
       ],
       "faces": {
@@ -58,7 +58,7 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
+            4,
             16,
             16
           ]
@@ -67,46 +67,68 @@
     },
     {
       "from": [
-        1.5999999999999996,
         0,
-        2
+        12,
+        0
       ],
       "to": [
-        1.9000000000000004,
-        6,
-        14
+        4,
+        16,
+        16
       ],
       "faces": {
-        "west": {
-          "texture": "#iron",
+        "east": {
+          "texture": "#timber",
           "uv": [
-            2,
-            10,
-            14,
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            4,
             16
           ]
-        }
-      }
-    },
-    {
-      "from": [
-        1.0999999999999996,
-        6,
-        1
-      ],
-      "to": [
-        1.5999999999999996,
-        12,
-        15
-      ],
-      "faces": {
-        "west": {
-          "texture": "#refractory",
+        },
+        "down": {
+          "texture": "#timber",
           "uv": [
-            1,
+            0,
+            0,
             4,
-            15,
-            10
+            16
           ]
         }
       }

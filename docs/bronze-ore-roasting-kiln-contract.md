@@ -95,3 +95,45 @@ local-geometry and proportional-UV audits. A source-side absence of coplanar
 model faces is **not** proof of an in-game fix; all orientations and grazing
 camera angles still require screenshots. The HEAT, fuel and selective roasting
 mechanics remain out of scope.
+
+## 2026-11-01 — reference-detail pass after user comparison
+
+The new in-game screenshots show a much closer industrial building, but they
+also expose missing structural details: almost no visible timber framing,
+three very bright rectangular grille openings, a thin front gable and an
+overly square chimney. This iteration is targeted at those **existing model
+shortcomings**, not additional machinery.
+
+- Replaced the former thin side-wall trim with **real four-pixel-thick
+  loadbearing spruce posts** at the front corners and between the six arched
+  bays. The posts rise from the existing stone-brick foundation and join
+  continuous **four-pixel-high spruce headers** beneath both long eaves.
+- Rebuilt the upper part of each arch so the timber header **replaces**
+  the previous front portion of the brick crown rather than occupying the
+  same space. The first/rear corner bays use proper timber end posts.
+  Brick shoulders, dark recesses and stone sills stay structurally connected.
+- Added one substantial five-block-wide front gable crossbeam and made the
+  *actual* front charging door recessed and opaque by removing the brick face
+  that had obscured it. Two-pixel-deep Deepslate fascia volumes now finish the
+  front and rear roof slopes instead of extra coplanar decorative sheets.
+- Changed the tall grille texture from glaring vanilla
+  `minecraft:block/iron_block` to darker *vanilla polished blackstone*.
+  Existing brick, wood, stone, deepslate, magma and soot art remains vanilla.
+  The only bespoke textures remain the genuine input/output port markings.
+- Preserved the canonical **5×8×9 multiblock, eight-layer Patchouli pattern
+  and genuine 3×3 brick chimney ring**. The chimney's *formed baked* profile is
+  narrowed to a 1.5-block-wide stack with four-pixel-thick masonry walls, a
+  stone capped rim and a true central open AIR flue. **Voxel V2 collision was
+  updated to follow that same narrower visible shaft.** The wide ring below
+  remains the actual supporting masonry base.
+
+The generated block-local model audit found no same-normal overlapping
+coplanar face rectangles, invalid cuboids, stretched native-16px UVs or
+missing texture aliases. That audit does not claim an in-game fix, a successful
+Gradle build or any FPS improvement.
+
+**Required screenshot verification:** front gable, all three side arches,
+each timber-pier junction, roof-to-gable returns, chimney from multiple
+angles, and the actual real ports. Test all four orientations and confirm
+existing Refractory Kiln gameplay remains unchanged. The Ore Roasting Kiln
+still performs no roasting: processing and chemistry are out of scope.

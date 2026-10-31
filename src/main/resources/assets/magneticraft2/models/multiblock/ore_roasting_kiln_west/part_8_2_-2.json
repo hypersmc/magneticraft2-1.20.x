@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -168,7 +168,7 @@
       ],
       "faces": {
         "east": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             10,
             0,
@@ -177,7 +177,7 @@
           ]
         },
         "west": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             0,
             0,
@@ -186,7 +186,7 @@
           ]
         },
         "south": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             13,
             0,
@@ -195,7 +195,7 @@
           ]
         },
         "north": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             0,
             0,
@@ -204,7 +204,7 @@
           ]
         },
         "up": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             13,
             0,
@@ -213,7 +213,7 @@
           ]
         },
         "down": {
-          "texture": "#brick",
+          "texture": "#timberEnd",
           "uv": [
             13,
             10,

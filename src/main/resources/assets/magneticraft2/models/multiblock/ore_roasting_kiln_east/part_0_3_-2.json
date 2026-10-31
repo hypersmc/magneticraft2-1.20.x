@@ -12,7 +12,7 @@
     "iron": "minecraft:block/polished_deepslate",
     "soot": "minecraft:block/black_concrete",
     "ember": "minecraft:block/magma",
-    "grate": "minecraft:block/iron_block",
+    "grate": "minecraft:block/polished_blackstone",
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
@@ -23,11 +23,11 @@
       "from": [
         0,
         0,
-        0
+        4
       ],
       "to": [
         16,
-        16,
+        12,
         16
       ],
       "faces": {
@@ -35,31 +35,8 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
-            16,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        3,
-        0,
-        0
-      ],
-      "to": [
-        16,
-        16,
-        16
-      ],
-      "faces": {
-        "north": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            13,
+            4,
+            12,
             16
           ]
         }
@@ -72,34 +49,61 @@
         0
       ],
       "to": [
-        3,
         16,
-        0.8000000000000007
+        12,
+        4
       ],
       "faces": {
-        "north": {
-          "texture": "#iron",
-          "uv": [
-            13,
-            0,
-            16,
-            16
-          ]
-        },
         "west": {
-          "texture": "#iron",
+          "texture": "#timberEnd",
           "uv": [
             0,
-            0,
-            0.8000000000000007,
+            4,
+            4,
             16
           ]
         },
         "east": {
-          "texture": "#iron",
+          "texture": "#timberEnd",
           "uv": [
-            15.2,
+            12,
+            4,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#timberEnd",
+          "uv": [
             0,
+            4,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            4,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#timberEnd",
+          "uv": [
+            0,
+            12,
             16,
             16
           ]
@@ -110,20 +114,47 @@
       "from": [
         0,
         12,
-        0.09999999999999964
+        0
       ],
       "to": [
+        12,
         16,
-        15,
-        0.9000000000000004
+        4
       ],
       "faces": {
-        "north": {
+        "west": {
           "texture": "#timber",
           "uv": [
             0,
-            1,
+            0,
+            4,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
             16,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            4,
+            0,
+            16,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            12,
             4
           ]
         },
@@ -131,9 +162,86 @@
           "texture": "#timber",
           "uv": [
             0,
-            0.09999999999999964,
+            0,
+            12,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            12,
+            12,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        12,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
             16,
-            0.9000000000000004
+            4
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            16,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            16
           ]
         }
       }
