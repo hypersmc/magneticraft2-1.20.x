@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * One canonical 5x6x9 SOUTH blueprint: rotate four ways, bake block-local
+ * One canonical 5x8x9 SOUTH blueprint: rotate four ways, bake block-local
  * models, Voxel V2 roof and chimney, and generate Patchouli-compatible layout.
  */
 import fs from 'node:fs';
@@ -8,7 +8,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {roastVisual,roastPort,roofStep} from './visuals.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
-const W=5,H=6,D=9,dirs=['south','west','north','east'];
+const W=5,H=8,D=9,dirs=['south','west','north','east'];
 const materials={S:'minecraft:stone_bricks',B:'minecraft:bricks',
  C:'magneticraft2:ore_roasting_kiln',U:'magneticraft2:multiblock_item_input',
  O:'magneticraft2:multiblock_item_primary_output',A:'minecraft:air'};
@@ -31,7 +31,7 @@ export function typeAt(x,y,z){
  if(y>=1&&y<=3)
   return Math.abs(x)===2||z===0||z===-8?'B':'A';
  if(y===4)return x===0&&z===-7?'A':'B';
- if(y===5)return Math.abs(x)<=1&&z>=-8&&z<=-6&&
+ if(y>=5&&y<=7)return Math.abs(x)<=1&&z>=-8&&z<=-6&&
   !(x===0&&z===-7)?'B':'A';
  throw Error('Invalid layer '+y);
 }

@@ -32,12 +32,12 @@ const textures={
  roofTrim:'minecraft:block/deepslate_tiles',
  timber:'minecraft:block/spruce_planks',
  timberEnd:'minecraft:block/stripped_spruce_log',
- refractory:'magneticraft2:block/material/refractory_brick',
- iron:'magneticraft2:block/ore_roasting_kiln/iron',
- soot:'magneticraft2:block/ore_roasting_kiln/soot',
- ember:'magneticraft2:block/ore_roasting_kiln/ember',
- grate:'magneticraft2:block/ore_roasting_kiln/grate',
- bronze:'magneticraft2:block/ore_roasting_kiln/bronze',
+ refractory:'minecraft:block/smooth_stone',
+ iron:'minecraft:block/polished_deepslate',
+ soot:'minecraft:block/black_concrete',
+ ember:'minecraft:block/magma',
+ grate:'minecraft:block/iron_block',
+ bronze:'minecraft:block/cut_copper',
  input:'magneticraft2:block/ore_roasting_kiln/input',
  output:'magneticraft2:block/ore_roasting_kiln/output',
  particle:'minecraft:block/bricks'
@@ -104,96 +104,61 @@ function addRoof(E,add,c){
   add([0,0,0],[16,2,16],'roofTrim',[x===2?'east':'west']);
 }
 
-function aperturePanel(add,x,y0,y1,z0,z1,material,depth=14.0){
- const face=faceSide(x);
- const a=x===2?[depth,y0,z0]:[16-depth-.18,y0,z0];
- const b=x===2?[depth+.18,y1,z1]:[16-depth,y1,z1];
- add(a,b,material,[face]);
-}
-function arch(cell,add){
- const {x,y,z}=cell;
- // A single arch spans two adjacent Z cells. The earlier implementation
- // reversed the outer jamb positions and put pillars on the SHARED seam.
- const frontHalf=rowStarts.has(z); // z=-1,-4,-7, outer edge at local Z=16
- const backHalf=rowEnds.has(z);    // z=-2,-5,-8, outer edge at local Z=0
- if(!frontHalf&&!backHalf)throw Error('Non-arch roasting segment '+z);
-
- // An opaque full-cell fire-chamber backplate prevents sky/terrain
- // leaking around the grilles. Recess is inboard of actual masonry.
- aperturePanel(add,x,0,16,0,16,'soot',13.0);
-
- if(y===1){
-  aperturePanel(add,x,3,16,0,16,'ember',13.65);
-  aperturePanel(add,x,0,3,0,16,'refractory',15.25);
-  aperturePanel(add,x,3,4,0,16,'iron',15.4);
- }else if(y===2){
-  aperturePanel(add,x,0,16,0,16,'ember',13.65);
- }else if(y===3){
-  // The whole curved crown belongs to ONE two-cell-wide opening.
-  // Narrowed shoulders appear only at the true outer corners.
-  aperturePanel(add,x,0,9,0,16,'ember',13.65);
-  aperturePanel(add,x,12,16,0,16,'brick',15.4);
-  aperturePanel(add,x,10,12,0,16,'refractory',15.55);
-  if(frontHalf){
-   aperturePanel(add,x,0,11,13,16,'brick',15.5);
-   aperturePanel(add,x,7,12,9,13,'refractory',15.5);
-  }
-  if(backHalf){
-   aperturePanel(add,x,0,11,0,3,'brick',15.5);
-   aperturePanel(add,x,7,12,3,7,'refractory',15.5);
-  }
-  // Split keystone spans the shared seam without creating a centre pillar.
-  if(frontHalf)aperturePanel(add,x,9,13,0,4,'refractory',15.7);
-  if(backHalf)aperturePanel(add,x,9,13,12,16,'refractory',15.7);
- }
- if(y===1||y===2){
-  // Full-height OUTER jambs only. Do not fill the middle seam.
-  if(frontHalf)aperturePanel(add,x,0,16,13,16,'brick',15.5);
-  if(backHalf)aperturePanel(add,x,0,16,0,3,'brick',15.5);
-
-  // Real iron grille bars tie the lower sill to the stone arch crown.
-  for(const zz of [5,11])
-   aperturePanel(add,x,4,16,zz,zz+1,'grate',15.7);
- }
-}
-
 /**
- * PILOT: one 2x3-block roasting aperture (right side, nearest front).
- * The remaining five apertures deliberately retain their old appearance
- * until this bay passes straight-on and grazing-angle inspection.
- * Cuboids use existing 16px textures and have physical return faces.
+ * Six matching arched, recessed furnace windows. The old version overlaid
+ * paper-thin textured planes and coplanar 3D pieces. Each wall cell now
+ * contains a CLOSED back wall, a real inset, solid outer jambs, a masonry
+ * sill / crown, and full-thickness grille bars. All volumes are disjoint
+ * where they share an outward-facing plane: no decorated sheet over a block
+ * face and no accidental central mullion.
+ *
+ * x is outward on the RIGHT side, and mirrored for the LEFT side. All
+ * coordinates are native 16px and existing Minecraft textures are used.
  */
-export function isPilotBay(c){
- return c.x===2&&c.y>=1&&c.y<=3&&(c.z===-2||c.z===-1);
+export function isRoastingBay(c){
+ return Math.abs(c.x)===2 && openings.has(c.z) && c.y>=1 && c.y<=3;
 }
-function solidBayBox(add,from,to,mat){
- add(from,to,mat,['north','south','east','west','up','down']);
+function mirrorBoxX(from,to,left){
+ return left?[[16-to[0],from[1],from[2]],[16-from[0],to[1],to[2]]]:
+             [from,to];
 }
-function pilotRoastingBay(c,add){
- if(!isPilotBay(c))throw Error('Not the chosen pilot bay');
- const backHalf=c.z===-2;
- // Exterior +X=16. Six-pixel-deep cavity; no paper-thin overlays.
- solidBayBox(add,[0,0,0],[9,16,16],'brick');
- solidBayBox(add,[9,0,0],[10,16,16],'soot');
- solidBayBox(add,[10,0,0],[10.5,c.y===3?12:16,16],'ember');
- // The jambs are on the OUTER ends, not on the shared Z seam.
- if(backHalf)solidBayBox(add,[9,0,0],[16,16,3],'brick');
- else solidBayBox(add,[9,0,13],[16,16,16],'brick');
+function box6(add,from,to,mat,left){
+ const [a,b]=mirrorBoxX(from,to,left);
+ add(a,b,mat,['north','south','east','west','up','down']);
+}
+function volumeArch(c,add){
+ if(!isRoastingBay(c))throw Error('Out-of-bounds roaster arch');
+ const left=c.x===-2,backHalf=rowEnds.has(c.z);
+ const outerA=backHalf?0:13,outerB=backHalf?3:16;
+ const innerA=backHalf?3:0,innerB=backHalf?16:13;
+ const p=(a,b,m)=>box6(add,a,b,m,left);
+ // Back wall is nine pixels of structural brick. Its interior is a flat,
+ // fully opaque dark wall; no daylight can shine between the grille bars.
+ p([0,0,0],[9,16,16],'brick');
+ p([9,0,0],[10,16,16],'soot');
+ // The warmed ore bed is only low in the cavity, not a three-block-high
+ // blanket of noisy custom "embers". The rest remains dark inside.
+ if(c.y===1)p([10,3,innerA],[11,8,innerB],'ember');
+ // These outer jambs touch the actual brick wall and are on the outside
+ // of the TWO-block bay, not between its adjoining cells.
+ p([10,0,outerA],[16,16,outerB],'brick');
  if(c.y===1){
-  // Connected to the actual stone-brick foundation below.
-  solidBayBox(add,[10,0,0],[16,3,16],'refractory');
-  solidBayBox(add,[10,3,0],[16,4,16],'iron');
+  // Sill fills only the OPEN Z span, so it never overlaps the jamb.
+  p([10,0,innerA],[16,3,innerB],'refractory');
+  p([10,3,innerA],[16,4,innerB],'iron');
  }
  if(c.y===3){
-  // Substantial stepped upper arch, with side shoulder and broad crown.
-  solidBayBox(add,[9,12,0],[16,16,16],'brick');
-  if(backHalf)solidBayBox(add,[9,8,3],[16,12,7],'refractory');
-  else solidBayBox(add,[9,8,9],[16,12,13],'refractory');
+  // Arch crown also ends where the jamb begins, with no coplanar
+  // same-direction outer surface. Shoulder is set below the crown.
+  p([10,12,innerA],[16,16,innerB],'brick');
+  const shoulder=backHalf?[3,7]:[9,13];
+  p([10,8,shoulder[0]],[16,12,shoulder[1]],'refractory');
  }
- // 3px-deep bars tie into the lower sill and the upper masonry crown.
+ // Real 3px-deep iron bars (vanilla iron texture) stand clear of the
+ // brick and fire bed; they terminate at the sill and arch crown.
  const low=c.y===1?4:0,high=c.y===3?12:16;
- for(const zBar of (backHalf?[7,13]:[2,8]))
-  solidBayBox(add,[11.5,low,zBar],[14.5,high,zBar+1.25],'iron');
+ for(const z of (backHalf?[7,12]:[3.5,8]))
+  p([12,low,z],[15,high,z+1.25],'grate');
 }
 
 export function roastVisual(c,d,lookup){
@@ -218,16 +183,13 @@ export function roastVisual(c,d,lookup){
  }else if(y>=1&&y<=3){
   // Three true wall layers: side openings occupy roughly 2.5 blocks in
   // height rather than the old one-block-high miniature window slots.
-  const window=side&&openings.has(z),pilot=isPilotBay(c);
-  for(const face of exposed){
-   if(pilot)continue; // pilot masonry supplies all solid return faces
-   if(window&&face===faceSide(x)){
-    if(x===2)add([0,0,0],[12.25,16,16],'brick',[face]);
-    else add([3.75,0,0],[16,16,16],'brick',[face]);
-   }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
-  }
-  if(pilot)pilotRoastingBay(c,add);
-  else if(window)arch(c,add);
+  const bay=isRoastingBay(c);
+  if(bay){
+   // One volumetric module on each of the six arches. No previous decal
+   // or sheet can remain over the newly carved cavity.
+   volumeArch(c,add);
+  }else for(const face of exposed)
+   add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
   // Separate loadbearing iron ribs and timber ties, based on wall piers.
   if(side&&(ribs.has(z)||front||back)){
    const f=faceSide(x);
@@ -265,24 +227,17 @@ export function roastVisual(c,d,lookup){
    }
    if(wallFaces.length)add([0,0,0],[16,16,16],'brick',wallFaces);
   }
- }else if(y===5){
-  // Thick three-by-three BRICK chimney ring built from real world blocks.
-  // The centre (x=0,z=-7) is AIR, so there is a genuine open flue.
-  for(const face of exposed)add([0,0,0],[16,16,16],'brick',[face]);
-  if(exposed.includes('up')){
-   add([0,14,0],[16,16,16],'roofTrim',['up']);
+ }else if(y>=5&&y<=7){
+  // Three real courses of brick above the pitched roof. The 3x3 ring
+  // preserves a real 1x1 open AIR flue through every level.
+  // The cap is a separate last course, not overlapped coplanar decals.
+  for(const face of exposed){
+   if(y===7){
+    add([0,0,0],[16,13,16],'brick',[face]);
+    add([0,13,0],[16,16,16],'roofTrim',[face]);
+   }else add([0,0,0],[16,16,16],'brick',[face]);
   }
-  // Tall vertical corner ties: only on chimney's actual corners.
-  if(Math.abs(x)===1&&(z===-8||z===-6)){
-   for(const face of ['north','south','east','west'])
-    if(exposed.includes(face)){
-     const a=face==='west'?[0,0,0]:face==='east'?[15.2,0,0]:
-       face==='north'?[0,0,0]:[0,0,15.2];
-     const b=face==='west'?[.8,16,16]:face==='east'?[16,16,16]:
-       face==='north'?[16,16,.8]:[16,16,16];
-     add(a,b,'iron',[face]);
-    }
-  }
+
  }
  return blank(E);
 }
