@@ -1,0 +1,158 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
+    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
+    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
+    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        1,
+        15
+      ],
+      "to": [
+        15,
+        15,
+        15.2
+      ],
+      "faces": {
+        "south": {
+          "texture": "#soot",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        2,
+        15.3
+      ],
+      "to": [
+        14,
+        14,
+        15.7
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        2,
+        15.75
+      ],
+      "to": [
+        8,
+        14,
+        15.9
+      ],
+      "faces": {
+        "south": {
+          "texture": "#soot",
+          "uv": [
+            7,
+            2,
+            8,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        7,
+        15.91
+      ],
+      "to": [
+        12,
+        9,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            9,
+            7,
+            12,
+            9
+          ]
+        }
+      }
+    }
+  ]
+}

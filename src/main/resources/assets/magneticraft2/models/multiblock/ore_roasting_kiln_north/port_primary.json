@@ -1,0 +1,180 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
+    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
+    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
+    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        1
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#foundation",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#foundation",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#foundation",
+          "uv": [
+            0,
+            1,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#foundation",
+          "uv": [
+            0,
+            0,
+            16,
+            15
+          ]
+        },
+        "west": {
+          "texture": "#foundation",
+          "uv": [
+            1,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#foundation",
+          "uv": [
+            0,
+            0,
+            15,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        3,
+        0.5999999999999996
+      ],
+      "to": [
+        14,
+        13,
+        0.9000000000000004
+      ],
+      "faces": {
+        "north": {
+          "texture": "#soot",
+          "uv": [
+            2,
+            3,
+            14,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        0.3000000000000007
+      ],
+      "to": [
+        12,
+        12,
+        0.5500000000000007
+      ],
+      "faces": {
+        "north": {
+          "texture": "#output",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        12.5,
+        0.1999999999999993
+      ],
+      "to": [
+        14,
+        14,
+        0.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            2,
+            2,
+            14,
+            3.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        2,
+        0.1999999999999993
+      ],
+      "to": [
+        14,
+        3.5,
+        0.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            2,
+            12.5,
+            14,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
+    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
+    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
+    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -439,6 +439,63 @@
     {
       "type": "text",
       "text": "$(bold)Firing Refractory Ceramics$()$(br2)Feed an unfired batch into the kiln, add solid fuel at the controller and heat until the firing threshold is reached. Firing consumes stored HEAT each active tick. The finished ceramic goes to the right Item Output port. A full output pauses processing without consuming another batch. HEAT balance is configurable in Common settings."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Ore Roasting Kiln Controller",
+      "recipe": "magneticraft2:ore_roasting_kiln",
+      "text": "Craft the controller from fired refractory ceramic, bricks and copper. The finished multiblock is 5 wide, 3 high and 9 long."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Ore Roasting Kiln",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB",
+            "BBBBB",
+            "BBBBB",
+            "BBBBB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "OS0SU"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:ore_roasting_kiln",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Build the long 5×3×9 structure with real front ports, an open hollow chamber, and a single AIR exhaust cell in the rear roof. Right-click the controller to form. This first milestone is the visual structure; selective roasting and HEAT are not yet enabled."
     }
   ],
   "sortnum": 3,

@@ -1,0 +1,158 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
+    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
+    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
+    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15,
+        1,
+        1
+      ],
+      "to": [
+        15.2,
+        15,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#soot",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.3,
+        2,
+        2
+      ],
+      "to": [
+        15.7,
+        14,
+        14
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.75,
+        2,
+        8
+      ],
+      "to": [
+        15.9,
+        14,
+        9
+      ],
+      "faces": {
+        "east": {
+          "texture": "#soot",
+          "uv": [
+            7,
+            2,
+            8,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.91,
+        7,
+        4
+      ],
+      "to": [
+        16,
+        9,
+        7
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            9,
+            7,
+            12,
+            9
+          ]
+        }
+      }
+    }
+  ]
+}
