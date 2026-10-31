@@ -28,15 +28,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "north": {
           "texture": "#brick",
           "uv": [

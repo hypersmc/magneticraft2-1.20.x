@@ -47,6 +47,10 @@ The current generic `magneticraft2:multiblock_processing` recipe supports **one 
 
 **Do not use this document to claim implementation, compilation, or in-game acceptance.**
 
+## K1 front-wall revision (2026-10-31)
+
+The first in-game screenshot exposed an overly large, two-block-high front opening. The K1 revision keeps the **5×4×5** envelope, controller, item ports, hollow internal chamber and roof flue, but replaces the front opening with a masonry wall: lower front `BUBOB` (real item ports in bricks) and upper front `BBABB` (one-cell loading aperture). All four blueprint rotations, block-local faces, Voxel V2 occupancy, Patchouli Visualize and static structural assertions must be regenerated together. K1 still has no fuel, HEAT or production recipes; the aperture is an unclosed prototype opening, not a simulated hatch or firebox.
+
 ## K1 source implementation candidate (2026-10-31)
 
 A structural-only implementation has now been authored: 5×4×5, 4 JSON facings, a complete front controller, two real front item modules, hollow chamber, open roof flue, Voxel V2 block-local snapshots, vanilla masonry prototype textures, Patchouli Visualize and a prototype controller recipe. Input is intentionally rejected until K2. No HEAT simulation, refractory products, wear, fuel, or production recipe is claimed. Model aesthetics are provisional. Compilation and in-game formation/regression remain unverified.

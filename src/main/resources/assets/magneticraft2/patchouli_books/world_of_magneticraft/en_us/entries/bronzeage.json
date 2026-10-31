@@ -402,14 +402,14 @@
             "B___B",
             "B___B",
             "B___B",
-            "B___B"
+            "BB_BB"
           ],
           [
             "BBBBB",
             "B___B",
             "B___B",
             "B___B",
-            "BO_UB"
+            "BOBUB"
           ],
           [
             "SSSSS",
@@ -428,7 +428,7 @@
         },
         "symmetrical": false
       },
-      "text": "The bottom is a full Stone Brick foundation except for the front-centre controller. Layer 2 has real Item Input and Item Output at the front, one block up. The interior chamber is AIR, and the roof has a single central open flue. Right-click the controller to form. K2 will add firing and HEAT."
+      "text": "Build the solid Stone Brick foundation with the controller at the front-centre. Above it, the brick front wall contains real Item Input and Item Output modules, with a single-block loading aperture directly above the controller. Keep the 3×3 interior chamber hollow and the roof-centre flue open. Right-click the controller to form. K2 will add firing and HEAT."
     }
   ],
   "sortnum": 3,

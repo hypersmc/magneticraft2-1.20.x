@@ -15,24 +15,25 @@ const base='src/main/resources/';
 const resource=base+'assets/magneticraft2/';
 const data=base+'data/magneticraft2/';
 const files=makeAssets();
-assert.equal(run('--check'),306,'unexpected count or stale files');
+assert.equal(run('--check'),318,'unexpected count or stale files');
 const dirs=['south','west','north','east'];
 const solids=['B','S','C'];
 const canonical=j(data+'multiblocks/refractory_kiln_south.json');
 assert.deepEqual(canonical.structure.dimensions,[5,4,5]);
 assert.equal(Object.values(canonical.structure.layout).flat(2).filter(v=>v==='C').length,1);
 const cellRows=Object.values(canonical.structure.layout);
-assert.deepEqual(cellRows[1][4],['B','U','A','O','B']);
+assert.deepEqual(cellRows[1][4],['B','U','B','O','B']);
+assert.deepEqual(cellRows[2][4],['B','B','A','B','B']);
 assert.deepEqual(cellRows[3][2],['B','B','A','B','B']);
 const southCells=new Map();
 for(let y=0;y<4;y++)for(let z=-4;z<=0;z++)for(let x=-2;x<=2;x++)
  southCells.set(x+','+y+','+z,canonical.structure.layout['layer'+(y+1)][z+4][x+2]);
 const rotation=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:d==='north'?[-x,-z]:[z,-x];
 const vox=j(data+'multiblock_voxels/refractory_kiln.json');
-assert.equal(vox.collision.length,75);
+assert.equal(vox.collision.length,78);
 assert.deepEqual(vox.collision,vox.selection);
 const pv=new Set(vox.collision.map(box=>[box[0]/16,box[1]/16,box[2]/16].join(',')));
-assert.equal(pv.size,75);
+assert.equal(pv.size,78);
 for(const [key,type] of southCells)assert.equal(pv.has(key),solids.includes(type),'Voxel collision occupancy differs at '+key);
 for(const d of dirs){
  const name='refractory_kiln_'+d;
@@ -75,7 +76,7 @@ for(const d of dirs){
   }
   modelCount++;
  }
- assert.equal(modelCount,75,d+': wrong solid model count');
+ assert.equal(modelCount,78,d+': wrong solid model count');
  // Controller model is present, and Item I/O is physically separate.
  const control=positions.find(p=>rotated.get(p.join(','))==='C');
  assert.ok(control);

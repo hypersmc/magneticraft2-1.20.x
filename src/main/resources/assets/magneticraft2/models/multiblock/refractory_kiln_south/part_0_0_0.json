@@ -28,15 +28,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#stone",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#stone",
           "uv": [

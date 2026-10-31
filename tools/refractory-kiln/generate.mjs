@@ -31,10 +31,16 @@ const out=(x,y,z)=>{
  if(y===0)return x===0&&z===0?'C':'S';
  if(y===1){
   if(z===-4)return 'B';
-  if(z===0)return x===-1?'U':x===1?'O':Math.abs(x)===2?'B':'A';
+  // A full masonry front at firebox height with two real integrated modules.
+  if(z===0)return x===-1?'U':x===1?'O':'B';
   return Math.abs(x)===2?'B':'A';
  }
- if(y===2)return z===-4||Math.abs(x)===2?'B':'A';
+ if(y===2){
+  if(z===-4)return 'B';
+  // A narrow accessible loading aperture, rather than an open 3x2 facade.
+  if(z===0)return x===0?'A':'B';
+  return Math.abs(x)===2?'B':'A';
+ }
  if(y===3)return x===0&&z===-2?'A':'B';
  throw new Error('Out-of-bounds kiln Y: '+y);
 };
