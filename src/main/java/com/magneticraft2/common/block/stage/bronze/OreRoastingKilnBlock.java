@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** 5x3x9 JSON Ore Roasting Kiln, structural visual prototype. */
+/** 5x8x9 JSON Ore Roasting Kiln, structural visual prototype. */
 public final class OreRoastingKilnBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 

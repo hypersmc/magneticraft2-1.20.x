@@ -40,7 +40,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** 5x3x9 JSON-formed Ore Roasting Kiln, structural-only V2 visual milestone. */
+/** 5x8x9 JSON-formed Ore Roasting Kiln, structural-only V2 visual prototype. */
 public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private static final String PREFIX = "ore_roasting_kiln_";
