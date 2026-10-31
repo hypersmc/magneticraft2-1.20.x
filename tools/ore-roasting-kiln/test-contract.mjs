@@ -76,8 +76,11 @@ for(const z of [-2,-1]){
    e.from[2]===0&&e.to[2]===16&&
    Object.values(e.faces).some(f=>f.texture==='#soot')),
    'A roasting arch is not sealed against daylight at z='+z);
- const brickJamb=m.elements.filter(e=>Object.values(e.faces).some(f=>f.texture==='#brick'));
- assert.ok(brickJamb.length===1,'Extra centre pillar in roasting bay z='+z);
+ // Filter the narrow exterior jamb, not the broad backing masonry face.
+ const brickJamb=m.elements.filter(e=>
+  e.to[2]-e.from[2]<=3.1 &&
+  Object.values(e.faces).some(f=>f.texture==='#brick'));
+ assert.equal(brickJamb.length,1,'Extra centre pillar in roasting bay z='+z);
  assert.ok(brickJamb.some(e=>z===-2?e.to[2]<=3:e.from[2]>=13),
    'Arch jamb must be on OUTER side, not shared middle seam: '+z);
 }
