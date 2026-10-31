@@ -36,3 +36,34 @@ The two-cell arches previously placed masonry jambs against their *shared seam*,
 The segmented roof previously emitted **top-only faces** for its pitched courses, missing vertical riser/edge faces, and used a separate `roofTop()` height for ribs/caps. The roof now has all exposed vertical riser and gable faces and derives the position of every structural rib and ridge cap from the exact same `roofStep()` height as its own stone-tile surface and Voxel V2 profile. The silhouette, voxel profile and all four real blueprint structures are unchanged. Genuine input/output port blocks gain larger, integral iron mounting plates; their actual capabilities and coordinates do not change.
 
 **Status:** Source/static regression checks only. Minecraft screenshots from front, both arch sides, and roof at several angles are required before claiming any visual fix.
+
+## One-bay oblique-angle geometry pilot (2026-10-31)
+
+The user's latest grazing-angle screenshot proves the side openings still
+behave like near-planar decals. A specific modeling error was also found:
+`modelBox` sent local east/west faces to the wrong world-facing normals
+for the *west* and *east* orientation rotations. Source normals now follow
+the exact coordinate transforms for all four orientations.
+
+**Scope intentionally limited to one bay, not six:** right-hand wall
+(`x=+2` in canonical SOUTH coordinates), *nearest the controller/front*,
+`z=-2,-1`, for all three wall heights `y=1,2,3`. This is one
+two-block-wide, three-block-high aperture, generated across all orientations.
+The other five existing roasting arches are unchanged visually pending
+side-by-side in-game review.
+
+The pilot is a real closed masonry/refractory assembly: backing brick volume
+`x=0..9`, opaque soot lined chamber `x=9..10`, heated lining `x=10..10.5`,
+three-pixel-deep forged iron grilles `x=11.5..14.5`, and load-bearing
+outer jambs/sill/crown extending to `x=16`. Cuboids have all six face
+textures so they reveal solid side, top and inner return faces at grazing
+angles. Two halves do not introduce a center pillar. This uses the same
+vanilla brick texture and existing kiln material textures and does not alter
+blueprints, collision, dimensions, gameplay or add dynamic rendering.
+
+Run `node tools/ore-roasting-kiln/generate.mjs --check` and
+`node tools/ore-roasting-kiln/test-contract.mjs`, then Gradle and
+an **in-game A/B comparison at a very shallow side angle**. Check all four
+facing rotations, view the pilot bay from both ends and below the arches,
+and compare it with the unchanged bays. These are static source changes:
+**visual acceptance remains unverified until Minecraft screenshots**.

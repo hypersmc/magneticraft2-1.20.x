@@ -31,7 +31,7 @@
         16
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#brick",
           "uv": [
             0,
@@ -54,7 +54,7 @@
         16
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#brick",
           "uv": [
             0,
@@ -77,12 +77,12 @@
         0.8
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#iron",
           "uv": [
-            13,
             0,
-            16,
+            0,
+            3,
             16
           ]
         },

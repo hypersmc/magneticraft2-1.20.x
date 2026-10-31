@@ -97,6 +97,50 @@ assert.ok(inputPort.elements.some(e=>e.from[0]===1&&e.to[0]===15&&
  e.from[1]===1&&e.to[1]===15&&Object.values(e.faces).some(f=>f.texture==='#iron')),
  'Functional input port has no integrated mounting frame');
 
+// A single real 3D aperture is piloted on the front-right pair of
+// cells only. Assert depth, physical returns, grille volume and rotational
+// face normals explicitly; ordinary UV checks do not detect wrong normals.
+const {modelBox,isPilotBay}=await import('./visuals.mjs');
+const normalTable={
+ south:{east:'east',west:'west',north:'north',south:'south'},
+ west:{east:'south',west:'north',north:'east',south:'west'},
+ north:{east:'west',west:'east',north:'south',south:'north'},
+ east:{east:'north',west:'south',north:'west',south:'east'}
+};
+for(const [dir,expected] of Object.entries(normalTable))
+ for(const [local,world] of Object.entries(expected)){
+  const box=modelBox([2,2,2],[12,12,12],'brick',[local],dir);
+  assert.deepEqual(Object.keys(box.faces),[world],
+   'Incorrect local face normal in '+dir+' '+local);
+ }
+const canonical=x=>'src/main/resources/assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_2_'+x+'.json';
+let pilotCount=0;
+for(const y of [1,2,3])for(const z of [-2,-1]){
+ const c={x:2,y,z,k:'B'};
+ assert.ok(isPilotBay(c));
+ const m=assets.get(canonical(y+'_'+z));
+ assert.ok(m,'Missing pilot cell '+y+'/'+z);
+ const boxes=m.elements.filter(e=>Object.keys(e.faces).length===6);
+ assert.ok(boxes.length>=6,'Pilot has flat, unclosed surfaces at '+y+'/'+z);
+ assert.ok(boxes.some(e=>e.from[0]===0&&e.to[0]===9&&e.from[2]===0&&e.to[2]===16),
+  'No real brick back wall at '+y+'/'+z);
+ assert.ok(boxes.some(e=>e.from[0]===9&&e.to[0]===10&&e.from[2]===0&&e.to[2]===16),
+  'No opaque soot cavity lining at '+y+'/'+z);
+ assert.ok(boxes.some(e=>e.from[0]===11.5&&e.to[0]===14.5),
+  'No 3px-deep grille at '+y+'/'+z);
+ const jamb=boxes.filter(e=>e.from[0]===9&&e.to[0]===16&&
+  e.from[1]===0&&e.to[1]===16);
+ assert.equal(jamb.length,1,'One physical outer jamb per half');
+ assert.deepEqual([jamb[0].from[2],jamb[0].to[2]],
+  z===-2?[0,3]:[13,16],'Jamb on shared seam instead of outer edge');
+ pilotCount++;
+}
+assert.equal(pilotCount,6);
+assert.equal([...assets].filter(([p,m])=>
+ p.includes('/part_')&&m.elements?.some(e=>e.from[0]===0&&e.to[0]===9&&
+ Object.keys(e.faces).length===6)).length,6,
+ 'Pilot geometry accidentally applied to all roasting openings');
+
 assert.equal(countModels,676);
 assert.equal(arches,144);
 assert.equal(typeAt(0,4,-7),'A');

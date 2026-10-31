@@ -54,7 +54,7 @@
         4
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#roof",
           "uv": [
             0,
@@ -100,7 +100,7 @@
         8
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#roof",
           "uv": [
             0,
@@ -146,7 +146,7 @@
         12
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#roof",
           "uv": [
             0,
@@ -192,7 +192,7 @@
         16
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#roof",
           "uv": [
             0,

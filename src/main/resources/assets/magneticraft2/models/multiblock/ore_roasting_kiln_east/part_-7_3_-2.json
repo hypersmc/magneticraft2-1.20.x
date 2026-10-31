@@ -31,7 +31,7 @@
         16
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#brick",
           "uv": [
             0,
@@ -54,7 +54,7 @@
         16
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#brick",
           "uv": [
             0,
@@ -77,7 +77,7 @@
         3
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#soot",
           "uv": [
             0,
@@ -100,7 +100,7 @@
         2.3499999999999996
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#ember",
           "uv": [
             0,
@@ -123,7 +123,7 @@
         0.5999999999999996
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#brick",
           "uv": [
             0,
@@ -146,7 +146,7 @@
         0.4499999999999993
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#refractory",
           "uv": [
             0,
@@ -169,12 +169,12 @@
         0.5
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#brick",
           "uv": [
-            13,
+            0,
             5,
-            16,
+            3,
             16
           ]
         }
@@ -192,12 +192,12 @@
         0.5
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#refractory",
           "uv": [
-            9,
+            3,
             4,
-            13,
+            7,
             9
           ]
         }
@@ -215,12 +215,12 @@
         0.3000000000000007
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#refractory",
           "uv": [
-            0,
+            12,
             3,
-            4,
+            16,
             7
           ]
         }
@@ -238,7 +238,7 @@
         0.9000000000000004
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#timber",
           "uv": [
             0,

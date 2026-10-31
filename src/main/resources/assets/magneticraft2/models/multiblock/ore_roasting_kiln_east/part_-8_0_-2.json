@@ -54,7 +54,7 @@
         16
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#stone",
           "uv": [
             0,
