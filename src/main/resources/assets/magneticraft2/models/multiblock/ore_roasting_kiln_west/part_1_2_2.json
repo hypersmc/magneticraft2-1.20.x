@@ -8,12 +8,12 @@
     "roofTrim": "minecraft:block/deepslate_tiles",
     "timber": "minecraft:block/spruce_planks",
     "timberEnd": "minecraft:block/stripped_spruce_log",
-    "refractory": "magneticraft2:block/material/refractory_brick",
-    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
-    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
-    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "refractory": "minecraft:block/smooth_stone",
+    "iron": "minecraft:block/polished_deepslate",
+    "soot": "minecraft:block/black_concrete",
+    "ember": "minecraft:block/magma",
+    "grate": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
     "particle": "minecraft:block/bricks"
@@ -162,74 +162,6 @@
         10
       ],
       "to": [
-        16,
-        16,
-        10.5
-      ],
-      "faces": {
-        "east": {
-          "texture": "#ember",
-          "uv": [
-            5.5,
-            0,
-            6,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#ember",
-          "uv": [
-            10,
-            0,
-            10.5,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            10,
-            16,
-            10.5
-          ]
-        },
-        "down": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            5.5,
-            16,
-            6
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        0,
-        9
-      ],
-      "to": [
         3,
         16,
         16
@@ -240,14 +172,14 @@
           "uv": [
             0,
             0,
-            7,
+            6,
             16
           ]
         },
         "west": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             0,
             16,
             16
@@ -275,7 +207,7 @@
           "texture": "#brick",
           "uv": [
             0,
-            9,
+            10,
             3,
             16
           ]
@@ -286,143 +218,143 @@
             0,
             0,
             3,
-            7
+            6
           ]
         }
       }
     },
     {
       "from": [
-        12.75,
+        11.25,
         0,
-        11.5
+        12
       ],
       "to": [
-        14,
+        12.5,
         16,
-        14.5
+        15
       ],
       "faces": {
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             0,
-            4.5,
+            4,
             16
           ]
         },
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             0,
-            14.5,
+            15,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            12.75,
+            11.25,
             0,
-            14,
+            12.5,
             16
           ]
         },
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            2,
+            3.5,
             0,
-            3.25,
+            4.75,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            12.75,
-            11.5,
-            14,
-            14.5
+            11.25,
+            12,
+            12.5,
+            15
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            12.75,
-            1.5,
-            14,
-            4.5
+            11.25,
+            1,
+            12.5,
+            4
           ]
         }
       }
     },
     {
       "from": [
-        6.75,
+        7.75,
         0,
-        11.5
+        12
       ],
       "to": [
-        8,
+        9,
         16,
-        14.5
+        15
       ],
       "faces": {
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             0,
-            4.5,
+            4,
             16
           ]
         },
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             0,
-            14.5,
+            15,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            6.75,
+            7.75,
             0,
-            8,
+            9,
             16
           ]
         },
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            8,
+            7,
             0,
-            9.25,
+            8.25,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            6.75,
-            11.5,
-            8,
-            14.5
+            7.75,
+            12,
+            9,
+            15
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            6.75,
-            1.5,
-            8,
-            4.5
+            7.75,
+            1,
+            9,
+            4
           ]
         }
       }

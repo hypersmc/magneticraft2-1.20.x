@@ -8,12 +8,12 @@
     "roofTrim": "minecraft:block/deepslate_tiles",
     "timber": "minecraft:block/spruce_planks",
     "timberEnd": "minecraft:block/stripped_spruce_log",
-    "refractory": "magneticraft2:block/material/refractory_brick",
-    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
-    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
-    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "refractory": "minecraft:block/smooth_stone",
+    "iron": "minecraft:block/polished_deepslate",
+    "soot": "minecraft:block/black_concrete",
+    "ember": "minecraft:block/magma",
+    "grate": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
     "particle": "minecraft:block/bricks"
@@ -90,29 +90,6 @@
     },
     {
       "from": [
-        0,
-        14,
-        0
-      ],
-      "to": [
-        4,
-        15,
-        16
-      ],
-      "faces": {
-        "up": {
-          "texture": "#roofTrim",
-          "uv": [
-            0,
-            0,
-            4,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
         4,
         0,
         0
@@ -182,29 +159,6 @@
     },
     {
       "from": [
-        4,
-        15,
-        0
-      ],
-      "to": [
-        8,
-        16,
-        16
-      ],
-      "faces": {
-        "up": {
-          "texture": "#roofTrim",
-          "uv": [
-            4,
-            0,
-            8,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
         8,
         0,
         0
@@ -274,29 +228,6 @@
     },
     {
       "from": [
-        8,
-        15,
-        0
-      ],
-      "to": [
-        12,
-        16,
-        16
-      ],
-      "faces": {
-        "up": {
-          "texture": "#roofTrim",
-          "uv": [
-            8,
-            0,
-            12,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
         12,
         0,
         0
@@ -358,29 +289,6 @@
           "uv": [
             12,
             2,
-            16,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        12,
-        14,
-        0
-      ],
-      "to": [
-        16,
-        15,
-        16
-      ],
-      "faces": {
-        "up": {
-          "texture": "#roofTrim",
-          "uv": [
-            12,
-            0,
             16,
             16
           ]

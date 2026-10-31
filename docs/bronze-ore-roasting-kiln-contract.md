@@ -67,3 +67,31 @@ an **in-game A/B comparison at a very shallow side angle**. Check all four
 facing rotations, view the pilot bay from both ends and below the arches,
 and compare it with the unchanged bays. These are static source changes:
 **visual acceptance remains unverified until Minecraft screenshots**.
+
+## 2026-10-31 — reference correction from in-game screenshots
+
+The user rejected the squat 6-high chimney and noisy custom textures shown in
+actual Minecraft screenshots. The deliberately breaking **5×8×9** blueprint
+places a *real* three-block-tall 3×3 brick chimney at heights y=5,6,7 with
+a single continuous center AIR shaft. The upper ring is finished with vanilla
+Deepslate Tiles coping; the chimney does not float or render invisible extra
+blocks. The Stone Bricks + Brick structure otherwise retains the same width
+and length. Six-layer formed machines must be dismantled before upgrading and
+rebuilt with the eight-layer Patchouli Visualize pattern. This is a structural
+migration, not save-data auto-migration.
+
+All six roasting arches now use the same enclosed 3D volume geometry instead
+of one pilot and five planar copies. Interior soot is vanilla Black Concrete,
+low glowing ore-bed texture is vanilla Magma Block, and true 3px-thick
+metal grilles use vanilla Iron Block. Arch shoulders and sill use vanilla
+Bricks/Smooth Stone; frames use vanilla Polished Deepslate, and roof/wood
+retain existing vanilla materials. Only real I/O panel markings still use the
+machine's custom PNGs. The previous machine-specific PNGs remain in source as
+unused legacy tiles but are **not referenced by formed models**.
+
+A geometric coplanarity audit of every baked model now reports zero overlapping
+faces with the same outward normal in the same plane, alongside the older
+local-geometry and proportional-UV audits. A source-side absence of coplanar
+model faces is **not** proof of an in-game fix; all orientations and grazing
+camera angles still require screenshots. The HEAT, fuel and selective roasting
+mechanics remain out of scope.

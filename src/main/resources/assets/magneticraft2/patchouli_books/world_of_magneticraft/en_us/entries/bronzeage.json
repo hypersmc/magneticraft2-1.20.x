@@ -444,7 +444,7 @@
       "type": "patchouli:crafting",
       "title": "Ore Roasting Kiln Controller",
       "recipe": "magneticraft2:ore_roasting_kiln",
-      "text": "Craft the controller from fired refractory ceramic, Bricks and Copper Plates. The complete kiln is a tall industrial 5×6×9 structure with a pitched roof, six tall side arches and a raised open brick chimney."
+      "text": "Craft the controller from fired refractory ceramic, Bricks and Copper Plates. This kiln needs a complete 5×8×9 industrial structure, with tall recessed roasting arches and a raised brick chimney."
     },
     {
       "type": "patchouli:multiblock",
@@ -452,6 +452,28 @@
       "enable_visualize": true,
       "multiblock": {
         "pattern": [
+          [
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____",
+            "_____",
+            "_____",
+            "_____",
+            "_____",
+            "_____"
+          ],
+          [
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____",
+            "_____",
+            "_____",
+            "_____",
+            "_____",
+            "_____"
+          ],
           [
             "_BBB_",
             "_B_B_",
@@ -528,7 +550,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the full 5-wide × 6-high × 9-long structure in Visualize. Layer 1 is Stone Bricks with the controller and genuine front input/output ports. Layers 2–4 are the hollow three-level brick roasting chamber; layer 5 is the Bricks roof; layer 6 is the raised rear chimney made of eight Bricks around one central AIR shaft. The roof's AIR flue is directly below that chimney opening, seven blocks behind the front controller. Every underscore in Visualize means real AIR. Right-click the controller to form. This is the visual prototype; roasting chemistry and HEAT are not yet implemented."
+      "text": "Build the 5×8×9 Ore Roasting Kiln from the eight layers shown. Stone Bricks form its foundation; three Brick layers form the hollow roasting chamber. Layer 5 supports the pitched roof, and layers 6–8 build a THREE-course Brick chimney around the same central AIR shaft. Keep the roof flue and all other underscores empty. The two front ports are real Item Input/Output blocks. Right-click the controller to form. Roasting gameplay is not yet active."
     }
   ],
   "sortnum": 3,

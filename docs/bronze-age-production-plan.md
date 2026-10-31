@@ -33,7 +33,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 |---|---|---|---|---|
 | Stamp Mill | **Source implemented** (PR #11; validation pending) | 5x3x4 | Raw ore -> crushed fraction, optional waste; large inertia and hammer wear | Bronze bearings, Gear V2 |
 | Rotary Ore Classifier | **Source implemented** (PR #11; validation pending) | **3x3x5** | 3 screened fines + 1 reusable coarse crushed ore per 4 crushed (no tailings generation yet) | Stamp Mill |
-| Ore Roasting Kiln | **Source-implemented reference-faithful structural/visual rebuild** (in-game verification pending; roasting gameplay planned) | **5x6x9** | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
+| Ore Roasting Kiln | **Source-implemented reference-faithful structural/visual rebuild** (in-game verification pending; roasting gameplay planned) | **5x8x9** | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | **Source implemented; V5.1 visuals accepted** (gameplay/build validation pending) | **5x2x5** | 600 mB dirty water -> 480 mB reusable clean water + 1 settled sediment per 240 ticks | Ore Washer |
 | Charcoal Retort | **Source implemented; partial in-game fluid extraction confirmed by user** (PR #11; latest NBT/render fixes need retest) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + **250 mB liquid Wood Tar** (720 ticks); 8,000 mB internal output tank, legacy item retained for saves | Furnace; advanced airflow still planned |
 | Refractory Kiln | **K1 structural prototype authored; build/gameplay verification pending** | **5x4x5 source footprint** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
@@ -439,13 +439,13 @@ planned footprint values remain proposals, not silently finalized builds.
 
 K1 adds the physical 5×4×5 JSON-based controller/structure in four facings, a brick V2 static model/voxel profile, two genuine front item modules and Patchouli formation. The module input is intentionally disabled until K2 can accept prepared refractory batches. NO firing/HEAT/ceramic output exists yet; verify build and formation before treating K1 as a working prototype. Full visual model/texture polish is deferred but no missing textures or incorrect structure/ports are acceptable.
 
-### 2026-10-31 — Ore Roasting Kiln reference-driven 5×6×9 visual rebuild
+### 2026-10-31 — Ore Roasting Kiln reference-driven 5×8×9 visual rebuild
 
 The original 5×3×9 visual prototype failed the user’s screenshot comparison:
 it appeared as a low brick box, not the industrial roaster shown in the
 **first** concept image. The user explicitly approved increasing the height.
 
-Draft PR #11 now contains a **5×6×9 structural prototype**: one
+Draft PR #11 now contains a **5×8×9 structural prototype**: one
 Stone Bricks base, three courses of brick roasting walls with **three tall
 arched openings on each side**, a separately pitched stone roof with real
 Voxel V2 collision, timber headers, dark structural iron ribs and a **raised
@@ -463,3 +463,21 @@ six-high version. Roasting chemistry, fuel, HEAT, exhaust pollution and ore
 byproducts remain unimplemented, and the item input stays locked to prevent
 loss. A fully passed Gradle build and actual *in-game visual acceptance*
 are still required; do not mark the prototype complete yet.
+
+### 2026-10-31 — taller chimney and vanilla-texture correction
+
+The user showed that the 6-high chimney looked like a squat box and that the
+custom ember/grille textures were visually inappropriate. The prototype is
+**5×8×9**, with a genuine three-course 3×3 Bricks chimney ring at the rear,
+continuous 1×1 AIR flue, and stone-coped upper rim. All six side arches now
+share a recessed, full-volume geometry, replacing the earlier one-bay-only
+comparison and paper-thin panel variants. Most visible furnace textures are
+vanilla: Bricks, Stone Bricks, Deepslate Tiles, Spruce Planks, Smooth Stone,
+Polished Deepslate, Iron Block, Black Concrete and Magma Block. Only the two
+real item-port symbols still use roaster-specific PNG textures.
+
+A source geometry check found and removed **same-plane, same-normal overlaps**
+that caused z-fighting in the old arches, brick piers, roof strips and chimney
+supports. Visual and build acceptance remain **pending**. Old 6-high formed
+prototype structures must be dismantled before updating to this breaking
+blueprint size. No roasting gameplay has been added.

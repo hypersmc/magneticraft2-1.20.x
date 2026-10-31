@@ -8,12 +8,12 @@
     "roofTrim": "minecraft:block/deepslate_tiles",
     "timber": "minecraft:block/spruce_planks",
     "timberEnd": "minecraft:block/stripped_spruce_log",
-    "refractory": "magneticraft2:block/material/refractory_brick",
-    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
-    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
-    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "refractory": "minecraft:block/smooth_stone",
+    "iron": "minecraft:block/polished_deepslate",
+    "soot": "minecraft:block/black_concrete",
+    "ember": "minecraft:block/magma",
+    "grate": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
     "particle": "minecraft:block/bricks"
@@ -159,74 +159,6 @@
       "from": [
         10,
         0,
-        0
-      ],
-      "to": [
-        10.5,
-        16,
-        16
-      ],
-      "faces": {
-        "north": {
-          "texture": "#ember",
-          "uv": [
-            5.5,
-            0,
-            6,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#ember",
-          "uv": [
-            10,
-            0,
-            10.5,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
-          "texture": "#ember",
-          "uv": [
-            10,
-            0,
-            10.5,
-            16
-          ]
-        },
-        "down": {
-          "texture": "#ember",
-          "uv": [
-            10,
-            0,
-            10.5,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        9,
-        0,
         13
       ],
       "to": [
@@ -240,14 +172,14 @@
           "uv": [
             0,
             0,
-            7,
+            6,
             16
           ]
         },
         "south": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             0,
             16,
             16
@@ -274,7 +206,7 @@
         "up": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             13,
             16,
             16
@@ -283,7 +215,7 @@
         "down": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             0,
             16,
             3
@@ -293,136 +225,136 @@
     },
     {
       "from": [
-        11.5,
+        12,
         0,
-        2
+        3.5
       ],
       "to": [
-        14.5,
+        15,
         16,
-        3.25
+        4.75
       ],
       "faces": {
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             0,
-            4.5,
+            4,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             0,
-            14.5,
+            15,
             16
           ]
         },
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            12.75,
+            11.25,
             0,
-            14,
+            12.5,
             16
           ]
         },
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            2,
+            3.5,
             0,
-            3.25,
+            4.75,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
-            2,
-            14.5,
-            3.25
+            12,
+            3.5,
+            15,
+            4.75
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
-            12.75,
-            14.5,
-            14
+            12,
+            11.25,
+            15,
+            12.5
           ]
         }
       }
     },
     {
       "from": [
-        11.5,
+        12,
         0,
-        8
+        7
       ],
       "to": [
-        14.5,
+        15,
         16,
-        9.25
+        8.25
       ],
       "faces": {
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             0,
-            4.5,
+            4,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             0,
-            14.5,
+            15,
             16
           ]
         },
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            6.75,
+            7.75,
             0,
-            8,
+            9,
             16
           ]
         },
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            8,
+            7,
             0,
-            9.25,
+            8.25,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
-            8,
-            14.5,
-            9.25
+            12,
+            7,
+            15,
+            8.25
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
-            6.75,
-            14.5,
-            8
+            12,
+            7.75,
+            15,
+            9
           ]
         }
       }

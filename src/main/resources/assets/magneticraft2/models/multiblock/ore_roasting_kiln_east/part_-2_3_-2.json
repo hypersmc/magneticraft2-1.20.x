@@ -8,12 +8,12 @@
     "roofTrim": "minecraft:block/deepslate_tiles",
     "timber": "minecraft:block/spruce_planks",
     "timberEnd": "minecraft:block/stripped_spruce_log",
-    "refractory": "magneticraft2:block/material/refractory_brick",
-    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
-    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
-    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "refractory": "minecraft:block/smooth_stone",
+    "iron": "minecraft:block/polished_deepslate",
+    "soot": "minecraft:block/black_concrete",
+    "ember": "minecraft:block/magma",
+    "grate": "minecraft:block/iron_block",
+    "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
     "particle": "minecraft:block/bricks"
@@ -159,80 +159,12 @@
       "from": [
         0,
         0,
-        5.5
-      ],
-      "to": [
-        16,
-        12,
-        6
-      ],
-      "faces": {
-        "west": {
-          "texture": "#ember",
-          "uv": [
-            5.5,
-            4,
-            6,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#ember",
-          "uv": [
-            10,
-            4,
-            10.5,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            4,
-            16,
-            16
-          ]
-        },
-        "up": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            5.5,
-            16,
-            6
-          ]
-        },
-        "down": {
-          "texture": "#ember",
-          "uv": [
-            0,
-            10,
-            16,
-            10.5
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        0,
         0
       ],
       "to": [
         3,
         16,
-        7
+        6
       ],
       "faces": {
         "west": {
@@ -240,14 +172,14 @@
           "uv": [
             0,
             0,
-            7,
+            6,
             16
           ]
         },
         "east": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             0,
             16,
             16
@@ -277,14 +209,14 @@
             0,
             0,
             3,
-            7
+            6
           ]
         },
         "down": {
           "texture": "#brick",
           "uv": [
             0,
-            9,
+            10,
             3,
             16
           ]
@@ -293,14 +225,14 @@
     },
     {
       "from": [
-        0,
+        3,
         12,
         0
       ],
       "to": [
         16,
         16,
-        7
+        6
       ],
       "faces": {
         "west": {
@@ -308,14 +240,14 @@
           "uv": [
             0,
             0,
-            7,
+            6,
             4
           ]
         },
         "east": {
           "texture": "#brick",
           "uv": [
-            9,
+            10,
             0,
             16,
             4
@@ -326,14 +258,14 @@
           "uv": [
             0,
             0,
-            16,
+            13,
             4
           ]
         },
         "south": {
           "texture": "#brick",
           "uv": [
-            0,
+            3,
             0,
             16,
             4
@@ -342,17 +274,17 @@
         "up": {
           "texture": "#brick",
           "uv": [
-            0,
+            3,
             0,
             16,
-            7
+            6
           ]
         },
         "down": {
           "texture": "#brick",
           "uv": [
-            0,
-            9,
+            3,
+            10,
             16,
             16
           ]
@@ -368,7 +300,7 @@
       "to": [
         7,
         12,
-        7
+        6
       ],
       "faces": {
         "west": {
@@ -376,14 +308,14 @@
           "uv": [
             0,
             4,
-            7,
+            6,
             8
           ]
         },
         "east": {
           "texture": "#refractory",
           "uv": [
-            9,
+            10,
             4,
             16,
             8
@@ -413,14 +345,14 @@
             3,
             0,
             7,
-            7
+            6
           ]
         },
         "down": {
           "texture": "#refractory",
           "uv": [
             3,
-            9,
+            10,
             7,
             16
           ]
@@ -429,136 +361,136 @@
     },
     {
       "from": [
-        7,
+        8,
         0,
-        1.5
+        1
       ],
       "to": [
-        8.25,
+        9.25,
         12,
-        4.5
+        4
       ],
       "faces": {
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             4,
-            4.5,
+            4,
             16
           ]
         },
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             4,
-            14.5,
+            15,
             16
           ]
         },
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            7.75,
+            6.75,
             4,
-            9,
+            8,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            7,
+            8,
             4,
-            8.25,
+            9.25,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            7,
-            1.5,
-            8.25,
-            4.5
+            8,
+            1,
+            9.25,
+            4
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            7,
-            11.5,
-            8.25,
-            14.5
+            8,
+            12,
+            9.25,
+            15
           ]
         }
       }
     },
     {
       "from": [
-        13,
+        12,
         0,
-        1.5
+        1
       ],
       "to": [
-        14.25,
+        13.25,
         12,
-        4.5
+        4
       ],
       "faces": {
         "west": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.5,
+            1,
             4,
-            4.5,
+            4,
             16
           ]
         },
         "east": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            11.5,
+            12,
             4,
-            14.5,
+            15,
             16
           ]
         },
         "north": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            1.75,
+            2.75,
             4,
-            3,
+            4,
             16
           ]
         },
         "south": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            13,
+            12,
             4,
-            14.25,
+            13.25,
             16
           ]
         },
         "up": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            13,
-            1.5,
-            14.25,
-            4.5
+            12,
+            1,
+            13.25,
+            4
           ]
         },
         "down": {
-          "texture": "#iron",
+          "texture": "#grate",
           "uv": [
-            13,
-            11.5,
-            14.25,
-            14.5
+            12,
+            12,
+            13.25,
+            15
           ]
         }
       }
