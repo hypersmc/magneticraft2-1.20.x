@@ -346,7 +346,7 @@ public class MultiblockItemPortBlockEntity
                 && formedModule
                 && getPortMode() == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
                 && getController() instanceof CharcoalRetortBlockEntity retort) {
-            return retort.getCapability(ForgeCapabilities.FLUID_HANDLER, side);
+            return retort.getCapability(cap, side);
         }
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCapability.cast();
