@@ -40,7 +40,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** Recipe-driven, server-authoritative Refractory Kiln. Rendering stays independent. */
+/** 5x3x9 JSON-formed Ore Roasting Kiln, structural-only V2 visual milestone. */
 public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private static final String PREFIX = "ore_roasting_kiln_";
@@ -84,14 +84,13 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
         // Refuse missing/broken profile before replacing any in-world bricks.
         if (!voxelProfileName.isBlank() && !MultiblockVoxelProfiles.exists(voxelProfileName)) {
             org.apache.logging.log4j.LogManager.getLogger("Magneticraft2Voxels").error(
-                    "Cannot form Refractory Kiln: missing Voxel V2 profile {}", voxelProfileName);
+                    "Cannot form Ore Roasting Kiln: missing Voxel V2 profile {}", voxelProfileName);
             return null;
         }
         MultiblockController controller = new MultiblockController(structure);
         controller.identifyAndAddModules(level, worldPosition, structure);
         if (!controller.createStructure(level, worldPosition)) return null;
-        // Keep both genuine module BEs linked for their port skins and item handlers.
-        // This is the same formed-port linkage already used by the Retort.
+        // Preserve both real module blocks, their capabilities and formed skins.
         for (BlockPos member : controller.getBlockMap().keySet()) {
             if (level.getBlockEntity(member) instanceof MultiblockItemPortBlockEntity port) {
                 port.linkFormedController(worldPosition);
@@ -196,8 +195,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
         return getUpdateTag();
     }
 
-    // The two genuine module blocks own all item I/O. Exposing the
-    // base controller-wide handler here would bypass the K1 input lock.
+    // Only the real item ports own inventory automation; source-stage input is locked.
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap, @Nullable Direction side) {
