@@ -56,7 +56,10 @@ for(const d of dirs){
  for(const [p,m] of assets){
   if(!p.startsWith(prefix)||!p.includes('/part_'))continue;
   partModels++;
-  if(m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#soot')))arches++;
+  if(!p.endsWith('/part_0_0_0.json')&&
+   m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#soot'))&&
+   m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#grate')))
+  arches++;
   assert.ok(m.elements.length>0&&m.elements.length<40,'Element budget '+p);
   const planes=[];
   for(const e of m.elements){
