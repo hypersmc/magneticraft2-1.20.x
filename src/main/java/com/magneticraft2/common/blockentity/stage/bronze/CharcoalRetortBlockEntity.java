@@ -450,7 +450,11 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     @Override public boolean energycape() { return false; }
     @Override public boolean heatcape() { return false; }
     @Override public boolean wattcape() { return false; }
-    @Override public boolean fluidcape() { return true; }
+    // The Retort already owns a persisted Wood Tar FluidTank and exposes
+    // its own drain-only Forge fluid capability. Do not allocate/serialize
+    // the obsolete BaseBlockEntityMagneticraft2 FluidStorages handler:
+    // its legacy StringTag deserializer is not a FluidStack codec.
+    @Override public boolean fluidcape() { return false; }
     @Override public boolean pressurecape() { return false; }
     @Override public boolean HeatCanReceive() { return false; }
     @Override public boolean HeatCanSend() { return false; }

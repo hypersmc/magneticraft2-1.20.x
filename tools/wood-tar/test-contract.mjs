@@ -92,4 +92,19 @@ for(const dir of rows){
   }
 }
 
+// Prevent the unused legacy BaseBlockEntityMagneticraft2 fluid NBT handler
+// from being reenabled on Retort controllers. The real Wood Tar tank has
+// independent save/load keys and its own output-only fluid capability.
+assert.ok(retort.includes('boolean fluidcape() { return false; }'),
+  'Retort must not instantiate the legacy FluidStorages handler');
+assert.ok(retort.includes('private final FluidTank tarTank'),
+  'Retort must retain its real Wood Tar fluid tank');
+assert.ok(retort.includes('tag.put("RetortTarTank", tarTank.writeToNBT(new CompoundTag()))'),
+  'Retort must persist the real tank via its own NBT compound');
+assert.ok(retort.includes('tarTank.readFromNBT(tag.getCompound("RetortTarTank"))'),
+  'Retort must load the real tank independently of legacy fields');
+assert.ok(retort.includes('if (capability == ForgeCapabilities.FLUID_HANDLER)') &&
+          retort.includes('return formed ? fluidCapability.cast() : LazyOptional.empty()'),
+  'Retort must still expose its drain-only fluid capability');
+
 console.log('Wood Tar contract: recipe, ports, legacy forms, tank, palette and sprites OK');
