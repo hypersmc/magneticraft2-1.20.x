@@ -329,5 +329,9 @@
   "item.magneticraft2.ancient_projector": "Ancient Holographic Projector",
   "fluid.magneticraft2.wood_tar": "Wood Tar",
   "block.magneticraft2.wood_tar": "Wood Tar",
-  "item.magneticraft2.wood_tar_bucket": "Wood Tar Bucket"
+  "item.magneticraft2.wood_tar_bucket": "Wood Tar Bucket",
+  "block.magneticraft2.refractory_kiln": "Refractory Kiln",
+  "item.magneticraft2.refractory_kiln": "Refractory Kiln Controller",
+  "message.magneticraft2.refractory_kiln.incomplete": "Refractory Kiln structure incomplete",
+  "message.magneticraft2.refractory_kiln.k1": "Refractory Kiln formed (K1). Firing and HEAT processing are not implemented yet."
 }

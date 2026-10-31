@@ -373,6 +373,62 @@
         "symmetrical": false
       },
       "text": "Build exactly as Visualize shows. The SOUTH projection reverses row columns relative to the JSON layout. Facing the controller, Log Input is on the left and Charcoal Item Output on the right; liquid Wood Tar leaves through the REAL Fluid Output at the rear. Connect the rear port to a pipe or tank. Existing builds using the old byproduct item port can still form as legacy structures. Keep chimney AIR clear; supply solid fuel at the controller."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Refractory Kiln (K1)$()$(br2)Build the 5×4×5 masonry kiln to prepare for high-temperature ceramics. K1 implements construction and formation only: fuel, clay/sand batches, fired products and HEAT are reserved for K2, and the input port is intentionally locked until recipes exist. The roof center flue must stay AIR."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Refractory Kiln Controller",
+      "recipe": "magneticraft2:refractory_kiln",
+      "text": "Craft the controller, then build the full structure from Stone Bricks and Bricks. This is a structural prototype, not yet a working firing kiln."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Refractory Kiln",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BBBBB",
+            "BBABB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB"
+          ],
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BOAUB"
+          ],
+          [
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:refractory_kiln",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "The bottom is a full Stone Brick foundation except for the front-centre controller. Layer 2 has real Item Input and Item Output at the front, one block up. The interior chamber is AIR, and the roof has a single central open flue. Right-click the controller to form. K2 will add firing and HEAT."
     }
   ],
   "sortnum": 3,

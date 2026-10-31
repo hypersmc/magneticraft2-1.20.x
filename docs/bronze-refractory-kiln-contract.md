@@ -1,7 +1,7 @@
 # Bronze Refractory Kiln — V1 implementation contract
 
 **Scope:** 16-machine Bronze Age roadmap · preliminary footprint **5×4×5** · planned follow-on to the Charcoal Retort.
-**Status as of 2026-10-31:** design contract only, **not** yet a registered machine, multiblock, recipe or playable prototype.
+**Status as of 2026-10-31:** K1 structural source prototype authored; **not yet compiled or tested in Minecraft**, with firing/HEAT/ceramics reserved for K2.
 
 ## Why this machine exists
 
@@ -46,3 +46,7 @@ The current generic `magneticraft2:multiblock_processing` recipe supports **one 
 - Whether the Ore Roasting Kiln is independent or shares refractory parts (must remain a distinct role per roadmap).
 
 **Do not use this document to claim implementation, compilation, or in-game acceptance.**
+
+## K1 source implementation candidate (2026-10-31)
+
+A structural-only implementation has now been authored: 5×4×5, 4 JSON facings, a complete front controller, two real front item modules, hollow chamber, open roof flue, Voxel V2 block-local snapshots, vanilla masonry prototype textures, Patchouli Visualize and a prototype controller recipe. Input is intentionally rejected until K2. No HEAT simulation, refractory products, wear, fuel, or production recipe is claimed. Model aesthetics are provisional. Compilation and in-game formation/regression remain unverified.

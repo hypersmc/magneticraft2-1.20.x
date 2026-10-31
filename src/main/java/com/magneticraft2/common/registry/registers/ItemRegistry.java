@@ -128,6 +128,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_STAMP_SHOE =
             ITEMS.register("bronze_stamp_shoe", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY = fromBlock(BRONZE_FOUNDRY);
+    public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_BRONZE_CASTING_BASIN = fromBlock(BRONZE_CASTING_BASIN);
     public static final RegistryObject<BronzePouringLadleItem> ITEM_BRONZE_POURING_LADLE =
             ITEMS.register("bronze_pouring_ladle", BronzePouringLadleItem::new);

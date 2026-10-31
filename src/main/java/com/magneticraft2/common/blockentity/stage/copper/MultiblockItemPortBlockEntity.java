@@ -172,6 +172,10 @@ public class MultiblockItemPortBlockEntity
             return classifier.acceptsRecipeInput(stack);
         if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity retort)
             return retort.acceptsRecipeInput(stack);
+        // K1: the Kiln forms and exposes its real port, but has no firing
+        // recipes yet; don't accept player/automation input it cannot use.
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity kiln)
+            return kiln.acceptsRecipeInput(stack);
         return true;
     }
 

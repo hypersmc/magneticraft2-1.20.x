@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "minecraft:block/stone_bricks",
+    "side": "minecraft:block/bricks",
+    "front": "minecraft:block/furnace_front",
+    "particle": "minecraft:block/bricks"
+  }
+}

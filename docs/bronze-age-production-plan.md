@@ -36,7 +36,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 | Ore Roasting Kiln | Planned | 5x3x5 | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | **Source implemented; V5.1 visuals accepted** (gameplay/build validation pending) | **5x2x5** | 600 mB dirty water -> 480 mB reusable clean water + 1 settled sediment per 240 ticks | Ore Washer |
 | Charcoal Retort | **Source implemented; partial in-game fluid extraction confirmed by user** (PR #11; latest NBT/render fixes need retest) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + **250 mB liquid Wood Tar** (720 ticks); 8,000 mB internal output tank, legacy item retained for saves | Furnace; advanced airflow still planned |
-| Refractory Kiln | **Next agreed implementation target — design contract established; gameplay/model not implemented** | **5x4x5 proposed** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
+| Refractory Kiln | **K1 structural prototype authored; build/gameplay verification pending** | **5x4x5 source footprint** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
 | Mechanical Forge Hammer | Planned | 5x4x3 | Hot metal blank -> forged part | Bronze power |
 | Bronze Rolling Mill | Planned | 5x3x3 | Heated billet -> sheet/rod | Precision bearings |
 | Mechanical Press | Planned | 3x3x3 | Sheet/blank -> stamped part | Rolling mill |
@@ -434,3 +434,7 @@ already-implemented casting sub-chain, not an alternative/shorter machine list.
 
 The named machines in the original table remain intact, and the previously
 planned footprint values remain proposals, not silently finalized builds.
+
+### 2026-10-31 — Refractory Kiln K1 structural slice
+
+K1 adds the physical 5×4×5 JSON-based controller/structure in four facings, a brick V2 static model/voxel profile, two genuine front item modules and Patchouli formation. The module input is intentionally disabled until K2 can accept prepared refractory batches. NO firing/HEAT/ceramic output exists yet; verify build and formation before treating K1 as a working prototype. Full visual model/texture polish is deferred but no missing textures or incorrect structure/ports are acceptable.

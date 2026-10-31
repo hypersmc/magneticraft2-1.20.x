@@ -1,0 +1,120 @@
+#!/usr/bin/env node
+/**
+ * K1 structural contract. Static checks cannot replace Gradle/in-game tests.
+ * Run: node tools/refractory-kiln/test-contract.mjs
+ */
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {makeAssets,run} from './generate.mjs';
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
+const r=p=>fs.readFileSync(path.join(root,p),'utf8');
+const j=p=>JSON.parse(r(p));
+const base='src/main/resources/';
+const resource=base+'assets/magneticraft2/';
+const data=base+'data/magneticraft2/';
+const files=makeAssets();
+assert.equal(run('--check'),306,'unexpected count or stale files');
+const dirs=['south','west','north','east'];
+const solids=['B','S','C'];
+const canonical=j(data+'multiblocks/refractory_kiln_south.json');
+assert.deepEqual(canonical.structure.dimensions,[5,4,5]);
+assert.equal(Object.values(canonical.structure.layout).flat(2).filter(v=>v==='C').length,1);
+const cellRows=Object.values(canonical.structure.layout);
+assert.deepEqual(cellRows[1][4],['B','U','A','O','B']);
+assert.deepEqual(cellRows[3][2],['B','B','A','B','B']);
+const southCells=new Map();
+for(let y=0;y<4;y++)for(let z=-4;z<=0;z++)for(let x=-2;x<=2;x++)
+ southCells.set(x+','+y+','+z,canonical.structure.layout['layer'+(y+1)][z+4][x+2]);
+const rotation=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:d==='north'?[-x,-z]:[z,-x];
+const vox=j(data+'multiblock_voxels/refractory_kiln.json');
+assert.equal(vox.collision.length,75);
+assert.deepEqual(vox.collision,vox.selection);
+const pv=new Set(vox.collision.map(box=>[box[0]/16,box[1]/16,box[2]/16].join(',')));
+assert.equal(pv.size,75);
+for(const [key,type] of southCells)assert.equal(pv.has(key),solids.includes(type),'Voxel collision occupancy differs at '+key);
+for(const d of dirs){
+ const name='refractory_kiln_'+d;
+ const bp=j(data+'multiblocks/'+name+'.json');
+ assert.equal(bp.name,name);
+ assert.deepEqual(bp.structure.dimensions,[5,4,5]);
+ assert.equal(bp.settings.voxel_profile,'magneticraft2:refractory_kiln');
+ assert.deepEqual(bp.settings.render_air_anchors,[]);
+ const rotated=new Map();
+ for(const [key,type] of southCells){
+  const [x,y,z]=key.split(',').map(Number),[rx,rz]=rotation(x,z,d);
+  rotated.set(rx+','+y+','+rz,type);
+ }
+ const positions=[...rotated.keys()].map(s=>s.split(',').map(Number));
+ const minX=Math.min(...positions.map(p=>p[0]));
+ const minZ=Math.min(...positions.map(p=>p[2]));
+ let modelCount=0,faceCount=0;
+ for(let y=0;y<4;y++)for(let iz=0;iz<5;iz++)for(let ix=0;ix<5;ix++){
+  const x=ix+minX,z=iz+minZ;
+  const key=x+','+y+','+z;
+  const expected=rotated.get(key);
+  const found=bp.structure.layout['layer'+(y+1)][iz][ix];
+  assert.equal(found,expected,d+': rotation mismatch at '+key);
+  const file=resource+'models/multiblock/'+name+'/part_'+x+'_'+y+'_'+z+'.json';
+  if(!solids.includes(expected)){
+   assert.ok(!fs.existsSync(path.join(root,file)),d+': module/AIR has fake model '+key);
+   continue;
+  }
+  const model=j(file);
+  assert.equal(model.parent,'minecraft:block/block');
+  assert.equal(model.elements.length,1);
+  const el=model.elements[0];
+  assert.deepEqual(el.from,[0,0,0]);
+  assert.deepEqual(el.to,[16,16,16]);
+  for(const [direction,face] of Object.entries(el.faces)){
+   assert.ok(['north','south','east','west','up','down'].includes(direction));
+   assert.deepEqual(face.uv,[0,0,16,16],'Texture stretching at '+file);
+   assert.ok(model.textures[face.texture.slice(1)],'Missing texture mapping '+file);
+   faceCount++;
+  }
+  modelCount++;
+ }
+ assert.equal(modelCount,75,d+': wrong solid model count');
+ // Controller model is present, and Item I/O is physically separate.
+ const control=positions.find(p=>rotated.get(p.join(','))==='C');
+ assert.ok(control);
+ const [cx,cy,cz]=control;
+ assert.equal(cy,0);
+ assert.equal(bp.structure.blocks.U,'magneticraft2:multiblock_item_input');
+ assert.equal(bp.structure.blocks.O,'magneticraft2:multiblock_item_primary_output');
+ assert.equal(bp.settings.inventory,true);
+ assert.equal(bp.settings.power,false);
+ assert.equal(bp.settings.fuel,false);
+ console.log(d+': '+modelCount+' cell models, '+faceCount+' visible faces');
+}
+const book=j(resource+'patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
+const page=book.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Refractory Kiln');
+assert.ok(page,'Missing Kiln book Visualize');
+assert.equal(page.multiblock.pattern.length,4);
+for(let y=0;y<4;y++){
+ const pageLayer=page.multiblock.pattern[3-y];
+ for(let iz=0;iz<5;iz++){
+  const row=canonical.structure.layout['layer'+(y+1)][iz];
+  const reversed=[...row].reverse().map(x=>x==='C'?'0':x).join('');
+  assert.equal(pageLayer[iz],reversed,'Patchouli projection drift at '+y+'/'+iz);
+ }
+}
+assert.equal(j(resource+'models/item/refractory_kiln.json').parent,
+ 'magneticraft2:block/refractory_kiln_controller');
+const be=r('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/RefractoryKilnBlockEntity.java');
+assert.ok(be.includes('boolean heatcape() { return false; }'));
+assert.ok(be.includes('boolean fluidcape() { return false; }'));
+assert.ok(be.includes('return false;')&&be.includes('acceptsRecipeInput('));
+assert.ok(be.includes('return super.getCapability(cap, side);'));
+assert.ok(be.includes('if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();'),
+ 'No controller-wide item-capability bypass of the locked K1 ports');
+assert.ok(be.includes('MultiblockRenderParts.assign('));
+assert.ok(be.includes('MultiblockVoxelProfiles.exists('));
+assert.ok(!be.includes('BronzeFoundryThermalCore'));
+const block=r('src/main/java/com/magneticraft2/common/block/stage/bronze/RefractoryKilnBlock.java');
+assert.ok(block.includes('return null;')&&block.includes('getTicker('),'No processing ticker allowed in K1');
+const port=r('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
+assert.ok(port.includes('RefractoryKilnBlockEntity kiln')&&port.includes('kiln.acceptsRecipeInput(stack)'));
+assert.ok(j(data+'recipes/refractory_kiln.json').result.item==='magneticraft2:refractory_kiln');
+console.log('Refractory Kiln K1: geometry, blueprints, modules, book and code assertions passed');
