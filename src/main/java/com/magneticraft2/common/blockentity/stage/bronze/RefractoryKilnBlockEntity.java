@@ -1,6 +1,7 @@
 package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -37,7 +38,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** JSON-formed Foundry controller. Rendering, voxels and heat stay independent. */
+/** JSON-formed Refractory Kiln. Rendering, voxels and heat stay independent. */
 public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private static final String PREFIX = "refractory_kiln_";
@@ -81,12 +82,19 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         // Refuse missing/broken profile before replacing any in-world bricks.
         if (!voxelProfileName.isBlank() && !MultiblockVoxelProfiles.exists(voxelProfileName)) {
             org.apache.logging.log4j.LogManager.getLogger("Magneticraft2Voxels").error(
-                    "Cannot form Bronze Foundry: missing Voxel V2 profile {}", voxelProfileName);
+                    "Cannot form Refractory Kiln: missing Voxel V2 profile {}", voxelProfileName);
             return null;
         }
         MultiblockController controller = new MultiblockController(structure);
         controller.identifyAndAddModules(level, worldPosition, structure);
         if (!controller.createStructure(level, worldPosition)) return null;
+        // Keep both genuine module BEs linked for their port skins and item handlers.
+        // This is the same formed-port linkage already used by the Retort.
+        for (BlockPos member : controller.getBlockMap().keySet()) {
+            if (level.getBlockEntity(member) instanceof MultiblockItemPortBlockEntity port) {
+                port.linkFormedController(worldPosition);
+            }
+        }
         controller.setFormed(true);
         setMultiblockController(controller);
         formed = true;

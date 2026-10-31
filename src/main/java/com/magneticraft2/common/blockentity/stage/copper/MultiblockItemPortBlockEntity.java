@@ -309,6 +309,11 @@ public class MultiblockItemPortBlockEntity
      * No extra block is added and other multiblocks retain their behavior.
      */
     public void linkRetortController(BlockPos controller) {
+        linkFormedController(controller);
+    }
+
+    /** Bind a real formed item module to its owning controller. */
+    public void linkFormedController(BlockPos controller) {
         if (level == null || level.isClientSide) return;
         controllerX = controller.getX();
         controllerY = controller.getY();

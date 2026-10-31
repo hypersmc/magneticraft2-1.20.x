@@ -102,7 +102,7 @@ export function makeAssets(){
  }
  // The unformed controller uses the same recognisable iron firebox as the formed base.
  const controller=canonical.find(c=>c.k==='C');
- assets.set(write('assets/magneticraft2/models/block/refractory_kiln_controller.json'),kilnVisual({...controller,rx:0,rz:0},'south',lookup));
+ assets.set(write('assets/magneticraft2/models/block/refractory_kiln_controller.json'),kilnVisual({...controller,rx:0,rz:0},'south',new Map()));
  const variants={},angle={south:0,west:90,north:180,east:270};
  for(const d of dirs){
   const unfinished={model:'magneticraft2:block/refractory_kiln_controller'};

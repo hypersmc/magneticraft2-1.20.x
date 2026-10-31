@@ -126,7 +126,11 @@ for(const dir of dirs)for(const role of ['input','primary']){
  assert.equal(model.parent,'minecraft:block/block');
  assert.ok(model.elements.length>=8,'Port has no integrated kiln visuals: '+file);
 }
-assert.equal(j(resource+'models/block/refractory_kiln_controller.json').parent,'minecraft:block/block');
+const unformed=j(resource+'models/block/refractory_kiln_controller.json');
+assert.equal(unformed.parent,'minecraft:block/block');
+const unformedFaces=new Set(unformed.elements.flatMap(e=>Object.keys(e.faces)));
+for(const face of ['north','east','south','west','up','down'])
+ assert.ok(unformedFaces.has(face),'Standalone controller is invisible from '+face);
 assert.equal(j(resource+'models/item/refractory_kiln.json').parent,
  'magneticraft2:block/refractory_kiln_controller');
 const be=r('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/RefractoryKilnBlockEntity.java');
@@ -143,6 +147,8 @@ const block=r('src/main/java/com/magneticraft2/common/block/stage/bronze/Refract
 assert.ok(block.includes('return null;')&&block.includes('getTicker('),'No processing ticker allowed in K1');
 const port=r('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
 assert.ok(port.includes('RefractoryKilnBlockEntity kiln')&&port.includes('kiln.acceptsRecipeInput(stack)'));
+assert.ok(port.includes('linkFormedController(BlockPos controller)'), 'No reusable item-port linkage');
+assert.ok(be.includes('port.linkFormedController(worldPosition)'), 'Kiln does not link real port BEs');
 assert.ok(port.includes('"refractory_kiln_"')&&port.includes('"/port_" + role'),
  'Kiln formed real ports lack their own local baked models');
 assert.ok(j(data+'recipes/refractory_kiln.json').result.item==='magneticraft2:refractory_kiln');
