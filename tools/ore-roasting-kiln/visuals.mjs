@@ -14,115 +14,227 @@ function modelBox(from,to,material,sides,dir){
  return {from:f,to:t,faces};
 }
 
-const tex=Object.fromEntries(['brick','foundation','refractory','roof','iron',
- 'bronze','soot','ember','grate','input','output'].map(k=>[k,
- 'magneticraft2:block/ore_roasting_kiln/'+k]));
-tex.timber='magneticraft2:block/material/machine_timber';
-tex.particle=tex.brick;
-const solid=new Set(['S','B','C','U','O']);
-const delta={north:[0,0,-1],south:[0,0,1],east:[1,0,0],
- west:[-1,0,0],up:[0,1,0],down:[0,-1,0]};
+
+/**
+ * Ore Roasting Kiln — reference-matched, baked block-local facade.
+ *
+ * The large, three-wall-layer arches, actual timber header, angular slate
+ * roof, brick chimney and loadbearing supports form the silhouette.
+ *
+ * Use existing vanilla tile textures wherever visually appropriate.
+ * Original 16x16 art is reserved for grilles, fire bed, soot, iron and ports.
+ * No model element leaves its owning block; no per-frame renderer.
+ */
+const textures={
+ stone:'minecraft:block/stone_bricks',
+ brick:'minecraft:block/bricks',
+ roof:'minecraft:block/stone_bricks',
+ roofTrim:'minecraft:block/deepslate_tiles',
+ timber:'minecraft:block/spruce_planks',
+ timberEnd:'minecraft:block/stripped_spruce_log',
+ refractory:'magneticraft2:block/material/refractory_brick',
+ iron:'magneticraft2:block/ore_roasting_kiln/iron',
+ soot:'magneticraft2:block/ore_roasting_kiln/soot',
+ ember:'magneticraft2:block/ore_roasting_kiln/ember',
+ grate:'magneticraft2:block/ore_roasting_kiln/grate',
+ bronze:'magneticraft2:block/ore_roasting_kiln/bronze',
+ input:'magneticraft2:block/ore_roasting_kiln/input',
+ output:'magneticraft2:block/ore_roasting_kiln/output',
+ particle:'minecraft:block/bricks'
+};
+const offsets={north:[0,0,-1],south:[0,0,1],east:[1,0,0],
+               west:[-1,0,0],up:[0,1,0],down:[0,-1,0]};
+const solids=new Set(['S','B','C','U','O']);
+const openings=new Set([-1,-2,-4,-5,-7,-8]);
+const ribs=new Set([0,-3,-6,-8]);
+const rowEnds=new Set([-2,-5,-8]);
+const rowStarts=new Set([-1,-4,-7]);
+const faceSide=x=>x===2?'east':'west';
+const blank=(E)=>({parent:'minecraft:block/block',ambientocclusion:false,textures,elements:E});
 export function roofTop(x,z){
- if(x===0&&(z===-8||z===-6))return 16;
- if(Math.abs(x)===1&&z===-7)return 16;
- return Math.abs(x)===2?7:Math.abs(x)===1?11:15;
+ if(Math.abs(x)>2)throw Error('Outside roof '+x);
+ // 4px-thick courses made within the existing roof cell only.
+ // The top of the middle ridge is 15px, not an arbitrary full brick cap.
+ return [15,11,6][Math.abs(x)];
+}
+function roofStep(globalPixel) {
+ // Across a 5-block roof, a stepped approximation to two pitched slopes.
+ const dx=Math.abs(globalPixel-40);
+ return Math.max(2,15-Math.floor(dx*13/40));
+}
+function addRoof(E,add,c){
+ const {x,z}=c;
+ for(let strip=0;strip<4;strip++){
+  const from=strip*4,to=from+4,gx=(x+2)*16+from;
+  const h=roofStep(gx+2);
+  const prev=roofStep(gx-2);
+  const mat=(z===0||z===-8||z===-3||z===-6)?'roofTrim':'roof';
+  add([from,0,0],[to,h,16],mat,['up']);
+  // Visible raised risers between adjoining stepped stone roof courses.
+  if(strip===0||h!==prev){
+   const face=x<=0?'west':'east';
+   if(face==='west'&&strip>0)
+    add([from-.35,Math.min(h,prev),0],[from,h,16],mat,['west']);
+   if(face==='east'&&strip>0&&h>prev)
+    add([from,prev,0],[from+.35,h,16],mat,['east']);
+  }
+ }
+ // Solid gable at the front and back follows the exact step roof profile.
+ if(z===0||z===-8){
+  for(let s=0;s<4;s++){
+   const a=s*4,b=a+4,gy=roofStep((x+2)*16+a+2);
+   add([a,0,0],[b,gy,16],z===0?'refractory':'brick',
+       [z===0?'south':'north']);
+  }
+ }
+ // Material bearing line under the eaves, made of existing wall blocks.
+ if(Math.abs(x)===2){
+  add([0,0,0],[16,2,16],'roofTrim',[faceSide(x)]);
+ }
+ // Ridge ridge-cap, physically sits on the centre course.
+ if(x===0){
+  add([5,14,0],[11,16,16],'roofTrim',['up']);
+ }
+ // Roof cross-ribs are continuous across the five sloping courses.
+ if(z===-2||z===-5){
+  const y=roofTop(x,z)-1;
+  add([0,y,6],[16,y+1.0,10],'iron',['up','north','south']);
+ }
+}
+function aperturePanel(add,x,y0,y1,z0,z1,material,depth=14.0){
+ const face=faceSide(x);
+ const a=x===2?[depth,y0,z0]:[16-depth-.18,y0,z0];
+ const b=x===2?[depth+.18,y1,z1]:[16-depth,y1,z1];
+ add(a,b,material,[face]);
+}
+function arch(cell,add){
+ const {x,y,z}=cell;
+ const side=faceSide(x);
+ // Two tiles per arch; 3 arches repeated down each long wall.
+ const first=rowStarts.has(z),last=rowEnds.has(z);
+ const base0=first?2:0,base1=last?14:16;
+ if(y===1||y===2){
+  // Recess is 3 pixels from the masonry facade. Glow occupies the interior.
+  aperturePanel(add,x,0,16,base0,base1,'soot',12.4);
+  aperturePanel(add,x,y===1?4:0,15,base0+1,base1-1,'ember',12.75);
+  if(y===1){
+   aperturePanel(add,x,0,3,base0,base1,'refractory',15.4);
+   aperturePanel(add,x,3,4,base0,base1,'iron',15.6);
+  }
+  // Thick masonry edge is visible around the two-cell arch.
+  if(first)aperturePanel(add,x,0,16,0,2.6,'brick',15.45);
+  if(last)aperturePanel(add,x,0,16,13.4,16,'brick',15.45);
+  // Three closely spaced grille bars. They attach to the lower sill and arch.
+  for(const zbar of [4,9,14]){
+   if(zbar<base0+2||zbar>base1-2)continue;
+   aperturePanel(add,x,4,16,zbar,zbar+.9,'grate',15.6);
+  }
+ }
+ if(y===3){
+  // Upper curved shoulder; two blocks across, split into stepped voussoirs.
+  aperturePanel(add,x,0,7,base0,base1,'soot',12.4);
+  aperturePanel(add,x,0,5,base0+2,base1-2,'ember',12.75);
+  aperturePanel(add,x,7,11,base0,base1,'refractory',15.1);
+  aperturePanel(add,x,11,16,base0,base1,'brick',15.5);
+  if(first){
+   aperturePanel(add,x,4,11,0,4,'brick',15.55);
+   aperturePanel(add,x,7,13,4,7,'refractory',15.4);
+  }
+  if(last){
+   aperturePanel(add,x,4,11,12,16,'brick',15.55);
+   aperturePanel(add,x,7,13,9,12,'refractory',15.4);
+  }
+  aperturePanel(add,x,5,8,7,9,'refractory',15.75);
+ }
 }
 export function roastVisual(c,d,lookup){
  const {x,y,z,k}=c,E=[];
- const add=(a,b,m,faces)=>E.push(modelBox(a,b,m,faces,d));
- const out=Object.keys(delta).filter(f=>{
-  const t=delta[f],n=lookup.get([x+t[0],y+t[1],z+t[2]].join(','));
-  return !n||!solid.has(n.k);
+ const add=(a,b,material,faces)=>E.push(modelBox(a,b,material,faces,d));
+ const exposed=Object.keys(offsets).filter(face=>{
+  const off=offsets[face];
+  const v=lookup.get([x+off[0],y+off[1],z+off[2]].join(','));
+  return !v||!solids.has(v.k);
  });
- const side=Math.abs(x)===2,front=z===0;
+ const side=Math.abs(x)===2,front=z===0,back=z===-8;
  if(y===0){
-  for(const f of out)add([0,0,0],[16,16,16],'foundation',[f]);
+  // Vanilla stone-brick foundation, visible all around.
+  for(const face of exposed)add([0,0,0],[16,16,16],'stone',[face]);
   if(front&&x===0&&k==='C'){
-   add([2,2,15],[14,12,15.2],'soot',['south']);
-   add([3,3,15.25],[13,11,15.5],'grate',['south']);
-   add([2,1.8,15.6],[4,13,15.85],'iron',['south']);
-   add([12,1.8,15.6],[14,13,15.85],'iron',['south']);
-   add([4,11.5,15.6],[12,13.5,15.85],'iron',['south']);
+   add([2,2,14.1],[14,13,14.4],'soot',['south']);
+   add([3,3,14.5],[13,12,14.85],'grate',['south']);
+   for(const a of [[2,2,14.9,4,14,15.9],[12,2,14.9,14,14,15.9]])
+    add(a.slice(0,3),a.slice(3),'iron',['south']);
+   add([4,12,15],[12,14,15.8],'iron',['south']);
   }
-  // Full-height structural footplates at real plinth corners.
-  if(side&&[-8,-5,-2,0].includes(z)){
-   add(x===2?[15,0,12]:[0,0,12],x===2?[16,16,16]:[1,16,16],
-       'iron',[x===2?'east':'west']);
+ }else if(y>=1&&y<=3){
+  // Three true wall layers: side openings occupy roughly 2.5 blocks in
+  // height rather than the old one-block-high miniature window slots.
+  const window=side&&openings.has(z);
+  for(const face of exposed){
+   if(window&&face===faceSide(x)){
+    // Don't hide the recessed arch beneath a full exterior brick face.
+    if(x===2)add([0,0,0],[12.25,16,16],'brick',[face]);
+    else add([3.75,0,0],[16,16,16],'brick',[face]);
+   }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
   }
- }else if(y===1){
-  const window=side&&[-2,-4,-6].includes(z),face=x===2?'east':'west';
-  for(const f of out){
-   if(window&&f===face){
-    if(x===2)add([0,0,0],[15.1,16,16],'brick',['east']);
-    else add([.9,0,0],[16,16,16],'brick',['west']);
-   }else add([0,0,0],[16,16,16],f==='up'?'refractory':'brick',[f]);
+  if(window)arch(c,add);
+  // Separate loadbearing iron ribs and timber ties, based on wall piers.
+  if(side&&(ribs.has(z)||front||back)){
+   const f=faceSide(x);
+   const a=x===2?[15.2,0,0]:[0,0,0];
+   const b=x===2?[16,16,3]:[.8,16,3];
+   add(a,b,'iron',[f,'north','south']);
   }
-  if(window){
-   // Three inset roasting arches per side; each is mechanically attached.
-   const panel=(y1,y2,z1,z2,m)=>{
-    const a=x===2?[15.2,y1,z1]:[.3,y1,z1];
-    const b=x===2?[15.7,y2,z2]:[.8,y2,z2];
-    add(a,b,m,[face]);
-   };
-   panel(2,13,2,14,'soot');
-   panel(4,11,4,12,'ember');
-   panel(2,4,2,14,'refractory');       // sill
-   panel(4,10,2,4,'refractory');      // left jamb
-   panel(4,10,12,14,'refractory');    // right jamb
-   panel(10,12,4,12,'refractory');    // arch spring
-   panel(12,14,6,10,'refractory');    // keystone
-   for(const bar of [6,9])panel(4,11,bar,bar+1,'grate');
-  }
-  if(side&&[-8,-5,-1].includes(z)){
-   add(x===2?[15,0,12]:[0,0,12],x===2?[16,16,15]:[1,16,15],
-       'iron',[face]);
-  }
-  if(side){
-   // The real masonry piers carry one continuous under-eave timber header.
-   // No mechanical gears/shafts or unowned geometry.
-   const face=x===2?'east':'west';
-   const a=x===2?[15.15,13.8,0]:[.15,13.8,0];
-   const b=x===2?[15.9,15.8,16]:[.85,15.8,16];
-   add(a,b,'timber',[face,'up']);
+  // Continuous oak-colored support timber below roof, on actual brickwork.
+  if(side&&y===3){
+   const face=faceSide(x);
+   add(x===2?[15.1,12,0]:[.2,12,0],
+       x===2?[15.9,15,16]:[.9,15,16],'timber',[face,'up']);
   }
   if(front&&x===0){
-   add([1,1,15],[15,15,15.2],'soot',['south']);
-   add([2,2,15.3],[14,14,15.7],'iron',['south']);
-   add([7,2,15.75],[8,14,15.9],'soot',['south']);
-   add([9,7,15.91],[12,9,16],'bronze',['south']);
+   if(y===1||y===2){
+    add([2,0,13.5],[14,16,13.8],'soot',['south']);
+    add([3,0,13.9],[13,16,15.0],'iron',['south']);
+    if(y===1)add([8,5,15.1],[12,8,15.8],'bronze',['south']);
+   }else{
+    add([2,0,14.1],[14,6,14.4],'iron',['south']);
+    add([1,6,14.4],[15,12,14.9],'refractory',['south']);
+   }
   }
-  if(front&&Math.abs(x)===1)
-   add([0,12.5,15.05],[16,15.5,15.75],'refractory',['south']);
- }else if(y===2){
-  const top=roofTop(x,z);
-  add([0,0,0],[16,top,16],'roof',['up']);
-  for(const f of ['north','south'])
-   if(out.includes(f))add([0,0,0],[16,top,16],'roof',[f]);
-  for(const f of ['east','west']){
-   const nx=x+(f==='east'?1:-1),n=lookup.get([nx,y,z].join(','));
-   const next=n&&n.k==='B'?roofTop(nx,z):0;
-   if(next<top)add([0,next,0],[16,top,16],
-      Math.abs(x)===2?'iron':'refractory',[f]);
+  if(front&&Math.abs(x)===1&&y===3)
+   add([0,5,15],[16,7,15.7],'refractory',['south']);
+ }else if(y===4){
+  // A continuous actual pitched stone roof, not a single flat tile with
+  // decorative strips. The central AIR chimney throat is left untouched.
+  addRoof(E,add,c);
+ }else if(y===5){
+  // Thick three-by-three BRICK chimney ring built from real world blocks.
+  // The centre (x=0,z=-7) is AIR, so there is a genuine open flue.
+  for(const face of exposed)add([0,0,0],[16,16,16],'brick',[face]);
+  if(exposed.includes('up')){
+   add([0,14,0],[16,16,16],'roofTrim',['up']);
   }
-  if(out.includes('down'))add([0,0,0],[16,top,16],'refractory',['down']);
-  if([-1,-4,-6].includes(z))
-   add([0,top-1.4,6],[16,Math.min(16,top+.8),8],'iron',['up','north','south']);
-  // Real open AIR stack at x0,z-7. Stone surrounds its perimeter.
-  if((x===0&&(z===-8||z===-6))||(Math.abs(x)===1&&z===-7)){
-   add([0,top-1,0],[16,top,16],'refractory',['up']);
-   if(x===0&&z===-8)add([0,0,13],[16,16,16],'iron',['south']);
-   if(x===0&&z===-6)add([0,0,0],[16,16,3],'iron',['north']);
+  // Tall vertical corner ties: only on chimney's actual corners.
+  if(Math.abs(x)===1&&(z===-8||z===-6)){
+   for(const face of ['north','south','east','west'])
+    if(exposed.includes(face)){
+     const a=face==='west'?[0,0,0]:face==='east'?[15.2,0,0]:
+       face==='north'?[0,0,0]:[0,0,15.2];
+     const b=face==='west'?[.8,16,16]:face==='east'?[16,16,16]:
+       face==='north'?[16,16,.8]:[16,16,16];
+     add(a,b,'iron',[face]);
+    }
   }
  }
- return {parent:'minecraft:block/block',ambientocclusion:false,textures:tex,elements:E};
+ return blank(E);
 }
 export function roastPort(role,d){
- if(role!=='input'&&role!=='primary')throw Error('Unknown port '+role);
+ if(role!=='input'&&role!=='primary')throw Error('Unknown item port '+role);
  const E=[],add=(a,b,m,f)=>E.push(modelBox(a,b,m,f,d));
- add([0,0,0],[16,16,15],'foundation',['north','south','up','down','east','west']);
- add([2,3,15.1],[14,13,15.4],'soot',['south']);
- add([4,4,15.45],[12,12,15.7],role==='input'?'input':'output',['south']);
+ add([0,0,0],[16,16,15],'stone',['north','south','up','down','east','west']);
+ add([2,3,15.1],[14,13,15.35],'soot',['south']);
+ add([4,4,15.4],[12,12,15.65],role==='input'?'input':'output',['south']);
  add([2,12.5,15.5],[14,14,15.8],'iron',['south']);
  add([2,2,15.5],[14,3.5,15.8],'iron',['south']);
- return {parent:'minecraft:block/block',ambientocclusion:false,textures:tex,elements:E};
+ return blank(E);
 }
