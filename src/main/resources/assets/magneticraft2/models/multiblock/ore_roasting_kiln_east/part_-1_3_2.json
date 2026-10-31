@@ -1,0 +1,262 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "brick": "minecraft:block/bricks",
+    "roof": "minecraft:block/stone_bricks",
+    "roofTrim": "minecraft:block/deepslate_tiles",
+    "timber": "minecraft:block/spruce_planks",
+    "timberEnd": "minecraft:block/stripped_spruce_log",
+    "refractory": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "minecraft:block/bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        12.25
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        0,
+        12.4
+      ],
+      "to": [
+        16,
+        7,
+        12.58
+      ],
+      "faces": {
+        "north": {
+          "texture": "#soot",
+          "uv": [
+            0,
+            9,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        12.75
+      ],
+      "to": [
+        14,
+        5,
+        12.93
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ember",
+          "uv": [
+            2,
+            11,
+            12,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        7,
+        15.1
+      ],
+      "to": [
+        16,
+        11,
+        15.28
+      ],
+      "faces": {
+        "north": {
+          "texture": "#refractory",
+          "uv": [
+            0,
+            5,
+            14,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        11,
+        15.5
+      ],
+      "to": [
+        16,
+        16,
+        15.68
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            14,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        4,
+        15.55
+      ],
+      "to": [
+        4,
+        11,
+        15.73
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            12,
+            5,
+            16,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        7,
+        15.4
+      ],
+      "to": [
+        7,
+        13,
+        15.58
+      ],
+      "faces": {
+        "north": {
+          "texture": "#refractory",
+          "uv": [
+            9,
+            3,
+            12,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        5,
+        15.75
+      ],
+      "to": [
+        9,
+        8,
+        15.93
+      ],
+      "faces": {
+        "north": {
+          "texture": "#refractory",
+          "uv": [
+            7,
+            8,
+            9,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        15.1
+      ],
+      "to": [
+        16,
+        15,
+        15.8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            1,
+            16,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            15.1,
+            16,
+            15.8
+          ]
+        }
+      }
+    }
+  ]
+}

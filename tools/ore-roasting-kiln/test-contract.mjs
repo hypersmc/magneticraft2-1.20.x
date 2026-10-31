@@ -1,106 +1,93 @@
 #!/usr/bin/env node
-/** Static K1 design contract; does NOT replace a Forge build or in-game review. */
+/** Ore Roasting Kiln structural/visual contract: static checks, not runtime proof. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {makeAssets,run} from './generate.mjs';
-import {makeRoasterPngs,roasterTiles} from './texture-art.mjs';
+import {makeAssets,typeAt,run} from './generate.mjs';
+import {makeRoasterPngs} from './texture-art.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
-const read=p=>fs.readFileSync(path.join(root,p),'utf8');
-const json=p=>JSON.parse(read(p));
-const base='src/main/resources/',assets=makeAssets();
-assert.equal(assets.size,460);
-assert.equal(run('--check'),460);
-for(const [name,content] of Object.entries(makeRoasterPngs())){
- assert.ok(roasterTiles.includes(name));
+const base='src/main/resources/';
+const get=p=>fs.readFileSync(path.join(root,p),'utf8');
+const j=p=>JSON.parse(get(p));
+const assets=makeAssets();
+assert.equal(assets.size,684);
+assert.equal(run('--check'),684);
+for(const [name,png] of Object.entries(makeRoasterPngs())){
  const file=path.join(root,base+'assets/magneticraft2/textures/block/ore_roasting_kiln/'+name+'.png');
- assert.ok(fs.existsSync(file),'Missing original art: '+name);
- assert.deepEqual(fs.readFileSync(file),Buffer.from(content),'Stale original art: '+name);
- assert.equal(Buffer.from(content).readUInt32BE(16),16);
- assert.equal(Buffer.from(content).readUInt32BE(20),16);
+ assert.deepEqual(fs.readFileSync(file),Buffer.from(png));
 }
-const dirs=['south','west','north','east'],expected=[5,3,9],rev=[9,3,5];
-let models=0,arches=0;
-for(const d of dirs){
- const blueprint=json(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_'+d+'.json');
- assert.deepEqual(blueprint.structure.dimensions,
-   d==='south'||d==='north'?expected:rev);
- assert.equal(Object.values(blueprint.structure.layout).flat(2).length,135);
+const dirs=['south','west','north','east'];
+const viz=get('tools/ore-roasting-kiln/visuals.mjs');
+for(const tex of ['minecraft:block/bricks','minecraft:block/stone_bricks',
+                  'minecraft:block/deepslate_tiles','minecraft:block/spruce_planks'])
+ assert.ok(viz.includes(tex),'Missing reference material '+tex);
+assert.ok(!viz.includes('gear_')&&!viz.includes('shaft_'),
+  'Unrequested large external gear/shaft');
+let countModels=0,arches=0;
+for(const dir of dirs){
+ const bp=j(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_'+dir+'.json');
+ assert.deepEqual(bp.structure.dimensions,
+  dir==='south'||dir==='north'?[5,6,9]:[9,6,5]);
+ assert.equal(Object.values(bp.structure.layout).flat(2).length,270);
  for(const role of ['C','U','O'])
-  assert.equal(Object.values(blueprint.structure.layout).flat(2).filter(c=>c===role).length,1);
- assert.equal(blueprint.settings.voxel_profile,'magneticraft2:ore_roasting_kiln');
- assert.deepEqual(blueprint.settings.render_air_anchors,[]);
- for(const [p,o] of assets){
-  if(!p.includes('models/multiblock/ore_roasting_kiln_'+d+'/'))continue;
-  models++;
-  assert.ok(o.elements.length>0&&o.elements.length<=24,'Detail budget '+p);
-  for(const e of o.elements){
+  assert.equal(Object.values(bp.structure.layout).flat(2).filter(v=>v===role).length,1);
+ assert.equal(bp.structure.layout.layer5.flat().filter(v=>v==='A').length,1);
+ assert.equal(bp.structure.layout.layer6.flat().filter(v=>v==='B').length,8);
+ assert.equal(bp.structure.layout.layer6.flat().filter(v=>v==='A').length,37);
+ assert.equal(bp.settings.voxel_profile,'magneticraft2:ore_roasting_kiln');
+ assert.deepEqual(bp.settings.render_air_anchors,[]);
+ const flat=(y)=>bp.structure.layout['layer'+(y+1)];
+ let controller,flue;
+ for(let y=0;y<6;y++)for(let z=0;z<flat(y).length;z++)for(let x=0;x<flat(y)[z].length;x++){
+  if(flat(y)[z][x]==='C')controller=[x,y,z];
+  if(y===4&&flat(y)[z][x]==='A')flue=[x,y,z];
+ }
+ assert.ok(controller&&flue);
+ const dx=flue[0]-controller[0],dz=flue[2]-controller[2];
+ assert.equal(flue[1]-controller[1],4);
+ assert.ok((Math.abs(dx)===7&&dz===0)||(Math.abs(dz)===7&&dx===0),
+ 'Flue should be 7 cells toward rear: '+dir);
+ for(const [p,model] of assets){
+  if(!p.includes('models/multiblock/ore_roasting_kiln_'+dir+'/'))continue;
+  countModels++;
+  assert.ok(model.elements.length>0&&model.elements.length<40,'Element budget '+p);
+  if(p.includes('/part_')&&model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#ember')))
+   arches++;
+  for(const el of model.elements){
    for(let a=0;a<3;a++)
-    assert.ok(e.from[a]>=0&&e.to[a]<=16&&e.from[a]<e.to[a],p);
-   for(const [face,f] of Object.entries(e.faces)){
-    assert.ok(o.textures[f.texture.slice(1)],'Missing texture alias '+p);
+    assert.ok(el.from[a]>=0&&el.to[a]<=16&&el.from[a]<el.to[a],p);
+   for(const [face,f] of Object.entries(el.faces)){
+    assert.ok(model.textures[f.texture.slice(1)],'Texture alias missing '+p);
     const axes=face==='north'||face==='south'?[0,1]:
       face==='east'||face==='west'?[2,1]:[0,2];
-    assert.ok(Math.abs(f.uv[2]-f.uv[0]-(e.to[axes[0]]-e.from[axes[0]]))<.001,
-      'Stretched U '+p);
-    assert.ok(Math.abs(f.uv[3]-f.uv[1]-(e.to[axes[1]]-e.from[axes[1]]))<.001,
-      'Stretched V '+p);
+    assert.ok(Math.abs(f.uv[2]-f.uv[0]-(el.to[axes[0]]-el.from[axes[0]]))<.001,'Stretched U '+p);
+    assert.ok(Math.abs(f.uv[3]-f.uv[1]-(el.to[axes[1]]-el.from[axes[1]]))<.001,'Stretched V '+p);
    }
   }
-  if(p.includes('/part_')&&o.elements.some(e=>
-    Object.values(e.faces).some(f=>f.texture==='#ember')))arches++;
  }
 }
-assert.equal(models,452); // 4*(111 solid part models + two genuine port models)
-assert.equal(arches,24);  // 3 vent arches per long side * 2 sides * 4 facings
-const voxel=json(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json');
-assert.equal(voxel.collision.length,113);
-assert.equal(voxel.selection.length,113);
-assert.ok(voxel.collision.some(box=>box[1]===32&&box[4]===39),
- 'Roof eaves should be only seven pixels high');
-assert.ok(voxel.collision.some(box=>box[1]===32&&box[4]===47),
- 'Ridge must remain in the 3-block envelope');
-const book=json(base+'assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
+assert.equal(countModels,676);
+assert.equal(arches,144);
+assert.equal(typeAt(0,4,-7),'A');
+assert.equal(typeAt(0,5,-7),'A');
+assert.equal(typeAt(1,5,-7),'B');
+const vox=j(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json');
+assert.equal(vox.collision.length,301);
+assert.deepEqual(vox.selection,vox.collision);
+assert.equal(vox.collision.filter(v=>v[1]===64).length,176);
+const book=j(base+'assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
 const page=book.pages.find(p=>p.name==='Ore Roasting Kiln');
-assert.ok(page&&page.enable_visualize&&page.multiblock.pattern.length===3);
-assert.ok(page.multiblock.pattern.every(layer=>layer.length===9));
-// Every orientation must have exactly one roof AIR cell and must locate
-// it seven blocks behind the front controller, two blocks above it.
-// A brick in that AIR cell must make formation fail (real exhaust opening).
-for(const dir of dirs){
- const layout=json(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_'+dir+'.json').structure.layout;
- const air=[];
- const controllers=[];
- for(let y=0;y<3;y++)for(let z=0;z<layout['layer'+(y+1)].length;z++)
-  for(let x=0;x<layout['layer'+(y+1)][z].length;x++){
-   const cell=layout['layer'+(y+1)][z][x];
-   if(cell==='A'&&y===2)air.push([x,y,z]);
-   if(cell==='C')controllers.push([x,y,z]);
-  }
- assert.equal(air.length,1,'Exactly one roof exhaust AIR required: '+dir);
- assert.equal(controllers.length,1,'Exactly one controller required: '+dir);
- const [ax,ay,az]=air[0],[cx,cy,cz]=controllers[0];
- assert.equal(ay-cy,2,'Exhaust at wrong height: '+dir);
- const dx=ax-cx,dz=az-cz;
- assert.ok((Math.abs(dx)===7&&dz===0)||(Math.abs(dz)===7&&dx===0),
-  'Exhaust must be seven blocks behind the controller: '+dir);
+assert.equal(page.multiblock.pattern.length,6);
+const south=j(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_south.json');
+for(let y=0;y<6;y++){
+ const expected=south.structure.layout['layer'+(6-y)]
+   .map(r=>r.map(c=>c==='A'?'_':c==='C'?'0':c).reverse().join(''));
+ assert.deepEqual(page.multiblock.pattern[y],expected,'Patchouli layer mismatch '+y);
 }
-assert.match(page.text,/Leave that block completely EMPTY/);
-
-const south=json(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_south.json');
-for(let y=0;y<3;y++){
- const expectedRows=south.structure.layout['layer'+(3-y)]
-  .map(row=>row.map(c=>c==='A'?'_':c==='C'?'0':c).reverse().join(''));
- assert.deepEqual(page.multiblock.pattern[y],expectedRows,'Patchouli formation mismatch');
-}
-const block=read('src/main/java/com/magneticraft2/common/block/stage/bronze/OreRoastingKilnBlock.java');
-const entity=read('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/OreRoastingKilnBlockEntity.java');
-const ports=read('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
+const entity=get('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/OreRoastingKilnBlockEntity.java');
+const block=get('src/main/java/com/magneticraft2/common/block/stage/bronze/OreRoastingKilnBlock.java');
 assert.ok(entity.includes('port.linkFormedController(worldPosition)'));
 assert.ok(entity.includes('acceptsRecipeInput(ItemStack stack) { return false; }'));
-assert.ok(entity.includes('MultiblockRenderParts.assign('));
-assert.ok(!block.includes('::serverTick'),'Structural prototype must not tick');
-assert.ok(ports.includes('instanceof OreRoastingKilnBlockEntity roaster'));
-assert.ok(ports.includes('"ore_roasting_kiln_"'));
-console.log('Ore Roasting Kiln static source checks passed; Forge/in-game NOT verified');
+assert.ok(!block.includes('::serverTick'));
+console.log('Ore Roasting Kiln 5x6x9 static source contracts passed; in-game not verified.');

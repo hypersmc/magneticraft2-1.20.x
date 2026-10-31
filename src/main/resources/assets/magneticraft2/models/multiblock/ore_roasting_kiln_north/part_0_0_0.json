@@ -2,19 +2,21 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
-    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
-    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
-    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "stone": "minecraft:block/stone_bricks",
+    "brick": "minecraft:block/bricks",
+    "roof": "minecraft:block/stone_bricks",
+    "roofTrim": "minecraft:block/deepslate_tiles",
+    "timber": "minecraft:block/spruce_planks",
+    "timberEnd": "minecraft:block/stripped_spruce_log",
+    "refractory": "magneticraft2:block/material/refractory_brick",
     "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
     "soot": "magneticraft2:block/ore_roasting_kiln/soot",
     "ember": "magneticraft2:block/ore_roasting_kiln/ember",
     "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
-    "timber": "magneticraft2:block/material/machine_timber",
-    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+    "particle": "minecraft:block/bricks"
   },
   "elements": [
     {
@@ -30,7 +32,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#foundation",
+          "texture": "#stone",
           "uv": [
             0,
             0,
@@ -53,7 +55,7 @@
       ],
       "faces": {
         "down": {
-          "texture": "#foundation",
+          "texture": "#stone",
           "uv": [
             0,
             0,
@@ -67,19 +69,19 @@
       "from": [
         2,
         2,
-        0.8000000000000007
+        1.5999999999999996
       ],
       "to": [
         14,
-        12,
-        1
+        13,
+        1.9000000000000004
       ],
       "faces": {
         "north": {
           "texture": "#soot",
           "uv": [
             2,
-            4,
+            3,
             14,
             14
           ]
@@ -90,19 +92,19 @@
       "from": [
         3,
         3,
-        0.5
+        1.1500000000000004
       ],
       "to": [
         13,
-        11,
-        0.75
+        12,
+        1.5
       ],
       "faces": {
         "north": {
           "texture": "#grate",
           "uv": [
             3,
-            5,
+            4,
             13,
             13
           ]
@@ -112,22 +114,22 @@
     {
       "from": [
         12,
-        1.8,
-        0.15000000000000036
+        2,
+        0.09999999999999964
       ],
       "to": [
         14,
-        13,
-        0.40000000000000036
+        14,
+        1.0999999999999996
       ],
       "faces": {
         "north": {
           "texture": "#iron",
           "uv": [
             2,
-            3,
+            2,
             4,
-            14.2
+            14
           ]
         }
       }
@@ -135,22 +137,22 @@
     {
       "from": [
         2,
-        1.8,
-        0.15000000000000036
+        2,
+        0.09999999999999964
       ],
       "to": [
         4,
-        13,
-        0.40000000000000036
+        14,
+        1.0999999999999996
       ],
       "faces": {
         "north": {
           "texture": "#iron",
           "uv": [
             12,
-            3,
+            2,
             14,
-            14.2
+            14
           ]
         }
       }
@@ -158,22 +160,22 @@
     {
       "from": [
         4,
-        11.5,
-        0.15000000000000036
+        12,
+        0.1999999999999993
       ],
       "to": [
         12,
-        13.5,
-        0.40000000000000036
+        14,
+        1
       ],
       "faces": {
         "north": {
           "texture": "#iron",
           "uv": [
             4,
-            2.5,
+            2,
             12,
-            4.5
+            4
           ]
         }
       }

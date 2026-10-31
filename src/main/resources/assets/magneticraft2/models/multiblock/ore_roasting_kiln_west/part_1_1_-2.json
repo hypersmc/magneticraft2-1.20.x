@@ -2,19 +2,21 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "brick": "magneticraft2:block/ore_roasting_kiln/brick",
-    "foundation": "magneticraft2:block/ore_roasting_kiln/foundation",
-    "refractory": "magneticraft2:block/ore_roasting_kiln/refractory",
-    "roof": "magneticraft2:block/ore_roasting_kiln/roof",
+    "stone": "minecraft:block/stone_bricks",
+    "brick": "minecraft:block/bricks",
+    "roof": "minecraft:block/stone_bricks",
+    "roofTrim": "minecraft:block/deepslate_tiles",
+    "timber": "minecraft:block/spruce_planks",
+    "timberEnd": "minecraft:block/stripped_spruce_log",
+    "refractory": "magneticraft2:block/material/refractory_brick",
     "iron": "magneticraft2:block/ore_roasting_kiln/iron",
-    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
     "soot": "magneticraft2:block/ore_roasting_kiln/soot",
     "ember": "magneticraft2:block/ore_roasting_kiln/ember",
     "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
-    "timber": "magneticraft2:block/material/machine_timber",
-    "particle": "magneticraft2:block/ore_roasting_kiln/brick"
+    "particle": "minecraft:block/bricks"
   },
   "elements": [
     {
@@ -44,7 +46,7 @@
       "from": [
         0,
         0,
-        0
+        3.75
       ],
       "to": [
         16,
@@ -65,22 +67,68 @@
     },
     {
       "from": [
-        1,
         0,
-        0
+        0,
+        3.4199999999999995
       ],
       "to": [
-        4,
+        14,
         16,
-        1
+        3.5999999999999996
       ],
       "faces": {
         "south": {
-          "texture": "#iron",
+          "texture": "#soot",
+          "uv": [
+            0,
+            0,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        4,
+        3.07
+      ],
+      "to": [
+        13,
+        15,
+        3.25
+      ],
+      "faces": {
+        "south": {
+          "texture": "#ember",
           "uv": [
             1,
+            1,
+            13,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0.41999999999999965
+      ],
+      "to": [
+        14,
+        3,
+        0.5999999999999996
+      ],
+      "faces": {
+        "south": {
+          "texture": "#refractory",
+          "uv": [
             0,
-            4,
+            13,
+            14,
             16
           ]
         }
@@ -89,31 +137,114 @@
     {
       "from": [
         0,
-        13.8,
-        0.15
+        3,
+        0.22000000000000036
       ],
       "to": [
-        16,
-        15.8,
-        0.85
+        14,
+        4,
+        0.40000000000000036
       ],
       "faces": {
         "south": {
-          "texture": "#timber",
+          "texture": "#iron",
           "uv": [
             0,
-            0.1999999999999993,
-            16,
-            2.1999999999999993
+            12,
+            14,
+            13
           ]
-        },
-        "up": {
-          "texture": "#timber",
+        }
+      }
+    },
+    {
+      "from": [
+        13.4,
+        0,
+        0.3700000000000007
+      ],
+      "to": [
+        16,
+        16,
+        0.5500000000000007
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
           "uv": [
+            13.4,
             0,
-            0.15,
             16,
-            0.85
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        11.1,
+        4,
+        0.22000000000000036
+      ],
+      "to": [
+        12,
+        16,
+        0.40000000000000036
+      ],
+      "faces": {
+        "south": {
+          "texture": "#grate",
+          "uv": [
+            11.1,
+            0,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.1,
+        4,
+        0.22000000000000036
+      ],
+      "to": [
+        7,
+        16,
+        0.40000000000000036
+      ],
+      "faces": {
+        "south": {
+          "texture": "#grate",
+          "uv": [
+            6.1,
+            0,
+            7,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1.0999999999999996,
+        4,
+        0.22000000000000036
+      ],
+      "to": [
+        2,
+        16,
+        0.40000000000000036
+      ],
+      "faces": {
+        "south": {
+          "texture": "#grate",
+          "uv": [
+            1.0999999999999996,
+            0,
+            2,
+            12
           ]
         }
       }

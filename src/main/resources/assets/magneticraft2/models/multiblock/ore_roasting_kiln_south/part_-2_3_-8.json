@@ -1,0 +1,303 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "brick": "minecraft:block/bricks",
+    "roof": "minecraft:block/stone_bricks",
+    "roofTrim": "minecraft:block/deepslate_tiles",
+    "timber": "minecraft:block/spruce_planks",
+    "timberEnd": "minecraft:block/stripped_spruce_log",
+    "refractory": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/ore_roasting_kiln/iron",
+    "soot": "magneticraft2:block/ore_roasting_kiln/soot",
+    "ember": "magneticraft2:block/ore_roasting_kiln/ember",
+    "grate": "magneticraft2:block/ore_roasting_kiln/grate",
+    "bronze": "magneticraft2:block/ore_roasting_kiln/bronze",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "minecraft:block/bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.75,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.4199999999999995,
+        0,
+        0
+      ],
+      "to": [
+        3.5999999999999996,
+        7,
+        14
+      ],
+      "faces": {
+        "west": {
+          "texture": "#soot",
+          "uv": [
+            0,
+            9,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.07,
+        0,
+        2
+      ],
+      "to": [
+        3.25,
+        5,
+        12
+      ],
+      "faces": {
+        "west": {
+          "texture": "#ember",
+          "uv": [
+            2,
+            11,
+            12,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.7200000000000004,
+        7,
+        0
+      ],
+      "to": [
+        0.9000000000000004,
+        11,
+        14
+      ],
+      "faces": {
+        "west": {
+          "texture": "#refractory",
+          "uv": [
+            0,
+            5,
+            14,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.32,
+        11,
+        0
+      ],
+      "to": [
+        0.5,
+        16,
+        14
+      ],
+      "faces": {
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            14,
+            5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.2699999999999993,
+        4,
+        12
+      ],
+      "to": [
+        0.4499999999999993,
+        11,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            12,
+            5,
+            16,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.41999999999999965,
+        7,
+        9
+      ],
+      "to": [
+        0.5999999999999996,
+        13,
+        12
+      ],
+      "faces": {
+        "west": {
+          "texture": "#refractory",
+          "uv": [
+            9,
+            3,
+            12,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.07,
+        5,
+        7
+      ],
+      "to": [
+        0.25,
+        8,
+        9
+      ],
+      "faces": {
+        "west": {
+          "texture": "#refractory",
+          "uv": [
+            7,
+            8,
+            9,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        0.8,
+        16,
+        3
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            15.2,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            0.8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.2,
+        12,
+        0
+      ],
+      "to": [
+        0.9,
+        15,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            1,
+            16,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0.2,
+            0,
+            0.9,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}
