@@ -33,7 +33,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 |---|---|---|---|---|
 | Stamp Mill | **Source implemented** (PR #11; validation pending) | 5x3x4 | Raw ore -> crushed fraction, optional waste; large inertia and hammer wear | Bronze bearings, Gear V2 |
 | Rotary Ore Classifier | **Source implemented** (PR #11; validation pending) | **3x3x5** | 3 screened fines + 1 reusable coarse crushed ore per 4 crushed (no tailings generation yet) | Stamp Mill |
-| Ore Roasting Kiln | **Source-implemented structural/visual prototype** (roasting gameplay still planned) | **5x3x9** | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
+| Ore Roasting Kiln | **Source-implemented reference-faithful structural/visual rebuild** (in-game verification pending; roasting gameplay planned) | **5x6x9** | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | **Source implemented; V5.1 visuals accepted** (gameplay/build validation pending) | **5x2x5** | 600 mB dirty water -> 480 mB reusable clean water + 1 settled sediment per 240 ticks | Ore Washer |
 | Charcoal Retort | **Source implemented; partial in-game fluid extraction confirmed by user** (PR #11; latest NBT/render fixes need retest) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + **250 mB liquid Wood Tar** (720 ticks); 8,000 mB internal output tank, legacy item retained for saves | Furnace; advanced airflow still planned |
 | Refractory Kiln | **K1 structural prototype authored; build/gameplay verification pending** | **5x4x5 source footprint** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
@@ -439,15 +439,27 @@ planned footprint values remain proposals, not silently finalized builds.
 
 K1 adds the physical 5×4×5 JSON-based controller/structure in four facings, a brick V2 static model/voxel profile, two genuine front item modules and Patchouli formation. The module input is intentionally disabled until K2 can accept prepared refractory batches. NO firing/HEAT/ceramic output exists yet; verify build and formation before treating K1 as a working prototype. Full visual model/texture polish is deferred but no missing textures or incorrect structure/ports are acceptable.
 
-### 2026-10-31 — Ore Roasting Kiln long-shell visual baseline
+### 2026-10-31 — Ore Roasting Kiln reference-driven 5×6×9 visual rebuild
 
-Per the user-approved first reference concept, the Ore Roasting Kiln's old *proposed*
-5×3×5 footprint was changed explicitly to **5×3×9**. A separate source-implemented
-JSON structural prototype now exists on draft PR #11: three arch vents per long
-side, heavy stone foundation, segmented 3-course masonry roof and rear roof flue,
-four rotated blueprints, real item ports and Voxel V2 block-local baked models.
-It deliberately **does not include the illustration's large realistic gear or
-shaft**. The short rear chimney is an honest three-block-high compromise, rather
-than a floating fourth-block facade. Selective roasting recipes, fuel/HEAT,
-exhaust pollutants and impurity byproducts are *not implemented*. Runtime and
-visual review remain outstanding; do not mark this machine gameplay-complete.
+The original 5×3×9 visual prototype failed the user’s screenshot comparison:
+it appeared as a low brick box, not the industrial roaster shown in the
+**first** concept image. The user explicitly approved increasing the height.
+
+Draft PR #11 now contains a **5×6×9 structural prototype**: one
+Stone Bricks base, three courses of brick roasting walls with **three tall
+arched openings on each side**, a separately pitched stone roof with real
+Voxel V2 collision, timber headers, dark structural iron ribs and a **raised
+3×3 brick chimney with a continuous AIR shaft**. The full geometry has
+four orientation-specific JSON structures, generated baked model parts, a
+matching six-layer Patchouli visualizer and real item input/output modules.
+The picture's large realistic gear and external shaft are intentionally
+absent. The brick/stone/roof areas use appropriate vanilla Minecraft
+textures; bespoke 16×16 art is reserved for grilles, dark iron, embers, soot
+and I/O surfaces.
+
+This change **breaks the earlier 3-high blueprint on purpose**. Prototype
+worlds must dismantle the old formed roaster before updating and rebuild the
+six-high version. Roasting chemistry, fuel, HEAT, exhaust pollution and ore
+byproducts remain unimplemented, and the item input stays locked to prevent
+loss. A fully passed Gradle build and actual *in-game visual acceptance*
+are still required; do not mark the prototype complete yet.
