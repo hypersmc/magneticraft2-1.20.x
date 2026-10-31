@@ -281,7 +281,8 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         if (held.isEmpty() && player.isShiftKeyDown() && !fuel.isEmpty()) {
             ItemStack returned = fuel.copy();
             fuel = ItemStack.EMPTY;
-            if (!player.getInventory().add(returned)) player.drop(returned, false);
+            player.getInventory().add(returned);
+            if (!returned.isEmpty()) player.drop(returned, false);
             sync();
             return;
         }
