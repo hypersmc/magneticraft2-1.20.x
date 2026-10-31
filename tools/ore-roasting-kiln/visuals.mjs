@@ -1,6 +1,6 @@
-function modelBox(from,to,material,sides,dir){
+export function modelBox(from,to,material,sides,dir){
  const pix=(x,z)=>dir==="south"?[x,z]:dir==="west"?[16-z,x]:dir==="north"?[16-x,16-z]:[z,16-x];
- const faceMap={south:{north:"north",south:"south",east:"east",west:"west"},west:{north:"east",south:"west",east:"north",west:"south"},north:{north:"south",south:"north",east:"west",west:"east"},east:{north:"west",south:"east",east:"south",west:"north"}};
+ const faceMap={south:{north:"north",south:"south",east:"east",west:"west"},west:{north:"east",south:"west",east:"south",west:"north"},north:{north:"south",south:"north",east:"west",west:"east"},east:{north:"west",south:"east",east:"north",west:"south"}};
  const corners=[[from[0],from[2]],[from[0],to[2]],[to[0],from[2]],[to[0],to[2]]].map(([x,z])=>pix(x,z));
  const f=[Math.min(...corners.map(v=>v[0])),from[1],Math.min(...corners.map(v=>v[1]))];
  const t=[Math.max(...corners.map(v=>v[0])),to[1],Math.max(...corners.map(v=>v[1]))];
@@ -157,6 +157,45 @@ function arch(cell,add){
  }
 }
 
+/**
+ * PILOT: one 2x3-block roasting aperture (right side, nearest front).
+ * The remaining five apertures deliberately retain their old appearance
+ * until this bay passes straight-on and grazing-angle inspection.
+ * Cuboids use existing 16px textures and have physical return faces.
+ */
+export function isPilotBay(c){
+ return c.x===2&&c.y>=1&&c.y<=3&&(c.z===-2||c.z===-1);
+}
+function solidBayBox(add,from,to,mat){
+ add(from,to,mat,['north','south','east','west','up','down']);
+}
+function pilotRoastingBay(c,add){
+ if(!isPilotBay(c))throw Error('Not the chosen pilot bay');
+ const backHalf=c.z===-2;
+ // Exterior +X=16. Six-pixel-deep cavity; no paper-thin overlays.
+ solidBayBox(add,[0,0,0],[9,16,16],'brick');
+ solidBayBox(add,[9,0,0],[10,16,16],'soot');
+ solidBayBox(add,[10,0,0],[10.5,c.y===3?12:16,16],'ember');
+ // The jambs are on the OUTER ends, not on the shared Z seam.
+ if(backHalf)solidBayBox(add,[9,0,0],[16,16,3],'brick');
+ else solidBayBox(add,[9,0,13],[16,16,16],'brick');
+ if(c.y===1){
+  // Connected to the actual stone-brick foundation below.
+  solidBayBox(add,[10,0,0],[16,3,16],'refractory');
+  solidBayBox(add,[10,3,0],[16,4,16],'iron');
+ }
+ if(c.y===3){
+  // Substantial stepped upper arch, with side shoulder and broad crown.
+  solidBayBox(add,[9,12,0],[16,16,16],'brick');
+  if(backHalf)solidBayBox(add,[9,8,3],[16,12,7],'refractory');
+  else solidBayBox(add,[9,8,9],[16,12,13],'refractory');
+ }
+ // 3px-deep bars tie into the lower sill and the upper masonry crown.
+ const low=c.y===1?4:0,high=c.y===3?12:16;
+ for(const zBar of (backHalf?[7,13]:[2,8]))
+  solidBayBox(add,[11.5,low,zBar],[14.5,high,zBar+1.25],'iron');
+}
+
 export function roastVisual(c,d,lookup){
  const {x,y,z,k}=c,E=[];
  const add=(a,b,material,faces)=>E.push(modelBox(a,b,material,faces,d));
@@ -179,15 +218,16 @@ export function roastVisual(c,d,lookup){
  }else if(y>=1&&y<=3){
   // Three true wall layers: side openings occupy roughly 2.5 blocks in
   // height rather than the old one-block-high miniature window slots.
-  const window=side&&openings.has(z);
+  const window=side&&openings.has(z),pilot=isPilotBay(c);
   for(const face of exposed){
+   if(pilot)continue; // pilot masonry supplies all solid return faces
    if(window&&face===faceSide(x)){
-    // Don't hide the recessed arch beneath a full exterior brick face.
     if(x===2)add([0,0,0],[12.25,16,16],'brick',[face]);
     else add([3.75,0,0],[16,16,16],'brick',[face]);
    }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
   }
-  if(window)arch(c,add);
+  if(pilot)pilotRoastingBay(c,add);
+  else if(window)arch(c,add);
   // Separate loadbearing iron ribs and timber ties, based on wall piers.
   if(side&&(ribs.has(z)||front||back)){
    const f=faceSide(x);
