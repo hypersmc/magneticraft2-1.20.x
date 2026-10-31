@@ -428,7 +428,17 @@
         },
         "symmetrical": false
       },
-      "text": "Form the unchanged 5×4×5 hollow-brick structure. The broad dark charging hatch spans the three middle front bricks, with a smaller firebox below and flush real Item Input (left) and Item Output (right). Keep the roof flue AIR. The hatch and firebox are visual-only in K1; fuel, HEAT and firing belong to K2."
+      "text": "Form the same 5×4×5 kiln. Feed prepared refractory batches through the left real Item Input port. Add solid fuel at the controller. Empty-hand right-click shows HEAT and progress; sneak-click retrieves unused queued fuel. Collect fired ceramic from the right Item Output port. Keep the roof flue AIR."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Prepare Refractory Batch",
+      "recipe": "magneticraft2:unfired_refractory_batch",
+      "text": "Provisional K2 mix: one clay ball and one sand form one unfired batch. Final clay/sand/flux proportions are not decided; modpacks may change the JSON recipe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Firing Refractory Ceramics$()$(br2)Feed an unfired batch into the kiln, add solid fuel at the controller and heat until the firing threshold is reached. Firing consumes stored HEAT each active tick. The finished ceramic goes to the right Item Output port. A full output pauses processing without consuming another batch. HEAT balance is configurable in Common settings."
     }
   ],
   "sortnum": 3,

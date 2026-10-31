@@ -333,5 +333,10 @@
   "block.magneticraft2.refractory_kiln": "Refractory Kiln",
   "item.magneticraft2.refractory_kiln": "Refractory Kiln Controller",
   "message.magneticraft2.refractory_kiln.incomplete": "Refractory Kiln structure incomplete",
-  "message.magneticraft2.refractory_kiln.k1": "Refractory Kiln formed (K1). Firing and HEAT processing are not implemented yet."
+  "message.magneticraft2.refractory_kiln.k1": "Refractory Kiln formed (K1). Firing and HEAT processing are not implemented yet.",
+  "item.magneticraft2.unfired_refractory_batch": "Unfired Refractory Batch",
+  "item.magneticraft2.fired_refractory_ceramic": "Fired Refractory Ceramic",
+  "message.magneticraft2.refractory_kiln.fuel_added": "Kiln fuel added",
+  "message.magneticraft2.refractory_kiln.fuel_rejected": "Kiln fuel rejected (invalid or queue full)",
+  "message.magneticraft2.refractory_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Firing: %s/%s | Input: %s | Output: %s"
 }
