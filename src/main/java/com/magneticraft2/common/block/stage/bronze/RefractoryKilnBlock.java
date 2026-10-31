@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** K1 structural-only 5x4x5 Refractory Kiln, datapack-defined formation. */
+/** 5x4x5 datapack-formed Kiln with solid-fuel, server-authoritative firing. */
 public final class RefractoryKilnBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
@@ -114,7 +114,7 @@ public final class RefractoryKilnBlock extends BaseBlockMagneticraft2 {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        // K1 has no processing. Do not allocate a per-tick callback.
-        return null;
+        return level.isClientSide ? null : createTickerHelper(type,
+                BlockEntityRegistry.REFRACTORY_KILN_BE.get(), RefractoryKilnBlockEntity::serverTick);
     }
 }

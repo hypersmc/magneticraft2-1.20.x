@@ -110,6 +110,8 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WATER_SETTLING_TANK.get());
                         entries.accept(ItemRegistry.ITEM_CHARCOAL_RETORT.get());
                         entries.accept(ItemRegistry.ITEM_REFRACTORY_KILN.get());
+                        entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
+                        entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());
                         entries.accept(ItemRegistry.ITEM_WOOD_TAR.get());
                         entries.accept(ItemRegistry.ITEM_SETTLED_SEDIMENT.get());
                         entries.accept(ItemRegistry.ITEM_CLASSIFIER_SCREEN.get());

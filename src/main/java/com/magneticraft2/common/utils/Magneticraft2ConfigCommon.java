@@ -31,6 +31,11 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryCrucibleIngotCapacity;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryLadleHotTicks;
         public final ForgeConfigSpec.ConfigValue<Integer> FoundryCastingCoolTicks;
+        public final ForgeConfigSpec.ConfigValue<Integer> KilnHeatCapacity;
+        public final ForgeConfigSpec.ConfigValue<Integer> KilnHeatPerFuelTick;
+        public final ForgeConfigSpec.ConfigValue<Integer> KilnPassiveHeatLoss;
+        public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringThreshold;
+        public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringHeatPerTick;
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -81,6 +86,18 @@ public class Magneticraft2ConfigCommon {
             FoundryCastingCoolTicks = builder
                     .comment("Loaded server ticks between pouring one bronze unit into a sand mold and obtaining a rough casting")
                     .defineInRange("castingCoolTicks", 200, 1, 72000);
+            builder.pop();
+            builder.push("Refractory Kiln (provisional K2, Magneticraft HEAT units)");
+            KilnHeatCapacity = builder.comment("Kiln stored HEAT (not Celsius)")
+                    .defineInRange("heatCapacity", 32000, 1, 1000000);
+            KilnHeatPerFuelTick = builder.comment("HEAT generated per burning tick")
+                    .defineInRange("heatPerFuelTick", 24, 1, 100000);
+            KilnPassiveHeatLoss = builder.comment("HEAT lost per loaded tick")
+                    .defineInRange("passiveHeatLoss", 1, 0, 100000);
+            KilnFiringThreshold = builder.comment("Minimum HEAT to fire; <= heatCapacity")
+                    .defineInRange("firingThreshold", 9000, 1, 1000000);
+            KilnFiringHeatPerTick = builder.comment("HEAT consumed per firing tick")
+                    .defineInRange("firingHeatPerTick", 6, 1, 100000);
             builder.pop();
             builder.pop();
         }

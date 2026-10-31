@@ -4,6 +4,9 @@ import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelProfiles;
@@ -16,6 +19,11 @@ import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -38,10 +46,16 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/** JSON-formed Refractory Kiln. Rendering, voxels and heat stay independent. */
+/** Recipe-driven, server-authoritative Refractory Kiln. Rendering stays independent. */
 public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
     private static final String PREFIX = "refractory_kiln_";
+    private static final ResourceLocation MACHINE = new ResourceLocation("magneticraft2", "refractory_kiln");
+    private static final int FUEL_QUEUE_LIMIT = 16;
+    private ItemStack fuel = ItemStack.EMPTY;
+    private int burnRemaining, burnTotal, progress;
+    @Nullable private ResourceLocation activeRecipeId;
+    private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private String blueprintName = "";
     private String replacementModel = "";
     private boolean formed;
@@ -137,18 +151,164 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         return Direction.SOUTH;
     }
 
-    @Override
-    protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
-                                     Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!world.isClientSide) {
-            player.displayClientMessage(Component.translatable(
-                    "message.magneticraft2.refractory_kiln.k1"), true);
+    public boolean acceptsRecipeInput(ItemStack stack) {
+        return MultiblockRecipeHandler.acceptsInput(level, MACHINE, stack);
+    }
+
+    private static boolean validRecipe(@Nullable MultiblockProcessingRecipe recipe) {
+        return recipe != null && recipe.getInputCount() > 0
+                && !recipe.getOutput().isEmpty() && recipe.getByproduct().isEmpty()
+                && recipe.getMinSpeed() == 0F && recipe.getTorque() == 0F
+                && recipe.getFluidInput().isEmpty() && recipe.getFluidOutput().isEmpty();
+    }
+
+    @Nullable private MultiblockProcessingRecipe findRecipe() {
+        return MultiblockRecipeHandler.findRecipe(level, MACHINE, itemHandler.getStackInSlot(0));
+    }
+
+    private static int fuelTime(ItemStack stack) {
+        if (stack.isEmpty() || !stack.getCraftingRemainingItem().isEmpty()) return 0;
+        return Math.max(0, ForgeHooks.getBurnTime(stack, RecipeType.SMELTING));
+    }
+
+    private static boolean sameStack(ItemStack a, ItemStack b) {
+        return (a.isEmpty() && b.isEmpty()) ||
+                (a.getCount() == b.getCount() && ItemStack.isSameItemSameTags(a, b));
+    }
+
+    public static <E extends BlockEntity> void serverTick(Level world, BlockPos pos,
+            BlockState state, E tile) {
+        if (world.isClientSide || !(tile instanceof RefractoryKilnBlockEntity kiln)) return;
+        kiln.tickKiln();
+        ItemStack in = kiln.itemHandler.getStackInSlot(0);
+        ItemStack out = kiln.itemHandler.getStackInSlot(1);
+        if (!sameStack(in, kiln.lastInput) || !sameStack(out, kiln.lastOutput))
+            kiln.sync();
+    }
+
+    private void tickKiln() {
+        if (level == null || !formed) return;
+        int capacity = heatHandler.getMaxHeatStored();
+        int heat = Math.max(0, Math.min(capacity, heatHandler.getHeatStored()));
+        int threshold = Magneticraft2ConfigCommon.GENERAL.KilnFiringThreshold.get();
+        int cost = Magneticraft2ConfigCommon.GENERAL.KilnFiringHeatPerTick.get();
+        int gain = Magneticraft2ConfigCommon.GENERAL.KilnHeatPerFuelTick.get();
+        int loss = Magneticraft2ConfigCommon.GENERAL.KilnPassiveHeatLoss.get();
+        boolean changed = false, notify = false;
+
+        // An ignited fuel item continues burning even if the output fills.
+        if (burnRemaining > 0) {
+            burnRemaining--;
+            heat = (int) Math.min((long) capacity, (long) heat + gain);
+            changed = true;
+        }
+        int cooled = Math.max(0, heat - loss);
+        if (cooled != heat) changed = true;
+        heat = cooled;
+
+        MultiblockProcessingRecipe recipe = findRecipe();
+        if (!validRecipe(recipe) || threshold > capacity || cost > capacity) {
+            if (progress != 0 || activeRecipeId != null) {
+                progress = 0;
+                activeRecipeId = null;
+                changed = true;
+                notify = true;
+            }
+        } else {
+            if (!recipe.getId().equals(activeRecipeId)) {
+                activeRecipeId = recipe.getId();
+                progress = 0;
+                changed = true;
+                notify = true;
+            }
+            ItemStack product = recipe.getOutput();
+            // Reserve output before new ignition, firing progress or input removal.
+            boolean outputFits = itemHandler.insertItem(1, product, true).isEmpty();
+            if (outputFits) {
+                if (burnRemaining <= 0 && (long) heat < (long) threshold + cost && !fuel.isEmpty()) {
+                    int time = fuelTime(fuel);
+                    if (time > 0) {
+                        fuel.shrink(1);
+                        if (fuel.isEmpty()) fuel = ItemStack.EMPTY;
+                        burnRemaining = time;
+                        burnTotal = time;
+                        changed = true;
+                        notify = true;
+                    }
+                }
+                if (heat >= threshold && heat >= cost) {
+                    heat -= cost;
+                    progress++;
+                    changed = true;
+                    if (progress >= recipe.getProcessTime()) {
+                        // No output can be emitted twice; this tick commits once.
+                        if (!itemHandler.insertItem(1, product, true).isEmpty())
+                            throw new IllegalStateException("Kiln output reservation lost");
+                        ItemStack removed = itemHandler.extractItem(0, recipe.getInputCount(), false);
+                        if (removed.getCount() != recipe.getInputCount())
+                            throw new IllegalStateException("Kiln input changed during firing");
+                        if (!itemHandler.insertItem(1, product, false).isEmpty())
+                            throw new IllegalStateException("Kiln output became unavailable");
+                        activeRecipeId = null;
+                        progress = 0;
+                        notify = true;
+                    }
+                }
+            }
+        }
+        if (heat != heatHandler.getHeatStored()) {
+            heatHandler.setHeat(heat);
+            changed = true;
+        }
+        if (changed) {
+            setChanged();
+            if (notify || level.getGameTime() % 20L == 0L) sync();
         }
     }
 
-    /** K1 is structure-only. Inputs are deliberately rejected by the real port. */
-    public boolean acceptsRecipeInput(net.minecraft.world.item.ItemStack stack) {
-        return false;
+    @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        if (world.isClientSide || !formed) return;
+        ItemStack held = player.getItemInHand(hand);
+        if (held.isEmpty() && player.isShiftKeyDown() && !fuel.isEmpty()) {
+            ItemStack returned = fuel.copy();
+            fuel = ItemStack.EMPTY;
+            if (!player.getInventory().add(returned)) player.drop(returned, false);
+            sync();
+            return;
+        }
+        if (!held.isEmpty()) {
+            boolean ok = fuelTime(held) > 0 && fuel.getCount() < FUEL_QUEUE_LIMIT
+                    && (fuel.isEmpty() || ItemStack.isSameItemSameTags(fuel, held));
+            if (ok) {
+                if (fuel.isEmpty()) {
+                    fuel = held.copy();
+                    fuel.setCount(1);
+                } else fuel.grow(1);
+                if (!player.getAbilities().instabuild) held.shrink(1);
+                sync();
+            }
+            player.displayClientMessage(Component.translatable(
+                    ok ? "message.magneticraft2.refractory_kiln.fuel_added"
+                       : "message.magneticraft2.refractory_kiln.fuel_rejected"), true);
+            return;
+        }
+        MultiblockProcessingRecipe recipe = findRecipe();
+        player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.refractory_kiln.status",
+                fuel.getCount(), burnRemaining, heatHandler.getHeatStored(),
+                heatHandler.getMaxHeatStored(), progress,
+                recipe == null ? 0 : recipe.getProcessTime(),
+                itemHandler.getStackInSlot(0).getCount(),
+                itemHandler.getStackInSlot(1).getCount()), true);
+    }
+
+    @Override public void onDestroy(Level world) {
+        if (!world.isClientSide && !fuel.isEmpty()) {
+            Block.popResource(world, worldPosition, fuel.copy());
+            fuel = ItemStack.EMPTY;
+        }
+        super.onDestroy(world);
     }
 
     @Override
@@ -162,6 +322,14 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         voxelProfileName = tag.getString("v2_voxel_profile");
         localVoxelCollision = MultiblockVoxelNbt.read(tag, "v2_voxel_collision");
         localVoxelSelection = MultiblockVoxelNbt.read(tag, "v2_voxel_selection");
+        fuel = ItemStack.of(tag.getCompound("KilnFuel"));
+        burnTotal = Math.max(0, tag.getInt("KilnBurnTotal"));
+        burnRemaining = Math.max(0, Math.min(burnTotal, tag.getInt("KilnBurnRemaining")));
+        progress = Math.max(0, tag.getInt("KilnProgress"));
+        activeRecipeId = tag.contains("KilnRecipe")
+                ? ResourceLocation.tryParse(tag.getString("KilnRecipe")) : null;
+        lastInput = itemHandler.getStackInSlot(0).copy();
+        lastOutput = itemHandler.getStackInSlot(1).copy();
     }
 
     @Override
@@ -171,6 +339,11 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         if (!voxelProfileName.isBlank()) tag.putString("v2_voxel_profile", voxelProfileName);
         MultiblockVoxelNbt.write(tag, "v2_voxel_collision", localVoxelCollision);
         MultiblockVoxelNbt.write(tag, "v2_voxel_selection", localVoxelSelection);
+        tag.putInt("KilnBurnTotal", burnTotal);
+        tag.putInt("KilnBurnRemaining", burnRemaining);
+        tag.putInt("KilnProgress", progress);
+        if (!fuel.isEmpty()) tag.put("KilnFuel", fuel.save(new CompoundTag()));
+        if (activeRecipeId != null) tag.putString("KilnRecipe", activeRecipeId.toString());
     }
 
     @Override
@@ -193,6 +366,8 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
     @Override
     public CompoundTag sync() {
         setChanged();
+        lastInput = itemHandler.getStackInSlot(0).copy();
+        lastOutput = itemHandler.getStackInSlot(1).copy();
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -210,8 +385,9 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
 
     @Override public int capacityE() { return 0; }
     @Override public int maxtransferE() { return 0; }
-    // K1 does not allocate an unused HEAT handler. K2 adds real firing.
-    @Override public int capacityH() { return 0; }
+    @Override public int capacityH() {
+        return Magneticraft2ConfigCommon.GENERAL.KilnHeatCapacity.get();
+    }
     @Override public int maxtransferH() { return 0; }
     @Override public int capacityW() { return 0; }
     @Override public int maxtransferW() { return 0; }
@@ -223,12 +399,12 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
 
     @Override public boolean itemcape() { return true; }
     @Override public boolean energycape() { return false; }
-    @Override public boolean heatcape() { return false; }
+    @Override public boolean heatcape() { return true; }
     @Override public boolean wattcape() { return false; }
     @Override public boolean fluidcape() { return false; }
     @Override public boolean pressurecape() { return false; }
 
-    // K1 is inert; fuel and HEAT become server-owned processes in K2.
+    // No external HEAT transfer in K2; only the solid-fuel firebox supplies HEAT.
     @Override public boolean HeatCanReceive() { return false; }
     @Override public boolean HeatCanSend() { return false; }
     @Override public boolean WattCanReceive() { return false; }
