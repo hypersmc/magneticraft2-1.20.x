@@ -393,23 +393,23 @@
           [
             "BBBBB",
             "BBBBB",
-            "BBABB",
+            "BB_BB",
             "BBBBB",
             "BBBBB"
           ],
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB"
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B"
           ],
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
-            "BOAUB"
+            "B___B",
+            "B___B",
+            "B___B",
+            "BO_UB"
           ],
           [
             "SSSSS",
