@@ -1,110 +1,125 @@
 #!/usr/bin/env node
-/** 5x3x9 structural layout, four facings and matching local voxel collision. */
+/**
+ * One canonical 5x6x9 SOUTH blueprint: rotate four ways, bake block-local
+ * models, Voxel V2 roof and chimney, and generate Patchouli-compatible layout.
+ */
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {roastVisual,roastPort,roofTop} from './visuals.mjs';
+import {roastVisual,roastPort,roofStep} from './visuals.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
-
-const W=5,H=3,D=9,dirs=['south','west','north','east'];
+const W=5,H=6,D=9,dirs=['south','west','north','east'];
 const materials={S:'minecraft:stone_bricks',B:'minecraft:bricks',
  C:'magneticraft2:ore_roasting_kiln',U:'magneticraft2:multiblock_item_input',
  O:'magneticraft2:multiblock_item_primary_output',A:'minecraft:air'};
-const occupied=new Set(['S','B','C','U','O']);
+const owned=new Set(['S','B','C','U','O']);
 const key=(x,y,z)=>x+','+y+','+z;
-const rot=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:
+const rotate=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:
  d==='north'?[-x,-z]:[z,-x];
-const type=(x,y,z)=>{
- if(y===0)return z===0&&x===0?'C':z===0&&x===-2?'U':z===0&&x===2?'O':'S';
- if(y===1)return Math.abs(x)===2||z===0||z===-8?'B':'A';
- if(y===2)return x===0&&z===-7?'A':'B';
- throw Error('Invalid local y='+y);
-};
-const write=p=>'src/main/resources/'+p;
-const fmt=m=>JSON.stringify(m,null,2)+'\n';
-
-export 
-function makeAssets(){
+const res=p=>'src/main/resources/'+p;
+const fmt=o=>JSON.stringify(o,null,2)+'\n';
+export function typeAt(x,y,z){
+ if(x < -2||x > 2||z < -8||z > 0||y < 0||y >= H)
+  throw Error('Out of bounds '+key(x,y,z));
+ if(y===0){
+  if(z===0&&x===0)return 'C';
+  if(z===0&&x===-2)return 'U';
+  if(z===0&&x===2)return 'O';
+  return 'S';
+ }
+ if(y>=1&&y<=3)
+  return Math.abs(x)===2||z===0||z===-8?'B':'A';
+ if(y===4)return x===0&&z===-7?'A':'B';
+ if(y===5)return Math.abs(x)<=1&&z>=-8&&z<=-6&&
+  !(x===0&&z===-7)?'B':'A';
+ throw Error('Invalid layer '+y);
+}
+export function makeAssets(){
  const assets=new Map(),canon=[];
  for(let y=0;y<H;y++)for(let z=-8;z<=0;z++)for(let x=-2;x<=2;x++)
-  canon.push({x,y,z,k:type(x,y,z)});
+  canon.push({x,y,z,k:typeAt(x,y,z)});
  const lookup=new Map(canon.map(c=>[key(c.x,c.y,c.z),c]));
- const vox=canon.filter(c=>occupied.has(c.k)).map(c=>[
-  c.x*16,c.y*16,c.z*16,(c.x+1)*16,
-  c.y*16+(c.y===2?roofTop(c.x,c.z):16),(c.z+1)*16
- ]);
- assets.set(write('data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json'),
+ const vox=[];
+ for(const c of canon){
+  if(!owned.has(c.k))continue;
+  if(c.y===4){
+   // Match each visible 4-pixel roof slope with real collision.
+   for(let strip=0;strip<4;strip++){
+    const px=strip*4,h=roofStep((c.x+2)*16+px+2);
+    vox.push([c.x*16+px,64,c.z*16,c.x*16+px+4,64+h,(c.z+1)*16]);
+   }
+  }else vox.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
+ }
+ if(vox.length>512)throw Error('Too many voxel boxes: '+vox.length);
+ assets.set(res('data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json'),
   {format:1,unit:'model_pixels',collision:vox,selection:vox,zones:{}});
  for(const d of dirs){
-  const cells=canon.map(c=>{const [rx,rz]=rot(c.x,c.z,d);return {...c,rx,rz};});
-  const locations=new Map(cells.map(c=>[key(c.rx,c.y,c.rz),c]));
-  const left=Math.min(...cells.map(c=>c.rx)),right=Math.max(...cells.map(c=>c.rx));
-  const back=Math.min(...cells.map(c=>c.rz)),front=Math.max(...cells.map(c=>c.rz));
+  const rotated=canon.map(c=>{const [rx,rz]=rotate(c.x,c.z,d);return {...c,rx,rz};});
+  const byPos=new Map(rotated.map(c=>[key(c.rx,c.y,c.rz),c]));
+  const left=Math.min(...rotated.map(c=>c.rx)),right=Math.max(...rotated.map(c=>c.rx));
+  const back=Math.min(...rotated.map(c=>c.rz)),front=Math.max(...rotated.map(c=>c.rz));
   const layout={};
   for(let y=0;y<H;y++){
    const rows=[];
    for(let z=back;z<=front;z++){
     const row=[];
     for(let x=left;x<=right;x++){
-     const c=locations.get(key(x,y,z));
-     if(!c)throw Error('Rotation hole '+d+'/'+x+'/'+y+'/'+z);
-     row.push(c.k);
+     const cell=byPos.get(key(x,y,z));
+     if(!cell)throw Error('Missing rotated cell '+d+':'+key(x,y,z));
+     row.push(cell.k);
     }
     rows.push(row);
    }
    layout['layer'+(y+1)]=rows;
   }
-  assets.set(write('data/magneticraft2/multiblocks/ore_roasting_kiln_'+d+'.json'),{
+  assets.set(res('data/magneticraft2/multiblocks/ore_roasting_kiln_'+d+'.json'),{
    name:'ore_roasting_kiln_'+d,
    structure:{dimensions:[right-left+1,H,front-back+1],layout,blocks:materials},
    settings:{replacewhenformed:'multiblock/ore_roasting_kiln_'+d,
     inventory:true,power:false,fuel:false,fluid:false,inputs:[],outputs:[],
     render_air_anchors:[],voxel_profile:'magneticraft2:ore_roasting_kiln'}
   });
-  for(const c of cells.filter(c=>['S','B','C'].includes(c.k)))
-   assets.set(write('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+
+  for(const c of rotated.filter(c=>['S','B','C'].includes(c.k)))
+   assets.set(res('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+
      '/part_'+c.rx+'_'+c.y+'_'+c.rz+'.json'),roastVisual(c,d,lookup));
   for(const role of ['input','primary'])
-   assets.set(write('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+
-      '/port_'+role+'.json'),roastPort(role,d));
+   assets.set(res('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+
+     '/port_'+role+'.json'),roastPort(role,d));
  }
  const controller=canon.find(c=>c.k==='C');
- assets.set(write('assets/magneticraft2/models/block/ore_roasting_kiln_controller.json'),
+ assets.set(res('assets/magneticraft2/models/block/ore_roasting_kiln_controller.json'),
   roastVisual({...controller,rx:0,rz:0},'south',new Map()));
  const variants={},angles={south:0,west:90,north:180,east:270};
  for(const d of dirs){
-  const unformed={model:'magneticraft2:block/ore_roasting_kiln_controller'};
-  if(angles[d])unformed.y=angles[d];
-  variants['facing='+d+',is_formed=false']=unformed;
+  const raw={model:'magneticraft2:block/ore_roasting_kiln_controller'};
+  if(angles[d])raw.y=angles[d];
+  variants['facing='+d+',is_formed=false']=raw;
   variants['facing='+d+',is_formed=true']={
-   model:'magneticraft2:multiblock/ore_roasting_kiln_'+d+'/part_0_0_0'
-  };
+   model:'magneticraft2:multiblock/ore_roasting_kiln_'+d+'/part_0_0_0'};
  }
- assets.set(write('assets/magneticraft2/blockstates/ore_roasting_kiln.json'),{variants});
- assets.set(write('assets/magneticraft2/models/item/ore_roasting_kiln.json'),{
+ assets.set(res('assets/magneticraft2/blockstates/ore_roasting_kiln.json'),{variants});
+ assets.set(res('assets/magneticraft2/models/item/ore_roasting_kiln.json'),{
   parent:'magneticraft2:block/ore_roasting_kiln_controller'});
  return assets;
 }
-
-
 export function run(mode){
  if(!['--write','--check'].includes(mode))throw Error('Expected --write or --check');
  const assets=makeAssets();
- for(const [relative,model] of assets){
-  const destination=path.join(root,relative);
+ for(const [rel,model] of assets){
+  const file=path.join(root,rel);
   if(mode==='--write'){
-   fs.mkdirSync(path.dirname(destination),{recursive:true});
-   fs.writeFileSync(destination,fmt(model));
-  }else if(!fs.existsSync(destination)||fs.readFileSync(destination,'utf8')!==fmt(model))
-   throw Error('Missing/stale Ore Roaster generated asset '+relative);
+   fs.mkdirSync(path.dirname(file),{recursive:true});
+   fs.writeFileSync(file,fmt(model));
+  }else if(!fs.existsSync(file)||fs.readFileSync(file,'utf8')!==fmt(model))
+   throw Error('Missing/stale ore-roasting asset '+rel);
  }
  if(mode==='--check'){
   for(const d of dirs){
-   const prefix=write('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+'/');
-   const dir=path.join(root,prefix);
-   const expected=new Set([...assets.keys()].filter(p=>p.startsWith(prefix)).map(p=>path.basename(p)));
-   for(const f of fs.readdirSync(dir))if(f.endsWith('.json')&&!expected.has(f))
-    throw Error('Obsolete Ore Roaster model '+f);
+   const prefix=res('assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+d+'/');
+   const folder=path.join(root,prefix);
+   const known=new Set([...assets.keys()].filter(p=>p.startsWith(prefix)).map(p=>path.basename(p)));
+   for(const file of fs.readdirSync(folder))if(file.endsWith('.json')&&!known.has(file))
+    throw Error('Obsolete model '+d+'/'+file);
   }
  }
  return assets.size;
