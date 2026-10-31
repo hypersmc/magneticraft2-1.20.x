@@ -13,6 +13,7 @@
     "grate": "magneticraft2:block/ore_roasting_kiln/grate",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "timber": "magneticraft2:block/material/machine_timber",
     "particle": "magneticraft2:block/ore_roasting_kiln/brick"
   },
   "elements": [

@@ -17,6 +17,7 @@ function modelBox(from,to,material,sides,dir){
 const tex=Object.fromEntries(['brick','foundation','refractory','roof','iron',
  'bronze','soot','ember','grate','input','output'].map(k=>[k,
  'magneticraft2:block/ore_roasting_kiln/'+k]));
+tex.timber='magneticraft2:block/material/machine_timber';
 tex.particle=tex.brick;
 const solid=new Set(['S','B','C','U','O']);
 const delta={north:[0,0,-1],south:[0,0,1],east:[1,0,0],
@@ -75,6 +76,14 @@ export function roastVisual(c,d,lookup){
   if(side&&[-8,-5,-1].includes(z)){
    add(x===2?[15,0,12]:[0,0,12],x===2?[16,16,15]:[1,16,15],
        'iron',[face]);
+  }
+  if(side){
+   // The real masonry piers carry one continuous under-eave timber header.
+   // No mechanical gears/shafts or unowned geometry.
+   const face=x===2?'east':'west';
+   const a=x===2?[15.15,13.8,0]:[.15,13.8,0];
+   const b=x===2?[15.9,15.8,16]:[.85,15.8,16];
+   add(a,b,'timber',[face,'up']);
   }
   if(front&&x===0){
    add([1,1,15],[15,15,15.2],'soot',['south']);

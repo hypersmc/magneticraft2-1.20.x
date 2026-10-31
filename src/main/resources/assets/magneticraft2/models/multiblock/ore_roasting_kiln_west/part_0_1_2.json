@@ -13,6 +13,7 @@
     "grate": "magneticraft2:block/ore_roasting_kiln/grate",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "timber": "magneticraft2:block/material/machine_timber",
     "particle": "magneticraft2:block/ore_roasting_kiln/brick"
   },
   "elements": [
@@ -58,6 +59,38 @@
             0,
             16,
             16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13.8,
+        15.15
+      ],
+      "to": [
+        16,
+        15.8,
+        15.9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0.1999999999999993,
+            16,
+            2.1999999999999993
+          ]
+        },
+        "up": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            15.15,
+            16,
+            15.9
           ]
         }
       }
