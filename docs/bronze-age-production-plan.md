@@ -1,6 +1,6 @@
 # Bronze Age industrial progression (Magneticraft2 1.20.1)
 
-Status: **living implementation roadmap** for draft Bronze Age PR #11. In the machine tables below, **source implemented** means the code/resources exist on the draft branch, not that the full Forge build and in-game acceptance are complete. **Planned** means not yet implemented. Commit new content incrementally and preserve Copper-era functionality. Target progression: **Copper workshop -> Bronze industrial factory -> first iron bloom -> Iron Age**.
+Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled against draft PR #11 on **2026-10-31**. The earlier historical milestone notes below are retained for context.  In the machine tables below, **source implemented** means the code/resources exist on the draft branch, not that the full Forge build and in-game acceptance are complete. **Planned** means not yet implemented. Commit new content incrementally and preserve Copper-era functionality. Target progression: **Copper workshop -> Bronze industrial factory -> first iron bloom -> Iron Age**.
 
 ## Non-negotiable design rules
 
@@ -20,14 +20,14 @@ Status: **living implementation roadmap** for draft Bronze Age PR #11. In the ma
 | Phase | Role | Production milestones and first verification |
 |---|---|---|
 | **Bronze I — Casting and machine tools** | *Implemented in PR #11; Minecraft/Gradle validation pending* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
-| **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill, optional Rotary Ore Classifier and Water Settling Tank source implemented in PR #11; in-game/Gradle verification pending* | Stamp Mill (ore breaker) -> optional Rotary Ore Classifier (3 fines + 1 coarse return per 4 crushed) -> Washer -> Sifter -> Water Settling Tank (dirty-water recovery). Settling Tank V5.1 visual baseline accepted; Charcoal Retort and Ore Roasting Kiln still planned. First test line: 64 ore into product + tailings with real machine power and water. |
+| **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill, optional Rotary Ore Classifier, Water Settling Tank and Charcoal Retort source implemented on PR #11; build/end-to-end verification pending* | Stamp Mill -> optional classifier -> Washer/Sifter -> Settling Tank. Charcoal Retort produces charcoal and liquid Wood Tar, with a dedicated fluid output. Settling Tank V5.1 visual baseline accepted. Selective Ore Roasting Kiln remains planned. Test fuel, item/fluid backpressure, reload, and the full ore/water circuit before marking this phase complete. |
 | **Bronze III — Manufacturing and networks** | *Planned* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
 ## Multiblock candidates (footprints preliminary)
 
 
-**Status snapshot (2026-10-24):** based on the current `feature/bronze-age-foundry` branch / draft PR #11. **Source implemented** = machine logic/assets exist on that branch, **not merged or certified by `./gradlew build` and end-to-end Minecraft tests**. **Visuals accepted** = appearance only, not a sign-off on mechanics, I/O, persistence, automation or performance. **Planned** = no corresponding implementation on this branch. **Optional** = discretionary and not a prerequisite. Footprints remain preliminary except where an implemented machine's current layout is stated.
+**Status snapshot (2026-10-31):** reconciled with `feature/bronze-age-foundry` / draft PR #11 at commit `ccbae12933ca`. The earlier screenshot/table remains the scope baseline (16 machines), but implementation status reflects later commits. **Source implemented** = machine logic/assets exist on that branch, **not merged or certified by `./gradlew build` and end-to-end Minecraft tests**. **Visuals accepted** = appearance only, not a sign-off on mechanics, I/O, persistence, automation or performance. **Planned** = no corresponding implementation on this branch. **Optional** = discretionary and not a prerequisite. Footprints remain preliminary except where an implemented machine's current layout is stated.
 
 | Machine | Implementation status | Suggested footprint | Input -> output / distinct role | Dependency |
 |---|---|---|---|---|
@@ -35,8 +35,8 @@ Status: **living implementation roadmap** for draft Bronze Age PR #11. In the ma
 | Rotary Ore Classifier | **Source implemented** (PR #11; validation pending) | **3x3x5** | 3 screened fines + 1 reusable coarse crushed ore per 4 crushed (no tailings generation yet) | Stamp Mill |
 | Ore Roasting Kiln | Planned | 5x3x5 | Sulfide concentrate -> roasted feed plus exhaust/impurity | Refractory and fuel |
 | Water Settling Tank | **Source implemented; V5.1 visuals accepted** (gameplay/build validation pending) | **5x2x5** | 600 mB dirty water -> 480 mB reusable clean water + 1 settled sediment per 240 ticks | Ore Washer |
-| Charcoal Retort | **First source prototype** (PR #11; uncompiled / gameplay unverified) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + 1 wood tar (720 ticks); tar is a modest Retort fuel | Furnace; advanced airflow still planned |
-| Refractory Kiln | Planned | 5x4x5 | Clay/sand/flux -> refractory ceramics | Improved fuel |
+| Charcoal Retort | **Source implemented; partial in-game fluid extraction confirmed by user** (PR #11; latest NBT/render fixes need retest) | **3x4x3** | 4 burnable logs + separately supplied solid fuel -> 4 charcoal + **250 mB liquid Wood Tar** (720 ticks); 8,000 mB internal output tank, legacy item retained for saves | Furnace; advanced airflow still planned |
+| Refractory Kiln | **Next agreed implementation target — design contract established; gameplay/model not implemented** | **5x4x5 proposed** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
 | Mechanical Forge Hammer | Planned | 5x4x3 | Hot metal blank -> forged part | Bronze power |
 | Bronze Rolling Mill | Planned | 5x3x3 | Heated billet -> sheet/rod | Precision bearings |
 | Mechanical Press | Planned | 3x3x3 | Sheet/blank -> stamped part | Rolling mill |
@@ -78,7 +78,8 @@ Iron ore deposits -> selective breaking/classification -> concentration -> dewat
 2. **Stamp Mill source implemented:** six raw feedstocks, Gear V2 input, replaceable stamp shoe, physical item ports, JSON recipes and guide/JEI integration. In-game animation polish and a verified build are still outstanding.
 3. **Still required before the next ore-processing multiblock:** verify ore -> crushed -> Washer -> Sifter end-to-end in-game, including block harvests, full output ports, dirty-water backpressure and automation. Do not label source-level checks as gameplay verification.
 4. **Water Settling Tank source implemented:** 5x2x5; V5.1 visuals accepted. Verify actual 600 -> 480 mB + sediment operation, pipe/item ports, output blocking, reload persistence and integrated water reuse; no full Forge build or complete gameplay acceptance claimed.
-5. **Charcoal Retort first source prototype:** sealed 3x4x3 multiblock with manual finite fuel, real log input and separate charcoal/tar outputs, current-lit state and chimney smoke, JSON recipe/JEI/Patchouli support. Uses vanilla masonry/copper textures in a **V1 visual prototype, not accepted art**. Full Forge and gameplay testing required. After it is verified, Refractory Kiln and selective metallurgy follow.
+5. **Charcoal Retort implemented as a source candidate:** sealed 3x4x3 multiblock with real liquid Wood Tar (250 mB per four-log batch), fuel, dedicated rear output capability, JSON recipe, JEI and Patchouli. The user confirmed fluid extraction; however the latest legacy-NBT crash fix and rear-port rendering still require retesting. Visual polishing remains deferred. The 250 mB output is a provisional balance value.
+6. **Refractory Kiln is the next agreed new machine (Bronze III):** follow [`bronze-refractory-kiln-contract.md`](bronze-refractory-kiln-contract.md). Start with the material and thermal contract, then a JSON-formed 5x4x5 prototype and its full four-facing/boundary tests. Do not mark it source-implemented until code, materials, assets, and recipes actually exist. Do not alter vanilla iron or Stone/Copper progression in this slice.
 
 ## Pre-next-multiblock consistency sweep (2026-10-19)
 
@@ -403,3 +404,33 @@ Rebuilt right/front Y2 cell as physical staggered-brick masonry over recessed st
 ### 2026-10-24 — Retort V3.23 upper right side-wall masonry (visual review pending)
 
 Two SOUTH-local Y2 right-side cells (x1/z−1 and x1/z−2) now display five staggered physical brick courses on the outward +X face: original refractory structural core, 0.2px mortar at X14..14.2, individually raised cut brick faces at X15.45/15.70. The two Z course layouts alternate to avoid simple repeated wallpaper patterns. Removed only their rejected full-width upper/lower dark iron bands. Rear copper corner and compact rear iron end caps remain; rear face material areas unchanged. Other side remains on original model for now. Eight authored rotated right-side meshes plus 20 hidden-contact meshes regenerate, 28 model files in total. Roof exterior, front-right facade and lower side outward faces unchanged. Pending in-game screenshot comparison and Forge build.
+
+
+## 2026-10-31 — Canonical roadmap reconciliation and next implementation
+
+This document's **16 named machines and their distinct roles** are the authoritative
+planning scope. The separate `bronze-age-foundry-roadmap.md` describes the
+already-implemented casting sub-chain, not an alternative/shorter machine list.
+
+- **Source implemented, not accepted:** Stamp Mill, Rotary Ore Classifier,
+  Water Settling Tank and Charcoal Retort. The user has verified real liquid
+  Wood Tar extraction from the Retort but the latest NBT fix and render model
+  are pending follow-up verification.
+- **Also implemented on draft PR #11, outside this 16-machine candidate list:**
+  Pattern Maker, Mold Table, Bronze Foundry, Casting Basin and Mechanical Lathe.
+  Presence of source does not imply the full compiled/visual/gameplay
+  acceptance criteria passed.
+- **Planned:** the remaining 12 listed machines, including the Refractory
+  Kiln, Ore Roasting Kiln, Industrial Air Blower and Bloomery.
+- **Next build target:** Refractory Kiln, preliminary 5x4x5 footprint,
+  intended to fire appropriate clay/sand/mineral refractory batches with
+  sustained HEAT and finite fuel. The batch recipe, relative material quality,
+  heat/cooling thresholds and fuel ratios require explicit source/contract
+  decisions before gameplay balancing. The currently existing refractory
+  brick texture is **not** evidence of a registered brick item or Kiln.
+- **Parallel verification track:** run `./gradlew build` and the Retort
+  NBT/multiplayer/fluid-port regressions; never merge PR #11 on mere
+  source presence or one working demonstration.
+
+The named machines in the original table remain intact, and the previously
+planned footprint values remain proposals, not silently finalized builds.

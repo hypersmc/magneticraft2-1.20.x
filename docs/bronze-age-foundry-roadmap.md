@@ -2,6 +2,9 @@
 
 Status: development design. The previous Copper Age is the entry point.
 
+**Full Bronze Age machinery reference:** [Bronze Age industrial progression](bronze-age-production-plan.md) defines the canonical 16-machine scope and current status. This Foundry document is only the casting/workshop sub-chain; it does not supersede the ore, refractory, forging, air or Bloomery paths.
+
+
 **In PR #11:** first Foundry *structure/visual prototype*: 3×2×3 JSON layouts for all facings, new controller, static baked models, collision and Patchouli Visualize. That initial prototype did **not** burn fuel, melt metal or pour castings; later commits in this same draft PR now implement those operations. See `docs/bronze-foundry-structure-and-casting-contract.md`.
 
 ## Identity and boundaries
