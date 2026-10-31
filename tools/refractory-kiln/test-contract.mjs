@@ -162,9 +162,9 @@ for(const face of ['north','east','south','west','up','down'])
 assert.equal(j(resource+'models/item/refractory_kiln.json').parent,
  'magneticraft2:block/refractory_kiln_controller');
 const be=r('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/RefractoryKilnBlockEntity.java');
-assert.ok(be.includes('boolean heatcape() { return false; }'));
+assert.ok(be.includes('boolean heatcape() { return true; }'),'K2 HEAT capability is disabled');
 assert.ok(be.includes('boolean fluidcape() { return false; }'));
-assert.ok(be.includes('return false;')&&be.includes('acceptsRecipeInput('));
+assert.ok(be.includes('MultiblockRecipeHandler.acceptsInput(level, MACHINE, stack)'),'Kiln still rejects all inputs');
 assert.ok(be.includes('return super.getCapability(cap, side);'));
 assert.ok(be.includes('if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();'),
  'No controller-wide item-capability bypass of the locked K1 ports');
@@ -172,7 +172,7 @@ assert.ok(be.includes('MultiblockRenderParts.assign('));
 assert.ok(be.includes('MultiblockVoxelProfiles.exists('));
 assert.ok(!be.includes('BronzeFoundryThermalCore'));
 const block=r('src/main/java/com/magneticraft2/common/block/stage/bronze/RefractoryKilnBlock.java');
-assert.ok(block.includes('return null;')&&block.includes('getTicker('),'No processing ticker allowed in K1');
+assert.ok(block.includes('RefractoryKilnBlockEntity::serverTick'),'Kiln has no server ticker');
 const port=r('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
 assert.ok(port.includes('RefractoryKilnBlockEntity kiln')&&port.includes('kiln.acceptsRecipeInput(stack)'));
 assert.ok(port.includes('linkFormedController(BlockPos controller)'), 'No reusable item-port linkage');
@@ -180,4 +180,29 @@ assert.ok(be.includes('port.linkFormedController(worldPosition)'), 'Kiln does no
 assert.ok(port.includes('"refractory_kiln_"')&&port.includes('"/port_" + role'),
  'Kiln formed real ports lack their own local baked models');
 assert.ok(j(data+'recipes/refractory_kiln.json').result.item==='magneticraft2:refractory_kiln');
-console.log('Refractory Kiln K1: geometry, blueprints, modules, book and code assertions passed');
+const prepared=j(data+'recipes/unfired_refractory_batch.json');
+assert.equal(prepared.type,'minecraft:crafting_shapeless');
+assert.deepEqual(prepared.ingredients.map(i=>i.item),['minecraft:clay_ball','minecraft:sand']);
+assert.equal(prepared.result.item,'magneticraft2:unfired_refractory_batch');
+const firing=j(data+'recipes/firing_refractory_batch.json');
+assert.equal(firing.type,'magneticraft2:multiblock_processing');
+assert.equal(firing.machine,'magneticraft2:refractory_kiln');
+assert.equal(firing.input.item,'magneticraft2:unfired_refractory_batch');
+assert.equal(firing.output.item,'magneticraft2:fired_refractory_ceramic');
+assert.equal(firing.process_time,400);
+for(const item of ['unfired_refractory_batch','fired_refractory_ceramic'])
+ assert.equal(j(resource+'models/item/'+item+'.json').parent,'minecraft:item/generated');
+assert.equal(book.pages.length,46,'Bronze Age Patchouli lost K2 pages');
+assert.ok(book.pages.some(p=>p.type==='patchouli:crafting'&&p.recipe==='magneticraft2:unfired_refractory_batch'));
+const cfg=r('src/main/java/com/magneticraft2/common/utils/Magneticraft2ConfigCommon.java');
+for(const name of ['KilnHeatCapacity','KilnHeatPerFuelTick','KilnPassiveHeatLoss',
+  'KilnFiringThreshold','KilnFiringHeatPerTick'])
+ assert.ok(cfg.includes(name),'Missing HEAT configuration '+name);
+for(const source of ['KilnFuel','KilnBurnRemaining','KilnProgress','KilnRecipe',
+ 'heatHandler.setHeat(heat)','ForgeHooks.getBurnTime',
+ 'itemHandler.insertItem(1, product, true)',
+ 'itemHandler.extractItem(0, recipe.getInputCount(), false)',
+ 'port.linkFormedController(worldPosition)'])
+ assert.ok(be.includes(source),'K2 logic/persistence missing '+source);
+assert.ok(be.includes('void onDestroy(Level world)'),'Queued fuel not recovered on break');
+console.log('Refractory Kiln K2 static contract: recipes, ports, HEAT, persistence and book validated');
