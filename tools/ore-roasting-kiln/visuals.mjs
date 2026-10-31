@@ -57,7 +57,7 @@ export function roofTop(x,z){
  // The top of the middle ridge is 15px, not an arbitrary full brick cap.
  return [15,11,6][Math.abs(x)];
 }
-function roofStep(globalPixel) {
+export function roofStep(globalPixel) {
  // Across a 5-block roof, a stepped approximation to two pitched slopes.
  const dx=Math.abs(globalPixel-40);
  return Math.max(2,15-Math.floor(dx*13/40));
@@ -70,14 +70,12 @@ function addRoof(E,add,c){
   const prev=roofStep(gx-2);
   const mat=(z===0||z===-8||z===-3||z===-6)?'roofTrim':'roof';
   add([from,0,0],[to,h,16],mat,['up']);
-  // Visible raised risers between adjoining stepped stone roof courses.
-  if(strip===0||h!==prev){
-   const face=x<=0?'west':'east';
-   if(face==='west'&&strip>0)
-    add([from-.35,Math.min(h,prev),0],[from,h,16],mat,['west']);
-   if(face==='east'&&strip>0&&h>prev)
-    add([from,prev,0],[from+.35,h,16],mat,['east']);
-  }
+  // Faces of the true upward/downward height difference only.
+  // Never emit a zero-volume element when adjacent strips match.
+  if(strip>0&&h>prev)
+   add([from-.35,prev,0],[from,h,16],mat,['west']);
+  else if(strip>0&&h<prev)
+   add([from,h,0],[from+.35,prev,16],mat,['east']);
  }
  // Solid gable at the front and back follows the exact step roof profile.
  if(z===0||z===-8){
