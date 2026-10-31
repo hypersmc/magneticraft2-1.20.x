@@ -25,6 +25,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -338,6 +339,15 @@ public class MultiblockItemPortBlockEntity
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap,
             @Nullable Direction side) {
+        // Compatibility path for previously formed Retorts: the original
+        // byproduct item module remains a drain-only fluid outlet. New
+        // Retorts use the dedicated fluid_output module instead.
+        if (cap == ForgeCapabilities.FLUID_HANDLER
+                && formedModule
+                && getPortMode() == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
+                && getController() instanceof CharcoalRetortBlockEntity retort) {
+            return retort.getCapability(ForgeCapabilities.FLUID_HANDLER, side);
+        }
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCapability.cast();
         }

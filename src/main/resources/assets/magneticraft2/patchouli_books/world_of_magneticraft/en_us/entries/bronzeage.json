@@ -326,7 +326,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze II — Charcoal Retort$()$(br2)The sealed Retort produces charcoal fuel for refractory processing and later iron reduction. It takes four burnable logs per 720-tick cycle and burns a SEPARATE solid fuel supply. Each completed cycle yields four Charcoal and one Wood Tar. Wood Tar can be burned in the Retort for 200 ticks; it cannot fuel a complete batch by itself."
+      "text": "$(bold)Bronze II — Charcoal Retort$()$(br2)The sealed Retort produces charcoal and liquid Wood Tar. It consumes four burnable logs per 720-tick cycle and a separate solid fuel supply. Each completed cycle yields four Charcoal and 250 mB Wood Tar. Connect the rear Fluid Output to pipes and a Copper Fluid Tank; processing pauses if either output fills. Old Wood Tar items remain usable as legacy fuel."
     },
     {
       "type": "patchouli:crafting",
@@ -368,11 +368,11 @@
           "P": "minecraft:cut_copper",
           "U": "magneticraft2:multiblock_item_input",
           "O": "magneticraft2:multiblock_item_primary_output",
-          "Y": "magneticraft2:multiblock_item_byproduct_output"
+          "Y": "magneticraft2:multiblock_fluid_output"
         },
         "symmetrical": false
       },
-      "text": "Build exactly as Visualize shows. The Patchouli projection reverses row columns relative to the SOUTH JSON blueprint; the actual front ports remain Log Input on the left and Charcoal Output on the right when facing the controller, with Wood Tar collected at the rear. All three are real interactable modules. Keep every required AIR cell clear, including the roof chimney. Right-click the controller to form; supply solid fuel at the controller."
+      "text": "Build exactly as Visualize shows. The SOUTH projection reverses row columns relative to the JSON layout. Facing the controller, Log Input is on the left and Charcoal Item Output on the right; liquid Wood Tar leaves through the REAL Fluid Output at the rear. Connect the rear port to a pipe or tank. Existing builds using the old byproduct item port can still form as legacy structures. Keep chimney AIR clear; supply solid fuel at the controller."
     }
   ],
   "sortnum": 3,

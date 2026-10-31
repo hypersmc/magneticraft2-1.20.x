@@ -9,10 +9,9 @@
     "item": "minecraft:charcoal",
     "count": 4
   },
-  "byproduct": {
-    "item": "magneticraft2:wood_tar",
-    "count": 1
-  },
-  "byproduct_chance": 1,
-  "process_time": 720
+  "process_time": 720,
+  "fluid_output": {
+    "fluid": "magneticraft2:wood_tar",
+    "amount": 250
+  }
 }

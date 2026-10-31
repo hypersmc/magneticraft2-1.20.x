@@ -7,6 +7,7 @@ import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.registry.registers.FluidRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelHost;
@@ -43,6 +44,9 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
@@ -59,6 +63,7 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
             new ResourceLocation("magneticraft2", "charcoal_retort");
     private static final String PREFIX = "charcoal_retort_";
     private static final int FUEL_QUEUE_LIMIT = 16;
+    public static final int WOOD_TAR_CAPACITY = 8000;
 
     private String blueprintName = "";
     private String replacementModel = "";
@@ -73,6 +78,35 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     private boolean processing;
     @Nullable private ResourceLocation activeRecipeId;
 
+
+    // One server-owned tank, exposed as OUTPUT-ONLY to the real fluid port.
+    private final FluidTank tarTank = new FluidTank(WOOD_TAR_CAPACITY,
+            stack -> stack.getFluid() == FluidRegistry.WOOD_TAR.get()) {
+        @Override protected void onContentsChanged() { sync(); }
+    };
+    private LazyOptional<IFluidHandler> fluidCapability =
+            LazyOptional.of(() -> new TarOutputHandler());
+
+    private final class TarOutputHandler implements IFluidHandler {
+        @Override public int getTanks() { return 1; }
+        @Override public @NotNull FluidStack getFluidInTank(int index) {
+            return index == 0 ? tarTank.getFluid().copy() : FluidStack.EMPTY;
+        }
+        @Override public int getTankCapacity(int index) {
+            return index == 0 ? WOOD_TAR_CAPACITY : 0;
+        }
+        @Override public boolean isFluidValid(int index, @NotNull FluidStack fluid) {
+            return false;
+        }
+        @Override public int fill(FluidStack resource, FluidAction action) { return 0; }
+        @Override public @NotNull FluidStack drain(FluidStack resource, FluidAction action) {
+            return formed ? tarTank.drain(resource, action) : FluidStack.EMPTY;
+        }
+        @Override public @NotNull FluidStack drain(int amount, FluidAction action) {
+            return formed ? tarTank.drain(amount, action) : FluidStack.EMPTY;
+        }
+    }
+
     public CharcoalRetortBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CHARCOAL_RETORT_BE.get(), pos, state);
     }
@@ -84,7 +118,10 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     public ItemStack getFuelDisplay() { return fuel.copy(); }
     public ItemStack getLogDisplay() { return itemHandler.getStackInSlot(0).copy(); }
     public ItemStack getCharcoalDisplay() { return itemHandler.getStackInSlot(1).copy(); }
+    // Pre-fluid item output is retained only so old worlds can remove tar
+    // items that were already stored before upgrading.
     public ItemStack getTarDisplay() { return itemHandler.getStackInSlot(2).copy(); }
+    public int getTarAmount() { return tarTank.getFluidAmount(); }
     public boolean acceptsRecipeInput(ItemStack stack) {
         return MultiblockRecipeHandler.acceptsInput(level, MACHINE, stack);
     }
@@ -119,10 +156,11 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
 
     private static boolean validRecipe(@Nullable MultiblockProcessingRecipe recipe) {
         return recipe != null && recipe.getInputCount() > 0
-                && !recipe.getOutput().isEmpty() && !recipe.getByproduct().isEmpty()
-                && recipe.getByproductChance() == 1F
+                && !recipe.getOutput().isEmpty() && recipe.getByproduct().isEmpty()
                 && recipe.getTorque() == 0F && recipe.getMinSpeed() == 0F
-                && recipe.getFluidInput().isEmpty() && recipe.getFluidOutput().isEmpty();
+                && recipe.getFluidInput().isEmpty()
+                && recipe.getFluidOutput().getFluid() == FluidRegistry.WOOD_TAR.get()
+                && recipe.getFluidOutput().getAmount() > 0;
     }
 
     private static int fuelTime(ItemStack stack) {
@@ -165,9 +203,10 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         }
 
         // Check ALL ports before burning a new fuel item or consuming feed.
-        ItemStack result = recipe.getOutput(), tar = recipe.getByproduct();
+        ItemStack result = recipe.getOutput();
+        FluidStack tar = recipe.getFluidOutput();
         if (!itemHandler.insertItem(1, result, true).isEmpty()
-                || !itemHandler.insertItem(2, tar, true).isEmpty()) {
+                || tarTank.fill(tar, IFluidHandler.FluidAction.SIMULATE) != tar.getAmount()) {
             setProcessing(false);
             updateLit(burnRemaining > 0);
             return;
@@ -199,9 +238,11 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         if (removed.getCount() != recipe.getInputCount()) {
             throw new IllegalStateException("Retort feed changed during a completed batch");
         }
-        if (!itemHandler.insertItem(1, result, false).isEmpty()
-                || !itemHandler.insertItem(2, tar, false).isEmpty()) {
-            throw new IllegalStateException("Retort reserved outputs were not available");
+        if (!itemHandler.insertItem(1, result, false).isEmpty()) {
+            throw new IllegalStateException("Retort reserved charcoal output was unavailable");
+        }
+        if (tarTank.fill(tar, IFluidHandler.FluidAction.EXECUTE) != tar.getAmount()) {
+            throw new IllegalStateException("Retort reserved fluid output was unavailable");
         }
         progress = 0;
         activeRecipeId = null;
@@ -253,7 +294,8 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         player.displayClientMessage(Component.translatable(
                 "message.magneticraft2.charcoal_retort.status", fuel.getCount(),
                 burnRemaining, itemHandler.getStackInSlot(0).getCount(),
-                itemHandler.getStackInSlot(1).getCount(), itemHandler.getStackInSlot(2).getCount(),
+                itemHandler.getStackInSlot(1).getCount(), getTarAmount(),
+                itemHandler.getStackInSlot(2).getCount(),
                 progress, recipe == null ? 0 : recipe.getProcessTime()), true);
     }
 
@@ -336,6 +378,7 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         lastIn = itemHandler.getStackInSlot(0).copy();
         lastOut = itemHandler.getStackInSlot(1).copy();
         lastTar = itemHandler.getStackInSlot(2).copy();
+        if (tag.contains("RetortTarTank")) tarTank.readFromNBT(tag.getCompound("RetortTarTank"));
     }
 
     @Override protected void saveAdditional(CompoundTag tag) {
@@ -346,6 +389,7 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
         MultiblockVoxelNbt.write(tag, "v2_voxel_selection", selection);
         tag.putInt("RetortProgress", progress);
         tag.putBoolean("RetortProcessing", processing);
+        tag.put("RetortTarTank", tarTank.writeToNBT(new CompoundTag()));
         tag.putInt("RetortBurnTotal", burnTotal);
         tag.putInt("RetortBurnRemaining", burnRemaining);
         if (!fuel.isEmpty()) tag.put("RetortFuel", fuel.save(new CompoundTag()));
@@ -376,8 +420,19 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     // The real input/output module block entities own all item automation.
     @Override public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> capability, @Nullable Direction side) {
+        if (capability == ForgeCapabilities.FLUID_HANDLER)
+            return formed ? fluidCapability.cast() : LazyOptional.empty();
         if (capability == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();
         return super.getCapability(capability, side);
+    }
+
+    @Override public void invalidateCaps() {
+        super.invalidateCaps();
+        fluidCapability.invalidate();
+    }
+    @Override public void reviveCaps() {
+        super.reviveCaps();
+        fluidCapability = LazyOptional.of(() -> new TarOutputHandler());
     }
 
     @Override public int capacityE() { return 0; }
@@ -386,8 +441,8 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     @Override public int maxtransferH() { return 0; }
     @Override public int capacityW() { return 0; }
     @Override public int maxtransferW() { return 0; }
-    @Override public int capacityF() { return 0; }
-    @Override public int tanks() { return 0; }
+    @Override public int capacityF() { return WOOD_TAR_CAPACITY; }
+    @Override public int tanks() { return 1; }
     @Override public int invsize() { return 3; }
     @Override public int capacityP() { return 0; }
     @Override public int maxtransferP() { return 0; }
@@ -395,7 +450,7 @@ public final class CharcoalRetortBlockEntity extends BaseBlockEntityMagneticraft
     @Override public boolean energycape() { return false; }
     @Override public boolean heatcape() { return false; }
     @Override public boolean wattcape() { return false; }
-    @Override public boolean fluidcape() { return false; }
+    @Override public boolean fluidcape() { return true; }
     @Override public boolean pressurecape() { return false; }
     @Override public boolean HeatCanReceive() { return false; }
     @Override public boolean HeatCanSend() { return false; }

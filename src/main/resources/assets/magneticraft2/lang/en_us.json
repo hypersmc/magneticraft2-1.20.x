@@ -320,11 +320,14 @@
   "message.magneticraft2.water_settling_tank.status": "Dirty: %s/%s mB | Clean: %s/%s mB | Sediment: %s | Settling: %s/%s ticks",
   "block.magneticraft2.charcoal_retort": "Charcoal Retort",
   "item.magneticraft2.charcoal_retort": "Charcoal Retort Controller",
-  "item.magneticraft2.wood_tar": "Wood Tar",
+  "item.magneticraft2.wood_tar": "Wood Tar (Legacy)",
   "message.magneticraft2.charcoal_retort.incomplete": "Incomplete Charcoal Retort: use the Bronze Age Visualize blueprint.",
   "message.magneticraft2.charcoal_retort.fuel_added": "Added one fuel item to the sealed Retort firebox.",
   "message.magneticraft2.charcoal_retort.fuel_rejected": "Not a valid fuel or the firebox queue is full.",
-  "message.magneticraft2.charcoal_retort.status": "Fuel: %s | Burn: %s ticks | Logs: %s | Charcoal: %s | Tar: %s | Cycle: %s/%s",
+  "message.magneticraft2.charcoal_retort.status": "Fuel: %s | Burn: %s ticks | Logs: %s | Charcoal: %s | Wood Tar: %s mB | Old tar items: %s | Cycle: %s/%s",
   "block.magneticraft2.ancient_projector": "Ancient Holographic Projector",
-  "item.magneticraft2.ancient_projector": "Ancient Holographic Projector"
+  "item.magneticraft2.ancient_projector": "Ancient Holographic Projector",
+  "fluid.magneticraft2.wood_tar": "Wood Tar",
+  "block.magneticraft2.wood_tar": "Wood Tar",
+  "item.magneticraft2.wood_tar_bucket": "Wood Tar Bucket"
 }

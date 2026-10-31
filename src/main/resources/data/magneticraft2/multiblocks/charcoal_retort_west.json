@@ -81,7 +81,7 @@
       "B": "minecraft:bricks",
       "P": "minecraft:cut_copper",
       "C": "magneticraft2:charcoal_retort",
-      "Y": "magneticraft2:multiblock_item_byproduct_output",
+      "Y": "magneticraft2:multiblock_fluid_output",
       "U": "magneticraft2:multiblock_item_input",
       "O": "magneticraft2:multiblock_item_primary_output",
       "A": "minecraft:air"
@@ -92,7 +92,7 @@
     "inventory": true,
     "power": false,
     "fuel": true,
-    "fluid": false,
+    "fluid": true,
     "inputs": [],
     "outputs": [],
     "render_air_anchors": [
