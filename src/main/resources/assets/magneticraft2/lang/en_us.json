@@ -338,5 +338,9 @@
   "item.magneticraft2.fired_refractory_ceramic": "Fired Refractory Ceramic",
   "message.magneticraft2.refractory_kiln.fuel_added": "Kiln fuel added",
   "message.magneticraft2.refractory_kiln.fuel_rejected": "Kiln fuel rejected (invalid or queue full)",
-  "message.magneticraft2.refractory_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Firing: %s/%s | Input: %s | Output: %s"
+  "message.magneticraft2.refractory_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Firing: %s/%s | Input: %s | Output: %s",
+  "block.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
+  "item.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
+  "message.magneticraft2.ore_roasting_kiln.incomplete": "Ore Roasting Kiln incomplete",
+  "message.magneticraft2.ore_roasting_kiln.prototype": "Roasting Kiln formed. Selective sulfide roasting and HEAT are not implemented yet."
 }

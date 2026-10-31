@@ -129,6 +129,7 @@ public class ItemRegistry {
             ITEMS.register("bronze_stamp_shoe", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY = fromBlock(BRONZE_FOUNDRY);
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
+    public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
             ITEMS.register("unfired_refractory_batch", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_FIRED_REFRACTORY_CERAMIC =

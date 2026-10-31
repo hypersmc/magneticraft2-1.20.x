@@ -42,6 +42,7 @@ import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
 import com.magneticraft2.common.block.stage.bronze.WaterSettlingTankBlock;
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
+import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -130,6 +131,8 @@ public class BlockRegistry {
             BLOCKS.register("charcoal_retort", CharcoalRetortBlock::new);
     public static final RegistryObject<RefractoryKilnBlock> REFRACTORY_KILN =
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
+    public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =
+            BLOCKS.register("ore_roasting_kiln", OreRoastingKilnBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =

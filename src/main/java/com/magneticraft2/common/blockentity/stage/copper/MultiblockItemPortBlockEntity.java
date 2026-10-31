@@ -11,6 +11,8 @@ import net.minecraftforge.client.model.data.ModelData;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
+import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -123,6 +125,23 @@ public class MultiblockItemPortBlockEntity
                 }
             }
         }
+        if (formedModule && level != null
+                && getController() instanceof OreRoastingKilnBlockEntity kiln) {
+            BlockState state = kiln.getBlockState();
+            if (state.getBlock() instanceof OreRoastingKilnBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    return ModelData.builder().with(MultiBlockProperties.MODEL_NAME,
+                            "ore_roasting_kiln_" +
+                            state.getValue(OreRoastingKilnBlock.FACING).getName() +
+                            "/port_" + role).build();
+                }
+            }
+        }
         return ModelData.EMPTY;
     }
 
@@ -199,6 +218,8 @@ public class MultiblockItemPortBlockEntity
         // recipes yet; don't accept player/automation input it cannot use.
         if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity kiln)
             return kiln.acceptsRecipeInput(stack);
+        if (controller instanceof OreRoastingKilnBlockEntity roaster)
+            return roaster.acceptsRecipeInput(stack);
         return true;
     }
 
