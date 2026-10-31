@@ -2,17 +2,19 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "stone": "magneticraft2:block/settling_tank/foundation",
-    "masonry": "magneticraft2:block/charcoal_retort/refractory",
+    "stone": "magneticraft2:block/refractory_kiln/plinth",
+    "masonry": "magneticraft2:block/refractory_kiln/brick",
     "ceramic": "magneticraft2:block/material/refractory_brick",
-    "iron": "magneticraft2:block/material/dark_work_iron",
-    "band": "magneticraft2:block/settling_tank/riveted_iron",
-    "bronze": "magneticraft2:block/settling_tank/bronze_joint",
-    "soot": "magneticraft2:block/charcoal_retort/soot",
-    "grate": "magneticraft2:block/charcoal_retort/grille",
-    "door": "magneticraft2:block/charcoal_retort/hatch_off",
-    "roof": "magneticraft2:block/charcoal_retort/roof",
-    "particle": "magneticraft2:block/charcoal_retort/refractory"
+    "iron": "magneticraft2:block/refractory_kiln/iron",
+    "band": "magneticraft2:block/refractory_kiln/iron",
+    "bronze": "magneticraft2:block/refractory_kiln/bronze",
+    "soot": "magneticraft2:block/refractory_kiln/soot",
+    "grate": "magneticraft2:block/refractory_kiln/grate",
+    "door": "magneticraft2:block/refractory_kiln/door",
+    "roof": "magneticraft2:block/refractory_kiln/roof",
+    "input": "magneticraft2:block/refractory_kiln/input",
+    "output": "magneticraft2:block/refractory_kiln/output",
+    "particle": "magneticraft2:block/refractory_kiln/brick"
   },
   "elements": [
     {
@@ -142,7 +144,7 @@
       ],
       "faces": {
         "south": {
-          "texture": "#grate",
+          "texture": "#output",
           "uv": [
             3,
             4.5,

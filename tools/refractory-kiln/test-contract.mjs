@@ -15,6 +15,16 @@ const base='src/main/resources/';
 const resource=base+'assets/magneticraft2/';
 const data=base+'data/magneticraft2/';
 const files=makeAssets();
+const artRoot=resource+'textures/block/refractory_kiln/';
+const expectedTiles=['brick','plinth','roof','iron','bronze','soot','grate','door','input','output'];
+for(const tile of expectedTiles){
+ const png=fs.readFileSync(path.join(root,artRoot+tile+'.png'));
+ assert.deepEqual([...png.subarray(0,8)],[137,80,78,71,13,10,26,10],
+  'Malformed kiln PNG '+tile);
+ assert.equal(png.readUInt32BE(16),16,'Kiln texture width must be 16: '+tile);
+ assert.equal(png.readUInt32BE(20),16,'Kiln texture height must be 16: '+tile);
+}
+
 assert.equal(run('--check'),331,'unexpected count or stale files');
 const dirs=['south','west','north','east'];
 const solids=['B','S','C'];
@@ -64,6 +74,11 @@ for(const d of dirs){
   }
   const model=j(file);
   assert.equal(model.parent,'minecraft:block/block');
+  for(const id of Object.values(model.textures)){
+   assert.ok(id.startsWith('magneticraft2:block/refractory_kiln/') ||
+    id==='magneticraft2:block/material/refractory_brick',
+    'Kiln model borrows a machine-specific texture: '+file+' -> '+id);
+  }
   assert.ok(model.elements.length>0 && model.elements.length<=45,'Excessive detail: '+file);
   for(const el of model.elements) {
    for(let axis=0;axis<3;axis++) {
@@ -125,6 +140,10 @@ for(const dir of dirs)for(const role of ['input','primary']){
  const model=j(file);
  assert.equal(model.parent,'minecraft:block/block');
  assert.ok(model.elements.length>=8,'Port has no integrated kiln visuals: '+file);
+ assert.equal(model.textures.input,'magneticraft2:block/refractory_kiln/input');
+ assert.equal(model.textures.output,'magneticraft2:block/refractory_kiln/output');
+ assert.ok(model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#'+
+  (role==='input'?'input':'output'))),'Port-specific marking absent: '+file);
 }
 const unformed=j(resource+'models/block/refractory_kiln_controller.json');
 assert.equal(unformed.parent,'minecraft:block/block');

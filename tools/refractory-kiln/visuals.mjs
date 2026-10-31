@@ -19,17 +19,22 @@ function modelBox(from,to,material,sides,dir){
  return {from:f,to:t,faces};
 }
 function kilnTextures(){
- return {stone:"magneticraft2:block/settling_tank/foundation",
-  masonry:"magneticraft2:block/charcoal_retort/refractory",
+ return {
+  // Shared material texture is legitimate; all machine-specific surfaces are original.
+  stone:"magneticraft2:block/refractory_kiln/plinth",
+  masonry:"magneticraft2:block/refractory_kiln/brick",
   ceramic:"magneticraft2:block/material/refractory_brick",
-  iron:"magneticraft2:block/material/dark_work_iron",
-  band:"magneticraft2:block/settling_tank/riveted_iron",
-  bronze:"magneticraft2:block/settling_tank/bronze_joint",
-  soot:"magneticraft2:block/charcoal_retort/soot",
-  grate:"magneticraft2:block/charcoal_retort/grille",
-  door:"magneticraft2:block/charcoal_retort/hatch_off",
-  roof:"magneticraft2:block/charcoal_retort/roof",
-  particle:"magneticraft2:block/charcoal_retort/refractory"};
+  iron:"magneticraft2:block/refractory_kiln/iron",
+  band:"magneticraft2:block/refractory_kiln/iron",
+  bronze:"magneticraft2:block/refractory_kiln/bronze",
+  soot:"magneticraft2:block/refractory_kiln/soot",
+  grate:"magneticraft2:block/refractory_kiln/grate",
+  door:"magneticraft2:block/refractory_kiln/door",
+  roof:"magneticraft2:block/refractory_kiln/roof",
+  input:"magneticraft2:block/refractory_kiln/input",
+  output:"magneticraft2:block/refractory_kiln/output",
+  particle:"magneticraft2:block/refractory_kiln/brick"
+ };
 }
 export function kilnVisual(c,dir,lookup){
  const {x,y,z,k}=c, elements=[];
@@ -152,7 +157,7 @@ export function kilnPort(role,dir){
  push([0,0,0],[16,16,13],"ceramic",["south","up","down","north","east","west"]);
  push([.5,.5,13.1],[15.5,15.5,14.1],"masonry",["south"]);
  push([2,3,14.2],[14,13,14.7],"soot",["south"]);
- push([3,5,14.75],[13,11.5,15.05],"grate",["south"]);
+ push([3,5,14.75],[13,11.5,15.05],output?"output":"input",["south"]);
  push([0,0,14.8],[2,16,16],"iron",["south"]);
  push([14,0,14.8],[16,16,16],"iron",["south"]);
  push([2,13.5,14.8],[14,16,16],"band",["south"]);
