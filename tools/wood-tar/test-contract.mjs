@@ -60,4 +60,36 @@ for(const kind of ['still','flow']){
   assert.ok(meta.animation.frametime>=10,'Tar should animate slowly');
 }
 assert.deepEqual(readPng('item/wood_tar_bucket.png'),{width:16,height:16});
+// V3.40: the generic fluid module selects the existing Retort rear
+// insert only when formed as part of that Retort. The base model must
+// remain available for unformed ports and all other multiblocks.
+const fluidStates=json(assets+'blockstates/multiblock_fluid_output.json');
+for(const facing of ['north','south','east','west','up','down']){
+  assert.equal(fluidStates.variants['facing='+facing]?.model,
+    'magneticraft2:block/multiblock_fluid_output_selector',
+    'Fluid Output is not connected to its model-data selector: '+facing);
+}
+const fluidSelector=json(assets+'models/block/multiblock_fluid_output_selector.json');
+assert.equal(fluidSelector.loader,'magneticraft2:multiblock');
+assert.equal(fluidSelector.baseModel,'magneticraft2:models/block/multiblock_fluid_output.json');
+const fluidPort=get('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockFluidOutputBlockEntity.java');
+assert.ok(fluidPort.includes('controller instanceof CharcoalRetortBlockEntity'),
+  'Only formed Charcoal Retorts may select the rear insert');
+assert.ok(fluidPort.includes('if (!formedModule || level == null)'),
+  'Unformed Fluid Outputs must preserve the original block model');
+assert.ok(fluidPort.includes('"/port_byproduct"'),
+  'Reuse the established Retort rear-port art');
+assert.ok(fluidPort.includes('requestModelDataUpdate()'),
+  'Client must refresh the selector when the module forms');
+for(const dir of rows){
+  const custom=json(assets+'models/multiblock/charcoal_retort_'+dir+'/port_byproduct.json');
+  assert.ok(custom.elements.length>0,'Missing existing rear port insert '+dir);
+  for(const element of custom.elements){
+    for(const face of Object.values(element.faces)){
+      if(face.texture?.startsWith('#'))assert.ok(custom.textures[face.texture.slice(1)],
+        'Unbound rear port texture '+dir+'/'+face.texture);
+    }
+  }
+}
+
 console.log('Wood Tar contract: recipe, ports, legacy forms, tank, palette and sprites OK');

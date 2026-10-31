@@ -1,6 +1,9 @@
 package com.magneticraft2.common.blockentity.stage.copper;
 
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
+import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
+import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
@@ -16,6 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -288,6 +292,37 @@ public class MultiblockFluidOutputBlockEntity
         }
     }
 
+    /**
+     * Reuse the existing Retort byproduct rear-wall insert when this real
+     * Fluid Output module belongs to a formed Charcoal Retort.
+     * Other multiblocks and unformed Fluid Outputs use the normal
+     * standalone block model. Rendering does not affect fluid I/O.
+     */
+    @Override
+    public @NotNull ModelData getModelData() {
+        if (!formedModule || level == null) {
+            return ModelData.EMPTY;
+        }
+
+        BlockEntity controller = level.getBlockEntity(
+                new BlockPos(controllerX, controllerY, controllerZ)
+        );
+        if (controller instanceof CharcoalRetortBlockEntity retort) {
+            BlockState state = retort.getBlockState();
+            if (state.getBlock() instanceof CharcoalRetortBlock
+                    && state.hasProperty(CharcoalRetortBlock.FACING)) {
+                String name = "charcoal_retort_"
+                        + state.getValue(CharcoalRetortBlock.FACING).getName()
+                        + "/port_byproduct";
+                return ModelData.builder()
+                        .with(MultiBlockProperties.MODEL_NAME, name)
+                        .build();
+            }
+        }
+
+        return ModelData.EMPTY;
+    }
+
     @Override
     public String getModuleKey() {
         return "fluid_output";
@@ -369,6 +404,11 @@ public class MultiblockFluidOutputBlockEntity
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
+        // The newly formed Retort changes which baked port model is
+        // selected. Refresh it when the server's BE data arrives.
+        if (level != null && level.isClientSide) {
+            requestModelDataUpdate();
+        }
     }
 
     @Override
