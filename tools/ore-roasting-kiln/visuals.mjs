@@ -50,6 +50,7 @@ const ribs=new Set([0,-3,-6,-8]);
 const rowEnds=new Set([-2,-5,-8]);
 const rowStarts=new Set([-1,-4,-7]);
 const faceSide=x=>x===2?'east':'west';
+const chimneyFoot=(x,z)=>Math.abs(x)<=1&&z>=-8&&z<=-6&&!(x===0&&z===-7);
 const blank=(E)=>({parent:'minecraft:block/block',ambientocclusion:false,textures,elements:E});
 export function roofTop(x,z){
  if(Math.abs(x)>2)throw Error('Outside roof '+x);
@@ -202,9 +203,17 @@ export function roastVisual(c,d,lookup){
   if(front&&Math.abs(x)===1&&y===3)
    add([0,5,15],[16,7,15.7],'refractory',['south']);
  }else if(y===4){
-  // A continuous actual pitched stone roof, not a single flat tile with
-  // decorative strips. The central AIR chimney throat is left untouched.
+  // All roof cells carry the pitched tiles; under the chimney, real brick
+  // piers meet the upper chimney wall without an unsupported vertical gap.
   addRoof(E,add,c);
+  if(chimneyFoot(x,z)){
+   const wallFaces=[];
+   for(const face of ['north','south','east','west']){
+    const step=offsets[face];
+    if(!chimneyFoot(x+step[0],z+step[2]))wallFaces.push(face);
+   }
+   if(wallFaces.length)add([0,0,0],[16,16,16],'brick',wallFaces);
+  }
  }else if(y===5){
   // Thick three-by-three BRICK chimney ring built from real world blocks.
   // The centre (x=0,z=-7) is AIR, so there is a genuine open flue.

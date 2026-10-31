@@ -13,6 +13,7 @@ const materials={S:'minecraft:stone_bricks',B:'minecraft:bricks',
  C:'magneticraft2:ore_roasting_kiln',U:'magneticraft2:multiblock_item_input',
  O:'magneticraft2:multiblock_item_primary_output',A:'minecraft:air'};
 const owned=new Set(['S','B','C','U','O']);
+const chimneyFoot=(x,z)=>Math.abs(x)<=1&&z>=-8&&z<=-6&&!(x===0&&z===-7);
 const key=(x,y,z)=>x+','+y+','+z;
 const rotate=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:
  d==='north'?[-x,-z]:[z,-x];
@@ -50,7 +51,7 @@ export function makeAssets(){
  for(let x=-2;x<=2;x++){
   let start=null;
   for(let z=-8;z<=1;z++){
-   const present=z<=0&&typeAt(x,4,z)!=='A';
+   const present=z<=0&&typeAt(x,4,z)!=='A'&&!chimneyFoot(x,z);
    if(present&&start===null)start=z;
    if(!present&&start!==null){
     for(let strip=0;strip<4;strip++){
@@ -60,6 +61,11 @@ export function makeAssets(){
     start=null;
    }
   }
+ }
+ // Eight loadbearing masonry feet fill the gap between the sloping roof
+ // and the brick ring above; no missing or duplicate collision volume.
+ for(let x=-1;x<=1;x++)for(let z=-8;z<=-6;z++){
+  if(chimneyFoot(x,z))vox.push([x*16,64,z*16,(x+1)*16,80,(z+1)*16]);
  }
  if(vox.length>512)throw Error('Too many voxel boxes: '+vox.length);
  assets.set(res('data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json'),
