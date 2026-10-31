@@ -43,7 +43,13 @@ export function makeAssets(){
  const vox=[];
  for(const c of canon){
   if(!owned.has(c.k)||c.y===4)continue;
-  vox.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
+  if(c.y>=5&&c.y<=7){
+   const x0=c.x===-1?12:0,x1=c.x===1?4:16;
+   const z0=c.z===-8?12:0,z1=c.z===-6?4:16;
+   vox.push([c.x*16+x0,c.y*16,c.z*16+z0,
+    c.x*16+x1,(c.y+1)*16,c.z*16+z1]);
+  }else vox.push([c.x*16,c.y*16,c.z*16,
+   (c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
  }
  // The roof is one continuous slope along its length, interrupted ONLY
  // by the single real chimney AIR shaft. Merge adjacent Z roof cells into

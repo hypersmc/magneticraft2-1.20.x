@@ -36,7 +36,7 @@ const textures={
  iron:'minecraft:block/polished_deepslate',
  soot:'minecraft:block/black_concrete',
  ember:'minecraft:block/magma',
- grate:'minecraft:block/iron_block',
+ grate:'minecraft:block/polished_blackstone',
  bronze:'minecraft:block/cut_copper',
  input:'magneticraft2:block/ore_roasting_kiln/input',
  output:'magneticraft2:block/ore_roasting_kiln/output',
@@ -64,42 +64,35 @@ export function roofStep(globalPixel) {
  return Math.max(2,15-Math.floor(dx*13/40));
 }
 function addRoof(E,add,c){
- const {x,z}=c;
- const outerFront=z===0,outerRear=z===-8;
- const openSouth=x===0&&z===-8;
- const openNorth=x===0&&z===-6;
+ const {x,z}=c,front=z===0,rear=z===-8;
  for(let strip=0;strip<4;strip++){
   const from=strip*4,to=from+4,gx=(x+2)*16+from;
   const h=roofStep(gx+2);
   const prev=gx===0?0:roofStep(gx-2);
   const next=gx===76?0:roofStep(gx+6);
-  const mat=outerFront||outerRear||z===-3||z===-6?'roofTrim':'roof';
-
-  // A solid, connected stepped roof course, not a single unbacked top quad.
-  // Model faces for each raised riser close every join between adjacent strips.
-  add([from,0,0],[to,h,16],mat,['up']);
-  if(h>prev)add([from,prev,0],[to,h,16],mat,['west']);
-  if(h>next)add([from,next,0],[to,h,16],mat,['east']);
-
-  // End gables and the sides of the real chimney opening. No open sky
-  // should be visible through a roof edge, except the intentional flue.
-  const ends=[];
-  if(outerFront||openSouth)ends.push('south');
-  if(outerRear||openNorth)ends.push('north');
-  if(ends.length)add([from,0,0],[to,h,16],
-    outerFront?'refractory':outerRear?'brick':mat,ends);
-
-  // Every cross-rib sits DIRECTLY on the local roof course, not at
-  // roofTop(x), which previously differed from the actual stepped slope.
+  const bodyStart=rear?2:0,bodyEnd=front?14:16;
+  const mat=(z===-3||z===-6)?'roofTrim':'roof';
+  // The front/back dark gable fascia REPLACES the roof edge volume:
+  // no extra overlay plane and no z-fighting at grazing angles.
+  add([from,0,bodyStart],[to,h,bodyEnd],mat,['up']);
+  if(h>prev)add([from,prev,bodyStart],[to,h,bodyEnd],mat,['west']);
+  if(h>next)add([from,next,bodyStart],[to,h,bodyEnd],mat,['east']);
+  if(front){
+   add([from,0,14],[to,h,16],'roofTrim',['up','south','north']);
+   if(h>prev)add([from,prev,14],[to,h,16],'roofTrim',['west']);
+   if(h>next)add([from,next,14],[to,h,16],'roofTrim',['east']);
+  }else if(rear){
+   add([from,0,0],[to,h,2],'roofTrim',['up','north','south']);
+   if(h>prev)add([from,prev,0],[to,h,2],'roofTrim',['west']);
+   if(h>next)add([from,next,0],[to,h,2],'roofTrim',['east']);
+  }else if((x===0&&z===-8)||(x===0&&z===-6)){
+   // Leave the only true chimney AIR opening unobstructed.
+  }
+  // Real restrained metal ties across only two structural roof spans.
   if((z===-2||z===-5)&&h<16)
    add([from,h,6],[to,Math.min(16,h+1),10],
        'iron',['up','north','south']);
-
-  // The central ridge is already formed by the actual stepped stone
-  // courses. Avoid a second top face over the cross-rib.
  }
- // The outermost sloped riser itself closes the eave. A second two-pixel
- // trim skin here was coplanar with it and caused z-fighting.
 }
 
 /**
@@ -125,35 +118,28 @@ function box6(add,from,to,mat,left){
  add(a,b,mat,['north','south','east','west','up','down']);
 }
 function volumeArch(c,add){
- if(!isRoastingBay(c))throw Error('Out-of-bounds roaster arch');
+ if(!isRoastingBay(c))throw Error('Not roasting bay');
  const left=c.x===-2,backHalf=rowEnds.has(c.z);
  const outerA=backHalf?0:13,outerB=backHalf?3:16;
  const innerA=backHalf?3:0,innerB=backHalf?16:13;
  const p=(a,b,m)=>box6(add,a,b,m,left);
- // Back wall is nine pixels of structural brick. Its interior is a flat,
- // fully opaque dark wall; no daylight can shine between the grille bars.
  p([0,0,0],[9,16,16],'brick');
  p([9,0,0],[10,16,16],'soot');
- // The warmed ore bed is only low in the cavity, not a three-block-high
- // blanket of noisy custom "embers". The rest remains dark inside.
  if(c.y===1)p([10,4,innerA],[11,8,innerB],'ember');
- // These outer jambs touch the actual brick wall and are on the outside
- // of the TWO-block bay, not between its adjoining cells.
- p([10,0,outerA],[16,16,outerB],'brick');
+ // The outside ends of the whole kiln use a real continuous timber post.
+ const endPost=c.z===-1||c.z===-8;
+ p([10,0,outerA],[16,c.y===3?12:16,outerB],endPost?'timberEnd':'brick');
  if(c.y===1){
-  // Sill fills only the OPEN Z span, so it never overlaps the jamb.
   p([10,0,innerA],[16,3,innerB],'refractory');
   p([10,3,innerA],[16,4,innerB],'iron');
  }
  if(c.y===3){
-  // Arch crown also ends where the jamb begins, with no coplanar
-  // same-direction outer surface. Shoulder is set below the crown.
-  p([10,12,innerA],[16,16,innerB],'brick');
+  // Put masonry BEHIND the header instead of layering timber on brick.
+  p([10,12,innerA],[13,16,innerB],'brick');
   const shoulder=backHalf?[3,7]:[9,13];
-  p([10,8,shoulder[0]],[16,12,shoulder[1]],'refractory');
+  p([10,8,shoulder[0]],[16,12,shoulder[1]],'brick');
+  p([13,12,0],[16,16,16],'timber');
  }
- // Real 3px-deep iron bars (vanilla iron texture) stand clear of the
- // brick and fire bed; they terminate at the sill and arch crown.
  const low=c.y===1?4:0,high=c.y===3?12:16;
  for(const z of (backHalf?[8,12]:[3.5,7]))
   p([12,low,z],[15,high,z+1.25],'grate');
@@ -182,44 +168,48 @@ export function roastVisual(c,d,lookup){
   // Three true wall layers: side openings occupy roughly 2.5 blocks in
   // height rather than the old one-block-high miniature window slots.
   const bay=isRoastingBay(c);
-  const pierRib=side&&!bay&&(ribs.has(z)||front||back);
-  if(bay){
-   // Every bay has a complete masonry recess; do not cover it with
-   // the old exterior wall sheet.
-   volumeArch(c,add);
-  }else for(const face of exposed){
-   if(pierRib&&face===faceSide(x)){
-    // Brick exterior starts AFTER the 3px-wide iron pier: never
-    // render brick and iron at the same outward-facing depth.
-    add([0,0,3],[16,16,16],'brick',[face]);
-   }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
-  }
-  // Only wall PIERS receive these external ribs. Arch outer jambs
-  // already have their own frame and must not overlap another rib.
-  if(pierRib){
-   const f=faceSide(x);
-   const a=x===2?[15.2,0,0]:[0,0,0];
-   const b=x===2?[16,16,3]:[.8,16,3];
-   add(a,b,'iron',[f,'north','south']);
-  }
-  // Continuous oak-colored support timber below roof, on actual brickwork.
-  if(side&&y===3){
-   const face=faceSide(x);
-   add(x===2?[15.1,12,0]:[.2,12,0],
-       x===2?[15.9,15,16]:[.9,15,16],'timber',[face,'up']);
-  }
-  if(front&&x===0){
-   if(y===1||y===2){
-    add([2,0,13.5],[14,16,13.8],'soot',['south']);
-    add([3,0,13.9],[13,16,15.0],'iron',['south']);
-    if(y===1)add([8,5,15.1],[12,8,15.8],'bronze',['south']);
-   }else{
-    add([2,0,14.1],[14,6,14.4],'iron',['south']);
-    add([1,6,14.4],[15,12,14.9],'refractory',['south']);
+  const pier=side&&!bay;
+  const outer=x===2;
+  const wooden=(a,b,m='timberEnd')=>box6(add,a,b,m,!outer);
+  if(bay)volumeArch(c,add);
+  else {
+   for(const face of exposed){
+    if(pier&&face===faceSide(x)){
+     // Exterior masonry is genuinely REPLACED by the loadbearing post.
+     if(!front)add([0,0,4],[16,y===3?12:16,16],'brick',[face]);
+    }else if(front&&face==='south'){
+     if(side){
+      const a=outer?[0,0,0]:[4,0,0];
+      const b=outer?[12,12,16]:[16,12,16];
+      add(a,b,'brick',['south']);
+     }else if(x===0&&(y===1||y===2)){
+      add([0,0,0],[3,16,16],'brick',['south']);
+      add([13,0,0],[16,16,16],'brick',['south']);
+     }else if(y===3)add([0,0,0],[16,12,16],'brick',['south']);
+     else add([0,0,0],[16,16,16],'brick',['south']);
+    }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
+   }
+   if(pier){
+    // A full wooden 4px post stands on the real Stone Brick foundation.
+    // At the front corners the post wraps around the end wall.
+    wooden([12,0,0],[16,y===3?12:16,front?16:4]);
+    if(y===3)wooden([12,12,0],[16,16,front?12:16],'timber');
    }
   }
-  if(front&&Math.abs(x)===1&&y===3)
-   add([0,5,15],[16,7,15.7],'refractory',['south']);
+  if(front&&y===3){
+   // The continuous gable crossbeam rests on the corner posts.
+   box6(add,[0,12,12],[16,16,16],'timber',false);
+  }
+  if(front&&x===0&&(y===1||y===2)){
+   // The charging door now has a recessed, opaque, framed chamber,
+   // instead of sitting BEHIND a solid brick south-facing sheet.
+   box6(add,[3,0,13],[13,16,14],'soot',false);
+   box6(add,[4,1,14],[12,15,15],'iron',false);
+   box6(add,[3,0,14],[4,16,16],'iron',false);
+   box6(add,[12,0,14],[13,16,16],'iron',false);
+   if(y===1)box6(add,[8,6,15],[11,9,16],'bronze',false);
+  }
+
  }else if(y===4){
   // All roof cells carry the pitched tiles; under the chimney, real brick
   // piers meet the upper chimney wall without an unsupported vertical gap.
@@ -235,16 +225,20 @@ export function roastVisual(c,d,lookup){
    if(outerFaces.length)add([0,0,0],[16,16,16],'brick',outerFaces);
   }else addRoof(E,add,c);
  }else if(y>=5&&y<=7){
-  // Three real courses of brick above the pitched roof. The 3x3 ring
-  // preserves a real 1x1 open AIR flue through every level.
-  // The cap is a separate last course, not overlapped coplanar decals.
-  for(const face of exposed){
-   if(y===7){
-    add([0,0,0],[16,13,16],'brick',[face]);
-    add([0,13,0],[16,16,16],'roofTrim',[face]);
-   }else add([0,0,0],[16,16,16],'brick',[face]);
+  // The real 3x3 Brick ring remains unchanged in the JSON structure.
+  // Its block-local baked geometry forms a narrower 1.5-block-wide
+  // flue, with substantial four-pixel-thick brick walls. Still open AIR.
+  const x0=x===-1?12:0,x1=x===1?4:16;
+  const z0=z===-8?12:0,z1=z===-6?4:16;
+  const exterior=y===7?13:16;
+  add([x0,0,z0],[x1,exterior,z1],'brick',
+      ['north','south','east','west','up','down']);
+  if(y===7){
+   const xa=x===-1?10:0,xb=x===1?6:16;
+   const za=z===-8?10:0,zb=z===-6?6:16;
+   add([xa,13,za],[xb,16,zb],'roofTrim',
+       ['north','south','east','west','up','down']);
   }
-
  }
  return blank(E);
 }
