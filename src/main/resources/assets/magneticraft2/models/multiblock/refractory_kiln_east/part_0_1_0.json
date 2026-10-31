@@ -1,10 +1,18 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "brick": "minecraft:block/bricks",
-    "front": "minecraft:block/furnace_front",
-    "particle": "minecraft:block/bricks"
+    "stone": "magneticraft2:block/settling_tank/foundation",
+    "masonry": "magneticraft2:block/charcoal_retort/refractory",
+    "ceramic": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "band": "magneticraft2:block/settling_tank/riveted_iron",
+    "bronze": "magneticraft2:block/settling_tank/bronze_joint",
+    "soot": "magneticraft2:block/charcoal_retort/soot",
+    "grate": "magneticraft2:block/charcoal_retort/grille",
+    "door": "magneticraft2:block/charcoal_retort/hatch_off",
+    "roof": "magneticraft2:block/charcoal_retort/roof",
+    "particle": "magneticraft2:block/charcoal_retort/refractory"
   },
   "elements": [
     {
@@ -14,36 +22,202 @@
         0
       ],
       "to": [
-        16,
+        14.5,
         16,
         16
       ],
       "faces": {
         "west": {
-          "texture": "#brick",
+          "texture": "#ceramic",
           "uv": [
             0,
             0,
             16,
             16
           ]
-        },
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        14.5,
+        16,
+        16
+      ],
+      "faces": {
         "east": {
-          "texture": "#brick",
+          "texture": "#masonry",
           "uv": [
             0,
             0,
             16,
             16
           ]
-        },
-        "up": {
-          "texture": "#brick",
+        }
+      }
+    },
+    {
+      "from": [
+        14.6,
+        1,
+        1
+      ],
+      "to": [
+        15.1,
+        15,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
           "uv": [
-            0,
-            0,
-            16,
-            16
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.2,
+        11.5,
+        2
+      ],
+      "to": [
+        15.7,
+        13.5,
+        14
+      ],
+      "faces": {
+        "east": {
+          "texture": "#band",
+          "uv": [
+            2,
+            2.5,
+            14,
+            4.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.2,
+        2,
+        2
+      ],
+      "to": [
+        15.7,
+        4,
+        14
+      ],
+      "faces": {
+        "east": {
+          "texture": "#band",
+          "uv": [
+            2,
+            12,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.2,
+        6,
+        12
+      ],
+      "to": [
+        15.75,
+        10,
+        13
+      ],
+      "faces": {
+        "east": {
+          "texture": "#grate",
+          "uv": [
+            3,
+            6,
+            4,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.2,
+        6,
+        8
+      ],
+      "to": [
+        15.75,
+        10,
+        9
+      ],
+      "faces": {
+        "east": {
+          "texture": "#grate",
+          "uv": [
+            7,
+            6,
+            8,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.2,
+        6,
+        4
+      ],
+      "to": [
+        15.75,
+        10,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#grate",
+          "uv": [
+            11,
+            6,
+            12,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        15.75,
+        4,
+        7
+      ],
+      "to": [
+        16,
+        6,
+        9
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            7,
+            10,
+            9,
+            12
           ]
         }
       }

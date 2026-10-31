@@ -8,6 +8,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {kilnVisual, kilnPort} from './visuals.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const W=5,H=4,D=5;
 const dirs=['south','west','north','east'];
@@ -38,7 +39,7 @@ const out=(x,y,z)=>{
  if(y===2){
   if(z===-4)return 'B';
   // A narrow accessible loading aperture, rather than an open 3x2 facade.
-  if(z===0)return x===0?'A':'B';
+  if(z===0)return 'B';
   return Math.abs(x)===2?'B':'A';
  }
  if(y===3)return x===0&&z===-2?'A':'B';
@@ -91,29 +92,17 @@ export function makeAssets(){
    }
   });
   for(const c of rotated.filter(c=>solid.has(c.k))){
-   const faces={};
-   for(const f of exposedDirs){
-    const [dx,dy,dz]=offset[f];
-    const n=lookup.get(cellName(c.x+dx,c.y+dy,c.z+dz));
-    if(n&&(solid.has(n.k)||n.k==='U'||n.k==='O'))continue;
-    const world=f==='up'||f==='down'?f:facing[d][f];
-    const material=c.k==='S'?'stone':c.k==='B'?'brick':
-      world===facing[d].south?'front':'stone';
-    faces[world]={texture:'#'+material,uv:[0,0,16,16]};
-   }
    assets.set(write('assets/magneticraft2/models/multiblock/refractory_kiln_'+d+
-     '/part_'+c.rx+'_'+c.y+'_'+c.rz+'.json'),{
-    parent:'minecraft:block/block',
-    textures:{
-     stone:'minecraft:block/stone_bricks',
-     brick:'minecraft:block/bricks',
-     front:'minecraft:block/furnace_front',
-     particle:c.k==='B'?'minecraft:block/bricks':'minecraft:block/stone_bricks'
-    },
-    elements:[{from:[0,0,0],to:[16,16,16],faces}]
-   });
+      '/part_'+c.rx+'_'+c.y+'_'+c.rz+'.json'),kilnVisual(c,d,lookup));
+  }
+  for(const role of ['input','primary']){
+   assets.set(write('assets/magneticraft2/models/multiblock/refractory_kiln_'+d+
+      '/port_'+role+'.json'),kilnPort(role,d));
   }
  }
+ // The unformed controller uses the same recognisable iron firebox as the formed base.
+ const controller=canonical.find(c=>c.k==='C');
+ assets.set(write('assets/magneticraft2/models/block/refractory_kiln_controller.json'),kilnVisual({...controller,rx:0,rz:0},'south',lookup));
  const variants={},angle={south:0,west:90,north:180,east:270};
  for(const d of dirs){
   const unfinished={model:'magneticraft2:block/refractory_kiln_controller'};

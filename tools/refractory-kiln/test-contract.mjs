@@ -15,7 +15,7 @@ const base='src/main/resources/';
 const resource=base+'assets/magneticraft2/';
 const data=base+'data/magneticraft2/';
 const files=makeAssets();
-assert.equal(run('--check'),318,'unexpected count or stale files');
+assert.equal(run('--check'),331,'unexpected count or stale files');
 const dirs=['south','west','north','east'];
 const solids=['B','S','C'];
 const canonical=j(data+'multiblocks/refractory_kiln_south.json');
@@ -23,17 +23,17 @@ assert.deepEqual(canonical.structure.dimensions,[5,4,5]);
 assert.equal(Object.values(canonical.structure.layout).flat(2).filter(v=>v==='C').length,1);
 const cellRows=Object.values(canonical.structure.layout);
 assert.deepEqual(cellRows[1][4],['B','U','B','O','B']);
-assert.deepEqual(cellRows[2][4],['B','B','A','B','B']);
+assert.deepEqual(cellRows[2][4],['B','B','B','B','B']);
 assert.deepEqual(cellRows[3][2],['B','B','A','B','B']);
 const southCells=new Map();
 for(let y=0;y<4;y++)for(let z=-4;z<=0;z++)for(let x=-2;x<=2;x++)
  southCells.set(x+','+y+','+z,canonical.structure.layout['layer'+(y+1)][z+4][x+2]);
 const rotation=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:d==='north'?[-x,-z]:[z,-x];
 const vox=j(data+'multiblock_voxels/refractory_kiln.json');
-assert.equal(vox.collision.length,78);
+assert.equal(vox.collision.length,79);
 assert.deepEqual(vox.collision,vox.selection);
 const pv=new Set(vox.collision.map(box=>[box[0]/16,box[1]/16,box[2]/16].join(',')));
-assert.equal(pv.size,78);
+assert.equal(pv.size,79);
 for(const [key,type] of southCells)assert.equal(pv.has(key),solids.includes(type),'Voxel collision occupancy differs at '+key);
 for(const d of dirs){
  const name='refractory_kiln_'+d;
@@ -64,19 +64,28 @@ for(const d of dirs){
   }
   const model=j(file);
   assert.equal(model.parent,'minecraft:block/block');
-  assert.equal(model.elements.length,1);
-  const el=model.elements[0];
-  assert.deepEqual(el.from,[0,0,0]);
-  assert.deepEqual(el.to,[16,16,16]);
-  for(const [direction,face] of Object.entries(el.faces)){
-   assert.ok(['north','south','east','west','up','down'].includes(direction));
-   assert.deepEqual(face.uv,[0,0,16,16],'Texture stretching at '+file);
-   assert.ok(model.textures[face.texture.slice(1)],'Missing texture mapping '+file);
-   faceCount++;
+  assert.ok(model.elements.length>0 && model.elements.length<=45,'Excessive detail: '+file);
+  for(const el of model.elements) {
+   for(let axis=0;axis<3;axis++) {
+    assert.ok(el.from[axis]>=0 && el.to[axis]<=16 && el.to[axis]>el.from[axis],
+      'Out of cell geometry '+file);
+   }
+   for(const [direction,face] of Object.entries(el.faces)){
+    assert.ok(['north','south','east','west','up','down'].includes(direction));
+    assert.ok(model.textures[face.texture.slice(1)],'Missing texture '+file);
+    const axes=direction==='north'||direction==='south'?[0,1]:
+      direction==='east'||direction==='west'?[2,1]:[0,2];
+    const du=face.uv[2]-face.uv[0],dv=face.uv[3]-face.uv[1];
+    assert.ok(Math.abs(du-(el.to[axes[0]]-el.from[axes[0]]))<.001,
+      'Stretched UV width '+file);
+    assert.ok(Math.abs(dv-(el.to[axes[1]]-el.from[axes[1]]))<.001,
+      'Stretched UV height '+file);
+    faceCount++;
+   }
   }
   modelCount++;
  }
- assert.equal(modelCount,78,d+': wrong solid model count');
+ assert.equal(modelCount,79,d+': wrong solid model count');
  // Controller model is present, and Item I/O is physically separate.
  const control=positions.find(p=>rotated.get(p.join(','))==='C');
  assert.ok(control);
@@ -93,6 +102,7 @@ const book=j(resource+'patchouli_books/world_of_magneticraft/en_us/entries/bronz
 const page=book.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Refractory Kiln');
 assert.ok(page,'Missing Kiln book Visualize');
 assert.equal(page.multiblock.pattern.length,4);
+assert.equal(page.multiblock.pattern[1][4],'BBBBB','Front hatch must be a real wall cell');
 for(let y=0;y<4;y++){
  const pageLayer=page.multiblock.pattern[3-y];
  for(let iz=0;iz<5;iz++){
@@ -110,6 +120,13 @@ for (const page of book.pages.filter(p=>p.type==='patchouli:multiblock')) {
    'Unmapped Patchouli multiblock symbol '+symbol+' on page '+page.name);
  }
 }
+for(const dir of dirs)for(const role of ['input','primary']){
+ const file=resource+'models/multiblock/refractory_kiln_'+dir+'/port_'+role+'.json';
+ const model=j(file);
+ assert.equal(model.parent,'minecraft:block/block');
+ assert.ok(model.elements.length>=8,'Port has no integrated kiln visuals: '+file);
+}
+assert.equal(j(resource+'models/block/refractory_kiln_controller.json').parent,'minecraft:block/block');
 assert.equal(j(resource+'models/item/refractory_kiln.json').parent,
  'magneticraft2:block/refractory_kiln_controller');
 const be=r('src/main/java/com/magneticraft2/common/blockentity/stage/bronze/RefractoryKilnBlockEntity.java');
@@ -126,5 +143,7 @@ const block=r('src/main/java/com/magneticraft2/common/block/stage/bronze/Refract
 assert.ok(block.includes('return null;')&&block.includes('getTicker('),'No processing ticker allowed in K1');
 const port=r('src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
 assert.ok(port.includes('RefractoryKilnBlockEntity kiln')&&port.includes('kiln.acceptsRecipeInput(stack)'));
+assert.ok(port.includes('"refractory_kiln_"')&&port.includes('"/port_" + role'),
+ 'Kiln formed real ports lack their own local baked models');
 assert.ok(j(data+'recipes/refractory_kiln.json').result.item==='magneticraft2:refractory_kiln');
 console.log('Refractory Kiln K1: geometry, blueprints, modules, book and code assertions passed');

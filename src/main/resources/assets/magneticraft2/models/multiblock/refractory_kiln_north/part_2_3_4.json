@@ -1,10 +1,18 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "brick": "minecraft:block/bricks",
-    "front": "minecraft:block/furnace_front",
-    "particle": "minecraft:block/bricks"
+    "stone": "magneticraft2:block/settling_tank/foundation",
+    "masonry": "magneticraft2:block/charcoal_retort/refractory",
+    "ceramic": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "band": "magneticraft2:block/settling_tank/riveted_iron",
+    "bronze": "magneticraft2:block/settling_tank/bronze_joint",
+    "soot": "magneticraft2:block/charcoal_retort/soot",
+    "grate": "magneticraft2:block/charcoal_retort/grille",
+    "door": "magneticraft2:block/charcoal_retort/hatch_off",
+    "roof": "magneticraft2:block/charcoal_retort/roof",
+    "particle": "magneticraft2:block/charcoal_retort/refractory"
   },
   "elements": [
     {
@@ -14,36 +22,151 @@
         0
       ],
       "to": [
+        15,
+        14,
+        15
+      ],
+      "faces": {
+        "south": {
+          "texture": "#masonry",
+          "uv": [
+            0,
+            2,
+            15,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        15,
+        14,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#masonry",
+          "uv": [
+            1,
+            2,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        15,
+        14,
+        15
+      ],
+      "faces": {
+        "up": {
+          "texture": "#roof",
+          "uv": [
+            0,
+            0,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14.15,
+        0
+      ],
+      "to": [
+        16,
+        15.2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#roof",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        15.2,
+        0
+      ],
+      "to": [
         16,
         16,
         16
       ],
       "faces": {
-        "south": {
-          "texture": "#brick",
+        "up": {
+          "texture": "#band",
           "uv": [
-            0,
+            14,
             0,
             16,
             16
           ]
         },
         "east": {
-          "texture": "#brick",
+          "texture": "#band",
           "uv": [
             0,
             0,
             16,
+            0.8000000000000007
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        15.2,
+        14
+      ],
+      "to": [
+        14,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#band",
+          "uv": [
+            0,
+            14,
+            14,
             16
           ]
         },
-        "up": {
-          "texture": "#brick",
+        "south": {
+          "texture": "#band",
           "uv": [
             0,
             0,
-            16,
-            16
+            14,
+            0.8000000000000007
           ]
         }
       }

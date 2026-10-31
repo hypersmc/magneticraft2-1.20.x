@@ -10,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.data.ModelData;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
+import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -93,6 +95,27 @@ public class MultiblockItemPortBlockEntity
                 if (!role.isEmpty()) {
                     String key = "charcoal_retort_"
                             + controllerState.getValue(CharcoalRetortBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key)
+                            .build();
+                }
+            }
+        }
+        // The Refractory Kiln uses the same REAL port block entities as the
+        // Retort, with a baked iron/refractory skin only while formed.
+        if (formedModule && level != null
+                && getController() instanceof RefractoryKilnBlockEntity kiln) {
+            BlockState controllerState = kiln.getBlockState();
+            if (controllerState.getBlock() instanceof RefractoryKilnBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "refractory_kiln_"
+                            + controllerState.getValue(RefractoryKilnBlock.FACING).getName()
                             + "/port_" + role;
                     return ModelData.builder()
                             .with(MultiBlockProperties.MODEL_NAME, key)

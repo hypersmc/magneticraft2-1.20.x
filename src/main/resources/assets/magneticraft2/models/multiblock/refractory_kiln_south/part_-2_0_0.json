@@ -1,17 +1,126 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
-    "stone": "minecraft:block/stone_bricks",
-    "brick": "minecraft:block/bricks",
-    "front": "minecraft:block/furnace_front",
-    "particle": "minecraft:block/stone_bricks"
+    "stone": "magneticraft2:block/settling_tank/foundation",
+    "masonry": "magneticraft2:block/charcoal_retort/refractory",
+    "ceramic": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "band": "magneticraft2:block/settling_tank/riveted_iron",
+    "bronze": "magneticraft2:block/settling_tank/bronze_joint",
+    "soot": "magneticraft2:block/charcoal_retort/soot",
+    "grate": "magneticraft2:block/charcoal_retort/grille",
+    "door": "magneticraft2:block/charcoal_retort/hatch_off",
+    "roof": "magneticraft2:block/charcoal_retort/roof",
+    "particle": "magneticraft2:block/charcoal_retort/refractory"
   },
   "elements": [
     {
       "from": [
-        0,
+        1,
         0,
         0
+      ],
+      "to": [
+        16,
+        16,
+        14.5
+      ],
+      "faces": {
+        "south": {
+          "texture": "#stone",
+          "uv": [
+            1,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        14.5
+      ],
+      "faces": {
+        "west": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            14.5,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        14.5
+      ],
+      "faces": {
+        "down": {
+          "texture": "#stone",
+          "uv": [
+            1,
+            1.5,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        14.5
+      ],
+      "to": [
+        16,
+        3,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            13,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            14.5,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        13,
+        14.5
       ],
       "to": [
         16,
@@ -20,30 +129,90 @@
       ],
       "faces": {
         "south": {
-          "texture": "#stone",
+          "texture": "#band",
           "uv": [
             0,
             0,
+            16,
+            3
+          ]
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            0,
+            14.5,
             16,
             16
           ]
-        },
-        "west": {
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        5,
+        14.6
+      ],
+      "to": [
+        14,
+        11,
+        15.15
+      ],
+      "faces": {
+        "south": {
           "texture": "#stone",
           "uv": [
-            0,
-            0,
-            16,
-            16
+            2,
+            5,
+            14,
+            11
           ]
-        },
-        "down": {
-          "texture": "#stone",
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        9.5,
+        15.2
+      ],
+      "to": [
+        14,
+        10.5,
+        15.8
+      ],
+      "faces": {
+        "south": {
+          "texture": "#band",
           "uv": [
-            0,
-            0,
-            16,
-            16
+            2,
+            5.5,
+            14,
+            6.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        5,
+        15.2
+      ],
+      "to": [
+        14,
+        6,
+        15.8
+      ],
+      "faces": {
+        "south": {
+          "texture": "#band",
+          "uv": [
+            2,
+            10,
+            14,
+            11
           ]
         }
       }

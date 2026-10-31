@@ -376,7 +376,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze III — Refractory Kiln (K1)$()$(br2)Build the 5×4×5 masonry kiln to prepare for high-temperature ceramics. K1 implements construction and formation only: fuel, clay/sand batches, fired products and HEAT are reserved for K2, and the input port is intentionally locked until recipes exist. The roof center flue must stay AIR."
+      "text": "$(bold)Bronze III — Refractory Kiln (K1)$()$(br2)Build the 5×4×5 masonry kiln to prepare for high-temperature ceramics. K1 implements construction and formation only: fuel, clay/sand batches, fired products and HEAT are reserved for K2, and the input port is intentionally locked until recipes exist. The front charging hatch is visually closed, while the central roof flue stays AIR."
     },
     {
       "type": "patchouli:crafting",
@@ -402,7 +402,7 @@
             "B___B",
             "B___B",
             "B___B",
-            "BB_BB"
+            "BBBBB"
           ],
           [
             "BBBBB",
@@ -428,7 +428,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the solid Stone Brick foundation with the controller at the front-centre. Above it, the brick front wall contains real Item Input and Item Output modules, with a single-block loading aperture directly above the controller. Keep the 3×3 interior chamber hollow and the roof-centre flue open. Right-click the controller to form. K2 will add firing and HEAT."
+      "text": "Build the 5×4×5 kiln with an enclosed brick firing chamber and a closed dark-iron charging hatch above the controller. Both front fittings are the real Item Input and Item Output modules, disguised as kiln-compatible metal throats once formed. Leave the centre roof flue AIR. K1 has no fuel, firing or HEAT yet."
     }
   ],
   "sortnum": 3,
