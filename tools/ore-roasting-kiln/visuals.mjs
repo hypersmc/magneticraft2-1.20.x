@@ -128,7 +128,10 @@ function volumeArch(c,add){
  if(c.y===1)p([10,4,innerA],[11,8,innerB],'ember');
  // The outside ends of the whole kiln use a real continuous timber post.
  const endPost=c.z===-1||c.z===-8;
- p([10,0,outerA],[16,c.y===3?12:16,outerB],endPost?'timberEnd':'brick');
+ if(endPost&&c.y===3){
+  p([10,0,outerA],[16,9,outerB],'timberEnd');
+  p([10,9,outerA],[16,12,outerB],'iron');
+ }else p([10,0,outerA],[16,c.y===3?12:16,outerB],endPost?'timberEnd':'brick');
  if(c.y===1){
   p([10,0,innerA],[16,3,innerB],'refractory');
   p([10,3,innerA],[16,4,innerB],'iron');
@@ -192,8 +195,12 @@ export function roastVisual(c,d,lookup){
    if(pier){
     // A full wooden 4px post stands on the real Stone Brick foundation.
     // At the front corners the post wraps around the end wall.
-    wooden([12,0,0],[16,y===3?12:16,front?16:4]);
-    if(y===3)wooden([12,12,0],[16,16,front?12:16],'timber');
+    const zEnd=front?16:4;
+    if(y===3){
+     wooden([12,0,0],[16,9,zEnd]);
+     wooden([12,9,0],[16,12,zEnd],'iron');
+     wooden([12,12,0],[16,16,front?12:16],'timber');
+    }else wooden([12,0,0],[16,16,zEnd]);
    }
   }
   if(front&&y===3){
