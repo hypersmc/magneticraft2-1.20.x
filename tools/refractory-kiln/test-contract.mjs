@@ -202,6 +202,7 @@ for(const source of ['KilnFuel','KilnBurnRemaining','KilnProgress','KilnRecipe',
  'heatHandler.setHeat(heat)','ForgeHooks.getBurnTime',
  'itemHandler.insertItem(1, product, true)',
  'itemHandler.extractItem(0, recipe.getInputCount(), false)',
+ 'KilnActiveInput','ItemStack.isSameItemSameTags(activeInput, candidate)',
  'port.linkFormedController(worldPosition)'])
  assert.ok(be.includes(source),'K2 logic/persistence missing '+source);
 assert.ok(be.includes('void onDestroy(Level world)'),'Queued fuel not recovered on break');

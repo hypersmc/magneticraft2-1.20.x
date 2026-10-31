@@ -55,6 +55,8 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
     private ItemStack fuel = ItemStack.EMPTY;
     private int burnRemaining, burnTotal, progress;
     @Nullable private ResourceLocation activeRecipeId;
+    // Ignore stack count but preserve identity and NBT (including material quality).
+    private ItemStack activeInput = ItemStack.EMPTY;
     private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private String blueprintName = "";
     private String replacementModel = "";
@@ -208,15 +210,20 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
 
         MultiblockProcessingRecipe recipe = findRecipe();
         if (!validRecipe(recipe) || threshold > capacity || cost > capacity) {
-            if (progress != 0 || activeRecipeId != null) {
+            if (progress != 0 || activeRecipeId != null || !activeInput.isEmpty()) {
                 progress = 0;
                 activeRecipeId = null;
+                activeInput = ItemStack.EMPTY;
                 changed = true;
                 notify = true;
             }
         } else {
-            if (!recipe.getId().equals(activeRecipeId)) {
+            ItemStack candidate = itemHandler.getStackInSlot(0);
+            if (!recipe.getId().equals(activeRecipeId)
+                    || !ItemStack.isSameItemSameTags(activeInput, candidate)) {
                 activeRecipeId = recipe.getId();
+                activeInput = candidate.copy();
+                activeInput.setCount(1);
                 progress = 0;
                 changed = true;
                 notify = true;
@@ -250,6 +257,7 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
                         if (!itemHandler.insertItem(1, product, false).isEmpty())
                             throw new IllegalStateException("Kiln output became unavailable");
                         activeRecipeId = null;
+                        activeInput = ItemStack.EMPTY;
                         progress = 0;
                         notify = true;
                     }
@@ -328,6 +336,7 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         progress = Math.max(0, tag.getInt("KilnProgress"));
         activeRecipeId = tag.contains("KilnRecipe")
                 ? ResourceLocation.tryParse(tag.getString("KilnRecipe")) : null;
+        activeInput = ItemStack.of(tag.getCompound("KilnActiveInput"));
         lastInput = itemHandler.getStackInSlot(0).copy();
         lastOutput = itemHandler.getStackInSlot(1).copy();
     }
@@ -344,6 +353,7 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         tag.putInt("KilnProgress", progress);
         if (!fuel.isEmpty()) tag.put("KilnFuel", fuel.save(new CompoundTag()));
         if (activeRecipeId != null) tag.putString("KilnRecipe", activeRecipeId.toString());
+        if (!activeInput.isEmpty()) tag.put("KilnActiveInput", activeInput.save(new CompoundTag()));
     }
 
     @Override
