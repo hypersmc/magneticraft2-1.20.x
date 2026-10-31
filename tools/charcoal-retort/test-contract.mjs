@@ -1267,49 +1267,42 @@ for(const dir of dirs)for(const x of [-1,1]){
   assert(firstSlot&&firstSlot.material==='#soot'&&firstSlot.depth<15,
     'V3.35 rear corner fitting blocks the first side vent '+dir+'/'+x);
 }
-// V3.37 — widen the Y1 iron firebox, shorten its THREE dark vents,
-// and expose two thin copper supports. Never bake a permanent fire
-// texture into the static upper furnace door.
+// V3.38 — a single wide iron furnace with three real recessed slots.
+// Copper supports attach to the Y2 ribs; the stationary door stays off.
 for(const dir of dirs){
-  const root=resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+'/part_0_';
-  const m=json(root+'1_0.json');
-  assert.equal(m.textures.bronze,'minecraft:block/cut_copper',
-    'V3.37 must use the accepted copper palette '+dir);
-  assert(!m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#on')),
-    'V3.37 stationary Y1 door must not be permanently lit '+dir);
-  const ax=(dir==='south'||dir==='north')?0:2,n=ax===0?2:0;
-  const front=(dir==='south'||dir==='east');
-  const reverse=(dir==='north'||dir==='east');
+  const model=json(resource+'assets/magneticraft2/models/multiblock/charcoal_retort_'+dir+
+    '/part_0_1_0.json');
+  assert.equal(model.textures.bronze,'minecraft:block/cut_copper');
+  const axis=(dir==='south'||dir==='north')?0:2,n=axis===0?2:0;
+  const forward=(dir==='south'||dir==='east'),flip=(dir==='north'||dir==='east');
   const at=(x,y)=>{
-    const u=reverse?16-x:x;
-    const e=m.elements.filter(v=>v.faces[dir]&&
-      v.from[ax]<u&&u<v.to[ax]&&v.from[1]<y&&y<v.to[1])
-      .sort((a,b)=>front?b.to[n]-a.to[n]:a.from[n]-b.from[n])[0];
-    return e&&{
-      mat:e.faces[dir].texture,
-      depth:front?e.to[n]:16-e.from[n]};
+    const u=flip?16-x:x;
+    const e=model.elements.filter(e=>e.faces[dir]&&
+      e.from[axis]<u&&u<e.to[axis]&&e.from[1]<y&&y<e.to[1])
+      .sort((a,b)=>forward?b.to[n]-a.to[n]:a.from[n]-b.from[n])[0];
+    return e&&{mat:e.faces[dir].texture,depth:forward?e.to[n]:16-e.from[n]};
   };
-  for(const [x,y,mat,depth]of [
-    [1.4,8,'#bronze',15.9],[14.6,8,'#bronze',15.9],
-    [2.7,8,'#metal',15.96],[12.7,8,'#metal',15.96],
-    [13.3,8,'#join',16],
-    [8,3,'#metal',15.96],[8,12,'#metal',15.96],
-    [4.8,7.2,'#soot',15.6],[8,7.2,'#soot',15.6],
-    [11.1,7.2,'#soot',15.6],
-    [6.4,7.2,'#metal',15.47],[9.5,7.2,'#metal',15.47],
-    [8,10.4,'#metal',15.47],[8,4.7,'#metal',15.47]
-  ]){
-    assert.deepEqual(at(x,y),{mat,depth},
-      'V3.37 door geometry mismatch '+dir+'/'+x+'/'+y);
-  }
-  assert(m.elements.every(e=>e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v)),
-    'V3.37 center furnace part exceeds its 16px cell '+dir);
-  for(const element of m.elements)
-    for(const face of Object.values(element.faces)){
-      if(face.texture.startsWith('#'))
-        assert(m.textures[face.texture.slice(1)],
-          'V3.37 unbound furnace texture '+face.texture+' '+dir);
+  for(const x of [4.85,8,11.1])
+    assert.deepEqual(at(x,7.5),{mat:'#soot',depth:14.62},
+      'V3.38 recessed furnace window obscured '+dir+'/'+x);
+  for(const x of [6.45,9.45])
+    assert.deepEqual(at(x,7.5),{mat:'#metal',depth:15.08},
+      'V3.38 iron divider missing '+dir+'/'+x);
+  for(const [x,y] of [[2.6,8],[13.35,10],[8,2.9],[8,12.4]])
+    assert.deepEqual(at(x,y),{mat:'#metal',depth:15.92},
+      'V3.38 wide iron bezel missing '+dir+'/'+x+'/'+y);
+  for(const x of [1.4,14.6])
+    assert.deepEqual(at(x,8),{mat:'#bronze',depth:15.72},
+      'V3.38 copper jamb does not connect to Y2 '+dir+'/'+x);
+  for(const e of model.elements){
+    assert(e.from.every((v,i)=>v>=0&&e.to[i]<=16&&e.to[i]>v),
+      'V3.38 block model out of bounds '+dir);
+    for(const f of Object.values(e.faces)){
+      assert.notEqual(f.texture,'#on','V3.38 furnace permanently lit '+dir);
+      if(f.texture.startsWith('#'))assert(model.textures[f.texture.slice(1)],
+        'V3.38 undefined material '+f.texture+' '+dir);
     }
+  }
 }
 // Neighboring roof non-bottom faces, Y1 outer side surfaces and the
 // front-right outward face are compared to previous assets before commit.

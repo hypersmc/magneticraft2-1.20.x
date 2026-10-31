@@ -563,32 +563,47 @@ export function applyRetortV3(files) {
     }
    }
    if(front&&x===0&&y===1){
-    // V3.37: a broad iron furnace door with THREE short recessed
-    // windows. Unlit by default: real LIT-state fire is Y0 controlled.
-    solid(c,"soot",[2.2,2.45,7.5],[13.8,13.5,13.25]);
-    solid(c,"metal",[2.2,2.45,13.25],[13.8,13.5,15.15]);
-    solid(c,"metal",[3.35,4.05,15.15],[12.65,11.45,15.47]);
-    for(const [xa,xb] of [[4.05,5.55],[7.25,8.75],[10.45,11.95]])
-      solid(c,"soot",[xa,5.15,15.47],[xb,10.05,15.60]);
-    // Four substantial perimeter rails: iron, not copper.
-    solid(c,"metal",[2.1,2.2,14],[13.9,3.85,15.96]);
-    solid(c,"metal",[2.1,11.65,14],[13.9,13.3,15.96]);
-    solid(c,"metal",[2.1,3.85,14],[3.5,11.65,15.96]);
-    solid(c,"metal",[12.5,3.85,14],[13.9,11.65,15.96]);
-    solid(c,"stone",[3.5,3.85,15.1],[12.5,4.15,15.69]);
-    solid(c,"stone",[3.5,11.35,15.1],[12.5,11.65,15.69]);
-    solid(c,"stone",[3.5,4.15,15.1],[3.75,11.35,15.69]);
-    solid(c,"stone",[12.25,4.15,15.1],[12.5,11.35,15.69]);
-    // Dark upper iron housing, BELOW the accepted stepped Y2 hood.
-    solid(c,"metal",[2.2,13.3,13],[13.8,15.75,15.08]);
-    solid(c,"soot",[3.3,13.75,15.08],[12.7,15.35,15.30]);
-    // Small copper structural jambs exposed by the changed Y1
-    // brick backing; retain the original dark feet and small latch.
-    solid(c,"bronze",[.75,1.4,12.4],[2.1,15.5,15.90]);
-    solid(c,"bronze",[13.9,1.4,12.4],[15.25,15.5,15.90]);
-    solid(c,"metal",[.75,0,14],[2.1,1.4,15.95]);
-    solid(c,"metal",[13.9,0,14],[15.25,1.4,15.95]);
-    solid(c,"join",[12.9,7.2,15.7],[13.75,8.7,16]);
+    // V3.38 — one coherent firebox assembly, not a grille on a plate.
+    // Static Y1 door is unlit; the existing Y0 controller owns LIT.
+    // Structural copper jambs line up with the accepted Y2 ribs.
+    solid(c,"bronze",[1.05,1.1,12.8],[2.95,16,15.72]);
+    solid(c,"bronze",[13.05,1.1,12.8],[14.95,16,15.72]);
+    solid(c,"metal",[1.05,0,13.8],[2.95,1.1,15.94]);
+    solid(c,"metal",[13.05,0,13.8],[14.95,1.1,15.94]);
+
+    // Sealed furnace core and an inset soot backing behind the door.
+    solid(c,"soot",[2.45,2.45,9],[13.55,13.55,13.65]);
+    solid(c,"metal",[2.4,2.4,13.65],[13.6,13.35,14.45]);
+    solid(c,"soot",[3.45,4.1,14.45],[12.55,11.5,14.48]);
+
+    // Split iron door panel: genuine empty windows between the iron
+    // members. Never overlay black rectangles onto a full front plate.
+    solid(c,"metal",[3.65,4.4,14.63],[12.35,5.15,15.08]);
+    solid(c,"metal",[3.65,10.05,14.63],[12.35,11.2,15.08]);
+    for(const [xa,xb] of [
+      [3.65,4.2],[5.65,7.25],[8.75,10.35],[11.8,12.35]
+    ])solid(c,"metal",[xa,5.15,14.63],[xb,10.05,15.08]);
+    // Exactly THREE short dark slits; 0.46px behind the iron panel
+    // and 1.30px behind the substantial front bezel.
+    for(const [xa,xb] of [
+      [4.2,5.65],[7.25,8.75],[10.35,11.8]
+    ])solid(c,"soot",[xa,5.15,14.48],[xb,10.05,14.62]);
+
+    // Four heavy iron surround rails and shallow inner grey bevels.
+    solid(c,"metal",[2.1,2.25,14.4],[13.9,3.8,15.92]);
+    solid(c,"metal",[2.1,11.65,14.4],[13.9,13.25,15.92]);
+    solid(c,"metal",[2.1,3.8,14.4],[3.45,11.65,15.92]);
+    solid(c,"metal",[12.55,3.8,14.4],[13.9,11.65,15.92]);
+    solid(c,"stone",[3.45,3.8,14.85],[12.55,4.15,15.58]);
+    solid(c,"stone",[3.45,11.3,14.85],[12.55,11.65,15.58]);
+    solid(c,"stone",[3.45,4.15,14.85],[3.75,11.3,15.58]);
+    solid(c,"stone",[12.25,4.15,14.85],[12.55,11.3,15.58]);
+
+    // Dark iron socket connects to the already-approved Y2 copper
+    // crown; do NOT reintroduce a straight copper bar below it.
+    solid(c,"metal",[2.4,13.25,13.7],[13.6,16,15.08]);
+    solid(c,"soot",[3.5,13.7,15.08],[12.5,15.35,15.27]);
+    solid(c,"join",[13,7.2,15.7],[13.75,8.65,16]);
    } else if(front&&x===0&&y===2){
     // Small upper vent deliberately subordinate to the one-block door below.
     solid(c,"soot",[3,6,9],[13,12,11]);
