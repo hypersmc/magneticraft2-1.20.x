@@ -125,6 +125,10 @@ assert.ok(contains(at(2,2,-3),[12,0,0],[16,16,4],'timberEnd'),
  'Structural pier post missing between roasting bays');
 assert.ok(contains(at(2,3,-3),[12,12,0],[16,16,16],'timber'),
  'Continuous side roof-bearing beam missing');
+assert.ok(contains(at(2,3,-3),[12,9,0],[16,12,4],'iron'),
+ 'Iron cap does not sit between support post and beam');
+assert.ok(contains(at(2,3,-1),[10,9,13],[16,12,16],'iron'),
+ 'No iron cap on the outer end-post of the first arch');
 assert.ok(contains(at(2,3,-1),[13,12,0],[16,16,16],'timber'),
  'Arched opening lacks connected timber header');
 assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),

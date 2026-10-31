@@ -137,3 +137,7 @@ each timber-pier junction, roof-to-gable returns, chimney from multiple
 angles, and the actual real ports. Test all four orientations and confirm
 existing Refractory Kiln gameplay remains unchanged. The Ore Roasting Kiln
 still performs no roasting: processing and chemistry are out of scope.
+
+### Iron-capped support joints
+
+Real dark metal collars (vanilla Polished Deepslate) now occupy the upper three pixels of each timber pier just below the roof-bearing beam, and the front/rear timber end posts of the three arch bays receive the same treatment. They replace part of the existing wood rather than overlap it. The baked-model contract checks both the collar and the connected beam, so these joints do not regress into floating decorations.
