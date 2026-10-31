@@ -138,7 +138,7 @@ function volumeArch(c,add){
  p([9,0,0],[10,16,16],'soot');
  // The warmed ore bed is only low in the cavity, not a three-block-high
  // blanket of noisy custom "embers". The rest remains dark inside.
- if(c.y===1)p([10,3,innerA],[11,8,innerB],'ember');
+ if(c.y===1)p([10,4,innerA],[11,8,innerB],'ember');
  // These outer jambs touch the actual brick wall and are on the outside
  // of the TWO-block bay, not between its adjoining cells.
  p([10,0,outerA],[16,16,outerB],'brick');
@@ -157,7 +157,7 @@ function volumeArch(c,add){
  // Real 3px-deep iron bars (vanilla iron texture) stand clear of the
  // brick and fire bed; they terminate at the sill and arch crown.
  const low=c.y===1?4:0,high=c.y===3?12:16;
- for(const z of (backHalf?[7,12]:[3.5,8]))
+ for(const z of (backHalf?[8,12]:[3.5,7]))
   p([12,low,z],[15,high,z+1.25],'grate');
 }
 
@@ -184,14 +184,21 @@ export function roastVisual(c,d,lookup){
   // Three true wall layers: side openings occupy roughly 2.5 blocks in
   // height rather than the old one-block-high miniature window slots.
   const bay=isRoastingBay(c);
+  const pierRib=side&&!bay&&(ribs.has(z)||front||back);
   if(bay){
-   // One volumetric module on each of the six arches. No previous decal
-   // or sheet can remain over the newly carved cavity.
+   // Every bay has a complete masonry recess; do not cover it with
+   // the old exterior wall sheet.
    volumeArch(c,add);
-  }else for(const face of exposed)
-   add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
-  // Separate loadbearing iron ribs and timber ties, based on wall piers.
-  if(side&&(ribs.has(z)||front||back)){
+  }else for(const face of exposed){
+   if(pierRib&&face===faceSide(x)){
+    // Brick exterior starts AFTER the 3px-wide iron pier: never
+    // render brick and iron at the same outward-facing depth.
+    add([0,0,3],[16,16,16],'brick',[face]);
+   }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
+  }
+  // Only wall PIERS receive these external ribs. Arch outer jambs
+  // already have their own frame and must not overlap another rib.
+  if(pierRib){
    const f=faceSide(x);
    const a=x===2?[15.2,0,0]:[0,0,0];
    const b=x===2?[16,16,3]:[.8,16,3];
