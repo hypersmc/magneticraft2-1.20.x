@@ -79,7 +79,7 @@ for(const d of dirs){
     id==='magneticraft2:block/material/refractory_brick',
     'Kiln model borrows a machine-specific texture: '+file+' -> '+id);
   }
-  assert.ok(model.elements.length>0 && model.elements.length<=45,'Excessive detail: '+file);
+  assert.ok(model.elements.length>0 && model.elements.length<=20,'Overly busy K1 model: '+file);
   for(const el of model.elements) {
    for(let axis=0;axis<3;axis++) {
     assert.ok(el.from[axis]>=0 && el.to[axis]<=16 && el.to[axis]>el.from[axis],
@@ -139,11 +139,20 @@ for(const dir of dirs)for(const role of ['input','primary']){
  const file=resource+'models/multiblock/refractory_kiln_'+dir+'/port_'+role+'.json';
  const model=j(file);
  assert.equal(model.parent,'minecraft:block/block');
- assert.ok(model.elements.length>=8,'Port has no integrated kiln visuals: '+file);
+ assert.equal(model.elements.length,7,'Ports must stay small and uncluttered: '+file);
  assert.equal(model.textures.input,'magneticraft2:block/refractory_kiln/input');
  assert.equal(model.textures.output,'magneticraft2:block/refractory_kiln/output');
  assert.ok(model.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#'+
   (role==='input'?'input':'output'))),'Port-specific marking absent: '+file);
+}
+// One large upper charging door, one low firebox and no secondary Y=1 control panel.
+for(const dir of dirs){
+ const bp=j(data+'multiblocks/refractory_kiln_'+dir+'.json');
+ const models=Object.values(bp.structure.layout).flat(2);
+ assert.equal(models.filter(c=>c==='C').length,1);
+ const door=j(resource+'models/multiblock/refractory_kiln_'+dir+'/part_0_2_0.json');
+ assert.ok(door.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#iron')),
+  'Main charging door has no dark-iron face: '+dir);
 }
 const unformed=j(resource+'models/block/refractory_kiln_controller.json');
 assert.equal(unformed.parent,'minecraft:block/block');

@@ -428,7 +428,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the 5×4×5 kiln with an enclosed brick firing chamber and a closed dark-iron charging hatch above the controller. Both front fittings are the real Item Input and Item Output modules, disguised as kiln-compatible metal throats once formed. Leave the centre roof flue AIR. K1 has no fuel, firing or HEAT yet."
+      "text": "Form the unchanged 5×4×5 hollow-brick structure. The broad dark charging hatch spans the three middle front bricks, with a smaller firebox below and flush real Item Input (left) and Item Output (right). Keep the roof flue AIR. The hatch and firebox are visual-only in K1; fuel, HEAT and firing belong to K2."
     }
   ],
   "sortnum": 3,
