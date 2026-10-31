@@ -8,7 +8,7 @@
 
 Use **vanilla textures** whenever their visual identity matches the artwork: minecraft:block/bricks on the main walls, minecraft:block/stone_bricks for the base and roof, minecraft:block/deepslate_tiles for the roof bands/caps, and minecraft:block/spruce_planks for actual under-eave timber supports. Reuse existing generic magneticraft2 refractory material. Keep purpose-made 16×16 tiles only for iron frame, recessed soot, glowing ore/embers, wrought-iron grilles, and the functional item modules. The previous bespoke brick/foundation/roof PNG assets remain for source history but are no longer used by the formed model.
 
-Three multi-block-high arch bays on each side, with recessed ember/soot interiors, lower masonry sills and stepped brick shoulders; continuous roof slopes produced as four 4px sections per roof block. The Voxel V2 profile uses the same subdivisions and block-local baked models; it stays below the maximum 512 boxes. No fake gearbox, entity renderer, floating chimney, large gear, or decorative drive shaft.
+Three multi-block-high arch bays on each side, with recessed ember/soot interiors, lower masonry sills and stepped brick shoulders; continuous roof slopes produced as four 4px sections per roof block. The Voxel V2 roof collision follows the same subdivisions but merges contiguous Z spans into 24 long boxes (instead of 176 per-cell roof boxes); it stays below the maximum 512 boxes. No fake gearbox, entity renderer, floating chimney, large gear, or decorative drive shaft.
 
 ## Construction, existing saves, gameplay
 

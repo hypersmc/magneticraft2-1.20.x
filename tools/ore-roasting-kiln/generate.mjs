@@ -41,14 +41,25 @@ export function makeAssets(){
  const lookup=new Map(canon.map(c=>[key(c.x,c.y,c.z),c]));
  const vox=[];
  for(const c of canon){
-  if(!owned.has(c.k))continue;
-  if(c.y===4){
-   // Match each visible 4-pixel roof slope with real collision.
-   for(let strip=0;strip<4;strip++){
-    const px=strip*4,h=roofStep((c.x+2)*16+px+2);
-    vox.push([c.x*16+px,64,c.z*16,c.x*16+px+4,64+h,(c.z+1)*16]);
+  if(!owned.has(c.k)||c.y===4)continue;
+  vox.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
+ }
+ // The roof is one continuous slope along its length, interrupted ONLY
+ // by the single real chimney AIR shaft. Merge adjacent Z roof cells into
+ // long run boxes: ~24 rectangles instead of 176 small roof boxes.
+ for(let x=-2;x<=2;x++){
+  let start=null;
+  for(let z=-8;z<=1;z++){
+   const present=z<=0&&typeAt(x,4,z)!=='A';
+   if(present&&start===null)start=z;
+   if(!present&&start!==null){
+    for(let strip=0;strip<4;strip++){
+     const px=strip*4,h=roofStep((x+2)*16+px+2);
+     vox.push([x*16+px,64,start*16,x*16+px+4,64+h,z*16]);
+    }
+    start=null;
    }
-  }else vox.push([c.x*16,c.y*16,c.z*16,(c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
+  }
  }
  if(vox.length>512)throw Error('Too many voxel boxes: '+vox.length);
  assets.set(res('data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json'),
