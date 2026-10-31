@@ -495,7 +495,7 @@
         },
         "symmetrical": false
       },
-      "text": "Build the long 5×3×9 structure with real front ports, an open hollow chamber, and a single AIR exhaust cell in the rear roof. Right-click the controller to form. This first milestone is the visual structure; selective roasting and HEAT are not yet enabled."
+      "text": "Build the 5×3×9 structure shown. IMPORTANT: The roof has ONE deliberate 1×1 AIR opening for its rear chimney: centered across the five-block width, on the second roof row from the back. Relative to the front controller, this is 2 blocks up and 7 blocks toward the rear. Leave that block completely EMPTY; do not cap it with Bricks. Keep the hollow chamber and real front Item Input/Output ports as shown, then right-click the controller to form. Roasting and HEAT remain a later milestone."
     }
   ],
   "sortnum": 3,

@@ -65,6 +65,29 @@ const book=json(base+'assets/magneticraft2/patchouli_books/world_of_magneticraft
 const page=book.pages.find(p=>p.name==='Ore Roasting Kiln');
 assert.ok(page&&page.enable_visualize&&page.multiblock.pattern.length===3);
 assert.ok(page.multiblock.pattern.every(layer=>layer.length===9));
+// Every orientation must have exactly one roof AIR cell and must locate
+// it seven blocks behind the front controller, two blocks above it.
+// A brick in that AIR cell must make formation fail (real exhaust opening).
+for(const dir of dirs){
+ const layout=json(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_'+dir+'.json').structure.layout;
+ const air=[];
+ const controllers=[];
+ for(let y=0;y<3;y++)for(let z=0;z<layout['layer'+(y+1)].length;z++)
+  for(let x=0;x<layout['layer'+(y+1)][z].length;x++){
+   const cell=layout['layer'+(y+1)][z][x];
+   if(cell==='A'&&y===2)air.push([x,y,z]);
+   if(cell==='C')controllers.push([x,y,z]);
+  }
+ assert.equal(air.length,1,'Exactly one roof exhaust AIR required: '+dir);
+ assert.equal(controllers.length,1,'Exactly one controller required: '+dir);
+ const [ax,ay,az]=air[0],[cx,cy,cz]=controllers[0];
+ assert.equal(ay-cy,2,'Exhaust at wrong height: '+dir);
+ const dx=ax-cx,dz=az-cz;
+ assert.ok((Math.abs(dx)===7&&dz===0)||(Math.abs(dz)===7&&dx===0),
+  'Exhaust must be seven blocks behind the controller: '+dir);
+}
+assert.match(page.text,/Leave that block completely EMPTY/);
+
 const south=json(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_south.json');
 for(let y=0;y<3;y++){
  const expectedRows=south.structure.layout['layer'+(3-y)]

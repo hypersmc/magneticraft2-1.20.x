@@ -25,3 +25,21 @@ must include a formed machine in all four orientations, construction as shown
 by Patchouli, the 9-block length, true open chimney, non-floating roof,
 correct UVs and matching Voxel V2 collision. No roasting UI/recipe acceptance
 is claimed before an actual thermal/material loop exists.
+
+## 2026-10-31 — formation troubleshooting: rear flue AIR
+
+An in-game failed formation log from the user's test world showed the NORTH
+layout matched all 45 foundation cells and all 45 second-layer cells, then
+failed at **world position (12,58,-51)** where the third layer requires
+`minecraft:air`, but `minecraft:bricks` was placed. The logged controller
+was at (12,56,-44); therefore the required flue cell is at controller-local
+**(0,+2,-7)** in that facing. The roof must have exactly **one real empty
+block**, centered across its width, second roof row from the rear (seven
+blocks behind the controller). This isn't a placeholder geometry omission:
+adding a brick closes the physical exhaust and invalidates the blueprint.
+
+The Patchouli text was clarified and the static contract now asserts the
+flue offset in all four facing-specific JSON layouts. No formation rules,
+models, UVs, collision, materials, recipe, or existing world blocks were
+changed. The user must remove that roof brick and attempt formation again;
+this specific log does not confirm any other build faults or successful formation.
