@@ -26,3 +26,13 @@ node tools/ore-roasting-kiln/test-contract.mjs
 ```
 
 The generator assets were checked for four rotated blueprints, six Patchouli layers, block-local geometry, texture alias validity and UV width correspondence. **Gradle, in-game formation, multi-angle visual inspection, smoke flue, save/reload and multiplayer are unverified.** Visual acceptance requires an actual screenshot/video; do not declare reference fidelity from static checks.
+
+## 2026-10-31 — screenshot-directed aperture and roof seam correction
+
+The user's two in-game screenshots showed **visible sky/terrain in the side arches**, three pairs of separate slit-shaped windows rather than three unified arches, **floating/detached roof ribs**, and undersized, weakly integrated front item-port faces. These were caused by authored block-model geometry, not texture resolution or a need for arbitrary positional offsets.
+
+The two-cell arches previously placed masonry jambs against their *shared seam*, producing a false centre pillar and uncovered outer edges. They now use one full-cell opaque recessed soot backplate per segment, with masonry only on the *actual external edges* of each two-cell arch. The taller roasting vents and bars remain static.
+
+The segmented roof previously emitted **top-only faces** for its pitched courses, missing vertical riser/edge faces, and used a separate `roofTop()` height for ribs/caps. The roof now has all exposed vertical riser and gable faces and derives the position of every structural rib and ridge cap from the exact same `roofStep()` height as its own stone-tile surface and Voxel V2 profile. The silhouette, voxel profile and all four real blueprint structures are unchanged. Genuine input/output port blocks gain larger, integral iron mounting plates; their actual capabilities and coordinates do not change.
+
+**Status:** Source/static regression checks only. Minecraft screenshots from front, both arch sides, and roof at several angles are required before claiming any visual fix.

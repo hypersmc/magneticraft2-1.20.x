@@ -67,6 +67,33 @@ for(const dir of dirs){
   }
  }
 }
+// Screenshot regression: real backs to both halves of each arch, no centre
+// mullion, real roof risers, and large ports on genuine module blocks.
+const pfx=base+'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/';
+for(const z of [-2,-1]){
+ const m=assets.get(pfx+'part_2_2_'+z+'.json');
+ assert.ok(m.elements.some(e=>e.from[1]===0&&e.to[1]===16&&
+   e.from[2]===0&&e.to[2]===16&&
+   Object.values(e.faces).some(f=>f.texture==='#soot')),
+   'A roasting arch is not sealed against daylight at z='+z);
+ const brickJamb=m.elements.filter(e=>Object.values(e.faces).some(f=>f.texture==='#brick'));
+ assert.ok(brickJamb.length===1,'Extra centre pillar in roasting bay z='+z);
+ assert.ok(brickJamb.some(e=>z===-2?e.to[2]<=3:e.from[2]>=13),
+   'Arch jamb must be on OUTER side, not shared middle seam: '+z);
+}
+const eave=assets.get(pfx+'part_-2_4_-3.json');
+assert.ok(eave.elements.some(e=>Object.hasOwn(e.faces,'west')),
+ 'Pitched roof has an unsealed outside edge');
+for(const z of [-2,-5]){
+ const rib=assets.get(pfx+'part_-2_4_'+z+'.json');
+ assert.ok(rib.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#iron')),
+ 'Structural rib absent');
+}
+const inputPort=assets.get(pfx+'port_input.json');
+assert.ok(inputPort.elements.some(e=>e.from[0]===1&&e.to[0]===15&&
+ e.from[1]===1&&e.to[1]===15&&Object.values(e.faces).some(f=>f.texture==='#iron')),
+ 'Functional input port has no integrated mounting frame');
+
 assert.equal(countModels,676);
 assert.equal(arches,144);
 assert.equal(typeAt(0,4,-7),'A');

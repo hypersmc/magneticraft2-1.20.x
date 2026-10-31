@@ -65,41 +65,45 @@ export function roofStep(globalPixel) {
 }
 function addRoof(E,add,c){
  const {x,z}=c;
+ const outerFront=z===0,outerRear=z===-8;
+ const openSouth=x===0&&z===-8;
+ const openNorth=x===0&&z===-6;
  for(let strip=0;strip<4;strip++){
   const from=strip*4,to=from+4,gx=(x+2)*16+from;
   const h=roofStep(gx+2);
-  const prev=roofStep(gx-2);
-  const mat=(z===0||z===-8||z===-3||z===-6)?'roofTrim':'roof';
+  const prev=gx===0?0:roofStep(gx-2);
+  const next=gx===76?0:roofStep(gx+6);
+  const mat=outerFront||outerRear||z===-3||z===-6?'roofTrim':'roof';
+
+  // A solid, connected stepped roof course, not a single unbacked top quad.
+  // Model faces for each raised riser close every join between adjacent strips.
   add([from,0,0],[to,h,16],mat,['up']);
-  // Faces of the true upward/downward height difference only.
-  // Never emit a zero-volume element when adjacent strips match.
-  if(strip>0&&h>prev)
-   add([from-.35,prev,0],[from,h,16],mat,['west']);
-  else if(strip>0&&h<prev)
-   add([from,h,0],[from+.35,prev,16],mat,['east']);
+  if(h>prev)add([from,prev,0],[to,h,16],mat,['west']);
+  if(h>next)add([from,next,0],[to,h,16],mat,['east']);
+
+  // End gables and the sides of the real chimney opening. No open sky
+  // should be visible through a roof edge, except the intentional flue.
+  const ends=[];
+  if(outerFront||openSouth)ends.push('south');
+  if(outerRear||openNorth)ends.push('north');
+  if(ends.length)add([from,0,0],[to,h,16],
+    outerFront?'refractory':outerRear?'brick':mat,ends);
+
+  // Every cross-rib sits DIRECTLY on the local roof course, not at
+  // roofTop(x), which previously differed from the actual stepped slope.
+  if((z===-2||z===-5)&&h<16)
+   add([from,h,6],[to,Math.min(16,h+1),10],
+       'iron',['up','north','south']);
+
+  // Central ridge caps also follow the top of their owning strips.
+  if(x===0&&h>=14&&h<16)
+   add([from,h,0],[to,Math.min(16,h+1),16],'roofTrim',['up']);
  }
- // Solid gable at the front and back follows the exact step roof profile.
- if(z===0||z===-8){
-  for(let s=0;s<4;s++){
-   const a=s*4,b=a+4,gy=roofStep((x+2)*16+a+2);
-   add([a,0,0],[b,gy,16],z===0?'refractory':'brick',
-       [z===0?'south':'north']);
-  }
- }
- // Material bearing line under the eaves, made of existing wall blocks.
- if(Math.abs(x)===2){
-  add([0,0,0],[16,2,16],'roofTrim',[faceSide(x)]);
- }
- // Ridge ridge-cap, physically sits on the centre course.
- if(x===0){
-  add([5,14,0],[11,16,16],'roofTrim',['up']);
- }
- // Roof cross-ribs are continuous across the five sloping courses.
- if(z===-2||z===-5){
-  const y=roofTop(x,z)-1;
-  add([0,y,6],[16,y+1.0,10],'iron',['up','north','south']);
- }
+ // Continuous eaves remain connected to the masonry below.
+ if(Math.abs(x)===2)
+  add([0,0,0],[16,2,16],'roofTrim',[x===2?'east':'west']);
 }
+
 function aperturePanel(add,x,y0,y1,z0,z1,material,depth=14.0){
  const face=faceSide(x);
  const a=x===2?[depth,y0,z0]:[16-depth-.18,y0,z0];
@@ -108,44 +112,51 @@ function aperturePanel(add,x,y0,y1,z0,z1,material,depth=14.0){
 }
 function arch(cell,add){
  const {x,y,z}=cell;
- const side=faceSide(x);
- // Two tiles per arch; 3 arches repeated down each long wall.
- const first=rowStarts.has(z),last=rowEnds.has(z);
- const base0=first?2:0,base1=last?14:16;
- if(y===1||y===2){
-  // Recess is 3 pixels from the masonry facade. Glow occupies the interior.
-  aperturePanel(add,x,0,16,base0,base1,'soot',12.4);
-  aperturePanel(add,x,y===1?4:0,15,base0+1,base1-1,'ember',12.75);
-  if(y===1){
-   aperturePanel(add,x,0,3,base0,base1,'refractory',15.4);
-   aperturePanel(add,x,3,4,base0,base1,'iron',15.6);
+ // A single arch spans two adjacent Z cells. The earlier implementation
+ // reversed the outer jamb positions and put pillars on the SHARED seam.
+ const frontHalf=rowStarts.has(z); // z=-1,-4,-7, outer edge at local Z=16
+ const backHalf=rowEnds.has(z);    // z=-2,-5,-8, outer edge at local Z=0
+ if(!frontHalf&&!backHalf)throw Error('Non-arch roasting segment '+z);
+
+ // An opaque full-cell fire-chamber backplate prevents sky/terrain
+ // leaking around the grilles. Recess is inboard of actual masonry.
+ aperturePanel(add,x,0,16,0,16,'soot',13.0);
+
+ if(y===1){
+  aperturePanel(add,x,3,16,0,16,'ember',13.65);
+  aperturePanel(add,x,0,3,0,16,'refractory',15.25);
+  aperturePanel(add,x,3,4,0,16,'iron',15.4);
+ }else if(y===2){
+  aperturePanel(add,x,0,16,0,16,'ember',13.65);
+ }else if(y===3){
+  // The whole curved crown belongs to ONE two-cell-wide opening.
+  // Narrowed shoulders appear only at the true outer corners.
+  aperturePanel(add,x,0,9,0,16,'ember',13.65);
+  aperturePanel(add,x,12,16,0,16,'brick',15.4);
+  aperturePanel(add,x,10,12,0,16,'refractory',15.55);
+  if(frontHalf){
+   aperturePanel(add,x,0,11,13,16,'brick',15.5);
+   aperturePanel(add,x,7,12,9,13,'refractory',15.5);
   }
-  // Thick masonry edge is visible around the two-cell arch.
-  if(first)aperturePanel(add,x,0,16,0,2.6,'brick',15.45);
-  if(last)aperturePanel(add,x,0,16,13.4,16,'brick',15.45);
-  // Three closely spaced grille bars. They attach to the lower sill and arch.
-  for(const zbar of [4,9,14]){
-   if(zbar<base0+2||zbar>base1-2)continue;
-   aperturePanel(add,x,4,16,zbar,zbar+.9,'grate',15.6);
+  if(backHalf){
+   aperturePanel(add,x,0,11,0,3,'brick',15.5);
+   aperturePanel(add,x,7,12,3,7,'refractory',15.5);
   }
+  // Split keystone spans the shared seam without creating a centre pillar.
+  if(frontHalf)aperturePanel(add,x,9,13,0,4,'refractory',15.7);
+  if(backHalf)aperturePanel(add,x,9,13,12,16,'refractory',15.7);
  }
- if(y===3){
-  // Upper curved shoulder; two blocks across, split into stepped voussoirs.
-  aperturePanel(add,x,0,7,base0,base1,'soot',12.4);
-  aperturePanel(add,x,0,5,base0+2,base1-2,'ember',12.75);
-  aperturePanel(add,x,7,11,base0,base1,'refractory',15.1);
-  aperturePanel(add,x,11,16,base0,base1,'brick',15.5);
-  if(first){
-   aperturePanel(add,x,4,11,0,4,'brick',15.55);
-   aperturePanel(add,x,7,13,4,7,'refractory',15.4);
-  }
-  if(last){
-   aperturePanel(add,x,4,11,12,16,'brick',15.55);
-   aperturePanel(add,x,7,13,9,12,'refractory',15.4);
-  }
-  aperturePanel(add,x,5,8,7,9,'refractory',15.75);
+ if(y===1||y===2){
+  // Full-height OUTER jambs only. Do not fill the middle seam.
+  if(frontHalf)aperturePanel(add,x,0,16,13,16,'brick',15.5);
+  if(backHalf)aperturePanel(add,x,0,16,0,3,'brick',15.5);
+
+  // Real iron grille bars tie the lower sill to the stone arch crown.
+  for(const zz of [5,11])
+   aperturePanel(add,x,4,16,zz,zz+1,'grate',15.7);
  }
 }
+
 export function roastVisual(c,d,lookup){
  const {x,y,z,k}=c,E=[];
  const add=(a,b,material,faces)=>E.push(modelBox(a,b,material,faces,d));
@@ -238,10 +249,12 @@ export function roastVisual(c,d,lookup){
 export function roastPort(role,d){
  if(role!=='input'&&role!=='primary')throw Error('Unknown item port '+role);
  const E=[],add=(a,b,m,f)=>E.push(modelBox(a,b,m,f,d));
+ // One integrated full-block metal inset in the real foundation port.
  add([0,0,0],[16,16,15],'stone',['north','south','up','down','east','west']);
- add([2,3,15.1],[14,13,15.35],'soot',['south']);
- add([4,4,15.4],[12,12,15.65],role==='input'?'input':'output',['south']);
- add([2,12.5,15.5],[14,14,15.8],'iron',['south']);
- add([2,2,15.5],[14,3.5,15.8],'iron',['south']);
+ add([1,1,15.05],[15,15,15.3],'iron',['south']);
+ add([2.5,2.5,15.35],[13.5,13.5,15.55],'soot',['south']);
+ add([4,5,15.6],[12,11,15.85],role==='input'?'input':'output',['south']);
+ add([2,13.5,15.55],[14,14.7,15.85],'iron',['south']);
+ add([2,1.3,15.55],[14,2.5,15.85],'iron',['south']);
  return blank(E);
 }
