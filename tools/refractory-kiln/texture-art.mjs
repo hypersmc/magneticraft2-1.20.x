@@ -102,3 +102,86 @@ export function makeKilnPngs(){
  }
  return result;
 }
+
+/**
+ * Two ORIGINAL item sprites for the K2 refractory loop, not borrowed
+ * block materials or Minecraft items. Palette + 16x16 pixel rows are
+ * the editable source of truth; '.' is transparent.
+ *
+ * Raw clay/sand is irregular and rough; fired ceramic is cleanly
+ * formed, lighter and solid. Integer pixels only, no interpolation.
+ */
+export const kilnItemSprites = {
+ unfired_refractory_batch:{
+  palette:{
+   A:'#4e3930',B:'#ac8063',C:'#e0c099',D:'#6c4d3d',
+   E:'#d7b08c',F:'#765344',G:'#6e5344',H:'#dac29f',
+   I:'#dec19a',J:'#e0c4a0',K:'#865a48',L:'#b58868',
+   M:'#c39a71',N:'#d3a383',O:'#684b3d',P:'#5d4236'
+  },
+  pixels:[
+   '................',
+   '................',
+   '................',
+   '................',
+   '.....AAAAA......',
+   '....ABCBBBAAA...',
+   '...ADBBBBEBBBA..',
+   '..ABBFBBGBBBHAA.',
+   '..ADBBBBBIJBBKA.',
+   '..AKKKKKKKLLKKA.',
+   '..AKLLLLLLKMKKA.',
+   '..AKKNKKOKKKPA..',
+   '....AKKKKKKKA...',
+   '.....AAAAAAA....',
+   '................',
+   '................'
+  ]
+ },
+ fired_refractory_ceramic:{
+  palette:{
+   A:'#5c4735',B:'#e7cc98',C:'#ba8f65',
+   D:'#f4ddb0',E:'#8f6749',F:'#d9b78a',
+   G:'#bd996b',H:'#b18a5a',I:'#d9b887',
+   J:'#c7a77a',K:'#95724f'
+  },
+  pixels:[
+   '................',
+   '................',
+   '................',
+   '......AAAAAAA...',
+   '....AABBBBBBBA..',
+   '..ACBDDDDDDDBBA.',
+   '..ABBBBBBBBBAEA.',
+   '..ABFFFFFFBAEEA.',
+   '..AGGGGGGGEEHEA.',
+   '..AGGIGJGGEEEEA.',
+   '..AGGGGGGGGEEEA.',
+   '...KKKGGGGGEEEA.',
+   '...AAAKKKKGEAA..',
+   '.......AAAGA....',
+   '..........A.....',
+   '................'
+  ]
+ }
+};
+
+export function makeKilnItemPngs(){
+ const result={};
+ for(const [name,sprite] of Object.entries(kilnItemSprites)){
+  if(sprite.pixels.length!==16)throw Error('Invalid item height: '+name);
+  const rgba=new Uint8Array(16*16*4);
+  for(let y=0;y<16;y++){
+   if(sprite.pixels[y].length!==16)throw Error('Invalid item width: '+name+'/'+y);
+   for(let x=0;x<16;x++){
+    const symbol=sprite.pixels[y][x];
+    if(symbol==='.')continue; // alpha 0
+    if(!Object.hasOwn(sprite.palette,symbol))
+     throw Error('Unmapped item pixel: '+name+'/'+symbol);
+    rgba.set(rgb(sprite.palette[symbol]),(y*16+x)*4);
+   }
+  }
+  result[name]=encodePng(rgba);
+ }
+ return result;
+}

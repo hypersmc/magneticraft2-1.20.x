@@ -82,3 +82,21 @@ A full output slot prevents ignition of further fuel and pauses progress without
 This implementation is **not yet build-, client-, or multiplayer-verified**. Required tests: `node tools/refractory-kiln/build-textures.mjs --check`, `node tools/refractory-kiln/generate.mjs --check`, `node tools/refractory-kiln/test-contract.mjs`, `./gradlew build`; then in-game formation in four orientations, fuel handling, recipes, HEAT cooling, blocked output, port interaction, chunk unload/reload and break/reform. No K2 completion or PR merge claim until those pass.
 
 K2 follow-up: The controller also persists a one-item identity/NBT snapshot of the in-flight input. Replacing an ingredient with another item or a different material-quality tag under the same recipe ID resets partial firing progress rather than inheriting already-paid HEAT work. Stack count changes alone do not reset progress.
+
+## K2 item artwork correction (2026-10-31)
+
+The Unfired Refractory Batch initially reused `minecraft:item/clay_ball`,
+and Fired Refractory Ceramic reused `magneticraft2:block/material/refractory_brick`.
+Both were placeholders, and in the creative inventory they were not recognizable
+as a prepared sandy-clay batch and a fired ceramic product. These are now
+original 16×16 RGBA item icons with transparent backgrounds. The raw batch is
+an irregular brown sand-speckled compact, and the fired ceramic is a neatly
+shaped light refractory brick. The model paths are
+`magneticraft2:item/unfired_refractory_batch` and
+`magneticraft2:item/fired_refractory_ceramic`.
+
+The exact pixels and palettes live in `tools/refractory-kiln/texture-art.mjs`;
+`node tools/refractory-kiln/build-textures.mjs --write` reproduces both new
+item PNGs and all pre-existing block tiles. `--check` and the
+`test-contract.mjs` assertions verify resource existence, dimensions and
+distinct icons. No recipes, machine geometry, processing or saved data change.

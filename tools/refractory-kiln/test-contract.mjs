@@ -25,6 +25,25 @@ for(const tile of expectedTiles){
  assert.equal(png.readUInt32BE(20),16,'Kiln texture height must be 16: '+tile);
 }
 
+
+const itemSprites=['unfired_refractory_batch','fired_refractory_ceramic'];
+for(const item of itemSprites){
+ const itemModel=j(resource+'models/item/'+item+'.json');
+ assert.equal(itemModel.parent,'minecraft:item/generated');
+ assert.equal(itemModel.textures.layer0,'magneticraft2:item/'+item,
+  'Refractory item uses placeholder texture: '+item);
+ const png=fs.readFileSync(path.join(root,resource+'textures/item/'+item+'.png'));
+ assert.deepEqual([...png.subarray(0,8)],[137,80,78,71,13,10,26,10],
+  'Invalid item PNG: '+item);
+ assert.equal(png.readUInt32BE(16),16);
+ assert.equal(png.readUInt32BE(20),16);
+}
+assert.notEqual(
+ fs.readFileSync(path.join(root,resource+'textures/item/'+itemSprites[0]+'.png')).toString('base64'),
+ fs.readFileSync(path.join(root,resource+'textures/item/'+itemSprites[1]+'.png')).toString('base64'),
+ 'Unfired and fired ceramic must have distinct textures'
+);
+
 assert.equal(run('--check'),331,'unexpected count or stale files');
 const dirs=['south','west','north','east'];
 const solids=['B','S','C'];
