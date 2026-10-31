@@ -95,13 +95,11 @@ function addRoof(E,add,c){
    add([from,h,6],[to,Math.min(16,h+1),10],
        'iron',['up','north','south']);
 
-  // Central ridge caps also follow the top of their owning strips.
-  if(x===0&&h>=14&&h<16)
-   add([from,h,0],[to,Math.min(16,h+1),16],'roofTrim',['up']);
+  // The central ridge is already formed by the actual stepped stone
+  // courses. Avoid a second top face over the cross-rib.
  }
- // Continuous eaves remain connected to the masonry below.
- if(Math.abs(x)===2)
-  add([0,0,0],[16,2,16],'roofTrim',[x===2?'east':'west']);
+ // The outermost sloped riser itself closes the eave. A second two-pixel
+ // trim skin here was coplanar with it and caused z-fighting.
 }
 
 /**
@@ -225,15 +223,17 @@ export function roastVisual(c,d,lookup){
  }else if(y===4){
   // All roof cells carry the pitched tiles; under the chimney, real brick
   // piers meet the upper chimney wall without an unsupported vertical gap.
-  addRoof(E,add,c);
   if(chimneyFoot(x,z)){
-   const wallFaces=[];
-   for(const face of ['north','south','east','west']){
+   // Real supporting brick fills this entire roof block. Roof triangles
+   // would be buried beneath it; drawing them as well duplicates faces.
+   // Expose the brick at the flue, the outer wall, and above neighbouring
+   // lower roof tiles, rather than stacking two block models in one cell.
+   const outerFaces=['north','south','east','west'].filter(face=>{
     const step=offsets[face];
-    if(!chimneyFoot(x+step[0],z+step[2]))wallFaces.push(face);
-   }
-   if(wallFaces.length)add([0,0,0],[16,16,16],'brick',wallFaces);
-  }
+    return !chimneyFoot(x+step[0],z+step[2]);
+   });
+   if(outerFaces.length)add([0,0,0],[16,16,16],'brick',outerFaces);
+  }else addRoof(E,add,c);
  }else if(y>=5&&y<=7){
   // Three real courses of brick above the pitched roof. The 3x3 ring
   // preserves a real 1x1 open AIR flue through every level.
