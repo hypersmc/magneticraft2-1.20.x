@@ -116,6 +116,11 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_HAMMER = fromBlock(BRONZE_FORGE_HAMMER);
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_DIE =
             ITEMS.register("bronze_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BRONZE_ROLLING_MILL = fromBlock(BRONZE_ROLLING_MILL);
+    public static final RegistryObject<Item> ITEM_BRONZE_ROLLER_SLEEVES =
+            ITEMS.register("bronze_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_COPPER_SHEET =
+            ITEMS.register("copper_sheet", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_ROTARY_ORE_CLASSIFIER = fromBlock(ROTARY_ORE_CLASSIFIER);
     public static final RegistryObject<Item> ITEM_WATER_SETTLING_TANK = fromBlock(WATER_SETTLING_TANK);
     public static final RegistryObject<Item> ITEM_CHARCOAL_RETORT = fromBlock(CHARCOAL_RETORT);

@@ -1,0 +1,124 @@
+{
+  "name": "bronze_rolling_mill_east",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "O",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "I",
+          "S",
+          "C"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "U",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_rolling_mill",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_rolling_mill_east",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_rolling_mill",
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        -1,
+        2,
+        0
+      ]
+    ]
+  }
+}

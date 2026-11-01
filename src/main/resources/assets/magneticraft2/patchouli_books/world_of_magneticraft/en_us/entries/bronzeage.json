@@ -614,6 +614,60 @@
         "symmetrical": false
       },
       "text": "Four layers, 5 wide × 4 tall × 3 deep. Rear-center I is the physical Gear V2 Mechanical Input; at the front the left U accepts ingots and the right O extracts plates. The middle AIR cells leave space for the anvils and hammer, but must be genuinely empty when built. Right-click the controller (0) to form. It needs a powered input and an unworn die. Recipe data is pack editable; the model is intentionally provisional for Studio."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Rolling Mill (K1)$()$(br2)The Bronze Rolling Mill cold-rolls four Copper Plates into four thinner Copper Sheets. It needs a formed 5×3×3 machine, 16 or more Gear V2 RPM and 6 torque for 180 powered ticks. This gives the earlier Mechanical Forge Hammer a useful downstream step without replacing its Copper Plate output.$(br2)Copper Sheets can form Water Pipes more efficiently: four sheets produce eight pipe blocks versus six thicker plates for the older recipe, which remains available."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Rolling Mill Controller",
+      "recipe": "magneticraft2:bronze_rolling_mill",
+      "text": "Bronze framework, precision bearing and replaceable roller sleeves. Craft a controller, then build the full 5×3×3 structure. Face the rear Mechanical Input toward your Gear V2 drive."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Roller Sleeves",
+      "recipe": "magneticraft2:bronze_roller_sleeves",
+      "text": "Replaceable bronze roller linings, installed when the machine is first built and servicing after 512 completed rolling batches. Sneak-right-click the controller empty-handed to inspect, or use a new set of sleeves normally to service the machine."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bronze Rolling Mill",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "P___P",
+            "PPPPP"
+          ],
+          [
+            "P___P",
+            "P___P",
+            "P___P"
+          ],
+          [
+            "SSISS",
+            "OSSSU",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_rolling_mill",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "This is a 5 wide × 3 tall × 3 deep open frame, not a solid cube. I = real rear-center mechanical input. U = real LEFT item input, O = real RIGHT primary output (in the visualized machine). The middle area marked AIR must be empty during formation. Right-click controller 0 to form. The visual model is provisional until Magneticraft2 Studio is ready."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Rolling output and maintenance$()$(br2)Feed four Copper Plates via the LEFT module, supply Gear V2 power from the rear, and collect four Copper Sheets from the RIGHT port. The rollers counter-rotate as the mechanical shaft turns. Output blockage, insufficient power or worn sleeves pause work without consuming items.$(br2)Hot bronze billets → bronze sheet/rod, quality changes, lubricants and press tooling are future data-driven recipes; no fake temperatures are introduced in K1."
     }
   ],
   "sortnum": 3,

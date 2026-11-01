@@ -39,6 +39,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeFoundryBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeStampMillBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeForgeHammerBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeRollingMillBlock;
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
 import com.magneticraft2.common.block.stage.bronze.WaterSettlingTankBlock;
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
@@ -126,6 +127,8 @@ public class BlockRegistry {
             BLOCKS.register("bronze_stamp_mill", BronzeStampMillBlock::new);
     public static final RegistryObject<BronzeForgeHammerBlock> BRONZE_FORGE_HAMMER =
             BLOCKS.register("bronze_forge_hammer", BronzeForgeHammerBlock::new);
+    public static final RegistryObject<BronzeRollingMillBlock> BRONZE_ROLLING_MILL =
+            BLOCKS.register("bronze_rolling_mill", BronzeRollingMillBlock::new);
     public static final RegistryObject<RotaryOreClassifierBlock> ROTARY_ORE_CLASSIFIER =
             BLOCKS.register("rotary_ore_classifier", RotaryOreClassifierBlock::new);
     public static final RegistryObject<WaterSettlingTankBlock> WATER_SETTLING_TANK =

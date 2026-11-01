@@ -33,6 +33,7 @@ import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeStampMillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeForgeHammerRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeRollingMillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.RotaryOreClassifierRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.WaterSettlingTankRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
@@ -129,6 +130,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get(), BronzeStampMillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(), BronzeForgeHammerRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_ROLLING_MILL_BE.get(), BronzeRollingMillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(), RotaryOreClassifierRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_SETTLING_TANK_BE.get(), WaterSettlingTankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
@@ -217,6 +219,7 @@ public class Clientsetup {
         }
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_forge_hammer_ram"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_rolling_mill_roller"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
