@@ -32,7 +32,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             0,
@@ -55,7 +55,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             13,
@@ -78,7 +78,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             4,
             0,
@@ -101,7 +101,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             12,
@@ -124,7 +124,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             8,
             0,
@@ -147,7 +147,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             10,
@@ -170,7 +170,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             12,
             0,
@@ -193,7 +193,7 @@
       ],
       "faces": {
         "west": {
-          "texture": "#roofTrim",
+          "texture": "#roof",
           "uv": [
             0,
             9,

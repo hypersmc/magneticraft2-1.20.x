@@ -46,10 +46,7 @@ const offsets={north:[0,0,-1],south:[0,0,1],east:[1,0,0],
                west:[-1,0,0],up:[0,1,0],down:[0,-1,0]};
 const solids=new Set(['S','B','C','U','O']);
 const openings=new Set([-1,-2,-4,-5,-7,-8]);
-const ribs=new Set([0,-3,-6,-8]);
-const rowEnds=new Set([-2,-5,-8]);
 const rowStarts=new Set([-1,-4,-7]);
-const faceSide=x=>x===2?'east':'west';
 const chimneyFoot=(x,z)=>Math.abs(x)<=1&&z>=-8&&z<=-6&&!(x===0&&z===-7);
 const blank=(E)=>({parent:'minecraft:block/block',ambientocclusion:false,textures,elements:E});
 export function roofTop(x,z){
@@ -64,37 +61,37 @@ export function roofStep(globalPixel) {
  return Math.max(2,15-Math.floor(dx*13/40));
 }
 function addRoof(E,add,c){
- const {x,z}=c,front=z===0,rear=z===-8;
+ // Uniform stone-tile courses with a restrained dark gable fascia; no black bands.
+ const front=c.z===0,rear=c.z===-8;
  for(let strip=0;strip<4;strip++){
-  const from=strip*4,to=from+4,gx=(x+2)*16+from;
-  const h=roofStep(gx+2);
-  const prev=gx===0?0:roofStep(gx-2);
-  const next=gx===76?0:roofStep(gx+6);
-  const bodyStart=rear?2:0,bodyEnd=front?14:16;
-  const mat=(z===-3||z===-6)?'roofTrim':'roof';
-  // The front/back dark gable fascia REPLACES the roof edge volume:
-  // no extra overlay plane and no z-fighting at grazing angles.
-  add([from,0,bodyStart],[to,h,bodyEnd],mat,['up']);
-  if(h>prev)add([from,prev,bodyStart],[to,h,bodyEnd],mat,['west']);
-  if(h>next)add([from,next,bodyStart],[to,h,bodyEnd],mat,['east']);
-  if(front){
-   add([from,0,14],[to,h,16],'roofTrim',['up','south','north']);
-   if(h>prev)add([from,prev,14],[to,h,16],'roofTrim',['west']);
-   if(h>next)add([from,next,14],[to,h,16],'roofTrim',['east']);
-  }else if(rear){
-   add([from,0,0],[to,h,2],'roofTrim',['up','north','south']);
-   if(h>prev)add([from,prev,0],[to,h,2],'roofTrim',['west']);
-   if(h>next)add([from,next,0],[to,h,2],'roofTrim',['east']);
-  }else if((x===0&&z===-8)||(x===0&&z===-6)){
-   // Leave the only true chimney AIR opening unobstructed.
+  const from=strip*4,to=from+4,global=(c.x+2)*16+from;
+  const h=roofStep(global+2),prev=global===0?0:roofStep(global-2),
+        next=global===76?0:roofStep(global+6);
+  const start=rear?2:0,end=front?14:16;
+  add([from,0,start],[to,h,end],'roof',['up']);
+  if(h>prev)add([from,prev,start],[to,h,end],'roof',['west']);
+  if(h>next)add([from,next,start],[to,h,end],'roof',['east']);
+  if(front||rear){
+   const a=rear?0:14,b=rear?2:16;
+   add([from,0,a],[to,h,b],'roofTrim',['up',front?'south':'north']);
+   if(h>prev)add([from,prev,a],[to,h,b],'roofTrim',['west']);
+   if(h>next)add([from,next,a],[to,h,b],'roofTrim',['east']);
   }
-  // Real restrained metal ties across only two structural roof spans.
-  if((z===-2||z===-5)&&h<16)
-   add([from,h,6],[to,Math.min(16,h+1),10],
-       'iron',['up','north','south']);
  }
 }
-
+function chimneyBounds(c){
+ return {x0:c.x===-1?12:0,x1:c.x===1?4:16,
+         z0:c.z===-8?12:0,z1:c.z===-6?4:16};
+}
+function addChimneyBase(c,add){
+ // The flue emerges directly from the slate: no oversized solid plinth.
+ const {x0,x1,z0,z1}=chimneyBounds(c);
+ for(let a=x0;a<x1;a+=4){
+  const b=Math.min(a+4,x1);
+  const h=roofStep((c.x+2)*16+(a+b)/2);
+  if(h<16)add([a,h,z0],[b,16,z1],'brick',['north','south','east','west']);
+ }
+}
 /**
  * Six matching arched, recessed furnace windows. The old version overlaid
  * paper-thin textured planes and coplanar 3D pieces. Each wall cell now
@@ -118,36 +115,87 @@ function box6(add,from,to,mat,left){
  add(a,b,mat,['north','south','east','west','up','down']);
 }
 function volumeArch(c,add){
- if(!isRoastingBay(c))throw Error('Not roasting bay');
- const left=c.x===-2,backHalf=rowEnds.has(c.z);
- const outerA=backHalf?0:13,outerB=backHalf?3:16;
- const innerA=backHalf?3:0,innerB=backHalf?16:13;
+ if(!isRoastingBay(c))throw Error('Not a roasting bay');
+ const left=c.x===-2,start=rowStarts.has(c.z),outerA=start?13:0,
+       outerB=start?16:3,insideA=start?0:3,insideB=start?13:16;
  const p=(a,b,m)=>box6(add,a,b,m,left);
  p([0,0,0],[9,16,16],'brick');
  p([9,0,0],[10,16,16],'soot');
- if(c.y===1)p([10,4,innerA],[11,8,innerB],'ember');
- // The outside ends of the whole kiln use a real continuous timber post.
- const endPost=c.z===-1||c.z===-8;
- if(endPost&&c.y===3){
-  p([10,0,outerA],[16,9,outerB],'timberEnd');
-  p([10,9,outerA],[16,12,outerB],'iron');
- }else p([10,0,outerA],[16,c.y===3?12:16,outerB],endPost?'timberEnd':'brick');
- if(c.y===1){
-  p([10,0,innerA],[16,3,innerB],'refractory');
-  p([10,3,innerA],[16,4,innerB],'iron');
+ if(c.y<3){
+  p([10,0,outerA],[16,16,outerB],c.z===-8?'timberEnd':'brick');
+  if(c.y===1){
+   p([10,0,insideA],[16,5,insideB],'refractory');
+   p([10,5,insideA],[11,12,insideB],'ember');
+  }else p([10,0,insideA],[11,5,insideB],'ember');
+ }else{
+  // Each 2-block bay has stepped brick voussoirs and an actual arched void.
+  // The continuous timber header *rests on* the brick crown.
+  for(const [low,high,width] of [[0,4,3],[4,7,5],
+                                   [7,9,7],[9,11,9],[11,12,16]]){
+   const a=start?(width===16?0:16-width):0,b=start?16:width;
+   p([10,low,a],[16,high,b],'brick');
+  }
+  p([12,12,0],[16,16,16],'timber');
  }
- if(c.y===3){
-  // Put masonry BEHIND the header instead of layering timber on brick.
-  p([10,12,innerA],[13,16,innerB],'brick');
-  const shoulder=backHalf?[3,7]:[9,13];
-  p([10,8,shoulder[0]],[16,12,shoulder[1]],'brick');
-  p([13,12,0],[16,16,16],'timber');
- }
- const low=c.y===1?4:0,high=c.y===3?12:16;
- for(const z of (backHalf?[8,12]:[3.5,7]))
-  p([12,low,z],[15,high,z+1.25],'grate');
+ const low=c.y===1?5:0,high=c.y===3?9:16,zBar=start?4:11;
+ p([12,low,zBar],[14,high,zBar+1.5],'grate');
+ if(c.y===2)p([11,6,insideA],[12,7,insideB],'iron');
 }
-
+function sidePier(c,add){
+ const p=(a,b,m)=>box6(add,a,b,m,c.x===-2),y=c.y,top=y===3?12:16;
+ p([0,0,0],[12,top,16],'brick');
+ p([12,0,0],[16,top,6],'brick');
+ p([12,0,10],[16,top,16],'brick');
+ p([12,0,6],[16,y===3?9:16,10],'timberEnd');
+ if(y===3){
+  p([12,9,6],[16,12,10],'iron');
+  p([12,12,0],[16,16,16],'timber');
+ }
+}
+function frontCorner(c,add){
+ const p=(a,b,m)=>box6(add,a,b,m,c.x===-2),y=c.y,top=y===3?12:16;
+ p([0,0,0],[12,top,16],'brick');
+ p([12,0,0],[16,top,12],'brick');
+ p([12,0,12],[16,y===3?9:16,16],'timberEnd');
+ if(y===3){
+  p([12,9,12],[16,12,16],'iron');
+  p([12,12,0],[16,16,16],'timber');
+  p([0,12,12],[12,16,16],'timber');
+ }
+}
+function frontDoorWall(c,add){
+ const y=c.y,x=c.x,top=y===3?12:16;
+ const [a,b]=x===-1?[8,16]:x===1?[0,8]:[0,16];
+ add([0,0,0],[16,top,14],'brick',['north','south','east','west']);
+ if(y===3){
+  add([0,0,14],[16,12,16],'brick',['south']);
+  add([0,12,12],[16,16,16],'timber',
+      ['south','north','up','down','east','west']);
+  return;
+ }
+ if(a>0)add([0,0,14],[a,16,16],'brick',['south','up','down']);
+ if(b<16)add([b,0,14],[16,16,16],'brick',['south','up','down']);
+ const low=y===1?4:0,high=y===2?12:16;
+ if(low>0)add([a,0,14],[b,low,16],'refractory',['south','up']);
+ if(high<16)add([a,high,14],[b,16,16],'brick',['south','down']);
+ // 32px-wide framed front charging door, rather than a hidden 1-block strip.
+ add([a,low,14],[b,high,15.1],'soot',['south']);
+ add([a,low,15.1],[b,high,15.55],'iron',['south']);
+ if(x===-1)add([a,low,15.55],[a+2,high,16],'grate',['south']);
+ if(x===1)add([b-2,low,15.55],[b,high,16],'grate',['south']);
+ const rail=y===1?6:9;
+ add([a,rail,15.55],[b,rail+2,15.9],'grate',['south']);
+ if(y===1&&x===0)add([4,8,15.6],[12,11,15.95],'ember',['south']);
+}
+function rearWall(c,add){
+ const y=c.y;
+ if(y===3){
+  add([0,0,0],[16,12,16],'brick',['north','south','east','west']);
+  add([0,12,0],[16,16,4],'timber',
+      ['north','south','east','west','up','down']);
+  add([0,12,4],[16,16,16],'brick',['north','south','east','west']);
+ }else add([0,0,0],[16,16,16],'brick',['north','south','east','west']);
+}
 export function roastVisual(c,d,lookup){
  const {x,y,z,k}=c,E=[];
  const add=(a,b,material,faces)=>E.push(modelBox(a,b,material,faces,d));
@@ -156,11 +204,9 @@ export function roastVisual(c,d,lookup){
   const v=lookup.get([x+off[0],y+off[1],z+off[2]].join(','));
   return !v||!solids.has(v.k);
  });
- const side=Math.abs(x)===2,front=z===0,back=z===-8;
  if(y===0){
-  // Vanilla stone-brick foundation, visible all around.
   for(const face of exposed)add([0,0,0],[16,16,16],'stone',[face]);
-  if(front&&x===0&&k==='C'){
+  if(z===0&&x===0&&k==='C'){
    add([2,2,14.1],[14,13,14.4],'soot',['south']);
    add([3,3,14.5],[13,12,14.85],'grate',['south']);
    for(const a of [[2,2,14.9,4,14,15.9],[12,2,14.9,14,14,15.9]])
@@ -168,75 +214,17 @@ export function roastVisual(c,d,lookup){
    add([4,12,15],[12,14,15.8],'iron',['south']);
   }
  }else if(y>=1&&y<=3){
-  // Three true wall layers: side openings occupy roughly 2.5 blocks in
-  // height rather than the old one-block-high miniature window slots.
-  const bay=isRoastingBay(c);
-  const pier=side&&!bay;
-  const outer=x===2;
-  const wooden=(a,b,m='timberEnd')=>box6(add,a,b,m,!outer);
-  if(bay)volumeArch(c,add);
-  else {
-   for(const face of exposed){
-    if(pier&&face===faceSide(x)){
-     // Exterior masonry is genuinely REPLACED by the loadbearing post.
-     if(!front)add([0,0,4],[16,y===3?12:16,16],'brick',[face]);
-    }else if(front&&face==='south'){
-     if(side){
-      const a=outer?[0,0,0]:[4,0,0];
-      const b=outer?[12,12,16]:[16,12,16];
-      add(a,b,'brick',['south']);
-     }else if(x===0&&(y===1||y===2)){
-      add([0,0,0],[3,16,16],'brick',['south']);
-      add([13,0,0],[16,16,16],'brick',['south']);
-     }else if(y===3)add([0,0,0],[16,12,16],'brick',['south']);
-     else add([0,0,0],[16,16,16],'brick',['south']);
-    }else add([0,0,0],[16,16,16],face==='up'?'refractory':'brick',[face]);
-   }
-   if(pier){
-    // A full wooden 4px post stands on the real Stone Brick foundation.
-    // At the front corners the post wraps around the end wall.
-    const zEnd=front?16:4;
-    if(y===3){
-     wooden([12,0,0],[16,9,zEnd]);
-     wooden([12,9,0],[16,12,zEnd],'iron');
-     wooden([12,12,0],[16,16,front?12:16],'timber');
-    }else wooden([12,0,0],[16,16,zEnd]);
-   }
-  }
-  if(front&&y===3){
-   // The continuous gable crossbeam rests on the corner posts.
-   box6(add,[0,12,12],[16,16,16],'timber',false);
-  }
-  if(front&&x===0&&(y===1||y===2)){
-   // The charging door now has a recessed, opaque, framed chamber,
-   // instead of sitting BEHIND a solid brick south-facing sheet.
-   box6(add,[3,0,13],[13,16,14],'soot',false);
-   box6(add,[4,1,14],[12,15,15],'iron',false);
-   box6(add,[3,0,14],[4,16,16],'iron',false);
-   box6(add,[12,0,14],[13,16,16],'iron',false);
-   if(y===1)box6(add,[8,6,15],[11,9,16],'bronze',false);
-  }
-
+  if(Math.abs(x)===2){
+   if(z===0)frontCorner(c,add);
+   else if(isRoastingBay(c))volumeArch(c,add);
+   else sidePier(c,add);
+  }else if(z===0)frontDoorWall(c,add);
+  else if(z===-8)rearWall(c,add);
  }else if(y===4){
-  // All roof cells carry the pitched tiles; under the chimney, real brick
-  // piers meet the upper chimney wall without an unsupported vertical gap.
-  if(chimneyFoot(x,z)){
-   // Real supporting brick fills this entire roof block. Roof triangles
-   // would be buried beneath it; drawing them as well duplicates faces.
-   // Expose the brick at the flue, the outer wall, and above neighbouring
-   // lower roof tiles, rather than stacking two block models in one cell.
-   const outerFaces=['north','south','east','west'].filter(face=>{
-    const step=offsets[face];
-    return !chimneyFoot(x+step[0],z+step[2]);
-   });
-   if(outerFaces.length)add([0,0,0],[16,16,16],'brick',outerFaces);
-  }else addRoof(E,add,c);
+  addRoof(E,add,c);
+  if(chimneyFoot(x,z))addChimneyBase(c,add);
  }else if(y>=5&&y<=7){
-  // The real 3x3 Brick ring remains unchanged in the JSON structure.
-  // Its block-local baked geometry forms a narrower 1.5-block-wide
-  // flue, with substantial four-pixel-thick brick walls. Still open AIR.
-  const x0=x===-1?12:0,x1=x===1?4:16;
-  const z0=z===-8?12:0,z1=z===-6?4:16;
+  const {x0,x1,z0,z1}=chimneyBounds(c);
   const exterior=y===7?13:16;
   add([x0,0,z0],[x1,exterior,z1],'brick',
       ['north','south','east','west','up','down']);

@@ -51,13 +51,12 @@ export function makeAssets(){
   }else vox.push([c.x*16,c.y*16,c.z*16,
    (c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
  }
- // The roof is one continuous slope along its length, interrupted ONLY
- // by the single real chimney AIR shaft. Merge adjacent Z roof cells into
- // long run boxes: ~24 rectangles instead of 176 small roof boxes.
+ // Slate courses run continuously under the chimney, except at its AIR
+ // shaft. Brick base and roof collision must match the actual baked geometry.
  for(let x=-2;x<=2;x++){
   let start=null;
   for(let z=-8;z<=1;z++){
-   const present=z<=0&&typeAt(x,4,z)!=='A'&&!chimneyFoot(x,z);
+   const present=z<=0&&typeAt(x,4,z)!=='A';
    if(present&&start===null)start=z;
    if(!present&&start!==null){
     for(let strip=0;strip<4;strip++){
@@ -68,10 +67,15 @@ export function makeAssets(){
    }
   }
  }
- // Eight loadbearing masonry feet fill the gap between the sloping roof
- // and the brick ring above; no missing or duplicate collision volume.
  for(let x=-1;x<=1;x++)for(let z=-8;z<=-6;z++){
-  if(chimneyFoot(x,z))vox.push([x*16,64,z*16,(x+1)*16,80,(z+1)*16]);
+  if(!chimneyFoot(x,z))continue;
+  const x0=x===-1?12:0,x1=x===1?4:16;
+  const z0=z===-8?12:0,z1=z===-6?4:16;
+  for(let a=x0;a<x1;a+=4){
+   const b=Math.min(a+4,x1);
+   const h=roofStep((x+2)*16+(a+b)/2);
+   vox.push([x*16+a,64+h,z*16+z0,x*16+b,80,z*16+z1]);
+  }
  }
  if(vox.length>512)throw Error('Too many voxel boxes: '+vox.length);
  assets.set(res('data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json'),

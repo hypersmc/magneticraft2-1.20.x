@@ -23,11 +23,11 @@
       "from": [
         0,
         0,
-        0
+        2
       ],
       "to": [
         16,
-        16,
+        12,
         16
       ],
       "faces": {
@@ -35,8 +35,35 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
+            4,
             16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            4,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            2,
+            4,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            4,
+            14,
             16
           ]
         }
@@ -51,7 +78,7 @@
       "to": [
         16,
         12,
-        16
+        2
       ],
       "faces": {
         "north": {
@@ -77,15 +104,6 @@
         4
       ],
       "faces": {
-        "south": {
-          "texture": "#timber",
-          "uv": [
-            0,
-            0,
-            16,
-            4
-          ]
-        },
         "north": {
           "texture": "#timber",
           "uv": [
@@ -95,19 +113,10 @@
             4
           ]
         },
-        "west": {
+        "south": {
           "texture": "#timber",
           "uv": [
             0,
-            0,
-            4,
-            4
-          ]
-        },
-        "east": {
-          "texture": "#timber",
-          "uv": [
-            12,
             0,
             16,
             4
@@ -129,6 +138,24 @@
             12,
             16,
             16
+          ]
+        },
+        "west": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            4
           ]
         }
       }

@@ -38,7 +38,7 @@ const sides={
  up:{axis:1,edge:'to',other:[0,2]},
  down:{axis:1,edge:'from',other:[0,2]}
 };
-let partModels=0,arches=0,faceCount=0;
+let partModels=0,recesses=0,faceCount=0;
 for(const d of dirs){
  const bp=get(base+'data/magneticraft2/multiblocks/ore_roasting_kiln_'+d+'.json');
  assert.deepEqual(bp.structure.dimensions,
@@ -59,7 +59,7 @@ for(const d of dirs){
   if(!p.endsWith('/part_0_0_0.json')&&
    m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#soot'))&&
    m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#grate')))
-  arches++;
+  recesses++;
   assert.ok(m.elements.length>0&&m.elements.length<40,'Element budget '+p);
   const planes=[];
   for(const e of m.elements){
@@ -92,7 +92,8 @@ for(const d of dirs){
  }
 }
 assert.equal(partModels,732);
-assert.equal(arches,144);
+// 144 side wall layers and 24 door wall layers have recessed openings.
+assert.equal(recesses,168);
 assert.ok(faceCount>8000);
 assert.equal(typeAt(0,4,-7),'A');
 for(let y=5;y<=7;y++){
@@ -116,46 +117,62 @@ for(const name of [
  'minecraft:block/polished_blackstone'])
  assert.ok(materialTextures.has(name),'Missing intended vanilla texture '+name);
 
-/** Screenshot-driven structure checks: strong jointed supports, dark grilles,
- * front gable, real door and narrower brick chimney, all four orientations. */
+/** The screenshot regressions: actual narrow posts, real arch shoulders,
+ * a wider front door, uninterrupted stone roof tiles and a chimney that meets the roof. */
 const at=(x,y,z)=>assets.get(base+
  'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_'+x+'_'+y+'_'+z+'.json');
 const contains=(m,from,to,texture)=>m.elements.some(e=>
  e.from.every((n,i)=>Math.abs(n-from[i])<.001)&&
  e.to.every((n,i)=>Math.abs(n-to[i])<.001)&&
  Object.values(e.faces).some(f=>f.texture==='#'+texture));
-assert.ok(contains(at(2,2,-3),[12,0,0],[16,16,4],'timberEnd'),
- 'Structural pier post missing between roasting bays');
+assert.ok(contains(at(2,2,-3),[12,0,6],[16,16,10],'timberEnd'),
+ 'Side support must be a 4px-wide post, not a full wooden wall');
 assert.ok(contains(at(2,3,-3),[12,12,0],[16,16,16],'timber'),
- 'Continuous side roof-bearing beam missing');
-assert.ok(contains(at(2,3,-3),[12,9,0],[16,12,4],'iron'),
- 'Iron cap does not sit between support post and beam');
-assert.ok(contains(at(2,3,-1),[10,9,13],[16,12,16],'iron'),
- 'No iron cap on the outer end-post of the first arch');
-assert.ok(contains(at(2,3,-1),[13,12,0],[16,16,16],'timber'),
- 'Arched opening lacks connected timber header');
+ 'Continuous roof-bearing timber header missing');
+assert.ok(contains(at(2,3,-3),[12,9,6],[16,12,10],'iron'),
+ 'Iron collar does not physically join post to roof beam');
+assert.ok(contains(at(2,2,0),[12,0,12],[16,16,16],'timberEnd'),
+ 'Front corner post not confined to a real 4x4 footprint');
+assert.ok(!contains(at(2,2,0),[12,0,0],[16,16,16],'timberEnd'),
+ 'Full-width timber panel has returned at the corner');
+assert.ok(contains(at(2,3,0),[0,12,12],[12,16,16],'timber'),
+ 'Front gable crossbeam missing at the corner');
 assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),
- 'Front gable horizontal beam missing');
-assert.ok(contains(at(0,2,0),[4,1,14],[12,15,15],'iron'),
- 'Recessed charging-door plate missing');
+ 'Crossbeam must span the middle of the front gable');
+assert.ok(contains(at(2,3,-1),[10,4,11],[16,7,16],'brick')&&
+          contains(at(2,3,-1),[10,7,9],[16,9,16],'brick'),
+ 'Brick shoulder courses do not create a recessed stepped arch');
+assert.ok(contains(at(2,3,-1),[12,12,0],[16,16,16],'timber'),
+ 'The arched roasting chamber lacks its continuous timber header');
+for(const [x,a,b] of [[-1,8,16],[0,0,16],[1,0,8]]){
+ assert.ok(contains(at(x,2,0),[a,0,15.1],[b,12,15.55],'iron'),
+  'Front charging door is not framed across its full two-block width: '+x);
+}
+const middleRoof=at(0,4,-4);
+assert.ok(middleRoof.elements.some(e=>
+ Object.values(e.faces).some(f=>f.texture==='#roof')),
+ 'Stone-tile roof courses missing');
+assert.ok(!middleRoof.elements.some(e=>
+ Object.values(e.faces).some(f=>f.texture==='#roofTrim')),
+ 'Dark roof bands have returned');
 const frontRoof=at(0,4,0);
 assert.ok(frontRoof.elements.some(e=>e.from[2]===14&&e.to[2]===16&&
-  Object.values(e.faces).some(f=>f.texture==='#roofTrim')),
- 'Solid front-gable roof fascia missing');
+ Object.values(e.faces).some(f=>f.texture==='#roofTrim')),
+ 'Front gable roof fascia missing');
+assert.ok(contains(at(0,4,-8),[0,14,12],[4,16,16],'brick'),
+ 'Brick chimney base must grow out of the actual 14px roof course');
+assert.ok(!contains(at(0,4,-8),[0,0,0],[16,16,16],'brick'),
+ 'Solid 3x3 chimney pedestal has returned');
 assert.ok(contains(at(-1,6,-7),[12,0,0],[16,16,16],'brick'),
- 'Chimney left flank must be narrow brick masonry, not an oversized tower');
-assert.ok(contains(at(1,6,-7),[0,0,0],[4,16,16],'brick'),
- 'Chimney right flank must retain 4px real wall thickness');
+ 'Upper flue wall thickness must remain 4px');
+assert.equal(typeAt(0,4,-7),'A','Flue must remain open through roof');
 const chimneyBoxes=assets.get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json').collision;
-assert.ok(chimneyBoxes.some(b=>b[1]===96&&b[4]===112&&b[3]-b[0]===4),
- 'Chimney collision must match narrowed baked chimney shape');
-assert.ok(chimneyBoxes.some(b=>b[1]===96&&b[4]===112&&b[5]-b[2]===4),
- 'Chimney collision side wall must be only 4px deep');
-
+assert.ok(chimneyBoxes.some(v=>v[1]===78&&v[4]===80&&v[5]-v[2]===4),
+ 'Chimney base collision must rise just above matching slate course');
 const voxel=get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json');
-assert.equal(voxel.collision.length,169);
+assert.equal(voxel.collision.length,179);
 assert.deepEqual(voxel.selection,voxel.collision);
-assert.equal(voxel.collision.filter(v=>v[1]===64&&v[4]===80).length,8);
+assert.equal(voxel.collision.filter(v=>v[4]===80&&v[1]>64).length,14);
 const book=get(base+'assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
 const page=book.pages.find(p=>p.name==='Ore Roasting Kiln');
 assert.equal(page.multiblock.pattern.length,8);
@@ -170,4 +187,4 @@ const block=read('src/main/java/com/magneticraft2/common/block/stage/bronze/OreR
 assert.ok(entity.includes('port.linkFormedController(worldPosition)'));
 assert.ok(entity.includes('acceptsRecipeInput(ItemStack stack) { return false; }'));
 assert.ok(!block.includes('::serverTick'));
-console.log('Ore Roasting Kiln 5x8x9: geometry, 4 facings, coplanarity, book and port contract passed (static only).');
+console.log('Ore Roasting Kiln 5x8x9: arches, beams, tiled roof/flue, 4 facings, UVs, coplanarity, book and port contract passed (static only).');

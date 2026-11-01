@@ -21,13 +21,13 @@
   "elements": [
     {
       "from": [
-        0,
+        2,
         0,
         0
       ],
       "to": [
         16,
-        16,
+        12,
         16
       ],
       "faces": {
@@ -35,8 +35,35 @@
           "texture": "#brick",
           "uv": [
             0,
-            0,
+            4,
             16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            4,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            2,
+            4,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            4,
+            14,
             16
           ]
         }
@@ -49,7 +76,7 @@
         0
       ],
       "to": [
-        16,
+        2,
         12,
         16
       ],
@@ -77,15 +104,6 @@
         16
       ],
       "faces": {
-        "east": {
-          "texture": "#timber",
-          "uv": [
-            0,
-            0,
-            16,
-            4
-          ]
-        },
         "west": {
           "texture": "#timber",
           "uv": [
@@ -95,19 +113,10 @@
             4
           ]
         },
-        "south": {
+        "east": {
           "texture": "#timber",
           "uv": [
             0,
-            0,
-            4,
-            4
-          ]
-        },
-        "north": {
-          "texture": "#timber",
-          "uv": [
-            12,
             0,
             16,
             4
@@ -129,6 +138,24 @@
             0,
             4,
             16
+          ]
+        },
+        "south": {
+          "texture": "#timber",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#timber",
+          "uv": [
+            12,
+            0,
+            16,
+            4
           ]
         }
       }
