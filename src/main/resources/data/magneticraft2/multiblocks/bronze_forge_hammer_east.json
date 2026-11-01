@@ -1,0 +1,156 @@
+{
+  "name": "bronze_forge_hammer_east",
+  "structure": {
+    "dimensions": [
+      3,
+      4,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "O"
+        ],
+        [
+          "I",
+          "S",
+          "C"
+        ],
+        [
+          "S",
+          "S",
+          "U"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ],
+      "layer4": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_forge_hammer",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_forge_hammer_east",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_forge_hammer",
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        -1,
+        2,
+        0
+      ],
+      [
+        -1,
+        3,
+        0
+      ]
+    ]
+  }
+}

@@ -345,5 +345,9 @@
   "item.magneticraft2.roasted_copper_concentrate": "Roasted Copper Concentrate",
   "message.magneticraft2.ore_roasting_kiln.fuel_added": "Roasting Kiln fuel added",
   "message.magneticraft2.ore_roasting_kiln.fuel_rejected": "Roasting Kiln fuel rejected (invalid or fuel queue full)",
-  "message.magneticraft2.ore_roasting_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Roasting: %s/%s | Input: %s | Output: %s"
+  "message.magneticraft2.ore_roasting_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Roasting: %s/%s | Input: %s | Output: %s",
+  "block.magneticraft2.bronze_forge_hammer": "Mechanical Forge Hammer",
+  "item.magneticraft2.bronze_forge_hammer": "Mechanical Forge Hammer Controller",
+  "item.magneticraft2.bronze_forge_die": "Bronze Forging Die",
+  "message.magneticraft2.bronze_forge_hammer.status": "Forge Hammer: %s/%s ticks | Input: %s | Output: %s | Die: %s/%s batches | Running: %s"
 }

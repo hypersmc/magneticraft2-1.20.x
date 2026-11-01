@@ -1,0 +1,152 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/stone_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        11,
+        1.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0,
+            15,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        14.9375
+      ],
+      "to": [
+        15,
+        11,
+        15
+      ],
+      "faces": {
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0,
+            15,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        1.0625,
+        11,
+        15
+      ],
+      "faces": {
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0,
+            15,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14.9375,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        11,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            0,
+            15,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        10.9375,
+        1
+      ],
+      "to": [
+        15,
+        11,
+        15
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        0.0625,
+        15
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    }
+  ]
+}

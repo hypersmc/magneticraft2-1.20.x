@@ -559,6 +559,61 @@
     {
       "type": "text",
       "text": "$(bold)Why roast the ore?$()$(br2)The Primitive Furnace can smelt one Roasted Copper Concentrate with Coal into $(bold)4 Copper Ingots plus Slag$(), compared with 3 ingots from unroasted Copper Concentrate. This provisional Bronze-age route rewards extra fuel and a large dedicated installation while preserving the original Copper path.$(br2)Selective roasting for other mineral species, exhaust capture, sulfur handling, material quality and dedicated smelting remain future work."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Mechanical Forge Hammer$()$(br2)The powered 5×4×3 hammer is the first Bronze hot-working workshop framework. Its $(bold)initial$() recipe is cold copper plate forging: four vanilla Copper Ingots → four Copper Plates in 160 active ticks. Compared with the primitive four-strike Anvil, this runs automatically using Gear V2 at 20 speed and 5 torque. It preserves material count and does not replace the early Anvil.$(br2)Hot blanks, forging temperatures, iron stock and the Rolling Mill are later recipes, not simulated in this first pass."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Forge Hammer Controller",
+      "recipe": "magneticraft2:bronze_forge_hammer",
+      "text": "Craft with Bronze Ingots, Copper Plates, a Precision Bronze Bearing, Polished Blackstone and Stone Bricks. Build the full open-framed 5×4×3 structure before using it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replacement Forging Die",
+      "recipe": "magneticraft2:bronze_forge_die",
+      "text": "A replaceable forging surface: one die lasts 384 completed batches. Right-click the formed controller with a new die to service it; sneak-use with an empty hand shows remaining life."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Forge Hammer",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "P___P",
+            "PPPPP"
+          ],
+          [
+            "P___P",
+            "P___P",
+            "P___P"
+          ],
+          [
+            "P___P",
+            "P___P",
+            "P___P"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SU0OS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_forge_hammer",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Four layers, 5 wide × 4 tall × 3 deep. Rear-center I is the physical Gear V2 Mechanical Input; at the front the left U accepts ingots and the right O extracts plates. The middle AIR cells leave space for the anvils and hammer, but must be genuinely empty when built. Right-click the controller (0) to form. It needs a powered input and an unworn die. Recipe data is pack editable; the model is intentionally provisional for Studio."
     }
   ],
   "sortnum": 3,

@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_forge_hammer",
+  "input": {
+    "item": "minecraft:copper_ingot"
+  },
+  "input_count": 4,
+  "output": {
+    "item": "magneticraft2:copper_plate",
+    "count": 4
+  },
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 20,
+    "torque": 5
+  }
+}

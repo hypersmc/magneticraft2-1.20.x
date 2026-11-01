@@ -1,0 +1,175 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/stone_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        3,
+        4
+      ],
+      "to": [
+        16,
+        9,
+        4.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            3,
+            16,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        7,
+        9.9375
+      ],
+      "to": [
+        16,
+        9,
+        10
+      ],
+      "faces": {
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        4,
+        9.9375
+      ],
+      "to": [
+        16,
+        7,
+        10
+      ],
+      "faces": {
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            4,
+            16,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        3,
+        9.9375
+      ],
+      "to": [
+        16,
+        4,
+        10
+      ],
+      "faces": {
+        "south": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            3,
+            16,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        8.9375,
+        4
+      ],
+      "to": [
+        16,
+        9,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            4,
+            16,
+            10
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        3,
+        4
+      ],
+      "to": [
+        16,
+        3.0625,
+        6
+      ],
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            4,
+            16,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        3,
+        6
+      ],
+      "to": [
+        16,
+        3.0625,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#wood",
+          "uv": [
+            0,
+            6,
+            16,
+            10
+          ]
+        }
+      }
+    }
+  ]
+}

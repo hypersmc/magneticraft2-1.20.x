@@ -143,6 +143,7 @@ public class MagneticraftJeiPlugin implements IModPlugin {
                 MultiblockJeiRecipe.MECHANICAL_SIFTER
         );
         registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_STAMP_MILL);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_FORGE_HAMMER);
         registerCatalyst(registration, MultiblockJeiRecipe.ROTARY_ORE_CLASSIFIER);
         registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);
         registerCatalyst(registration, MultiblockJeiRecipe.CHARCOAL_RETORT);

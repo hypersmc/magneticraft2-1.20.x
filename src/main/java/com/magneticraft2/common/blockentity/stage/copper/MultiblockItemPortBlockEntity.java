@@ -13,6 +13,7 @@ import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -220,6 +221,8 @@ public class MultiblockItemPortBlockEntity
             return kiln.acceptsRecipeInput(stack);
         if (controller instanceof OreRoastingKilnBlockEntity roaster)
             return roaster.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeForgeHammerBlockEntity hammer)
+            return hammer.acceptsRecipeInput(stack);
         return true;
     }
 

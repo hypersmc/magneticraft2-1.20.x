@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BHB",
+    "PCP",
+    "BSB"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "H": {
+      "item": "minecraft:polished_blackstone"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_forge_hammer"
+  }
+}
