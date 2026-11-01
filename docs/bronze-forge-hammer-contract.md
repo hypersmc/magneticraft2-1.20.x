@@ -109,3 +109,34 @@ Mechanical Input is correctly placed (first rotated-candidate warning was
 not a real mechanical-module problem). Follow the revised Patchouli
 visualization for fresh builds. Verify actual formation in-game before
 declaring this bug resolved.
+
+## 2026-11-01 — Visible input but no hammer movement
+
+A formed Forge Hammer visibly shows the copper stock on its anvil even when
+there is no mechanical power. The initial K1 recipe **requires both 20 RPM
+and 5 torque**, not just four Copper Ingots in the input. A standard small
+water wheel produces at most 16 RPM without suitable gearing; simply
+attaching an unpowered wooden shaft does not operate this industrial press.
+The existing wooden **Large Gear With Handle** is a temporary source: one
+activation runs for **100 ticks**, less than this forge's **160 supplied
+ticks per batch**. If the handle has enough transmitted torque and speed,
+its first activation should partially progress the batch; operate it again
+or use a continuous source to finish. This is not a broken forging recipe.
+
+**Do not reduce the required RPM/torque or invent free motion to hide an
+underpowered network.**
+
+The server-side status on an ordinary right-click now reports the actual
+input count, required recipe count, observed and required Gear V2 RPM/torque,
+whether the mechanical load is supplied, and a concise reason for being
+idle. It also distinguishes missing power modules, overloaded networks,
+blocked output, a broken die, invalid/undersized ingredients and a missing
+recipe. This is a gameplay diagnostic, not proof that the user's particular
+shaft is unpowered; check the in-game numbers to identify the real cause.
+
+**Regression:** form a Forge Hammer, insert exactly four ingots and inspect
+the status with (a) no connected power, (b) a small waterwheel,
+(c) an adequate larger source, (d) deliberate overload and (e) a blocked
+output. Ensure the numbers/reasons are correct and the machine runs only
+under actually supplied mechanical load. Test independently of the
+provisional visual model and check for no additional per-tick allocations.

@@ -156,6 +156,21 @@ assert.equal(south.structure.layout.layer1[2][3],"O");
 
 const lang=json("src/main/resources/assets/magneticraft2/lang/en_us.json");
 assert.ok(lang["block.magneticraft2."+id]&&lang["item.magneticraft2.bronze_forge_die"]);
+for(const reason of ["empty","recipe_missing","need_more","recipe_unsupported",
+ "die_worn","output_blocked","module_missing","overloaded",
+ "insufficient_speed","insufficient_torque","load_unsupplied","working","ready"]){
+ assert.ok(lang["message.magneticraft2.bronze_forge_hammer.reason."+reason],
+  "Missing localised diagnosis "+reason);
+ assert.ok(be.includes('diagnostic = "'+reason+'"'),
+  "Missing server-side diagnosis branch "+reason);
+}
+assert.ok(lang["message.magneticraft2.bronze_forge_hammer.diagnostic"].includes("RPM"),
+ "Server diagnostics must state the actual Gear V2 RPM requirement");
+assert.match(be,/GearNetworkManager\.getInstance\(\)\.getMechanicalLoadState\(world, worldPosition\)/);
+assert.match(be,/node\.getEffectiveSpeed\(\)/);
+assert.match(be,/node\.getTorque\(\)/);
+assert.match(be,/player\.displayClientMessage\(Component\.translatable\(\s*"message\.magneticraft2\.bronze_forge_hammer\.diagnostic"/);
+
 for(const tag of ["mineable/pickaxe","needs_stone_tool"])assert.ok(
  json("src/main/resources/data/minecraft/tags/blocks/"+tag+".json").values.includes("magneticraft2:"+id));
 console.log("Bronze Forge Hammer K1: 4 facings, "+models+" models, "+faces+

@@ -349,5 +349,19 @@
   "block.magneticraft2.bronze_forge_hammer": "Mechanical Forge Hammer",
   "item.magneticraft2.bronze_forge_hammer": "Mechanical Forge Hammer Controller",
   "item.magneticraft2.bronze_forge_die": "Bronze Forging Die",
-  "message.magneticraft2.bronze_forge_hammer.status": "Forge Hammer: %s/%s ticks | Input: %s | Output: %s | Die: %s/%s batches | Running: %s"
+  "message.magneticraft2.bronze_forge_hammer.status": "Forge Hammer: %s/%s ticks | Input: %s | Output: %s | Die: %s/%s batches | Running: %s",
+  "message.magneticraft2.bronze_forge_hammer.diagnostic": "Forge Hammer: %s | Input %s/%s | Gear V2 RPM %s/%s | Torque %s/%s | Load supplied: %s",
+  "message.magneticraft2.bronze_forge_hammer.reason.empty": "No input: insert copper ingots through the input port",
+  "message.magneticraft2.bronze_forge_hammer.reason.recipe_missing": "No Forge Hammer recipe accepts the inserted item",
+  "message.magneticraft2.bronze_forge_hammer.reason.need_more": "Not enough input items for a full batch",
+  "message.magneticraft2.bronze_forge_hammer.reason.recipe_unsupported": "Recipe is not supported by this forge",
+  "message.magneticraft2.bronze_forge_hammer.reason.die_worn": "Forging die worn out; replace it",
+  "message.magneticraft2.bronze_forge_hammer.reason.output_blocked": "Output port is full or cannot accept the product",
+  "message.magneticraft2.bronze_forge_hammer.reason.module_missing": "Mechanical input module not found",
+  "message.magneticraft2.bronze_forge_hammer.reason.overloaded": "Gear network overloaded",
+  "message.magneticraft2.bronze_forge_hammer.reason.insufficient_speed": "Insufficient RPM; increase mechanical speed",
+  "message.magneticraft2.bronze_forge_hammer.reason.insufficient_torque": "Insufficient torque; use stronger power or reduce gearing",
+  "message.magneticraft2.bronze_forge_hammer.reason.load_unsupplied": "Mechanical load not supplied (network power/overload)",
+  "message.magneticraft2.bronze_forge_hammer.reason.working": "Forging in progress",
+  "message.magneticraft2.bronze_forge_hammer.reason.ready": "Power available; awaiting next processing tick"
 }

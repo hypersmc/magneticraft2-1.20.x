@@ -47,6 +47,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.Locale;
 
 /**
  * Bronze III powered forge: Gear V2-driven, recipe-defined batches, with a
@@ -206,17 +207,81 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         return tile instanceof MechanicalInputModuleBlockEntity module ? module : null;
     }
 
+    /**
+     * Explicit feedback for a GUI-less machine. Copper on the anvil proves only
+     * that the item port accepted it, NOT that Gear V2 can supply the demanded
+     * RPM and torque. Check the actual server-side module and load state here.
+     * Recipe enumeration occurs ONLY on player interaction, not each tick.
+     */
     @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
         if (world.isClientSide || !formed) return;
         if (forgingDie.handleInteraction(player, hand, this::sync)) return;
+
+        ItemStack inputStack = itemHandler.getStackInSlot(0);
+        MultiblockProcessingRecipe matching = recipe();
+        MultiblockProcessingRecipe candidate = matching;
+        if (candidate == null && !inputStack.isEmpty()) {
+            for (MultiblockProcessingRecipe possible : world.getRecipeManager()
+                    .getAllRecipesFor(MultiblockProcessingRecipe.Type.INSTANCE)) {
+                if (possible.isForMachine(MACHINE) && possible.acceptsInputType(inputStack)) {
+                    candidate = possible;
+                    break;
+                }
+            }
+        }
+
+        MechanicalInputModuleBlockEntity module = getMechanicalInput();
+        GearNode node = module == null ? null : module.getOrCreateGearNode();
+        GearNetworkManager.MechanicalLoadState load =
+                GearNetworkManager.getInstance().getMechanicalLoadState(world, worldPosition);
+        float rpm = node == null ? 0F : node.getEffectiveSpeed();
+        float torque = node == null ? 0F : node.getTorque();
+        float requiredRpm = candidate == null ? 0F : candidate.getMinSpeed();
+        float requiredTorque = candidate == null ? 0F : candidate.getTorque();
+
+        String diagnostic;
+        if (inputStack.isEmpty()) {
+            diagnostic = "empty";
+        } else if (candidate == null) {
+            diagnostic = "recipe_missing";
+        } else if (inputStack.getCount() < candidate.getInputCount()) {
+            diagnostic = "need_more";
+        } else if (!validRecipe(candidate)) {
+            diagnostic = "recipe_unsupported";
+        } else if (!forgingDie.canOperate()) {
+            diagnostic = "die_worn";
+        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+            diagnostic = "output_blocked";
+        } else if (node == null) {
+            diagnostic = "module_missing";
+        } else if (node.isOverloaded()) {
+            diagnostic = "overloaded";
+        } else if (rpm < requiredRpm) {
+            diagnostic = "insufficient_speed";
+        } else if (torque + EPS < requiredTorque) {
+            diagnostic = "insufficient_torque";
+        } else if (!load.supplied()) {
+            diagnostic = "load_unsupplied";
+        } else {
+            diagnostic = running ? "working" : "ready";
+        }
+
         player.displayClientMessage(Component.translatable(
                 "message.magneticraft2.bronze_forge_hammer.status",
-                progress, recipe() == null ? 0 : recipe().getProcessTime(),
-                itemHandler.getStackInSlot(0).getCount(),
-                itemHandler.getStackInSlot(1).getCount(),
+                progress, matching == null ? 0 : matching.getProcessTime(),
+                inputStack.getCount(), itemHandler.getStackInSlot(1).getCount(),
                 forgingDie.getRemainingCycles(), forgingDie.getMaximumCycles(),
-                running), true);
+                running), false);
+        player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.bronze_forge_hammer.diagnostic",
+                Component.translatable("message.magneticraft2.bronze_forge_hammer.reason." + diagnostic),
+                inputStack.getCount(), candidate == null ? 0 : candidate.getInputCount(),
+                String.format(Locale.ROOT, "%.1f", rpm),
+                String.format(Locale.ROOT, "%.1f", requiredRpm),
+                String.format(Locale.ROOT, "%.1f", torque),
+                String.format(Locale.ROOT, "%.1f", requiredTorque),
+                load.supplied()), false);
     }
 
     @Override protected @Nullable MultiblockStructure identifyMultiblockStructure(Level world,
