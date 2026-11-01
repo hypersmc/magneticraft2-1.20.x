@@ -36,7 +36,8 @@ public class BronzeMoldTableBlockEntity extends BlockEntity {
             return switch (slot) {
                 case 0 -> stack.is(ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get())
                         || stack.is(ItemRegistry.ITEM_WOODEN_BEARING_PATTERN.get());
-                case 1 -> stack.is(Items.SAND) || stack.is(Items.RED_SAND);
+                case 1 -> stack.is(Items.SAND) || stack.is(Items.RED_SAND)
+                        || stack.is(ItemRegistry.ITEM_RECLAIMED_MOLDING_SAND.get());
                 case 2 -> stack.is(Items.CLAY_BALL);
                 default -> false;
             };
@@ -81,7 +82,8 @@ public class BronzeMoldTableBlockEntity extends BlockEntity {
         ItemStack product = currentMold();
         ItemStack output = inventory.getStackInSlot(3);
         return !product.isEmpty() && !inventory.getStackInSlot(1).isEmpty()
-                && !inventory.getStackInSlot(2).isEmpty()
+                && (inventory.getStackInSlot(1).is(ItemRegistry.ITEM_RECLAIMED_MOLDING_SAND.get())
+                    || !inventory.getStackInSlot(2).isEmpty())
                 && (output.isEmpty() || (ItemStack.isSameItemSameTags(output, product)
                 && output.getCount() < Math.min(output.getMaxStackSize(),
                 inventory.getSlotLimit(3))));
@@ -124,8 +126,9 @@ public class BronzeMoldTableBlockEntity extends BlockEntity {
                 // Only a completed mold consumes binder and sand. The wooden
                 // pattern in slot 0 stays installed and can be reused.
                 if (ready()) {
+                    boolean recycled = inventory.getStackInSlot(1).is(ItemRegistry.ITEM_RECLAIMED_MOLDING_SAND.get());
                     inventory.extractItem(1, 1, false);
-                    inventory.extractItem(2, 1, false);
+                    if (!recycled) inventory.extractItem(2, 1, false);
                     ItemStack output = inventory.getStackInSlot(3);
                     if (output.isEmpty()) {
                         inventory.setStackInSlot(3, mold);
@@ -149,7 +152,8 @@ public class BronzeMoldTableBlockEntity extends BlockEntity {
         int slot;
         if (held.is(ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get())
                 || held.is(ItemRegistry.ITEM_WOODEN_BEARING_PATTERN.get())) slot = 0;
-        else if (held.is(Items.SAND) || held.is(Items.RED_SAND)) slot = 1;
+        else if (held.is(Items.SAND) || held.is(Items.RED_SAND)
+                || held.is(ItemRegistry.ITEM_RECLAIMED_MOLDING_SAND.get())) slot = 1;
         else if (held.is(Items.CLAY_BALL)) slot = 2;
         else return false;
 

@@ -830,6 +830,61 @@
     {
       "type": "text",
       "text": "$(bold)Cutting and maintenance$()$(br2)One ordinary log → three Precision-Cut Pattern Stock. Each stock is a prepared blank yielding two reusable wooden patterns at the original Pattern Maker, improving raw-timber pattern yield from four to six per log. No extra ore or exotic wood. The rear gearbox drives the rotating saw, and the real input is loaded only while work is feasible. Missing tool, full output, insufficient load or stopped shaft pause processing without consuming stock.$(br2)The saw and model are initial Studio references requiring visual verification."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Foundry Sand Mixer K1$()$(br2)A cooled rough casting returns one Spent Molding Sand when collected from the Casting Basin. Four spent portions and one Clay Ball binder are crafted into one Sand Reclamation Blend. The powered mixer processes a blend into THREE Reclaimed Molding Sand, discarding 25% of the sand as irrecoverable fines."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Foundry Sand Mixer",
+      "recipe": "magneticraft2:bronze_foundry_sand_mixer",
+      "text": "Craft the 3×2×3 controller with bronze, a Precision Bronze Bearing, stone, timber and the replaceable Bronze Mixing Paddles."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mixing Paddles",
+      "recipe": "magneticraft2:bronze_mixer_paddles",
+      "text": "One set of replaceable mixing paddles lasts 512 completed recovery batches. Right-click the formed controller with new paddles when worn; idle and stalled cycles cause no wear."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Sand Reclamation Blend",
+      "recipe": "magneticraft2:sand_reclamation_blend",
+      "text": "K1 deliberately pre-blends 4 spent sand and 1 clay binder with crafting. This fits the established single-item input port; it does not claim a second automated binder feed."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Foundry Sand Mixer",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P_P",
+            "PPP"
+          ],
+          [
+            "SIS",
+            "OSU",
+            "S0S"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_foundry_sand_mixer",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "3 wide × 2 high × 3 deep. The bottom rear-center I is a REAL Gear V2 input; U the LEFT real item input; O the RIGHT output; controller (0) at front center. The upper middle must be AIR when constructing. As in the Forge Hammer, Patchouli mirrors the SOUTH blueprint X axis. Right-click controller to form."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Reclaim sand$()$(br2)One prepared blend → 3 Reclaimed Molding Sand after 200 supplied ticks at 12 RPM / 4 torque. Use recovered sand directly in the existing Mold Table: one portion replaces fresh Sand + Clay, while the wooden pattern remains reusable and the original four press actions remain. Fresh Sand + Clay still works. Recovery only happens after a successful casting; dismantling while pouring does not return the consumed mold."
     }
   ],
   "sortnum": 3,
@@ -850,6 +905,9 @@
     "magneticraft2:bronze_classifier_screen": 31,
     "magneticraft2:settled_sediment": 37,
     "magneticraft2:bronze_saw_blade": 71,
-    "magneticraft2:sawn_pattern_stock": 73
+    "magneticraft2:sawn_pattern_stock": 73,
+    "magneticraft2:bronze_mixer_paddles": 76,
+    "magneticraft2:sand_reclamation_blend": 77,
+    "magneticraft2:reclaimed_molding_sand": 79
   }
 }

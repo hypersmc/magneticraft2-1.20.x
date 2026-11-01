@@ -34,6 +34,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     private ItemStack mold=ItemStack.EMPTY;
     private ItemStack sourceBronze=ItemStack.EMPTY;
     private ItemStack result=ItemStack.EMPTY;
+    private boolean recoverableSand;
     private int castType;
     private int coolingTicks;
     private int directFillTicks;
@@ -68,6 +69,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         int shape = kind(mold);
         sourceBronze = original.copy();
         mold = ItemStack.EMPTY;
+        recoverableSand = false;
         castType = shape;
         coolingTicks = Math.max(1, getCoolingDuration());
         directFillTicks = 0;
@@ -99,6 +101,10 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
                 result=ItemStack.EMPTY;
                 castType=0;
                 give(player,collected);
+                if (recoverableSand) {
+                    give(player,new ItemStack(ItemRegistry.ITEM_SPENT_MOLDING_SAND.get()));
+                    recoverableSand=false;
+                }
                 sync();
             } else if (player.isShiftKeyDown() && !mold.isEmpty() && !isCooling()) {
                 ItemStack recovered=mold;
@@ -176,6 +182,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
             }
             basin.result=created;
             basin.sourceBronze=ItemStack.EMPTY;
+            basin.recoverableSand=true;
             basin.sync();
             world.playSound(null,pos,SoundEvents.ANVIL_LAND,
                     SoundSource.BLOCKS,.35F,1.5F);
@@ -198,17 +205,21 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
     public void dropContents() {
         if (level==null || level.isClientSide) return;
         ItemStack a=mold,b=result,c=sourceBronze;
+        boolean dropSpentSand = recoverableSand;
         mold=ItemStack.EMPTY;
         result=ItemStack.EMPTY;
         sourceBronze=ItemStack.EMPTY;
         castType=0;
         coolingTicks=0;
         directFillTicks=0;
+        recoverableSand=false;
         // The consumed mold is not refunded when poured; the bronze itself
         // is always returned if the incomplete basin is dismantled.
         if (!a.isEmpty()) Block.popResource(level,worldPosition,a);
         if (!b.isEmpty()) Block.popResource(level,worldPosition,b);
         if (!c.isEmpty()) Block.popResource(level,worldPosition,c);
+        if (dropSpentSand) Block.popResource(level,worldPosition,
+                new ItemStack(ItemRegistry.ITEM_SPENT_MOLDING_SAND.get()));
         setChanged();
     }
 
@@ -227,6 +238,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         castType=Math.max(0,Math.min(2,tag.getInt("CastingShape")));
         coolingTicks=Math.max(0,tag.getInt("CoolingTicks"));
         directFillTicks=Math.max(0,Math.min(DIRECT_FILL_DURATION,tag.getInt("DirectFillTicks")));
+        recoverableSand=tag.getBoolean("RecoverableSand");
     }
 
     @Override
@@ -238,6 +250,7 @@ public final class BronzeCastingBasinBlockEntity extends BlockEntity {
         tag.putInt("CastingShape",castType);
         tag.putInt("CoolingTicks",coolingTicks);
         tag.putInt("DirectFillTicks",directFillTicks);
+        tag.putBoolean("RecoverableSand",recoverableSand);
     }
 
     @Override

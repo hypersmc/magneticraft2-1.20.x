@@ -132,6 +132,15 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_MECHANICAL_SAWMILL = fromBlock(BRONZE_MECHANICAL_SAWMILL);
     public static final RegistryObject<Item> ITEM_BRONZE_SAW_BLADE =
             ITEMS.register("bronze_saw_blade", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY_SAND_MIXER = fromBlock(BRONZE_FOUNDRY_SAND_MIXER);
+    public static final RegistryObject<Item> ITEM_BRONZE_MIXER_PADDLES =
+            ITEMS.register("bronze_mixer_paddles", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_SPENT_MOLDING_SAND =
+            ITEMS.register("spent_molding_sand", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_SAND_RECLAMATION_BLEND =
+            ITEMS.register("sand_reclamation_blend", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_RECLAIMED_MOLDING_SAND =
+            ITEMS.register("reclaimed_molding_sand", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_SAWN_PATTERN_STOCK =
             ITEMS.register("sawn_pattern_stock", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_BUSHING =

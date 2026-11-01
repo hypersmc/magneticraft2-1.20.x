@@ -37,6 +37,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockE
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.WaterSettlingTankBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
@@ -135,6 +136,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("bronze_mechanical_sawmill", () ->
                     BlockEntityType.Builder.of(BronzeMechanicalSawmillBlockEntity::new,
                             BlockRegistry.BRONZE_MECHANICAL_SAWMILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeFoundrySandMixerBlockEntity>> BRONZE_FOUNDRY_SAND_MIXER_BE =
+            BLOCK_ENTITIES.register("bronze_foundry_sand_mixer", () ->
+                    BlockEntityType.Builder.of(BronzeFoundrySandMixerBlockEntity::new,
+                            BlockRegistry.BRONZE_FOUNDRY_SAND_MIXER.get()).build(null));
     public static final RegistryObject<BlockEntityType<WaterSettlingTankBlockEntity>> WATER_SETTLING_TANK_BE =
             BLOCK_ENTITIES.register("water_settling_tank", () ->
                     BlockEntityType.Builder.of(WaterSettlingTankBlockEntity::new,
