@@ -90,7 +90,7 @@ public final class BronzeForgeHammerBlock extends BaseBlockMagneticraft2 {
     @Override public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level,BlockState state,BlockEntityType<T> type){
         return level.isClientSide?null:createTickerHelper(type,
-                BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get(),
+                BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(),
                 BronzeForgeHammerBlockEntity::serverTick);
     }
 }

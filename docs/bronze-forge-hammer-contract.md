@@ -181,3 +181,42 @@ adequate, processing should resume and yield exactly 4 Copper Plates
 after 160 supplied ticks. Verify after reload and from the actual
 controller output, then review whether the 20 RPM/5 torque values need
 balancing; do not silently lower them to mask source limits.
+
+
+## 2026-11-01 — Confirmed processing ticker mismatch (K1 blocker)
+
+User's latest in-game report: formed Forge Hammer, 4/4 Copper Ingots, **24.0
+RPM**, **8.0 input torque**, **0/160** progress, **load active=false**,
+**source connected=false**, **0.0 upstream demand**.
+
+**Root cause identified by direct source inspection:** the initial block
+`BronzeForgeHammerBlock.getTicker` mistakenly used
+`BlockEntityRegistry.BRONZE_STAMP_MILL_BE.get()` while supplying
+`BronzeForgeHammerBlockEntity::serverTick`. Forge's
+`createTickerHelper(type, expectedType, ticker)` returns **null** when
+the registered block-entity type differs. The newly formed Hammer had
+correct items, power, structure and rendering, but **its controller
+never ticked**, so it never invoked `setMechanicalLoad` or incremented
+processing progress. This completely explains the zero/inactive
+mechanical-load report. Earlier suspected source-overload or RPM-ratio
+problems were **not demonstrated by the user's tests**, because the Hammer
+did not run its ticker; do not treat those hypotheses as established
+faults. Keep Gear V2's legitimate torque accounting and overload behavior.
+
+**Fix:** change only the Forge Hammer block's ticker lookup to
+`BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get()`. The K1 contract now
+checks BOTH the exact registry type in `createTickerHelper` and the
+registry's factory mapping; it explicitly rejects the Stamp Mill
+type to prevent copied-controller regressions. Preserve the JSON
+blueprints, physical Gear V2 connection, original 20 RPM / 5 torque,
+160-tick recipe, item ports, maintenance and all models.
+
+**Verification required:** compile the Forge 1.20.1 project, form the
+existing structure, insert 4 ingots, confirm **Load active=true**
+and a valid connected source when the machine has power, then 160
+supplied ticks produce exactly 4 plates. With the existing 24/8
+wheel setup this should have a chance to work; it must still
+pass source torque budget/other-load calculations. Test power loss,
+output blocking, die wear, save/reload and both single-player and
+multiplayer separately. A static code test cannot claim successful
+in-game operation.

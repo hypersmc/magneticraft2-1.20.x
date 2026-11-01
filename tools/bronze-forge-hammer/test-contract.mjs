@@ -116,6 +116,11 @@ const client=read("src/main/java/com/magneticraft2/client/Clientsetup.java");
 const renderer=read("src/main/java/com/magneticraft2/client/render/blocks/stage/bronze/BronzeForgeHammerRenderer.java");
 const jei=read("src/main/java/com/magneticraft2/compatibility/JEI/MagneticraftJeiPlugin.java");
 const jeiModel=read("src/main/java/com/magneticraft2/compatibility/JEI/MultiblockJeiRecipe.java");
+/* Correct BE type is mandatory: Forge's ticker is silently NULL otherwise. */
+assert.match(b,/createTickerHelper\(type,\s*BlockEntityRegistry\.BRONZE_FORGE_HAMMER_BE\.get\(\),\s*BronzeForgeHammerBlockEntity::serverTick\)/);
+assert.doesNotMatch(b,/createTickerHelper\(type,\s*BlockEntityRegistry\.BRONZE_STAMP_MILL_BE\.get\(\),\s*BronzeForgeHammerBlockEntity::serverTick\)/);
+const registry=read("src/main/java/com/magneticraft2/common/registry/registers/BlockEntityRegistry.java");
+assert.match(registry,/BlockEntityType\.Builder\.of\(BronzeForgeHammerBlockEntity::new,\s*BlockRegistry\.BRONZE_FORGE_HAMMER\.get\(\)\)/);
 assert.match(b,/BronzeForgeHammerBlockEntity::serverTick/);
 for(const token of ["getMechanicalLoadState","setMechanicalLoad","removeMechanicalLoad",
  "getEffectiveSpeed","getTorque","recipe.getInputCount()",
