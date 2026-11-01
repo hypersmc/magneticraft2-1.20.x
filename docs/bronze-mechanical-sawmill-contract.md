@@ -42,3 +42,7 @@ Rotate to other directions using the authored JSONs. The Patchouli preview rever
 6. Verify rear input axis and guarded blade rotation, support/collision, UV density and missing textures from all camera directions. Inspect FPS near multiple sawmills.
 7. Dismantle/reform and break controller while holding stock and work; check drops once. Test item transfer and multiplayer with two clients separately.
 8. Regression: Pattern Maker, retort, Lathe, Boring Machine, item ports and JEI category/catalyst.
+
+## Editable 3D sample for later Studio modeling
+
+A separate 3D starter with editable groups, saw-pivot and port guides is committed at `docs/reference/bronze-mechanical-sawmill-starter.bbmodel`; companion `.obj`, `.mtl`, and `.md` are in that directory. This is not the V2 source of truth or a game-ready replacement. Rebuild and verify the final Studio geometry against the real ports and JSON blueprints.
