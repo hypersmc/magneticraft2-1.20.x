@@ -21,7 +21,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 |---|---|---|
 | **Bronze I — Casting and machine tools** | *Implemented in PR #11; Minecraft/Gradle validation pending* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
 | **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill, optional Rotary Ore Classifier, Water Settling Tank and Charcoal Retort source implemented on PR #11; build/end-to-end verification pending* | Stamp Mill -> optional classifier -> Washer/Sifter -> Settling Tank. Charcoal Retort produces charcoal and liquid Wood Tar, with a dedicated fluid output. Settling Tank V5.1 visual baseline accepted. Selective Ore Roasting Kiln K2 source candidate adds 4 Copper Concentrate -> 4 Roasted Copper Concentrate, fuel/HEAT and a downstream Primitive Furnace recipe; build and in-game verification pending. Test fuel, item/fluid backpressure, reload, and the full ore/water circuit before marking this phase complete. |
-| **Bronze III — Manufacturing and networks** | *Forge Hammer K1 user-verified; Rolling Mill and Mechanical Press K1 source implemented, runtime integration pending* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
+| **Bronze III — Manufacturing and networks** | *Forge Hammer and Mechanical Press K1 basic operation user-confirmed; Rolling Mill full powered operation not explicitly confirmed; broader regressions pending* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
 ## Multiblock candidates (footprints preliminary)
@@ -39,7 +39,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 | Refractory Kiln | **K1 structural prototype authored; build/gameplay verification pending** | **5x4x5 source footprint** | Prepared clay/sand/mineral batch -> fired refractory ceramics, using sustained HEAT from real fuel; no output recipe/ratios approved yet | Charcoal/solid fuel, existing HEAT system |
 | Mechanical Forge Hammer | **K1 functional source candidate** (4 Copper Ingots -> 4 Copper Plates under Gear V2; wear; Gradle/gameplay validation pending) | **5x4x3** | Powered copper plate batches now; hot metal -> forged parts when thermal stock exists | Bronze power |
 | Bronze Rolling Mill | **K1 source candidate** (4 Copper Plates -> 4 Copper Sheets; Gear V2; sleeves; Gradle/in-game tests pending) | 5x3x3 | Cold copper sheets now; hot billet -> bronze sheet/rod later | Precision bearings |
-| Mechanical Press | **K1 source candidate** (4 Copper Sheets -> 4 Copper Panels; Gear V2; die wear; Gradle and gameplay pending) | **3x3x3** | Cold copper sheet -> useful stamped Copper Panel | Rolling Mill |
+| Mechanical Press | **K1 basic gameplay user-confirmed (2026-11-01)** (4 Copper Sheets -> 4 Copper Panels; Gear V2; targeted regressions, Gradle and multiplayer outstanding) | **3x3x3** | Cold copper sheet -> useful stamped Copper Panel | Rolling Mill |
 | Precision Boring Machine | Planned | 5x3x3 | Casting -> precision bore | Lathe toolmaking |
 | Mechanical Sawmill | Planned | 5x3x3 | Timber -> accurately cut lumber/pattern stock | Gear V2 |
 | Foundry Sand Mixer | Planned | 3x2x3 | Used sand + binder -> reusable molding sand, with loss | Foundry |
@@ -554,4 +554,18 @@ system or rod forming; these are separate design decisions.
 
 See [Mechanical Press contract](bronze-mechanical-press-contract.md)
 and [Studio vector reference](reference/bronze-mechanical-press-studio.svg).
-**Status: source candidate pending compilation and in-game validation.**
+**Status: Mechanical Press K1 basic operation confirmed by user in Minecraft (2026-11-01); build, comprehensive regressions and multiplayer remain unverified.**
+
+## 2026-11-01 — Mechanical Press K1 first in-game acceptance
+
+The user reported **"works"** after testing the Mechanical Press introduced at
+`a6aee2fd3fe91fb6ffce94294eb33702166db662`. Record this as **basic
+single-player in-game functionality user-confirmed**, not as automatic proof
+that every item-flow, power-interruption, alternate recipe, die replacement,
+save/reload, four-facing, performance or multi-client regression passed.
+No source or resource code changes were needed for this acceptance report.
+The Forge Hammer's basic operation has separately been confirmed; the Rolling
+Mill's full powered sheet conversion and animations have **not** yet been
+explicitly confirmed, so the three-machine production chain is not fully
+end-to-end verified. The next *planned* machine is Precision Boring Machine;
+this status update does not authorize its implementation.

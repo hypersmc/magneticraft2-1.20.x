@@ -1,6 +1,6 @@
 # Bronze Mechanical Press — K1 implementation and Studio contract
 
-**Milestone:** Bronze III Mechanical Press, **source candidate only**. The Forge Hammer has a user-verified plate process; the Copper Sheet name is confirmed, but the Rolling Mill's full powered rolling/animation remains unverified. Do not represent this Press as in-game tested before user evidence.
+**Milestone:** Bronze III Mechanical Press K1, **basic gameplay user-confirmed on 2026-11-01**. The Forge Hammer has a user-verified plate process; the Copper Sheet name is confirmed, but the Rolling Mill's full powered rolling/animation remains unverified. Detailed Press regressions, compilation evidence and multiplayer verification remain outstanding.
 
 ## Purpose and distinct gameplay role
 
@@ -67,7 +67,7 @@ The concept illustration shared with the user in chat is a **non-authoritative m
 - Persist `PressProgress`, `PressRecipe`, `PressActiveInput`, `PressDie`, `PressRunning`, base inventory and Voxel V2 data across reload. Input identity/NBT mismatch resets partial progress; chunks don't continue off-thread processing.
 - Worn press tooling stops new batches and needs a real replacement `bronze_press_die` item. Initial die is installed (controller crafting also requires one). No artificial wear inside the generic Gear V2 shafts is added.
 
-## Acceptance checklist — not yet run in Minecraft
+## Acceptance checklist — first in-game operation confirmed; detailed checks still pending
 
 1. Execute `node tools/multiblock-models/build-designs.mjs --check`, `node tools/multiblock-models/generate.mjs --check`, `node tools/bronze-mechanical-press/test-contract.mjs`, and **`./gradlew build`** when the repository/build environment is available. Source checks do not prove Java compilation.
 2. Form the book's 3×3×3 structure for SOUTH, WEST, NORTH and EAST. Missing AIR spaces and reversed real U/O must prevent formation. Confirm correct controller facing, stable shape and accurate V2 collision.
@@ -80,3 +80,13 @@ The concept illustration shared with the user in chat is a **non-authoritative m
 9. Confirm former Forge Hammer and Ore Roasting Kiln still function. Verify the Rolling Mill's actual processing/animation before marking the 3-machine line runtime complete.
 
 **Do not merge or close PR #11 without broader Bronze-age testing.**
+
+## 2026-11-01 — First runtime confirmation
+
+Following `a6aee2fd3fe91fb6ffce94294eb33702166db662`, the user
+confirmed **"works"** for the Mechanical Press in-game. This is meaningful
+basic machine functionality acceptance, **not** a claim of complete testing.
+Do not infer a Gradle build result, all four formation rotations, exact
+wear-life counts, output backpressure behavior, load shedding under overload,
+NBT save/load safety, FPS measurements or two-client synchronization from
+this short confirmation. Keep the remaining checklist open and PR #11 draft.
