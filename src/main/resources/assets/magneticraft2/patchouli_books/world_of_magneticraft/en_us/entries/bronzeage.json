@@ -722,6 +722,60 @@
     {
       "type": "text",
       "text": "$(bold)Operating and maintenance$()$(br2)Insert four Copper Sheets via the LEFT port, connect the actual rear Gear V2 input at 18 RPM / 8 torque or better, and collect four Copper Panels at the RIGHT output after 160 supplied ticks. The die follows the input cam phase; no output is created on stalled or overloaded networks.$(br2)Full output pauses the batch, and the press die loses one of 384 life cycles per completed batch. Panels may be used in the alternative Copper Fluid Tank recipe. Hot shaping, forming mould selection and sheet quality are future features."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Precision Boring Machine (K1)$()$(br2)Precision boring opens accurate internal shaft/bearing bores while keeping the casting stationary. This differs from the Mechanical Lathe's external turning/gear finishing.$(br2)The first process takes one Rough Bronze Bearing Casting from the Foundry/Casting Basin and makes one Bronze Bushing. It takes 200 powered ticks, at least 20 Gear V2 RPM and 6 torque, and preserves the casting's material-quality NBT."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Precision Boring Machine",
+      "recipe": "magneticraft2:bronze_precision_boring_machine",
+      "text": "The controller uses bronze, Copper Panels, a Precision Bronze Bearing made on the Lathe, stone bricks and an Abrasive Boring Bit. Form the complete 5×3×3 open machine before supplying power."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Abrasive Boring Bit",
+      "recipe": "magneticraft2:abrasive_boring_bit",
+      "text": "A flint cutting tip held by bronze with a wooden tool shank. The installed bit lasts 384 successful batches; right-click the controller with another bit to service it. No Steel Age materials are required."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Precision Boring Machine",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "P___P",
+            "PPPPP"
+          ],
+          [
+            "P___P",
+            "P___P",
+            "P___P"
+          ],
+          [
+            "SSISS",
+            "OSSSU",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_precision_boring_machine",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "5 wide × 3 high × 3 deep. I is the physical rear Mechanical Input module; U and O are the real LEFT item input and RIGHT item output, with the controller (0) front center. Every AIR gap must be empty. This book preview mirrors the SOUTH JSON coordinates in X so the displayed port positions are usable. Right-click the controller to form."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Finishing castings$()$(br2)One Rough Bronze Bearing Casting + supplied Gear V2 power → one Bronze Bushing. The abrasive bit wears once on each completed piece; the machine stalls safely on insufficient speed, torque, exhausted bit or full output.$(br2)A Bronze Bushing may substitute for some materials in an alternative Mechanical Water Pump recipe. The original Copper Age pump recipe remains available. A bushing's input quality tags survive boring; further quality behavior in assembled machines belongs to the later multi-ore quality pass."
     }
   ],
   "sortnum": 3,

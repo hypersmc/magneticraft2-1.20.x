@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_precision_boring_machine",
+  "input": {
+    "item": "magneticraft2:rough_bronze_bearing"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:bronze_bushing",
+    "count": 1
+  },
+  "process_time": 200,
+  "mechanical": {
+    "min_speed": 20,
+    "torque": 6
+  }
+}

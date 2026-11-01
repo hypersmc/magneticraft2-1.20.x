@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1380 900" width="1380" height="900">
+<title>Magneticraft2 Precision Boring Machine — editable 5 × 3 × 3 Studio reference</title>
+<desc>Supported bronze-age horizontal precision boring tool, clamped bronze bearing casting, stone and oak machine frame, two-height enclosed rear drive and actual JSON layer layout. One machine and exact real ports; not a final texture sheet.</desc>
+<defs><linearGradient id="dark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#28353b"/><stop offset="1" stop-color="#101b20"/></linearGradient>
+<linearGradient id="copper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e4a47a"/><stop offset="1" stop-color="#864b36"/></linearGradient>
+<linearGradient id="iron" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b5b2a8"/><stop offset="1" stop-color="#4b5359"/></linearGradient>
+<style>.name{font:700 37px Georgia,serif;fill:#efe2d0}.h{font:700 23px Georgia,serif;fill:#e5a97e}.txt{font:17px Arial,sans-serif;fill:#e7ded1}.small{font:14px Arial,sans-serif;fill:#c5c0b7}.label{font:bold 19px Arial,sans-serif;fill:#20272a}.panel{fill:#202b30;stroke:#8f6d55;stroke-width:2}</style>
+</defs>
+<rect width="1380" height="900" fill="url(#dark)"/>
+<rect x="20" y="20" width="1340" height="100" rx="12" class="panel"/>
+<text x="49" y="71" class="name">MAGNETICRAFT2  /  PRECISION BORING MACHINE</text>
+<text x="51" y="103" class="small">Bronze III • Studio visual reference • 5 wide × 3 tall × 3 deep • real Gear V2, casting clamp and item ports</text>
+<rect x="20" y="145" width="845" height="580" rx="12" class="panel"/>
+<text x="52" y="188" class="h">SIDE ELEVATION — supported boring bar &amp; stationary casting</text>
+<text x="53" y="212" class="small">All major parts physically connect. The rear enclosed gears lift drive from y8 to y20.</text>
+<!-- masonry bed, feet and oak machine stands -->
+<rect x="96" y="622" width="683" height="48" fill="url(#iron)" stroke="#333" stroke-width="6"/>
+<rect x="115" y="578" width="81" height="45" fill="url(#iron)" stroke="#414e51" stroke-width="4"/>
+<rect x="676" y="578" width="79" height="45" fill="url(#iron)" stroke="#414e51" stroke-width="4"/>
+<rect x="136" y="257" width="47" height="320" fill="#8d6542" stroke="#443122" stroke-width="6"/>
+<rect x="686" y="257" width="47" height="320" fill="#8d6542" stroke="#443122" stroke-width="6"/>
+<rect x="120" y="251" width="637" height="47" fill="#936c48" stroke="#443122" stroke-width="6"/>
+<!-- bed rails -->
+<rect x="190" y="563" width="489" height="31" fill="url(#iron)" stroke="#42474b" stroke-width="5"/>
+<rect x="217" y="552" width="448" height="16" fill="#343b41"/>
+<!-- rear gearbox -->
+<rect x="223" y="340" width="151" height="211" rx="8" fill="#464e51" stroke="#bd8b63" stroke-width="9"/>
+<circle cx="299" cy="501" r="27" fill="#5d6364" stroke="#c7a48c" stroke-width="7"/>
+<circle cx="299" cy="376" r="27" fill="#5d6364" stroke="#c7a48c" stroke-width="7"/>
+<path d="M299 476 V404" stroke="#d8aa82" stroke-width="18" stroke-linecap="round"/>
+<!-- input stub -->
+<rect x="147" y="491" width="79" height="20" fill="url(#iron)" stroke="#5d4240" stroke-width="4"/>
+<rect x="90" y="463" width="65" height="77" rx="4" fill="#56616c" stroke="#c8a58a" stroke-width="5"/>
+<text x="122" y="507" class="label" text-anchor="middle">I</text>
+<!-- main boring spindle -->
+<rect x="373" y="367" width="219" height="19" fill="url(#iron)" stroke="#4b4f51" stroke-width="4"/>
+<rect x="373" y="356" width="47" height="38" fill="url(#copper)" stroke="#503b34" stroke-width="4"/>
+<rect x="563" y="359" width="31" height="35" fill="#4f5558" stroke="#d2a181" stroke-width="4"/>
+<rect x="592" y="372" width="36" height="10" fill="#3b4345"/>
+<!-- supporting gantry for spindle -->
+<rect x="393" y="292" width="26" height="152" fill="url(#iron)" stroke="#4a4d4e" stroke-width="4"/>
+<rect x="369" y="310" width="258" height="23" fill="url(#copper)" stroke="#573e35" stroke-width="4"/>
+<!-- casting stationary in a supported vise -->
+<rect x="603" y="531" width="105" height="31" fill="url(#iron)" stroke="#444f51" stroke-width="4"/>
+<rect x="610" y="401" width="22" height="132" fill="url(#iron)" stroke="#41494a" stroke-width="4"/>
+<rect x="688" y="401" width="22" height="132" fill="url(#iron)" stroke="#41494a" stroke-width="4"/>
+<rect x="623" y="387" width="76" height="27" fill="url(#copper)" stroke="#75432c" stroke-width="5"/>
+<rect x="638" y="372" width="44" height="17" fill="#995b37" stroke="#cc8d67" stroke-width="4"/>
+<rect x="644" y="376" width="31" height="10" fill="#31383c"/>
+<!-- annotations -->
+<path d="M308 334 L361 256" stroke="#e4ac85" stroke-width="3" fill="none"/>
+<text x="365" y="250" class="txt">Enclosed gear lift</text>
+<path d="M515 391 L510 445" stroke="#e4ac85" stroke-width="3" fill="none"/>
+<text x="450" y="474" class="small">Rotating abrasive bar</text>
+<path d="M664 373 L755 335" stroke="#e4ac85" stroke-width="3" fill="none"/>
+<text x="650" y="322" class="small">Clamped casting</text>
+<text x="50" y="694" class="small">Tool rotates on horizontal +Z. Casting stays fixed. Bronze bushing retains the rough casting's quality tag.</text>
+
+<rect x="891" y="145" width="469" height="580" rx="12" class="panel"/>
+<text x="916" y="182" class="h">ACTUAL SOUTH JSON BLUEPRINT</text>
+<text x="919" y="204" class="small">Back (top row) → front (bottom row), not Patchouli X mirror</text>
+<text x="918" y="231" class="txt">Y3 / TOP</text><rect x="928" y="244" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="267" text-anchor="middle" class="label">P</text><rect x="1006" y="244" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1041" y="267" text-anchor="middle" class="label">P</text><rect x="1084" y="244" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1119" y="267" text-anchor="middle" class="label">P</text><rect x="1162" y="244" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1197" y="267" text-anchor="middle" class="label">P</text><rect x="1240" y="244" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="267" text-anchor="middle" class="label">P</text><rect x="928" y="279" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="302" text-anchor="middle" class="label">P</text><rect x="1006" y="279" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1041" y="302" text-anchor="middle" class="label">·</text><rect x="1084" y="279" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1119" y="302" text-anchor="middle" class="label">·</text><rect x="1162" y="279" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1197" y="302" text-anchor="middle" class="label">·</text><rect x="1240" y="279" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="302" text-anchor="middle" class="label">P</text><rect x="928" y="314" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="337" text-anchor="middle" class="label">P</text><rect x="1006" y="314" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1041" y="337" text-anchor="middle" class="label">P</text><rect x="1084" y="314" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1119" y="337" text-anchor="middle" class="label">P</text><rect x="1162" y="314" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1197" y="337" text-anchor="middle" class="label">P</text><rect x="1240" y="314" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="337" text-anchor="middle" class="label">P</text><text x="918" y="386" class="txt">Y2 / MIDDLE</text><rect x="928" y="399" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="422" text-anchor="middle" class="label">P</text><rect x="1006" y="399" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1041" y="422" text-anchor="middle" class="label">·</text><rect x="1084" y="399" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1119" y="422" text-anchor="middle" class="label">·</text><rect x="1162" y="399" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1197" y="422" text-anchor="middle" class="label">·</text><rect x="1240" y="399" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="422" text-anchor="middle" class="label">P</text><rect x="928" y="434" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="457" text-anchor="middle" class="label">P</text><rect x="1006" y="434" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1041" y="457" text-anchor="middle" class="label">·</text><rect x="1084" y="434" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1119" y="457" text-anchor="middle" class="label">·</text><rect x="1162" y="434" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1197" y="457" text-anchor="middle" class="label">·</text><rect x="1240" y="434" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="457" text-anchor="middle" class="label">P</text><rect x="928" y="469" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="963" y="492" text-anchor="middle" class="label">P</text><rect x="1006" y="469" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1041" y="492" text-anchor="middle" class="label">·</text><rect x="1084" y="469" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1119" y="492" text-anchor="middle" class="label">·</text><rect x="1162" y="469" width="71" height="31" rx="3" fill="#14262a" stroke="#243138" stroke-width="2"/><text x="1197" y="492" text-anchor="middle" class="label">·</text><rect x="1240" y="469" width="71" height="31" rx="3" fill="#936644" stroke="#243138" stroke-width="2"/><text x="1275" y="492" text-anchor="middle" class="label">P</text><text x="918" y="541" class="txt">Y1 / BASE</text><rect x="928" y="554" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="963" y="577" text-anchor="middle" class="label">S</text><rect x="1006" y="554" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1041" y="577" text-anchor="middle" class="label">S</text><rect x="1084" y="554" width="71" height="31" rx="3" fill="#97b69a" stroke="#243138" stroke-width="2"/><text x="1119" y="577" text-anchor="middle" class="label">I</text><rect x="1162" y="554" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1197" y="577" text-anchor="middle" class="label">S</text><rect x="1240" y="554" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1275" y="577" text-anchor="middle" class="label">S</text><rect x="928" y="589" width="71" height="31" rx="3" fill="#6c9fc0" stroke="#243138" stroke-width="2"/><text x="963" y="612" text-anchor="middle" class="label">U</text><rect x="1006" y="589" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1041" y="612" text-anchor="middle" class="label">S</text><rect x="1084" y="589" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1119" y="612" text-anchor="middle" class="label">S</text><rect x="1162" y="589" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1197" y="612" text-anchor="middle" class="label">S</text><rect x="1240" y="589" width="71" height="31" rx="3" fill="#dfb476" stroke="#243138" stroke-width="2"/><text x="1275" y="612" text-anchor="middle" class="label">O</text><rect x="928" y="624" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="963" y="647" text-anchor="middle" class="label">S</text><rect x="1006" y="624" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1041" y="647" text-anchor="middle" class="label">S</text><rect x="1084" y="624" width="71" height="31" rx="3" fill="#e5a781" stroke="#243138" stroke-width="2"/><text x="1119" y="647" text-anchor="middle" class="label">C</text><rect x="1162" y="624" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1197" y="647" text-anchor="middle" class="label">S</text><rect x="1240" y="624" width="71" height="31" rx="3" fill="#8e9290" stroke="#243138" stroke-width="2"/><text x="1275" y="647" text-anchor="middle" class="label">S</text>
+<text x="916" y="702" class="small">I rear drive · U left input · O right output · C front controller</text>
+<rect x="20" y="745" width="1340" height="134" rx="12" class="panel"/>
+<text x="47" y="785" class="h">FIRST FUNCTIONAL RECIPE — NOT FINAL METALLURGY</text>
+<text x="47" y="821" class="txt">1 Rough Bronze Bearing Casting → 1 Bronze Bushing • 200 supplied ticks • ≥20 RPM / ≥6 torque</text>
+<text x="47" y="851" class="small">384-batch abrasive bit • bushing can enter an alternative Mechanical Water Pump recipe • no new ore recipes yet</text>
+</svg>

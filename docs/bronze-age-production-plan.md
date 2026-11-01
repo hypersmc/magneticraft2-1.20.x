@@ -21,7 +21,7 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 |---|---|---|
 | **Bronze I — Casting and machine tools** | *Implemented in PR #11; Minecraft/Gradle validation pending* | Complete and stabilize Pattern Maker -> Mold Table -> Foundry -> Casting Basin -> precision Lathe; bronze bearings/gears, input modules, visible tooling and wear. Prove an uninterrupted and a stalled machining batch; compare ladle and direct-pour losses. |
 | **Bronze II — Ore dressing and industrial fuel** | *Stamp Mill, optional Rotary Ore Classifier, Water Settling Tank and Charcoal Retort source implemented on PR #11; build/end-to-end verification pending* | Stamp Mill -> optional classifier -> Washer/Sifter -> Settling Tank. Charcoal Retort produces charcoal and liquid Wood Tar, with a dedicated fluid output. Settling Tank V5.1 visual baseline accepted. Selective Ore Roasting Kiln K2 source candidate adds 4 Copper Concentrate -> 4 Roasted Copper Concentrate, fuel/HEAT and a downstream Primitive Furnace recipe; build and in-game verification pending. Test fuel, item/fluid backpressure, reload, and the full ore/water circuit before marking this phase complete. |
-| **Bronze III — Manufacturing and networks** | *Forge Hammer and Mechanical Press K1 basic operation user-confirmed; Rolling Mill full powered operation not explicitly confirmed; broader regressions pending* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
+| **Bronze III — Manufacturing and networks** | *Forge Hammer and Mechanical Press basic operation user-confirmed; Rolling Mill powered processing not explicitly confirmed; Boring Machine K1 source candidate; regressions pending* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
 ## Agreed development order — finish machines, then integrate full ore progression (2026-11-01)
@@ -84,7 +84,7 @@ multiblock foundations, without inventing a universal ore pipeline.
 | Mechanical Forge Hammer | **K1 functional source candidate** (4 Copper Ingots -> 4 Copper Plates under Gear V2; wear; Gradle/gameplay validation pending) | **5x4x3** | Powered copper plate batches now; hot metal -> forged parts when thermal stock exists | Bronze power |
 | Bronze Rolling Mill | **K1 source candidate** (4 Copper Plates -> 4 Copper Sheets; Gear V2; sleeves; Gradle/in-game tests pending) | 5x3x3 | Cold copper sheets now; hot billet -> bronze sheet/rod later | Precision bearings |
 | Mechanical Press | **K1 basic gameplay user-confirmed (2026-11-01)** (4 Copper Sheets -> 4 Copper Panels; Gear V2; targeted regressions, Gradle and multiplayer outstanding) | **3x3x3** | Cold copper sheet -> useful stamped Copper Panel | Rolling Mill |
-| Precision Boring Machine | Planned | 5x3x3 | Casting -> precision bore | Lathe toolmaking |
+| Precision Boring Machine | **K1 source candidate** (rough bronze bearing casting -> Bronze Bushing; Gear V2, bit wear, NBT quality; Gradle/runtime pending) | **5x3x3** | Precision internal bore, distinct from Lathe external turning; optional pump crafting sink | Lathe toolmaking + Foundry |
 | Mechanical Sawmill | Planned | 5x3x3 | Timber -> accurately cut lumber/pattern stock | Gear V2 |
 | Foundry Sand Mixer | Planned | 3x2x3 | Used sand + binder -> reusable molding sand, with loss | Foundry |
 | Industrial Air Blower | Planned | 3x3x3 | Gear V2 -> pressurized process air | Forge/Bloomery |
@@ -613,3 +613,35 @@ Mill's full powered sheet conversion and animations have **not** yet been
 explicitly confirmed, so the three-machine production chain is not fully
 end-to-end verified. The next *planned* machine is Precision Boring Machine;
 this status update does not authorize its implementation.
+
+## 2026-11-01 — Precision Boring Machine (Bronze III K1)
+
+After completing the planned multiblock foundations, the broader
+ore-by-ore recipe/quality pass will follow; this K1 is a minimal functional
+casting operation, **not a change to ore processing**. The 5×3×3 Precision
+Boring Machine reuses the existing Foundry/Basin's **Rough Bronze Bearing
+Casting**, removing an internal bore to make **one Bronze Bushing** in
+200 supplied ticks at **20 RPM and 6 torque**. The reusable Abrasive Boring
+Bit wears once per completed piece (384 batches). The existing Mechanical
+Lathe still finishes precision bronze gears and bearings; the Boring Machine
+makes a distinct sleeve/bushing. Bushing stock is consumed by a new, additive
+Mechanical Water Pump crafting recipe (2 Oak/other planks, 1 wooden shaft,
+1 pulley, 1 bronze bushing); the original Copper Age pump recipe remains.
+
+NBT from the rough bronze casting is preserved on the machined bushing to
+avoid losing existing ingot-quality metadata. The alternative vanilla
+crafting recipe does **not** yet transfer bushing quality into the finished
+pump: assembled-component quality propagation remains part of the agreed
+post-multiblock integration pass. No new ore types are registered.
+
+A real rear Gear V2 input drives a supported, enclosed gear housing, a
+horizontal boring bar and a stationary clamped casting. Static frame models
+and Voxel V2 collision come from one generator design with four facings;
+real module slots are kept clear. Separate baked shaft and rear coupling
+models use the actual input's visual phase. Editable design JSON and a
+single-machine SVG reference are retained for Magneticraft2 Studio.
+See [Precision Boring Machine contract](bronze-precision-boring-machine-contract.md)
+and [Studio vector reference](reference/bronze-precision-boring-machine-studio.svg).
+**Status: source candidate.** Compilation, four-facing formation, actual
+boring, quality NBT, wear, save/reload, automation, FPS and multiplayer are
+not verified in Minecraft; PR #11 stays draft.
