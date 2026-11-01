@@ -85,3 +85,27 @@ Do not fabricate a bevel gearbox solely as decorative filler.
 8. Run a separate two-client test for ports, model synchronization,
    save/reload and mechanical network behavior. Verify the Primitive Anvil,
    Stamp Mill and all working kilns remain unchanged.
+
+## 2026-11-01 — Formation guide regression: Patchouli X-mirror
+
+The first Forge Hammer in-game formation report failed on SOUTH at the real
+front port: expected `multiblock_item_input`, found
+`multiblock_item_primary_output` (world x=21, y=56, z=-43). The other
+warnings came from the normal scan over nonmatching rotated layouts. The
+server's SOUTH blueprint is correct and explicitly places **U at local
+x=1, z=2** and **O at x=3, z=2**, but the newly-authored Patchouli pattern
+had copied those raw rows verbatim. As already done in the *working*
+Ore Roasting Kiln's book pattern, the Patchouli visual needs a **horizontal
+X-axis mirror of the JSON layout**. The bottom displayed book row is now
+`SO0US` rather than `SU0OS`; the server structure and Gear V2 input,
+generated models, collision, recipes and I/O semantics are unchanged.
+A source-contract test requires the book to mirror the entire SOUTH blueprint
+to prevent a future copy-paste regression.
+
+**Existing in-world construction built from the old book preview:** swap the
+two front item port blocks; the previously positioned Primary Output at
+the server's U location must become an Input, and vice versa. The rear
+Mechanical Input is correctly placed (first rotated-candidate warning was
+not a real mechanical-module problem). Follow the revised Patchouli
+visualization for fresh builds. Verify actual formation in-game before
+declaring this bug resolved.

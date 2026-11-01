@@ -137,6 +137,23 @@ const book=json("src/main/resources/assets/magneticraft2/patchouli_books/world_o
 const guide=book.pages.find(p=>p.name==="Mechanical Forge Hammer");
 assert.ok(guide&&guide.multiblock.pattern.length===4);
 assert.equal(guide.multiblock.mapping["0"],"magneticraft2:"+id);
+/*
+ * Patchouli's visual multiblock preview displays the horizontal X axis
+ * mirrored relative to the server's SOUTH coordinate layout. Do NOT copy
+ * the blueprint rows verbatim: it swaps functional input/output ports.
+ * The existing in-game-tested Ore Roasting Kiln follows this convention.
+ */
+const south=json("src/main/resources/data/magneticraft2/multiblocks/"+id+"_south.json");
+const bookRows=Array.from({length:south.structure.dimensions[1]},(_,topIndex)=>{
+ const layer=south.structure.layout["layer"+(south.structure.dimensions[1]-topIndex)];
+ return layer.map(row=>[...row].reverse().map(symbol=>
+    symbol==="C"?"0":symbol==="A"?"_":symbol).join(""));
+});
+assert.deepEqual(guide.multiblock.pattern,bookRows,
+ "Patchouli preview must mirror the SOUTH blueprint's X coordinates so I/O appears correctly");
+assert.equal(south.structure.layout.layer1[2][1],"U");
+assert.equal(south.structure.layout.layer1[2][3],"O");
+
 const lang=json("src/main/resources/assets/magneticraft2/lang/en_us.json");
 assert.ok(lang["block.magneticraft2."+id]&&lang["item.magneticraft2.bronze_forge_die"]);
 for(const tag of ["mineable/pickaxe","needs_stone_tool"])assert.ok(
