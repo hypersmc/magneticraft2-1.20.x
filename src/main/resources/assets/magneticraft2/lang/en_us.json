@@ -486,5 +486,9 @@
   "message.magneticraft2.bronze_foundry_sand_mixer.reason.load_unsupplied": "Gear V2 has not supplied the registered load",
   "message.magneticraft2.bronze_foundry_sand_mixer.reason.working": "Mixing and conditioning spent sand",
   "message.magneticraft2.bronze_foundry_sand_mixer.reason.ready": "Ready to reclaim spent sand",
-  "message.magneticraft2.bronze_foundry_sand_mixer.reason.blade_worn": "Bronze Mixing Paddles worn out; replace them"
+  "message.magneticraft2.bronze_foundry_sand_mixer.reason.blade_worn": "Bronze Mixing Paddles worn out; replace them",
+  "block.magneticraft2.bronze_industrial_air_blower": "Industrial Air Blower",
+  "item.magneticraft2.bronze_industrial_air_blower": "Industrial Air Blower Controller",
+  "message.magneticraft2.bronze_industrial_air_blower.status": "Air Blower: Running: %s | Stored air: %s/%s units | Stroke: %s/%s | Receiver connected: %s",
+  "message.magneticraft2.bronze_industrial_air_blower.diagnostic": "Gear V2: %s/%s RPM | Torque: %s/%s | Load supplied: %s | Load active: %s"
 }

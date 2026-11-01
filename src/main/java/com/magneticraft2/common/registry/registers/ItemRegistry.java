@@ -133,6 +133,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_SAW_BLADE =
             ITEMS.register("bronze_saw_blade", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY_SAND_MIXER = fromBlock(BRONZE_FOUNDRY_SAND_MIXER);
+    public static final RegistryObject<Item> ITEM_BRONZE_INDUSTRIAL_AIR_BLOWER = fromBlock(BRONZE_INDUSTRIAL_AIR_BLOWER);
     public static final RegistryObject<Item> ITEM_BRONZE_MIXER_PADDLES =
             ITEMS.register("bronze_mixer_paddles", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_SPENT_MOLDING_SAND =

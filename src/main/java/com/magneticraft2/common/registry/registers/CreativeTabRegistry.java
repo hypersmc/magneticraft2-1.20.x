@@ -122,6 +122,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_SAW_BLADE.get());
                         entries.accept(ItemRegistry.ITEM_SAWN_PATTERN_STOCK.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FOUNDRY_SAND_MIXER.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_INDUSTRIAL_AIR_BLOWER.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_MIXER_PADDLES.get());
                         entries.accept(ItemRegistry.ITEM_SPENT_MOLDING_SAND.get());
                         entries.accept(ItemRegistry.ITEM_SAND_RECLAMATION_BLEND.get());

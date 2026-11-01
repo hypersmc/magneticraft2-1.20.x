@@ -885,6 +885,52 @@
     {
       "type": "text",
       "text": "$(bold)Reclaim sand$()$(br2)One prepared blend → 3 Reclaimed Molding Sand after 200 supplied ticks at 12 RPM / 4 torque. Use recovered sand directly in the existing Mold Table: one portion replaces fresh Sand + Clay, while the wooden pattern remains reusable and the original four press actions remain. Fresh Sand + Clay still works. Recovery only happens after a successful casting; dismantling while pouring does not return the consumed mold."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze IV — Industrial Air Blower (K1)$()$(br2)This 3×3×3 multiblock converts actual Gear V2 rotary power into steady integer pressure units. It uses the existing Pressure capability already accepted by the Primitive Furnace Bellows module: it does NOT produce HEAT, inject gas as a fluid, or automatically increase Refractory Kiln output. Its first consumer is a directly adjacent receiver; piping and Bloomery airflow are later work."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Industrial Air Blower Controller",
+      "recipe": "magneticraft2:bronze_industrial_air_blower",
+      "text": "Built using precision bronze gearing, a Bronze Bushing, bronze ingots, Copper Plates and Stone Bricks. Requires a real rear Mechanical Input module and a connected Gear V2 shaft; no hidden power."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Industrial Air Blower",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P_P",
+            "PPP"
+          ],
+          [
+            "P_P",
+            "P_P",
+            "P_P"
+          ],
+          [
+            "SIS",
+            "SSS",
+            "S0S"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_industrial_air_blower",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module"
+        },
+        "symmetrical": false
+      },
+      "text": "3 wide × 3 high × 3 deep. S=Stone Bricks, P=Oak Planks, _=required AIR, I=real Gear V2 rear input (bottom/rear center), 0=controller (bottom/front center). This book preview mirrors SOUTH JSON X. Right-click the front controller to form."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Mechanical airflow$()$(br2)One pressure (air) unit is generated every 5 continuously powered ticks at a minimum of 16 RPM and 5 torque. Buffer capacity: 16 units. At most one unit transfers each tick out of the FRONT controller face into a directly touching valid pressure receiver. Existing Primitive Furnace bellows module supports this capability: place it immediately ahead of the blower outlet. If full, the blower stops registering load. K1 has no pipes, fluid output, consumable blades, or fuel requirement; do not assume it can yet feed the planned Bloomery."
     }
   ],
   "sortnum": 3,

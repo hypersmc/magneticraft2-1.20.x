@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PGP",
+    "CIC",
+    "SSS"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "G": {
+      "item": "magneticraft2:precision_bronze_gear"
+    },
+    "C": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "I": {
+      "item": "magneticraft2:bronze_bushing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_industrial_air_blower"
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "minecraft:block/stripped_spruce_log",
+    "plank": "minecraft:block/oak_planks",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        4.9375,
+        0,
+        1
+      ],
+      "to": [
+        5,
+        2,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            1,
+            0,
+            15,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        14.9375
+      ],
+      "to": [
+        5,
+        2,
+        15
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            4,
+            0,
+            5,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        0,
+        1
+      ],
+      "to": [
+        5,
+        2,
+        1.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            4,
+            0,
+            5,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        1.9375,
+        1
+      ],
+      "to": [
+        5,
+        2,
+        15
+      ],
+      "faces": {
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            4,
+            1,
+            5,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        1.9375,
+        0
+      ],
+      "to": [
+        4,
+        2,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            4,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.9375,
+        0,
+        15
+      ],
+      "to": [
+        4,
+        2,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            15,
+            0,
+            16,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3.9375,
+        0,
+        0
+      ],
+      "to": [
+        4,
+        2,
+        1
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        0,
+        0
+      ],
+      "to": [
+        7.0625,
+        1,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.9375,
+        0,
+        0
+      ],
+      "to": [
+        11,
+        1,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            16,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        0.9375,
+        0
+      ],
+      "to": [
+        11,
+        1,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            7,
+            0,
+            11,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

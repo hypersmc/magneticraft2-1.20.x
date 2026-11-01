@@ -38,6 +38,7 @@ import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalPress
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzePrecisionBoringMachineRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalSawmillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundrySandMixerRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeIndustrialAirBlowerRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.RotaryOreClassifierRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.WaterSettlingTankRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
@@ -139,6 +140,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_PRECISION_BORING_MACHINE_BE.get(), BronzePrecisionBoringMachineRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_SAWMILL_BE.get(), BronzeMechanicalSawmillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_SAND_MIXER_BE.get(), BronzeFoundrySandMixerRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_INDUSTRIAL_AIR_BLOWER_BE.get(), BronzeIndustrialAirBlowerRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(), RotaryOreClassifierRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_SETTLING_TANK_BE.get(), WaterSettlingTankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
@@ -235,6 +237,8 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_sawmill_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_foundry_sand_mixer_paddles"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_foundry_sand_mixer_coupling"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_industrial_air_blower_rotor"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_industrial_air_blower_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));
