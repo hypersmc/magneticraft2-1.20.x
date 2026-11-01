@@ -140,53 +140,79 @@ function box6(add,from,to,mat,left){
  const [a,b]=mirrorBoxX(from,to,left);
  add(a,b,mat,['north','south','east','west','up','down']);
 }
+/**
+ * One half of a two-block-wide roasting opening. The same geometry is used
+ * on both long walls and is rotated into all four multiblock orientations.
+ *
+ * Side-wall coordinates:
+ *   outer face: x=16, recessed soot: x=10, hot bed: x=11
+ *   sill top: global y=28 (layer 1 + 12px)
+ *   arch crown: global y=55 (layer 3 + 7px)
+ * The resulting ~27px-high opening is intentionally broader and lower than
+ * the former 34px-tall window-like aperture.
+ */
 function volumeArch(c,add){
  if(!isRoastingBay(c))throw Error('Not a roasting bay');
- const left=c.x===-2,start=rowStarts.has(c.z),outerA=start?13:0,
-       outerB=start?16:3,insideA=start?0:3,insideB=start?13:16;
+ const left=c.x===-2,start=rowStarts.has(c.z);
+ const outsideA=start?13:0,outsideB=start?16:3;
+ const insideA=start?0:3,insideB=start?13:16;
  const p=(a,b,m)=>box6(add,a,b,m,left);
- // The dark backing is inset by 6px. The visible arch is built of real
- // clay masonry, not an orange texture placed on a rectangular hole.
  p([0,0,0],[9,16,16],'brick');
  p([9,0,0],[10,16,16],'soot');
- if(c.y<3){
-  if(c.z===-8)
-   p([10,0,outerA],[16,16,outerB],'timberEnd');
-  else{
-   p([10,0,outerA],[14,16,outerB],'brick');
-   p([14,0,outerA],[16,16,outerB],'arch');
-  }
-  if(c.y===1){
-   p([10,0,insideA],[16,9,insideB],'refractory');
-   p([10,9,insideA],[11,13,insideB],'ember');
-  }else p([10,0,insideA],[11,5,insideB],'ember');
+
+ if(c.y===1){
+  // Brickwork supports a thin refractory sill; the glow stays behind it.
+  p([10,0,insideA],[16,10,insideB],'brick');
+  p([10,10,insideA],[16,12,insideB],'refractory');
+  p([10,12,outsideA],[14,16,outsideB],'brick');
+  p([14,12,outsideA],[16,16,outsideB],
+    c.z===-8?'timberEnd':'arch');
+  p([10,12,insideA],[11,16,insideB],'ember');
+ }else if(c.y===2){
+  p([10,0,outsideA],[14,16,outsideB],'brick');
+  p([14,0,outsideA],[16,16,outsideB],
+    c.z===-8?'timberEnd':'arch');
+  p([10,0,insideA],[11,4,insideB],'ember');
+  // Rear cross-rail: visible through the grate but recessed behind bars.
+  p([11,6,insideA],[12,7,insideB],'iron');
  }else{
-  // Mirrored stepped voussoirs curve inward, closing the top of each bay.
-  // Their outer face is clay-coloured and distinct from the brick wall.
-  for(const [low,high,width] of [[0,4,3],[4,7,5],
-                                   [7,9,7],[9,11,9],[11,12,16]]){
-   const a=start?(width===16?0:16-width):0,b=start?16:width;
+  // Shallow, segmental arch: the narrow steps terminate in a broad crown.
+  // Each pair of boxes is a continuous masonry course with a 2px clay rim.
+  for(const [low,high,width] of [[0,2,3],[2,4,4],
+                                  [4,6,6],[6,7,9]]){
+   const a=start?16-width:0,b=start?16:width;
    p([10,low,a],[14,high,b],'brick');
    p([14,low,a],[16,high,b],'arch');
   }
+  // Flat crown, backed by solid brick before the load-bearing header.
+  p([10,7,0],[14,12,16],'brick');
+  p([14,7,0],[16,9,16],'arch');
+  p([14,9,0],[16,12,16],'brick');
   p([12,12,0],[16,16,16],'timber');
  }
- // Raise the refractory sill so this reads as a squat roasting arch,
- // rather than a window slit stretching from the foundation to the roof.
- const low=c.y===1?9:0,high=c.y===3?9:16,zBar=start?4:11;
- p([12,low,zBar],[14,high,zBar+1.5],'grate');
- if(c.y===2)p([11,6,insideA],[12,7,insideB],'iron');
+ // Four slender grate bars per full bay. Bars terminate at their actual
+ // arch shoulder, rather than protruding into the masonry above it.
+ // Matching positions on the two halves keep the bays symmetrical.
+ const bars=start?[[5.5,7],[11,2]]:[[3.5,2],[9,7]];
+ for(const [z,top] of bars)
+  p([12,c.y===1?12:0,z],[14,c.y===3?top:16,z+1.5],'grate');
 }
 function sidePier(c,add){
- const p=(a,b,m)=>box6(add,a,b,m,c.x===-2),y=c.y,top=y===3?12:16;
- p([0,0,0],[12,top,16],'brick');
- p([12,0,0],[16,top,6],'brick');
- p([12,0,10],[16,top,16],'brick');
- p([12,0,6],[16,y===3?9:16,10],'timberEnd');
- if(y===3){
-  p([12,9,6],[16,12,10],'iron');
-  p([12,12,0],[16,16,16],'timber');
+ const p=(a,b,m)=>box6(add,a,b,m,c.x===-2);
+ if(c.y<3){
+  // Two full-height brick courses: no timber strip all the way to the base.
+  p([0,0,0],[16,16,16],'brick');
+  return;
  }
+ // Brick pier carries the beam; the timber-and-iron corbel exists only
+ // immediately underneath it, physically fitted inside the pier face.
+ p([0,0,0],[12,12,16],'brick');
+ p([12,0,0],[16,12,5],'brick');
+ p([12,0,5],[16,7,11],'brick');
+ p([12,7,5],[16,10,11],'timberEnd');
+ p([12,10,5],[16,12,11],'iron');
+ p([12,0,11],[16,12,16],'brick');
+ p([12,12,0],[16,16,16],'timber');
 }
 function frontCorner(c,add){
  const p=(a,b,m)=>box6(add,a,b,m,c.x===-2),y=c.y,top=y===3?12:16;

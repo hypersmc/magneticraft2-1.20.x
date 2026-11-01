@@ -117,20 +117,33 @@ for(const name of [
  'minecraft:block/polished_blackstone'])
  assert.ok(materialTextures.has(name),'Missing intended vanilla texture '+name);
 
-/** The screenshot regressions: actual narrow posts, real arch shoulders,
- * a wider front door, less corrugated roof courses and a fitted chimney. */
+/** Side-wall screenshot regressions: three squat masonry roasting bays,
+ * heavy brick piers, fitted upper corbels and a continuous roof header.
+ * The front, roof, chimney and item-port checks below remain unchanged. */
 const at=(x,y,z)=>assets.get(base+
  'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_'+x+'_'+y+'_'+z+'.json');
 const contains=(m,from,to,texture)=>m.elements.some(e=>
  e.from.every((n,i)=>Math.abs(n-from[i])<.001)&&
  e.to.every((n,i)=>Math.abs(n-to[i])<.001)&&
  Object.values(e.faces).some(f=>f.texture==='#'+texture));
-assert.ok(contains(at(2,2,-3),[12,0,6],[16,16,10],'timberEnd'),
- 'Side support must be a 4px-wide post, not a full wooden wall');
+// Lower/middle pier must read as masonry, not a floor-to-roof timber slat.
+for(const x of [-2,2])for(const z of [-3,-6])
+ for(const y of [1,2]){
+  const pier=at(x,y,z);
+  assert.equal(pier.elements.length,1,'Extra geometry on brick pier '+x+','+y+','+z);
+  assert.ok(!pier.elements.some(e=>Object.values(e.faces)
+    .some(f=>f.texture==='#timberEnd')),
+   'Full-height timber divider returned '+x+','+y+','+z);
+ }
+assert.ok(contains(at(2,2,-3),[0,0,0],[16,16,16],'brick'),
+ 'Heavy brick pier must occupy the full lower/middle wall');
 assert.ok(contains(at(2,3,-3),[12,12,0],[16,16,16],'timber'),
  'Continuous roof-bearing timber header missing');
-assert.ok(contains(at(2,3,-3),[12,9,6],[16,12,10],'iron'),
- 'Iron collar does not physically join post to roof beam');
+assert.ok(contains(at(2,3,-3),[12,7,5],[16,10,11],'timberEnd')&&
+          contains(at(2,3,-3),[12,10,5],[16,12,11],'iron'),
+ 'Short upper timber corbel and iron collar must meet the continuous header');
+assert.ok(contains(at(2,3,-3),[12,0,5],[16,7,11],'brick'),
+ 'The brick pier must support its corbel from underneath');
 assert.ok(contains(at(2,2,0),[12,0,12],[16,16,16],'timberEnd'),
  'Front corner post not confined to a real 4x4 footprint');
 assert.ok(!contains(at(2,2,0),[12,0,0],[16,16,16],'timberEnd'),
@@ -139,16 +152,45 @@ assert.ok(contains(at(2,3,0),[0,12,12],[12,16,16],'timber'),
  'Front gable crossbeam missing at the corner');
 assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),
  'Crossbeam must span the middle of the front gable');
-assert.ok(contains(at(2,3,-1),[10,4,11],[14,7,16],'brick')&&
-          contains(at(2,3,-1),[14,4,11],[16,7,16],'arch')&&
-          contains(at(2,3,-1),[14,7,9],[16,9,16],'arch'),
- 'A recessed masonry arch needs a visible fitted clay rim');
+assert.ok(contains(at(2,1,-1),[10,0,0],[16,10,13],'brick')&&
+          contains(at(2,1,-1),[10,10,0],[16,12,13],'refractory'),
+ 'A taller brick pedestal and thin refractory sill must reduce opening height');
+assert.ok(contains(at(2,3,-1),[14,2,12],[16,4,16],'arch')&&
+          contains(at(2,3,-1),[14,4,10],[16,6,16],'arch')&&
+          contains(at(2,3,-1),[14,6,7],[16,7,16],'arch')&&
+          contains(at(2,3,-1),[14,7,0],[16,9,16],'arch'),
+ 'The roasting bay must form a shallow, broad segmental clay arch');
+for(const z of [-8,-7,-5,-4,-2,-1])for(const y of [1,2,3]){
+ const bay=at(2,y,z),bars=bay.elements.filter(e=>
+   Object.values(e.faces).some(f=>f.texture==='#grate'));
+ assert.equal(bars.length,2,'Two slender bars per half-bay required at '+y+','+z);
+}
+assert.ok(contains(at(2,3,-1),[12,0,5.5],[14,7,7],'grate')&&
+          contains(at(2,3,-1),[12,0,11],[14,2,12.5],'grate'),
+ 'Upper grate bars must meet the actual curved masonry shoulder');
 assert.ok(contains(at(2,3,-1),[12,12,0],[16,16,16],'timber'),
  'The arched roasting chamber lacks its continuous timber header');
 for(const [x,a,b] of [[-1,8,16],[0,0,16],[1,0,8]]){
  assert.ok(contains(at(x,2,0),[a,0,15.1],[b,12,15.55],'iron'),
   'Front charging door is not framed across its full two-block width: '+x);
 }
+// All four facings get the same local side-wall geometry, with no positive
+// overlap between solid boxes; only the original side part models change.
+const rotateCell=(x,z,d)=>d==='south'?[x,z]:d==='west'?[-z,x]:
+ d==='north'?[-x,-z]:[z,-x];
+for(const d of dirs)for(const x of [-2,2])for(let z=-8;z<0;z++)
+ for(let y=1;y<=3;y++){
+  const [rx,rz]=rotateCell(x,z,d);
+  const m=assets.get(base+'assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+
+    d+'/part_'+rx+'_'+y+'_'+rz+'.json');
+  assert.ok(m,'Missing mirrored side geometry '+d+' '+x+','+y+','+z);
+  for(let a=0;a<m.elements.length;a++)for(let b=a+1;b<m.elements.length;b++){
+   const u=m.elements[a],v=m.elements[b];
+   assert.ok(u.from.some((n,i)=>Math.min(u.to[i],v.to[i])-
+       Math.max(n,v.from[i])<=.001),
+    'Intersecting side-wall solids '+d+' '+x+','+y+','+z);
+  }
+ }
 const middleRoof=at(0,4,-4);
 assert.deepEqual(middleRoof.elements.filter(e=>e.faces.up?.texture==='#roof')
  .map(e=>e.to[0]-e.from[0]),[8,8],
@@ -195,4 +237,4 @@ const block=read('src/main/java/com/magneticraft2/common/block/stage/bronze/OreR
 assert.ok(entity.includes('port.linkFormedController(worldPosition)'));
 assert.ok(entity.includes('acceptsRecipeInput(ItemStack stack) { return false; }'));
 assert.ok(!block.includes('::serverTick'));
-console.log('Ore Roasting Kiln 5x8x9: arches, beams, 8px roof courses, gable and chimney flashing, 4 facings, UVs, coplanarity, book and port contract passed (static only).');
+console.log('Ore Roasting Kiln 5x8x9: squat side arches, masonry piers, fitted corbels, 4 facings, UVs, overlaps, roof, book and port contract passed (static only).');
