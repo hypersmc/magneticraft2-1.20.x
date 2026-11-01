@@ -140,3 +140,44 @@ the status with (a) no connected power, (b) a small waterwheel,
 output. Ensure the numbers/reasons are correct and the machine runs only
 under actually supplied mechanical load. Test independently of the
 provisional visual model and check for no additional per-tick allocations.
+
+## 2026-11-01 — Stalling with 48.6 RPM and 8 torque (large water wheel)
+
+Player's in-game status: **Input 4/4, RPM 48.6/20, torque 8.0/5.0,
+Running false, Load supplied false, progress 0/160**.
+
+**Root-cause candidate verified in the code:** K1 queried
+`node.getEffectiveSpeed()` for `canAttempt`, then passed that boolean to
+`setMechanicalLoad(..., active)`. Gear V2 intentionally masks
+`getEffectiveSpeed()` to ZERO while overloaded, but **preserves raw speed**
+via `getSpeed()` so source-path and gear-ratio calculations remain valid.
+This caused the Forge Hammer to *deactivate its mechanical load as soon as
+a source overloaded*; on the next network evaluation the source recovered,
+which reactivated the load, cycling without completing a batch. Switching
+the active-load qualification to **raw `getSpeed()`** stabilizes the
+demand. The actual processing decision still uses the manager's
+`MechanicalLoadState.supplied()`; a genuinely overloaded source can NOT
+produce output or consume ingredients.
+
+**Important:** enough local RPM and torque does not guarantee the water
+wheel can supply the source-equivalent load. Gear V2 correctly converts:
+`source_demand = local_torque × (input_RPM / source_RPM)` and sums all
+active machine demands on that source. E.g. 5 torque at 48 RPM driven by
+a 24 RPM wheel requires **10 torque at the wheel**, not 5. A higher gear
+ratio increases speed while reducing available force. The *actual* source
+RPM/torque and other loads are not known from the screenshot; do not
+assert that the user's source is definitely overloaded.
+
+The controller now also displays the load's **source-equivalent demand,
+total upstream demand, source capacity, active state and source presence**.
+If total demand exceeds source capacity, ease the speed-up gearing (aim
+around 20–24 RPM directly from a well-powered large wheel) or reduce
+other loads before assuming the Forge recipe is broken.
+
+**Acceptance:** idle with 4 ingots must not flicker between active and
+inactive load when a motor is genuinely underpowered. Underpowered
+networks stay in a stable blocked state; once source supply becomes
+adequate, processing should resume and yield exactly 4 Copper Plates
+after 160 supplied ticks. Verify after reload and from the actual
+controller output, then review whether the 20 RPM/5 torque values need
+balancing; do not silently lower them to mask source limits.

@@ -363,5 +363,9 @@
   "message.magneticraft2.bronze_forge_hammer.reason.insufficient_torque": "Insufficient torque; use stronger power or reduce gearing",
   "message.magneticraft2.bronze_forge_hammer.reason.load_unsupplied": "Mechanical load not supplied (network power/overload)",
   "message.magneticraft2.bronze_forge_hammer.reason.working": "Forging in progress",
-  "message.magneticraft2.bronze_forge_hammer.reason.ready": "Power available; awaiting next processing tick"
+  "message.magneticraft2.bronze_forge_hammer.reason.ready": "Power available; awaiting next processing tick",
+  "message.magneticraft2.bronze_forge_hammer.source": "Upstream: this forge %s torque | total %s / source available %s | Source connected: %s | Load active: %s",
+  "message.magneticraft2.bronze_forge_hammer.reason.source_overload": "Upstream torque demand exceeds source capacity; reduce RPM gearing or other loads",
+  "message.magneticraft2.bronze_forge_hammer.reason.source_missing": "Gear speed exists but no connected Gear V2 power source owns the input",
+  "message.magneticraft2.bronze_forge_hammer.reason.load_inactive": "Forge load is inactive; check connected input and recipe"
 }

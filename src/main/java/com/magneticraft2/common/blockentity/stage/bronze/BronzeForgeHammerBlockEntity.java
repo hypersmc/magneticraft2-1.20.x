@@ -168,7 +168,12 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         }
         MechanicalInputModuleBlockEntity module = getMechanicalInput();
         GearNode node = module == null ? null : module.getOrCreateGearNode();
-        boolean canAttempt = node != null && node.getEffectiveSpeed() >= recipe.getMinSpeed()
+        // Qualify the physical gearing with raw RPM. Gear V2 deliberately
+        // retains raw speed when a source overloads, while effective speed
+        // becomes zero. Using effective speed here deactivated this load on
+        // the next tick, cleared the overload, then reactivated it forever.
+        // Supply is decided below by the authoritative load evaluator.
+        boolean canAttempt = node != null && node.getSpeed() >= recipe.getMinSpeed()
                 && node.getTorque() + EPS >= recipe.getTorque();
         GearNetworkManager manager = GearNetworkManager.getInstance();
         manager.setMechanicalLoad(level, worldPosition, module == null ? worldPosition
@@ -255,12 +260,19 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";
+        } else if (load.active() && load.sourcePos() != null
+                && load.totalSourceDemand() > load.sourceTorqueCapacity() + EPS) {
+            diagnostic = "source_overload";
         } else if (node.isOverloaded()) {
             diagnostic = "overloaded";
-        } else if (rpm < requiredRpm) {
+        } else if (rpm < requiredRpm && !load.active()) {
             diagnostic = "insufficient_speed";
         } else if (torque + EPS < requiredTorque) {
             diagnostic = "insufficient_torque";
+        } else if (load.active() && load.sourcePos() == null) {
+            diagnostic = "source_missing";
+        } else if (!load.active()) {
+            diagnostic = "load_inactive";
         } else if (!load.supplied()) {
             diagnostic = "load_unsupplied";
         } else {
@@ -282,6 +294,13 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
                 String.format(Locale.ROOT, "%.1f", torque),
                 String.format(Locale.ROOT, "%.1f", requiredTorque),
                 load.supplied()), false);
+        player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.bronze_forge_hammer.source",
+                String.format(Locale.ROOT, "%.1f", load.sourceEquivalentDemand()),
+                String.format(Locale.ROOT, "%.1f", load.totalSourceDemand()),
+                String.format(Locale.ROOT, "%.1f", load.sourceTorqueCapacity()),
+                load.sourcePos() != null,
+                load.active()), false);
     }
 
     @Override protected @Nullable MultiblockStructure identifyMultiblockStructure(Level world,

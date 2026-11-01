@@ -169,6 +169,28 @@ assert.ok(lang["message.magneticraft2.bronze_forge_hammer.diagnostic"].includes(
 assert.match(be,/GearNetworkManager\.getInstance\(\)\.getMechanicalLoadState\(world, worldPosition\)/);
 assert.match(be,/node\.getEffectiveSpeed\(\)/);
 assert.match(be,/node\.getTorque\(\)/);
+/**
+ * Gear V2 preserves raw RPM while a source is overloaded. Qualification must
+ * use raw speed, NOT the effective (stall-masked) speed, or an overload causes
+ * active load -> disabled load -> recovered source -> active load oscillation.
+ * The final supply decision remains the GearNetworkManager load snapshot.
+ */
+assert.match(be,/boolean canAttempt = node != null && node\.getSpeed\(\) >= recipe\.getMinSpeed\(\)/);
+assert.doesNotMatch(be,/boolean canAttempt = node != null && node\.getEffectiveSpeed\(\)/);
+assert.match(be,/manager\.getMechanicalLoadState\(level, worldPosition\)\.supplied\(\)/);
+for(const field of ["active()","sourcePos()","sourceEquivalentDemand()",
+                     "totalSourceDemand()","sourceTorqueCapacity()"]){
+ assert.ok(be.includes("load."+field),"Missing load source diagnostic: "+field);
+}
+assert.ok(lang["message.magneticraft2.bronze_forge_hammer.source"],
+ "Missing upstream source-demand report");
+for(const reason of ["source_overload","source_missing","load_inactive"]){
+ assert.ok(lang["message.magneticraft2.bronze_forge_hammer.reason."+reason],
+  "Missing localised upstream diagnosis "+reason);
+ assert.ok(be.includes('diagnostic = "'+reason+'"'),
+  "Missing upstream diagnosis branch "+reason);
+}
+
 assert.match(be,/player\.displayClientMessage\(Component\.translatable\(\s*"message\.magneticraft2\.bronze_forge_hammer\.diagnostic"/);
 
 for(const tag of ["mineable/pickaxe","needs_stone_tool"])assert.ok(
