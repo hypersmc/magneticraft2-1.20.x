@@ -92,8 +92,9 @@ for(const d of dirs){
  }
 }
 assert.equal(partModels,732);
-// 144 side wall layers and 24 door wall layers have recessed openings.
-assert.equal(recesses,168);
+// Side grilles now occupy the middle wall layer (48 models); the front
+// charging door retains 24 layers. Lower courses must be solid masonry.
+assert.equal(recesses,72);
 assert.ok(faceCount>8000);
 assert.equal(typeAt(0,4,-7),'A');
 for(let y=5;y<=7;y++){
@@ -106,8 +107,11 @@ for(const x of [-2,2])for(const y of [1,2,3])
   assert.ok(isRoastingBay({x,y,z}));
   assert.ok(m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#soot')),
    'Bay missing solid dark back '+x+','+y+','+z);
-  assert.ok(m.elements.some(e=>Object.values(e.faces).some(f=>f.texture==='#grate')),
-   'Bay missing thick metal grille '+x+','+y+','+z);
+  const bars=m.elements.filter(e=>Object.values(e.faces)
+    .some(f=>f.texture==='#grate'));
+  assert.equal(bars.length,y===2?1:0,
+   'Roasting bay should have one short guard bar per middle-layer half '+
+     x+','+y+','+z);
  }
 const custom=[...materialTextures].filter(x=>x.startsWith('magneticraft2:block/ore_roasting_kiln/'));
 assert.deepEqual(custom,[],'Machine-specific custom textures on baked body');
@@ -117,9 +121,9 @@ for(const name of [
  'minecraft:block/polished_blackstone'])
  assert.ok(materialTextures.has(name),'Missing intended vanilla texture '+name);
 
-/** Side-wall screenshot regressions: three squat masonry roasting bays,
- * heavy brick piers, fitted upper corbels and a continuous roof header.
- * The front, roof, chimney and item-port checks below remain unchanged. */
+/** Side-wall screenshot regressions: continuous lower masonry without
+ * ground-facing holes, three short and wide furnace throats, heavy piers,
+ * two short guards per full bay and the unchanged roof header. */
 const at=(x,y,z)=>assets.get(base+
  'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_'+x+'_'+y+'_'+z+'.json');
 const contains=(m,from,to,texture)=>m.elements.some(e=>
@@ -152,22 +156,25 @@ assert.ok(contains(at(2,3,0),[0,12,12],[12,16,16],'timber'),
  'Front gable crossbeam missing at the corner');
 assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),
  'Crossbeam must span the middle of the front gable');
-assert.ok(contains(at(2,1,-1),[10,0,0],[16,10,13],'brick')&&
-          contains(at(2,1,-1),[10,10,0],[16,12,13],'refractory'),
- 'A taller brick pedestal and thin refractory sill must reduce opening height');
-assert.ok(contains(at(2,3,-1),[14,2,12],[16,4,16],'arch')&&
-          contains(at(2,3,-1),[14,4,10],[16,6,16],'arch')&&
-          contains(at(2,3,-1),[14,6,7],[16,7,16],'arch')&&
-          contains(at(2,3,-1),[14,7,0],[16,9,16],'arch'),
- 'The roasting bay must form a shallow, broad segmental clay arch');
+assert.ok(contains(at(2,1,-1),[10,0,0],[16,16,16],'brick'),
+ 'Lower roasting wall must be solid all the way across each bay');
+assert.ok(contains(at(2,2,-1),[10,0,0],[16,4,14],'brick')&&
+          contains(at(2,2,-1),[10,4,0],[16,5,14],'refractory'),
+ 'The lower firebed should stand on masonry with a thin stone sill');
+assert.ok(contains(at(2,3,-1),[14,2,13],[16,3,16],'arch')&&
+          contains(at(2,3,-1),[14,3,11],[16,4,16],'arch')&&
+          contains(at(2,3,-1),[14,4,9],[16,5,16],'arch')&&
+          contains(at(2,3,-1),[14,5,7],[16,6,16],'arch')&&
+          contains(at(2,3,-1),[14,6,0],[16,8,16],'arch'),
+ 'A lower segmental arch must spread across the 2-block-wide bay');
 for(const z of [-8,-7,-5,-4,-2,-1])for(const y of [1,2,3]){
  const bay=at(2,y,z),bars=bay.elements.filter(e=>
    Object.values(e.faces).some(f=>f.texture==='#grate'));
- assert.equal(bars.length,2,'Two slender bars per half-bay required at '+y+','+z);
+ assert.equal(bars.length,y===2?1:0,
+  'Only the middle furnace layer should carry short protective bars '+y+','+z);
 }
-assert.ok(contains(at(2,3,-1),[12,0,5.5],[14,7,7],'grate')&&
-          contains(at(2,3,-1),[12,0,11],[14,2,12.5],'grate'),
- 'Upper grate bars must meet the actual curved masonry shoulder');
+assert.ok(contains(at(2,2,-1),[13,5,7],[15,14,9],'grate'),
+ 'Short guards must stay below the arch instead of looking like window bars');
 assert.ok(contains(at(2,3,-1),[12,12,0],[16,16,16],'timber'),
  'The arched roasting chamber lacks its continuous timber header');
 for(const [x,a,b] of [[-1,8,16],[0,0,16],[1,0,8]]){
@@ -191,6 +198,30 @@ for(const d of dirs)for(const x of [-2,2])for(let z=-8;z<0;z++)
     'Intersecting side-wall solids '+d+' '+x+','+y+','+z);
   }
  }
+// The previous screenshot showed daylight under the outer jambs. Check
+// EXPOSED FACE COVERAGE (not just collisions) across the entire bottom
+// roasting-wall layer, in both mirrored sides and all four rotations.
+const outward={
+ south:{'2':'east','-2':'west'},west:{'2':'south','-2':'north'},
+ north:{'2':'west','-2':'east'},east:{'2':'north','-2':'south'}
+};
+for(const d of dirs)for(const x of [-2,2])for(let z=-8;z<0;z++){
+ const [rx,rz]=rotateCell(x,z,d);
+ const m=assets.get(base+'assets/magneticraft2/models/multiblock/ore_roasting_kiln_'+
+   d+'/part_'+rx+'_1_'+rz+'.json');
+ const face=outward[d][String(x)],outer=(face==='east'||face==='south');
+ const edge=outer?'to':'from',axis=(face==='east'||face==='west')?0:2;
+ const across=axis===0?2:0;
+ for(const u of [0.5,2.5,7.5,12.5,15.5])
+  for(const y of [0.5,5.5,10.5,15.5]){
+   const covered=m.elements.some(e=>e.faces[face]&&
+    Math.abs(e[edge][axis]-(outer?16:0))<.001&&
+    e.from[across]<=u&&u<e.to[across]&&
+    e.from[1]<=y&&y<e.to[1]);
+   assert.ok(covered,'Visible hole at kiln foot: '+d+' '+x+','+z+
+     ' horizontal='+u+' y='+y);
+  }
+}
 const middleRoof=at(0,4,-4);
 assert.deepEqual(middleRoof.elements.filter(e=>e.faces.up?.texture==='#roof')
  .map(e=>e.to[0]-e.from[0]),[8,8],
@@ -237,4 +268,4 @@ const block=read('src/main/java/com/magneticraft2/common/block/stage/bronze/OreR
 assert.ok(entity.includes('port.linkFormedController(worldPosition)'));
 assert.ok(entity.includes('acceptsRecipeInput(ItemStack stack) { return false; }'));
 assert.ok(!block.includes('::serverTick'));
-console.log('Ore Roasting Kiln 5x8x9: squat side arches, masonry piers, fitted corbels, 4 facings, UVs, overlaps, roof, book and port contract passed (static only).');
+console.log('Ore Roasting Kiln 5x8x9: closed side-wall foot, low roasting throats, short guards, 4 facings, UVs, overlaps, roof, book and port contract passed (static only).');

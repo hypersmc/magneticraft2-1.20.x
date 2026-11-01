@@ -151,51 +151,54 @@ function box6(add,from,to,mat,left){
  * The resulting ~27px-high opening is intentionally broader and lower than
  * the former 34px-tall window-like aperture.
  */
+/**
+ * A roasting bay is two block cells wide. Its lower layer is a continuous
+ * brick pedestal, not an exposed gap around the hearth. The fire chamber
+ * starts 5px into the middle layer and is capped by a low segmental arch
+ * in the upper layer. Both side walls share the same geometry.
+ */
 function volumeArch(c,add){
  if(!isRoastingBay(c))throw Error('Not a roasting bay');
  const left=c.x===-2,start=rowStarts.has(c.z);
- const outsideA=start?13:0,outsideB=start?16:3;
- const insideA=start?0:3,insideB=start?13:16;
+ // 2px jambs leave a 28px-wide opening across the paired 32px bay.
+ const outsideA=start?14:0,outsideB=start?16:2;
+ const insideA=start?0:2,insideB=start?14:16;
  const p=(a,b,m)=>box6(add,a,b,m,left);
+ // Opaque backing and a genuinely recessed black/fire chamber.
  p([0,0,0],[9,16,16],'brick');
  p([9,0,0],[10,16,16],'soot');
 
  if(c.y===1){
-  // Brickwork supports a thin refractory sill; the glow stays behind it.
-  p([10,0,insideA],[16,10,insideB],'brick');
-  p([10,10,insideA],[16,12,insideB],'refractory');
-  p([10,12,outsideA],[14,16,outsideB],'brick');
-  p([14,12,outsideA],[16,16,outsideB],
-    c.z===-8?'timberEnd':'arch');
-  p([10,12,insideA],[11,16,insideB],'ember');
+  // Critical: EVERY slice touches the exterior. Previous inner-only
+  // pedestal left 2-3px air gaps at the bottom of each bay jamb.
+  p([10,0,0],[16,16,16],'brick');
  }else if(c.y===2){
+  // Sill and massive masonry support sit below the actual fire opening.
+  p([10,0,insideA],[16,4,insideB],'brick');
+  p([10,4,insideA],[16,5,insideB],'refractory');
   p([10,0,outsideA],[14,16,outsideB],'brick');
-  p([14,0,outsideA],[16,16,outsideB],
-    c.z===-8?'timberEnd':'arch');
-  p([10,0,insideA],[11,4,insideB],'ember');
-  // Rear cross-rail: visible through the grate but recessed behind bars.
-  p([11,6,insideA],[12,7,insideB],'iron');
+  p([14,0,outsideA],[16,16,outsideB],'arch');
+  // Eight-pixel bed at the BACK, with a short iron support rail above it.
+  p([10,5,insideA],[11,13,insideB],'ember');
+  p([11,9,insideA],[12,10,insideB],'iron');
+  // Only two front guard bars across a full two-block opening. They do
+  // not extend into the arch, avoiding the tall barred-window appearance.
+  p([13,5,7],[15,14,9],'grate');
  }else{
-  // Shallow, segmental arch: the narrow steps terminate in a broad crown.
-  // Each pair of boxes is a continuous masonry course with a 2px clay rim.
-  for(const [low,high,width] of [[0,2,3],[2,4,4],
-                                  [4,6,6],[6,7,9]]){
+  // Shallow, wide segmental arch. Each half mirrors the other around the
+  // centre of the 2-block opening, with a broad clay brick keystone course.
+  for(const [low,high,width] of [[0,2,2],[2,3,3],[3,4,5],
+                                  [4,5,7],[5,6,9]]){
    const a=start?16-width:0,b=start?16:width;
    p([10,low,a],[14,high,b],'brick');
    p([14,low,a],[16,high,b],'arch');
   }
-  // Flat crown, backed by solid brick before the load-bearing header.
-  p([10,7,0],[14,12,16],'brick');
-  p([14,7,0],[16,9,16],'arch');
-  p([14,9,0],[16,12,16],'brick');
+  p([10,6,0],[14,12,16],'brick');
+  p([14,6,0],[16,8,16],'arch');
+  p([14,8,0],[16,12,16],'brick');
+  // Existing roof-bearing header retained unchanged.
   p([12,12,0],[16,16,16],'timber');
  }
- // Four slender grate bars per full bay. Bars terminate at their actual
- // arch shoulder, rather than protruding into the masonry above it.
- // Matching positions on the two halves keep the bays symmetrical.
- const bars=start?[[5.5,7],[11,2]]:[[3.5,2],[9,7]];
- for(const [z,top] of bars)
-  p([12,c.y===1?12:0,z],[14,c.y===3?top:16,z+1.5],'grate');
 }
 function sidePier(c,add){
  const p=(a,b,m)=>box6(add,a,b,m,c.x===-2);

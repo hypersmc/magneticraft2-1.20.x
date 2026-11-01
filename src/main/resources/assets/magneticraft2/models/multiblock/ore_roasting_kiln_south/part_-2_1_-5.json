@@ -16,8 +16,7 @@
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
-    "particle": "minecraft:block/bricks",
-    "arch": "minecraft:block/terracotta"
+    "particle": "minecraft:block/bricks"
   },
   "elements": [
     {
@@ -160,474 +159,66 @@
       "from": [
         0,
         0,
-        3
-      ],
-      "to": [
-        6,
-        10,
-        16
-      ],
-      "faces": {
-        "north": {
-          "texture": "#brick",
-          "uv": [
-            10,
-            6,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            6,
-            6,
-            16
-          ]
-        },
-        "east": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            6,
-            13,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#brick",
-          "uv": [
-            3,
-            6,
-            16,
-            16
-          ]
-        },
-        "up": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            3,
-            6,
-            16
-          ]
-        },
-        "down": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            6,
-            13
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        10,
-        3
-      ],
-      "to": [
-        6,
-        12,
-        16
-      ],
-      "faces": {
-        "north": {
-          "texture": "#refractory",
-          "uv": [
-            10,
-            4,
-            16,
-            6
-          ]
-        },
-        "south": {
-          "texture": "#refractory",
-          "uv": [
-            0,
-            4,
-            6,
-            6
-          ]
-        },
-        "east": {
-          "texture": "#refractory",
-          "uv": [
-            0,
-            4,
-            13,
-            6
-          ]
-        },
-        "west": {
-          "texture": "#refractory",
-          "uv": [
-            3,
-            4,
-            16,
-            6
-          ]
-        },
-        "up": {
-          "texture": "#refractory",
-          "uv": [
-            0,
-            3,
-            6,
-            16
-          ]
-        },
-        "down": {
-          "texture": "#refractory",
-          "uv": [
-            0,
-            0,
-            6,
-            13
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        2,
-        12,
         0
       ],
       "to": [
         6,
         16,
-        3
-      ],
-      "faces": {
-        "north": {
-          "texture": "#brick",
-          "uv": [
-            10,
-            0,
-            14,
-            4
-          ]
-        },
-        "south": {
-          "texture": "#brick",
-          "uv": [
-            2,
-            0,
-            6,
-            4
-          ]
-        },
-        "east": {
-          "texture": "#brick",
-          "uv": [
-            13,
-            0,
-            16,
-            4
-          ]
-        },
-        "west": {
-          "texture": "#brick",
-          "uv": [
-            0,
-            0,
-            3,
-            4
-          ]
-        },
-        "up": {
-          "texture": "#brick",
-          "uv": [
-            2,
-            0,
-            6,
-            3
-          ]
-        },
-        "down": {
-          "texture": "#brick",
-          "uv": [
-            2,
-            13,
-            6,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        12,
-        0
-      ],
-      "to": [
-        2,
-        16,
-        3
-      ],
-      "faces": {
-        "north": {
-          "texture": "#arch",
-          "uv": [
-            14,
-            0,
-            16,
-            4
-          ]
-        },
-        "south": {
-          "texture": "#arch",
-          "uv": [
-            0,
-            0,
-            2,
-            4
-          ]
-        },
-        "east": {
-          "texture": "#arch",
-          "uv": [
-            13,
-            0,
-            16,
-            4
-          ]
-        },
-        "west": {
-          "texture": "#arch",
-          "uv": [
-            0,
-            0,
-            3,
-            4
-          ]
-        },
-        "up": {
-          "texture": "#arch",
-          "uv": [
-            0,
-            0,
-            2,
-            3
-          ]
-        },
-        "down": {
-          "texture": "#arch",
-          "uv": [
-            0,
-            13,
-            2,
-            16
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        5,
-        12,
-        3
-      ],
-      "to": [
-        6,
-        16,
         16
       ],
       "faces": {
         "north": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
             10,
             0,
-            11,
-            4
+            16,
+            16
           ]
         },
         "south": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
-            5,
+            0,
             0,
             6,
-            4
+            16
           ]
         },
         "east": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
             0,
             0,
-            13,
-            4
+            16,
+            16
           ]
         },
         "west": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
-            3,
+            0,
             0,
             16,
-            4
+            16
           ]
         },
         "up": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
-            5,
-            3,
+            0,
+            0,
             6,
             16
           ]
         },
         "down": {
-          "texture": "#ember",
+          "texture": "#brick",
           "uv": [
-            5,
+            0,
             0,
             6,
-            13
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        2,
-        12,
-        3.5
-      ],
-      "to": [
-        4,
-        16,
-        5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#grate",
-          "uv": [
-            12,
-            0,
-            14,
-            4
-          ]
-        },
-        "south": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            0,
-            4,
-            4
-          ]
-        },
-        "east": {
-          "texture": "#grate",
-          "uv": [
-            11,
-            0,
-            12.5,
-            4
-          ]
-        },
-        "west": {
-          "texture": "#grate",
-          "uv": [
-            3.5,
-            0,
-            5,
-            4
-          ]
-        },
-        "up": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            3.5,
-            4,
-            5
-          ]
-        },
-        "down": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            11,
-            4,
-            12.5
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        2,
-        12,
-        9
-      ],
-      "to": [
-        4,
-        16,
-        10.5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#grate",
-          "uv": [
-            12,
-            0,
-            14,
-            4
-          ]
-        },
-        "south": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            0,
-            4,
-            4
-          ]
-        },
-        "east": {
-          "texture": "#grate",
-          "uv": [
-            5.5,
-            0,
-            7,
-            4
-          ]
-        },
-        "west": {
-          "texture": "#grate",
-          "uv": [
-            9,
-            0,
-            10.5,
-            4
-          ]
-        },
-        "up": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            9,
-            4,
-            10.5
-          ]
-        },
-        "down": {
-          "texture": "#grate",
-          "uv": [
-            2,
-            5.5,
-            4,
-            7
+            16
           ]
         }
       }
