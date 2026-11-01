@@ -24,6 +24,50 @@ Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled a
 | **Bronze III — Manufacturing and networks** | *Forge Hammer and Mechanical Press K1 basic operation user-confirmed; Rolling Mill full powered operation not explicitly confirmed; broader regressions pending* | Refractory kiln, forge hammer, rolling mill, mechanical press, boring machine, sawmill, mold-sand mixer, assembly station. Introduce larger line shafts, mechanical item distribution, lubrication, maintenance and meaningful quality differences. |
 | **Bronze IV — Iron preparation** | *Planned* | Iron ore concentration, controlled reduction/smelting, flux and charcoal, high-temperature refractories, mechanical air blast, bloomery furnace. First iron bloom completes Bronze's core progression and opens Iron Age. |
 
+## Agreed development order — finish machines, then integrate full ore progression (2026-11-01)
+
+**Decision:** complete the planned multiblocks and their first functioning gameplay
+loops before the broader **ore-by-ore progression pass**. The current
+Copper-focused recipes (including the Ore Roasting Kiln and Bronze III
+manufacturing loop) are baseline integration tests, **not** the final
+material/ore catalog. This is a sequencing decision, not permission to
+introduce new ores or redesign working machinery immediately.
+
+**Pass A — multiblock foundations first:** each planned machine must be
+formable with real JSON modules, have a useful functional recipe, existing
+Gear V2/HEAT/pressure connections where appropriate, working inventory/fluid
+I/O, persistence and a preliminary in-game model. Preserve a separate
+Magneticraft2 Studio visual reference for future art refinement. Verify
+individual milestones as they are built; deferring mineral breadth does
+**not** defer compilation, correctness, or essential regression checks.
+
+**Pass B — full multi-ore/material progression afterward:** use the
+existing [ore-processing-by-age matrix](ore-processing-by-age.md), ore
+catalog, and established Stone/Copper/Bronze/Iron progression to map each
+ore and mineral to appropriate *existing* operations. Expand the data-driven
+recipes for crushing, screening, washing, sifting, selective roasting,
+smelting/reduction, casting, forging, rolling and forming **only where the
+material's properties and machine purpose make sense**. A machine does
+not need to process every ore, and roasting must not become a universal
+mandatory step. The ore-specific path should have a real downstream
+consumer rather than dead-end intermediate items.
+
+During that integration pass, reconcile the previously agreed **material
+quality/ingot grades**, impurities, yields, fuel/HEAT/air requirements,
+machine-part wear and mass-conserving byproducts (tailings, dirty water,
+slag and metal scraps). Reuse rather than replace the existing
+Chalcocite/Cassiterite/Copper processing. Validate complete chains in
+survival, item/fluid automation, JEI/Patchouli and save/reload, including
+compatibility with vanilla resources, before calling the progression
+release-ready.
+
+**Important separation:** *machine K1 works* and *ore/material progression
+is complete* are different milestones. Do not silently label the latter
+complete merely because a machine processes one copper test recipe.
+The exact recipes, mineral-specific routes, numerical balance and rollout
+order of Pass B are **not agreed yet**; define and test them after the
+multiblock foundations, without inventing a universal ore pipeline.
+
 ## Multiblock candidates (footprints preliminary)
 
 
