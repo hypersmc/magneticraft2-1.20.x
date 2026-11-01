@@ -371,7 +371,7 @@
   "block.magneticraft2.bronze_rolling_mill": "Bronze Rolling Mill",
   "item.magneticraft2.bronze_rolling_mill": "Bronze Rolling Mill Controller",
   "item.magneticraft2.bronze_roller_sleeves": "Bronze Roller Sleeves",
-  "item.magneticraft2.copper_sheet": "Rolled Copper Sheet",
+  "item.magneticraft2.copper_sheet": "Copper Sheet",
   "message.magneticraft2.bronze_rolling_mill.status": "Rolling Mill: %s/%s ticks | Input: %s | Output: %s | Sleeves: %s/%s batches | Running: %s",
   "message.magneticraft2.bronze_rolling_mill.diagnostic": "Rolling Mill: %s | Input %s/%s | Gear V2 RPM %s/%s | Torque %s/%s | Load supplied: %s",
   "message.magneticraft2.bronze_rolling_mill.source": "Upstream: mill demand %s torque | total %s / available %s | Source connected: %s | Load active: %s",
