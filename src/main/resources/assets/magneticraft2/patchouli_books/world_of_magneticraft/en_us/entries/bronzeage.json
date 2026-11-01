@@ -930,11 +930,21 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Mechanical airflow$()$(br2)One pressure (air) unit is generated every 5 continuously powered ticks at a minimum of 16 RPM and 5 torque. Buffer capacity: 16 units. At most one unit transfers each tick out of the FRONT controller face into a directly touching valid pressure receiver. Existing Primitive Furnace bellows module supports this capability: place it immediately ahead of the blower outlet. If full, the blower stops registering load. K1 has no pipes, fluid output, consumable blades, or fuel requirement; do not assume it can yet feed the planned Bloomery."
+      "text": "$(bold)Mechanical airflow$()$(br2)One pressure (air) unit is generated every 5 continuously powered ticks at a minimum of 16 RPM and 5 torque. Buffer capacity: 16 units. Air is delivered from the FRONT controller outlet either directly to a receiver, or through Bronze Air Ducts (maximum 128 connected blocks), to an actual pressure-capable machine. Ore Roasting Kiln is a first Bronze consumer; the Primitive Furnace bellows module remains compatible. If the blower buffer is full it releases mechanical demand. K1 has no fluid output, automatic HEAT generation or Bloomery receiver."
     },
     {
       "type": "text",
-      "text": "$(bold)Air-Assisted Ore Roasting$()$(br2)The existing Ore Roasting Kiln accepts combustion air on the FRONT face of its formed controller. Point the K1 Industrial Air Blower outlet directly toward that face: both controllers must be adjacent and facing each other, both structures formed. During hot, valid, unblocked roasting batches, every 5 ordinary processing ticks consume 1 air unit and grant 1 extra oxidation-progress tick (+20% speed). Without air the old fuel-fired process is unchanged. Air does not create HEAT or bypass fuel. The Bloomery needs its own air receiver in a later phase."
+      "text": "$(bold)Air-Assisted Ore Roasting$()$(br2)The existing Ore Roasting Kiln accepts combustion air on the FRONT face of its formed controller. Attach a Bronze Air Duct to the formed blower controller's FRONT outlet and run the duct to the formed kiln controller's FRONT intake. A directly touching blower also remains supported. During hot, valid, unblocked roasting batches, every 5 ordinary processing ticks consume 1 air unit and grant 1 extra oxidation-progress tick (+20% speed). Without air the old fuel-fired process is unchanged. Air does not create HEAT or bypass fuel. The Bloomery needs its own air receiver in a later phase."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Air Ducts",
+      "recipe": "magneticraft2:bronze_air_duct",
+      "text": "A separate, passive network for forced air—not liquid water pipes. Connect a duct to the front controller of the formed Industrial Air Blower; run the ducts to the FRONT controller of a formed Ore Roasting Kiln (or another supported pressure receiver). The pipe's visible collars indicate actual links. Eight bronze ducts per recipe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Air Distribution K1$()$(br2)Bronze Air Ducts connect straight, turn and branch in all six directions. The blower alone pushes units: at least 16 RPM, 5 torque, and 1 air unit per 5 powered ticks. Ducts have no inventory, stored pressure or ticking block entities. One blower shares at most 1 air/tick across all branches; the first version scans a bounded 128-duct network and rotates between receivers. Only actually loaded chunks participate.$(br2)The Ore Roasting Kiln still accepts air on its formed front controller face, now via ducts rather than requiring controllers to touch. Its existing optional +20% oxidation progress while heated remains provisional; no pressure-drop, temperature, altitude, air leakage, gas physics or Bloomery receiver is implemented yet."
     }
   ],
   "sortnum": 3,

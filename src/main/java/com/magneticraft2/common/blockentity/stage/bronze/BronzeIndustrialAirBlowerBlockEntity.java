@@ -16,6 +16,8 @@ import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
+import com.magneticraft2.common.systems.PRESSURE.AirDuctNetwork;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.PRESSURE.IPressureStorage;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
@@ -51,7 +53,8 @@ import java.util.Locale;
  *
  * Air is a buffered, integer unit (NOT Forge fluid gas, HEAT or a new network).
  * Only the front face of the formed controller exports an output-only capability.
- * A directly adjacent receiver is automatically filled without phantom ducts.
+ * Its outlet may feed a directly adjacent receiver or a bounded passive bronze
+ * air-duct network. This is pressure-unit transport, not full gas physics.
  */
 public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
@@ -72,6 +75,7 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
     // and integrations querying the Forge capability repeatedly.
     private long lastOutputTick = Long.MIN_VALUE;
     private int outputThisTick;
+    private int nextReceiver; // Round-robin duct branch selection, not persistent pressure.
 
     // Isolated, directional send-only view of internal mutable pressure storage.
     // The storage itself may receive pressure to account for generated air, but
@@ -142,22 +146,52 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         return got;
     }
 
-    /** Push at most one air unit per server tick into the *actual* adjacent receiver. */
+    /**
+     * A receiver may accept only part of an offered unit. Retain the blower's
+     * original per-tick output budget across ducts and direct/manual extraction.
+     */
+    private boolean trySupply(IPressureStorage receiver) {
+        if (!receiver.canReceive()) return false;
+        int offered = drainAir(TRANSFER_RATE, true);
+        if (offered <= 0) return false;
+        // Receiver accepts first, source drains only the actually accepted
+        // amount. The operation runs on the authoritative server thread.
+        int received = receiver.receivePressure(offered, false);
+        if (received <= 0) return false;
+        return drainAir(Math.min(received, offered), false) > 0;
+    }
+
     private void transferAir() {
         if (level == null || !formed || drainAir(TRANSFER_RATE, true) == 0) return;
-        BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(matchedFacing));
+        BlockPos next = worldPosition.relative(matchedFacing);
+        if (!level.hasChunkAt(next)) return;
+        // The physical outlet may contact a pressure-capable furnace directly
+        // (old K1 saves remain valid) or an independent passive air-duct graph.
+        if (level.getBlockState(next).is(BlockRegistry.BRONZE_AIR_DUCT.get())) {
+            // Bounded BFS every five ticks, not every tick/frame. No duct BE,
+            // active pipe tickers or world-wide network scans.
+            if (level.getGameTime() % PUMP_INTERVAL != 0) return;
+            java.util.List<AirDuctNetwork.Receiver> receivers =
+                    AirDuctNetwork.findReceivers(level, next, worldPosition);
+            int size = receivers.size();
+            for (int i = 0; i < size; i++) {
+                int index = Math.floorMod(nextReceiver + i, size);
+                AirDuctNetwork.Receiver candidate = receivers.get(index);
+                if (candidate.handler().canReceive() && trySupply(candidate.handler())) {
+                    nextReceiver = (index + 1) % size;
+                    break;
+                }
+            }
+            return;
+        }
+        BlockEntity neighbor = level.getBlockEntity(next);
         if (neighbor == null) return;
-        // The existing bellows module accepts pressure even while its legacy
-        // capability reports canReceive() before structure formation.
-        if (neighbor instanceof BellowsMultiblockModuleEntity bellows && !bellows.isFormedModule()) return;
+        // Never deliver to the old bellows module unless it belongs to an
+        // actually formed Primitive Furnace structure.
+        if (neighbor instanceof BellowsMultiblockModuleEntity bellows
+                && !bellows.isFormedModule()) return;
         neighbor.getCapability(CapabilityPressure.PRESSURE, matchedFacing.getOpposite())
-                .ifPresent(receiver -> {
-                    if (!receiver.canReceive()) return;
-                    int offered = drainAir(TRANSFER_RATE, true);
-                    if (offered <= 0) return;
-                    int accepted = receiver.receivePressure(offered, false);
-                    if (accepted > 0) drainAir(Math.min(accepted, offered), false);
-                });
+                .ifPresent(this::trySupply);
     }
 
     private void tickBlower() {
@@ -207,10 +241,14 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         GearNode node = module == null ? null : module.getOrCreateGearNode();
         GearNetworkManager.MechanicalLoadState load =
                 GearNetworkManager.getInstance().getMechanicalLoadState(world, worldPosition);
-        BlockEntity receiver = world.getBlockEntity(worldPosition.relative(matchedFacing));
-        boolean receiverPresent = receiver != null
-                && receiver.getCapability(CapabilityPressure.PRESSURE, matchedFacing.getOpposite())
-                        .map(IPressureStorage::canReceive).orElse(false);
+        BlockPos next = worldPosition.relative(matchedFacing);
+        boolean receiverPresent = world.hasChunkAt(next)
+                && (world.getBlockState(next).is(BlockRegistry.BRONZE_AIR_DUCT.get())
+                    ? !AirDuctNetwork.findReceivers(world, next, worldPosition).isEmpty()
+                    : world.getBlockEntity(next) != null
+                      && world.getBlockEntity(next)
+                         .getCapability(CapabilityPressure.PRESSURE, matchedFacing.getOpposite())
+                         .map(IPressureStorage::canReceive).orElse(false));
         player.displayClientMessage(Component.translatable(
                 "message.magneticraft2.bronze_industrial_air_blower.status",
                 running, pressureHandler.getPressureStored(), AIR_CAPACITY,

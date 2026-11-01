@@ -19,6 +19,7 @@ import com.magneticraft2.common.block.stage.copper.MultiblockItemPortBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidInputBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
 import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeAirDuctBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalWaterPumpBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmUpperBlock;
@@ -190,6 +191,7 @@ public class BlockRegistry {
     public static final RegistryObject<MultiblockFluidInputBlock> MULTIBLOCK_FLUID_INPUT = BLOCKS.register("multiblock_fluid_input", MultiblockFluidInputBlock::new);
     public static final RegistryObject<MultiblockFluidOutputBlock> MULTIBLOCK_FLUID_OUTPUT = BLOCKS.register("multiblock_fluid_output", MultiblockFluidOutputBlock::new);
     public static final RegistryObject<WaterPipeBlock> WATER_PIPE = BLOCKS.register("water_pipe", WaterPipeBlock::new);
+    public static final RegistryObject<BronzeAirDuctBlock> BRONZE_AIR_DUCT = BLOCKS.register("bronze_air_duct", BronzeAirDuctBlock::new);
     public static final RegistryObject<MechanicalWaterPumpBlock> MECHANICAL_WATER_PUMP = BLOCKS.register("mechanical_water_pump", MechanicalWaterPumpBlock::new);
     public static final RegistryObject<MechanicalTransferArmBlock> MECHANICAL_TRANSFER_ARM = BLOCKS.register("mechanical_transfer_arm", MechanicalTransferArmBlock::new);
     public static final RegistryObject<MechanicalTransferArmUpperBlock> MECHANICAL_TRANSFER_ARM_UPPER =
