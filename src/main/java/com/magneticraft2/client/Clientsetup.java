@@ -36,6 +36,7 @@ import com.magneticraft2.client.render.blocks.stage.bronze.BronzeForgeHammerRend
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeRollingMillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalPressRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzePrecisionBoringMachineRenderer;
+import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalSawmillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.RotaryOreClassifierRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.WaterSettlingTankRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeCastingBasinRenderer;
@@ -135,6 +136,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_ROLLING_MILL_BE.get(), BronzeRollingMillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_PRESS_BE.get(), BronzeMechanicalPressRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_PRECISION_BORING_MACHINE_BE.get(), BronzePrecisionBoringMachineRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_SAWMILL_BE.get(), BronzeMechanicalSawmillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.ROTARY_ORE_CLASSIFIER_BE.get(), RotaryOreClassifierRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.WATER_SETTLING_TANK_BE.get(), WaterSettlingTankRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_CASTING_BASIN_BE.get(), BronzeCastingBasinRenderer::new);
@@ -227,6 +229,8 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_press_ram"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_spindle"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_sawmill_blade"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_sawmill_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_strike_plate"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_hammer_worn"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_stamp_mill_input_frame"));

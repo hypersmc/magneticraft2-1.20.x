@@ -54,11 +54,11 @@ function generate(id,model,variants){
   }
   if(controllers.length!==1)throw Error(`Expected one controller in ${id}_${dir}`);
   const [cx,cy,cz]=controllers[0],hosts=occupied.map(([x,y,z])=>[x-cx,y-cy,z-cz]);
-  // Bronze Stamp Mill I/O ports and Gear V2 input are real full-block
+  // Bronze Stamp Mill and Sawmill I/O ports and Gear V2 inputs are real full-block
   // module entities, not fillers. Preserve their entire model space and
   // let adjacent V2 filler/air hosts carry bordering decorative geometry.
   // Deliberately scoped to this multiblock; other legacy generators unchanged.
-  const reservedModuleHosts=new Set(id==="bronze_stamp_mill"
+  const reservedModuleHosts=new Set((id==="bronze_stamp_mill" || id==="bronze_mechanical_sawmill")
     ? occupied.filter(([x,y,z])=>{
         const name=st.blocks[st.layout[`layer${y+1}`][z][x]];
         return name==="magneticraft2:mechanical_input_module"

@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_mechanical_sawmill",
+  "input": {
+    "tag": "minecraft:logs_that_burn"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:sawn_pattern_stock",
+    "count": 3
+  },
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 16,
+    "torque": 4
+  }
+}

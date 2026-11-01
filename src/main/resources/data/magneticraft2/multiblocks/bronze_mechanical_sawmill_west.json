@@ -1,0 +1,113 @@
+{
+  "name": "bronze_mechanical_sawmill_west",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "U",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "C",
+          "S",
+          "I"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "O",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "I": "magneticraft2:mechanical_input_module",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:bronze_mechanical_sawmill",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_mechanical_sawmill_west",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_mechanical_sawmill",
+    "render_air_anchors": []
+  }
+}

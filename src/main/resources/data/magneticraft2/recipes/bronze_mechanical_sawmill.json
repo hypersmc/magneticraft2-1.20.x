@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BFB",
+    "PCP",
+    "BSB"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "F": {
+      "item": "magneticraft2:bronze_saw_blade"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_mechanical_sawmill"
+  }
+}

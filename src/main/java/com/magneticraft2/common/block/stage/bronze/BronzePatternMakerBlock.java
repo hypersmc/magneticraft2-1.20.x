@@ -112,11 +112,12 @@ public class BronzePatternMakerBlock extends HorizontalDirectionalBlock {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (held.is(ItemTags.PLANKS)) {
+        if (held.is(ItemTags.PLANKS) || held.is(ItemRegistry.ITEM_SAWN_PATTERN_STOCK.get())) {
             if (!level.isClientSide) {
                 ItemStack result = new ItemStack(state.getValue(BEARING_SELECTED)
                         ? ItemRegistry.ITEM_WOODEN_BEARING_PATTERN.get()
-                        : ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get());
+                        : ItemRegistry.ITEM_WOODEN_GEAR_PATTERN.get(),
+                        held.is(ItemRegistry.ITEM_SAWN_PATTERN_STOCK.get()) ? 2 : 1);
                 if (!player.getAbilities().instabuild) {
                     held.shrink(1);
                 }

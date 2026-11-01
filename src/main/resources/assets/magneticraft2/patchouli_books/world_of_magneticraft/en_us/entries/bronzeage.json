@@ -776,6 +776,60 @@
     {
       "type": "text",
       "text": "$(bold)Finishing castings$()$(br2)One Rough Bronze Bearing Casting + supplied Gear V2 power → one Bronze Bushing. The abrasive bit wears once on each completed piece; the machine stalls safely on insufficient speed, torque, exhausted bit or full output.$(br2)A Bronze Bushing may substitute for some materials in an alternative Mechanical Water Pump recipe. The original Copper Age pump recipe remains available. A bushing's input quality tags survive boring; further quality behavior in assembled machines belongs to the later multi-ore quality pass."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Mechanical Sawmill (K1)$()$(br2)The Mechanical Sawmill turns one burnable log into three precision-cut Pattern Stock pieces, consuming 160 powered ticks at 16 RPM and 4 torque. Feed stock to the existing Pattern Maker: each cut piece yields TWO matching reusable patterns, compared with one per vanilla plank. The plank route is unchanged. This is a precision workshop benefit, not mandatory early progression."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Sawmill Controller",
+      "recipe": "magneticraft2:bronze_mechanical_sawmill",
+      "text": "Build a sawmill controller from bronze, Copper Plates, a Precision Bronze Bearing, stone and the separate Saw Blade. A genuine Gear V2 shaft feeds the rear Mechanical Input."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Saw Blade",
+      "recipe": "magneticraft2:bronze_saw_blade",
+      "text": "A replaceable toothed bronze circular blade. It lasts 256 successful log cuts, never wearing while idle or output-blocked. Right-click the formed Sawmill with a fresh blade to service it."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Sawmill",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "P___P",
+            "PPPPP"
+          ],
+          [
+            "P___P",
+            "P___P",
+            "P___P"
+          ],
+          [
+            "SSISS",
+            "OSSSU",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_sawmill",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "5 wide × 3 high × 3 deep. The rear-center I module is a REAL Gear V2 input; U/O are the real LEFT feed and RIGHT output ports. Empty center cells must be air while forming. Patchouli mirrors the SOUTH JSON horizontally. Right-click front-center (0) to form; connect the back shaft, load burnable logs and retrieve pattern stock from O."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Cutting and maintenance$()$(br2)One ordinary log → three Precision-Cut Pattern Stock. Each stock is a prepared blank yielding two reusable wooden patterns at the original Pattern Maker, improving raw-timber pattern yield from four to six per log. No extra ore or exotic wood. The rear gearbox drives the rotating saw, and the real input is loaded only while work is feasible. Missing tool, full output, insufficient load or stopped shaft pause processing without consuming stock.$(br2)The saw and model are initial Studio references requiring visual verification."
     }
   ],
   "sortnum": 3,
@@ -794,6 +848,8 @@
     "magneticraft2:bronze_casting_basin": 14,
     "magneticraft2:bronze_lathe_cutter": 20,
     "magneticraft2:bronze_classifier_screen": 31,
-    "magneticraft2:settled_sediment": 37
+    "magneticraft2:settled_sediment": 37,
+    "magneticraft2:bronze_saw_blade": 71,
+    "magneticraft2:sawn_pattern_stock": 73
   }
 }

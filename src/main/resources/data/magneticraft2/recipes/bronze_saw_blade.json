@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BCB",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_saw_blade"
+  }
+}

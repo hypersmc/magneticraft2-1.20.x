@@ -118,6 +118,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_PRECISION_BORING_MACHINE.get());
                         entries.accept(ItemRegistry.ITEM_ABRASIVE_BORING_BIT.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_BUSHING.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_MECHANICAL_SAWMILL.get());
+                        entries.accept(ItemRegistry.ITEM_BRONZE_SAW_BLADE.get());
+                        entries.accept(ItemRegistry.ITEM_SAWN_PATTERN_STOCK.get());
                         entries.accept(ItemRegistry.ITEM_ROTARY_ORE_CLASSIFIER.get());
                         entries.accept(ItemRegistry.ITEM_WATER_SETTLING_TANK.get());
                         entries.accept(ItemRegistry.ITEM_CHARCOAL_RETORT.get());

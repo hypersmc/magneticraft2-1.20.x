@@ -85,7 +85,7 @@ multiblock foundations, without inventing a universal ore pipeline.
 | Bronze Rolling Mill | **K1 source candidate** (4 Copper Plates -> 4 Copper Sheets; Gear V2; sleeves; Gradle/in-game tests pending) | 5x3x3 | Cold copper sheets now; hot billet -> bronze sheet/rod later | Precision bearings |
 | Mechanical Press | **K1 basic gameplay user-confirmed (2026-11-01)** (4 Copper Sheets -> 4 Copper Panels; Gear V2; targeted regressions, Gradle and multiplayer outstanding) | **3x3x3** | Cold copper sheet -> useful stamped Copper Panel | Rolling Mill |
 | Precision Boring Machine | **K1 source candidate** (rough bronze bearing casting -> Bronze Bushing; Gear V2, bit wear, NBT quality; Gradle/runtime pending) | **5x3x3** | Precision internal bore, distinct from Lathe external turning; optional pump crafting sink | Lathe toolmaking + Foundry |
-| Mechanical Sawmill | Planned | 5x3x3 | Timber -> accurately cut lumber/pattern stock | Gear V2 |
+| Mechanical Sawmill | **K1 source candidate (build/gameplay pending)** | **5x3x3** | 1 burnable log -> 3 precision-cut pattern stock (6 Pattern Maker patterns); 256-cut blade; Gear V2 | Precision bearings, Pattern Maker |
 | Foundry Sand Mixer | Planned | 3x2x3 | Used sand + binder -> reusable molding sand, with loss | Foundry |
 | Industrial Air Blower | Planned | 3x3x3 | Gear V2 -> pressurized process air | Forge/Bloomery |
 | Mechanical Assembly Station | Planned | 5x3x5 | Prepared components -> composite machinery | Bronze III |
