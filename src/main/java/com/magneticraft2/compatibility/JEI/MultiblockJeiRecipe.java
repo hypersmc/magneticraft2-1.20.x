@@ -42,6 +42,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "bronze_forge_hammer");
     public static final ResourceLocation BRONZE_ROLLING_MILL =
             new ResourceLocation("magneticraft2", "bronze_rolling_mill");
+    public static final ResourceLocation BRONZE_MECHANICAL_PRESS =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_press");
     public static final ResourceLocation ROTARY_ORE_CLASSIFIER =
             new ResourceLocation("magneticraft2", "rotary_ore_classifier");
     public static final ResourceLocation WATER_SETTLING_TANK =

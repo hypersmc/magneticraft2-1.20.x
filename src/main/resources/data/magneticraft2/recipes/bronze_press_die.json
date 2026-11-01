@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BHB",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "H": {
+      "item": "minecraft:polished_blackstone"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_press_die"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_mechanical_press",
+  "input": {
+    "item": "magneticraft2:copper_sheet"
+  },
+  "input_count": 4,
+  "output": {
+    "item": "magneticraft2:copper_panel",
+    "count": 4
+  },
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 8
+  }
+}

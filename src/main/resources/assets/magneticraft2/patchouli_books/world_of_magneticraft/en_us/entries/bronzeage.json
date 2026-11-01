@@ -668,6 +668,60 @@
     {
       "type": "text",
       "text": "$(bold)Rolling output and maintenance$()$(br2)Feed four Copper Plates via the LEFT module, supply Gear V2 power from the rear, and collect four Copper Sheets from the RIGHT port. The rollers counter-rotate as the mechanical shaft turns. Output blockage, insufficient power or worn sleeves pause work without consuming items.$(br2)Hot bronze billets → bronze sheet/rod, quality changes, lubricants and press tooling are future data-driven recipes; no fake temperatures are introduced in K1."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Mechanical Press (K1)$()$(br2)The 3×3×3 Gear V2 press stamps four Copper Sheets into four Copper Panels. It is a forming machine, not another smelter or rolling mill. With at least 18 input RPM and 8 torque for 160 supplied ticks, a complete four-item batch becomes four usable panels.$(br2)Panels are immediately useful: four Copper Panels and two Glass craft a Copper Fluid Tank. The original six-Copper-Plate tank recipe remains available."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Mechanical Press Controller",
+      "recipe": "magneticraft2:bronze_mechanical_press",
+      "text": "Craft a Bronze Press Die first, then assemble the Mechanical Press controller using bronze, Copper Sheets, stone bricks and a precision bearing. Form the full 3×3×3 assembly before powering it."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bronze Press Die",
+      "recipe": "magneticraft2:bronze_press_die",
+      "text": "Replaceable press tooling. The initial installed die lasts 384 complete batches. Replace a worn die by right-clicking the formed controller with a new Bronze Press Die."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Press",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "P_P",
+            "PPP"
+          ],
+          [
+            "P_P",
+            "P_P",
+            "P_P"
+          ],
+          [
+            "SIS",
+            "OSU",
+            "S0S"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_press",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "A 3×3×3 open-framed press with a rear Mechanical Input (I), real LEFT Item Input (U), real RIGHT Primary Output (O), and front-center controller (0). The middle AIR space must remain empty. The Patchouli preview mirrors the SOUTH JSON layout horizontally, like the verified Forge Hammer. Right-click controller to form. Studio artwork is provisional."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Operating and maintenance$()$(br2)Insert four Copper Sheets via the LEFT port, connect the actual rear Gear V2 input at 18 RPM / 8 torque or better, and collect four Copper Panels at the RIGHT output after 160 supplied ticks. The die follows the input cam phase; no output is created on stalled or overloaded networks.$(br2)Full output pauses the batch, and the press die loses one of 384 life cycles per completed batch. Panels may be used in the alternative Copper Fluid Tank recipe. Hot shaping, forming mould selection and sheet quality are future features."
     }
   ],
   "sortnum": 3,
