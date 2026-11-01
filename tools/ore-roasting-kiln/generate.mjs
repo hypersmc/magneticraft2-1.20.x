@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {roastVisual,roastPort,roofStep} from './visuals.mjs';
+import {roastVisual,roastPort,roofStep,roofCourseHeight} from './visuals.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../..');
 const W=5,H=8,D=9,dirs=['south','west','north','east'];
 const materials={S:'minecraft:stone_bricks',B:'minecraft:bricks',
@@ -51,7 +51,7 @@ export function makeAssets(){
   }else vox.push([c.x*16,c.y*16,c.z*16,
    (c.x+1)*16,(c.y+1)*16,(c.z+1)*16]);
  }
- // Slate courses run continuously under the chimney, except at its AIR
+ // Eight-pixel stone tile courses run beneath the chimney, except at its AIR
  // shaft. Brick base and roof collision must match the actual baked geometry.
  for(let x=-2;x<=2;x++){
   let start=null;
@@ -59,9 +59,9 @@ export function makeAssets(){
    const present=z<=0&&typeAt(x,4,z)!=='A';
    if(present&&start===null)start=z;
    if(!present&&start!==null){
-    for(let strip=0;strip<4;strip++){
-     const px=strip*4,h=roofStep((x+2)*16+px+2);
-     vox.push([x*16+px,64,start*16,x*16+px+4,64+h,z*16]);
+    for(let strip=0;strip<2;strip++){
+     const px=strip*8,h=roofCourseHeight(x,px);
+     vox.push([x*16+px,64,start*16,x*16+px+8,64+h,z*16]);
     }
     start=null;
    }
@@ -73,7 +73,7 @@ export function makeAssets(){
   const z0=z===-8?12:0,z1=z===-6?4:16;
   for(let a=x0;a<x1;a+=4){
    const b=Math.min(a+4,x1);
-   const h=roofStep((x+2)*16+(a+b)/2);
+   const h=roofCourseHeight(x,a);
    vox.push([x*16+a,64+h,z*16+z0,x*16+b,80,z*16+z1]);
   }
  }

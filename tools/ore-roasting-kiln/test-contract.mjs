@@ -118,7 +118,7 @@ for(const name of [
  assert.ok(materialTextures.has(name),'Missing intended vanilla texture '+name);
 
 /** The screenshot regressions: actual narrow posts, real arch shoulders,
- * a wider front door, uninterrupted stone roof tiles and a chimney that meets the roof. */
+ * a wider front door, less corrugated roof courses and a fitted chimney. */
 const at=(x,y,z)=>assets.get(base+
  'assets/magneticraft2/models/multiblock/ore_roasting_kiln_south/part_'+x+'_'+y+'_'+z+'.json');
 const contains=(m,from,to,texture)=>m.elements.some(e=>
@@ -139,9 +139,10 @@ assert.ok(contains(at(2,3,0),[0,12,12],[12,16,16],'timber'),
  'Front gable crossbeam missing at the corner');
 assert.ok(contains(at(0,3,0),[0,12,12],[16,16,16],'timber'),
  'Crossbeam must span the middle of the front gable');
-assert.ok(contains(at(2,3,-1),[10,4,11],[16,7,16],'brick')&&
-          contains(at(2,3,-1),[10,7,9],[16,9,16],'brick'),
- 'Brick shoulder courses do not create a recessed stepped arch');
+assert.ok(contains(at(2,3,-1),[10,4,11],[14,7,16],'brick')&&
+          contains(at(2,3,-1),[14,4,11],[16,7,16],'arch')&&
+          contains(at(2,3,-1),[14,7,9],[16,9,16],'arch'),
+ 'A recessed masonry arch needs a visible fitted clay rim');
 assert.ok(contains(at(2,3,-1),[12,12,0],[16,16,16],'timber'),
  'The arched roasting chamber lacks its continuous timber header');
 for(const [x,a,b] of [[-1,8,16],[0,0,16],[1,0,8]]){
@@ -149,6 +150,9 @@ for(const [x,a,b] of [[-1,8,16],[0,0,16],[1,0,8]]){
   'Front charging door is not framed across its full two-block width: '+x);
 }
 const middleRoof=at(0,4,-4);
+assert.deepEqual(middleRoof.elements.filter(e=>e.faces.up?.texture==='#roof')
+ .map(e=>e.to[0]-e.from[0]),[8,8],
+ '4px corrugated roof stripes have returned');
 assert.ok(middleRoof.elements.some(e=>
  Object.values(e.faces).some(f=>f.texture==='#roof')),
  'Stone-tile roof courses missing');
@@ -159,18 +163,22 @@ const frontRoof=at(0,4,0);
 assert.ok(frontRoof.elements.some(e=>e.from[2]===14&&e.to[2]===16&&
  Object.values(e.faces).some(f=>f.texture==='#roofTrim')),
  'Front gable roof fascia missing');
-assert.ok(contains(at(0,4,-8),[0,14,12],[4,16,16],'brick'),
- 'Brick chimney base must grow out of the actual 14px roof course');
+assert.ok(frontRoof.elements.some(e=>e.faces.south?.texture==='#brick'),
+ 'Dark full-height gable fascia has returned; brick masonry must be visible');
+assert.ok(contains(at(0,4,-8),[0,14,12],[4,16,16],'iron'),
+ 'Narrow chimney flashing must sit on the actual 14px roof course');
 assert.ok(!contains(at(0,4,-8),[0,0,0],[16,16,16],'brick'),
  'Solid 3x3 chimney pedestal has returned');
-assert.ok(contains(at(-1,6,-7),[12,0,0],[16,16,16],'brick'),
- 'Upper flue wall thickness must remain 4px');
+assert.ok(contains(at(-1,6,-7),[12,0,0],[16,11,16],'brick')&&
+          contains(at(-1,6,-7),[12,11,0],[16,13,16],'iron')&&
+          contains(at(-1,6,-7),[12,13,0],[16,16,16],'brick'),
+ 'The 4px upper flue wall must keep a mechanically joined iron belt');
 assert.equal(typeAt(0,4,-7),'A','Flue must remain open through roof');
 const chimneyBoxes=assets.get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json').collision;
 assert.ok(chimneyBoxes.some(v=>v[1]===78&&v[4]===80&&v[5]-v[2]===4),
  'Chimney base collision must rise just above matching slate course');
 const voxel=get(base+'data/magneticraft2/multiblock_voxels/ore_roasting_kiln.json');
-assert.equal(voxel.collision.length,179);
+assert.equal(voxel.collision.length,167);
 assert.deepEqual(voxel.selection,voxel.collision);
 assert.equal(voxel.collision.filter(v=>v[4]===80&&v[1]>64).length,14);
 const book=get(base+'assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
@@ -187,4 +195,4 @@ const block=read('src/main/java/com/magneticraft2/common/block/stage/bronze/OreR
 assert.ok(entity.includes('port.linkFormedController(worldPosition)'));
 assert.ok(entity.includes('acceptsRecipeInput(ItemStack stack) { return false; }'));
 assert.ok(!block.includes('::serverTick'));
-console.log('Ore Roasting Kiln 5x8x9: arches, beams, tiled roof/flue, 4 facings, UVs, coplanarity, book and port contract passed (static only).');
+console.log('Ore Roasting Kiln 5x8x9: arches, beams, 8px roof courses, gable and chimney flashing, 4 facings, UVs, coplanarity, book and port contract passed (static only).');

@@ -16,7 +16,8 @@
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
-    "particle": "minecraft:block/bricks"
+    "particle": "minecraft:block/bricks",
+    "arch": "minecraft:block/terracotta"
   },
   "elements": [
     {
@@ -162,7 +163,7 @@
         13
       ],
       "to": [
-        16,
+        14,
         16,
         16
       ],
@@ -172,14 +173,14 @@
           "uv": [
             10,
             0,
-            16,
+            14,
             16
           ]
         },
         "north": {
           "texture": "#brick",
           "uv": [
-            0,
+            2,
             0,
             6,
             16
@@ -208,7 +209,7 @@
           "uv": [
             10,
             13,
-            16,
+            14,
             16
           ]
         },
@@ -216,6 +217,74 @@
           "texture": "#brick",
           "uv": [
             10,
+            0,
+            14,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        0,
+        13
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#arch",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#arch",
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#arch",
+          "uv": [
+            13,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#arch",
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#arch",
+          "uv": [
+            14,
+            13,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#arch",
+          "uv": [
+            14,
             0,
             16,
             3
@@ -231,7 +300,7 @@
       ],
       "to": [
         16,
-        5,
+        9,
         13
       ],
       "faces": {
@@ -239,7 +308,7 @@
           "texture": "#refractory",
           "uv": [
             10,
-            11,
+            7,
             16,
             16
           ]
@@ -248,7 +317,7 @@
           "texture": "#refractory",
           "uv": [
             0,
-            11,
+            7,
             6,
             16
           ]
@@ -257,7 +326,7 @@
           "texture": "#refractory",
           "uv": [
             0,
-            11,
+            7,
             13,
             16
           ]
@@ -266,7 +335,7 @@
           "texture": "#refractory",
           "uv": [
             3,
-            11,
+            7,
             16,
             16
           ]
@@ -294,12 +363,12 @@
     {
       "from": [
         10,
-        5,
+        9,
         0
       ],
       "to": [
         11,
-        12,
+        13,
         13
       ],
       "faces": {
@@ -307,36 +376,36 @@
           "texture": "#ember",
           "uv": [
             10,
-            4,
+            3,
             11,
-            11
+            7
           ]
         },
         "north": {
           "texture": "#ember",
           "uv": [
             5,
-            4,
+            3,
             6,
-            11
+            7
           ]
         },
         "west": {
           "texture": "#ember",
           "uv": [
             0,
-            4,
+            3,
             13,
-            11
+            7
           ]
         },
         "east": {
           "texture": "#ember",
           "uv": [
             3,
-            4,
+            3,
             16,
-            11
+            7
           ]
         },
         "up": {
@@ -362,7 +431,7 @@
     {
       "from": [
         12,
-        5,
+        9,
         3.5
       ],
       "to": [
@@ -377,7 +446,7 @@
             12,
             0,
             14,
-            11
+            7
           ]
         },
         "north": {
@@ -386,7 +455,7 @@
             2,
             0,
             4,
-            11
+            7
           ]
         },
         "west": {
@@ -395,7 +464,7 @@
             3.5,
             0,
             5,
-            11
+            7
           ]
         },
         "east": {
@@ -404,7 +473,7 @@
             11,
             0,
             12.5,
-            11
+            7
           ]
         },
         "up": {

@@ -16,7 +16,8 @@
     "bronze": "minecraft:block/cut_copper",
     "input": "magneticraft2:block/ore_roasting_kiln/input",
     "output": "magneticraft2:block/ore_roasting_kiln/output",
-    "particle": "minecraft:block/bricks"
+    "particle": "minecraft:block/bricks",
+    "arch": "minecraft:block/terracotta"
   },
   "elements": [
     {
@@ -164,13 +165,13 @@
       "to": [
         16,
         16,
-        16
+        14
       ],
       "faces": {
         "east": {
           "texture": "#brick",
           "uv": [
-            0,
+            2,
             0,
             6,
             16
@@ -181,7 +182,7 @@
           "uv": [
             10,
             0,
-            16,
+            14,
             16
           ]
         },
@@ -209,16 +210,84 @@
             13,
             10,
             16,
-            16
+            14
           ]
         },
         "down": {
           "texture": "#brick",
           "uv": [
             13,
-            0,
+            2,
             16,
             6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        0,
+        14
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#arch",
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#arch",
+          "uv": [
+            14,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#arch",
+          "uv": [
+            13,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#arch",
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#arch",
+          "uv": [
+            13,
+            14,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#arch",
+          "uv": [
+            13,
+            0,
+            16,
+            2
           ]
         }
       }

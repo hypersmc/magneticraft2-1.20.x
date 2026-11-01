@@ -48,7 +48,12 @@ const solids=new Set(['S','B','C','U','O']);
 const openings=new Set([-1,-2,-4,-5,-7,-8]);
 const rowStarts=new Set([-1,-4,-7]);
 const chimneyFoot=(x,z)=>Math.abs(x)<=1&&z>=-8&&z<=-6&&!(x===0&&z===-7);
-const blank=(E)=>({parent:'minecraft:block/block',ambientocclusion:false,textures,elements:E});
+const blank=(E)=>({
+ parent:'minecraft:block/block',ambientocclusion:false,
+ textures:E.some(e=>Object.values(e.faces).some(f=>f.texture==='#arch'))
+  ? {...textures,arch:'minecraft:block/terracotta'}:textures,
+ elements:E
+});
 export function roofTop(x,z){
  if(Math.abs(x)>2)throw Error('Outside roof '+x);
  // 4px-thick courses made within the existing roof cell only.
@@ -60,22 +65,40 @@ export function roofStep(globalPixel) {
  const dx=Math.abs(globalPixel-40);
  return Math.max(2,15-Math.floor(dx*13/40));
 }
+// Every 8px course shares its height with voxel collision and the chimney.
+// The old 4px courses made the entire roof read as corrugated metal.
+export function roofCourseHeight(x,localX){
+ const px=Math.floor(localX/8)*8;
+ return roofStep((x+2)*16+px+4);
+}
 function addRoof(E,add,c){
- // Uniform stone-tile courses with a restrained dark gable fascia; no black bands.
  const front=c.z===0,rear=c.z===-8;
- for(let strip=0;strip<4;strip++){
-  const from=strip*4,to=from+4,global=(c.x+2)*16+from;
-  const h=roofStep(global+2),prev=global===0?0:roofStep(global-2),
-        next=global===76?0:roofStep(global+6);
+ for(let strip=0;strip<2;strip++){
+  const from=strip*8,to=from+8,global=(c.x+2)*16+from;
+  const h=roofCourseHeight(c.x,from);
+  const prev=global===0?0:roofStep(global-4);
+  const next=global===72?0:roofStep(global+12);
   const start=rear?2:0,end=front?14:16;
+  // Only exposed outer faces; the stone texture is mapped pixel-for-pixel.
   add([from,0,start],[to,h,end],'roof',['up']);
   if(h>prev)add([from,prev,start],[to,h,end],'roof',['west']);
   if(h>next)add([from,next,start],[to,h,end],'roof',['east']);
   if(front||rear){
-   const a=rear?0:14,b=rear?2:16;
-   add([from,0,a],[to,h,b],'roofTrim',['up',front?'south':'north']);
-   if(h>prev)add([from,prev,a],[to,h,b],'roofTrim',['west']);
-   if(h>next)add([from,next,a],[to,h,b],'roofTrim',['east']);
+   // A masonry gable inset inside a thin, shaped dark stone coping.
+   // The earlier full-height dark fascia concealed the brick triangle.
+   const a=rear?0:14,b=rear?2:16,normal=front?'south':'north';
+   const trimBottom=Math.max(0,h-2);
+   if(trimBottom>0)
+    add([from,0,a],[to,trimBottom,b],'brick',[normal]);
+   add([from,trimBottom,a],[to,h,b],'roofTrim',['up',normal]);
+   for(const [side,neighbor] of [['west',prev],['east',next]]){
+    if(h<=neighbor)continue;
+    if(neighbor<trimBottom)
+     add([from,neighbor,a],[to,trimBottom,b],'brick',[side]);
+    const trimSideStart=Math.max(neighbor,trimBottom);
+    if(h>trimSideStart)
+     add([from,trimSideStart,a],[to,h,b],'roofTrim',[side]);
+   }
   }
  }
 }
@@ -84,12 +107,15 @@ function chimneyBounds(c){
          z0:c.z===-8?12:0,z1:c.z===-6?4:16};
 }
 function addChimneyBase(c,add){
- // The flue emerges directly from the slate: no oversized solid plinth.
  const {x0,x1,z0,z1}=chimneyBounds(c);
+ // Thin dark flashing is physically joined to the brick flue, sitting on
+ // the same roof course used by the collision profile.
  for(let a=x0;a<x1;a+=4){
-  const b=Math.min(a+4,x1);
-  const h=roofStep((c.x+2)*16+(a+b)/2);
-  if(h<16)add([a,h,z0],[b,16,z1],'brick',['north','south','east','west']);
+  const b=Math.min(a+4,x1),h=roofCourseHeight(c.x,a);
+  const collarTop=Math.min(16,h+2);
+  add([a,h,z0],[b,collarTop,z1],'iron',['north','south','east','west']);
+  if(collarTop<16)add([a,collarTop,z0],[b,16,z1],
+                       'brick',['north','south','east','west']);
  }
 }
 /**
@@ -119,25 +145,35 @@ function volumeArch(c,add){
  const left=c.x===-2,start=rowStarts.has(c.z),outerA=start?13:0,
        outerB=start?16:3,insideA=start?0:3,insideB=start?13:16;
  const p=(a,b,m)=>box6(add,a,b,m,left);
+ // The dark backing is inset by 6px. The visible arch is built of real
+ // clay masonry, not an orange texture placed on a rectangular hole.
  p([0,0,0],[9,16,16],'brick');
  p([9,0,0],[10,16,16],'soot');
  if(c.y<3){
-  p([10,0,outerA],[16,16,outerB],c.z===-8?'timberEnd':'brick');
+  if(c.z===-8)
+   p([10,0,outerA],[16,16,outerB],'timberEnd');
+  else{
+   p([10,0,outerA],[14,16,outerB],'brick');
+   p([14,0,outerA],[16,16,outerB],'arch');
+  }
   if(c.y===1){
-   p([10,0,insideA],[16,5,insideB],'refractory');
-   p([10,5,insideA],[11,12,insideB],'ember');
+   p([10,0,insideA],[16,9,insideB],'refractory');
+   p([10,9,insideA],[11,13,insideB],'ember');
   }else p([10,0,insideA],[11,5,insideB],'ember');
  }else{
-  // Each 2-block bay has stepped brick voussoirs and an actual arched void.
-  // The continuous timber header *rests on* the brick crown.
+  // Mirrored stepped voussoirs curve inward, closing the top of each bay.
+  // Their outer face is clay-coloured and distinct from the brick wall.
   for(const [low,high,width] of [[0,4,3],[4,7,5],
                                    [7,9,7],[9,11,9],[11,12,16]]){
    const a=start?(width===16?0:16-width):0,b=start?16:width;
-   p([10,low,a],[16,high,b],'brick');
+   p([10,low,a],[14,high,b],'brick');
+   p([14,low,a],[16,high,b],'arch');
   }
   p([12,12,0],[16,16,16],'timber');
  }
- const low=c.y===1?5:0,high=c.y===3?9:16,zBar=start?4:11;
+ // Raise the refractory sill so this reads as a squat roasting arch,
+ // rather than a window slit stretching from the foundation to the roof.
+ const low=c.y===1?9:0,high=c.y===3?9:16,zBar=start?4:11;
  p([12,low,zBar],[14,high,zBar+1.5],'grate');
  if(c.y===2)p([11,6,insideA],[12,7,insideB],'iron');
 }
@@ -226,8 +262,17 @@ export function roastVisual(c,d,lookup){
  }else if(y>=5&&y<=7){
   const {x0,x1,z0,z1}=chimneyBounds(c);
   const exterior=y===7?13:16;
-  add([x0,0,z0],[x1,exterior,z1],'brick',
-      ['north','south','east','west','up','down']);
+  // A slender structural iron band interrupts the tall plain masonry stack
+  // without changing the chimney footprint or blocking its flue.
+  if(y===6){
+   add([x0,0,z0],[x1,11,z1],'brick',
+       ['north','south','east','west','up','down']);
+   add([x0,11,z0],[x1,13,z1],'iron',
+       ['north','south','east','west']);
+   add([x0,13,z0],[x1,16,z1],'brick',
+       ['north','south','east','west','up','down']);
+  }else add([x0,0,z0],[x1,exterior,z1],'brick',
+             ['north','south','east','west','up','down']);
   if(y===7){
    const xa=x===-1?10:0,xb=x===1?6:16;
    const za=z===-8?10:0,zb=z===-6?6:16;
