@@ -342,5 +342,8 @@
   "block.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
   "item.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
   "message.magneticraft2.ore_roasting_kiln.incomplete": "Ore Roasting Kiln incomplete",
-  "message.magneticraft2.ore_roasting_kiln.prototype": "Roasting Kiln formed. Selective sulfide roasting and HEAT are not implemented yet."
+  "item.magneticraft2.roasted_copper_concentrate": "Roasted Copper Concentrate",
+  "message.magneticraft2.ore_roasting_kiln.fuel_added": "Roasting Kiln fuel added",
+  "message.magneticraft2.ore_roasting_kiln.fuel_rejected": "Roasting Kiln fuel rejected (invalid or fuel queue full)",
+  "message.magneticraft2.ore_roasting_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Roasting: %s/%s | Input: %s | Output: %s"
 }

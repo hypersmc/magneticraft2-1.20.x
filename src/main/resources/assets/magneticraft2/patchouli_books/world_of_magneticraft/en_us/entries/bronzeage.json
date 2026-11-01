@@ -376,13 +376,13 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze III — Refractory Kiln (K1)$()$(br2)Build the 5×4×5 masonry kiln to prepare for high-temperature ceramics. K1 implements construction and formation only: fuel, clay/sand batches, fired products and HEAT are reserved for K2, and the input port is intentionally locked until recipes exist. The front charging hatch is visually closed, while the central roof flue stays AIR."
+      "text": "$(bold)Bronze III — Refractory Kiln$()$(br2)Build the 5×4×5 masonry kiln to prepare high-temperature ceramics. The working firing process accepts prepared clay/sand batches and solid fuel, stores HEAT, and produces fired refractory ceramics through real input and output ports. Its front charging hatch remains a visual model; the roof flue stays AIR."
     },
     {
       "type": "patchouli:crafting",
       "title": "Refractory Kiln Controller",
       "recipe": "magneticraft2:refractory_kiln",
-      "text": "Craft the controller, then build the full structure from Stone Bricks and Bricks. This is a structural prototype, not yet a working firing kiln."
+      "text": "Craft the controller and form the 5×4×5 refractory kiln. Add solid fuel at its controller, supply Unfired Refractory Batches through its real input port, and collect fired ceramics from the output port."
     },
     {
       "type": "patchouli:multiblock",
@@ -550,7 +550,15 @@
         },
         "symmetrical": false
       },
-      "text": "Build the 5×8×9 Ore Roasting Kiln from the eight layers shown. Stone Bricks form its foundation; three Brick layers form the hollow roasting chamber. Layer 5 supports the pitched roof, and layers 6–8 build a THREE-course Brick chimney around the same central AIR shaft. Keep the roof flue and all other underscores empty. The two front ports are real Item Input/Output blocks. Right-click the controller to form. Roasting gameplay is not yet active."
+      "text": "Form the same 5×8×9 kiln with the front item Input/Output ports and open chimney flue. Feed at least four Copper Concentrate through the real Input port. Add normal solid fuel at the controller; empty-hand use displays HEAT and batch progress, sneak-use returns queued unused fuel. The Output port supplies Roasted Copper Concentrate. Structure and visual models are provisional."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze II — Selective Ore Roasting (K2)$()$(br2)The first provisional batch converts $(bold)4 Copper Concentrate → 4 Roasted Copper Concentrate$() in 600 active ticks, once the masonry reaches sufficient HEAT. Feed with the actual Item Input port and collect at the real Output port. The controller burns ordinary solid furnace fuel. A full output pauses progress and prevents new ignition; ongoing fuel continues burning.$(br2)Process requirements are JSON/data-pack based, and HEAT numbers are configurable."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why roast the ore?$()$(br2)The Primitive Furnace can smelt one Roasted Copper Concentrate with Coal into $(bold)4 Copper Ingots plus Slag$(), compared with 3 ingots from unroasted Copper Concentrate. This provisional Bronze-age route rewards extra fuel and a large dedicated installation while preserving the original Copper path.$(br2)Selective roasting for other mineral species, exhaust capture, sulfur handling, material quality and dedicated smelting remain future work."
     }
   ],
   "sortnum": 3,

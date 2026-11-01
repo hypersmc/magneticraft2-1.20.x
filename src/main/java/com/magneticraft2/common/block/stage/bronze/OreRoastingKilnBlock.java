@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** 5x8x9 JSON Ore Roasting Kiln, structural visual prototype. */
+/** 5x8x9 JSON Ore Roasting Kiln: server-ticked fuel/HEAT batch roaster. */
 public final class OreRoastingKilnBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
@@ -114,7 +114,8 @@ public final class OreRoastingKilnBlock extends BaseBlockMagneticraft2 {
     @Override
     public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(
             Level level, BlockState state, BlockEntityType<T> type) {
-        // No per-tick work until roasting mechanics exist.
-        return null;
+        // Processing is server-authoritative; block models remain static.
+        return level.isClientSide ? null : createTickerHelper(type,
+                BlockEntityRegistry.ORE_ROASTING_KILN_BE.get(), OreRoastingKilnBlockEntity::serverTick);
     }
 }

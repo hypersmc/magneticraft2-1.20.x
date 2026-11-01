@@ -95,6 +95,9 @@ public class ItemRegistry {
     // Copper-age expansion: processed material forms (quality grades follow later).
     public static final RegistryObject<Item> ITEM_WASHED_CHALCOCITE = ITEMS.register("washed_chalcocite", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_COPPER_CONCENTRATE = ITEMS.register("copper_concentrate", () -> new Item(new Item.Properties()));
+    // K2 selective ore-roasting output; separate from the existing Copper-age route.
+    public static final RegistryObject<Item> ITEM_ROASTED_COPPER_CONCENTRATE =
+            ITEMS.register("roasted_copper_concentrate", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_SIFTER_MESH = ITEMS.register("sifter_mesh", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_CRUSHED_QUARTZ = ITEMS.register("crushed_quartz", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_WASHED_QUARTZ = ITEMS.register("washed_quartz", () -> new Item(new Item.Properties()));

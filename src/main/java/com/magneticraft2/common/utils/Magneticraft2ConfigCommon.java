@@ -36,6 +36,12 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> KilnPassiveHeatLoss;
         public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringHeatPerTick;
+        // Provisional high-temperature ore-roasting balance in HEAT units.
+        public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatCapacity;
+        public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatPerFuelTick;
+        public final ForgeConfigSpec.ConfigValue<Integer> RoasterPassiveHeatLoss;
+        public final ForgeConfigSpec.ConfigValue<Integer> RoasterRoastingThreshold;
+        public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatPerProcessingTick;
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -98,6 +104,18 @@ public class Magneticraft2ConfigCommon {
                     .defineInRange("firingThreshold", 9000, 1, 1000000);
             KilnFiringHeatPerTick = builder.comment("HEAT consumed per firing tick")
                     .defineInRange("firingHeatPerTick", 6, 1, 100000);
+            builder.pop();
+            builder.push("Ore Roasting Kiln (provisional K2, Magneticraft HEAT units)");
+            RoasterHeatCapacity = builder.comment("Maximum brick thermal mass HEAT, not degrees Celsius")
+                    .defineInRange("heatCapacity", 48000, 1, 1000000);
+            RoasterHeatPerFuelTick = builder.comment("HEAT from one tick of solid-fuel burning")
+                    .defineInRange("heatPerFuelTick", 32, 1, 100000);
+            RoasterPassiveHeatLoss = builder.comment("HEAT lost per loaded tick")
+                    .defineInRange("passiveHeatLoss", 2, 0, 100000);
+            RoasterRoastingThreshold = builder.comment("Minimum HEAT for roasting; cannot exceed heatCapacity")
+                    .defineInRange("roastingThreshold", 16000, 1, 1000000);
+            RoasterHeatPerProcessingTick = builder.comment("HEAT consumed per active roasting tick")
+                    .defineInRange("heatPerProcessingTick", 10, 1, 100000);
             builder.pop();
             builder.pop();
         }

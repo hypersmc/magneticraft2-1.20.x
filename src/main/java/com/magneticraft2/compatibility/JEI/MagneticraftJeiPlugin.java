@@ -146,6 +146,7 @@ public class MagneticraftJeiPlugin implements IModPlugin {
         registerCatalyst(registration, MultiblockJeiRecipe.ROTARY_ORE_CLASSIFIER);
         registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);
         registerCatalyst(registration, MultiblockJeiRecipe.CHARCOAL_RETORT);
+        registerCatalyst(registration, MultiblockJeiRecipe.ORE_ROASTING_KILN);
     }
 
     private static void registerCatalyst(

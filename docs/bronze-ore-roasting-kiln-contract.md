@@ -1,4 +1,4 @@
-# Ore Roasting Kiln — first reference visual rebuild (2026-10-31)
+# Ore Roasting Kiln — structural prototype and K2 functional roasting
 
 **Source of truth:** the FIRST Ore Roasting Kiln concept selected by the user; a long masonry furnace with three large arched roasting vents per side, substantial iron structural ribs, timber headers, a pitched segmented stone roof, a clear front charging door/firebox, and a rear brick chimney. **Only the illustration's unrealistic large gear and external shaft are intentionally omitted.**
 
@@ -141,3 +141,99 @@ still performs no roasting: processing and chemistry are out of scope.
 ### Iron-capped support joints
 
 Real dark metal collars (vanilla Polished Deepslate) now occupy the upper three pixels of each timber pier just below the roof-bearing beam, and the front/rear timber end posts of the three arch bays receive the same treatment. They replace part of the existing wood rather than overlap it. The baked-model contract checks both the collar and the connected beam, so these joints do not regress into floating decorations.
+
+## 2026-11-01 — Model freeze and K2 functional roasting
+
+**User decision:** do not continue chasing 99% fidelity to the concept illustration.
+The current baked models, UVs, Voxel V2 shape and canonical **5×8×9**
+multiblock blueprint remain frozen; future model work will be handled in
+Magneticraft2 Studio when it is available. The original reference illustration
+shared in the development conversation (Ore Roasting Kiln, Bronze Age, long
+brick building with **three broad recessed roasting arches per side**, heavy
+timber/iron framing, pitched stone roof, chimney and dark firebox grilles)
+remains the **visual reference**. The screenshot is **not yet archived as an
+image file in this repository**; keep that distinction clear for later Studio
+imports. The reference panel's "5×3×9" is concept-only, not the currently
+implemented eight-block-high construction blueprint. The optional big external
+drive gear is NOT part of the agreed physical structure.
+
+**K2 functionality is a provisional material-flow milestone, not final
+metallurgy balance:** four `magneticraft2:copper_concentrate` enter the
+existing real Input port as one batch. A `magneticraft2:multiblock_processing`
+recipe produces four `magneticraft2:roasted_copper_concentrate` in **600
+active processing ticks**. Four units per batch help justify this large
+furnace; no item multiplication takes place in roasting itself. The existing
+Primitive Furnace receives a second, additive JSON recipe:
+one roasted concentrate plus one Coal -> **four vanilla Copper Ingots plus
+one Slag** (240 ticks, bellows still required), versus the unchanged Copper
+Age route of one unroasted concentrate -> three Copper Ingots plus one Slag.
+Extra yield is a *provisional balance reward* for an additional fuel/HEAT step,
+not a finalized geochemical mass-equivalence claim. Do not force roasting in
+Stone/Copper progression or silently remove old recipes.
+
+**Thermal contract:** reuse the Refractory Kiln server-only fuel/HEAT system.
+The controller accepts normal Forge smelting fuels on right-click (reject
+fuel with a remaining container). Queue up to 16 identical fuel items; use
+empty-hand sneak-click to retrieve unburned queued items and normal empty-hand
+click for machine status. Config defaults: **48,000 HEAT capacity, +32 HEAT
+per burning tick, -2 passive HEAT per loaded tick, 16,000 HEAT threshold,
+-10 HEAT per active roasting tick**. All are gameplay units, *not Celsius*.
+A lit item continues burning while output is blocked, but no new item ignites
+and processing progress pauses until there is output space. New recipes are
+selected by machine ID; K2 rejects unsupported mechanical/fluid/byproduct
+recipes instead of silently discarding ingredients.
+
+**Persistence and authority:** `RoasterFuel`, `RoasterBurnTotal`,
+`RoasterBurnRemaining`, `RoasterProgress`, `RoasterRecipe` and
+`RoasterActiveInput` persist in the controller NBT, alongside the existing
+base inventory, HEAT and multiblock data. Input identity and NBT must match
+the in-progress recipe; changes reset partial progress. Successful batches
+first simulate output capacity, then consume exact input counts and insert
+the exact output stack, once on the server. Breakage drops unburned fuel
+and uses the established inventory/multiblock teardown. Only the real
+Item Input and Primary Output modules expose item automation; controller
+ITEM_HANDLER bypass stays disabled. No client-side ticker, replacement
+renderer, fake output ports or separate fuel-energy implementation.
+
+**V1 art for roasted concentrate** reuses the already-existing
+`copper_concentrate.json` 3D item geometry with a distinct red-terracotta
+vanilla texture. It is intentionally functional placeholder art, not a
+Studio-approved final sprite. JEI uses the existing generic multiblock
+recipe category and now registers the Ore Roasting Kiln controller as a
+catalyst. Patchouli documents the batch and its downstream smelting use.
+
+**Not part of K2:** sulfide/oxide chemistry for every ore, actual gaseous
+sulfur handling or pollution, exhaust processing, ash/slag recovery,
+fuel/air-blower automation, replaceable refractory lining wear, advanced
+batch size and heat balance, or material-quality tier propagation. The
+existing Copper concentrate item has no quality contract for roasting; do
+not invent an incompatible material-quality system. Any next chemical
+recipe must be accepted individually and have a tested downstream sink.
+
+### Acceptance and limitations
+
+1. Run `node tools/ore-roasting-kiln/test-k2-contract.mjs` and all existing
+   ore-roaster model/blueprint tests, then **`./gradlew build`**.
+2. Form all four facings in Minecraft, including one formation across a
+   save/reload, and verify chimney AIR, real ports and collision remain intact.
+3. Feed 3 Copper Concentrate (must not start), add the fourth; add Coal or
+   Charcoal as ordinary solid fuel and watch HEAT/progress/status.
+4. With output blocked, confirm no new fuel ignites, progress pauses and
+   no input is consumed. Clear output, complete exactly one 4->4 batch,
+   and check that the auto-extraction and manual extraction both work.
+5. Pause the machine halfway through a batch by removing fuel, then
+   reload the world and confirm HEAT/progress/fuel/input state continue
+   without duplication. Change input item/NBT and verify progress resets.
+6. Break during/after a run and confirm the queued fuel and inventory are
+   returned exactly once. Test with a second connected client separately.
+7. Complete the downstream Primitive Furnace 1->4 smelt with Coal and
+   bellows, confirm the existing 1->3 route is unchanged, and check both
+   recipes/catalysts in JEI and Patchouli.
+8. Visually verify only that the existing 5×8×9 model and genuine ports
+   still load. The current rendering is deliberately **not approved** as
+   a near-reference recreation.
+
+**Status:** this section documents an authored K2 candidate. The Refractory
+Kiln's firing loop has been confirmed working by the user. The Ore Roasting
+Kiln's new K2 gameplay must still pass Gradle and in-game testing before
+being called verified or completed.
