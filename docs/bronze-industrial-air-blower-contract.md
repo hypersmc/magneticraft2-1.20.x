@@ -7,7 +7,7 @@
 - Produce **1 integer pressure/air unit per 5 consecutive supplied ticks**, with a buffer of **16 units**. No production when stalled, overloaded or at capacity. Load releases when the buffer is full.
 - Transfer **at most 1 air unit per server tick** from the **front face of the controller** to the directly adjacent PRESSURE receiver, or expose a directional send-only PRESSURE capability on that front face for compatible integrations. Other faces and the unformed machine do not expose air. External callers cannot inject pressure into the output capability. Never mint free air in the client.
 - Buffer and partial stroke are persisted by block entity NBT. Running state must revalidate on the next server tick. Dismantling releases Gear V2 demand; stored compressed air is lost when physically broken.
-- **Existing consumer:** `BellowsMultiblockModuleEntity`, which already accepts `CapabilityPressure.PRESSURE` for the Primitive Furnace. Set the bellows-module block immediately in front of the outlet to test this. Existing Copper Mechanical Bellows uses the same protocol. This is *not yet a combustion-air consumer for the Refractory Kiln, Ore Roasting Kiln, Forge or future Bloomery*; those need a receiver contract, physical connection and furnace gating before they can claim support.
+- **Real industrial consumer:** The **Ore Roasting Kiln**, on the formed controller's outward front face, adjacent and facing the blower outlet, consumes 1 air per 5 heated production ticks for one bonus oxidation-progress tick (+20% process rate). Old Roaster recipes, HEAT and fuel behavior remain unchanged. The Primitive Furnace bellows module also accepts the same pressure. The future Bloomery does not yet receive air.
 - No new electrical system, air-block entities, fake pipes, HEAT source, Forge fluid, fuel or wear-item system. K1's fan is non-consumable. Existing PRESSURE code has legacy comments about future removal; review migration before building any broad air network.
 
 ## Multiblock
@@ -24,7 +24,7 @@ Y0: SIS    Y1: PAP    Y2: PPP
 ## Source and illustration
 Canonical editable geometry JSON: `tools/multiblock-models/designs/bronze_industrial_air_blower.json`. Static V2 model sources and four sets of block-host meshes are generated from that design. Separate baked rotor and coupling models turn in a client-only BER; no per-frame voxel generation. Edit design JSON and rerun the existing V2 generator for final Studio changes. Additional orthographic study: `docs/reference/bronze-industrial-air-blower-studio.svg`.
 
-The **visual concept poster** is only art direction. Any generated scene/text showing pipes, direct Bloomery/Roaster hookup, wear parts, 4×2×3 dimensions, volumetric liters/sec or speed/torque figures other than the contract is **non-canonical and unimplemented**.
+The **visual concept poster** is only art direction. Any generated scene/text showing pipes, direct **Bloomery** hookup, wear parts, 4×2×3 dimensions, volumetric liters/sec or other speed/torque figures is **non-canonical and unimplemented**. A direct Ore Roasting Kiln controller connection is now real in source but remains unverified in-game.
 
 ## Acceptance & regression
 1. Execute `node tools/multiblock-models/build-designs.mjs --check`, `node tools/multiblock-models/generate.mjs --check`, `node tools/bronze-industrial-air-blower/test-contract.mjs`, then `./gradlew build` on an environment with the repo and dependencies. Record actual outputs.
@@ -36,4 +36,12 @@ The **visual concept poster** is only art direction. Any generated scene/text sh
 7. Test multiple blower sources sharing one source network; profile FPS around several, and complete a real server plus two-client test. Verify preexisting Mechanical Bellows, furnace recipes, ore roasting, Sawmill and Mixer are unaffected.
 
 ## K1 limitations
-Air volume is counted in integer pressure units inherited from the current capability. This **does not** define real-world pressure, volume, standard flow rates, compressor temperature, or air duct routing. No actual Refractory Kiln / Bloomery integration has been implemented. Do not introduce HEAT or ore processing bonuses until the receiver architecture and progression gating have been designed and tested.
+Air volume is counted in integer pressure units inherited from the current capability. This **does not** define real-world pressure, volume, standard flow rates, compressor temperature, or air duct routing. Roaster oxidation-progress assistance is implemented as an optional real receiver; Refractory Kiln and Bloomery integration still do not exist. Do not invent HEAT injection or ore-yield bonuses.
+
+## In-game rotor overlap / industrial-air follow-up
+
+The static `upper_gearbox_shell` (local x1..15 y19..32 z-17..-12) actually intersects the rotating impeller swept region (x0..16 y16..32 z-18..-14), consistent with the user's Z-fighting screenshot. The static gearbox has been regenerated behind the fan with explicit radial clearance, using the canonical V2 geometry pipeline; do not mask with render offsets. The Ore Roaster intake is the current controller FRONT (not a new module) and only boosts valid hot processing; it never supplies HEAT.
+
+## Post-change verification target
+
+The new source design rejects any static cuboid intersecting the rotor sweep (x0..16, y16..32, z-18..-14), and preserves the original 3×3×3 JSON layer layouts. New back gearcase sits behind the impeller, with a spindle bearing reaching the hub. Retest the user's exact screenshot camera perspective plus all four orientations. A code-level intersection test passing does not constitute visual verification. Roasting throughput should be checked over at least 100 heated ticks with and without a full air supply; ensure exactly one air unit consumed per five valid heated ticks and no consumption while blocked.

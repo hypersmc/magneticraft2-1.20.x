@@ -15,15 +15,15 @@
       "from": [
         0,
         0,
-        1
+        6.9375
       ],
       "to": [
         6,
         6,
-        1.0625
+        7
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#stone",
           "uv": [
             0,
@@ -38,15 +38,15 @@
       "from": [
         0,
         0,
-        6.9375
+        1
       ],
       "to": [
         6,
         6,
-        7
+        1.0625
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#stone",
           "uv": [
             0,
@@ -199,15 +199,15 @@
       "from": [
         1,
         6,
-        2
+        5.9375
       ],
       "to": [
         5,
         16,
-        2.0625
+        6
       ],
       "faces": {
-        "north": {
+        "south": {
           "texture": "#timber",
           "uv": [
             1,
@@ -222,15 +222,15 @@
       "from": [
         1,
         6,
-        5.9375
+        2
       ],
       "to": [
         5,
         16,
-        6
+        2.0625
       ],
       "faces": {
-        "south": {
+        "north": {
           "texture": "#timber",
           "uv": [
             1,

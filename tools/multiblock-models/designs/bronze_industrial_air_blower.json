@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "description": "Bronze IV Industrial Air Blower K1; timber uprights, stone base, bronze fan shroud, internal Z-axis rotor fed via enclosed elevated drive from the existing low rear Gear V2 mechanical input. Genuine output-only pressure port on front controller face; no invented air pipes or HEAT.",
+  "description": "Industrial Air Blower K1 V2. Rear mechanical input below an elevated enclosed transmission behind the moving rotor. Fan has at least 1px radial clearance from static shroud; no static box intersects swept rotor x0..16,y16..32,z-18..-14. Gears/shaft are real supported geometry, no offsets.",
   "textures": {
     "stone": "minecraft:block/stone_bricks",
     "timber": "minecraft:block/stripped_spruce_log",
@@ -264,48 +264,6 @@
       ]
     },
     {
-      "name": "lower_gearbox_shell",
-      "material": "dark",
-      "from": [
-        2,
-        12,
-        -17
-      ],
-      "to": [
-        14,
-        20,
-        -11
-      ]
-    },
-    {
-      "name": "upper_gearbox_shell",
-      "material": "dark",
-      "from": [
-        1,
-        19,
-        -17
-      ],
-      "to": [
-        15,
-        32,
-        -12
-      ]
-    },
-    {
-      "name": "upper_bearing_cap",
-      "material": "bronze",
-      "from": [
-        1,
-        30,
-        -17
-      ],
-      "to": [
-        15,
-        34,
-        -11
-      ]
-    },
-    {
       "name": "fan_shroud_left",
       "material": "bronze",
       "from": [
@@ -314,8 +272,8 @@
         -19
       ],
       "to": [
-        0,
-        34,
+        -1,
+        33,
         -12
       ]
     },
@@ -323,13 +281,13 @@
       "name": "fan_shroud_right",
       "material": "bronze",
       "from": [
-        16,
+        17,
         15,
         -19
       ],
       "to": [
         19,
-        34,
+        33,
         -12
       ]
     },
@@ -338,12 +296,12 @@
       "material": "bronze",
       "from": [
         0,
-        31,
+        33,
         -19
       ],
       "to": [
         16,
-        34,
+        36,
         -12
       ]
     },
@@ -352,12 +310,12 @@
       "material": "bronze",
       "from": [
         0,
-        15,
+        12,
         -19
       ],
       "to": [
         16,
-        18,
+        15,
         -12
       ]
     },
@@ -528,6 +486,48 @@
         30,
         8
       ]
+    },
+    {
+      "name": "gearbox_rear_rising_housing",
+      "material": "dark",
+      "from": [
+        3,
+        16,
+        -24
+      ],
+      "to": [
+        13,
+        29,
+        -20
+      ]
+    },
+    {
+      "name": "gearbox_rear_gear_cover",
+      "material": "bronze",
+      "from": [
+        2,
+        26,
+        -24
+      ],
+      "to": [
+        14,
+        33,
+        -20
+      ]
+    },
+    {
+      "name": "rear_spindle_bearing",
+      "material": "iron",
+      "from": [
+        6,
+        22,
+        -20
+      ],
+      "to": [
+        10,
+        26,
+        -18
+      ]
     }
   ],
   "voxels": {
@@ -677,59 +677,35 @@
         -8
       ],
       [
-        2,
-        12,
-        -17,
-        14,
-        20,
-        -11
-      ],
-      [
-        1,
-        19,
-        -17,
-        15,
-        32,
-        -12
-      ],
-      [
-        1,
-        30,
-        -17,
-        15,
-        34,
-        -11
-      ],
-      [
         -3,
         15,
         -19,
-        0,
-        34,
+        -1,
+        33,
         -12
       ],
       [
-        16,
+        17,
         15,
         -19,
         19,
-        34,
+        33,
         -12
       ],
       [
         0,
-        31,
+        33,
         -19,
         16,
-        34,
+        36,
         -12
       ],
       [
         0,
+        12,
+        -19,
+        16,
         15,
-        -19,
-        16,
-        18,
         -12
       ],
       [
@@ -827,6 +803,30 @@
         12,
         30,
         8
+      ],
+      [
+        3,
+        16,
+        -24,
+        13,
+        29,
+        -20
+      ],
+      [
+        2,
+        26,
+        -24,
+        14,
+        33,
+        -20
+      ],
+      [
+        6,
+        22,
+        -20,
+        10,
+        26,
+        -18
       ],
       [
         0,
@@ -983,59 +983,35 @@
         -8
       ],
       [
-        2,
-        12,
-        -17,
-        14,
-        20,
-        -11
-      ],
-      [
-        1,
-        19,
-        -17,
-        15,
-        32,
-        -12
-      ],
-      [
-        1,
-        30,
-        -17,
-        15,
-        34,
-        -11
-      ],
-      [
         -3,
         15,
         -19,
-        0,
-        34,
+        -1,
+        33,
         -12
       ],
       [
-        16,
+        17,
         15,
         -19,
         19,
-        34,
+        33,
         -12
       ],
       [
         0,
-        31,
+        33,
         -19,
         16,
-        34,
+        36,
         -12
       ],
       [
         0,
+        12,
+        -19,
+        16,
         15,
-        -19,
-        16,
-        18,
         -12
       ],
       [
@@ -1133,6 +1109,30 @@
         12,
         30,
         8
+      ],
+      [
+        3,
+        16,
+        -24,
+        13,
+        29,
+        -20
+      ],
+      [
+        2,
+        26,
+        -24,
+        14,
+        33,
+        -20
+      ],
+      [
+        6,
+        22,
+        -20,
+        10,
+        26,
+        -18
       ],
       [
         0,

@@ -931,6 +931,10 @@
     {
       "type": "text",
       "text": "$(bold)Mechanical airflow$()$(br2)One pressure (air) unit is generated every 5 continuously powered ticks at a minimum of 16 RPM and 5 torque. Buffer capacity: 16 units. At most one unit transfers each tick out of the FRONT controller face into a directly touching valid pressure receiver. Existing Primitive Furnace bellows module supports this capability: place it immediately ahead of the blower outlet. If full, the blower stops registering load. K1 has no pipes, fluid output, consumable blades, or fuel requirement; do not assume it can yet feed the planned Bloomery."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Air-Assisted Ore Roasting$()$(br2)The existing Ore Roasting Kiln accepts combustion air on the FRONT face of its formed controller. Point the K1 Industrial Air Blower outlet directly toward that face: both controllers must be adjacent and facing each other, both structures formed. During hot, valid, unblocked roasting batches, every 5 ordinary processing ticks consume 1 air unit and grant 1 extra oxidation-progress tick (+20% speed). Without air the old fuel-fired process is unchanged. Air does not create HEAT or bypass fuel. The Bloomery needs its own air receiver in a later phase."
     }
   ],
   "sortnum": 3,

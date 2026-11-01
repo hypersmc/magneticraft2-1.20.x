@@ -4,6 +4,7 @@ import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
@@ -56,6 +57,8 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
     private static final int FUEL_QUEUE_LIMIT = 16;
     private ItemStack fuel = ItemStack.EMPTY;
     private int burnRemaining, burnTotal, progress;
+    private static final int AIR_CAPACITY = 16, AIR_BONUS_INTERVAL = 5;
+    private int poweredAirTicks;
     @Nullable private ResourceLocation activeRecipeId;
     // Keep recipe identity and input tags in saves; stack count can grow while roasting.
     private ItemStack activeInput = ItemStack.EMPTY;
@@ -217,6 +220,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
                 progress = 0;
                 activeRecipeId = null;
                 activeInput = ItemStack.EMPTY;
+                poweredAirTicks = 0;
                 changed = true;
                 notify = true;
             }
@@ -228,6 +232,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
                 activeInput = candidate.copy();
                 activeInput.setCount(1);
                 progress = 0;
+                poweredAirTicks = 0;
                 changed = true;
                 notify = true;
             }
@@ -249,6 +254,14 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
                 if (heat >= threshold && heat >= cost) {
                     heat -= cost;
                     progress++;
+                    // Optional oxygen accelerates oxidation only while HEAT
+                    // is actually consumed and output capacity was reserved.
+                    if (pressureHandler.getPressureStored() > 0) {
+                        if (++poweredAirTicks >= AIR_BONUS_INTERVAL) {
+                            if (pressureHandler.extractPressure(1, false) == 1) progress++;
+                            poweredAirTicks = 0;
+                        }
+                    } else poweredAirTicks = 0;
                     changed = true;
                     if (progress >= recipe.getProcessTime()) {
                         // No output can be emitted twice; this tick commits once.
@@ -262,6 +275,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
                         activeRecipeId = null;
                         activeInput = ItemStack.EMPTY;
                         progress = 0;
+                        poweredAirTicks = 0;
                         notify = true;
                     }
                 }
@@ -313,6 +327,10 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
                 recipe == null ? 0 : recipe.getProcessTime(),
                 itemHandler.getStackInSlot(0).getCount(),
                 itemHandler.getStackInSlot(1).getCount()), true);
+        player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.ore_roasting_kiln.combustion_air",
+                pressureHandler.getPressureStored(), AIR_CAPACITY,
+                poweredAirTicks, AIR_BONUS_INTERVAL), false);
     }
 
     @Override public void onDestroy(Level world) {
@@ -338,6 +356,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
         burnTotal = Math.max(0, tag.getInt("RoasterBurnTotal"));
         burnRemaining = Math.max(0, Math.min(burnTotal, tag.getInt("RoasterBurnRemaining")));
         progress = Math.max(0, tag.getInt("RoasterProgress"));
+        poweredAirTicks = Math.max(0, Math.min(AIR_BONUS_INTERVAL - 1, tag.getInt("RoasterAirTicks")));
         activeRecipeId = tag.contains("RoasterRecipe")
                 ? ResourceLocation.tryParse(tag.getString("RoasterRecipe")) : null;
         activeInput = ItemStack.of(tag.getCompound("RoasterActiveInput"));
@@ -355,6 +374,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
         tag.putInt("RoasterBurnTotal", burnTotal);
         tag.putInt("RoasterBurnRemaining", burnRemaining);
         tag.putInt("RoasterProgress", progress);
+        tag.putInt("RoasterAirTicks", poweredAirTicks);
         if (!fuel.isEmpty()) tag.put("RoasterFuel", fuel.save(new CompoundTag()));
         if (activeRecipeId != null) tag.putString("RoasterRecipe", activeRecipeId.toString());
         if (!activeInput.isEmpty()) tag.put("RoasterActiveInput", activeInput.save(new CompoundTag()));
@@ -394,6 +414,9 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();
+        if (cap == CapabilityPressure.PRESSURE)
+            return formed && side == matchedFacing
+                    ? super.getCapability(cap, side) : LazyOptional.empty();
         return super.getCapability(cap, side);
     }
 
@@ -408,15 +431,15 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
     @Override public int capacityF() { return 0; }
     @Override public int tanks() { return 0; }
     @Override public int invsize() { return 2; }
-    @Override public int capacityP() { return 0; }
-    @Override public int maxtransferP() { return 0; }
+    @Override public int capacityP() { return AIR_CAPACITY; }
+    @Override public int maxtransferP() { return 1; }
 
     @Override public boolean itemcape() { return true; }
     @Override public boolean energycape() { return false; }
     @Override public boolean heatcape() { return true; }
     @Override public boolean wattcape() { return false; }
     @Override public boolean fluidcape() { return false; }
-    @Override public boolean pressurecape() { return false; }
+    @Override public boolean pressurecape() { return true; }
 
     // No external HEAT transfer in K2; real solid fuel supplies thermal energy.
     @Override public boolean HeatCanReceive() { return false; }
@@ -425,7 +448,7 @@ public final class OreRoastingKilnBlockEntity extends BaseBlockEntityMagneticraf
     @Override public boolean WattCanSend() { return false; }
     @Override public boolean EnergyCanReceive() { return false; }
     @Override public boolean EnergyCanSend() { return false; }
-    @Override public boolean PressureCanReceive() { return false; }
+    @Override public boolean PressureCanReceive() { return true; }
     @Override public boolean PressureCanSend() { return false; }
 
     @Override public Level getThisWorld() { return level; }

@@ -126,4 +126,37 @@ assert.equal(lang["block.magneticraft2."+id],"Industrial Air Blower");
 assert.match(read("tools/multiblock-models/generate.mjs"),/id==="bronze_industrial_air_blower"/);
 for(const tag of ["mineable/pickaxe","needs_stone_tool"])
  assert.ok(json("src/main/resources/data/minecraft/tags/blocks/"+tag+".json").values.includes(machine));
+
+// A rotor swept-volume contract is stronger than merely comparing baked faces.
+// The old rear gearbox occupied the rotating blades' volume and caused Z-fighting.
+const rotorSweep=[[0,16],[16,32],[-18,-14]];
+for(const solid of design.boxes) {
+ const intersects=solid.from.every((n,i)=>n<rotorSweep[i][1]&&solid.to[i]>rotorSweep[i][0]);
+ assert.equal(intersects,false,"STATIC GEOMETRY INTERSECTS ROTOR: "+solid.name);
+}
+for(const name of ["gearbox_rear_rising_housing","gearbox_rear_gear_cover","rear_spindle_bearing"])
+ assert.ok(design.boxes.some(b=>b.name===name),"Missing supported relocated gearbox: "+name);
+for(const removed of ["lower_gearbox_shell","upper_gearbox_shell","upper_bearing_cap"])
+ assert.ok(!design.boxes.some(b=>b.name===removed),"Legacy obstruction present "+removed);
+
+// The old Ore Roasting Kiln must still work without supplied air; this
+// optional receiver only provides oxidation-progress while actively firing.
+const roaster=read(pkg+"common/blockentity/stage/bronze/OreRoastingKilnBlockEntity.java");
+assert.match(roaster,/import com\.magneticraft2\.common\.systems\.PRESSURE\.CapabilityPressure;/);
+assert.match(roaster,/AIR_CAPACITY = 16, AIR_BONUS_INTERVAL = 5/);
+assert.match(roaster,/heat >= threshold && heat >= cost/);
+assert.match(roaster,/boolean outputFits = itemHandler\.insertItem\(1, product, true\)\.isEmpty\(\)/);
+assert.match(roaster,/if \(pressureHandler\.getPressureStored\(\) > 0\)/);
+assert.match(roaster,/if \(\+\+poweredAirTicks >= AIR_BONUS_INTERVAL\)/);
+assert.match(roaster,/pressureHandler\.extractPressure\(1, false\) == 1\) progress\+\+/);
+assert.match(roaster,/formed && side == matchedFacing/);
+assert.match(roaster,/PressureCanReceive\(\) \{ return true; \}/);
+assert.match(roaster,/pressurecape\(\) \{ return true; \}/);
+assert.match(roaster,/RoasterAirTicks/);
+assert.match(roaster,/poweredAirTicks = 0;/);
+assert.ok(book.pages.some(p=>p.text?.includes("Air-Assisted Ore Roasting")),
+ "Missing actual Roaster/Blower connection instructions");
+const roar=json(data+"recipes/roasting_copper_concentrate.json");
+assert.equal(roar.machine,"magneticraft2:ore_roasting_kiln");
+
 console.log("Industrial Air Blower K1 static contract PASS: "+models+" hosts, "+faces+" native UV faces; no compile or gameplay claim.");
