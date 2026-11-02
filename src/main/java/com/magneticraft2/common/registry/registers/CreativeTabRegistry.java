@@ -139,6 +139,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WASHED_MAGNETITE.get());
                         entries.accept(ItemRegistry.ITEM_MAGNETITE_CONCENTRATE.get());
                         entries.accept(ItemRegistry.ITEM_IRON_BLOOM.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
                         entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());

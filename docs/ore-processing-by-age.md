@@ -16,7 +16,7 @@
 | **Copper** | Chalcocite, Cassiterite, Quartz — **existing source recipes stay unchanged** | No additional copper mineral merely for historical variety |
 | **Bronze** | Magnetite **existing source path**; Hematite and Limonite **conditional alternatives** only with genuinely useful preparation and Bloomery recipes | Galena/Lead is **deferred**; no dead-end Lead Ingot |
 
-**Bloomery evidence:** Magnetite can be crushed in the Stamp Mill, washed, sifted to concentrate, and reduced in the existing Bloomery recipe with **Calcite flux + charcoal + HEAT + AIR → Iron Bloom + Slag**. The user has formed and used the Bloomery. The complete survival ore chain, hot consolidation into usable Wrought Iron, build, and multiplayer regressions remain separate tests. Do not mark them complete. Wrought Iron is the Bronze-to-Iron milestone; existing vanilla iron recipes are not silently removed. Calcite is a **vanilla flux resource**, not one of the 31 custom ore families.
+**Bloomery evidence:** Magnetite can be crushed in the Stamp Mill, washed, sifted to concentrate, and reduced in the existing Bloomery recipe with **Calcite flux + charcoal + HEAT + AIR → Iron Bloom + Slag**. The user has formed and used the Bloomery. The complete survival ore chain, the new kiln-to-hammer hot Wrought Iron implementation, the build, and multiplayer regressions remain separate tests. Do not mark them complete. Wrought Iron is the Bronze-to-Iron milestone; existing vanilla iron recipes are not silently removed. Calcite is a **vanilla flux resource**, not one of the 31 custom ore families.
 
 **Hematite and Limonite:** both can provide iron and therefore have a believable Bronze output, but recipes should only be introduced if the ore preparation differs meaningfully (for instance, conditioning a hydrated Limonite feed) or provides useful exploration variation. Do not require universal roasting or identical crushing→washing→sifting for every material. The optional Ore Breaker is not made mandatory.
 
@@ -46,7 +46,7 @@ Magnetite is the K1 iron-bloom baseline; Hematite/Limonite require demonstrably 
 
 | Mineral ID | Status | First useful product or purpose | Condition before a recipe is allowed |
 | --- | --- | --- | --- |
-| `magnetite` | Existing source route | Iron Bloom from the existing Bloomery | Existing Stamp Mill → Washer → Sifter → concentrate; Calcite flux, charcoal, HEAT and real AIR are mandatory. Wrought Iron consolidation is still missing. |
+| `magnetite` | Existing source route | Iron Bloom from the existing Bloomery | Existing Stamp Mill → Washer → Sifter → concentrate; Calcite flux, charcoal, HEAT and real AIR are mandatory. Hot Wrought Iron consolidation is now source-authored with the existing Kiln and Forge Hammer, but not yet in-game verified. |
 | `hematite` | Conditional only | Alternative iron-bloom feed | Approve an ore-specific concentration method and compare its yield and availability with Magnetite. Use the same Bloomery only when mechanically justified. |
 | `limonite` | Conditional only | Alternative iron-bloom feed after drying/roasting when beneficial | Prove the hydrated iron-bearing feed benefits from existing drying or Ore Roasting Kiln, and provide a real Bloomery recipe. |
 

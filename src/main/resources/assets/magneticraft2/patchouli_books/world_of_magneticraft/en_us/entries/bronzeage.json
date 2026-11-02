@@ -1002,7 +1002,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Bronze IV: Magnetite to Iron Bloom$()$(br2)Mine Magnetite or Deepslate Magnetite. Break 2 ore into 2 Crushed Magnetite at the existing Stamp Mill; wash with water and sift to concentrate. Four Magnetite Concentrate and one Calcite flux are reduced by sustained hot charcoal and forced combustion AIR. The outputs are an Iron Bloom and guaranteed Slag. The bloom must later be hot consolidated into Wrought Iron."
+      "text": "$(bold)Bronze IV: Magnetite to Iron Bloom$()$(br2)Mine Magnetite or Deepslate Magnetite. Break 2 ore into 2 Crushed Magnetite at the existing Stamp Mill; wash with water and sift to concentrate. Four Magnetite Concentrate and one Calcite flux are reduced by sustained hot charcoal and forced combustion AIR. The outputs are an Iron Bloom and guaranteed Slag. The bloom can be reheated in the fueled Refractory Kiln, then mechanically consolidated at the Forge Hammer. Only hot blooms are forgeable."
     },
     {
       "type": "patchouli:crafting",
@@ -1068,7 +1068,17 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Running the Bloomery$()$(br2)Insert 4 Magnetite Concentrate and 1 Calcite into the input module. Add Charcoal by right-clicking the controller. Supply the SIDE tuyere with the existing Industrial Air Blower and Bronze Air Ducts (the old controller connection remains available for compatibility). One real air charge is consumed every five progress ticks. Two outputs are reserved: Iron Bloom and guaranteed Slag. A blocked output stalls processing. Hot consolidation into Wrought Iron is a later step."
+      "text": "$(bold)Running the Bloomery$()$(br2)Insert 4 Magnetite Concentrate and 1 Calcite into the input module. Add Charcoal by right-clicking the controller. Supply the SIDE tuyere with the existing Industrial Air Blower and Bronze Air Ducts (the old controller connection remains available for compatibility). One real air charge is consumed every five progress ticks. Two outputs are reserved: Iron Bloom and guaranteed Slag. A blocked output stalls processing. Reheat the resulting Iron Bloom in the Refractory Kiln and transfer it to the powered Forge Hammer before it cools."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze → Iron: Wrought Iron$()$(br2)The Bloomery makes an Iron Bloom, not a usable ingot. Move one bloom into the fueled Refractory Kiln to reheat it (240 HEAT-supplied ticks). The same bloom item receives a real server-time forging-heat stamp, shown on its tooltip, and cools after about 120 seconds. Move it to the existing Forge Hammer: 20 RPM, 6 torque, 160 supplied hammer ticks produce one Wrought Iron Ingot. The forging die wears normally. Cold blooms are rejected and can be reheated; a stalled machine does not consume the bloom or create free iron. The full progression requires Ore preparation, flux, charcoal, forced AIR, heat and mechanical work."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_ingot",
+      "title": "First Wrought Iron",
+      "text": "This is Magneticraft2's Bronze-to-Iron material milestone. Refractory Kiln (hot bloom) and Forge Hammer (wrought ingot) are existing machines. Wrought Iron tooling, Iron-age power components and future machine upgrades are separate later milestones."
     }
   ],
   "sortnum": 3,

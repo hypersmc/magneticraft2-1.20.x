@@ -6,6 +6,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBl
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
@@ -151,6 +152,16 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             return;
         }
         ItemStack inputStack = itemHandler.getStackInSlot(0);
+        // Only cold copper needs no heat. Consolidation is always hot work,
+        // and heat must remain valid throughout every supplied hammer tick.
+        // A cooled bloom can be reheated at the existing Refractory Kiln.
+        if (HotBloomWorkpiece.requiresHeat(recipe)
+                && !HotBloomWorkpiece.isHot(inputStack, level)) {
+            resetBatch();
+            releaseLoad();
+            setRunning(false);
+            return;
+        }
         if (!recipe.getId().equals(activeRecipe)
                 || !ItemStack.isSameItemSameTags(activeInput, inputStack)) {
             activeRecipe = recipe.getId();
@@ -160,7 +171,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             setChanged();
         }
         // No load while output is blocked or the die needs replacement.
-        ItemStack output = recipe.getOutput();
+        ItemStack output = HotBloomWorkpiece.requiresHeat(recipe)
+                ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
+                : recipe.getOutput();
         if (!forgingDie.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
@@ -254,6 +267,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "need_more";
         } else if (!validRecipe(candidate)) {
             diagnostic = "recipe_unsupported";
+        } else if (HotBloomWorkpiece.requiresHeat(candidate)
+                && !HotBloomWorkpiece.isHot(inputStack, world)) {
+            diagnostic = "bloom_cold";
         } else if (!forgingDie.canOperate()) {
             diagnostic = "die_worn";
         } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {

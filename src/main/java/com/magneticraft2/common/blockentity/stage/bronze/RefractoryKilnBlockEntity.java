@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlock
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -229,6 +230,13 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
                 notify = true;
             }
             ItemStack product = recipe.getOutput();
+            // Re-firing an Iron Bloom requires real fuel, sustained HEAT and
+            // a dedicated datapack recipe. The timestamp is authoritative
+            // world game-time, not client-side cosmetic item state.
+            // Use the same tagged product for BOTH reservation and commit.
+            if (HotBloomWorkpiece.isReheatRecipe(recipe)) {
+                product = HotBloomWorkpiece.heatInKiln(candidate, product, level);
+            }
             // Reserve output before new ignition, firing progress or input removal.
             boolean outputFits = itemHandler.insertItem(1, product, true).isEmpty();
             if (outputFits) {

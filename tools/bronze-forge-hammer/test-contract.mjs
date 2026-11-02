@@ -22,6 +22,16 @@ assert.equal(recipe.process_time,160);
 assert.equal(recipe.mechanical.min_speed,20);
 assert.equal(recipe.mechanical.torque,5);
 assert.ok(!recipe.byproduct&&!recipe.fluid_input&&!recipe.fluid_output);
+const consolidation=json(recipes+"consolidate_iron_bloom.json");
+assert.equal(consolidation.type,"magneticraft2:multiblock_processing");
+assert.equal(consolidation.machine,"magneticraft2:"+id);
+assert.deepEqual(consolidation.input,{item:"magneticraft2:iron_bloom"});
+assert.equal(consolidation.input_count,1);
+assert.equal(consolidation.output.item,"magneticraft2:wrought_iron_ingot");
+assert.equal(consolidation.output.count,1);
+assert.ok(consolidation.mechanical.min_speed>=20 && consolidation.mechanical.torque>=5);
+assert.ok(consolidation.process_time>0);
+assert.ok(!consolidation.byproduct&&!consolidation.fluid_input&&!consolidation.fluid_output);
 
 const controller=json(recipes+id+".json");
 const die=json(recipes+"bronze_forge_die.json");
@@ -161,7 +171,7 @@ assert.equal(south.structure.layout.layer1[2][3],"O");
 
 const lang=json("src/main/resources/assets/magneticraft2/lang/en_us.json");
 assert.ok(lang["block.magneticraft2."+id]&&lang["item.magneticraft2.bronze_forge_die"]);
-for(const reason of ["empty","recipe_missing","need_more","recipe_unsupported",
+for(const reason of ["empty","recipe_missing","need_more","recipe_unsupported","bloom_cold",
  "die_worn","output_blocked","module_missing","overloaded",
  "insufficient_speed","insufficient_torque","load_unsupplied","working","ready"]){
  assert.ok(lang["message.magneticraft2.bronze_forge_hammer.reason."+reason],
@@ -197,6 +207,32 @@ for(const reason of ["source_overload","source_missing","load_inactive"]){
 }
 
 assert.match(be,/player\.displayClientMessage\(Component\.translatable\(\s*"message\.magneticraft2\.bronze_forge_hammer\.diagnostic"/);
+assert.ok(be.includes("HotBloomWorkpiece.isHot(inputStack, level)"));
+assert.ok(be.includes("HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())"));
+assert.ok(be.includes("resetBatch();") && be.includes("releaseLoad();"));
+const kiln=read("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/RefractoryKilnBlockEntity.java");
+assert.ok(kiln.includes("HotBloomWorkpiece.heatInKiln(candidate, product, level)"));
+assert.ok(kiln.includes("itemHandler.insertItem(1, product, true)"));
+assert.ok(kiln.includes("itemHandler.insertItem(1, product, false)"));
+const thermo=read("src/main/java/com/magneticraft2/common/systems/material/HotBloomWorkpiece.java");
+assert.match(thermo,/HOT_WINDOW_TICKS\s*=\s*2400/);
+assert.ok(thermo.includes("tag.getLong(HOT_UNTIL_TAG) > world.getGameTime()"));
+assert.ok(thermo.includes("result.getOrCreateTag().putLong(HOT_UNTIL_TAG"));
+assert.ok(thermo.includes("metalData.remove(HOT_UNTIL_TAG)"));
+const reheat=json(recipes+"reheat_iron_bloom.json");
+assert.equal(reheat.type,"magneticraft2:multiblock_processing");
+assert.equal(reheat.machine,"magneticraft2:refractory_kiln");
+assert.equal(reheat.input.item,"magneticraft2:iron_bloom");
+assert.equal(reheat.output.item,"magneticraft2:iron_bloom");
+assert.equal(reheat.input_count,reheat.output.count);
+assert.ok(reheat.process_time>0);
+const registryItems=read("src/main/java/com/magneticraft2/common/registry/registers/ItemRegistry.java");
+assert.ok(registryItems.includes('ITEMS.register("wrought_iron_ingot"'));
+assert.ok(registryItems.includes('ITEMS.register("iron_bloom", IronBloomItem::new)'));
+const itemModel=json("src/main/resources/assets/magneticraft2/models/item/wrought_iron_ingot.json");
+assert.equal(itemModel.textures.layer0,"magneticraft2:item/wrought_iron_ingot");
+assert.ok(fs.existsSync(path.join(root,"src/main/resources/assets/magneticraft2/textures/item/wrought_iron_ingot.png")));
+
 
 for(const tag of ["mineable/pickaxe","needs_stone_tool"])assert.ok(
  json("src/main/resources/data/minecraft/tags/blocks/"+tag+".json").values.includes("magneticraft2:"+id));

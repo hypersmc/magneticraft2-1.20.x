@@ -220,3 +220,13 @@ pass source torque budget/other-load calculations. Test power loss,
 output blocking, die wear, save/reload and both single-player and
 multiplayer separately. A static code test cannot claim successful
 in-game operation.
+
+## Hot bloom consolidation — Bronze-to-Iron source candidate (2026-11-02)
+
+The original cold 4×Copper → 4×Copper Plates recipe is unchanged. A new **datapack** `consolidate_iron_bloom` recipe adds 1 `iron_bloom` → 1 `wrought_iron_ingot`, at **20 RPM, 6 torque and 160 supplied ticks**. This recipe is accepted by the existing genuine input/output modules, persisted progress, and 384-cycle replaceable forging die. This is an actual machine load, not a free crafting recipe.
+
+To prevent cold forging, **the Refractory Kiln must first reheat the Iron Bloom** through a separate `reheat_iron_bloom` datapack recipe (240 kiln HEAT-supplied ticks plus actual solid fuel). The existing item ID is preserved: the output bloom carries `magneticraft2:hot_until` server-world-game-time NBT, valid for **2400 ticks (~120 s)**. Input quality/other NBT is copied through reheating and consolidation, but the ephemeral heat timestamp is discarded on the wrought ingot. Hot/cold state appears on the Iron Bloom tooltip. A timed-out bloom stalls the Forge Hammer, releases its mechanical load and resets partial work; reheating restores eligibility. No client authority, no always-hot separate item, and no new machine block. Existing hot/cold items are distinguished by NBT.
+
+**Thermal numbers are gameplay HEAT units, not actual Celsius.** The Kiln already controls fuel consumption, temperature budget, and output reservations. An input must be reheated again if forging expires. The Kiln output can hold different heat-stamped blooms in separate batches; extract a completed bloom before running the next batch because timestamped outputs deliberately do not merge. One Iron Bloom still produces at most one Wrought Iron Ingot, with the Bloomery's guaranteed Slag as process waste; any additional consolidation slag byproduct requires future explicit port support. Do not silently substitute a cold 1→1 furnace recipe.
+
+**Verification pending:** actual `./gradlew build`, kiln/forge processing, precision of expiration under save/reload and dimension transfers, automation of heat-stamped items, forge die wear, client tooltip updates and single/multiplayer regressions. Do not close Bronze solely on source changes.
