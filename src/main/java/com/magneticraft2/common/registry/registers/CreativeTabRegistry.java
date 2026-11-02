@@ -134,6 +134,11 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WATER_SETTLING_TANK.get());
                         entries.accept(ItemRegistry.ITEM_CHARCOAL_RETORT.get());
                         entries.accept(ItemRegistry.ITEM_REFRACTORY_KILN.get());
+                        entries.accept(ItemRegistry.ITEM_BLOOMERY_FURNACE.get());
+                        entries.accept(ItemRegistry.ITEM_CRUSHED_MAGNETITE.get());
+                        entries.accept(ItemRegistry.ITEM_WASHED_MAGNETITE.get());
+                        entries.accept(ItemRegistry.ITEM_MAGNETITE_CONCENTRATE.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_BLOOM.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
                         entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());

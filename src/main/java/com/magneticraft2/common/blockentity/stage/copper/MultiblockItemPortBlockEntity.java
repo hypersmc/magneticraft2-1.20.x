@@ -21,6 +21,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmill
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -233,6 +234,9 @@ public class MultiblockItemPortBlockEntity
             return kiln.acceptsRecipeInput(stack);
         if (controller instanceof OreRoastingKilnBlockEntity roaster)
             return roaster.acceptsRecipeInput(stack);
+        if (controller instanceof BloomeryFurnaceBlockEntity bloomery)
+            return bloomery.acceptsIngredientSlot(0,stack)
+                    || bloomery.acceptsIngredientSlot(3,stack);
         if (controller instanceof BronzeForgeHammerBlockEntity hammer)
             return hammer.acceptsRecipeInput(stack);
         if (controller instanceof BronzeRollingMillBlockEntity mill)
@@ -274,6 +278,14 @@ public class MultiblockItemPortBlockEntity
             }
             return false;
         }
+        if (controller instanceof BloomeryFurnaceBlockEntity bloomery) {
+            for (int slot : new int[]{0,3}) {
+                if (bloomery.acceptsIngredientSlot(slot,stack)
+                        && controller.itemHandler.insertItem(slot,stack,false).isEmpty())
+                    return true;
+            }
+            return false;
+        }
         return controller.itemHandler
                 .insertItem(
                         0,
@@ -303,6 +315,10 @@ public class MultiblockItemPortBlockEntity
                 if (!taken.isEmpty()) return taken;
             }
             return ItemStack.EMPTY;
+        }
+        if (controller instanceof BloomeryFurnaceBlockEntity) {
+            ItemStack ore=controller.itemHandler.extractItem(0,64,false);
+            return ore.isEmpty() ? controller.itemHandler.extractItem(3,64,false) : ore;
         }
         return controller.itemHandler
                 .extractItem(
@@ -555,6 +571,9 @@ public class MultiblockItemPortBlockEntity
             if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
                     && getController() instanceof BronzeMechanicalAssemblyStationBlockEntity)
                 return 4;
+            if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
+                    && getController() instanceof BloomeryFurnaceBlockEntity)
+                return 2;
             return getPortMode()
                     == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
                     ? 2
@@ -608,6 +627,8 @@ public class MultiblockItemPortBlockEntity
             if (mapped < 0 || mapped >= controller.itemHandler.getSlots()) return stack;
             if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly
                     && !assembly.acceptsIngredientSlot(mapped, stack)) return stack;
+            if (controller instanceof BloomeryFurnaceBlockEntity bloomery
+                    && !bloomery.acceptsIngredientSlot(mapped,stack)) return stack;
             return controller.itemHandler.insertItem(mapped, stack, simulate);
         }
 
@@ -685,6 +706,8 @@ public class MultiblockItemPortBlockEntity
                     && acceptsControllerInput(controller, stack)
                     && (!(controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly)
                         || assembly.acceptsIngredientSlot(mapped, stack))
+                    && (!(controller instanceof BloomeryFurnaceBlockEntity bloomery)
+                        || bloomery.acceptsIngredientSlot(mapped, stack))
                     && controller.itemHandler.isItemValid(mapped, stack);
         }
 
@@ -693,6 +716,9 @@ public class MultiblockItemPortBlockEntity
                     getPortMode();
 
             BaseBlockEntityMagneticraft2 controller = getController();
+            if (controller instanceof BloomeryFurnaceBlockEntity
+                    && mode == MultiblockItemPortBlock.PortMode.INPUT)
+                return slot == 0 ? 0 : slot == 1 ? 3 : -1;
             if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
                 if (mode == MultiblockItemPortBlock.PortMode.INPUT)
                     return slot >= 0 && slot < 4 ? slot : -1;

@@ -165,6 +165,11 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_STAMP_SHOE =
             ITEMS.register("bronze_stamp_shoe", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY = fromBlock(BRONZE_FOUNDRY);
+    public static final RegistryObject<Item> ITEM_BLOOMERY_FURNACE = fromBlock(BLOOMERY_FURNACE);
+    public static final RegistryObject<Item> ITEM_CRUSHED_MAGNETITE = ITEMS.register("crushed_magnetite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WASHED_MAGNETITE = ITEMS.register("washed_magnetite", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_MAGNETITE_CONCENTRATE = ITEMS.register("magnetite_concentrate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_BLOOM = ITEMS.register("iron_bloom", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =

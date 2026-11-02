@@ -49,6 +49,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalSawmillBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalAssemblyStationBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeFoundrySandMixerBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeIndustrialAirBlowerBlock;
+import com.magneticraft2.common.block.stage.bronze.BloomeryFurnaceBlock;
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
 import com.magneticraft2.common.block.stage.bronze.WaterSettlingTankBlock;
 import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
@@ -156,6 +157,8 @@ public class BlockRegistry {
             BLOCKS.register("water_settling_tank", WaterSettlingTankBlock::new);
     public static final RegistryObject<CharcoalRetortBlock> CHARCOAL_RETORT =
             BLOCKS.register("charcoal_retort", CharcoalRetortBlock::new);
+    public static final RegistryObject<BloomeryFurnaceBlock> BLOOMERY_FURNACE =
+            BLOCKS.register("bloomery_furnace", BloomeryFurnaceBlock::new);
     public static final RegistryObject<RefractoryKilnBlock> REFRACTORY_KILN =
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
     public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =

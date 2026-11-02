@@ -1,0 +1,18 @@
+{
+  "type": "magneticraft2:bloomery_reduction",
+  "input": {
+    "item": "magneticraft2:magnetite_concentrate"
+  },
+  "input_count": 4,
+  "flux": {
+    "item": "minecraft:calcite"
+  },
+  "flux_count": 1,
+  "output": {
+    "item": "magneticraft2:iron_bloom"
+  },
+  "slag": {
+    "item": "magneticraft2:slagitem"
+  },
+  "process_time": 800
+}

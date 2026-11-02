@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "magneticraft2:block/material/refractory_brick",
+    "particle": "magneticraft2:block/material/refractory_brick"
+  }
+}

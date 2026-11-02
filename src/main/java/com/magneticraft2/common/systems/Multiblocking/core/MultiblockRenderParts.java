@@ -105,8 +105,14 @@ public final class MultiblockRenderParts {
             int dx = partPos.getX() - master.getX();
             int dy = partPos.getY() - master.getY();
             int dz = partPos.getZ() - master.getZ();
-            String modelKey = machineId + "_" + facing.getName()
-                    + "/part_" + dx + "_" + dy + "_" + dz;
+            // Bloomery K1 uses a limited set of real, block-sized masonry
+            // skins. Reuse baked models instead of hundreds of identical
+            // generated JSON files; do not affect any other V2 machinery.
+            String modelKey = machineId.equals("bloomery_furnace")
+                    ? (originalBlocks.get(partPos).is(net.minecraft.world.level.block.Blocks.STONE_BRICKS)
+                        ? "bloomery_furnace/stone" : "bloomery_furnace/brick")
+                    : machineId + "_" + facing.getName()
+                        + "/part_" + dx + "_" + dy + "_" + dz;
 
             // Preserve at most half a block of actual physical protrusion from
             // explicitly specified AIR anchors. Ordinary filler collision and

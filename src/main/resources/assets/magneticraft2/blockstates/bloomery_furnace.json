@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=south,is_formed=false": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_south"
+    },
+    "facing=south,is_formed=true": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_south"
+    },
+    "facing=west,is_formed=false": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_west"
+    },
+    "facing=west,is_formed=true": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_west"
+    },
+    "facing=north,is_formed=false": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_north"
+    },
+    "facing=north,is_formed=true": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_north"
+    },
+    "facing=east,is_formed=false": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_east"
+    },
+    "facing=east,is_formed=true": {
+      "model": "magneticraft2:multiblock/bloomery_furnace_east"
+    }
+  }
+}

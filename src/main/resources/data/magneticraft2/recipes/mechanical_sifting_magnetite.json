@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:mechanical_sifter",
+  "input": {
+    "item": "magneticraft2:washed_magnetite"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:magnetite_concentrate",
+    "count": 1
+  },
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 15,
+    "torque": 2
+  }
+}

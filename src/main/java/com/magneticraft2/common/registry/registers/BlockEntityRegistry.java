@@ -44,6 +44,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBloc
 import com.magneticraft2.common.blockentity.stage.bronze.WaterSettlingTankBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeCastingBasinBlockEntity;
 import com.magneticraft2.common.magneticraft2;
@@ -158,6 +159,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("charcoal_retort", () ->
                     BlockEntityType.Builder.of(CharcoalRetortBlockEntity::new,
                             BlockRegistry.CHARCOAL_RETORT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BloomeryFurnaceBlockEntity>> BLOOMERY_FURNACE_BE =
+            BLOCK_ENTITIES.register("bloomery_furnace", () ->
+                    BlockEntityType.Builder.of(BloomeryFurnaceBlockEntity::new,
+                            BlockRegistry.BLOOMERY_FURNACE.get()).build(null));
     public static final RegistryObject<BlockEntityType<RefractoryKilnBlockEntity>> REFRACTORY_KILN_BE =
             BLOCK_ENTITIES.register("refractory_kiln", () ->
                     BlockEntityType.Builder.of(RefractoryKilnBlockEntity::new,
