@@ -1,6 +1,7 @@
 package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -48,6 +49,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "bronze_precision_boring_machine");
     public static final ResourceLocation BRONZE_MECHANICAL_SAWMILL =
             new ResourceLocation("magneticraft2", "bronze_mechanical_sawmill");
+    public static final ResourceLocation BRONZE_MECHANICAL_ASSEMBLY_STATION =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_assembly_station");
     public static final ResourceLocation BRONZE_FOUNDRY_SAND_MIXER =
             new ResourceLocation("magneticraft2", "bronze_foundry_sand_mixer");
     public static final ResourceLocation ROTARY_ORE_CLASSIFIER =
@@ -88,6 +91,18 @@ public final class MultiblockJeiRecipe {
         this.processTime = Math.max(1, processTime);
         this.minSpeed = Math.max(0.0F, minSpeed);
         this.torque = Math.max(0.0F, torque);
+    }
+
+    public static MultiblockJeiRecipe from(MechanicalAssemblyRecipe recipe) {
+        List<List<ItemStack>> inputs = new ArrayList<>();
+        for (int i = 0; i < MechanicalAssemblyRecipe.INPUT_SLOTS; i++) {
+            var part = recipe.part(i);
+            inputs.add(stacksFor(part.ingredient(), part.count()));
+        }
+        return new MultiblockJeiRecipe(recipe.getId(), BRONZE_MECHANICAL_ASSEMBLY_STATION,
+                inputs, List.of(new Output(recipe.output(), 1.0F)),
+                FluidStack.EMPTY, FluidStack.EMPTY,
+                recipe.processTime(), recipe.minSpeed(), recipe.torque());
     }
 
     public static MultiblockJeiRecipe from(MultiblockProcessingRecipe recipe) {

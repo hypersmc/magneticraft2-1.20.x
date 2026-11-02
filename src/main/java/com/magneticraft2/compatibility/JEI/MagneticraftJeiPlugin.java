@@ -2,6 +2,7 @@ package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -63,6 +64,12 @@ public class MagneticraftJeiPlugin implements IModPlugin {
                 .getAllRecipesFor(
                         MultiblockProcessingRecipe.Type.INSTANCE
                 )
+                .stream()
+                .map(MultiblockJeiRecipe::from)
+                .forEach(recipes::add);
+
+        level.getRecipeManager()
+                .getAllRecipesFor(MechanicalAssemblyRecipe.Type.INSTANCE)
                 .stream()
                 .map(MultiblockJeiRecipe::from)
                 .forEach(recipes::add);
@@ -148,6 +155,7 @@ public class MagneticraftJeiPlugin implements IModPlugin {
         registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_PRESS);
         registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_PRECISION_BORING_MACHINE);
         registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_SAWMILL);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_ASSEMBLY_STATION);
         registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_FOUNDRY_SAND_MIXER);
         registerCatalyst(registration, MultiblockJeiRecipe.ROTARY_ORE_CLASSIFIER);
         registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);

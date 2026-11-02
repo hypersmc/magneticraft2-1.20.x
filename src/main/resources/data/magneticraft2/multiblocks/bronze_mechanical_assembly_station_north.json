@@ -1,0 +1,149 @@
+{
+  "name": "bronze_mechanical_assembly_station_north",
+  "structure": {
+    "dimensions": [
+      5,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "O",
+          "S",
+          "C",
+          "S",
+          "U"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "I",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "I": "magneticraft2:mechanical_input_module",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:bronze_mechanical_assembly_station",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_mechanical_assembly_station_north",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_mechanical_assembly_station",
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        2
+      ]
+    ]
+  }
+}

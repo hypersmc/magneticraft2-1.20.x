@@ -496,5 +496,8 @@
   "item.magneticraft2.bronze_air_duct": "Bronze Air Duct",
   "block.magneticraft2.steam_pipe": "Steam Pipe",
   "item.magneticraft2.steam_pipe": "Steam Pipe",
-  "block.magneticraft2.ruptured_steam_pipe": "Ruptured Steam Pipe"
+  "block.magneticraft2.ruptured_steam_pipe": "Ruptured Steam Pipe",
+  "block.magneticraft2.bronze_mechanical_assembly_station": "Mechanical Assembly Station",
+  "item.magneticraft2.bronze_mechanical_assembly_station": "Mechanical Assembly Station Controller",
+  "message.magneticraft2.bronze_mechanical_assembly_station.status": "Assembly: %s | Progress: %s/%s | Mechanical RPM: %s | Torque: %s | Running: %s"
 }

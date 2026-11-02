@@ -37,6 +37,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockE
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeIndustrialAirBlowerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
@@ -137,6 +138,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("bronze_mechanical_sawmill", () ->
                     BlockEntityType.Builder.of(BronzeMechanicalSawmillBlockEntity::new,
                             BlockRegistry.BRONZE_MECHANICAL_SAWMILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMechanicalAssemblyStationBlockEntity>> BRONZE_MECHANICAL_ASSEMBLY_STATION_BE =
+            BLOCK_ENTITIES.register("bronze_mechanical_assembly_station", () ->
+                    BlockEntityType.Builder.of(BronzeMechanicalAssemblyStationBlockEntity::new,
+                            BlockRegistry.BRONZE_MECHANICAL_ASSEMBLY_STATION.get()).build(null));
     public static final RegistryObject<BlockEntityType<BronzeFoundrySandMixerBlockEntity>> BRONZE_FOUNDRY_SAND_MIXER_BE =
             BLOCK_ENTITIES.register("bronze_foundry_sand_mixer", () ->
                     BlockEntityType.Builder.of(BronzeFoundrySandMixerBlockEntity::new,

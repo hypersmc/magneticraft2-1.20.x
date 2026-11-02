@@ -46,6 +46,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeRollingMillBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalPressBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzePrecisionBoringMachineBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalSawmillBlock;
+import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalAssemblyStationBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeFoundrySandMixerBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeIndustrialAirBlowerBlock;
 import com.magneticraft2.common.block.stage.bronze.RotaryOreClassifierBlock;
@@ -143,6 +144,8 @@ public class BlockRegistry {
             BLOCKS.register("bronze_precision_boring_machine", BronzePrecisionBoringMachineBlock::new);
     public static final RegistryObject<BronzeMechanicalSawmillBlock> BRONZE_MECHANICAL_SAWMILL =
             BLOCKS.register("bronze_mechanical_sawmill", BronzeMechanicalSawmillBlock::new);
+    public static final RegistryObject<BronzeMechanicalAssemblyStationBlock> BRONZE_MECHANICAL_ASSEMBLY_STATION =
+            BLOCKS.register("bronze_mechanical_assembly_station", BronzeMechanicalAssemblyStationBlock::new);
     public static final RegistryObject<BronzeFoundrySandMixerBlock> BRONZE_FOUNDRY_SAND_MIXER =
             BLOCKS.register("bronze_foundry_sand_mixer", BronzeFoundrySandMixerBlock::new);
     public static final RegistryObject<BronzeIndustrialAirBlowerBlock> BRONZE_INDUSTRIAL_AIR_BLOWER =

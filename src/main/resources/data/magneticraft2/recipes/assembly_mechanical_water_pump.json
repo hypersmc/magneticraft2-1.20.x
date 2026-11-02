@@ -1,0 +1,38 @@
+{
+  "type": "magneticraft2:mechanical_assembly",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "minecraft:planks"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:bronze_bushing"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:shaft_wood"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:pulley_small_wood"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:mechanical_water_pump",
+    "count": 1
+  },
+  "process_time": 200,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 5
+  }
+}

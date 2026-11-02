@@ -130,6 +130,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_ABRASIVE_BORING_BIT =
             ITEMS.register("abrasive_boring_bit", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_MECHANICAL_SAWMILL = fromBlock(BRONZE_MECHANICAL_SAWMILL);
+    public static final RegistryObject<Item> ITEM_BRONZE_MECHANICAL_ASSEMBLY_STATION = fromBlock(BRONZE_MECHANICAL_ASSEMBLY_STATION);
     public static final RegistryObject<Item> ITEM_BRONZE_SAW_BLADE =
             ITEMS.register("bronze_saw_blade", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_FOUNDRY_SAND_MIXER = fromBlock(BRONZE_FOUNDRY_SAND_MIXER);

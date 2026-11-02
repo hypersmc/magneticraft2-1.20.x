@@ -945,6 +945,60 @@
     {
       "type": "text",
       "text": "$(bold)Air Distribution K1$()$(br2)Bronze Air Ducts connect straight, turn and branch in all six directions. The blower alone pushes units: at least 16 RPM, 5 torque, and 1 air unit per 5 powered ticks. Ducts have no inventory, stored pressure or ticking block entities. One blower shares at most 1 air/tick across all branches; the first version scans a bounded 128-duct network and rotates between receivers. Only actually loaded chunks participate.$(br2)The Ore Roasting Kiln still accepts air on its formed front controller face, now via ducts rather than requiring controllers to touch. Its existing optional +20% oxidation progress while heated remains provisional; no pressure-drop, temperature, altitude, air leakage, gas physics or Bloomery receiver is implemented yet."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze III — Mechanical Assembly$()$(br2)The Assembly Station joins prepared parts into existing machinery using mechanical power. Manual crafting remains available: assembly provides hands-off, repeated production, not a new compulsory gate. Supply four ingredient types through the REAL four-slot Item Input module, extract finished items through the REAL primary output, and drive the REAR mechanical input. The controller is the floor-level front centre."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Assembly Station Controller",
+      "recipe": "magneticraft2:bronze_mechanical_assembly_station",
+      "text": "Craft the controller, then build the 5-wide, 3-high, 5-deep workshop shown on the next page. The controller alone cannot assemble anything."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Assembly Station",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPPPP",
+            "P___P",
+            "PPPPP",
+            "P___P",
+            "PPPPP"
+          ],
+          [
+            "P___P",
+            "_____",
+            "P___P",
+            "_____",
+            "P___P"
+          ],
+          [
+            "SSISS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "OS0SU"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bronze_mechanical_assembly_station",
+          "S": "minecraft:stone_bricks",
+          "P": "minecraft:oak_planks",
+          "I": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Place the bottom stone foundation with one mechanical input (I) at rear-centre, real Item Input (U) front-left and real Item Output (O) front-right as seen from the South. Leave all underscored cells AIR. Six oak posts support three overhead crossbeams. The central middle-layer AIR cell becomes a V2 assembly fixture proxy on formation. Right-click the Controller to form. Other facings use the same structure rotated."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)First assembly: Mechanical Water Pump$()$(br2)Provide 2 planks, 1 Bronze Bushing, 1 Wooden Shaft, and 1 Small Wooden Pulley in the four input slots. With at least 18 RPM and 5 torque, 200 supplied ticks create one Water Pump. Full output or missing power pauses work; no components are consumed until completion. You can still craft this Water Pump manually at a Crafting Table. These power values are provisional Bronze balance values."
     }
   ],
   "sortnum": 3,

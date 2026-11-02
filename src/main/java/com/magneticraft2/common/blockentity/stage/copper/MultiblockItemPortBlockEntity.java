@@ -18,6 +18,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockE
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
@@ -204,6 +205,12 @@ public class MultiblockItemPortBlockEntity
             return ItemStack.EMPTY;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+            for (int i = 0; i < 4; i++)
+                if (!controller.itemHandler.getStackInSlot(i).isEmpty())
+                    return controller.itemHandler.getStackInSlot(i).copy();
+            return ItemStack.EMPTY;
+        }
         return controller.itemHandler
                 .getStackInSlot(0)
                 .copy();
@@ -236,6 +243,11 @@ public class MultiblockItemPortBlockEntity
             return borer.acceptsRecipeInput(stack);
         if (controller instanceof BronzeMechanicalSawmillBlockEntity sawmill)
             return sawmill.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly) {
+            for (int i = 0; i < 4; i++)
+                if (assembly.acceptsIngredientSlot(i, stack)) return true;
+            return false;
+        }
         if (controller instanceof BronzeFoundrySandMixerBlockEntity mixer)
             return mixer.acceptsRecipeInput(stack);
         return true;
@@ -255,6 +267,13 @@ public class MultiblockItemPortBlockEntity
             return false;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly) {
+            for (int i = 0; i < 4; i++) {
+                if (!assembly.acceptsIngredientSlot(i, stack)) continue;
+                if (controller.itemHandler.insertItem(i, stack, false).isEmpty()) return true;
+            }
+            return false;
+        }
         return controller.itemHandler
                 .insertItem(
                         0,
@@ -278,6 +297,13 @@ public class MultiblockItemPortBlockEntity
             return ItemStack.EMPTY;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+            for (int i = 0; i < 4; i++) {
+                ItemStack taken = controller.itemHandler.extractItem(i, 64, false);
+                if (!taken.isEmpty()) return taken;
+            }
+            return ItemStack.EMPTY;
+        }
         return controller.itemHandler
                 .extractItem(
                         0,
@@ -324,11 +350,9 @@ public class MultiblockItemPortBlockEntity
                     );
         }
 
-        int mapped =
-                mode
-                        == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
-                        ? 2
-                        : 1;
+        int mapped = controller instanceof BronzeMechanicalAssemblyStationBlockEntity
+                ? BronzeMechanicalAssemblyStationBlockEntity.OUTPUT_SLOT
+                : (mode == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT ? 2 : 1);
 
         return controller.itemHandler
                 .extractItem(
@@ -528,6 +552,9 @@ public class MultiblockItemPortBlockEntity
 
         @Override
         public int getSlots() {
+            if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
+                    && getController() instanceof BronzeMechanicalAssemblyStationBlockEntity)
+                return 4;
             return getPortMode()
                     == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
                     ? 2
@@ -577,12 +604,11 @@ public class MultiblockItemPortBlockEntity
                 return stack;
             }
 
-            return controller.itemHandler
-                    .insertItem(
-                            0,
-                            stack,
-                            simulate
-                    );
+            int mapped = mapSlot(slot);
+            if (mapped < 0 || mapped >= controller.itemHandler.getSlots()) return stack;
+            if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly
+                    && !assembly.acceptsIngredientSlot(mapped, stack)) return stack;
+            return controller.itemHandler.insertItem(mapped, stack, simulate);
         }
 
         @Override
@@ -653,20 +679,26 @@ public class MultiblockItemPortBlockEntity
             BaseBlockEntityMagneticraft2 controller =
                     getController();
 
-            return controller != null
-                    && controller.itemHandler != null
+            int mapped = mapSlot(slot);
+            return controller != null && controller.itemHandler != null
+                    && mapped >= 0 && mapped < controller.itemHandler.getSlots()
                     && acceptsControllerInput(controller, stack)
-                    && controller.itemHandler
-                    .isItemValid(
-                            0,
-                            stack
-                    );
+                    && (!(controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly)
+                        || assembly.acceptsIngredientSlot(mapped, stack))
+                    && controller.itemHandler.isItemValid(mapped, stack);
         }
 
         private int mapSlot(int slot) {
             MultiblockItemPortBlock.PortMode mode =
                     getPortMode();
 
+            BaseBlockEntityMagneticraft2 controller = getController();
+            if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+                if (mode == MultiblockItemPortBlock.PortMode.INPUT)
+                    return slot >= 0 && slot < 4 ? slot : -1;
+                if (mode == MultiblockItemPortBlock.PortMode.PRIMARY_OUTPUT)
+                    return slot == 0 ? BronzeMechanicalAssemblyStationBlockEntity.OUTPUT_SLOT : -1;
+            }
             if (mode
                     == MultiblockItemPortBlock.PortMode.INPUT) {
                 return slot == 0
