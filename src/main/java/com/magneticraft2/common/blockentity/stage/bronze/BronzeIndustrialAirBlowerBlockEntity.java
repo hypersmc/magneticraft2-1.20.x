@@ -16,7 +16,11 @@ import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
-import com.magneticraft2.common.systems.PRESSURE.AirDuctNetwork;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
+import com.magneticraft2.common.systems.PRESSURE.GasMedium;
+import com.magneticraft2.common.systems.PRESSURE.IPressurizedGasHandler;
+import com.magneticraft2.common.systems.PRESSURE.LegacyAirPort;
+import com.magneticraft2.common.systems.PRESSURE.PressurizedPipeNetwork;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.PRESSURE.IPressureStorage;
 import com.magneticraft2.common.utils.MultiBlockProperties;
@@ -48,7 +52,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 /**
- * Bronze IV K1 industrial combustion-air blower. Uses Gear V2 torque/load and
+ * Bronze IV K1 industrial combustion-air blower. Uses Mechanical Power torque/load and
  * the existing pressure capability used by the Primitive Furnace bellows module.
  *
  * Air is a buffered, integer unit (NOT Forge fluid gas, HEAT or a new network).
@@ -92,6 +96,12 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         @Override public boolean setSend(boolean val) { return val && formed; }
         @Override public boolean setReceive(boolean val) { return !val; }
     });
+
+    // Typed AIR port for future pneumatic consumers; the existing pressure
+    // capability remains available to old integrations and saved machinery.
+    private final LazyOptional<IPressurizedGasHandler> gasOutput =
+            LazyOptional.of(() -> new LegacyAirPort(output.orElseThrow(
+                    () -> new IllegalStateException("Missing blower air capability"))));
 
     public BronzeIndustrialAirBlowerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_INDUSTRIAL_AIR_BLOWER_BE.get(), pos, state);
@@ -146,21 +156,6 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         return got;
     }
 
-    /**
-     * A receiver may accept only part of an offered unit. Retain the blower's
-     * original per-tick output budget across ducts and direct/manual extraction.
-     */
-    private boolean trySupply(IPressureStorage receiver) {
-        if (!receiver.canReceive()) return false;
-        int offered = drainAir(TRANSFER_RATE, true);
-        if (offered <= 0) return false;
-        // Receiver accepts first, source drains only the actually accepted
-        // amount. The operation runs on the authoritative server thread.
-        int received = receiver.receivePressure(offered, false);
-        if (received <= 0) return false;
-        return drainAir(Math.min(received, offered), false) > 0;
-    }
-
     private void transferAir() {
         if (level == null || !formed || drainAir(TRANSFER_RATE, true) == 0) return;
         BlockPos next = worldPosition.relative(matchedFacing);
@@ -171,16 +166,11 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
             // Bounded BFS every five ticks, not every tick/frame. No duct BE,
             // active pipe tickers or world-wide network scans.
             if (level.getGameTime() % PUMP_INTERVAL != 0) return;
-            java.util.List<AirDuctNetwork.Receiver> receivers =
-                    AirDuctNetwork.findReceivers(level, next, worldPosition);
-            int size = receivers.size();
-            for (int i = 0; i < size; i++) {
-                int index = Math.floorMod(nextReceiver + i, size);
-                AirDuctNetwork.Receiver candidate = receivers.get(index);
-                if (candidate.handler().canReceive() && trySupply(candidate.handler())) {
-                    nextReceiver = (index + 1) % size;
-                    break;
-                }
+            IPressureStorage send = output.orElse(null);
+            if (send != null) {
+                PressurizedPipeNetwork.Transfer result = PressurizedPipeNetwork.transfer(
+                        level, next, worldPosition, new LegacyAirPort(send), nextReceiver);
+                nextReceiver = result.nextReceiver();
             }
             return;
         }
@@ -190,8 +180,11 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         // actually formed Primitive Furnace structure.
         if (neighbor instanceof BellowsMultiblockModuleEntity bellows
                 && !bellows.isFormedModule()) return;
-        neighbor.getCapability(CapabilityPressure.PRESSURE, matchedFacing.getOpposite())
-                .ifPresent(this::trySupply);
+        IPressurizedGasHandler receiver = PressurizedPipeNetwork.port(
+                neighbor, matchedFacing.getOpposite(), GasMedium.AIR);
+        IPressureStorage send = output.orElse(null);
+        if (send != null && receiver != null)
+            PressurizedPipeNetwork.transferDirect(new LegacyAirPort(send), receiver, 0);
     }
 
     private void tickBlower() {
@@ -207,7 +200,7 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         MechanicalInputModuleBlockEntity module = getMechanicalInput();
         GearNode node = module == null ? null : module.getOrCreateGearNode();
         boolean room = pressureHandler.getPressureStored() < AIR_CAPACITY;
-        // Qualify raw speed to prevent Gear V2 overload on/off oscillation.
+        // Qualify raw speed to prevent Mechanical Power overload on/off oscillation.
         boolean canAttempt = room && node != null && node.getSpeed() >= MIN_RPM
                 && node.getTorque() + EPS >= TORQUE_DEMAND;
         GearNetworkManager manager = GearNetworkManager.getInstance();
@@ -244,7 +237,8 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
         BlockPos next = worldPosition.relative(matchedFacing);
         boolean receiverPresent = world.hasChunkAt(next)
                 && (world.getBlockState(next).is(BlockRegistry.BRONZE_AIR_DUCT.get())
-                    ? !AirDuctNetwork.findReceivers(world, next, worldPosition).isEmpty()
+                    ? !PressurizedPipeNetwork.receivers(world, next, worldPosition,
+                            GasMedium.AIR).isEmpty()
                     : world.getBlockEntity(next) != null
                       && world.getBlockEntity(next)
                          .getCapability(CapabilityPressure.PRESSURE, matchedFacing.getOpposite())
@@ -365,11 +359,14 @@ public final class BronzeIndustrialAirBlowerBlockEntity extends BaseBlockEntityM
     @Override public void invalidateCaps() {
         super.invalidateCaps();
         output.invalidate();
+        gasOutput.invalidate();
     }
     @Override public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityPressure.PRESSURE)
             return formed && side == matchedFacing ? output.cast() : LazyOptional.empty();
+        if (cap == CapabilityPressurizedGas.GAS)
+            return formed && side == matchedFacing ? gasOutput.cast() : LazyOptional.empty();
         if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();
         return super.getCapability(cap, side);
     }

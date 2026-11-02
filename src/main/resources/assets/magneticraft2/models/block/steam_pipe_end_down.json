@@ -1,0 +1,7 @@
+{
+  "parent": "magneticraft2:block/bronze_air_duct_end_down",
+  "textures": {
+    "bronze": "minecraft:block/iron_block",
+    "particle": "minecraft:block/iron_block"
+  }
+}

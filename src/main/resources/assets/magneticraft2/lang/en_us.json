@@ -490,8 +490,10 @@
   "block.magneticraft2.bronze_industrial_air_blower": "Industrial Air Blower",
   "item.magneticraft2.bronze_industrial_air_blower": "Industrial Air Blower Controller",
   "message.magneticraft2.bronze_industrial_air_blower.status": "Air Blower: Running: %s | Stored air: %s/%s units | Stroke: %s/%s | Receiver connected: %s",
-  "message.magneticraft2.bronze_industrial_air_blower.diagnostic": "Gear V2: %s/%s RPM | Torque: %s/%s | Load supplied: %s | Load active: %s",
+  "message.magneticraft2.bronze_industrial_air_blower.diagnostic": "Mechanical power: %s/%s RPM | Torque: %s/%s | Load supplied: %s | Load active: %s",
   "message.magneticraft2.ore_roasting_kiln.combustion_air": "Combustion air: %s/%s units | oxidation pulse: %s/%s",
   "block.magneticraft2.bronze_air_duct": "Bronze Air Duct",
-  "item.magneticraft2.bronze_air_duct": "Bronze Air Duct"
+  "item.magneticraft2.bronze_air_duct": "Bronze Air Duct",
+  "block.magneticraft2.steam_pipe": "Steam Pipe",
+  "item.magneticraft2.steam_pipe": "Steam Pipe"
 }

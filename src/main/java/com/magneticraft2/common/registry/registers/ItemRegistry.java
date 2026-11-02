@@ -210,6 +210,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_FLUID_OUTPUT = fromBlock(MULTIBLOCK_FLUID_OUTPUT);
     public static final RegistryObject<Item> ITEM_WATER_PIPE = fromBlock(WATER_PIPE);
     public static final RegistryObject<Item> ITEM_BRONZE_AIR_DUCT = fromBlock(BRONZE_AIR_DUCT);
+    public static final RegistryObject<Item> ITEM_STEAM_PIPE = fromBlock(STEAM_PIPE);
     public static final RegistryObject<Item> ITEM_MECHANICAL_WATER_PUMP = fromBlock(MECHANICAL_WATER_PUMP);
     public static final RegistryObject<Item> ITEM_MECHANICAL_TRANSFER_ARM = fromBlock(MECHANICAL_TRANSFER_ARM);
     public static final RegistryObject<Item> ITEM_COPPER_FLUID_TANK = fromBlock(COPPER_FLUID_TANK);

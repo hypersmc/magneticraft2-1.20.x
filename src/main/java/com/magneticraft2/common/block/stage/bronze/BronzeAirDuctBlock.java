@@ -15,6 +15,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
+import com.magneticraft2.common.systems.PRESSURE.GasMedium;
 import com.magneticraft2.common.blockentity.stage.stone.BellowsMultiblockModuleEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeIndustrialAirBlowerBlockEntity;
 
@@ -138,6 +140,10 @@ public class BronzeAirDuctBlock extends Block {
         // capability query enforces blower FRONT and kiln FRONT port restrictions.
         BlockEntity neighbourEntity = level.getBlockEntity(neighbourPos);
         if (neighbourEntity == null) return false;
+        var gas = neighbourEntity.getCapability(
+                CapabilityPressurizedGas.GAS, direction.getOpposite()).orElse(null);
+        if (gas != null) return gas.medium() == GasMedium.AIR
+                && (gas.canReceive() || gas.canExtract());
         if (neighbourEntity instanceof BellowsMultiblockModuleEntity bellows
                 && !bellows.isFormedModule()) return false;
         return neighbourEntity.getCapability(
@@ -172,12 +178,8 @@ public class BronzeAirDuctBlock extends Block {
         );
     }
 
-    @Override
-    public VoxelShape getShape(
-            BlockState state,
-            BlockGetter level,
-            BlockPos pos,
-            CollisionContext context) {
+    /** Shared cached 64-shape geometry, including Steam Pipe metal sleeves. */
+    public static VoxelShape shapeForConnections(BlockState state) {
         int mask = 0;
         if (state.getValue(NORTH)) mask |= 1;
         if (state.getValue(EAST)) mask |= 2;
@@ -186,6 +188,12 @@ public class BronzeAirDuctBlock extends Block {
         if (state.getValue(UP)) mask |= 16;
         if (state.getValue(DOWN)) mask |= 32;
         return CONNECTION_SHAPES[mask];
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level,
+            BlockPos pos, CollisionContext context) {
+        return shapeForConnections(state);
     }
 
     @Override

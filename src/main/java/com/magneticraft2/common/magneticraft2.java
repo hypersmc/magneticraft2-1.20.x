@@ -7,6 +7,7 @@ import com.magneticraft2.common.systems.Blueprint.core.BlueprintManager;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockManager;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
 import com.magneticraft2.common.systems.mgc2Network;
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
@@ -110,6 +111,7 @@ public class magneticraft2 {
     public void registerCapabilities(RegisterCapabilitiesEvent event){
         CapabilityHeat.register(event);
         CapabilityPressure.register(event);
+        CapabilityPressurizedGas.register(event);
         CapabilityWatt.register(event);
     }
 }
