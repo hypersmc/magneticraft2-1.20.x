@@ -49,6 +49,9 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraftforge.registries.ForgeRegistries;
 
 /** Recipe-driven, server-authoritative Bloomery Furnace. Rendering stays independent. */
 public final class BloomeryFurnaceBlockEntity extends BaseBlockEntityMagneticraft2
@@ -156,6 +159,92 @@ public final class BloomeryFurnaceBlockEntity extends BaseBlockEntityMagneticraf
             return structure;
         }
         return null;
+    }
+
+
+    /**
+     * A failed attempt checks every position in each of the four Bloomery
+     * blueprints. The ordinary matcher stops on the first mismatch, making
+     * four rotational log entries impossible to interpret. This is only
+     * called when the player clicks an unformed controller; it never changes
+     * the real structure validator, world blocks or formation rules.
+     */
+    public void reportFormationFailure(Player player) {
+        if (level == null || level.isClientSide || formed) return;
+        Direction preferred = getBlockState().getValue(BloomeryFurnaceBlock.FACING);
+        int fewestErrors = Integer.MAX_VALUE;
+        List<String> nearestErrors = List.of();
+        String nearestName = "";
+        Direction nearestFacing = preferred;
+
+        for (Multiblock multiblock : MultiblockRegistry.getRegisteredMultiblocks().values()) {
+            if (!multiblock.getName().startsWith(PREFIX)) continue;
+            MultiblockStructure structure = multiblock.getStructure();
+            BlockPos offset = findControllerOffset(structure, getBlockState().getBlock());
+            BlockPos origin = worldPosition.subtract(offset);
+            int[] dimensions = structure.getDimensions();
+            var layout = structure.getLayout();
+            var blocks = structure.getBlocks();
+            List<String> errors = new ArrayList<>(4);
+            int total = 0;
+
+            for (int y = 0; y < dimensions[1]; y++) {
+                List<List<String>> layer = layout.get("layer" + (y + 1));
+                if (layer == null) {
+                    total++;
+                    if (errors.size() < 4) errors.add("Missing blueprint layer " + (y + 1));
+                    continue;
+                }
+                for (int z = 0; z < dimensions[2]; z++) {
+                    for (int x = 0; x < dimensions[0]; x++) {
+                        BlockPos testPos = origin.offset(x, y, z);
+                        if (!level.hasChunkAt(testPos)) {
+                            total++;
+                            if (errors.size() < 4)
+                                errors.add(testPos.toShortString() + ": chunk not loaded");
+                            continue;
+                        }
+                        Block expected = blocks.get(layer.get(z).get(x));
+                        Block actual = level.getBlockState(testPos).getBlock();
+                        if (expected != actual) {
+                            total++;
+                            if (errors.size() < 4) {
+                                errors.add(testPos.toShortString()
+                                        + ": requires " + ForgeRegistries.BLOCKS.getKey(expected)
+                                        + ", found " + ForgeRegistries.BLOCKS.getKey(actual));
+                            }
+                        }
+                    }
+                }
+            }
+
+            Direction facing = facingFromName(multiblock.getName());
+            if (total < fewestErrors || (total == fewestErrors
+                    && facing == preferred && nearestFacing != preferred)) {
+                fewestErrors = total;
+                nearestErrors = errors;
+                nearestName = multiblock.getName();
+                nearestFacing = facing;
+            }
+        }
+
+        if (fewestErrors == Integer.MAX_VALUE) {
+            player.sendSystemMessage(Component.literal(
+                    "Bloomery: no matching JSON blueprint was loaded. Check server datapacks."));
+        } else if (fewestErrors == 0) {
+            player.sendSystemMessage(Component.literal(
+                    "Bloomery: " + nearestName
+                            + " matches all blocks, but formation failed later. Check server logs for module/voxel errors."));
+        } else {
+            player.sendSystemMessage(Component.literal(
+                    "Bloomery: cannot form. Closest layout is " + nearestFacing.getName()
+                            + " (" + fewestErrors + " incorrect/missing blocks):"));
+            for (String error : nearestErrors)
+                player.sendSystemMessage(Component.literal(" - " + error));
+            if (fewestErrors > nearestErrors.size())
+                player.sendSystemMessage(Component.literal(
+                        " ... and " + (fewestErrors - nearestErrors.size()) + " more. Follow the book's exact bottom layer."));
+        }
     }
 
     private static Direction facingFromName(String name) {

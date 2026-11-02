@@ -66,7 +66,18 @@ assert.equal(wash.fluid_output.fluid,"magneticraft2:dirty_water");
 const sift=json(dir+"recipes/mechanical_sifting_magnetite.json");
 assert.equal(sift.input.item,"magneticraft2:washed_magnetite");
 assert.equal(sift.output.item,"magneticraft2:magnetite_concentrate");
+// Formation geometry evidence: for the north-facing layout, the first
+// block one step behind the byproduct port is required Stone Bricks.
+// This avoids treating a visually recessed module as a blueprint AIR cell.
+const north=json(dir+"multiblocks/bloomery_furnace_north.json");
+assert.equal(north.structure.layout.layer1[0][0],"Y");
+assert.equal(north.structure.layout.layer1[1][0],"S");
+const diagnosticsBlock=source("src/main/java/com/magneticraft2/common/block/stage/bronze/BloomeryFurnaceBlock.java");
+assert.ok(diagnosticsBlock.includes("tank.reportFormationFailure(player)"));
 const be=source("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BloomeryFurnaceBlockEntity.java");
+assert.ok(be.includes("public void reportFormationFailure(Player player)"));
+assert.ok(be.includes("Closest layout is "));
+
 for(const required of [
  "if (level == null || !formed) return;",
  "held.is(Items.CHARCOAL)",

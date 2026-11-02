@@ -1062,7 +1062,7 @@
         },
         "symmetrical": false
       },
-      "text": "Top-down layers. Ground-layer FRONT/SOUTH row, left to right: Stone Bricks, Input port, Bloomery Controller, Bloom Output port, Slag Output port. The next two levels have a central front service opening, and the shaft's center is open AIR all the way to the chimney. Right-click the controller to form."
+      "text": "Bottom layer is a SOLID 5x5 Stone Bricks foundation EXCEPT four FRONT-edge positions: Input, Controller, Bloom output, and Slag output. All 21 remaining bottom cells must contain Stone Bricks, including cells one block behind the output ports. Do not excavate behind the ports. The next two levels have a central front opening, and upper levels surround an AIR chimney. Right-click the controller to form; if it fails, the closest blueprint and exact mismatched positions appear in chat."
     },
     {
       "type": "text",
