@@ -1,17 +1,22 @@
 {
-  "schema_version": 1,
-  "meaning": "Earliest intended useful processing/extraction unlock. It does NOT gate worldgen, ore mining, JEI, or game progression.",
-  "mining_policy": "All registered ore blocks currently self-drop with a stone-tier pickaxe baseline. Do not impose metal-tool gating that would softlock the first iron bloom; revisit only with tested metal tool progression.",
-  "quality_policy": "Preserve current copper/tin/bronze recipes and the already agreed quality concept. No new grade math or low-grade ingot substitution without a separate decision.",
+  "schema_version": 2,
+  "meaning": "Candidate earliest useful processing age, NOT worldgen/harvest gating. A mineral marked conditional does not unlock until its prerequisite consumer/process exists. Deferred minerals have no assigned unlock age.",
+  "mining_policy": "All registered ore blocks retain current self-drops and stone-tool mining baseline. An inactive mineral can be found/mined; do not gate critical early ore behind a later tool.",
+  "compatibility_policy": "No registered ore IDs, worldgen, loot, crafting recipes, JEI rules or existing Copper/Bronze production yields are changed by this planning matrix. Preserve legacy silicium/platinium IDs.",
+  "quality_policy": "Preserve vanilla-versus-mod Copper quality decisions. No new grade math, NBT migration, or recipe yield changes without an explicit later implementation.",
+  "gating_rules": [
+    "Technology: machines available in the age must plausibly carry out the process.",
+    "Gameplay: a resulting material must have a named and useful consumer.",
+    "Progression: early availability must not bypass a later milestone.",
+    "No dead ends: no isolated concentrate or ingot recipe merely to populate an age.",
+    "Discovery/mining may precede meaningful processing."
+  ],
   "ages": [
     {
       "age": "Stone",
-      "ores": [
-        "kaolinite",
-        "lignite"
-      ],
+      "ores": [],
       "state": "planned",
-      "purpose": "Basic ceramic feed and low-grade fuel; no production recipe is active yet."
+      "purpose": "No mandatory ore-specific processing; vanilla clay and ordinary fuels already cover the first technologies."
     },
     {
       "age": "Copper",
@@ -21,81 +26,304 @@
         "quartz"
       ],
       "state": "implemented",
-      "purpose": "Copper and Tin concentrates, plus quartz via Grinder → Washer → Sifter."
+      "purpose": "Preserve proven Copper, Tin and Quartz recipes and material quality conventions."
     },
     {
       "age": "Bronze",
       "ores": [
         "magnetite",
         "hematite",
-        "limonite",
-        "galena"
+        "limonite"
       ],
-      "state": "planned",
-      "purpose": "Iron-mineral preparation for the Bloomery; Lead is an optional early byproduct chain, not a bloom requirement."
+      "state": "partial",
+      "purpose": "Magnetite is the K1 iron-bloom baseline; Hematite/Limonite require demonstrably distinct preparation and downstream Bloomery use."
     },
     {
       "age": "Iron",
       "ores": [
         "graphite",
         "anthracite",
-        "sphalerite",
-        "silver"
+        "sphalerite"
       ],
       "state": "planned",
-      "purpose": "Carbon processing, high-grade fuels, Zinc/Brass and precious metals."
+      "purpose": "Candidate carbon/lubrication, high-grade fuel and brass processing only if consumers exist."
     },
     {
       "age": "Steel",
       "ores": [
         "manganese",
-        "chromite",
         "garnierite",
         "kimberlite"
       ],
       "state": "planned",
-      "purpose": "Steel alloy additions, Chromium, Nickel and recovered industrial diamonds."
+      "purpose": "Candidate alloying and industrial abrasion, gated by actual Steel production."
     },
     {
       "age": "Steam",
       "ores": [
-        "sulfur",
-        "saltpeter",
-        "apatite",
-        "cinnabar"
+        "sulfur"
       ],
       "state": "planned",
-      "purpose": "Bulk chemical feedstocks, fertilizer materials and controlled Mercury processing."
+      "purpose": "Sulfur chemistry only if a named industrial chemical consumer exists."
     },
     {
       "age": "Gasoline",
       "ores": [],
       "state": "planned",
-      "purpose": "Liquid hydrocarbons, petroleum refining and lubrication; no new mandatory ore deposit."
+      "purpose": "Petroleum extraction/refining is not a mandatory mineral-ore unlock."
     },
     {
       "age": "Electric Generator",
       "ores": [
+        "silver",
+        "chromite",
         "bauxite",
         "cryolite",
-        "silicium",
-        "titanite",
         "wolframite",
         "tantalite",
         "cobaltite",
         "platinium"
       ],
       "state": "planned",
-      "purpose": "Electric metallurgy, Aluminum and Silicon, specialty metals and electronics."
+      "purpose": "Electrical contacts, specialty metal reduction and aluminum electrolysis require functioning electric technology."
     },
     {
       "age": "Nuclear",
       "ores": [
-        "uraninite",
-        "osmiridium"
+        "uraninite"
       ],
       "state": "planned",
-      "purpose": "Fuel-cycle metallurgy and endgame advanced materials."
+      "purpose": "Real uranium fuel cycle rather than a symbolic ore smelting recipe."
     }
-  ]
+  ],
+  "deferred": [
+    "kaolinite",
+    "lignite",
+    "galena",
+    "saltpeter",
+    "apatite",
+    "cinnabar",
+    "silicium",
+    "titanite",
+    "osmiridium"
+  ],
+  "minerals": {
+    "chalcocite": {
+      "earliest_use_age": "Copper",
+      "status": "source_active",
+      "first_use": "Existing copper concentrate / copper ingots",
+      "prerequisites": "Preserve the Grinder, Washer, Sifter and Primitive Furnace 1/2/3-copper yield tiers; the Roasting Kiln is a separate optional improvement.",
+      "rationale": "An established required Copper material and existing recipes."
+    },
+    "cassiterite": {
+      "earliest_use_age": "Copper",
+      "status": "source_active",
+      "first_use": "Existing tin concentrate / tin ingots",
+      "prerequisites": "Preserve existing copper-to-bronze tin chain, including processing water and slag accounting.",
+      "rationale": "Tin is required for Bronze production."
+    },
+    "quartz": {
+      "earliest_use_age": "Copper",
+      "status": "source_active",
+      "first_use": "Existing quartz product",
+      "prerequisites": "Preserve existing crushing, washing and sifting; later silicon chemistry must not erase the current route.",
+      "rationale": "Already processed and useful, with later possibilities that do not force an early electronics path."
+    },
+    "magnetite": {
+      "earliest_use_age": "Bronze",
+      "status": "source_active",
+      "first_use": "Iron Bloom from the existing Bloomery",
+      "prerequisites": "Existing Stamp Mill → Washer → Sifter → concentrate; Calcite flux, charcoal, HEAT and real AIR are mandatory. Wrought Iron consolidation is still missing.",
+      "rationale": "First actual Bronze-to-Iron reduction route exists in source; user has formed and used the Bloomery, but the full survival chain is not yet accepted."
+    },
+    "hematite": {
+      "earliest_use_age": "Bronze",
+      "status": "conditional",
+      "first_use": "Alternative iron-bloom feed",
+      "prerequisites": "Approve an ore-specific concentration method and compare its yield and availability with Magnetite. Use the same Bloomery only when mechanically justified.",
+      "rationale": "Second iron-oxide source can provide exploration variety; it must not require a duplicate machine or dead-end concentrate."
+    },
+    "limonite": {
+      "earliest_use_age": "Bronze",
+      "status": "conditional",
+      "first_use": "Alternative iron-bloom feed after drying/roasting when beneficial",
+      "prerequisites": "Prove the hydrated iron-bearing feed benefits from existing drying or Ore Roasting Kiln, and provide a real Bloomery recipe.",
+      "rationale": "Would give the existing kiln a material-specific role; no universal roasting tax."
+    },
+    "graphite": {
+      "earliest_use_age": "Iron",
+      "status": "conditional",
+      "first_use": "Dry lubricant or carbon/refractory ingredient",
+      "prerequisites": "Only unlock with a named Iron-era bearing, hot-working, crucible or heat-resistant component that consumes it.",
+      "rationale": "Graphite should not become a purposeless coal replacement."
+    },
+    "anthracite": {
+      "earliest_use_age": "Iron",
+      "status": "conditional",
+      "first_use": "Higher-performance industrial carbon fuel",
+      "prerequisites": "Define a measurable difference in heat/cleanliness/duration from charcoal and coal in a machine that needs it.",
+      "rationale": "A valuable industrial fuel only if machines benefit from its characteristics."
+    },
+    "sphalerite": {
+      "earliest_use_age": "Iron",
+      "status": "conditional",
+      "first_use": "Zinc feedstock for useful brass components",
+      "prerequisites": "Add a proper zinc extraction route, identify brass consumers and prevent ordinary furnace ore-to-brass shortcuts.",
+      "rationale": "Brass fittings or precision parts may make zinc meaningful in Iron technology."
+    },
+    "manganese": {
+      "earliest_use_age": "Steel",
+      "status": "conditional",
+      "first_use": "Manganese-bearing alloying feed",
+      "prerequisites": "Require an actual alloy/furnace recipe with improved or distinct steel-component use.",
+      "rationale": "Useful for alloy design, not simply an extra decorative ingot."
+    },
+    "garnierite": {
+      "earliest_use_age": "Steel",
+      "status": "conditional",
+      "first_use": "Nickel-bearing alloy feed",
+      "prerequisites": "Only use after nickel metallurgy and a named alloy or corrosion-resistant component are designed.",
+      "rationale": "Nickel steels are an appropriate eventual Steel-era upgrade if the heat/process requirements are supported."
+    },
+    "kimberlite": {
+      "earliest_use_age": "Steel",
+      "status": "conditional",
+      "first_use": "Industrial diamond recovery for durable cutting/abrasive tools",
+      "prerequisites": "Define recovery yields and a genuinely wear-resistant cutting/grinding tool; never convert all Kimberlite directly into diamonds.",
+      "rationale": "A rock hosting diamonds, rather than a steel alloy ore; toolmaking gives a relevant purpose."
+    },
+    "sulfur": {
+      "earliest_use_age": "Steam",
+      "status": "conditional",
+      "first_use": "Sulfur chemistry used by industry",
+      "prerequisites": "Require a specific Steam-era chemical product and machine consumer, such as controlled acid processing or elastomer treatment; not a bare Furnace recipe.",
+      "rationale": "Plausible bulk chemical feed when chemical processing becomes an actual system."
+    },
+    "silver": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Electrical contacts or specialist conductive parts",
+      "prerequisites": "Only unlock with an actual electrical component; preserve vanilla materials compatibility and do not force Silver into basic iron forging.",
+      "rationale": "No necessary Iron-era consumer currently exists; its most credible planned utility is electrical."
+    },
+    "chromite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Chromium-bearing corrosion/heat-resistant alloy feed",
+      "prerequisites": "Define a sufficiently advanced reduction process and actual corrosion-resistant component; revisit Steel placement only if its furnaces legitimately support it.",
+      "rationale": "Chromium alloy extraction is too demanding to assume ordinary Steel-era smelting suffices."
+    },
+    "bauxite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Aluminum feedstock",
+      "prerequisites": "Require real electrically powered aluminum extraction and meaningful aluminum components.",
+      "rationale": "Energy-intensive refining makes this a natural electric milestone."
+    },
+    "cryolite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Aluminum electrolysis bath constituent",
+      "prerequisites": "Link explicitly to Bauxite refining; allow a carefully balanced non-ore supply alternative if necessary to prevent mining bottlenecks.",
+      "rationale": "Not an independently smeltable metal; useful only together with aluminum production."
+    },
+    "wolframite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Tungsten feed for cutting tools or high-temperature components",
+      "prerequisites": "Require appropriate advanced reduction and useful wear-resistant, heat-resistant tooling.",
+      "rationale": "More credible after high-temperature electric metallurgy than as free Steel Age tungsten."
+    },
+    "tantalite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Tantalum for advanced electrical components",
+      "prerequisites": "Require an electronics/capacitor consumer and a realistic specialty-metal process.",
+      "rationale": "Electric/advanced electronics provides a distinct demand."
+    },
+    "cobaltite": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Cobalt-bearing specialty-alloy or catalyst feed",
+      "prerequisites": "Require a named advanced alloy, component or chemical consumer; avoid direct ore-to-pure-cobalt recipes.",
+      "rationale": "This ore matters only if advanced manufacture uses cobalt."
+    },
+    "platinium": {
+      "earliest_use_age": "Electric Generator",
+      "status": "conditional",
+      "first_use": "Platinum-group catalyst or electrical contact",
+      "prerequisites": "Require a named catalyst or specialist component; retain existing registry spelling for compatibility.",
+      "rationale": "Plausible advanced material, not a generic Bronze-age precious metal."
+    },
+    "uraninite": {
+      "earliest_use_age": "Nuclear",
+      "status": "conditional",
+      "first_use": "Uranium-bearing feed for nuclear fuel fabrication",
+      "prerequisites": "Require a dedicated fuel cycle, radiation containment and actual reactor consumption; no furnace-to-fuel-rod shortcut.",
+      "rationale": "The nuclear age has an obvious genuine consumer but the process is not implemented."
+    },
+    "kaolinite": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No required early consumer",
+      "prerequisites": "Revisit if kaolin ceramics add a meaningful upgrade over existing clay/sand and fired refractory production.",
+      "rationale": "A Stone-age ceramic recipe would currently duplicate established inputs without adding gameplay."
+    },
+    "lignite": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No distinct early fuel role",
+      "prerequisites": "Revisit only if low-grade coal provides an actual resource/combustion tradeoff; never replace mandatory charcoal in the Bloomery.",
+      "rationale": "Stone/Copper already have usable fuels; a redundant low-efficiency fuel is not necessary."
+    },
+    "galena": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved lead consumer",
+      "prerequisites": "Revisit in later metalworking or chemical/electric production when lead or associated silver has a named sink.",
+      "rationale": "A plausible Bronze extraction process is not sufficient reason to add dead-end Lead Ingots."
+    },
+    "saltpeter": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved chemical consumer",
+      "prerequisites": "Revisit alongside a later fertilizer or controlled industrial chemical chain.",
+      "rationale": "Do not introduce a chemical ore because Steam Age has a chemistry label."
+    },
+    "apatite": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved phosphate consumer",
+      "prerequisites": "Revisit when agriculture, fertilizer or specialty chemical production creates meaningful demand.",
+      "rationale": "An early phosphate concentrate would currently be a dead-end item."
+    },
+    "cinnabar": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved mercury consumer",
+      "prerequisites": "Only reconsider with a distinct, justified process that accounts for hazardous mercury chemistry; do not make it a mandatory age gate.",
+      "rationale": "No need to add Mercury extraction just because the ore exists."
+    },
+    "silicium": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "Existing legacy mineral ID has no coherent product definition",
+      "prerequisites": "Design Silicon production from the existing Quartz/silica path first; decide what silicium_ore represents without renaming saved-world IDs.",
+      "rationale": "Native elemental Silicon ore is not a credible natural source; existing Quartz already supplies silica."
+    },
+    "titanite": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved titanium consumer or practical feed process",
+      "prerequisites": "Only reconsider if an advanced titanium route has credible chemistry and useful outputs; do not treat Titanite as simple raw titanium.",
+      "rationale": "Titanite is not an easy high-grade titanium ore and should not be mandatory solely to populate Electric Age."
+    },
+    "osmiridium": {
+      "earliest_use_age": null,
+      "status": "deferred",
+      "first_use": "No approved advanced-material consumer",
+      "prerequisites": "Define a distinct endgame use and appropriate processing before assigning it to Nuclear or an earlier age.",
+      "rationale": "Its legacy endgame ore status is not in itself a reason for a recipe."
+    }
+  }
 }
