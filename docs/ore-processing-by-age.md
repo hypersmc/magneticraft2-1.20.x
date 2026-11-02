@@ -29,7 +29,7 @@ Kaolinite and Lignite exist as world ores, but do not yet have a usable ceramic/
 
 ### Bronze
 
-**Preparation unlock, not iron ingots:** Magnetite/Hematite/Limonite should feed ore-dressing and eventually the Bloomery; Galena/Lead remains an optional Bronze-era chemistry/metal route. No iron concentrate, roasted ores, bloom or Lead items exist yet. Do not add dead-end Stamp Mill recipes today. First bloom/forged wrought iron is the Bronze → Iron milestone.
+**Preparation unlock, not iron ingots:** Magnetite/Hematite/Limonite should feed ore-dressing and eventually the Bloomery; Galena/Lead remains an optional Bronze-era chemistry/metal route. No iron concentrate, roasted ores, bloom or Lead items exist yet. The [Bloomery K0 contract](bronze-bloomery-contract.md) selects Magnetite for the first route: introduce its ore intermediates only together with a downstream consumer, not as dead-end recipes. First bloom/forged wrought iron is the Bronze → Iron milestone.
 
 ### Iron
 

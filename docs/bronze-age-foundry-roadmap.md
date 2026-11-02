@@ -43,7 +43,7 @@ Primitive Furnace + Coal -> 4 Bronze Ingots + Slag.
    iron bloom; working the bloom yields first usable **wrought iron**.
 
 **Bronze Age exit milestone:** the first wrought iron item, after a real
-Bloomery and mechanical/hand finishing chain. The bloom and its refining
+Bloomery and mechanical/hand finishing chain. [Bloomery K0 contract](bronze-bloomery-contract.md) proposes a first Magnetite-only reduction route; bloom itself is not finished wrought iron. The bloom and its refining
 must not be skipped by a plain crafting recipe.
 
 ## Still undecided — do not hard-code prematurely
