@@ -2,6 +2,14 @@
 
 Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled against draft PR #11 on **2026-10-31**. The earlier historical milestone notes below are retained for context.  In the machine tables below, **source implemented** means the code/resources exist on the draft branch, not that the full Forge build and in-game acceptance are complete. **Planned** means not yet implemented. Commit new content incrementally and preserve Copper-era functionality. Target progression: **Copper workshop -> Bronze industrial factory -> first iron bloom -> Iron Age**.
 
+## Current development direction — 2026-11-02
+
+**Bronze remains the active age.** The Industrial Air Blower is **done for now as a scope decision**, not a claim that full Gradle/in-game verification has passed. Do not reopen its design or introduce more Steam Age machinery in this slice. Steam transport/rupture infrastructure on PR #11 is parked until the Steam Age workstream; it remains unverified and is not part of the Bronze gameplay acceptance milestone.
+
+**Next Bronze III planned machine:** Mechanical Assembly Station, the last source-unimplemented Bronze III candidate. Start with [its functional and integration contract](bronze-mechanical-assembly-station-contract.md) rather than a decorative block. The first **candidate** automated assembly produces the **existing Mechanical Water Pump** from the same 2 planks + Bronze Bushing + Wooden Shaft + Small Wooden Pulley as its existing shaped recipe. Manual crafting remains. The machine requires a real multi-input recipe contract and independent automation-accessible ingredient inventories; the current one-input `multiblock_processing` format cannot provide that directly. No gameplay source or recipe has been added by this planning update.
+
+**Sequence:** Assembly Station K0 contract -> reusable multi-input and port design -> one working K1 pump-assembly batch -> compile/in-game verification -> optional additional outputs based on gameplay need -> Bronze IV Bloomery/first iron bloom -> full ore-by-ore progression. The Refractory Kiln is already **K2 source-implemented** with a provisional clay/sand batch firing loop (see its current contract), not just a K1 structural mock-up. Build and end-to-end gameplay verification remain pending. Preserve the existing progression quality and maintenance decisions, including that not everything should wear out or need constant upkeep.
+
 ## Non-negotiable design rules
 
 1. Every formed machine has a concrete purpose: new material transformation, meaningful throughput/quality upgrade, or a connection between established processes. Avoid adding machines solely for item-gating.
