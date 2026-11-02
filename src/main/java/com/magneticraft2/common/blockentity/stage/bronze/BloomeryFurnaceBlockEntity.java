@@ -398,7 +398,7 @@ public final class BloomeryFurnaceBlockEntity extends BaseBlockEntityMagneticraf
         return getUpdateTag();
     }
 
-    // The two genuine module blocks own all item I/O. Exposing the
+    // Genuine input, primary and byproduct modules own item I/O. Exposing the
     // base controller-wide handler here would bypass the K1 input lock.
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(
@@ -431,7 +431,7 @@ public final class BloomeryFurnaceBlockEntity extends BaseBlockEntityMagneticraf
     @Override public boolean fluidcape() { return false; }
     @Override public boolean pressurecape() { return true; }
 
-    // No external HEAT transfer in K2; only the solid-fuel firebox supplies HEAT.
+    // K1 HEAT comes only from actual charcoal combustion; AIR is separate.
     @Override public boolean HeatCanReceive() { return false; }
     @Override public boolean HeatCanSend() { return false; }
     @Override public boolean WattCanReceive() { return false; }

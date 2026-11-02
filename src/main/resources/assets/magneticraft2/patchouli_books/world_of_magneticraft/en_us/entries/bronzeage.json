@@ -1018,31 +1018,31 @@
         "pattern": [
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
+            "B___B",
+            "B___B",
+            "B___B",
             "BBBBB"
           ],
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
+            "B___B",
+            "B___B",
+            "B___B",
             "BBBBB"
           ],
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
-            "BBABB"
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
           ],
           [
             "BBBBB",
-            "BAAAB",
-            "BAAAB",
-            "BAAAB",
-            "BBABB"
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
           ],
           [
             "SSSSS",
