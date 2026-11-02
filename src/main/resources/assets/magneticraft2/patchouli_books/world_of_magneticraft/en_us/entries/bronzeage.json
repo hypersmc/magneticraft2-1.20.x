@@ -964,9 +964,9 @@
         "pattern": [
           [
             "PPPPP",
-            "P___P",
+            "_____",
             "PPPPP",
-            "P___P",
+            "_____",
             "PPPPP"
           ],
           [
@@ -981,7 +981,7 @@
             "SSSSS",
             "SSSSS",
             "SSSSS",
-            "OS0SU"
+            "US0SO"
           ]
         ],
         "mapping": {
@@ -994,7 +994,7 @@
         },
         "symmetrical": false
       },
-      "text": "Place the bottom stone foundation with one mechanical input (I) at rear-centre, real Item Input (U) front-left and real Item Output (O) front-right as seen from the South. Leave all underscored cells AIR. Six oak posts support three overhead crossbeams. The central middle-layer AIR cell becomes a V2 assembly fixture proxy on formation. Right-click the Controller to form. Other facings use the same structure rotated."
+      "text": "Build exactly as Visualize shows: the BOTTOM layer is Stone Bricks with Mechanical Input (I) at rear-centre, Item Input (U) at front-left, Controller (0) at front-centre, and Primary Output (O) at front-right (viewed from the South). On the MIDDLE layer, place Oak Planks only at both ends of the rear, centre and front rows; leave every other cell AIR. On the TOP layer, place three full Oak Plank crossbeams at rear, centre and front. The TWO rows BETWEEN these beams must be entirely AIR, including their ends. The central middle-layer air cell hosts a V2 assembly fixture after formation. Rotate the entire structure together for other facings."
     },
     {
       "type": "text",

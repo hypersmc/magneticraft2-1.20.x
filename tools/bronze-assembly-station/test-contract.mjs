@@ -61,6 +61,30 @@ assert(assembly.result.item==="magneticraft2:mechanical_water_pump","Wrong first
 const manual=read("src/main/resources/data/magneticraft2/recipes/mechanical_water_pump_bronze_bushing.json");
 assert(manual.result.item===assembly.result.item,"Manual alternative removed");
 const book=read("src/main/resources/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
-assert(book.pages.some(p=>p.type==="patchouli:multiblock"&&p.name==="Mechanical Assembly Station"),
-       "Patchouli build guide missing");
+const construction = book.pages.find(p=>
+ p.type==="patchouli:multiblock" && p.name==="Mechanical Assembly Station");
+assert(construction,"Patchouli build guide missing");
+// Patchouli patterns are TOP-to-BOTTOM, while JSON layer1 is the foundation.
+// Check every construction cell against all four rotated server blueprints.
+const schematic = construction.multiblock;
+assert(schematic.pattern.length===3 && schematic.pattern.every(layer=>
+ layer.length===5 && layer.every(row=>row.length===5)),
+ "Patchouli dimensions don't match 5x3x5 server multiblock");
+const canonical=(x,y,z)=>{
+ const symbol=schematic.pattern[2-y][z][x];
+ return symbol==="_"?"minecraft:air":schematic.mapping[symbol];
+};
+for(let n=0;n<dirs.length;n++){
+ const dir=dirs[n],server=read(blueprints+id+"_"+dir+".json").structure;
+ for(let y=0;y<3;y++)for(let z=0;z<5;z++)for(let x=0;x<5;x++){
+  let xx=x,zz=z;
+  for(let turn=0;turn<n;turn++){const oldX=xx;xx=4-zz;zz=oldX;}
+  const bookBlock=canonical(x,y,z);
+  const key=server.layout["layer"+(y+1)][zz][xx];
+  const serverBlock=server.blocks[key];
+  assert(bookBlock===serverBlock,
+   "Patchouli mismatch "+dir+" layer="+(y+1)+" x="+xx+" z="+zz+
+   ": expected "+serverBlock+", book shows "+bookBlock);
+ }
+}
 console.log("PASS Bronze Assembly K1: 4 layouts, 176 part models, voxel shapes, UV, recipe and guide");
