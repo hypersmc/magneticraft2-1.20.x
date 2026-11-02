@@ -999,6 +999,74 @@
     {
       "type": "text",
       "text": "$(bold)First assembly: Mechanical Water Pump$()$(br2)Provide 2 planks, 1 Bronze Bushing, 1 Wooden Shaft, and 1 Small Wooden Pulley in the four input slots. With at least 18 RPM and 5 torque, 200 supplied ticks create one Water Pump. Full output or missing power pauses work; no components are consumed until completion. You can still craft this Water Pump manually at a Crafting Table. These power values are provisional Bronze balance values."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bronze IV: Magnetite to Iron Bloom$()$(br2)Mine Magnetite or Deepslate Magnetite. Break 2 ore into 2 Crushed Magnetite at the existing Stamp Mill; wash with water and sift to concentrate. Four Magnetite Concentrate and one Calcite flux are reduced by sustained hot charcoal and forced combustion AIR. The outputs are an Iron Bloom and guaranteed Slag. The bloom must later be hot consolidated into Wrought Iron."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bloomery Furnace Controller",
+      "recipe": "magneticraft2:bloomery_furnace",
+      "text": "The controller requires existing fired refractory ceramics and bronze; the actual 5x5x5 structure requires Stone Bricks, Bricks and three genuine item ports."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Bloomery Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BBABB"
+          ],
+          [
+            "BBBBB",
+            "BAAAB",
+            "BAAAB",
+            "BAAAB",
+            "BBABB"
+          ],
+          [
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SU0OY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:bloomery_furnace",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Top-down layers. Ground-layer FRONT/SOUTH row, left to right: Stone Bricks, Input port, Bloomery Controller, Bloom Output port, Slag Output port. The next two levels have a central front service opening, and the shaft's center is open AIR all the way to the chimney. Right-click the controller to form."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Running the Bloomery$()$(br2)The input module exposes two slots for 4 Magnetite Concentrate and 1 Calcite. Right-click the controller holding Charcoal to load fuel. Pipe the Industrial Air Blower to the FRONT of the controller with Bronze Air Ducts, or directly connect the Blower outlet. The Bloomery needs HEAT plus one real air charge every five progress ticks. Output blockage pauses the process. Right-click empty-handed to inspect state. Hot consolidation of the bloom is later Iron Age work; vanilla iron smelting is unchanged."
     }
   ],
   "sortnum": 3,

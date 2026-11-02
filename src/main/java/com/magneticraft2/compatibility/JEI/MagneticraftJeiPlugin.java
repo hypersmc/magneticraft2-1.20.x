@@ -3,6 +3,7 @@ package com.magneticraft2.compatibility.JEI;
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
+import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -70,6 +71,12 @@ public class MagneticraftJeiPlugin implements IModPlugin {
 
         level.getRecipeManager()
                 .getAllRecipesFor(MechanicalAssemblyRecipe.Type.INSTANCE)
+                .stream()
+                .map(MultiblockJeiRecipe::from)
+                .forEach(recipes::add);
+
+        level.getRecipeManager()
+                .getAllRecipesFor(BloomeryRecipe.Type.INSTANCE)
                 .stream()
                 .map(MultiblockJeiRecipe::from)
                 .forEach(recipes::add);
@@ -161,6 +168,7 @@ public class MagneticraftJeiPlugin implements IModPlugin {
         registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);
         registerCatalyst(registration, MultiblockJeiRecipe.CHARCOAL_RETORT);
         registerCatalyst(registration, MultiblockJeiRecipe.ORE_ROASTING_KILN);
+        registerCatalyst(registration, MultiblockJeiRecipe.BLOOMERY_FURNACE);
     }
 
     private static void registerCatalyst(

@@ -1,6 +1,6 @@
 # Bronze IV — Bloomery Furnace: K0 design and K1 implementation contract
 
-**Status: K0 specification only (2026-11-02). Bloomery source, recipes, assets, JEI, runtime and Forge tests are not implemented/verified.** This is a proposed machine, not a formed multiblock. Track implementation in [Bronze production plan](bronze-age-production-plan.md), which remains canonical. [Concept footprint diagram](concepts/bloomery-k0-layout.svg) is an editable reference, not an accepted blueprint. A separate rendered concept image was generated in the design conversation.
+**Status: K1 source candidate (2026-11-02). Recipe, controller, first Magnetite processing route, four-facing multiblock, basic V2 model/voxel assets, JEI and Patchouli have been authored. Forge compilation, in-game processing/rendering, multiplayer and full regression remain UNVERIFIED.** This is a proposed machine, not a formed multiblock. Track implementation in [Bronze production plan](bronze-age-production-plan.md), which remains canonical. [Concept footprint diagram](concepts/bloomery-k0-layout.svg) is an editable reference, not an accepted blueprint. A separate rendered concept image was generated in the design conversation.
 
 ## Role and age boundary
 
@@ -41,8 +41,8 @@ Use the existing JSON multiblock architecture, genuine item-input / primary-outp
 
 ## Staged delivery — no false completion
 
-- **K0 (this commit):** authored gameplay/physical contract and editable footprint reference, no source functionality.
-- **K1 implementation:** one working Magnetite preparation and Bloomery reduction path, JSON structures, real charcoal+flux+air+heat gating, guaranteed bloom+slag, source tests, full registrations, item models, language, JEI and book.
+- **K0 (prior):** authored gameplay/physical contract and editable footprint reference.
+- **K1 implementation candidate:** one Magnetite preparation and Bloomery reduction path is now source-authored, including real charcoal+flux+air+heat gating, guaranteed bloom+slag, JEI and book. Shared/reused block textures and item icons are placeholders requiring artistic revision; no Gradle or Minecraft acceptance has passed.
 - **K1 verification:** `./gradlew build` on JDK 17 / Forge 1.20.1, contract checks, one successful real in-game batch and all failure/regression scenarios below. A code change alone is not verification.
 - **K2 and Bronze exit:** hot bloom consolidation into wrought iron; later ore-family expansion, quality/yield integration and properly scoped replaceable-part wear. Do not call the Iron Age unlocked on bloom alone.
 

@@ -2,6 +2,7 @@ package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
+import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -61,6 +62,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "charcoal_retort");
     public static final ResourceLocation ORE_ROASTING_KILN =
             new ResourceLocation("magneticraft2", "ore_roasting_kiln");
+    public static final ResourceLocation BLOOMERY_FURNACE =
+            new ResourceLocation("magneticraft2", "bloomery_furnace");
 
     private final ResourceLocation id;
     private final ResourceLocation machine;
@@ -91,6 +94,17 @@ public final class MultiblockJeiRecipe {
         this.processTime = Math.max(1, processTime);
         this.minSpeed = Math.max(0.0F, minSpeed);
         this.torque = Math.max(0.0F, torque);
+    }
+
+    public static MultiblockJeiRecipe from(BloomeryRecipe recipe) {
+        var ingredients = recipe.getIngredients();
+        return new MultiblockJeiRecipe(recipe.getId(), BLOOMERY_FURNACE,
+                List.of(stacksFor(ingredients.get(0),recipe.oreCount()),
+                        stacksFor(ingredients.get(1),recipe.fluxCount()),
+                        List.of(new ItemStack(Items.CHARCOAL))),
+                List.of(new Output(recipe.bloom(),1F),
+                        new Output(recipe.slag(),1F)),
+                FluidStack.EMPTY,FluidStack.EMPTY,recipe.processTime(),0F,0F);
     }
 
     public static MultiblockJeiRecipe from(MechanicalAssemblyRecipe recipe) {
