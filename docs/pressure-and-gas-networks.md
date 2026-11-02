@@ -19,6 +19,10 @@ Status: implementation candidate on draft PR #11. Neither Forge compilation nor 
 - `LegacyAirPort` bridges pre-existing integer `CapabilityPressure.PRESSURE` air charges and formed furnace modules without rewriting NBT. Legacy air charges have **no meaningful kPa measurement**, so pressure-drop gating is skipped whenever a legacy adapter participates. The blower keeps its existing 16-unit buffer, 1 unit/5 powered ticks and max 1 unit/tick output, including combined direct/capability/duct consumers.
 - The old `IPressureStorage` capability is intentionally retained. No silent removal of older blocks, saves, direct blower connections, input/output faces, or furnace recipe behavior.
 
+## Sudden Steam Pipe rupture decision (design only)
+
+The chosen future failure mechanic is **sudden structural rupture** once steam pressure exceeds the rating of an eligible, physically pressurized pipe. A randomly selected eligible pipe becomes a persistent visibly leaking pipe, and the Steam Network must conserve inventory as steam vents. Intact pipes remain ordinary blocks; the server's network manager owns pressure, volume and loss calculations. The current passive-pipe implementation cannot yet do this; it requires network-owned gas/thermal storage, topology/persistence, limits, and a ruptured pipe state/block. See [steam-network-rupture-architecture.md](steam-network-rupture-architecture.md) for the complete decision, implementation stages and verification requirements. No runtime changes were made by documenting the decision.
+
 ## Progression boundaries
 
 This work makes a Steam Pipe block with a usable 6-directional transport infrastructure and a typed machine capability, but does **not** invent a generator, boiler, turbine, conversion recipe, valve or forced air requirement for an unimplemented Bloomery. Steam Pipes are Creative-only until their material quality, recipe, pressure rating and Steam Age prerequisites are agreed. The Ore Roasting Kiln's provisional +20% combustion-air bonus remains unchanged.
