@@ -35,16 +35,21 @@ for(let y=0;y<5;y++)for(let z=0;z<5;z++)for(let x=0;x<5;x++)
  if(layers[y][z][x]!=="A"){
   occupied++;
   if(y===1&&x===0&&z===2)continue; // hollow side AIR conduit
+  if(layers[y][z][x]==="P"||layers[y][z][x]==="W")continue; // modeled wood supports
   const box=[(x-2)*16,y*16,(z-4)*16,(x-1)*16,(y+1)*16,(z-3)*16];
   assert.ok(voxel.collision.some(b=>JSON.stringify(b)===JSON.stringify(box)),
           "missing collision voxel "+x+","+y+","+z);
  }
+assert.equal(layers.flat(2).filter(c=>c==="W").length,8,"eight real spruce corner logs");
+assert.equal(layers.flat(2).filter(c=>c==="P").length,12,"twelve real outer beams");
 const tuyereBoxes=voxel.collision.filter(b=>b[0]===-32 && b[2]>=-32 && b[5]<=-16
         && b[1]>=16 && b[4]<=32);
 assert.equal(tuyereBoxes.length,4,"real hollow tuyere requires four shell pieces");
 assert.ok(voxel.collision.some(b=>JSON.stringify(b)===JSON.stringify(
         [0,16,0,16,20,16])),"low hearth collision missing");
-assert.equal(voxel.collision.length,occupied-1+4+1);
+// The 20 additional AIR proxies are real external supports and an open
+// perimeter, not a solid roof over the chimney.
+assert.equal(voxel.collision.length,occupied-1-20+4+1+28);
 assert.equal(layers[1][4][2],"A","hearth block must be an air anchor");
 assert.equal(layers[2][4][2],"B","arch must span the first-storey hearth");
 for(const y of [3,4]){
@@ -54,7 +59,8 @@ for(const y of [3,4]){
 }
 for(const d of faces){
  const structure=json(dir+"multiblocks/bloomery_furnace_"+d+".json");
- assert.deepEqual(structure.settings.render_air_anchors,[[0,1,0]]);
+ assert.deepEqual(structure.settings.render_air_anchors,[[0,1,0]],
+               "only the unformed hearth is a required-AIR proxy");
 }
 const book=json("src/main/resources/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
 const shown=book.pages.find(page=>page.type==="patchouli:multiblock" && page.name==="Bloomery Furnace");
@@ -126,7 +132,8 @@ const palettes=["foundation","hearth","tuyere","lower_wall","lower_jamb_left",
  "lower_jamb_right","lower_corner_left","lower_corner_right",
  "upper_wall","upper_arch","upper_jamb_left","upper_jamb_right",
  "upper_corner_left","upper_corner_right","shoulder","shoulder_front",
- "chimney","chimney_front"];
+ "chimney","chimney_front","frame_post","frame_corner",
+ "frame_beam_x","frame_beam_z"];
 for(const facing of faces)for(const part of palettes){
  const file="src/main/resources/assets/magneticraft2/models/multiblock/bloomery_furnace_"
        +facing+"/"+part+".json";

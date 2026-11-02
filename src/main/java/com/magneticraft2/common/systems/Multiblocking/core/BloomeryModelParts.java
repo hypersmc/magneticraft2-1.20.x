@@ -26,7 +26,13 @@ public final class BloomeryModelParts {
         };
         int x = cx + 2, z = cz + 4;
         String part;
-        if (wasAir) {
+        if (dy == 3 && (x == 0 || x == 4) && (z == 0 || z == 4)) {
+            part = "frame_post";
+        } else if (dy == 4 && (x == 0 || x == 4 || z == 0 || z == 4)) {
+            if ((x == 0 || x == 4) && (z == 0 || z == 4))
+                part = "frame_corner";
+            else part = (z == 0 || z == 4) ? "frame_beam_x" : "frame_beam_z";
+        } else if (wasAir) {
             part = "hearth";
         } else if (dy == 0) {
             part = "foundation";

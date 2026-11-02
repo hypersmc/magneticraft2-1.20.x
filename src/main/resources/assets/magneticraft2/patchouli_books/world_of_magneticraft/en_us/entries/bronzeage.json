@@ -1017,18 +1017,18 @@
       "multiblock": {
         "pattern": [
           [
-            "_____",
-            "_BBB_",
-            "_B_B_",
-            "_BBB_",
-            "_____"
+            "WPPPW",
+            "PBBBP",
+            "PB_BP",
+            "PBBBP",
+            "WPPPW"
           ],
           [
-            "_____",
+            "W___W",
             "_BBB_",
             "_B_B_",
             "_BBB_",
-            "_____"
+            "W___W"
           ],
           [
             "BBBBB",
@@ -1058,11 +1058,13 @@
           "B": "minecraft:bricks",
           "U": "magneticraft2:multiblock_item_input",
           "O": "magneticraft2:multiblock_item_primary_output",
-          "Y": "magneticraft2:multiblock_item_byproduct_output"
+          "Y": "magneticraft2:multiblock_item_byproduct_output",
+          "W": "minecraft:spruce_log",
+          "P": "minecraft:spruce_planks"
         },
         "symmetrical": false
       },
-      "text": "5x5x5 tiered Bloomery. The bottom layer is Stone Bricks except the four genuine ports/controller on the front (use Visualize for the exact order). The lower hearth has an opening one block above the controller; the side of the lower wall contains a Bronze AIR tuyere, and the upper layers step inward to a narrow OPEN chimney. Side air connects via Bronze Air Ducts; no separate air intake block is needed. Charcoal, Calcite and Magnetite Concentrate are mandatory for iron bloom and slag."
+      "text": "The 5x5x5 Bloomery has REAL structure supports: spruce logs at all four outer corner posts on levels 4 and 5, spruce planks spanning the outer rim on level 5, and a 3x3 refractory-brick shaft inside. Leave the 1x1 chimney center OPEN. The lower level has a real hollow side-air tuyere on the machine's left wall. Stone Bricks form the solid foundation. Use Visualize for the exact item-port order; right-click controller to form."
     },
     {
       "type": "text",
