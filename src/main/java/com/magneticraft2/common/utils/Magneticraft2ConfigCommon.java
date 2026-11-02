@@ -42,6 +42,8 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterPassiveHeatLoss;
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterRoastingThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatPerProcessingTick;
+        public final ForgeConfigSpec.DoubleValue SteamPipeRuptureKPa;
+
         General(ForgeConfigSpec.Builder builder) {
             builder.push("Common configuration for Magneticraft2");
             MaxWireLenght = builder
@@ -116,6 +118,11 @@ public class Magneticraft2ConfigCommon {
                     .defineInRange("roastingThreshold", 16000, 1, 1000000);
             RoasterHeatPerProcessingTick = builder.comment("HEAT consumed per active roasting tick")
                     .defineInRange("heatPerProcessingTick", 10, 1, 100000);
+            builder.pop();
+            builder.push("Steam pipe faults (provisional balance, steam stage not yet playable)");
+            SteamPipeRuptureKPa = builder
+                    .comment("A steam pipe ruptures only if its shared network pressure strictly exceeds this rating. No ordinary wear or random failures below it. Provisional gameplay kPa.")
+                    .defineInRange("rupturePressureKPa", 600.0, 10.0, 1000000.0);
             builder.pop();
             builder.pop();
         }

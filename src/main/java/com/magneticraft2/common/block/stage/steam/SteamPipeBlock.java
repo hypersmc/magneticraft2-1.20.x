@@ -3,6 +3,9 @@ package com.magneticraft2.common.block.stage.steam;
 import com.magneticraft2.common.block.stage.bronze.BronzeAirDuctBlock;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import com.magneticraft2.common.systems.PRESSURE.GasMedium;
+import com.magneticraft2.common.systems.PRESSURE.SteamNetworkManager;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -20,7 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * Passive steam-only pipe. Does not connect to bronze AIR ducts or liquid
  * pipes, store fluid, tick, or allocate shapes for each collision check.
  */
-public final class SteamPipeBlock extends Block {
+public class SteamPipeBlock extends Block {
     public SteamPipeBlock() {
         super(BlockBehaviour.Properties.of().strength(5.0F).noOcclusion());
         BlockState state = stateDefinition.any();
@@ -58,6 +61,19 @@ public final class SteamPipeBlock extends Block {
                 BronzeAirDuctBlock.SOUTH, BronzeAirDuctBlock.WEST,
                 BronzeAirDuctBlock.UP, BronzeAirDuctBlock.DOWN);
     }
+    /**
+     * A real removal vents the steam share at this coordinate. Replacing an
+     * intact pipe with a ruptured pipe is NOT a removal of network contents.
+     */
+    @Override public void onRemove(BlockState state, Level level, BlockPos pos,
+            BlockState newState, boolean moving) {
+        if (state.getBlock() != newState.getBlock()
+                && !(newState.getBlock() instanceof SteamPipeBlock)
+                && level instanceof ServerLevel server)
+            SteamNetworkManager.pipeRemoved(server, pos);
+        super.onRemove(state, level, pos, newState, moving);
+    }
+
     @Override public VoxelShape getShape(BlockState state, BlockGetter level,
             BlockPos pos, CollisionContext context) {
         return BronzeAirDuctBlock.shapeForConnections(state);

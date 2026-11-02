@@ -8,6 +8,7 @@ import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockManager;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
+import com.magneticraft2.common.systems.PRESSURE.SteamNetworkManager;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
 import com.magneticraft2.common.systems.mgc2Network;
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
@@ -76,6 +77,7 @@ public class magneticraft2 {
         modEventBus.addListener(this::preClient);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ContainerAndScreenRegistry::Screen);
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(SteamNetworkManager.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modEventBus.addListener(Clientsetup::init));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Magneticraft2ConfigCommon.SPEC, "magneticraft2-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Magneticraft2ConfigClient.SPEC, "magneticraft2-client.toml");

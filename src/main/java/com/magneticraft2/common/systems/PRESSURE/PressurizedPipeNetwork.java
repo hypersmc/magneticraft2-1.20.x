@@ -1,6 +1,8 @@
 package com.magneticraft2.common.systems.PRESSURE;
 
 import com.magneticraft2.common.blockentity.stage.stone.BellowsMultiblockModuleEntity;
+import com.magneticraft2.common.block.stage.steam.SteamPipeBlock;
+import net.minecraft.server.level.ServerLevel;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,7 +37,7 @@ public final class PressurizedPipeNetwork {
         if (!level.hasChunkAt(pos)) return false;
         return medium == GasMedium.AIR
                 ? level.getBlockState(pos).is(BlockRegistry.BRONZE_AIR_DUCT.get())
-                : level.getBlockState(pos).is(BlockRegistry.STEAM_PIPE.get());
+                : level.getBlockState(pos).getBlock() instanceof SteamPipeBlock;
     }
 
     /** Directional capability only: no unsided fallback or cross-medium links. */
@@ -124,6 +126,28 @@ public final class PressurizedPipeNetwork {
             BlockPos sourcePos, IPressurizedGasHandler source, int cursor) {
         if (level == null || level.isClientSide || source == null)
             return new Transfer(0, cursor);
+        // Steam pipes are reservoirs, not teleport links between machine ports.
+        // The server-owned steam ledger is the only place new STEAM may enter
+        // this network. No such special routing is needed for legacy AIR.
+        if (source.medium() == GasMedium.STEAM) {
+            if (!(level instanceof ServerLevel server) || !source.canExtract())
+                return new Transfer(0, cursor);
+            if (source.gaugePressureKPa() <=
+                    SteamNetworkManager.gaugePressureKPa(server, firstPipe))
+                return new Transfer(0, cursor);
+            int max = Math.min(source.maxFlowPerTick(), 64);
+            int available = source.extract(max, true);
+            int accepted = SteamNetworkManager.simulateAcceptSteam(
+                    server, firstPipe, available, source.temperatureK());
+            if (accepted <= 0) return new Transfer(0, cursor);
+            int drained = source.extract(accepted, false);
+            if (drained <= 0) return new Transfer(0, cursor);
+            int stored = SteamNetworkManager.acceptSteam(
+                    server, firstPipe, drained, source.temperatureK());
+            if (stored != drained)
+                throw new IllegalStateException("Steam admission changed during transfer");
+            return new Transfer(stored, cursor);
+        }
         List<Receiver> targets = receivers(level, firstPipe, sourcePos, source.medium());
         for (int i = 0; i < targets.size(); i++) {
             int index = Math.floorMod(cursor + i, targets.size());

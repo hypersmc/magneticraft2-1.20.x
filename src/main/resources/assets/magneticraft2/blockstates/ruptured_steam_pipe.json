@@ -1,0 +1,118 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_south"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_east"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_west"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_up"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/steam_pipe_end_down"
+      }
+    },
+    {
+      "when": {
+        "leak": "up"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "leak": "down"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true,
+        "x": 180
+      }
+    },
+    {
+      "when": {
+        "leak": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true,
+        "x": 90
+      }
+    },
+    {
+      "when": {
+        "leak": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true,
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "leak": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true,
+        "x": 90,
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "leak": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/ruptured_steam_pipe_vent",
+        "uvlock": true,
+        "x": 90,
+        "y": 270
+      }
+    }
+  ]
+}

@@ -2,7 +2,9 @@
 
 **Decision:** Sudden Steam Pipe failure on structural overpressure. No warning damage stages, ticking individual pipe block entities, automatic repair, or arbitrary random breakage while below a rating.
 
-**Scope:** Design only. Intended future work on Forge 1.20.1, draft Bronze PR #11. This document does **not** claim the current Steam Pipe implementation already supports pressure storage, overpressure rupture or steam leakage. No Steam Age machines or recipes are authorized by this decision.
+**Status (implementation pass):** First server-side steam reservoir, one-rupture-per-network behavior, persistent ruptured block, and visible active vent were implemented as an initial foundation. Forge compilation and in-game visual/runtime verification remain pending. No Steam Age boiler/engine and no steam crafting progression have been introduced.
+
+**Gameplay priority:** Intact pipes NEVER wear out and NEVER break randomly below their pressure rating. Failure happens only following actual overpressure. Even under continued overpressure, one broken pipe per connected component provides a vent; the network does not cascade through every pipe. This is intentionally a challenge players can engineer around, not daily maintenance.
 
 ## 1. Existing implementation and gap
 
@@ -49,7 +51,7 @@ No per-pipe BlockEntity or per-frame per-segment gas simulation. If pipe quality
 5. Replace the chosen pipe immediately with its ruptured variant, preserving connector directions and choosing an exposed leak orientation. Send normal block-state updates so the client sees the hole and steam plume. The network registers the vent and marks topology/conductance dirty.
 6. Remove steam from the **conserved network reservoir** using a pressure- and opening-dependent leak rate, bounded by available inventory. Losing steam also removes corresponding thermal energy. The pressure solver recalculates the new state.
 7. A ruptured section stays connected and continues venting while steam is available; nearby machines experience pressure/flow loss. The failure persists through saves, chunk reloads, and client reconnects. Repair/replacement ends the vent.
-8. Evaluate at most one new rupture per network per solve step, then recompute pressure. If the network **remains** overpressure on later steps, additional separate pipes may rupture; that is persistent unsafe operation, not a damage timer or immediate random chain explosion.
+8. A connected network with ANY existing ruptured segment does not create another automatic rupture while that vent remains. Repairing a pipe before fixing continued overpressure may cause a new single failure at the next evaluation. This prevents runaway chain failures and constant maintenance.
 
 Do not pick any random loaded pipe in a component if its computed local pressure is *below* its rating. In the initial uniform-pressure approximation, that condition is simplified to the common component pressure. Safety valves/regulators should be designed as explicit upstream control components, never an automatic hidden correction by the pipe manager.
 
@@ -105,3 +107,13 @@ This is a proposed architecture; none of these new classes except the existing S
 **Accepted:** Sudden pipe rupture after a pressure threshold is exceeded; randomly choose an eligible pipe, persistent visible breach and conserved steam venting; separate network state from block condition; no normal per-pipe BlockEntities.
 
 **Not yet approved or implemented:** numeric ratings, boiler design, Steam Age recipes, explosion or player-damage radius, stochastic early failures, staged fatigue, pressure regulator mechanics, specific model/texture, component wear, actual fluid/steam phase physics, or runtime changes to the existing PR. These must be decided and tested separately.
+
+## Initial implementation notes (development, not final Steam Age physics)
+
+- `SteamNetworkSavedData` stores only nonempty steam-bearing positions in dimension SavedData. Parcels split/merge with pipe topology, and the solver redistributes connected loaded shares deterministically without a BlockEntity per pipe. This sparse representation is an initial way to conserve inventory while a full network/port simulation is designed.
+- `SteamNetworkManager.acceptSteam`, `simulateAcceptSteam`, `takeSteam`, and `gaugePressureKPa` are server-only entry points. `PressurizedPipeNetwork.transfer` sends STEAM source output into the ledger rather than teleporting it past pipes to a distant receiver.
+- `RupturedSteamPipeBlock` is a distinct persistent block ID with a leak facing, connection geometry, and client-only active particles/sound. A rupture never spreads to other pipes in its connected loaded component while that pipe remains ruptured.
+- First gameplay calibration is intentionally **provisional**: reference temperature 453.15 K, 100 pseudo-kPa per abstract unit per pipe, configurable default rupture limit 600 pseudo-kPa, and a bounded leak evaluated every 20 loaded server ticks. These are not physical steam constants and should be redesigned with boiler/volume/enthalpy specifications.
+- No passive wear, no random idle failure, no damaged warning state. Replacement is physical: break the ruptured pipe and place a new intact pipe. The current vent overlay is a diagnostic visual, not final Minecraft-style pipe geometry.
+- Limits: the solver works on loaded connected components of at most 256 pipes; larger components decline new transfers rather than silently minting or draining gas. It recomputes connected topology on operations and active components every 20 ticks, not yet an event-cached production implementation. Unloaded parcels remain persisted; no forced chunk loads.
+- **Not implemented:** boilers, actual water-to-steam conversion, steam engines, pressure valves/safety upgrades, real steam equation of state, configurable per-material ratings, repair equipment, real end-to-end Steam Age gameplay, in-game verification.
