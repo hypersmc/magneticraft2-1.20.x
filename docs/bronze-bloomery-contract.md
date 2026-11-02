@@ -59,3 +59,7 @@ Use the existing JSON multiblock architecture, genuine item-input / primary-outp
 - [ ] Dedicated server + two actual clients; compatibility with existing saves and vanilla iron recipes.
 
 **PR #11 stays draft and unmerged until the existing milestones and this new work are truly verified.**
+
+### Formation correction — 2026-11-02
+
+The user rebuilt the Bloomery exactly according to Patchouli. The in-game diagnostic showed **four and only four mismatches** on the south-facing candidate, all four on the front ground-level service row: the displayed ports were mirrored against the JSON layout. The correct fix is to match the already-built guide reference by changing all four orientation-specific JSONs (no machinery or voxel geometry changes). The SOUTH `layer1` row at z=4 is now **`YOCUS`**, not `SUCOY`, while the book's authored pattern remains `SU0OY` because its visible left/right orientation is opposite to the raw structure x-index. The north layout rotates to `SUCOY`. The static contract now asserts both in-world port ordering and book matching with the proper visual transform. Successful formation and in-game rendering still require actual verification.

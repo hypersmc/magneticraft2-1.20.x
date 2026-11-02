@@ -43,7 +43,9 @@ const book=json("src/main/resources/assets/magneticraft2/patchouli_books/world_o
 const shown=book.pages.find(page=>page.type==="patchouli:multiblock" && page.name==="Bloomery Furnace");
 assert.ok(shown,"Bloomery construction page missing");
 for(let y=0;y<5;y++)for(let z=0;z<5;z++){
- const expected=layers[4-y][z].map(c=>c==="C"?"0":c==="A"?"_":c).join("");
+ // Patchouli's front-row left/right visual order is reversed relative to the
+ // JSON structure x index in-game. Keep the *visible* recipe as the reference.
+ const expected=layers[4-y][z].slice().reverse().map(c=>c==="C"?"0":c==="A"?"_":c).join("");
  assert.equal(shown.multiblock.pattern[y][z],expected,"book/build mismatch");
 }
 const recipe=json(dir+"recipes/bloomery_magnetite_reduction.json");
@@ -66,12 +68,19 @@ assert.equal(wash.fluid_output.fluid,"magneticraft2:dirty_water");
 const sift=json(dir+"recipes/mechanical_sifting_magnetite.json");
 assert.equal(sift.input.item,"magneticraft2:washed_magnetite");
 assert.equal(sift.output.item,"magneticraft2:magnetite_concentrate");
-// Formation geometry evidence: for the north-facing layout, the first
-// block one step behind the byproduct port is required Stone Bricks.
-// This avoids treating a visually recessed module as a blueprint AIR cell.
+// Regression for the actual 2026-11-02 player's failed formation:
+// all 125 world cells matched the SOUTH layout except the four exposed
+// module order positions. The book visualization was mirrored vs JSON x.
+// The corrected south row must be the observed Y/O/C/U/S, not S/U/C/O/Y.
+// For north the rotated row must be S/U/C/O/Y.
+assert.equal(baseBlueprint.structure.layout.layer1[4].join(""),"YOCUS");
 const north=json(dir+"multiblocks/bloomery_furnace_north.json");
-assert.equal(north.structure.layout.layer1[0][0],"Y");
+assert.equal(north.structure.layout.layer1[0].join(""),"SUCOY");
 assert.equal(north.structure.layout.layer1[1][0],"S");
+const reported=new Map([[0,"Y"],[1,"O"],[2,"C"],[3,"U"],[4,"S"]]);
+for(const [x,observed] of reported)assert.equal(
+  baseBlueprint.structure.layout.layer1[4][x],observed,
+  "in-game SOUTH frontage discrepancy at x="+x);
 const diagnosticsBlock=source("src/main/java/com/magneticraft2/common/block/stage/bronze/BloomeryFurnaceBlock.java");
 assert.ok(diagnosticsBlock.includes("tank.reportFormationFailure(player)"));
 const be=source("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BloomeryFurnaceBlockEntity.java");

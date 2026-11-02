@@ -1062,7 +1062,7 @@
         },
         "symmetrical": false
       },
-      "text": "Bottom layer is a SOLID 5x5 Stone Bricks foundation EXCEPT four FRONT-edge positions: Input, Controller, Bloom output, and Slag output. All 21 remaining bottom cells must contain Stone Bricks, including cells one block behind the output ports. Do not excavate behind the ports. The next two levels have a central front opening, and upper levels surround an AIR chimney. Right-click the controller to form; if it fails, the closest blueprint and exact mismatched positions appear in chat."
+      "text": "Follow Visualize for the exact 5x5x5 build. Its FRONT lower row contains the real Byproduct Output, Primary Output, Controller, Input and Stone Bricks as shown in-world (the JSON coordinate convention reads left/right oppositely). The remaining 21 ground-level cells are Stone Bricks. The next two layers leave a central front opening; the upper shaft has an air-filled center. Right-click controller to form. If formation fails, chat reports the closest orientation and exact block mismatches."
     },
     {
       "type": "text",
