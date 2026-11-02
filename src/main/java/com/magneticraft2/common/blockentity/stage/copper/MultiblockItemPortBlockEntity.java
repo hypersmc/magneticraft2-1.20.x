@@ -22,6 +22,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssembl
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.block.stage.bronze.BloomeryFurnaceBlock;
 import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -147,6 +148,26 @@ public class MultiblockItemPortBlockEntity
                             "ore_roasting_kiln_" +
                             state.getValue(OreRoastingKilnBlock.FACING).getName() +
                             "/port_" + role).build();
+                }
+            }
+        }
+        // Real formed-only item ports; this changes skin, not storage logic.
+        if (formedModule && level != null
+                && getController() instanceof BloomeryFurnaceBlockEntity bloomery) {
+            BlockState state = bloomery.getBlockState();
+            if (state.getBlock() instanceof BloomeryFurnaceBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    case BYPRODUCT_OUTPUT -> "byproduct";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "bloomery_furnace_"
+                            + state.getValue(BloomeryFurnaceBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key).build();
                 }
             }
         }

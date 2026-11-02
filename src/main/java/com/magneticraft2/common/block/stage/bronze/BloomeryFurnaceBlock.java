@@ -63,12 +63,10 @@ public final class BloomeryFurnaceBlock extends BaseBlockMagneticraft2 {
         if (!(level.getBlockEntity(pos) instanceof BloomeryFurnaceBlockEntity tank))
             return InteractionResult.PASS;
         if (level.isClientSide) return InteractionResult.SUCCESS;
-        if (!tank.isFormed()) {
-            tank.onRightClick();
-            if (!tank.isFormed()) tank.reportFormationFailure(player);
-        } else {
-            tank.interactable(state, level, pos, player, hand, hit);
-        }
+        if (!tank.isFormed()) tank.onRightClick();
+        if (tank.isFormed()) tank.interactable(state, level, pos, player, hand, hit);
+        else player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.bloomery_furnace.incomplete"), true);
         return InteractionResult.CONSUME;
     }
 

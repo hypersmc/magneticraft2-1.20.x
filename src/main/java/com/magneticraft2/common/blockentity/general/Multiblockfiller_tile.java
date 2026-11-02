@@ -1,6 +1,12 @@
 package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
+import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelNbt;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
@@ -146,6 +152,28 @@ public class Multiblockfiller_tile extends BlockEntity {
 
     public void setCachedLocalShape(@Nullable VoxelShape shape) {
         cachedLocalShape = shape;
+    }
+
+    /**
+     * Only the explicitly modeled side tuyere exposes air. It delegates to
+     * the formed controller's existing persistent pressure buffer; fillers
+     * never store or create gas, and unformed/other machines gain no port.
+     */
+    @Override
+    public <T> @NotNull LazyOptional<T> getCapability(@NotNull Capability<T> cap,
+                                                       @Nullable Direction side) {
+        if (side != null && renderPart.startsWith("bloomery_furnace_")
+                && renderPart.endsWith("/tuyere")
+                && (cap == CapabilityPressure.PRESSURE || cap == CapabilityPressurizedGas.GAS)
+                && level != null) {
+            BlockPos controllerPos = getControllerPos();
+            if (!level.hasChunkAt(controllerPos)) return LazyOptional.empty();
+            if (level.getBlockEntity(controllerPos)
+                    instanceof BloomeryFurnaceBlockEntity bloomery) {
+                return bloomery.getSideTuyereCapability(cap, side, worldPosition);
+            }
+        }
+        return super.getCapability(cap, side);
     }
 
     @Override

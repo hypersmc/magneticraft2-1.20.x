@@ -1017,11 +1017,18 @@
       "multiblock": {
         "pattern": [
           [
-            "BBBBB",
-            "B___B",
-            "B___B",
-            "B___B",
-            "BBBBB"
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
           ],
           [
             "BBBBB",
@@ -1029,13 +1036,6 @@
             "B___B",
             "B___B",
             "BBBBB"
-          ],
-          [
-            "BBBBB",
-            "B___B",
-            "B___B",
-            "B___B",
-            "BB_BB"
           ],
           [
             "BBBBB",
@@ -1062,11 +1062,11 @@
         },
         "symmetrical": false
       },
-      "text": "Follow Visualize for the exact 5x5x5 build. Its FRONT lower row contains the real Byproduct Output, Primary Output, Controller, Input and Stone Bricks as shown in-world (the JSON coordinate convention reads left/right oppositely). The remaining 21 ground-level cells are Stone Bricks. The next two layers leave a central front opening; the upper shaft has an air-filled center. Right-click controller to form. If formation fails, chat reports the closest orientation and exact block mismatches."
+      "text": "5x5x5 tiered Bloomery. The bottom layer is Stone Bricks except the four genuine ports/controller on the front (use Visualize for the exact order). The lower hearth has an opening one block above the controller; the side of the lower wall contains a Bronze AIR tuyere, and the upper layers step inward to a narrow OPEN chimney. Side air connects via Bronze Air Ducts; no separate air intake block is needed. Charcoal, Calcite and Magnetite Concentrate are mandatory for iron bloom and slag."
     },
     {
       "type": "text",
-      "text": "$(bold)Running the Bloomery$()$(br2)The input module exposes two slots for 4 Magnetite Concentrate and 1 Calcite. Right-click the controller holding Charcoal to load fuel. Pipe the Industrial Air Blower to the FRONT of the controller with Bronze Air Ducts, or directly connect the Blower outlet. The Bloomery needs HEAT plus one real air charge every five progress ticks. Output blockage pauses the process. Right-click empty-handed to inspect state. Hot consolidation of the bloom is later Iron Age work; vanilla iron smelting is unchanged."
+      "text": "$(bold)Running the Bloomery$()$(br2)Insert 4 Magnetite Concentrate and 1 Calcite into the input module. Add Charcoal by right-clicking the controller. Supply the SIDE tuyere with the existing Industrial Air Blower and Bronze Air Ducts (the old controller connection remains available for compatibility). One real air charge is consumed every five progress ticks. Two outputs are reserved: Iron Bloom and guaranteed Slag. A blocked output stalls processing. Hot consolidation into Wrought Iron is a later step."
     }
   ],
   "sortnum": 3,

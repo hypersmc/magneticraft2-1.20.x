@@ -105,12 +105,12 @@ public final class MultiblockRenderParts {
             int dx = partPos.getX() - master.getX();
             int dy = partPos.getY() - master.getY();
             int dz = partPos.getZ() - master.getZ();
-            // Bloomery K1 uses a limited set of real, block-sized masonry
-            // skins. Reuse baked models instead of hundreds of identical
-            // generated JSON files; do not affect any other V2 machinery.
+            // Bloomery gets a small reusable, once-baked palette: its
+            // foundation, tiered shaft, side tuyere and open hearth do not
+            // require one JSON/model allocation for each occupied cell.
             String modelKey = machineId.equals("bloomery_furnace")
-                    ? (originalBlocks.get(partPos).is(net.minecraft.world.level.block.Blocks.STONE_BRICKS)
-                        ? "bloomery_furnace/stone" : "bloomery_furnace/brick")
+                    ? BloomeryModelParts.key(facing, dx, dy, dz,
+                            originalBlocks.get(partPos).isAir())
                     : machineId + "_" + facing.getName()
                         + "/part_" + dx + "_" + dy + "_" + dz;
 

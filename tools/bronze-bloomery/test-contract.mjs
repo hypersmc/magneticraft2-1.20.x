@@ -34,11 +34,28 @@ const voxel=json(dir+"multiblock_voxels/bloomery_furnace.json");
 for(let y=0;y<5;y++)for(let z=0;z<5;z++)for(let x=0;x<5;x++)
  if(layers[y][z][x]!=="A"){
   occupied++;
+  if(y===1&&x===0&&z===2)continue; // hollow side AIR conduit
   const box=[(x-2)*16,y*16,(z-4)*16,(x-1)*16,(y+1)*16,(z-3)*16];
   assert.ok(voxel.collision.some(b=>JSON.stringify(b)===JSON.stringify(box)),
           "missing collision voxel "+x+","+y+","+z);
  }
-assert.equal(voxel.collision.length,occupied);
+const tuyereBoxes=voxel.collision.filter(b=>b[0]===-32 && b[2]>=-32 && b[5]<=-16
+        && b[1]>=16 && b[4]<=32);
+assert.equal(tuyereBoxes.length,4,"real hollow tuyere requires four shell pieces");
+assert.ok(voxel.collision.some(b=>JSON.stringify(b)===JSON.stringify(
+        [0,16,0,16,20,16])),"low hearth collision missing");
+assert.equal(voxel.collision.length,occupied-1+4+1);
+assert.equal(layers[1][4][2],"A","hearth block must be an air anchor");
+assert.equal(layers[2][4][2],"B","arch must span the first-storey hearth");
+for(const y of [3,4]){
+ assert.equal(layers[y][2][2],"A","chimney must stay open");
+ assert.equal(layers[y].flat().filter(x=>x==="B").length,8,
+              "upper shaft should taper to 3x3 brick ring");
+}
+for(const d of faces){
+ const structure=json(dir+"multiblocks/bloomery_furnace_"+d+".json");
+ assert.deepEqual(structure.settings.render_air_anchors,[[0,1,0]]);
+}
 const book=json("src/main/resources/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
 const shown=book.pages.find(page=>page.type==="patchouli:multiblock" && page.name==="Bloomery Furnace");
 assert.ok(shown,"Bloomery construction page missing");
@@ -99,6 +116,38 @@ for(const required of [
  "BloomeryAirStep"
 ]) assert.ok(be.includes(required),"missing Bloomery guard: "+required);
 assert.ok(!be.includes("SteamNetworkManager"));
+
+const filler=source("src/main/java/com/magneticraft2/common/blockentity/general/Multiblockfiller_tile.java");
+assert.ok(filler.includes("getSideTuyereCapability"));
+assert.ok(be.includes("getSideTuyereCapability"));
+const render=source("src/main/java/com/magneticraft2/common/systems/Multiblocking/core/MultiblockRenderParts.java");
+assert.ok(render.includes("BloomeryModelParts.key"));
+const palettes=["foundation","hearth","tuyere","lower_wall","lower_jamb_left",
+ "lower_jamb_right","lower_corner_left","lower_corner_right",
+ "upper_wall","upper_arch","upper_jamb_left","upper_jamb_right",
+ "upper_corner_left","upper_corner_right","shoulder","shoulder_front",
+ "chimney","chimney_front"];
+for(const facing of faces)for(const part of palettes){
+ const file="src/main/resources/assets/magneticraft2/models/multiblock/bloomery_furnace_"
+       +facing+"/"+part+".json";
+ const model=json(file);
+ assert.ok(model.elements.length>0,"empty model: "+file);
+ for(const el of model.elements)for(const [side,face] of Object.entries(el.faces)){
+  const b=side==="east"||side==="west"
+      ?[el.to[2]-el.from[2],el.to[1]-el.from[1]]
+      :side==="up"||side==="down"
+      ?[el.to[0]-el.from[0],el.to[2]-el.from[2]]
+      :[el.to[0]-el.from[0],el.to[1]-el.from[1]];
+  assert.deepEqual([face.uv[2]-face.uv[0],face.uv[3]-face.uv[1]],
+          b,"stretched texture: "+file+" "+side);
+ }
+}
+for(const facing of faces)for(const role of ["input","primary","byproduct"])
+ json("src/main/resources/assets/magneticraft2/models/multiblock/bloomery_furnace_"
+       +facing+"/port_"+role+".json");
+const itemPorts=source("src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java");
+assert.ok(itemPorts.includes("bloomery_furnace_"));
+
 const port=source("src/main/java/com/magneticraft2/common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java");
 assert.ok(port.includes("controller instanceof BloomeryFurnaceBlockEntity"));
 assert.ok(port.includes("slot == 1 ? 3"));

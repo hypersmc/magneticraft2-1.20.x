@@ -105,6 +105,23 @@ public final class BloomeryFurnaceBlockEntity extends BaseBlockEntityMagneticraf
 
     public boolean isFormed() { return formed; }
 
+    /**
+     * The real AIR intake is a single formed wall cell on the machine's
+     * left-hand side, two blocks behind the controller and one block up.
+     * Both legacy air charges and typed AIR terminate in the same buffer.
+     */
+    public <T> @NotNull LazyOptional<T> getSideTuyereCapability(
+            @NotNull Capability<T> cap, @Nullable Direction side, BlockPos portPos) {
+        if (!formed || level == null || side == null) return LazyOptional.empty();
+        Direction outerSide = matchedFacing.getClockWise();
+        BlockPos physicalPort = worldPosition.relative(outerSide, 2)
+                .relative(matchedFacing.getOpposite(), 2).above();
+        if (side != outerSide || !physicalPort.equals(portPos)) return LazyOptional.empty();
+        if (cap == CapabilityPressure.PRESSURE) return pressure.cast();
+        if (cap == CapabilityPressurizedGas.GAS) return gasInput.cast();
+        return LazyOptional.empty();
+    }
+
     @Override
     protected @Nullable MultiblockController createMultiblockController() {
         if (level == null || level.isClientSide || formed) return null;
