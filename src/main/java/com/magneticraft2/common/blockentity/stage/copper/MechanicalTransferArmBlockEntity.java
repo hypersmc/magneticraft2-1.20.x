@@ -63,7 +63,9 @@ public class MechanicalTransferArmBlockEntity
     private boolean active = false;
 
     private float clientCycleProgress = 0.0F;
-    private float clientCycleSyncTime = Float.NaN;
+    private double clientCycleSyncTime = Double.NaN;
+    // Snapshot corrections fade across the next four ticks without rewinding a stroke.
+    private float clientCycleCorrection = 0.0F;
 
     public MechanicalTransferArmBlockEntity(
             BlockPos pos,
@@ -737,61 +739,37 @@ public class MechanicalTransferArmBlockEntity
             return cycleProgress;
         }
 
+        double now = (double) level.getGameTime() + (double) partialTicks;
+
         if (!active) {
-            clientCycleProgress =
-                    cycleProgress;
-            clientCycleSyncTime =
-                    level.getGameTime()
-                            + partialTicks;
+            clientCycleProgress = cycleProgress;
+            clientCycleCorrection = 0.0F;
+            clientCycleSyncTime = now;
             return cycleProgress;
         }
 
-        float now =
-                level.getGameTime()
-                        + partialTicks;
-
-        if (Float.isNaN(
-                clientCycleSyncTime)) {
-            clientCycleProgress =
-                    cycleProgress;
+        if (Double.isNaN(clientCycleSyncTime)) {
+            clientCycleProgress = cycleProgress;
+            clientCycleCorrection = 0.0F;
             clientCycleSyncTime = now;
         }
 
-        float elapsed =
-                Math.max(
-                        0.0F,
-                        Math.min(
-                                4.0F,
-                                now - clientCycleSyncTime
-                        )
-                );
+        double elapsed = Math.max(0.0D,
+                Math.min(4.0D, now - clientCycleSyncTime));
+        float predicted = cycleProgress
+                + progressPerTick(Math.abs(getClientSpeed())) * (float) elapsed;
 
-        float predicted =
-                cycleProgress
-                        + progressPerTick(
-                        Math.abs(
-                                getClientSpeed()
-                        )
-                ) * elapsed;
+        // The carried item can only reach the delivery point, not pass it.
+        float endpoint = carriedStack.isEmpty() ? 1.0F : 0.5F;
+        float correctionRemaining = (float) (1.0D - elapsed / 4.0D);
+        float corrected = Math.max(0.0F, Math.min(endpoint,
+                predicted + clientCycleCorrection * correctionRemaining));
 
-        if (!carriedStack.isEmpty()) {
-            predicted =
-                    Math.min(
-                            0.5F,
-                            predicted
-                    );
-        } else {
-            predicted =
-                    Math.min(
-                            1.0F,
-                            predicted
-                    );
-        }
-
-        clientCycleProgress =
-                predicted;
-
-        return predicted;
+        // Delayed 5 Hz snapshots may be slightly behind the rendered arm.
+        // Never move an active stroke backwards just to apply that correction.
+        clientCycleProgress = Math.min(endpoint,
+                Math.max(clientCycleProgress, corrected));
+        return clientCycleProgress;
     }
 
     public String getRelativeSideName(
@@ -940,6 +918,14 @@ public class MechanicalTransferArmBlockEntity
     @Override
     public void load(
             CompoundTag tag) {
+        // Capture the displayed pose before a network snapshot replaces progress.
+        // A disk load has no client clock and initializes normally below.
+        boolean keepClientMotion = level != null && level.isClientSide
+                && active && !Double.isNaN(clientCycleSyncTime);
+        float oldProgress = cycleProgress;
+        float oldVisual = keepClientMotion
+                ? getVisualCycleProgress(0.0F) : cycleProgress;
+
         super.load(tag);
 
         sourceSide =
@@ -1001,13 +987,23 @@ public class MechanicalTransferArmBlockEntity
                         "Active"
                 );
 
-        clientCycleProgress =
-                cycleProgress;
-        clientCycleSyncTime =
-                level == null
-                        ? Float.NaN
-                        : (float) level
-                        .getGameTime();
+        if (level != null && level.isClientSide) {
+            // Preserve interpolation only within the same active stroke.
+            // Completion, restart and configuration changes adopt server truth.
+            if (keepClientMotion && active
+                    && cycleProgress + 0.001F >= oldProgress) {
+                clientCycleProgress = oldVisual;
+                clientCycleCorrection = oldVisual - cycleProgress;
+            } else {
+                clientCycleProgress = cycleProgress;
+                clientCycleCorrection = 0.0F;
+            }
+            clientCycleSyncTime = (double) level.getGameTime();
+        } else {
+            clientCycleProgress = cycleProgress;
+            clientCycleCorrection = 0.0F;
+            clientCycleSyncTime = Double.NaN;
+        }
     }
 
     @Nullable
