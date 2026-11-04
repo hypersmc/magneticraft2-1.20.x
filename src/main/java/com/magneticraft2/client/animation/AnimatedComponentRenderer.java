@@ -1,12 +1,15 @@
 package com.magneticraft2.client.animation;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -185,6 +188,23 @@ public final class AnimatedComponentRenderer {
         if (!component.visibleWhen().matches(frame.states())) {
             return true; // Children inherit their parent's visibility.
         }
+        AnimationDefinition.ItemVisual item = component.itemVisual();
+        if (item != null && frame.item(item.input()) == null) {
+            return false; // Missing binding, not an empty but real item slot.
+        }
+        AnimationDefinition.TransformTrack progress =
+                definition.transform(name, frame.states());
+        if (progress != null) {
+            AnimationDefinition.Input input = definition.input(progress.input());
+            if (input == null || !"machine.progress_normalized".equals(input.source())) {
+                return false;
+            }
+            Float fraction = frame.scalar(input.module());
+            if (fraction == null || !Float.isFinite(fraction)
+                    || fraction < 0F || fraction > 1F) {
+                return false;
+            }
+        }
         ResourceLocation modelId = modelFor(component, frame);
         if (modelId != null) {
             BakedModel model = models.getModel(modelId);
@@ -253,6 +273,12 @@ public final class AnimatedComponentRenderer {
                     definition.translation(name, frame.states());
             DrivenRotation.applyDistance(pose, component, track, angle, slide,
                     travel.getOrDefault(name, 0.0D));
+            AnimationDefinition.TransformTrack progress =
+                    definition.transform(name, frame.states());
+            if (progress != null) {
+                Float fraction = frame.scalar(definition.input(progress.input()).module());
+                DrivenProgress.apply(pose, progress, fraction);
+            }
 
             ResourceLocation modelId = modelFor(component, frame);
             if (modelId != null) {
@@ -264,6 +290,30 @@ public final class AnimatedComponentRenderer {
                 minecraft.getBlockRenderer().getModelRenderer().renderModel(
                         pose.last(), buffers.getBuffer(layer), blockState,
                         models.getModel(modelId), 1F, 1F, 1F, light, overlay);
+            }
+            AnimationDefinition.ItemVisual item = component.itemVisual();
+            if (item != null) {
+                ItemStack stack = frame.item(item.input());
+                if (stack != null && !stack.isEmpty()) {
+                    // Render the real client-synchronized ItemStack. No fake
+                    // models, item entities or per-frame copies are created.
+                    pose.pushPose();
+                    try {
+                        pose.mulPose(Axis.XP.rotationDegrees(
+                                (float) item.rotationDegrees().x));
+                        pose.mulPose(Axis.YP.rotationDegrees(
+                                (float) item.rotationDegrees().y));
+                        pose.mulPose(Axis.ZP.rotationDegrees(
+                                (float) item.rotationDegrees().z));
+                        pose.scale(item.scale(), item.scale(), item.scale());
+                        ItemRenderer itemRenderer = minecraft.getItemRenderer();
+                        itemRenderer.render(stack, item.display(), false,
+                                pose, buffers, light, overlay,
+                                itemRenderer.getModel(stack, minecraft.level, null, 889));
+                    } finally {
+                        pose.popPose();
+                    }
+                }
             }
             if (attachment != null) {
                 // Same transformed PoseStack as this component's baked model.

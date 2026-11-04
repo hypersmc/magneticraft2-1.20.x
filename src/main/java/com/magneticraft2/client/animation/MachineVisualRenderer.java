@@ -106,6 +106,15 @@ public final class MachineVisualRenderer {
             }
             items.put(binding.getKey(), stack);
         }
+        // An empty real item slot is valid; a missing channel is not.
+        for (AnimationDefinition.Component component : definition.components()) {
+            AnimationDefinition.ItemVisual visualItem = component.itemVisual();
+            if (visualItem != null && !items.containsKey(visualItem.input())) {
+                MachineVisualResourceLoader.warnUnavailableInput(
+                        machineId, visualItem.input());
+                return null;
+            }
+        }
         // Validate the whole declared contract before drawing any geometry.
         // In particular, an unknown integer wear selector must not silently
         // switch a damaged mesh back to its fresh base model.
