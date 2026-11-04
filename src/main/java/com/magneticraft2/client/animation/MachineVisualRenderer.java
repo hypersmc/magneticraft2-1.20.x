@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,11 +88,34 @@ public final class MachineVisualRenderer {
             }
             integers.put(binding.getKey(), value);
         }
+        Map<String, Float> scalars = new HashMap<>();
+        for (Map.Entry<String, String> binding : visual.scalarChannels().entrySet()) {
+            Float value = physicalInputs.scalar(binding.getValue());
+            if (value == null || !Float.isFinite(value)) {
+                MachineVisualResourceLoader.warnUnavailableInput(machineId, binding.getValue());
+                return null;
+            }
+            scalars.put(binding.getKey(), value);
+        }
+        Map<String, ItemStack> items = new HashMap<>();
+        for (Map.Entry<String, String> binding : visual.itemChannels().entrySet()) {
+            ItemStack stack = physicalInputs.item(binding.getValue());
+            if (stack == null) {
+                MachineVisualResourceLoader.warnUnavailableInput(machineId, binding.getValue());
+                return null;
+            }
+            items.put(binding.getKey(), stack);
+        }
         // Validate the whole declared contract before drawing any geometry.
         // In particular, an unknown integer wear selector must not silently
         // switch a damaged mesh back to its fresh base model.
         for (AnimationDefinition.Input input : definition.inputs()) {
-            if (!angles.containsKey(input.module())) {
+            boolean bound = switch (input.source()) {
+                case "mechanical.visual_angle_degrees" -> angles.containsKey(input.module());
+                case "machine.progress_normalized" -> scalars.containsKey(input.module());
+                default -> false;
+            };
+            if (!bound) {
                 MachineVisualResourceLoader.warnUnavailableInput(machineId, input.module());
                 return null;
             }
@@ -105,7 +129,8 @@ public final class MachineVisualRenderer {
         }
         // Preserve exactly the real, synchronized machine states. The visual
         // pack has no means of changing running, overload, or wear authority.
-        AnimationFrame rebound = new AnimationFrame(angles, physicalInputs.states(), integers);
+        AnimationFrame rebound = new AnimationFrame(
+                angles, physicalInputs.states(), integers, scalars, items);
         return AnimatedComponentRenderer.renderScene(definition, rebound, blockState,
                 pose, buffers, light, overlay);
     }

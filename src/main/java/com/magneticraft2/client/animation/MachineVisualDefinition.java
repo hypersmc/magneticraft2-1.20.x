@@ -17,10 +17,20 @@ import java.util.Map;
  */
 public record MachineVisualDefinition(ResourceLocation animation,
                                       Map<String, String> angleChannels,
-                                      Map<String, String> integerChannels) {
+                                      Map<String, String> integerChannels,
+                                      Map<String, String> scalarChannels,
+                                      Map<String, String> itemChannels) {
+    /** Compatibility for callers constructing a legacy v1 manifest. */
+    public MachineVisualDefinition(ResourceLocation animation,
+                                   Map<String, String> angleChannels,
+                                   Map<String, String> integerChannels) {
+        this(animation, angleChannels, integerChannels, Map.of(), Map.of());
+    }
     public MachineVisualDefinition {
         angleChannels = Map.copyOf(angleChannels);
         integerChannels = Map.copyOf(integerChannels);
+        scalarChannels = Map.copyOf(scalarChannels);
+        itemChannels = Map.copyOf(itemChannels);
     }
 
     public static MachineVisualDefinition parse(JsonElement element) {
@@ -45,7 +55,11 @@ public record MachineVisualDefinition(ResourceLocation animation,
 
         Map<String, String> angles = channels(root, "angle_channels");
         Map<String, String> integers = channels(root, "integer_channels");
-        return new MachineVisualDefinition(animation, angles, integers);
+        Map<String, String> scalars = root.has("scalar_channels")
+                ? channels(root, "scalar_channels") : Map.of();
+        Map<String, String> items = root.has("item_channels")
+                ? channels(root, "item_channels") : Map.of();
+        return new MachineVisualDefinition(animation, angles, integers, scalars, items);
     }
 
     private static Map<String, String> channels(JsonObject root, String key) {
