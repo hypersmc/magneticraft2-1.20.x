@@ -2,6 +2,30 @@
 
 Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled against draft PR #11 on **2026-10-31**. The earlier historical milestone notes below are retained for context.  In the machine tables below, **source implemented** means the code/resources exist on the draft branch, not that the full Forge build and in-game acceptance are complete. **Planned** means not yet implemented. Commit new content incrementally and preserve Copper-era functionality. Target progression: **Copper workshop -> Bronze industrial factory -> first iron bloom -> Iron Age**.
 
+## Later player verification and updated scheduling — 2026-11-04
+
+- **Confirmed hot material behavior:** Refractory Kiln heating made the
+  Iron Bloom hot with a visible timer counting down. The same player
+  previously completed Magnetite Ore → Wrought Iron in-game.
+  This proves the normal path and countdown display, **not** the
+  expiry/reload/stall edge cases.
+- **Visual authoring is deferred to MGC2 Studio acceptance.** The user
+  intends to build the remaining models and animations in Studio when
+  it meets their expectations. The key technical dependency is support
+  for machine-part animation **plus actual moving item visuals**
+  synchronized to process progress/state. Do not hand-code a replacement
+  animation system by default.
+- **Direct 45-degree Copper pipe destruction confirmed by player.**
+  The next requested pipe extension is every supported 45-degree
+  plane/orientation for the existing AIR ducts and Steam pipes, preserving
+  separate media/pressure/rupture systems; not implemented yet.
+- **Mod launches and operates in game.** This is genuine client compile
+  and runtime evidence, although the exact `./gradlew build` task,
+  packaging and contract suite have not been independently confirmed.
+- **Dedicated multiplayer acceptance is deferred until Steam Age is
+  finished**, per user decision; keep the test in the longer-term list
+  rather than treating it as a current Bronze workflow blocker.
+
 ## Current development update — 2026-11-04
 
 **Confirmed in-game by the player:** Starting from one Magnetite Ore, and adding further consumables/material quantities as required, the existing chain produced a **Wrought Iron Ingot**. This is a significant functional milestone. It does **not** verify full resource yields, cooling/stall corner cases, save compatibility, multiplayer or the complete Stone/Copper/Bronze survival path.

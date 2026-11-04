@@ -152,10 +152,22 @@ or packet traffic is introduced.
 - [ ] Existing Leather and Item Belt previews still render correctly.
 - [ ] Confirm stable FPS while looking around with a pipe selected.
 
+## Direct Copper diagonal assembly break verified in-game — 2026-11-04
+
+The player confirms that the 45-degree Copper pipe **assembly
+destruction works** in-game. Its source and user-observed behavior
+should no longer be called wholly unverified; the known unloaded
+chunk, unusual obstruction, item-count/drops and old-link
+compatibility cases are still separate targeted tests.
+
 ## Other pipes — requested extension, not yet implemented (2026-11-04)
 
 The player wants the same **direct, 45-degree endpoint-to-endpoint construction
-capability** on the other existing transport pipes:
+and whole-run destruction behavior** on other existing transport
+pipes, across **all valid 45-degree orientations**: XY rising/falling,
+XZ horizontal diagonals and YZ rising/falling, both traversal signs.
+This is a restriction to true 45-degree connections, not a request
+for arbitrary free-angle pipes. Existing pipe families include:
 
 - **Bronze Air Duct:** inspect its real pressure capability, duct graph,
   directional joins, flow demand and network length limit. A diagonal must

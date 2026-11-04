@@ -39,6 +39,21 @@ The current `GearNode` exposes individual `maxTorque` and the network already en
 
 **Before closing Bronze:** decide the minimal Bronze drivetrain strength upgrade and implement/test it if it is mandatory for Iron-age machinery. Avoid blocking Wrought Iron production behind a yet-unimplemented drive upgrade if a correctly engineered existing wheel/gear network can supply the Forge Hammer.
 
+## Additional player-confirmed heat behavior — 2026-11-04
+
+- [x] Heated Iron Bloom in the **Refractory Kiln** in-game;
+  the resulting Iron Bloom showed its **hot** state and a
+  **counting-down timer**.
+- [ ] The player's confirmation does **not yet** establish actual
+  expiry rejection, expiration through world save/reload, storage NBT
+  survival, interruption/load correctness, or reheating after expiry.
+
+A successful client game launch is separately confirmed. The exact
+`./gradlew build` lifecycle task has not been demonstrated; do not
+equate a runnable client with a passed packaging/test suite.
+Dedicated two-client multiplayer acceptance is **deferred until the
+Steam Age milestone** by user decision, not considered passed.
+
 ## Verified player milestone — 2026-11-04
 
 - [x] **Functional path, observed by player:** Starting with one Magnetite Ore and adding required quantities of other materials as needed, completed ore processing and received one Wrought Iron Ingot through the existing Bloomery, Kiln and Forge Hammer chain.

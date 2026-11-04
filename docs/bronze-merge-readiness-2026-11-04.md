@@ -23,38 +23,89 @@ documentation-only commit. Mergeability is not test approval.
 | Dedicated multiplayer / full release progression | **TBD / unverified**, not cancelled | Player feedback |
 | Asked to proceed with documentation and PR merge review | Update these status documents and PR description; **do not merge** | Authorized scope |
 
+## Follow-up user confirmations and scheduling decisions — 2026-11-04
+
+These supersede *planning assumptions* in the earlier review below. Historical
+checklists remain as test inventories; unchecked items are not automatically
+current implementation blockers or promises to finish before Steam.
+
+1. **MGC2 Studio is the intended authoring workflow for unfinished machine
+   models and animations.** The user expects to create these themselves when
+   Studio meets their requirements. First confirm Studio can animate both
+   actual machine parts **and carried/processed ItemStacks or item visuals**
+   driven by machine state/progress, including transport, visibility,
+   positioning and output changes. Do not build throwaway Java animation
+   workarounds or mark the Studio item-motion feature complete without a test.
+   Visual finishing is a planned follow-up dependent on Studio acceptance.
+2. **Iron Bloom reheating verified in game:** the player heated an Iron Bloom
+   in the Refractory Kiln, saw it become *hot*, and observed a live countdown.
+   Together with their previously confirmed Wrought Iron output, this is
+   positive functional evidence for the normal hot-working path. It does
+   not establish that expiry, subsequent reheating, NBT across storage/reload,
+   die wear, stalls or automation edge cases were specifically tested.
+3. **Direct 45-degree Copper pipe teardown verified in game:** breaking the
+   installed diagonal assembly works, per the player. The player now wants
+   the same diagonal connection behavior for **other existing pipe families**,
+   across **every supported 45-degree plane/orientation** rather than a
+   single demonstration direction. Bronze AIR ducts and Steam pipes need
+   their own existing network/pressure/rupture semantics preserved. Do
+   not claim these variants have been implemented already.
+4. **The mod launches successfully in the user's environment.** This is
+   actual evidence the client game and its required code/assets can load
+   and be used. The specific JDK 17 `./gradlew build` task has not been
+   shown to have passed. Record *game launch/functional runtime: confirmed*
+   separately from *packaging/full Gradle task: not separately evidenced*.
+   Do not erase real gameplay verification simply because CI is absent.
+5. **Multiplayer testing is deliberately scheduled after Steam Age
+   development** by user decision. It is *deferred*, not a current Bronze
+   implementation blocker or evidence of a passed multi-client test.
+   Reassess regression coverage at that stage.
+
+This update does not authorize implementing Steam, making new Bronze
+drivetrain parts, redesigning animation infrastructure or merging PR #11.
+Its draft status is retained pending an explicit completion/merge decision.
+
 ## Merge blockers / gates
 
-1. **No trusted build evidence for the current branch.** Run JDK 17
-   `./gradlew build`; report the real output. No CI workflow run or
-   commit status was reported for the reviewed HEAD, and no build
-   was run during this documentation review.
-2. **Model and animation acceptance remains open.** A functional machine
-   may still have incomplete or placeholder visual assets. Inspect the
-   current machine models, multiblock V2, JSON animation framework
-   (including the changes already merged through PR #12), and actual
-   in-game camera views before claiming completion. Test *each*
-   affected multiblock orientation; no UV stretch, floating shafts,
-   false ports, missing collision, depth artifacts or major FPS/TPS issues.
-3. **Wrought Iron risk cases are unverified.** Re-test cold/hot bloom
-   expiry, HEAT/fuel, die wear, Gear power/load, output backpressure,
-   item/arm transfer, NBT preservation, save/reload, and ingredient/byproduct
-   conservation. Main functional output success is confirmed.
+1. **Build evidence is partial, not absent.** The user successfully
+   launched and played the mod with the current changes. The separate
+   JDK 17 `./gradlew build` task and packaging/test suite have not
+   been independently evidenced. Run and record that task before
+   claiming *full build/package verification*; it does not negate
+   the confirmed functioning client game.
+2. **Model/animation finishing is dependent on MGC2 Studio maturity.**
+   The player intends to do this work using Studio when its authoring
+   workflow is acceptable. Verify that Studio represents/animates both
+   machine parts and actual moving items before declaring the workflow
+   ready. Preserve existing working machine logic and do not treat
+   unfinished art as a request for immediate speculative Java renderers.
+   Ultimately inspect all facings, UVs, supports, motion, collisions and
+   performance before visual completion is claimed.
+3. **Normal hot-bloom production is user-verified.** Refractory Kiln
+   heating produced the expected hot Iron Bloom with a visible live timer,
+   and the normal chain produced Wrought Iron. Targeted regressions still
+   include actual expiry, cooling across saves, reheating, fuel/power
+   interruption, die wear, output backpressure, item/arm automation, NBT
+   persistence and mass accounting; do not re-label the proven normal
+   path as untested.
 4. **Broader Bronze machine acceptance.** Verify the 16-machine roadmap
    at actual K1/K2 criteria: working inputs/outputs, stall and resume,
    wear/service, JSON formation/JEI/Patchouli, crafting and four facings.
    Some machines have previous individual player confirmations, but not
    blanket regressions or completed visuals.
-5. **Copper and pipe regressions.** The item/drive belt and arm movement
-   fixes have player-reported success. Direct diagonal Copper Fluid Pipe
-   placement preview also has player-reported success, but water flow,
-   complete-run breaking/drops, legacy elbows, obstruction handling and
-   unloaded-chunk teardown need explicit tests. Documented edge cases
-   remain unresolved (see the pipe prototype contract).
-6. **Save/multiplayer/resource checks.** Retest existing worlds, inventory
-   persistence, chunk boundaries, full item-fluid-pressure separation,
-   a dedicated server with two clients and real performance. Record
-   actual evidence before passing.
+5. **Copper and pipe regressions.** The item/drive belt and arm motion
+   fixes, direct diagonal Copper pipe placement preview and diagonal
+   **assembly breaking** have now been reported working in-game. Targeted
+   material drops, liquid transport, legacy elbows, obstructed corners and
+   unloaded-chunk cleanup still need separate evidence where applicable.
+   Extend the requested diagonal functionality to AIR/STEAM only by
+   separately preserving their existing transport networks.
+6. **Save/resource checks remain; multiplayer is scheduled for Steam.**
+   Test persistence, chunk boundaries, water/AIR/STEAM separation and
+   performance where the current changes require it. The user elected
+   to do dedicated-server/two-client verification **after Steam Age**.
+   Do not claim multiplayer passed or use it as an immediate Bronze
+   development stop.
 7. **Bronze drivetrain decision.** Do not invent stronger component stats
    simply to tick a milestone. Review whether the existing power network
    already meets Bronze-to-Iron needs, then decide if reinforced Bronze
@@ -67,13 +118,18 @@ documentation-only commit. Mergeability is not test approval.
 
 ## Next practical review sequence
 
-- Compile HEAD, run existing contracts and collect real build evidence.
-- Complete model/animation work on existing functional machines; make
-  small focused reviewable patches instead of reworking whole renderers.
-- Exercise Wrought Iron failure modes and the complete resource loop.
-- Finish direct Copper pipe runtime and unload/break correctness.
-- Run Bronze factory survival/regression and dedicated-server checks.
-- Reconcile docs, creative/JEI/Patchouli, and only then re-review PR #11.
+- Record the confirmed client game launch and Wrought Iron gameplay path;
+  obtain separate full Gradle/contract packaging evidence when available.
+- Finish/verify MGC2 Studio's machinery **and moving-item animation**
+  capabilities before scheduling the user's model and animation authoring.
+- Exercise targeted Wrought Iron expiry/stall/reload edge cases as needed,
+  without repeating the already-proven normal path.
+- Finish water diagonal corner/chunk cases and design equivalent
+  all-orientation 45-degree connections for the other pipe families.
+- Keep the Bronze drivetrain decision open until actual requirements exist.
+- Revisit multiplayer **after Steam Age**, as requested.
+- Reconcile JEI/Patchouli/visuals and PR readiness after those milestones;
+  do not merge PR #11 automatically.
 
 ## PR scope and conflict notes
 
