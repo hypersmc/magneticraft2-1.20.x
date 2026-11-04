@@ -7,6 +7,7 @@ import com.magneticraft2.common.item.creativeitems.pitkiln_item;
 import com.magneticraft2.common.item.general.Blueprintmarker;
 import com.magneticraft2.common.item.general.pebble;
 import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
+import com.magneticraft2.common.item.stage.copper.CopperFluidPipeItem;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
@@ -218,7 +219,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT = fromBlock(MULTIBLOCK_ITEM_BYPRODUCT_OUTPUT);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_FLUID_INPUT = fromBlock(MULTIBLOCK_FLUID_INPUT);
     public static final RegistryObject<Item> ITEM_MULTIBLOCK_FLUID_OUTPUT = fromBlock(MULTIBLOCK_FLUID_OUTPUT);
-    public static final RegistryObject<Item> ITEM_WATER_PIPE = fromBlock(WATER_PIPE);
+    public static final RegistryObject<Item> ITEM_WATER_PIPE = ITEMS.register(
+            "water_pipe", () -> new CopperFluidPipeItem(WATER_PIPE.get(), ITEM_PROPERTIES));
     public static final RegistryObject<Item> ITEM_BRONZE_AIR_DUCT = fromBlock(BRONZE_AIR_DUCT);
     public static final RegistryObject<Item> ITEM_STEAM_PIPE = fromBlock(STEAM_PIPE);
     public static final RegistryObject<Item> ITEM_MECHANICAL_WATER_PUMP = fromBlock(MECHANICAL_WATER_PUMP);

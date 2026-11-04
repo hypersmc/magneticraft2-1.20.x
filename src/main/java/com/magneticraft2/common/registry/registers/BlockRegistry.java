@@ -19,6 +19,7 @@ import com.magneticraft2.common.block.stage.copper.MultiblockItemPortBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidInputBlock;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidOutputBlock;
 import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
+import com.magneticraft2.common.block.stage.copper.DiagonalWaterPipeBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeAirDuctBlock;
 import com.magneticraft2.common.block.stage.steam.SteamPipeBlock;
 import com.magneticraft2.common.block.stage.steam.RupturedSteamPipeBlock;
@@ -199,6 +200,9 @@ public class BlockRegistry {
     public static final RegistryObject<MultiblockFluidInputBlock> MULTIBLOCK_FLUID_INPUT = BLOCKS.register("multiblock_fluid_input", MultiblockFluidInputBlock::new);
     public static final RegistryObject<MultiblockFluidOutputBlock> MULTIBLOCK_FLUID_OUTPUT = BLOCKS.register("multiblock_fluid_output", MultiblockFluidOutputBlock::new);
     public static final RegistryObject<WaterPipeBlock> WATER_PIPE = BLOCKS.register("water_pipe", WaterPipeBlock::new);
+    // Generated physical 45-degree sections, never separately obtainable items.
+    public static final RegistryObject<DiagonalWaterPipeBlock> DIAGONAL_WATER_PIPE =
+            registerBlockWithoutBlockItem("diagonal_water_pipe", DiagonalWaterPipeBlock::new);
     public static final RegistryObject<BronzeAirDuctBlock> BRONZE_AIR_DUCT = BLOCKS.register("bronze_air_duct", BronzeAirDuctBlock::new);
     public static final RegistryObject<SteamPipeBlock> STEAM_PIPE = BLOCKS.register("steam_pipe", SteamPipeBlock::new);
     public static final RegistryObject<RupturedSteamPipeBlock> RUPTURED_STEAM_PIPE = BLOCKS.register("ruptured_steam_pipe", RupturedSteamPipeBlock::new);

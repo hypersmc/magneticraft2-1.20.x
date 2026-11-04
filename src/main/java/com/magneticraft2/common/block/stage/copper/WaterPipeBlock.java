@@ -108,6 +108,10 @@ public class WaterPipeBlock extends Block {
         if (block instanceof WaterPipeBlock) {
             return true;
         }
+        // Only explicit end fittings of the diagonal line expose a face socket.
+        if (block instanceof DiagonalWaterPipeBlock) {
+            return DiagonalWaterPipeBlock.hasSocket(state, direction.getOpposite());
+        }
 
         // The pump only exposes fluid on its TOP. A pipe touching any mechanical
         // side must not pretend it is a valid fluid connection.

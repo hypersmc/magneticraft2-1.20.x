@@ -1,0 +1,262 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "axis": "xy_pos",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_pos_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "xy_pos",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_pos_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "xy_pos",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_pos_negative"
+      }
+    },
+    {
+      "when": {
+        "axis": "xy_neg",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_neg_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "xy_neg",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_neg_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "xy_neg",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xy_neg_negative"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_pos",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_pos_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_pos",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_pos_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_pos",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_pos_negative"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_neg",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_neg_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_neg",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_neg_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "xz_neg",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_xz_neg_negative"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_pos",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_pos_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_pos",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_pos_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_pos",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_pos_negative"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_neg",
+        "section": "both"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_neg_both"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_neg",
+        "section": "positive"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_neg_positive"
+      }
+    },
+    {
+      "when": {
+        "axis": "yz_neg",
+        "section": "negative"
+      },
+      "apply": {
+        "model": "magneticraft2:block/diagonal_water_pipe_yz_neg_negative"
+      }
+    },
+    {
+      "when": {
+        "socket": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_north"
+      }
+    },
+    {
+      "when": {
+        "socket": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_south"
+      }
+    },
+    {
+      "when": {
+        "socket": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_east"
+      }
+    },
+    {
+      "when": {
+        "socket": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_west"
+      }
+    },
+    {
+      "when": {
+        "socket": "up"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "up"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_up"
+      }
+    },
+    {
+      "when": {
+        "socket": "down"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_center"
+      }
+    },
+    {
+      "when": {
+        "socket": "down"
+      },
+      "apply": {
+        "model": "magneticraft2:block/water_pipe_end_down"
+      }
+    }
+  ]
+}
