@@ -1,6 +1,6 @@
 # Copper Fluid Pipes: direct 45-degree connections (prototype correction)
 
-**Status: implemented in source, not compiled or tested in-game.**
+**Status (2026-11-04): direct Copper pipe route and placement preview reported working in-game by the player; full fluid/break/save/multiplayer acceptance remains unchecked.** Prior documentation described the initial source candidate; this updated statement records the later user confirmation without claiming the entire feature is verified.
 **Branch:** `feature/bronze-age-foundry` (draft PR #11).
 
 ## Why the first attempt needed correction
@@ -151,3 +151,24 @@ or packet traffic is introduced.
 - [ ] Main-hand/offhand selection, dimension changes and switching items.
 - [ ] Existing Leather and Item Belt previews still render correctly.
 - [ ] Confirm stable FPS while looking around with a pipe selected.
+
+## Other pipes — requested extension, not yet implemented (2026-11-04)
+
+The player wants the same **direct, 45-degree endpoint-to-endpoint construction
+capability** on the other existing transport pipes:
+
+- **Bronze Air Duct:** inspect its real pressure capability, duct graph,
+  directional joins, flow demand and network length limit. A diagonal must
+  carry AIR through the existing air path, never through Copper water pipes.
+- **Steam Pipe:** inspect the separate steam network's medium/pressure state,
+  max-flow, damage and *rupture semantics*. Do not bypass or suppress rupture
+  behavior with a diagonal-only shortcut.
+
+The Copper placement survey, selection behavior and geometric clearance
+checks are useful *reference patterns*. Reuse them where technically sound,
+but do not assume Copper `FluidPipeNetwork` is a valid AIR/STEAM network.
+
+**No Bronze Air Duct or Steam Pipe diagonal code is implemented by this
+note.** Neither should be represented as available in JEI/book until
+implemented and tested. The appropriate age/release scope remains to be
+scheduled; the Steam core is parked per the Bronze production plan.

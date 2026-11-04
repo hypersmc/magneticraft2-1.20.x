@@ -1,6 +1,6 @@
 # Bronze → Iron: Wrought Iron consolidation and acceptance
 
-**Status (2026-11-02): initial gameplay source candidate only.** The player has used the Bloomery in Minecraft, but the new hot-bloom → Wrought Iron line has **not yet been compiled or tested in-game**, and Bronze Age is **not closed**. This implementation reuses the existing Refractory Kiln and Mechanical Forge Hammer; no new machine block, ore or power system is introduced.
+**Status (2026-11-04): Wrought Iron chain produced successfully by the player in-game; broader acceptance remains open.** The player reports starting with **one Magnetite Ore**, supplying additional materials/consumables where needed, and following the implemented processing chain through to a **Wrought Iron Ingot**. This verifies the main functional path in that gameplay run; it does **not** establish that one ore alone supplied all inputs, nor that resource accounting, exact heat/RPM constraints, every interruption, automation, save/reload, dedicated-server multiplayer or a full `./gradlew build` have passed. Bronze Age and PR #11 remain unfinished/draft. The path reuses the Refractory Kiln and Mechanical Forge Hammer.
 
 ## First complete working route
 
@@ -39,7 +39,14 @@ The current `GearNode` exposes individual `maxTorque` and the network already en
 
 **Before closing Bronze:** decide the minimal Bronze drivetrain strength upgrade and implement/test it if it is mandatory for Iron-age machinery. Avoid blocking Wrought Iron production behind a yet-unimplemented drive upgrade if a correctly engineered existing wheel/gear network can supply the Forge Hammer.
 
-## In-game acceptance checklist (all unchecked until tested)
+## Verified player milestone — 2026-11-04
+
+- [x] **Functional path, observed by player:** Starting with one Magnetite Ore and adding required quantities of other materials as needed, completed ore processing and received one Wrought Iron Ingot through the existing Bloomery, Kiln and Forge Hammer chain.
+- [ ] **Not independently established by that report:** cold-bloom rejection, 120-second expiry across storage/reload, exact fuel consumption, mechanical overload/stall, die wear, output blocking, automation stack NBT, full preceding Copper/Tin/Bronze survival setup and multiplayer behavior.
+
+The in-game success confirms the **basic Bronze-to-Iron handoff works**. Keep the following exhaustive acceptance tests open until specifically exercised.
+
+## In-game acceptance checklist (remaining tests, unless separately confirmed)
 
 - [ ] JDK 17 `./gradlew build`, recipe/JEI load and book validation; run `node tools/bronze-forge-hammer/test-contract.mjs` and `node tools/bronze-to-iron/test-contract.mjs`.
 - [ ] Follow the full Copper → Tin/Bronze → Magnetite concentrate → Bloomery route with survival-obtainable tools/resources, real water, air, charcoal and Calcite. No creative-only ingredients.
@@ -54,4 +61,4 @@ The current `GearNode` exposes individual `maxTorque` and the network already en
 - [ ] Dedicated server with two clients, plus actual in-game frame/render checks. Static JSON/source inspection does not substitute for tests.
 - [ ] Final Bronze drivetrain and remaining source-implemented machine audit. Only then mark Bronze complete and start Iron content.
 
-**Current gate:** Wrought Iron K1 source authored, full runtime/QA pending. Do not close PR #11 or claim Bronze is release-ready yet.
+**Current gate:** First Wrought Iron successfully produced in-game (2026-11-04), but the full Bronze factory and all edge-case/runtime/visual acceptance are pending. The user reports machine *function* substantially working while model/animation completion is still outstanding. Do not close PR #11 or call Bronze release-ready on the strength of this functional run alone. Merge review: [2026-11-04 readiness report](bronze-merge-readiness-2026-11-04.md).
