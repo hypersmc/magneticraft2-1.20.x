@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "PCP",
+    "BSB"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "I": {
+      "item": "magneticraft2:bronze_mixer_paddles"
+    },
+    "P": {
+      "item": "minecraft:oak_planks"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_foundry_sand_mixer"
+  }
+}

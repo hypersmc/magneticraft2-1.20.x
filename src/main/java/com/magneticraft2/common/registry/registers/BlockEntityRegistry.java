@@ -1,6 +1,7 @@
 package com.magneticraft2.common.registry.registers;
 
 import com.magneticraft2.common.blockentity.general.*;
+import com.magneticraft2.common.hologram.AncientProjectorBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
@@ -27,6 +28,25 @@ import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlock
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.WaterWheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.stone.*;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMoldTableBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundryBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalLatheBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeIndustrialAirBlowerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.WaterSettlingTankBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeCastingBasinBlockEntity;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -58,6 +78,7 @@ public class BlockEntityRegistry {
 
     public static final RegistryObject<BlockEntityType<PitKilnBlockEntity>> PitKilnblockEntity = BLOCK_ENTITIES.register("pitkilnblockentity", () -> BlockEntityType.Builder.of(PitKilnBlockEntity::new, BlockRegistry.PitKilnblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<stonepebbleBlockEntity>> stonepebbleBlockEntity = BLOCK_ENTITIES.register("stonepebbleblockentity", () -> BlockEntityType.Builder.of(stonepebbleBlockEntity::new, BlockRegistry.stonepebble.get()).build(null));
+    public static final RegistryObject<BlockEntityType<AncientProjectorBlockEntity>> ANCIENT_PROJECTOR_BE = BLOCK_ENTITIES.register("ancient_projector", () -> BlockEntityType.Builder.of(AncientProjectorBlockEntity::new, BlockRegistry.ANCIENT_PROJECTOR.get()).build(null));
     public static final RegistryObject<BlockEntityType<projectortestBlockEntity>> projectortestBlockEntity = BLOCK_ENTITIES.register("projectortestblockentity", () -> BlockEntityType.Builder.of(projectortestBlockEntity::new, BlockRegistry.protectortest.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpowermodule>> testpowermodule = BLOCK_ENTITIES.register("testpowermodule", () -> BlockEntityType.Builder.of(testpowermodule::new, BlockRegistry.testpowermoduleblock.get()).build(null));
     public static final RegistryObject<BlockEntityType<testpollutionblockentity>> testpollutionblock = BLOCK_ENTITIES.register("testpollutionblock", () -> BlockEntityType.Builder.of(testpollutionblockentity::new, BlockRegistry.testpollutionblock.get()).build(null));
@@ -86,6 +107,82 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMoldTableBlockEntity>> BRONZE_MOLD_TABLE_BE =
+            BLOCK_ENTITIES.register("bronze_mold_table", () ->
+                    BlockEntityType.Builder.of(BronzeMoldTableBlockEntity::new,
+                            BlockRegistry.BRONZE_MOLD_TABLE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMechanicalLatheBlockEntity>> BRONZE_MECHANICAL_LATHE_BE =
+            BLOCK_ENTITIES.register("bronze_mechanical_lathe", () ->
+                    BlockEntityType.Builder.of(BronzeMechanicalLatheBlockEntity::new,
+                            BlockRegistry.BRONZE_MECHANICAL_LATHE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeStampMillBlockEntity>> BRONZE_STAMP_MILL_BE =
+            BLOCK_ENTITIES.register("bronze_stamp_mill", () ->
+                    BlockEntityType.Builder.of(BronzeStampMillBlockEntity::new,
+                            BlockRegistry.BRONZE_STAMP_MILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeForgeHammerBlockEntity>> BRONZE_FORGE_HAMMER_BE =
+            BLOCK_ENTITIES.register("bronze_forge_hammer", () ->
+                    BlockEntityType.Builder.of(BronzeForgeHammerBlockEntity::new,
+                            BlockRegistry.BRONZE_FORGE_HAMMER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeRollingMillBlockEntity>> BRONZE_ROLLING_MILL_BE =
+            BLOCK_ENTITIES.register("bronze_rolling_mill", () ->
+                    BlockEntityType.Builder.of(BronzeRollingMillBlockEntity::new,
+                            BlockRegistry.BRONZE_ROLLING_MILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMechanicalPressBlockEntity>> BRONZE_MECHANICAL_PRESS_BE =
+            BLOCK_ENTITIES.register("bronze_mechanical_press", () ->
+                    BlockEntityType.Builder.of(BronzeMechanicalPressBlockEntity::new,
+                            BlockRegistry.BRONZE_MECHANICAL_PRESS.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzePrecisionBoringMachineBlockEntity>> BRONZE_PRECISION_BORING_MACHINE_BE =
+            BLOCK_ENTITIES.register("bronze_precision_boring_machine", () ->
+                    BlockEntityType.Builder.of(BronzePrecisionBoringMachineBlockEntity::new,
+                            BlockRegistry.BRONZE_PRECISION_BORING_MACHINE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMechanicalSawmillBlockEntity>> BRONZE_MECHANICAL_SAWMILL_BE =
+            BLOCK_ENTITIES.register("bronze_mechanical_sawmill", () ->
+                    BlockEntityType.Builder.of(BronzeMechanicalSawmillBlockEntity::new,
+                            BlockRegistry.BRONZE_MECHANICAL_SAWMILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeMechanicalAssemblyStationBlockEntity>> BRONZE_MECHANICAL_ASSEMBLY_STATION_BE =
+            BLOCK_ENTITIES.register("bronze_mechanical_assembly_station", () ->
+                    BlockEntityType.Builder.of(BronzeMechanicalAssemblyStationBlockEntity::new,
+                            BlockRegistry.BRONZE_MECHANICAL_ASSEMBLY_STATION.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeFoundrySandMixerBlockEntity>> BRONZE_FOUNDRY_SAND_MIXER_BE =
+            BLOCK_ENTITIES.register("bronze_foundry_sand_mixer", () ->
+                    BlockEntityType.Builder.of(BronzeFoundrySandMixerBlockEntity::new,
+                            BlockRegistry.BRONZE_FOUNDRY_SAND_MIXER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeIndustrialAirBlowerBlockEntity>> BRONZE_INDUSTRIAL_AIR_BLOWER_BE =
+            BLOCK_ENTITIES.register("bronze_industrial_air_blower", () ->
+                    BlockEntityType.Builder.of(BronzeIndustrialAirBlowerBlockEntity::new,
+                            BlockRegistry.BRONZE_INDUSTRIAL_AIR_BLOWER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<WaterSettlingTankBlockEntity>> WATER_SETTLING_TANK_BE =
+            BLOCK_ENTITIES.register("water_settling_tank", () ->
+                    BlockEntityType.Builder.of(WaterSettlingTankBlockEntity::new,
+                            BlockRegistry.WATER_SETTLING_TANK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<CharcoalRetortBlockEntity>> CHARCOAL_RETORT_BE =
+            BLOCK_ENTITIES.register("charcoal_retort", () ->
+                    BlockEntityType.Builder.of(CharcoalRetortBlockEntity::new,
+                            BlockRegistry.CHARCOAL_RETORT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BloomeryFurnaceBlockEntity>> BLOOMERY_FURNACE_BE =
+            BLOCK_ENTITIES.register("bloomery_furnace", () ->
+                    BlockEntityType.Builder.of(BloomeryFurnaceBlockEntity::new,
+                            BlockRegistry.BLOOMERY_FURNACE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<RefractoryKilnBlockEntity>> REFRACTORY_KILN_BE =
+            BLOCK_ENTITIES.register("refractory_kiln", () ->
+                    BlockEntityType.Builder.of(RefractoryKilnBlockEntity::new,
+                            BlockRegistry.REFRACTORY_KILN.get()).build(null));
+    public static final RegistryObject<BlockEntityType<OreRoastingKilnBlockEntity>> ORE_ROASTING_KILN_BE =
+            BLOCK_ENTITIES.register("ore_roasting_kiln", () ->
+                    BlockEntityType.Builder.of(OreRoastingKilnBlockEntity::new,
+                            BlockRegistry.ORE_ROASTING_KILN.get()).build(null));
+    public static final RegistryObject<BlockEntityType<RotaryOreClassifierBlockEntity>> ROTARY_ORE_CLASSIFIER_BE =
+            BLOCK_ENTITIES.register("rotary_ore_classifier", () ->
+                    BlockEntityType.Builder.of(RotaryOreClassifierBlockEntity::new,
+                            BlockRegistry.ROTARY_ORE_CLASSIFIER.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeFoundryBlockEntity>> BRONZE_FOUNDRY_BE =
+            BLOCK_ENTITIES.register("bronze_foundry", () ->
+                    BlockEntityType.Builder.of(BronzeFoundryBlockEntity::new,
+                            BlockRegistry.BRONZE_FOUNDRY.get()).build(null));
+    public static final RegistryObject<BlockEntityType<BronzeCastingBasinBlockEntity>> BRONZE_CASTING_BASIN_BE =
+            BLOCK_ENTITIES.register("bronze_casting_basin", () ->
+                    BlockEntityType.Builder.of(BronzeCastingBasinBlockEntity::new,
+                            BlockRegistry.BRONZE_CASTING_BASIN.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalInputModuleBlockEntity>> MECHANICAL_INPUT_MODULE_BE = BLOCK_ENTITIES.register("mechanical_input_module", () -> BlockEntityType.Builder.of(MechanicalInputModuleBlockEntity::new, BlockRegistry.MECHANICAL_INPUT_MODULE.get()).build(null));
     public static final RegistryObject<BlockEntityType<MultiblockItemPortBlockEntity>> MULTIBLOCK_ITEM_PORT_BE =
             BLOCK_ENTITIES.register(

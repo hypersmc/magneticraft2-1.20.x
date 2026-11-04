@@ -1,0 +1,766 @@
+{
+  "schema": 1,
+  "description": "Bronze III 5x4x3 Forge Hammer first functional model: supported stone bed, bronze crosshead and iron die guides. Moving hammer renders separately from actual Gear V2 rotation. Rear mechanical input and two real front item modules remain unobstructed.",
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/stone_bricks"
+  },
+  "boxes": [
+    {
+      "name": "rear_foundation_-2",
+      "material": "stone",
+      "from": [
+        -30,
+        0,
+        -30
+      ],
+      "to": [
+        -18,
+        7,
+        -18
+      ]
+    },
+    {
+      "name": "rear_foundation_-1",
+      "material": "stone",
+      "from": [
+        -14,
+        0,
+        -30
+      ],
+      "to": [
+        -2,
+        7,
+        -18
+      ]
+    },
+    {
+      "name": "rear_foundation_1",
+      "material": "stone",
+      "from": [
+        18,
+        0,
+        -30
+      ],
+      "to": [
+        30,
+        7,
+        -18
+      ]
+    },
+    {
+      "name": "rear_foundation_2",
+      "material": "stone",
+      "from": [
+        34,
+        0,
+        -30
+      ],
+      "to": [
+        46,
+        7,
+        -18
+      ]
+    },
+    {
+      "name": "front_foundation_-2",
+      "material": "stone",
+      "from": [
+        -30,
+        0,
+        2
+      ],
+      "to": [
+        -18,
+        7,
+        14
+      ]
+    },
+    {
+      "name": "front_foundation_2",
+      "material": "stone",
+      "from": [
+        34,
+        0,
+        2
+      ],
+      "to": [
+        46,
+        7,
+        14
+      ]
+    },
+    {
+      "name": "controller_chassis",
+      "material": "dark",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        11,
+        15
+      ]
+    },
+    {
+      "name": "anvil_bed",
+      "material": "stone",
+      "from": [
+        -30,
+        0,
+        -15
+      ],
+      "to": [
+        46,
+        9,
+        -1
+      ]
+    },
+    {
+      "name": "anvil_pedestal",
+      "material": "iron",
+      "from": [
+        -2,
+        9,
+        -14
+      ],
+      "to": [
+        18,
+        20,
+        -4
+      ]
+    },
+    {
+      "name": "anvil_strike_surface",
+      "material": "dark",
+      "from": [
+        0,
+        20,
+        -14
+      ],
+      "to": [
+        16,
+        24,
+        -4
+      ]
+    },
+    {
+      "name": "frame_post_-28_-28",
+      "material": "wood",
+      "from": [
+        -28,
+        7,
+        -28
+      ],
+      "to": [
+        -22,
+        54,
+        -22
+      ]
+    },
+    {
+      "name": "frame_post_-28_8",
+      "material": "wood",
+      "from": [
+        -28,
+        7,
+        8
+      ],
+      "to": [
+        -22,
+        54,
+        14
+      ]
+    },
+    {
+      "name": "frame_post_40_-28",
+      "material": "wood",
+      "from": [
+        40,
+        7,
+        -28
+      ],
+      "to": [
+        46,
+        54,
+        -22
+      ]
+    },
+    {
+      "name": "frame_post_40_8",
+      "material": "wood",
+      "from": [
+        40,
+        7,
+        8
+      ],
+      "to": [
+        46,
+        54,
+        14
+      ]
+    },
+    {
+      "name": "front_rear_header_-28",
+      "material": "wood",
+      "from": [
+        -28,
+        51,
+        -28
+      ],
+      "to": [
+        46,
+        57,
+        -22
+      ]
+    },
+    {
+      "name": "front_rear_header_8",
+      "material": "wood",
+      "from": [
+        -28,
+        51,
+        8
+      ],
+      "to": [
+        46,
+        57,
+        14
+      ]
+    },
+    {
+      "name": "side_header_-28",
+      "material": "wood",
+      "from": [
+        -28,
+        51,
+        -28
+      ],
+      "to": [
+        -22,
+        57,
+        14
+      ]
+    },
+    {
+      "name": "side_header_40",
+      "material": "wood",
+      "from": [
+        40,
+        51,
+        -28
+      ],
+      "to": [
+        46,
+        57,
+        14
+      ]
+    },
+    {
+      "name": "hammer_crosshead",
+      "material": "bronze",
+      "from": [
+        -28,
+        54,
+        -14
+      ],
+      "to": [
+        46,
+        60,
+        -6
+      ]
+    },
+    {
+      "name": "guide_left",
+      "material": "iron",
+      "from": [
+        0,
+        28,
+        -13
+      ],
+      "to": [
+        3,
+        54,
+        -5
+      ]
+    },
+    {
+      "name": "guide_right",
+      "material": "iron",
+      "from": [
+        13,
+        28,
+        -13
+      ],
+      "to": [
+        16,
+        54,
+        -5
+      ]
+    },
+    {
+      "name": "guide_bottom_stop_left",
+      "material": "bronze",
+      "from": [
+        -2,
+        28,
+        -14
+      ],
+      "to": [
+        3,
+        31,
+        -4
+      ]
+    },
+    {
+      "name": "guide_bottom_stop_right",
+      "material": "bronze",
+      "from": [
+        13,
+        28,
+        -14
+      ],
+      "to": [
+        18,
+        31,
+        -4
+      ]
+    },
+    {
+      "name": "rear_drive_housing",
+      "material": "dark",
+      "from": [
+        0,
+        45,
+        -26
+      ],
+      "to": [
+        16,
+        52,
+        -17
+      ]
+    },
+    {
+      "name": "rear_drive_support",
+      "material": "bronze",
+      "from": [
+        3,
+        48,
+        -25
+      ],
+      "to": [
+        13,
+        55,
+        -17
+      ]
+    }
+  ],
+  "voxels": {
+    "collision": [
+      [
+        -30,
+        0,
+        -30,
+        -18,
+        7,
+        -18
+      ],
+      [
+        -14,
+        0,
+        -30,
+        -2,
+        7,
+        -18
+      ],
+      [
+        18,
+        0,
+        -30,
+        30,
+        7,
+        -18
+      ],
+      [
+        34,
+        0,
+        -30,
+        46,
+        7,
+        -18
+      ],
+      [
+        -30,
+        0,
+        2,
+        -18,
+        7,
+        14
+      ],
+      [
+        34,
+        0,
+        2,
+        46,
+        7,
+        14
+      ],
+      [
+        1,
+        0,
+        1,
+        15,
+        11,
+        15
+      ],
+      [
+        -30,
+        0,
+        -15,
+        46,
+        9,
+        -1
+      ],
+      [
+        -2,
+        9,
+        -14,
+        18,
+        20,
+        -4
+      ],
+      [
+        0,
+        20,
+        -14,
+        16,
+        24,
+        -4
+      ],
+      [
+        -28,
+        7,
+        -28,
+        -22,
+        54,
+        -22
+      ],
+      [
+        -28,
+        7,
+        8,
+        -22,
+        54,
+        14
+      ],
+      [
+        40,
+        7,
+        -28,
+        46,
+        54,
+        -22
+      ],
+      [
+        40,
+        7,
+        8,
+        46,
+        54,
+        14
+      ],
+      [
+        -28,
+        51,
+        -28,
+        46,
+        57,
+        -22
+      ],
+      [
+        -28,
+        51,
+        8,
+        46,
+        57,
+        14
+      ],
+      [
+        -28,
+        51,
+        -28,
+        -22,
+        57,
+        14
+      ],
+      [
+        40,
+        51,
+        -28,
+        46,
+        57,
+        14
+      ],
+      [
+        -28,
+        54,
+        -14,
+        46,
+        60,
+        -6
+      ],
+      [
+        0,
+        28,
+        -13,
+        3,
+        54,
+        -5
+      ],
+      [
+        13,
+        28,
+        -13,
+        16,
+        54,
+        -5
+      ],
+      [
+        0,
+        45,
+        -26,
+        16,
+        52,
+        -17
+      ],
+      [
+        3,
+        48,
+        -25,
+        13,
+        55,
+        -17
+      ],
+      [
+        0,
+        24,
+        -14,
+        16,
+        44,
+        -4
+      ]
+    ],
+    "selection": [
+      [
+        -30,
+        0,
+        -30,
+        -18,
+        7,
+        -18
+      ],
+      [
+        -14,
+        0,
+        -30,
+        -2,
+        7,
+        -18
+      ],
+      [
+        18,
+        0,
+        -30,
+        30,
+        7,
+        -18
+      ],
+      [
+        34,
+        0,
+        -30,
+        46,
+        7,
+        -18
+      ],
+      [
+        -30,
+        0,
+        2,
+        -18,
+        7,
+        14
+      ],
+      [
+        34,
+        0,
+        2,
+        46,
+        7,
+        14
+      ],
+      [
+        1,
+        0,
+        1,
+        15,
+        11,
+        15
+      ],
+      [
+        -30,
+        0,
+        -15,
+        46,
+        9,
+        -1
+      ],
+      [
+        -2,
+        9,
+        -14,
+        18,
+        20,
+        -4
+      ],
+      [
+        0,
+        20,
+        -14,
+        16,
+        24,
+        -4
+      ],
+      [
+        -28,
+        7,
+        -28,
+        -22,
+        54,
+        -22
+      ],
+      [
+        -28,
+        7,
+        8,
+        -22,
+        54,
+        14
+      ],
+      [
+        40,
+        7,
+        -28,
+        46,
+        54,
+        -22
+      ],
+      [
+        40,
+        7,
+        8,
+        46,
+        54,
+        14
+      ],
+      [
+        -28,
+        51,
+        -28,
+        46,
+        57,
+        -22
+      ],
+      [
+        -28,
+        51,
+        8,
+        46,
+        57,
+        14
+      ],
+      [
+        -28,
+        51,
+        -28,
+        -22,
+        57,
+        14
+      ],
+      [
+        40,
+        51,
+        -28,
+        46,
+        57,
+        14
+      ],
+      [
+        -28,
+        54,
+        -14,
+        46,
+        60,
+        -6
+      ],
+      [
+        0,
+        28,
+        -13,
+        3,
+        54,
+        -5
+      ],
+      [
+        13,
+        28,
+        -13,
+        16,
+        54,
+        -5
+      ],
+      [
+        0,
+        45,
+        -26,
+        16,
+        52,
+        -17
+      ],
+      [
+        3,
+        48,
+        -25,
+        13,
+        55,
+        -17
+      ],
+      [
+        0,
+        24,
+        -14,
+        16,
+        44,
+        -4
+      ]
+    ],
+    "zones": {
+      "anvil": [
+        [
+          0,
+          20,
+          -14,
+          16,
+          28,
+          -4
+        ]
+      ]
+    }
+  }
+}

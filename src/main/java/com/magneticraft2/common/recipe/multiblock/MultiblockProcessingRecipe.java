@@ -55,7 +55,7 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
         this.id = id;
         this.machine = machine;
         this.input = input;
-        this.inputCount = Math.max(1, inputCount);
+        this.inputCount = input.isEmpty() ? 0 : Math.max(1, inputCount);
         this.output = output.copy();
         this.byproduct = byproduct.copy();
         this.byproductChance =
@@ -80,6 +80,8 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
     public boolean matches(
             Container container,
             Level level) {
+        // Fluid-only recipes are selected by their controllers, not item slots.
+        if (input.isEmpty()) return false;
         ItemStack stack = container.getItem(0);
 
         return !stack.isEmpty()
@@ -88,13 +90,13 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
     }
 
     public boolean matchesInput(ItemStack stack) {
-        return !stack.isEmpty()
+        return !input.isEmpty() && !stack.isEmpty()
                 && stack.getCount() >= inputCount
                 && input.test(stack);
     }
 
     public boolean acceptsInputType(ItemStack stack) {
-        return !stack.isEmpty()
+        return !input.isEmpty() && !stack.isEmpty()
                 && input.test(stack);
     }
 
@@ -181,7 +183,7 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> ingredients =
                 NonNullList.create();
-        ingredients.add(input);
+        if (!input.isEmpty()) ingredients.add(input);
         return ingredients;
     }
 
@@ -222,10 +224,10 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
                                     .getAsString()
                     );
 
-            Ingredient input =
-                    Ingredient.fromJson(
-                            json.get("input")
-                    );
+            // A missing item ingredient is allowed only when fluid_input exists.
+            Ingredient input = json.has("input")
+                    ? Ingredient.fromJson(json.get("input"))
+                    : Ingredient.EMPTY;
 
             int inputCount =
                     json.has("input_count")
@@ -329,6 +331,9 @@ public class MultiblockProcessingRecipe implements Recipe<Container> {
                                     )
                             )
                             : FluidStack.EMPTY;
+
+            if (input.isEmpty() && fluidInput.isEmpty())
+                throw new JsonSyntaxException("Fluid-only recipe "+id+" requires fluid_input");
 
             return new MultiblockProcessingRecipe(
                     id,

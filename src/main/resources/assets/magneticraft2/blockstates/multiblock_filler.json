@@ -1,7 +1,7 @@
 {
-  "variants":{
-    "":{
-      "model":"magneticraft2:block/invis"
+  "variants": {
+    "": {
+      "model": "magneticraft2:multiblock/all_multiblocks"
     }
   }
 }

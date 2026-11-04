@@ -1,0 +1,129 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/stone_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        15.9375
+      ],
+      "to": [
+        11,
+        3,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            3,
+            0,
+            11,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        0
+      ],
+      "to": [
+        11,
+        3,
+        0.0625
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze",
+          "uv": [
+            3,
+            0,
+            11,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        0,
+        0
+      ],
+      "to": [
+        3.0625,
+        3,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.9375,
+        0,
+        0
+      ],
+      "to": [
+        11,
+        3,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        2.9375,
+        0
+      ],
+      "to": [
+        11,
+        3,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#bronze",
+          "uv": [
+            3,
+            0,
+            11,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

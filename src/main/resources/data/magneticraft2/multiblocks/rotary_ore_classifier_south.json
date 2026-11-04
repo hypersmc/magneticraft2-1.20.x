@@ -1,0 +1,185 @@
+{
+  "name": "rotary_ore_classifier_south",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "C",
+          "S"
+        ],
+        [
+          "O",
+          "A",
+          "Y"
+        ]
+      ],
+      "layer2": [
+        [
+          "U",
+          "I",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ]
+      ],
+      "layer3": [
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "A",
+          "A",
+          "A"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "C": "magneticraft2:rotary_ore_classifier",
+      "U": "magneticraft2:multiblock_item_input",
+      "I": "magneticraft2:mechanical_input_module",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "Y": "magneticraft2:multiblock_item_byproduct_output",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/rotary_ore_classifier_south",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:rotary_ore_classifier",
+    "render_air_anchors": [
+      [
+        0,
+        0,
+        -2
+      ],
+      [
+        0,
+        0,
+        -1
+      ],
+      [
+        0,
+        1,
+        -2
+      ],
+      [
+        -1,
+        1,
+        -1
+      ],
+      [
+        1,
+        1,
+        -1
+      ],
+      [
+        -1,
+        2,
+        -2
+      ],
+      [
+        0,
+        2,
+        -2
+      ],
+      [
+        1,
+        2,
+        -2
+      ],
+      [
+        -1,
+        2,
+        -1
+      ],
+      [
+        0,
+        2,
+        -1
+      ],
+      [
+        1,
+        2,
+        -1
+      ],
+      [
+        -1,
+        2,
+        0
+      ],
+      [
+        0,
+        2,
+        0
+      ],
+      [
+        1,
+        2,
+        0
+      ]
+    ]
+  }
+}

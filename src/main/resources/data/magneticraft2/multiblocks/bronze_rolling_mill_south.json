@@ -1,0 +1,112 @@
+{
+  "name": "bronze_rolling_mill_south",
+  "structure": {
+    "dimensions": [
+      5,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "I",
+          "S",
+          "S"
+        ],
+        [
+          "U",
+          "S",
+          "S",
+          "S",
+          "O"
+        ],
+        [
+          "S",
+          "S",
+          "C",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_rolling_mill",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_rolling_mill_south",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_rolling_mill",
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        2,
+        -1
+      ]
+    ]
+  }
+}

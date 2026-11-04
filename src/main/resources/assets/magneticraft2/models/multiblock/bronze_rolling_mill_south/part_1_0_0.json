@@ -1,0 +1,174 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "bronze": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/polished_blackstone",
+    "particle": "minecraft:block/stone_bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        5,
+        1.9375
+      ],
+      "to": [
+        5,
+        16,
+        2
+      ],
+      "faces": {
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            5,
+            5,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16,
+        1.9375
+      ],
+      "to": [
+        5,
+        30,
+        2
+      ],
+      "faces": {
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            5,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.9375,
+        5,
+        0
+      ],
+      "to": [
+        5,
+        16,
+        2
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            5,
+            2,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.9375,
+        16,
+        0
+      ],
+      "to": [
+        5,
+        30,
+        2
+      ],
+      "faces": {
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            2,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        5,
+        0
+      ],
+      "to": [
+        5,
+        5.0625,
+        2
+      ],
+      "faces": {
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            5,
+            2
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        30,
+        1.9375
+      ],
+      "to": [
+        5,
+        32,
+        2
+      ],
+      "faces": {
+        "south": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            14,
+            5,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4.9375,
+        30,
+        0
+      ],
+      "to": [
+        5,
+        32,
+        2
+      ],
+      "faces": {
+        "east": {
+          "texture": "#bronze",
+          "uv": [
+            0,
+            14,
+            2,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -28,7 +28,7 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
     private BlockPos beltPartner;
 
     private double clientBeltTravelDistance = 0.0D;
-    private float lastClientBeltVisualTime = Float.NaN;
+    private double lastClientBeltVisualTime = Double.NaN;
 
     public PulleyBlockEntity_wood(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.PULLEY_BE_WOOD.get(), pos, state);
@@ -112,13 +112,14 @@ public class PulleyBlockEntity_wood extends GearBlockEntity {
             return clientBeltTravelDistance;
         }
 
-        float currentVisualTime = currentLevel.getGameTime() + partialTicks;
-        if (Float.isNaN(lastClientBeltVisualTime)) {
+        double currentVisualTime =
+                (double) currentLevel.getGameTime() + (double) partialTicks;
+        if (Double.isNaN(lastClientBeltVisualTime)) {
             lastClientBeltVisualTime = currentVisualTime;
             return clientBeltTravelDistance;
         }
 
-        float deltaTicks = currentVisualTime - lastClientBeltVisualTime;
+        double deltaTicks = currentVisualTime - lastClientBeltVisualTime;
         lastClientBeltVisualTime = currentVisualTime;
 
         if (deltaTicks < 0.0F) {

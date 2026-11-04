@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BSB",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_classifier_screen",
+    "count": 1
+  }
+}

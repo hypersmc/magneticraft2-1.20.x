@@ -1,0 +1,81 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "workpiece": {
+      "model_offset": [
+        0.5,
+        1.53125,
+        -0.5625
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "item": {
+        "input": "workpiece",
+        "display_context": "none",
+        "scale": 0.42,
+        "rotation": [
+          90,
+          0,
+          0
+        ]
+      }
+    }
+  },
+  "inputs": {
+    "progress": {
+      "source": "machine.progress_normalized",
+      "module": "work_progress"
+    }
+  },
+  "animations": {
+    "workpiece_progress": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "workpiece",
+          "property": "transform_keyframes",
+          "input": "progress",
+          "when": "always",
+          "keyframes": [
+            {
+              "time": 0,
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            },
+            {
+              "time": 1,
+              "position": [
+                0,
+                0,
+                0
+              ],
+              "rotation": [
+                0,
+                0,
+                0
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

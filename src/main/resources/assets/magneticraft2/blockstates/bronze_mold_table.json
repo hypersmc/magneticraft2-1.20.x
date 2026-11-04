@@ -1,0 +1,1 @@
+{"variants":{"facing=south":{"model":"magneticraft2:block/bronze_mold_table"},"facing=west":{"model":"magneticraft2:block/bronze_mold_table","y":90},"facing=north":{"model":"magneticraft2:block/bronze_mold_table","y":180},"facing=east":{"model":"magneticraft2:block/bronze_mold_table","y":270}}}

@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:water_settling_tank",
+  "fluid_input": {
+    "fluid": "magneticraft2:dirty_water",
+    "amount": 600
+  },
+  "fluid_output": {
+    "fluid": "minecraft:water",
+    "amount": 480
+  },
+  "output": {
+    "item": "magneticraft2:settled_sediment",
+    "count": 1
+  },
+  "process_time": 240
+}

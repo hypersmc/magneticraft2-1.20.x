@@ -1,0 +1,632 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "gearbox_frame": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_gearbox_frame",
+      "model_offset": [
+        0,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cross_bearing": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_cross_bearing",
+      "model_offset": [
+        1.0625,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "side_lower_mount": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_side_lower_mount",
+      "model_offset": [
+        2.45,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_coupler": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_input_coupler",
+      "model_offset": [
+        0,
+        0,
+        -1.5
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_shaft": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_input_shaft",
+      "model_offset": [
+        0,
+        0,
+        -1.625
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_spindle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_input_spindle",
+      "model_offset": [
+        0,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_bevel": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_bevel",
+      "model_offset": [
+        0,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "output_bevel": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_bevel_x",
+      "model_offset": [
+        0,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "lower_spindle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_lower_spindle",
+      "model_offset": [
+        0.5,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "lower_drive_shaft": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft",
+      "model_offset": [
+        1.5,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "lower_shaft_tip": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft_tip",
+      "model_offset": [
+        2,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "lower_pulley": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_pulley",
+      "model_offset": [
+        2.45,
+        0,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_pulley": {
+      "model": "magneticraft2:animated/belt_probe_upper_pulley",
+      "model_offset": [
+        2.45,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_shaft_start": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft_start",
+      "model_offset": [
+        -1.5,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_shaft_zero": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft",
+      "model_offset": [
+        -0.5,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_shaft_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft",
+      "model_offset": [
+        0.5,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_shaft_end": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft",
+      "model_offset": [
+        1.5,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "upper_shaft_tip": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_drive_shaft_tip",
+      "model_offset": [
+        2,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "plate_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        -1,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        -1,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_left": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        -1,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
+    },
+    "plate_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        0,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        0,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_middle": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        0,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
+    },
+    "plate_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_strike_plate",
+      "model_offset": [
+        1,
+        0.9375,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "cam_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_cam",
+      "model_offset": [
+        1,
+        1.90625,
+        -1.125
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "hammer_right": {
+      "model": "magneticraft2:multiblock/bronze_stamp_mill_hammer",
+      "model_offset": [
+        1,
+        1.5,
+        -1.125
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "stamp_mill.wear_stage",
+        "models": {
+          "2": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "3": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "4": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn",
+          "5": "magneticraft2:multiblock/bronze_stamp_mill_hammer_worn"
+        }
+      }
+    }
+  },
+  "inputs": {
+    "input_phase": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    },
+    "output_phase": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "output_shaft"
+    }
+  },
+  "animations": {
+    "powertrain": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "input_coupler",
+          "property": "rotation",
+          "axis": "z",
+          "input": "input_phase",
+          "scale": 1
+        },
+        {
+          "target": "input_shaft",
+          "property": "rotation",
+          "axis": "z",
+          "input": "input_phase",
+          "scale": 1
+        },
+        {
+          "target": "input_spindle",
+          "property": "rotation",
+          "axis": "z",
+          "input": "input_phase",
+          "scale": 1
+        },
+        {
+          "target": "input_bevel",
+          "property": "rotation",
+          "axis": "z",
+          "input": "input_phase",
+          "scale": 1
+        },
+        {
+          "target": "output_bevel",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "lower_spindle",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "lower_drive_shaft",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "lower_shaft_tip",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "lower_pulley",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_pulley",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_shaft_start",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_shaft_zero",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_shaft_middle",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_shaft_end",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        },
+        {
+          "target": "upper_shaft_tip",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1
+        }
+      ]
+    },
+    "stamp_heads": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "cam_left",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 0
+        },
+        {
+          "target": "hammer_left",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 0,
+          "when": "running"
+        },
+        {
+          "target": "cam_middle",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 120
+        },
+        {
+          "target": "hammer_middle",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 120,
+          "when": "running"
+        },
+        {
+          "target": "cam_right",
+          "property": "rotation",
+          "axis": "x",
+          "input": "output_phase",
+          "scale": 1,
+          "phase_degrees": 240
+        },
+        {
+          "target": "hammer_right",
+          "property": "translation",
+          "axis": "y",
+          "input": "output_phase",
+          "scale": 1,
+          "waveform": "cosine",
+          "distance": 0.32,
+          "bias": 0.5,
+          "amplitude": 0.5,
+          "phase_degrees": 240,
+          "when": "running"
+        }
+      ]
+    }
+  },
+  "belt_loops": {
+    "drive_belt": {
+      "type": "open_belt",
+      "input": "output_phase",
+      "texture": "minecraft:textures/block/light_blue_wool.png",
+      "start_center": [
+        2.95,
+        0.5,
+        -0.625
+      ],
+      "end_center": [
+        2.95,
+        2.40625,
+        -0.625
+      ],
+      "rotation_axis": "x",
+      "start_radius": 0.2978125,
+      "end_radius": 0.2978125,
+      "drive_radius": 0.2978125,
+      "half_width": 0.0625,
+      "half_thickness": 0.0428125,
+      "texture_repeat": 1,
+      "speed_scale": -1,
+      "texture_offset": 0.125
+    }
+  }
+}

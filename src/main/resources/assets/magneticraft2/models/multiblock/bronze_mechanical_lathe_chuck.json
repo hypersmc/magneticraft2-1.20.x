@@ -1,0 +1,140 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "hub": "minecraft:block/polished_blackstone",
+    "bronze": "minecraft:block/cut_copper",
+    "jaw": "minecraft:block/iron_block",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        5.5,
+        5,
+        5
+      ],
+      "to": [
+        10.5,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hub"
+        },
+        "south": {
+          "texture": "#hub"
+        },
+        "east": {
+          "texture": "#hub"
+        },
+        "west": {
+          "texture": "#hub"
+        },
+        "up": {
+          "texture": "#hub"
+        },
+        "down": {
+          "texture": "#hub"
+        }
+      }
+    },
+    {
+      "from": [
+        9.5,
+        5.5,
+        5.5
+      ],
+      "to": [
+        12,
+        10.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bronze"
+        },
+        "south": {
+          "texture": "#bronze"
+        },
+        "east": {
+          "texture": "#bronze"
+        },
+        "west": {
+          "texture": "#bronze"
+        },
+        "up": {
+          "texture": "#bronze"
+        },
+        "down": {
+          "texture": "#bronze"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        9.7,
+        6.9
+      ],
+      "to": [
+        14,
+        11,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#jaw"
+        },
+        "south": {
+          "texture": "#jaw"
+        },
+        "east": {
+          "texture": "#jaw"
+        },
+        "west": {
+          "texture": "#jaw"
+        },
+        "up": {
+          "texture": "#jaw"
+        },
+        "down": {
+          "texture": "#jaw"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        5,
+        6.9
+      ],
+      "to": [
+        14,
+        6.3,
+        9.1
+      ],
+      "faces": {
+        "north": {
+          "texture": "#jaw"
+        },
+        "south": {
+          "texture": "#jaw"
+        },
+        "east": {
+          "texture": "#jaw"
+        },
+        "west": {
+          "texture": "#jaw"
+        },
+        "up": {
+          "texture": "#jaw"
+        },
+        "down": {
+          "texture": "#jaw"
+        }
+      }
+    }
+  ]
+}

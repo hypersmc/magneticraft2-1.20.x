@@ -1,0 +1,78 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "marker": "minecraft:block/redstone_block",
+    "particle": "minecraft:block/redstone_block"
+  },
+  "elements": [
+    {
+      "from": [
+        10,
+        7,
+        0.1
+      ],
+      "to": [
+        11,
+        9,
+        0.6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#marker",
+          "uv": [
+            10,
+            7,
+            11,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#marker",
+          "uv": [
+            10,
+            7,
+            11,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#marker",
+          "uv": [
+            0.1,
+            7,
+            0.6,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#marker",
+          "uv": [
+            0.1,
+            7,
+            0.6,
+            9
+          ]
+        },
+        "up": {
+          "texture": "#marker",
+          "uv": [
+            10,
+            0.1,
+            11,
+            0.6
+          ]
+        },
+        "down": {
+          "texture": "#marker",
+          "uv": [
+            10,
+            0.1,
+            11,
+            0.6
+          ]
+        }
+      }
+    }
+  ]
+}

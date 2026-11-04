@@ -1,5 +1,7 @@
 package com.magneticraft2.common.systems.fluid;
 
+import com.magneticraft2.common.block.stage.copper.DiagonalWaterPipeBlock;
+import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,10 +59,7 @@ public final class FluidPipeNetwork {
             BlockPos firstPipe,
             @Nullable BlockPos ignoredPos,
             int maxPipeBlocks) {
-        if (level == null
-                || !level.getBlockState(firstPipe).is(
-                        BlockRegistry.WATER_PIPE.get()
-                )) {
+        if (level == null || !isPipe(level.getBlockState(firstPipe))) {
             return List.of();
         }
 
@@ -85,10 +84,58 @@ public final class FluidPipeNetwork {
                 continue;
             }
 
+            BlockState pipeState = level.getBlockState(pipePos);
+            if (!isPipe(pipeState)) {
+                continue;
+            }
+
+            if (pipeState.getBlock() instanceof DiagonalWaterPipeBlock) {
+                BlockPos step = pipeState.getValue(DiagonalWaterPipeBlock.AXIS).step();
+                for (int sign = -1; sign <= 1; sign += 2) {
+                    if (DiagonalWaterPipeBlock.isConnectedDiagonal(
+                            level, pipePos, pipeState, sign)) {
+                        BlockPos diagonal = pipePos.offset(
+                                step.getX() * sign, step.getY() * sign,
+                                step.getZ() * sign);
+                        if (!visited.contains(diagonal)) {
+                            queue.addLast(diagonal.immutable());
+                        }
+                    }
+                }
+            }
+
+            if (pipeState.getBlock() instanceof WaterPipeBlock) {
+                BlockPos outgoing = pipeState.getValue(
+                        WaterPipeBlock.DIAGONAL).step();
+                if (outgoing != null) {
+                    BlockPos neighbour = pipePos.offset(
+                            outgoing.getX(), outgoing.getY(), outgoing.getZ());
+                    if ((ignoredPos == null || !ignoredPos.equals(neighbour))
+                            && level.hasChunkAt(neighbour)) {
+                        BlockState otherState = level.getBlockState(neighbour);
+                        if (otherState.getBlock() instanceof DiagonalWaterPipeBlock) {
+                            BlockPos axis = otherState.getValue(DiagonalWaterPipeBlock.AXIS).step();
+                            int sign = axis.equals(outgoing) ? -1
+                                    : axis.getX() == -outgoing.getX()
+                                            && axis.getY() == -outgoing.getY()
+                                            && axis.getZ() == -outgoing.getZ() ? 1 : 0;
+                            if (sign != 0 && DiagonalWaterPipeBlock.isConnectedDiagonal(
+                                    level, neighbour, otherState, sign)
+                                    && !visited.contains(neighbour)) {
+                                queue.addLast(neighbour.immutable());
+                            }
+                        }
+                    }
+                }
+            }
+
             for (Direction direction :
                     Direction.values()) {
-                BlockPos neighbour =
-                        pipePos.relative(direction);
+                if (pipeState.getBlock() instanceof DiagonalWaterPipeBlock
+                        && !DiagonalWaterPipeBlock.hasSocket(pipeState, direction)) {
+                    continue;
+                }
+                BlockPos neighbour = pipePos.relative(direction);
 
                 if (ignoredPos != null
                         && neighbour.equals(ignoredPos)) {
@@ -98,14 +145,23 @@ public final class FluidPipeNetwork {
                 BlockState neighbourState =
                         level.getBlockState(neighbour);
 
-                if (neighbourState.is(
-                        BlockRegistry.WATER_PIPE.get()
-                )) {
-                    if (!visited.contains(neighbour)) {
-                        queue.addLast(
-                                neighbour.immutable()
-                        );
+                if (isPipe(neighbourState)) {
+                    // Diagonal pieces have no ordinary side connections unless
+                    // the blockstate explicitly includes an endpoint fitting.
+                    if (neighbourState.getBlock() instanceof DiagonalWaterPipeBlock
+                            && !DiagonalWaterPipeBlock.hasSocket(
+                                    neighbourState, direction.getOpposite())) {
+                        continue;
                     }
+                    if (!visited.contains(neighbour)) {
+                        queue.addLast(neighbour.immutable());
+                    }
+                    continue;
+                }
+
+                // Diagonal fittings terminate into ordinary Copper pipes,
+                // never directly into tanks or machine capabilities.
+                if (pipeState.getBlock() instanceof DiagonalWaterPipeBlock) {
                     continue;
                 }
 
@@ -162,5 +218,10 @@ public final class FluidPipeNetwork {
         }
 
         return endpoints;
+    }
+
+    private static boolean isPipe(BlockState state) {
+        return state.is(BlockRegistry.WATER_PIPE.get())
+                || state.is(BlockRegistry.DIAGONAL_WATER_PIPE.get());
     }
 }

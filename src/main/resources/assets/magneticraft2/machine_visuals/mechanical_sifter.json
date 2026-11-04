@@ -1,0 +1,11 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:mechanical_sifter",
+  "angle_channels": {
+    "mechanical_input": "mechanical_input"
+  },
+  "integer_channels": {
+    "sifter.wear_stage": "sifter.wear_stage"
+  }
+}

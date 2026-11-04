@@ -1,0 +1,9 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:mechanical_ore_washer",
+  "angle_channels": {
+    "trommel": "trommel"
+  },
+  "integer_channels": {}
+}

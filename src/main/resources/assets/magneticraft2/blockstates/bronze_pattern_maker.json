@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "bearing_selected=false,facing=south": {
+      "model": "magneticraft2:block/bronze_pattern_maker_gear"
+    },
+    "bearing_selected=true,facing=south": {
+      "model": "magneticraft2:block/bronze_pattern_maker_bearing"
+    },
+    "bearing_selected=false,facing=west": {
+      "model": "magneticraft2:block/bronze_pattern_maker_gear",
+      "y": 90
+    },
+    "bearing_selected=true,facing=west": {
+      "model": "magneticraft2:block/bronze_pattern_maker_bearing",
+      "y": 90
+    },
+    "bearing_selected=false,facing=north": {
+      "model": "magneticraft2:block/bronze_pattern_maker_gear",
+      "y": 180
+    },
+    "bearing_selected=true,facing=north": {
+      "model": "magneticraft2:block/bronze_pattern_maker_bearing",
+      "y": 180
+    },
+    "bearing_selected=false,facing=east": {
+      "model": "magneticraft2:block/bronze_pattern_maker_gear",
+      "y": 270
+    },
+    "bearing_selected=true,facing=east": {
+      "model": "magneticraft2:block/bronze_pattern_maker_bearing",
+      "y": 270
+    }
+  }
+}

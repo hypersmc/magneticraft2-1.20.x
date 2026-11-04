@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "SPS",
+    "BGB"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "I": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "P": {
+      "item": "minecraft:oak_planks"
+    },
+    "G": {
+      "item": "magneticraft2:precision_bronze_gear"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:rotary_ore_classifier",
+    "count": 1
+  }
+}

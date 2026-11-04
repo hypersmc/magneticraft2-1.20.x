@@ -1,0 +1,90 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "magneticraft2:block/refractory_kiln/plinth",
+    "masonry": "magneticraft2:block/refractory_kiln/brick",
+    "ceramic": "magneticraft2:block/material/refractory_brick",
+    "iron": "magneticraft2:block/refractory_kiln/iron",
+    "band": "magneticraft2:block/refractory_kiln/iron",
+    "bronze": "magneticraft2:block/refractory_kiln/bronze",
+    "soot": "magneticraft2:block/refractory_kiln/soot",
+    "grate": "magneticraft2:block/refractory_kiln/grate",
+    "door": "magneticraft2:block/refractory_kiln/door",
+    "roof": "magneticraft2:block/refractory_kiln/roof",
+    "input": "magneticraft2:block/refractory_kiln/input",
+    "output": "magneticraft2:block/refractory_kiln/output",
+    "particle": "magneticraft2:block/refractory_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        1
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        1
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "east": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            15,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        1
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            16,
+            15
+          ]
+        }
+      }
+    }
+  ]
+}

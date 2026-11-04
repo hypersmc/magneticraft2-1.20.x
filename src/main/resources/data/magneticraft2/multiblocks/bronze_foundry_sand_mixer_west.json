@@ -1,0 +1,72 @@
+{
+  "name": "bronze_foundry_sand_mixer_west",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "U",
+          "S"
+        ],
+        [
+          "C",
+          "S",
+          "I"
+        ],
+        [
+          "S",
+          "O",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "I": "magneticraft2:mechanical_input_module",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:bronze_foundry_sand_mixer"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_foundry_sand_mixer_west",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_foundry_sand_mixer",
+    "render_air_anchors": [
+      [
+        1,
+        1,
+        0
+      ]
+    ]
+  }
+}

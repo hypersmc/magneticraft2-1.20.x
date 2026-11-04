@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 890" width="1440" height="890" role="img" aria-labelledby="title desc">
+<title id="title">Magneticraft2 Bronze Rolling Mill — Studio construction reference</title>
+<desc id="desc">Editable schematic of the actual five-block-wide, three-block-high, three-block-deep Rolling Mill: supported upper and lower rollers on the rear input Z-axis, left input and right output, front controller, and blueprint layers.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#202a2c"/><stop offset="1" stop-color="#12171a"/></linearGradient>
+ <linearGradient id="bronze" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eaa16d"/><stop offset=".5" stop-color="#a95933"/><stop offset="1" stop-color="#703b2b"/></linearGradient>
+ <linearGradient id="roll" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d0a78c"/><stop offset=".48" stop-color="#a46d53"/><stop offset="1" stop-color="#6c3f31"/></linearGradient>
+ <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8c8a83"/><stop offset="1" stop-color="#474a4a"/></linearGradient>
+ <style>.head{font:700 35px Georgia,serif;fill:#f1e8d8}.sub{font:19px Arial,sans-serif;fill:#d4c6b1}.title{font:700 23px Georgia,serif;fill:#ebac75}.label{font:17px Arial,sans-serif;fill:#e4ddd1}.hint{font:14px Arial,sans-serif;fill:#bcb5aa}.card{fill:#202628;stroke:#795d46;stroke-width:2}.minor{stroke:#a28065;stroke-width:2;fill:none}.tag{font:700 17px Arial,sans-serif;fill:#111827}</style>
+</defs>
+<rect width="1440" height="890" fill="url(#bg)"/>
+<rect x="22" y="20" width="1396" height="92" rx="12" class="card"/>
+<text x="50" y="69" class="head">MAGNETICRAFT2   /   BRONZE ROLLING MILL</text>
+<text x="52" y="97" class="sub">Studio reference • K1 cold copper sheet rolling • actual 5 × 3 × 3 footprint • conceptual appearance, exact port roles</text>
+
+<rect x="23" y="132" width="900" height="605" rx="12" class="card"/>
+<text x="52" y="173" class="title">LEFT ELEVATION — shaft-axis &amp; two counter-rotating rolls</text>
+<text x="53" y="196" class="hint">Rear mechanical drive at left; feed flows across the roller axes (shown in plan at right)</text>
+<!-- stone shoes and structure -->
+<rect x="110" y="618" width="690" height="48" rx="2" fill="url(#stone)" stroke="#242a2a" stroke-width="5"/>
+<rect x="133" y="571" width="78" height="50" fill="url(#stone)"/><rect x="698" y="571" width="78" height="50" fill="url(#stone)"/>
+<!-- wooden posts -->
+<rect x="160" y="258" width="42" height="327" fill="#815536" stroke="#3e291d" stroke-width="5"/>
+<rect x="705" y="258" width="42" height="327" fill="#815536" stroke="#3e291d" stroke-width="5"/>
+<!-- top beam -->
+<rect x="149" y="251" width="610" height="45" fill="#926841" stroke="#3e291d" stroke-width="6"/>
+<!-- bronze overhead beam -->
+<rect x="206" y="307" width="501" height="32" fill="url(#bronze)" stroke="#422a23" stroke-width="4"/>
+<!-- static bearing guides -->
+<rect x="215" y="338" width="58" height="214" fill="#484c4c" stroke="#2e3435" stroke-width="5"/>
+<rect x="637" y="338" width="58" height="214" fill="#484c4c" stroke="#2e3435" stroke-width="5"/>
+<!-- rollers along front-back -->
+<rect x="279" y="384" width="350" height="77" rx="27" fill="url(#roll)" stroke="#463d3c" stroke-width="6"/>
+<rect x="279" y="474" width="350" height="77" rx="27" fill="url(#roll)" stroke="#463d3c" stroke-width="6"/>
+<g stroke="#a67c64" stroke-width="5" opacity=".58">
+<path d="M326 393v59 M362 393v59 M398 393v59 M434 393v59 M470 393v59 M506 393v59 M542 393v59 M578 393v59"/>
+<path d="M326 483v59 M362 483v59 M398 483v59 M434 483v59 M470 483v59 M506 483v59 M542 483v59 M578 483v59"/>
+</g>
+<!-- cover connects roller bearings -->
+<rect x="631" y="349" width="62" height="220" rx="7" fill="#494c4d" stroke="#bc7a52" stroke-width="8"/>
+<!-- lower spindle links rear drive -->
+<rect x="197" y="502" width="82" height="17" fill="#e1a07a" stroke="#613b2c" stroke-width="3"/>
+<rect x="88" y="469" width="107" height="82" rx="6" fill="#545f64" stroke="#303b41" stroke-width="5"/>
+<text x="141" y="506" text-anchor="middle" class="label" fill="#fff">I</text>
+<!-- floor anvil/feed -->
+<rect x="205" y="563" width="497" height="30" fill="#875a3b" stroke="#473123" stroke-width="5"/>
+<g fill="#d4bd9b" font-family="Arial,sans-serif" font-size="17">
+<text x="235" y="689">Stone foundation</text><text x="585" y="689">Enclosed timing drive</text></g>
+<path d="M695 540 L765 564" stroke="#dfb48f" stroke-width="3"/>
+<text x="54" y="720" class="hint">The in-game model uses static Voxel V2 supports and two cached animated roller models, not duplicate dynamic entities.</text>
+
+<rect x="946" y="132" width="470" height="605" rx="12" class="card"/>
+<text x="968" y="170" class="title">ACTUAL SOUTH JSON — layer view</text>
+<text x="972" y="193" class="hint">Server coordinates, NOT the mirrored Patchouli display</text>
+<!-- three layer grids 5 columns × 3 rows -->
+<g font-family="monospace" font-size="25" text-anchor="middle" font-weight="bold">
+<text x="977" y="221" class="label" text-anchor="start">Y3: TOP</text><rect x="986" y="242" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="265" class="tag">P</text><rect x="1064" y="242" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1100" y="265" class="tag">P</text><rect x="1142" y="242" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1178" y="265" class="tag">P</text><rect x="1220" y="242" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1256" y="265" class="tag">P</text><rect x="1298" y="242" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="265" class="tag">P</text><rect x="986" y="278" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="301" class="tag">P</text><rect x="1064" y="278" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1100" y="301" class="tag">·</text><rect x="1142" y="278" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1178" y="301" class="tag">·</text><rect x="1220" y="278" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1256" y="301" class="tag">·</text><rect x="1298" y="278" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="301" class="tag">P</text><rect x="986" y="314" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="337" class="tag">P</text><rect x="1064" y="314" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1100" y="337" class="tag">P</text><rect x="1142" y="314" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1178" y="337" class="tag">P</text><rect x="1220" y="314" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1256" y="337" class="tag">P</text><rect x="1298" y="314" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="337" class="tag">P</text><text x="977" y="376" class="label" text-anchor="start">Y2: MIDDLE</text><rect x="986" y="397" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="420" class="tag">P</text><rect x="1064" y="397" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1100" y="420" class="tag">·</text><rect x="1142" y="397" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1178" y="420" class="tag">·</text><rect x="1220" y="397" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1256" y="420" class="tag">·</text><rect x="1298" y="397" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="420" class="tag">P</text><rect x="986" y="433" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="456" class="tag">P</text><rect x="1064" y="433" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1100" y="456" class="tag">·</text><rect x="1142" y="433" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1178" y="456" class="tag">·</text><rect x="1220" y="433" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1256" y="456" class="tag">·</text><rect x="1298" y="433" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="456" class="tag">P</text><rect x="986" y="469" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1022" y="492" class="tag">P</text><rect x="1064" y="469" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1100" y="492" class="tag">·</text><rect x="1142" y="469" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1178" y="492" class="tag">·</text><rect x="1220" y="469" width="72" height="32" rx="3" fill="#1c2526" stroke="#333" stroke-width="2"/><text x="1256" y="492" class="tag">·</text><rect x="1298" y="469" width="72" height="32" rx="3" fill="#98663e" stroke="#333" stroke-width="2"/><text x="1334" y="492" class="tag">P</text><text x="977" y="531" class="label" text-anchor="start">Y1: BASE</text><rect x="986" y="552" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1022" y="575" class="tag">S</text><rect x="1064" y="552" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1100" y="575" class="tag">S</text><rect x="1142" y="552" width="72" height="32" rx="3" fill="#639568" stroke="#333" stroke-width="2"/><text x="1178" y="575" class="tag">I</text><rect x="1220" y="552" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1256" y="575" class="tag">S</text><rect x="1298" y="552" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1334" y="575" class="tag">S</text><rect x="986" y="588" width="72" height="32" rx="3" fill="#6388ab" stroke="#333" stroke-width="2"/><text x="1022" y="611" class="tag">U</text><rect x="1064" y="588" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1100" y="611" class="tag">S</text><rect x="1142" y="588" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1178" y="611" class="tag">S</text><rect x="1220" y="588" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1256" y="611" class="tag">S</text><rect x="1298" y="588" width="72" height="32" rx="3" fill="#d5a454" stroke="#333" stroke-width="2"/><text x="1334" y="611" class="tag">O</text><rect x="986" y="624" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1022" y="647" class="tag">S</text><rect x="1064" y="624" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1100" y="647" class="tag">S</text><rect x="1142" y="624" width="72" height="32" rx="3" fill="#dc995f" stroke="#333" stroke-width="2"/><text x="1178" y="647" class="tag">C</text><rect x="1220" y="624" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1256" y="647" class="tag">S</text><rect x="1298" y="624" width="72" height="32" rx="3" fill="#787a77" stroke="#333" stroke-width="2"/><text x="1334" y="647" class="tag">S</text>
+</g>
+<text x="973" y="692" class="hint">I rear drive · U left input · O right output · C controller</text>
+
+<rect x="23" y="756" width="1393" height="110" rx="12" class="card"/>
+<text x="49" y="787" class="title">K1 PROCESS &amp; TECHNICAL LIMITS</text>
+<text x="50" y="816" class="label">4 Copper Plates  →  4 Copper Sheets  •  180 powered ticks  •  ≥16 RPM / ≥6 torque  •  512-batch roller sleeve service</text>
+<text x="50" y="844" class="hint">Sheet use: 4 Sheets → 8 Water Pipes (alternative to existing 6 Plates → 8 Pipes). Future hot bronze billets / rods are NOT implemented.</text>
+</svg>

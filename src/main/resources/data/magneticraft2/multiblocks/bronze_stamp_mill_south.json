@@ -1,0 +1,170 @@
+{
+  "name": "bronze_stamp_mill_south",
+  "structure": {
+    "dimensions": [
+      5,
+      3,
+      4
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "S",
+          "I",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "C",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "U",
+          "Y",
+          "O",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ]
+      ],
+      "layer3": [
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_stamp_mill",
+      "P": "minecraft:oak_planks",
+      "B": "minecraft:cut_copper",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "Y": "magneticraft2:multiblock_item_byproduct_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_stamp_mill_south",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_stamp_mill",
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        -1
+      ],
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        1,
+        1,
+        -1
+      ],
+      [
+        -1,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        0
+      ],
+      [
+        -1,
+        1,
+        1
+      ],
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        1,
+        1,
+        1
+      ]
+    ]
+  }
+}

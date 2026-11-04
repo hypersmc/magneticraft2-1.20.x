@@ -1,0 +1,102 @@
+{
+  "name": "bronze_industrial_air_blower_south",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "I",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "C",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_industrial_air_blower"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_industrial_air_blower_south",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_industrial_air_blower",
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        -2
+      ],
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        2,
+        -1
+      ]
+    ]
+  }
+}

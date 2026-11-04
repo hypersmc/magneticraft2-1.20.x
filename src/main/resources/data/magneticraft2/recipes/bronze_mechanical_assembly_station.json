@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BGB",
+    "PCP",
+    "SIS"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "G": {
+      "item": "magneticraft2:bronze_bushing"
+    },
+    "P": {
+      "item": "magneticraft2:copper_panel"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "I": {
+      "item": "magneticraft2:mechanical_input_module"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_mechanical_assembly_station"
+  }
+}

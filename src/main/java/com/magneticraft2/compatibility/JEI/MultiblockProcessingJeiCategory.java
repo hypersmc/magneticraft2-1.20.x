@@ -70,16 +70,13 @@ public class MultiblockProcessingJeiCategory
             IRecipeLayoutBuilder builder,
             MultiblockJeiRecipe recipe,
             IFocusGroup focuses) {
-        int inputY = 22;
-        for (List<ItemStack> input :
-                recipe.getItemInputs()) {
-            builder.addSlot(
-                            RecipeIngredientRole.INPUT,
-                            8,
-                            inputY
-                    )
-                    .addItemStacks(input);
-            inputY += 20;
+        int index = 0;
+        boolean assemblyGrid = recipe.getItemInputs().size() >= 4;
+        for (List<ItemStack> input : recipe.getItemInputs()) {
+            int x = assemblyGrid ? 8 + (index % 2) * 21 : 8;
+            int y = assemblyGrid ? 22 + (index / 2) * 21 : 22 + index * 20;
+            builder.addSlot(RecipeIngredientRole.INPUT, x, y).addItemStacks(input);
+            index++;
         }
 
         FluidStack fluidInput =

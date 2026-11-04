@@ -1,0 +1,140 @@
+{
+  "name": "bronze_forge_hammer_north",
+  "structure": {
+    "dimensions": [
+      5,
+      4,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "O",
+          "C",
+          "U",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "I",
+          "S",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ]
+      ],
+      "layer4": [
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "A",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "C": "magneticraft2:bronze_forge_hammer",
+      "P": "minecraft:oak_planks",
+      "A": "minecraft:air",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_forge_hammer_north",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_forge_hammer",
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        1
+      ],
+      [
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        3,
+        1
+      ]
+    ]
+  }
+}

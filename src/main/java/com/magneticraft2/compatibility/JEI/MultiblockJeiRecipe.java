@@ -1,6 +1,8 @@
 package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
+import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -36,6 +38,32 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "mechanical_ore_washer");
     public static final ResourceLocation MECHANICAL_SIFTER =
             new ResourceLocation("magneticraft2", "mechanical_sifter");
+    public static final ResourceLocation BRONZE_STAMP_MILL =
+            new ResourceLocation("magneticraft2", "bronze_stamp_mill");
+    public static final ResourceLocation BRONZE_FORGE_HAMMER =
+            new ResourceLocation("magneticraft2", "bronze_forge_hammer");
+    public static final ResourceLocation BRONZE_ROLLING_MILL =
+            new ResourceLocation("magneticraft2", "bronze_rolling_mill");
+    public static final ResourceLocation BRONZE_MECHANICAL_PRESS =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_press");
+    public static final ResourceLocation BRONZE_PRECISION_BORING_MACHINE =
+            new ResourceLocation("magneticraft2", "bronze_precision_boring_machine");
+    public static final ResourceLocation BRONZE_MECHANICAL_SAWMILL =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_sawmill");
+    public static final ResourceLocation BRONZE_MECHANICAL_ASSEMBLY_STATION =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_assembly_station");
+    public static final ResourceLocation BRONZE_FOUNDRY_SAND_MIXER =
+            new ResourceLocation("magneticraft2", "bronze_foundry_sand_mixer");
+    public static final ResourceLocation ROTARY_ORE_CLASSIFIER =
+            new ResourceLocation("magneticraft2", "rotary_ore_classifier");
+    public static final ResourceLocation WATER_SETTLING_TANK =
+            new ResourceLocation("magneticraft2", "water_settling_tank");
+    public static final ResourceLocation CHARCOAL_RETORT =
+            new ResourceLocation("magneticraft2", "charcoal_retort");
+    public static final ResourceLocation ORE_ROASTING_KILN =
+            new ResourceLocation("magneticraft2", "ore_roasting_kiln");
+    public static final ResourceLocation BLOOMERY_FURNACE =
+            new ResourceLocation("magneticraft2", "bloomery_furnace");
 
     private final ResourceLocation id;
     private final ResourceLocation machine;
@@ -66,6 +94,29 @@ public final class MultiblockJeiRecipe {
         this.processTime = Math.max(1, processTime);
         this.minSpeed = Math.max(0.0F, minSpeed);
         this.torque = Math.max(0.0F, torque);
+    }
+
+    public static MultiblockJeiRecipe from(BloomeryRecipe recipe) {
+        var ingredients = recipe.getIngredients();
+        return new MultiblockJeiRecipe(recipe.getId(), BLOOMERY_FURNACE,
+                List.of(stacksFor(ingredients.get(0),recipe.oreCount()),
+                        stacksFor(ingredients.get(1),recipe.fluxCount()),
+                        List.of(new ItemStack(Items.CHARCOAL))),
+                List.of(new Output(recipe.bloom(),1F),
+                        new Output(recipe.slag(),1F)),
+                FluidStack.EMPTY,FluidStack.EMPTY,recipe.processTime(),0F,0F);
+    }
+
+    public static MultiblockJeiRecipe from(MechanicalAssemblyRecipe recipe) {
+        List<List<ItemStack>> inputs = new ArrayList<>();
+        for (int i = 0; i < MechanicalAssemblyRecipe.INPUT_SLOTS; i++) {
+            var part = recipe.part(i);
+            inputs.add(stacksFor(part.ingredient(), part.count()));
+        }
+        return new MultiblockJeiRecipe(recipe.getId(), BRONZE_MECHANICAL_ASSEMBLY_STATION,
+                inputs, List.of(new Output(recipe.output(), 1.0F)),
+                FluidStack.EMPTY, FluidStack.EMPTY,
+                recipe.processTime(), recipe.minSpeed(), recipe.torque());
     }
 
     public static MultiblockJeiRecipe from(MultiblockProcessingRecipe recipe) {

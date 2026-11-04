@@ -1,0 +1,131 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "bronze": "minecraft:block/cut_copper",
+    "dark": "minecraft:block/polished_blackstone",
+    "metal": "minecraft:block/iron_block",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        -1.5,
+        7.25,
+        7.25
+      ],
+      "to": [
+        10.5,
+        8.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            12,
+            1.5
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            12,
+            1.5
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.5
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            12,
+            1.5
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            12,
+            1.5
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10.5,
+        7.25,
+        7.25
+      ],
+      "to": [
+        20.3,
+        8.75,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9.8,
+            1.5
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9.8,
+            1.5
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.5
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9.8,
+            1.5
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9.8,
+            1.5
+          ]
+        }
+      }
+    }
+  ]
+}

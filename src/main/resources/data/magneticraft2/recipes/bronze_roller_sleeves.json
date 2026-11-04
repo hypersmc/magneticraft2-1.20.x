@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B B",
+    " P ",
+    "B B"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "P": {
+      "item": "minecraft:polished_blackstone"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_roller_sleeves"
+  }
+}

@@ -1,0 +1,410 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "gear_west_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        -2,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_west": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        -1,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_center": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        1,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        2,
+        0.65,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_inner": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        1
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_outer": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        0,
+        0.65,
+        2
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "gear_integrity",
+        "models": {
+          "0": "magneticraft2:block/gear_medium_wood",
+          "1": "magneticraft2:hologram/gear_medium_damaged",
+          "2": "magneticraft2:block/gear_medium_wood"
+        }
+      }
+    },
+    "gear_rear_output": {
+      "model": "magneticraft2:block/gear_medium_wood",
+      "model_offset": [
+        1,
+        0.65,
+        2
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "branch_load_indicator": {
+      "model": "magneticraft2:block/mechanical_brake_wood_frame_y",
+      "model_offset": [
+        0,
+        1.65,
+        2
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "branch_reinforcement": {
+      "model": "magneticraft2:hologram/empty_projection",
+      "model_offset": [
+        0,
+        0,
+        1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "repair_stage",
+        "models": {
+          "0": "magneticraft2:hologram/empty_projection",
+          "1": "magneticraft2:hologram/empty_projection",
+          "2": "magneticraft2:block/flywheel_wood_frame_y"
+        }
+      }
+    },
+    "input_large_gear": {
+      "model": "magneticraft2:block/gear_large_wood",
+      "model_offset": [
+        -3,
+        0.65,
+        1
+      ],
+      "pivot": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "render_layer": "cutout"
+    },
+    "input_large_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        -3,
+        0,
+        1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "output_overload_disconnect": {
+      "model": "magneticraft2:block/overload_disconnect_wood_closed_y",
+      "model_offset": [
+        1,
+        1.65,
+        2
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout",
+      "model_variants": {
+        "source": "trip_stage",
+        "models": {
+          "0": "magneticraft2:block/overload_disconnect_wood_closed_y",
+          "1": "magneticraft2:block/overload_disconnect_wood_open_y",
+          "2": "magneticraft2:block/overload_disconnect_wood_closed_y"
+        }
+      }
+    },
+    "gear_west_outer_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        -2,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_west_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        -1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_center_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        1,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_east_outer_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        2,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_inner_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        0,
+        0,
+        1
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_outer_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        0,
+        0,
+        2
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    },
+    "gear_rear_output_bearing": {
+      "model": "magneticraft2:block/mechanical_input_module",
+      "model_offset": [
+        1,
+        0,
+        2
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "cutout"
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "mechanical_input"
+    }
+  },
+  "animations": {
+    "distribution": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "gear_west_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_west",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_center",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_east",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_east_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_rear_inner",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "gear_rear_outer",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": 1
+        },
+        {
+          "target": "gear_rear_output",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -1,
+          "phase_degrees": 22.5
+        },
+        {
+          "target": "input_large_gear",
+          "property": "rotation",
+          "axis": "y",
+          "input": "drive_angle",
+          "scale": -0.5,
+          "phase_degrees": 11.25
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_foundry_sand_mixer",
+  "input": {
+    "item": "magneticraft2:sand_reclamation_blend"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:reclaimed_molding_sand",
+    "count": 3
+  },
+  "process_time": 200,
+  "mechanical": {
+    "min_speed": 12,
+    "torque": 4
+  }
+}

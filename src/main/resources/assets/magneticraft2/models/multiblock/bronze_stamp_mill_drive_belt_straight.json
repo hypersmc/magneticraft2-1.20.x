@@ -1,0 +1,198 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "bronze": "minecraft:block/cut_copper",
+    "iron": "minecraft:block/iron_block",
+    "dark": "minecraft:block/polished_blackstone",
+    "wood": "minecraft:block/stripped_spruce_log",
+    "belt": "magneticraft2:block/bronze_stamp_mill_drive_belt",
+    "particle": "minecraft:block/cut_copper"
+  },
+  "elements": [
+    {
+      "from": [
+        7.13,
+        0,
+        2.55
+      ],
+      "to": [
+        8.72,
+        16,
+        2.6125
+      ],
+      "faces": {
+        "north": {
+          "texture": "#belt",
+          "uv": [
+            7.13,
+            0,
+            8.72,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.13,
+        0,
+        3.8575
+      ],
+      "to": [
+        8.72,
+        16,
+        3.92
+      ],
+      "faces": {
+        "south": {
+          "texture": "#belt",
+          "uv": [
+            7.13,
+            0,
+            8.72,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.13,
+        0,
+        2.55
+      ],
+      "to": [
+        7.1925,
+        16,
+        3.92
+      ],
+      "faces": {
+        "west": {
+          "texture": "#belt",
+          "uv": [
+            2.55,
+            0,
+            3.92,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.13,
+        0,
+        12.08
+      ],
+      "to": [
+        7.1925,
+        16,
+        13.45
+      ],
+      "faces": {
+        "west": {
+          "texture": "#belt",
+          "uv": [
+            12.08,
+            0,
+            13.45,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.6575,
+        0,
+        2.55
+      ],
+      "to": [
+        8.72,
+        16,
+        3.92
+      ],
+      "faces": {
+        "east": {
+          "texture": "#belt",
+          "uv": [
+            2.55,
+            0,
+            3.92,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.6575,
+        0,
+        12.08
+      ],
+      "to": [
+        8.72,
+        16,
+        13.45
+      ],
+      "faces": {
+        "east": {
+          "texture": "#belt",
+          "uv": [
+            12.08,
+            0,
+            13.45,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.13,
+        0,
+        12.08
+      ],
+      "to": [
+        8.72,
+        16,
+        12.1425
+      ],
+      "faces": {
+        "north": {
+          "texture": "#belt",
+          "uv": [
+            7.13,
+            0,
+            8.72,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.13,
+        0,
+        13.3875
+      ],
+      "to": [
+        8.72,
+        16,
+        13.45
+      ],
+      "faces": {
+        "south": {
+          "texture": "#belt",
+          "uv": [
+            7.13,
+            0,
+            8.72,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

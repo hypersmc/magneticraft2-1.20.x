@@ -43,6 +43,9 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
     // the moving belt surface.
     private final List<TransportedItem> transportedItems = new ArrayList<>();
     private double clientTransportSyncTime = Double.NaN;
+    private static final double CLIENT_RECONCILE_TICKS = 4.0D;
+    // Two distinct queued items never get closer than half a block.
+    private static final double CLIENT_MATCH_MAX_ERROR = 0.45D;
 
     public ConveyorRollerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.CONVEYOR_ROLLER_BE.get(), pos, state);
@@ -197,7 +200,10 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                 getDirectionMultiplier()
         );
 
-        return distance + blocksPerTick * elapsed * transportDirection;
+        double correctionRemaining = Math.max(0.0D,
+                1.0D - elapsed / CLIENT_RECONCILE_TICKS);
+        return distance + blocksPerTick * elapsed * transportDirection
+                + transportedItem.clientDistanceCorrection * correctionRemaining;
     }
 
     public double getClientHandoffProgress(TransportedItem transportedItem,
@@ -237,11 +243,12 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                 (rpm / 1200.0D) * (Math.PI * 2.0D * ROLLER_RADIUS)
         );
 
-        return Math.min(
-                1.0D,
+        double correctionRemaining = Math.max(0.0D,
+                1.0D - elapsed / CLIENT_RECONCILE_TICKS);
+        return Math.max(0.0D, Math.min(1.0D,
                 progress + blocksPerTick * elapsed
                         / ItemBeltConnectionManager.HANDOFF_BLEND_DISTANCE
-        );
+                        + transportedItem.clientHandoffCorrection * correctionRemaining));
     }
 
     public List<ItemStack> clearTransportedItems() {
@@ -367,6 +374,11 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
 
     @Override
     public void load(CompoundTag tag) {
+        // Client-only history: no item IDs, saved format changes or extra packets.
+        // At most four stacks need matching when a server snapshot arrives.
+        List<TransportedItem> previousClientItems =
+                level != null && level.isClientSide
+                        ? new ArrayList<>(transportedItems) : null;
         super.load(tag);
 
         BlockPos previousPartner = itemBeltPartner;
@@ -412,6 +424,9 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
                     );
                 }
 
+                if (previousClientItems != null) {
+                    restoreClientMotion(previousClientItems, transportedItem);
+                }
                 transportedItems.add(transportedItem);
             }
         }
@@ -428,6 +443,45 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         }
 
         ensureItemBeltRegistered();
+    }
+
+    private void restoreClientMotion(List<TransportedItem> previous,
+                                     TransportedItem incoming) {
+        TransportedItem best = null;
+        double bestError = CLIENT_MATCH_MAX_ERROR;
+        double bestVisualDistance = incoming.getDistance();
+
+        for (TransportedItem old : previous) {
+            if (!ItemStack.isSameItemSameTags(old.getStack(), incoming.getStack())
+                    || Math.abs(old.getLateralOffset() - incoming.getLateralOffset()) > 0.05D) {
+                continue;
+            }
+
+            double visualDistance = getClientTransportDistance(old, 0.0F);
+            double error = Math.abs(visualDistance - incoming.getDistance());
+            if (error < bestError) {
+                best = old;
+                bestError = error;
+                bestVisualDistance = visualDistance;
+            }
+        }
+
+        if (best == null) {
+            return;
+        }
+        previous.remove(best);
+
+        // On a real stall or unblock event, obey the server's exact position.
+        // Otherwise preserve visual continuity across ordinary 5 Hz snapshots.
+        if (!best.isStalled() && !incoming.isStalled()) {
+            incoming.clientDistanceCorrection =
+                    bestVisualDistance - incoming.getDistance();
+            if (best.isHandoffActive() && incoming.isHandoffActive()) {
+                incoming.clientHandoffCorrection =
+                        getClientHandoffProgress(best, 0.0F)
+                                - incoming.getHandoffProgress();
+            }
+        }
     }
 
     @Override
@@ -484,6 +538,9 @@ public class ConveyorRollerBlockEntity extends GearBlockEntity {
         private Vec3 handoffTangent = Vec3.ZERO;
         private Vec3 handoffNormal = new Vec3(0.0D, 1.0D, 0.0D);
         private double handoffProgress = 1.0D;
+        // Transient render-only offsets; never serialized or simulated on the server.
+        private double clientDistanceCorrection;
+        private double clientHandoffCorrection;
 
         public TransportedItem(ItemStack stack, double distance) {
             this.stack = stack == null ? ItemStack.EMPTY : stack;

@@ -1,0 +1,73 @@
+{
+  "name": "bronze_foundry_south",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "C",
+          "B"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "B": "minecraft:bricks",
+      "C": "magneticraft2:bronze_foundry",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_foundry_south",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        1,
+        0
+      ]
+    ],
+    "voxel_profile": "magneticraft2:bronze_foundry"
+  }
+}

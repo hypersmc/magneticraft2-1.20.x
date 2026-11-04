@@ -1,0 +1,45 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "drum": {
+      "model": "magneticraft2:animated/washer_gold_drum",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0.5,
+        0.90625,
+        0.5
+      ],
+      "render_layer": "solid"
+    }
+  },
+  "inputs": {
+    "drum_phase": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "trommel"
+    }
+  },
+  "animations": {
+    "drum_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "drum",
+          "property": "rotation",
+          "axis": "z",
+          "input": "drum_phase",
+          "scale": 1
+        }
+      ]
+    }
+  }
+}

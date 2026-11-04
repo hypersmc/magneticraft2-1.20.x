@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "P P",
+    " B "
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_air_duct",
+    "count": 8
+  }
+}

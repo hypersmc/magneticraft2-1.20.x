@@ -2,6 +2,8 @@ package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.magneticraft2;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
+import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -63,6 +65,18 @@ public class MagneticraftJeiPlugin implements IModPlugin {
                 .getAllRecipesFor(
                         MultiblockProcessingRecipe.Type.INSTANCE
                 )
+                .stream()
+                .map(MultiblockJeiRecipe::from)
+                .forEach(recipes::add);
+
+        level.getRecipeManager()
+                .getAllRecipesFor(MechanicalAssemblyRecipe.Type.INSTANCE)
+                .stream()
+                .map(MultiblockJeiRecipe::from)
+                .forEach(recipes::add);
+
+        level.getRecipeManager()
+                .getAllRecipesFor(BloomeryRecipe.Type.INSTANCE)
                 .stream()
                 .map(MultiblockJeiRecipe::from)
                 .forEach(recipes::add);
@@ -142,6 +156,19 @@ public class MagneticraftJeiPlugin implements IModPlugin {
                 registration,
                 MultiblockJeiRecipe.MECHANICAL_SIFTER
         );
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_STAMP_MILL);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_FORGE_HAMMER);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_ROLLING_MILL);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_PRESS);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_PRECISION_BORING_MACHINE);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_SAWMILL);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_MECHANICAL_ASSEMBLY_STATION);
+        registerCatalyst(registration, MultiblockJeiRecipe.BRONZE_FOUNDRY_SAND_MIXER);
+        registerCatalyst(registration, MultiblockJeiRecipe.ROTARY_ORE_CLASSIFIER);
+        registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);
+        registerCatalyst(registration, MultiblockJeiRecipe.CHARCOAL_RETORT);
+        registerCatalyst(registration, MultiblockJeiRecipe.ORE_ROASTING_KILN);
+        registerCatalyst(registration, MultiblockJeiRecipe.BLOOMERY_FURNACE);
     }
 
     private static void registerCatalyst(

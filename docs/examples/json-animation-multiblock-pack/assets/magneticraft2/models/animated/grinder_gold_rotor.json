@@ -1,0 +1,7 @@
+{
+  "parent": "magneticraft2:multiblock/primitive_grinder_rotor",
+  "textures": {
+    "2": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

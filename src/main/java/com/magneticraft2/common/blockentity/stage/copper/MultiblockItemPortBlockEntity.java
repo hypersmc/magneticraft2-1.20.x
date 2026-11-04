@@ -7,6 +7,23 @@ import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraftforge.client.model.data.ModelData;
+import com.magneticraft2.common.utils.MultiBlockProperties;
+import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
+import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
+import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BronzeFoundrySandMixerBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
+import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.block.stage.bronze.BloomeryFurnaceBlock;
+import com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -21,6 +38,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,6 +83,95 @@ public class MultiblockItemPortBlockEntity
         }
 
         return MultiblockItemPortBlock.PortMode.INPUT;
+    }
+
+
+    /**
+     * This changes only the baked appearance of a REAL, still-interactable
+     * item module. Other multiblocks and unformed modules keep their normal
+     * wooden/copper port appearance. No port coordinates or capabilities move.
+     */
+    @Override
+    public @NotNull ModelData getModelData() {
+        if (formedModule && level != null
+                && getController() instanceof CharcoalRetortBlockEntity retort) {
+            BlockState controllerState = retort.getBlockState();
+            if (controllerState.getBlock() instanceof CharcoalRetortBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    case BYPRODUCT_OUTPUT -> "byproduct";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "charcoal_retort_"
+                            + controllerState.getValue(CharcoalRetortBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key)
+                            .build();
+                }
+            }
+        }
+        // The Refractory Kiln uses the same REAL port block entities as the
+        // Retort, with a baked iron/refractory skin only while formed.
+        if (formedModule && level != null
+                && getController() instanceof RefractoryKilnBlockEntity kiln) {
+            BlockState controllerState = kiln.getBlockState();
+            if (controllerState.getBlock() instanceof RefractoryKilnBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "refractory_kiln_"
+                            + controllerState.getValue(RefractoryKilnBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key)
+                            .build();
+                }
+            }
+        }
+        if (formedModule && level != null
+                && getController() instanceof OreRoastingKilnBlockEntity kiln) {
+            BlockState state = kiln.getBlockState();
+            if (state.getBlock() instanceof OreRoastingKilnBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    return ModelData.builder().with(MultiBlockProperties.MODEL_NAME,
+                            "ore_roasting_kiln_" +
+                            state.getValue(OreRoastingKilnBlock.FACING).getName() +
+                            "/port_" + role).build();
+                }
+            }
+        }
+        // Real formed-only item ports; this changes skin, not storage logic.
+        if (formedModule && level != null
+                && getController() instanceof BloomeryFurnaceBlockEntity bloomery) {
+            BlockState state = bloomery.getBlockState();
+            if (state.getBlock() instanceof BloomeryFurnaceBlock) {
+                String role = switch (getPortMode()) {
+                    case INPUT -> "input";
+                    case PRIMARY_OUTPUT -> "primary";
+                    case BYPRODUCT_OUTPUT -> "byproduct";
+                    default -> "";
+                };
+                if (!role.isEmpty()) {
+                    String key = "bloomery_furnace_"
+                            + state.getValue(BloomeryFurnaceBlock.FACING).getName()
+                            + "/port_" + role;
+                    return ModelData.builder()
+                            .with(MultiBlockProperties.MODEL_NAME, key).build();
+                }
+            }
+        }
+        return ModelData.EMPTY;
     }
 
     public boolean isOutputPort() {
@@ -120,6 +227,12 @@ public class MultiblockItemPortBlockEntity
             return ItemStack.EMPTY;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+            for (int i = 0; i < 4; i++)
+                if (!controller.itemHandler.getStackInSlot(i).isEmpty())
+                    return controller.itemHandler.getStackInSlot(i).copy();
+            return ItemStack.EMPTY;
+        }
         return controller.itemHandler
                 .getStackInSlot(0)
                 .copy();
@@ -128,8 +241,41 @@ public class MultiblockItemPortBlockEntity
     private boolean acceptsControllerInput(
             @Nullable BaseBlockEntityMagneticraft2 controller,
             ItemStack stack) {
-        return !(controller instanceof MechanicalSifterBlockEntity sifter)
-                || sifter.acceptsRecipeInput(stack);
+        if(controller instanceof MechanicalSifterBlockEntity sifter)
+            return sifter.acceptsRecipeInput(stack);
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.BronzeStampMillBlockEntity mill)
+            return mill.acceptsRecipeInput(stack);
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RotaryOreClassifierBlockEntity classifier)
+            return classifier.acceptsRecipeInput(stack);
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.CharcoalRetortBlockEntity retort)
+            return retort.acceptsRecipeInput(stack);
+        // Refractory Kiln has real firing recipes, including reheating
+        // Iron Blooms. Only accept matching items through its real port.
+        if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity kiln)
+            return kiln.acceptsRecipeInput(stack);
+        if (controller instanceof OreRoastingKilnBlockEntity roaster)
+            return roaster.acceptsRecipeInput(stack);
+        if (controller instanceof BloomeryFurnaceBlockEntity bloomery)
+            return bloomery.acceptsIngredientSlot(0,stack)
+                    || bloomery.acceptsIngredientSlot(3,stack);
+        if (controller instanceof BronzeForgeHammerBlockEntity hammer)
+            return hammer.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeRollingMillBlockEntity mill)
+            return mill.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeMechanicalPressBlockEntity press)
+            return press.acceptsRecipeInput(stack);
+        if (controller instanceof BronzePrecisionBoringMachineBlockEntity borer)
+            return borer.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeMechanicalSawmillBlockEntity sawmill)
+            return sawmill.acceptsRecipeInput(stack);
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly) {
+            for (int i = 0; i < 4; i++)
+                if (assembly.acceptsIngredientSlot(i, stack)) return true;
+            return false;
+        }
+        if (controller instanceof BronzeFoundrySandMixerBlockEntity mixer)
+            return mixer.acceptsRecipeInput(stack);
+        return true;
     }
 
     public boolean insertFromPlayer(ItemStack stack) {
@@ -146,6 +292,21 @@ public class MultiblockItemPortBlockEntity
             return false;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly) {
+            for (int i = 0; i < 4; i++) {
+                if (!assembly.acceptsIngredientSlot(i, stack)) continue;
+                if (controller.itemHandler.insertItem(i, stack, false).isEmpty()) return true;
+            }
+            return false;
+        }
+        if (controller instanceof BloomeryFurnaceBlockEntity bloomery) {
+            for (int slot : new int[]{0,3}) {
+                if (bloomery.acceptsIngredientSlot(slot,stack)
+                        && controller.itemHandler.insertItem(slot,stack,false).isEmpty())
+                    return true;
+            }
+            return false;
+        }
         return controller.itemHandler
                 .insertItem(
                         0,
@@ -169,6 +330,17 @@ public class MultiblockItemPortBlockEntity
             return ItemStack.EMPTY;
         }
 
+        if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+            for (int i = 0; i < 4; i++) {
+                ItemStack taken = controller.itemHandler.extractItem(i, 64, false);
+                if (!taken.isEmpty()) return taken;
+            }
+            return ItemStack.EMPTY;
+        }
+        if (controller instanceof BloomeryFurnaceBlockEntity) {
+            ItemStack ore=controller.itemHandler.extractItem(0,64,false);
+            return ore.isEmpty() ? controller.itemHandler.extractItem(3,64,false) : ore;
+        }
         return controller.itemHandler
                 .extractItem(
                         0,
@@ -215,11 +387,9 @@ public class MultiblockItemPortBlockEntity
                     );
         }
 
-        int mapped =
-                mode
-                        == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
-                        ? 2
-                        : 1;
+        int mapped = controller instanceof BronzeMechanicalAssemblyStationBlockEntity
+                ? BronzeMechanicalAssemblyStationBlockEntity.OUTPUT_SLOT
+                : (mode == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT ? 2 : 1);
 
         return controller.itemHandler
                 .extractItem(
@@ -232,6 +402,25 @@ public class MultiblockItemPortBlockEntity
     @Override
     public boolean isValid(Level world, BlockPos pos) {
         return world.getBlockEntity(pos) == this;
+    }
+
+    /**
+     * The Retort links its own three existing ports after formation.
+     * No extra block is added and other multiblocks retain their behavior.
+     */
+    public void linkRetortController(BlockPos controller) {
+        linkFormedController(controller);
+    }
+
+    /** Bind a real formed item module to its owning controller. */
+    public void linkFormedController(BlockPos controller) {
+        if (level == null || level.isClientSide) return;
+        controllerX = controller.getX();
+        controllerY = controller.getY();
+        controllerZ = controller.getZ();
+        formedModule = true;
+        setChanged();
+        sync();
     }
 
     @Override
@@ -282,6 +471,15 @@ public class MultiblockItemPortBlockEntity
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap,
             @Nullable Direction side) {
+        // Compatibility path for previously formed Retorts: the original
+        // byproduct item module remains a drain-only fluid outlet. New
+        // Retorts use the dedicated fluid_output module instead.
+        if (cap == ForgeCapabilities.FLUID_HANDLER
+                && formedModule
+                && getPortMode() == MultiblockItemPortBlock.PortMode.BYPRODUCT_OUTPUT
+                && getController() instanceof CharcoalRetortBlockEntity retort) {
+            return retort.getCapability(cap, side);
+        }
         if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return itemCapability.cast();
         }
@@ -352,6 +550,7 @@ public class MultiblockItemPortBlockEntity
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
+        if (level != null && level.isClientSide) requestModelDataUpdate();
     }
 
     @Override
@@ -374,6 +573,7 @@ public class MultiblockItemPortBlockEntity
     }
 
     private void sync() {
+        requestModelDataUpdate();
         if (level != null) {
             level.sendBlockUpdated(
                     worldPosition,
@@ -389,6 +589,12 @@ public class MultiblockItemPortBlockEntity
 
         @Override
         public int getSlots() {
+            if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
+                    && getController() instanceof BronzeMechanicalAssemblyStationBlockEntity)
+                return 4;
+            if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
+                    && getController() instanceof BloomeryFurnaceBlockEntity)
+                return 2;
             return getPortMode()
                     == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
                     ? 2
@@ -438,12 +644,13 @@ public class MultiblockItemPortBlockEntity
                 return stack;
             }
 
-            return controller.itemHandler
-                    .insertItem(
-                            0,
-                            stack,
-                            simulate
-                    );
+            int mapped = mapSlot(slot);
+            if (mapped < 0 || mapped >= controller.itemHandler.getSlots()) return stack;
+            if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly
+                    && !assembly.acceptsIngredientSlot(mapped, stack)) return stack;
+            if (controller instanceof BloomeryFurnaceBlockEntity bloomery
+                    && !bloomery.acceptsIngredientSlot(mapped,stack)) return stack;
+            return controller.itemHandler.insertItem(mapped, stack, simulate);
         }
 
         @Override
@@ -514,20 +721,31 @@ public class MultiblockItemPortBlockEntity
             BaseBlockEntityMagneticraft2 controller =
                     getController();
 
-            return controller != null
-                    && controller.itemHandler != null
+            int mapped = mapSlot(slot);
+            return controller != null && controller.itemHandler != null
+                    && mapped >= 0 && mapped < controller.itemHandler.getSlots()
                     && acceptsControllerInput(controller, stack)
-                    && controller.itemHandler
-                    .isItemValid(
-                            0,
-                            stack
-                    );
+                    && (!(controller instanceof BronzeMechanicalAssemblyStationBlockEntity assembly)
+                        || assembly.acceptsIngredientSlot(mapped, stack))
+                    && (!(controller instanceof BloomeryFurnaceBlockEntity bloomery)
+                        || bloomery.acceptsIngredientSlot(mapped, stack))
+                    && controller.itemHandler.isItemValid(mapped, stack);
         }
 
         private int mapSlot(int slot) {
             MultiblockItemPortBlock.PortMode mode =
                     getPortMode();
 
+            BaseBlockEntityMagneticraft2 controller = getController();
+            if (controller instanceof BloomeryFurnaceBlockEntity
+                    && mode == MultiblockItemPortBlock.PortMode.INPUT)
+                return slot == 0 ? 0 : slot == 1 ? 3 : -1;
+            if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
+                if (mode == MultiblockItemPortBlock.PortMode.INPUT)
+                    return slot >= 0 && slot < 4 ? slot : -1;
+                if (mode == MultiblockItemPortBlock.PortMode.PRIMARY_OUTPUT)
+                    return slot == 0 ? BronzeMechanicalAssemblyStationBlockEntity.OUTPUT_SLOT : -1;
+            }
             if (mode
                     == MultiblockItemPortBlock.PortMode.INPUT) {
                 return slot == 0

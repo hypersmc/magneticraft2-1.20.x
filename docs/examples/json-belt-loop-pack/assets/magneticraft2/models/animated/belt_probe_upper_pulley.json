@@ -1,0 +1,7 @@
+{
+  "parent": "magneticraft2:multiblock/bronze_stamp_mill_drive_pulley",
+  "textures": {
+    "bronze": "minecraft:block/emerald_block",
+    "particle": "minecraft:block/emerald_block"
+  }
+}

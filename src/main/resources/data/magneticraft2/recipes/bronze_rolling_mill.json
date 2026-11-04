@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BSB",
+    "RCR",
+    "SBS"
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "R": {
+      "item": "magneticraft2:bronze_roller_sleeves"
+    },
+    "C": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_rolling_mill"
+  }
+}

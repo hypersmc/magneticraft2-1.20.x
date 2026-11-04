@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RBR",
+    "BCB",
+    "RBR"
+  ],
+  "key": {
+    "R": {
+      "item": "magneticraft2:fired_refractory_ceramic"
+    },
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:ore_roasting_kiln",
+    "count": 1
+  }
+}

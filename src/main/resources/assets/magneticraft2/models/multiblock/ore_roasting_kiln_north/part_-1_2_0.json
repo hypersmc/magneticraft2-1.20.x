@@ -1,0 +1,238 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "brick": "minecraft:block/bricks",
+    "roof": "minecraft:block/stone_bricks",
+    "roofTrim": "minecraft:block/deepslate_tiles",
+    "timber": "minecraft:block/spruce_planks",
+    "timberEnd": "minecraft:block/stripped_spruce_log",
+    "refractory": "minecraft:block/smooth_stone",
+    "iron": "minecraft:block/polished_deepslate",
+    "soot": "minecraft:block/black_concrete",
+    "ember": "minecraft:block/magma",
+    "grate": "minecraft:block/polished_blackstone",
+    "bronze": "minecraft:block/cut_copper",
+    "input": "magneticraft2:block/ore_roasting_kiln/input",
+    "output": "magneticraft2:block/ore_roasting_kiln/output",
+    "particle": "minecraft:block/bricks"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        2
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            2,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            14,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        8,
+        16,
+        2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            8,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            8,
+            2
+          ]
+        },
+        "down": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            14,
+            8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        12,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            8,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#brick",
+          "uv": [
+            8,
+            14,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        0.9000000000000004
+      ],
+      "to": [
+        16,
+        12,
+        2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#soot",
+          "uv": [
+            0,
+            4,
+            8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        0.4499999999999993
+      ],
+      "to": [
+        16,
+        12,
+        0.9000000000000004
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            4,
+            8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        0,
+        0
+      ],
+      "to": [
+        10,
+        12,
+        0.4499999999999993
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grate",
+          "uv": [
+            6,
+            4,
+            8,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        9,
+        0.09999999999999964
+      ],
+      "to": [
+        16,
+        11,
+        0.4499999999999993
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grate",
+          "uv": [
+            0,
+            5,
+            8,
+            7
+          ]
+        }
+      }
+    }
+  ]
+}

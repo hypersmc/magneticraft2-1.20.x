@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "magneticraft2:block/settling_tank/riveted_iron",
+    "particle": "magneticraft2:block/settling_tank/bronze"
+  }
+}

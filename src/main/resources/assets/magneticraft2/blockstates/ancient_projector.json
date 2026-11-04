@@ -1,0 +1,1 @@
+{"variants":{"facing=north":{"model":"magneticraft2:block/ancient_projector","y":180},"facing=south":{"model":"magneticraft2:block/ancient_projector"},"facing=east":{"model":"magneticraft2:block/ancient_projector","y":270},"facing=west":{"model":"magneticraft2:block/ancient_projector","y":90}}}

@@ -1,0 +1,439 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "ore": "magneticraft2:block/ores/chalcocite_ore",
+    "tray": "magneticraft2:block/material/bronze_cast",
+    "particle": "magneticraft2:block/ores/chalcocite_ore"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        1,
+        2
+      ],
+      "to": [
+        14,
+        1.6,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            1,
+            14,
+            1.6
+          ]
+        },
+        "south": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            1,
+            14,
+            1.6
+          ]
+        },
+        "east": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            1,
+            14,
+            1.6
+          ]
+        },
+        "west": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            1,
+            14,
+            1.6
+          ]
+        },
+        "up": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#tray",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        1.7,
+        4
+      ],
+      "to": [
+        6,
+        4,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            1.7,
+            6,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            1.7,
+            6,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            1.7,
+            7,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            1.7,
+            7,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            4,
+            6,
+            7
+          ]
+        },
+        "down": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            4,
+            6,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        1.7,
+        3
+      ],
+      "to": [
+        9,
+        3.2,
+        6
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ore",
+          "uv": [
+            7,
+            1.7,
+            9,
+            3.2
+          ]
+        },
+        "south": {
+          "texture": "#ore",
+          "uv": [
+            7,
+            1.7,
+            9,
+            3.2
+          ]
+        },
+        "east": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            1.7,
+            6,
+            3.2
+          ]
+        },
+        "west": {
+          "texture": "#ore",
+          "uv": [
+            3,
+            1.7,
+            6,
+            3.2
+          ]
+        },
+        "up": {
+          "texture": "#ore",
+          "uv": [
+            7,
+            3,
+            9,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#ore",
+          "uv": [
+            7,
+            3,
+            9,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        1.7,
+        5
+      ],
+      "to": [
+        13,
+        3.8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ore",
+          "uv": [
+            10,
+            1.7,
+            13,
+            3.8
+          ]
+        },
+        "south": {
+          "texture": "#ore",
+          "uv": [
+            10,
+            1.7,
+            13,
+            3.8
+          ]
+        },
+        "east": {
+          "texture": "#ore",
+          "uv": [
+            5,
+            1.7,
+            8,
+            3.8
+          ]
+        },
+        "west": {
+          "texture": "#ore",
+          "uv": [
+            5,
+            1.7,
+            8,
+            3.8
+          ]
+        },
+        "up": {
+          "texture": "#ore",
+          "uv": [
+            10,
+            5,
+            13,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#ore",
+          "uv": [
+            10,
+            5,
+            13,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        1.7,
+        9
+      ],
+      "to": [
+        7,
+        3.5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            1.7,
+            7,
+            3.5
+          ]
+        },
+        "south": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            1.7,
+            7,
+            3.5
+          ]
+        },
+        "east": {
+          "texture": "#ore",
+          "uv": [
+            9,
+            1.7,
+            12,
+            3.5
+          ]
+        },
+        "west": {
+          "texture": "#ore",
+          "uv": [
+            9,
+            1.7,
+            12,
+            3.5
+          ]
+        },
+        "up": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            9,
+            7,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#ore",
+          "uv": [
+            4,
+            9,
+            7,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8,
+        1.7,
+        9
+      ],
+      "to": [
+        11,
+        3.4,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ore",
+          "uv": [
+            8,
+            1.7,
+            11,
+            3.4
+          ]
+        },
+        "south": {
+          "texture": "#ore",
+          "uv": [
+            8,
+            1.7,
+            11,
+            3.4
+          ]
+        },
+        "east": {
+          "texture": "#ore",
+          "uv": [
+            9,
+            1.7,
+            12,
+            3.4
+          ]
+        },
+        "west": {
+          "texture": "#ore",
+          "uv": [
+            9,
+            1.7,
+            12,
+            3.4
+          ]
+        },
+        "up": {
+          "texture": "#ore",
+          "uv": [
+            8,
+            9,
+            11,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#ore",
+          "uv": [
+            8,
+            9,
+            11,
+            12
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        20,
+        140,
+        0
+      ],
+      "scale": [
+        1.25,
+        1.25,
+        1.25
+      ]
+    },
+    "ground": {
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    }
+  }
+}

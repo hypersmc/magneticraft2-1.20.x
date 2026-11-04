@@ -1,0 +1,1 @@
+{"type":"minecraft:crafting_shaped","pattern":["CBC","STS","L L"],"key":{"C":{"item":"magneticraft2:copper_plate"},"B":{"item":"magneticraft2:bronze_ingot"},"S":{"item":"minecraft:sandstone"},"T":{"item":"minecraft:crafting_table"},"L":{"tag":"minecraft:logs"}},"result":{"item":"magneticraft2:bronze_mold_table","count":1}}

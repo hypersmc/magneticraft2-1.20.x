@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "item": "magneticraft2:spent_molding_sand"
+    },
+    {
+      "item": "magneticraft2:spent_molding_sand"
+    },
+    {
+      "item": "magneticraft2:spent_molding_sand"
+    },
+    {
+      "item": "magneticraft2:spent_molding_sand"
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:sand_reclamation_blend",
+    "count": 1
+  }
+}

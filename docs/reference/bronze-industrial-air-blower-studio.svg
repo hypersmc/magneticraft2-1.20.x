@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="740" viewBox="0 0 1320 740">
+<title>Magneticraft2 — Industrial Air Blower K1 Studio reference</title>
+<rect width="1320" height="740" fill="#f5eee3"/>
+<g font-family="sans-serif" fill="#2f2d2a"><text x="45" y="55" font-size="30" font-weight="bold">Magneticraft2 • Industrial Air Blower K1</text>
+<text x="45" y="86" font-size="17">Bronze IV • 3 × 3 × 3 (W × H × D) • editable orthographic concept and actual module positions</text></g>
+<g stroke="#403831" stroke-width="4">
+<rect x="58" y="178" width="630" height="325" fill="#d1cdc5"/>
+<rect x="75" y="458" width="595" height="40" fill="#9c9791"/>
+<rect x="103" y="215" width="45" height="244" fill="#8c6945"/><rect x="592" y="215" width="45" height="244" fill="#8c6945"/>
+<rect x="92" y="200" width="555" height="43" fill="#b18659"/>
+<rect x="281" y="267" width="205" height="176" fill="#a56e45"/>
+<rect x="292" y="276" width="181" height="153" fill="#514d49"/>
+<circle cx="382" cy="349" r="65" fill="#6b6862" stroke="#c08343" stroke-width="12"/>
+<path d="M382 285 L400 334 L447 349 L400 364 L382 415 L365 365 L317 349 L365 333 Z" fill="#b9a6a0" stroke="#c08343" stroke-width="3"/>
+<rect x="348" y="458" width="65" height="35" fill="#aa713d"/>
+</g>
+<g font-family="sans-serif" fill="#2c2b29"><text x="60" y="155" font-size="19">FRONT CONCEPT • guarded axial impeller, grounded bearings</text>
+<text x="775" y="156" font-size="21" font-weight="bold">SOUTH blueprint • each row rear → front</text></g>
+<g fill="#51483e" font-family="monospace" letter-spacing="10" font-size="36">
+<text x="768" y="230">PPP</text><text x="768" y="280">PAP</text><text x="768" y="330">PPP</text>
+<text x="988" y="230">PAP</text><text x="988" y="280">PAP</text><text x="988" y="330">PAP</text>
+<text x="1173" y="230">SIS</text><text x="1173" y="280">SSS</text><text x="1173" y="330">SCS</text>
+</g>
+<g fill="#2c2b29" font-family="sans-serif" font-size="16">
+<text x="768" y="365">Y2 top</text><text x="988" y="365">Y1 middle</text><text x="1173" y="365">Y0 base</text>
+<text x="760" y="430">S = Stone Bricks • P = Oak Planks • A = required AIR</text>
+<text x="760" y="460">I = Rear Gear V2 input • C = Front controller / actual air outlet</text>
+<text x="760" y="490">No existing air pipes or direct Bloomery connection in K1.</text>
+<text x="55" y="550">REAL K1: ≥16 RPM • torque 5 • 1 pressure unit / 5 supplied ticks • 16-unit buffer • 1 unit/tick front-face transfer</text>
+<text x="55" y="580">Dynamic fan axis: (8,24,-16), Z axis. Rear drive coupling axis: (8,8,-24), Z axis.</text>
+<text x="55" y="615">Test existing Primitive Furnace bellows module directly adjacent to the formed front controller.</text>
+<text x="55" y="665">This reference shows modeled visual direction; exact collision, orientation and module positions are defined by JSON.</text>
+</g></svg>

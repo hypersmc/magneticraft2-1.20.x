@@ -1,0 +1,235 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "mud": "magneticraft2:block/settling_tank/sludge",
+    "grit": "magneticraft2:block/settling_tank/refractory",
+    "particle": "magneticraft2:block/settling_tank/sludge"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        5,
+        3
+      ],
+      "to": [
+        7,
+        8,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#mud",
+          "uv": [
+            9,
+            8,
+            14,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#mud",
+          "uv": [
+            2,
+            8,
+            7,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#mud",
+          "uv": [
+            8,
+            8,
+            13,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#mud",
+          "uv": [
+            3,
+            8,
+            8,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#mud",
+          "uv": [
+            2,
+            3,
+            7,
+            8
+          ]
+        },
+        "down": {
+          "texture": "#mud",
+          "uv": [
+            2,
+            8,
+            7,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        4,
+        5
+      ],
+      "to": [
+        13,
+        9,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#grit",
+          "uv": [
+            3,
+            7,
+            9,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#grit",
+          "uv": [
+            7,
+            7,
+            13,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#grit",
+          "uv": [
+            4,
+            7,
+            11,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#grit",
+          "uv": [
+            5,
+            7,
+            12,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#grit",
+          "uv": [
+            7,
+            5,
+            13,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#grit",
+          "uv": [
+            7,
+            4,
+            13,
+            11
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        5,
+        10
+      ],
+      "to": [
+        10,
+        7,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#mud",
+          "uv": [
+            6,
+            9,
+            12,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#mud",
+          "uv": [
+            4,
+            9,
+            10,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#mud",
+          "uv": [
+            2,
+            9,
+            6,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#mud",
+          "uv": [
+            10,
+            9,
+            14,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#mud",
+          "uv": [
+            4,
+            10,
+            10,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#mud",
+          "uv": [
+            4,
+            2,
+            10,
+            6
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "ground": {
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "gui": {
+      "rotation": [
+        25,
+        225,
+        0
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    }
+  }
+}

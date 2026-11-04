@@ -104,6 +104,14 @@ public class MechanicalSifterBlockEntity
     public boolean isProcessing() {
         return processing;
     }
+
+    /** Exposes the existing synced Gear V2 overload flag to client visuals. */
+    public boolean isInputOverloadedForAnimation() {
+        MechanicalInputModuleBlockEntity input = getMechanicalInput();
+        if (input == null || level == null) return false;
+        GearNode node = input.getOrCreateGearNode();
+        return level.isClientSide ? node.isClientOverloaded() : node.isOverloaded();
+    }
     public boolean needsMaintenance() {
         return sieveMesh.needsAttention();
     }

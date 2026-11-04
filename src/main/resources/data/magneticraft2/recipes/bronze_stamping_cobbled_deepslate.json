@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_stamp_mill",
+  "input": {
+    "item": "minecraft:cobbled_deepslate"
+  },
+  "input_count": 2,
+  "output": {
+    "item": "minecraft:gravel",
+    "count": 2
+  },
+  "process_time": 115,
+  "mechanical": {
+    "min_speed": 24,
+    "torque": 6
+  }
+}

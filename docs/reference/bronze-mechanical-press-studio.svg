@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="790" viewBox="0 0 1200 790" role="img">
+<title>Magneticraft2 Mechanical Press — editable Studio reference</title>
+<desc>True 3 by 3 by 3 Mechanical Press. The front view shows a supported copper headstock, guided moving die and stone press table. The server SOUTH blueprint maps rear mechanical input and left/right item ports; the Patchouli pattern is mirrored separately.</desc>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#273236"/><stop offset="1" stop-color="#101718"/></linearGradient>
+<linearGradient id="br" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e3a47d"/><stop offset="1" stop-color="#8e4d34"/></linearGradient>
+<linearGradient id="st" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#91918d"/><stop offset="1" stop-color="#494e50"/></linearGradient>
+<style>.h{font:bold 30px Georgia,serif;fill:#f7ead5}.sub{font:16px Arial;fill:#c0bbb2}.sect{font:bold 22px Georgia,serif;fill:#e8b28d}.label{font:16px Arial;fill:#e6dace}.small{font:13px Arial;fill:#c1bbaf}.tile{font:bold 18px monospace;fill:#182229;text-anchor:middle}</style>
+</defs>
+<rect width="1200" height="790" fill="url(#bg)"/>
+<rect x="18" y="16" width="1164" height="92" rx="10" fill="#253032" stroke="#8c684d" stroke-width="2"/>
+<text x="42" y="61" class="h">MAGNETICRAFT2  /  MECHANICAL PRESS</text>
+<text x="42" y="89" class="sub">Bronze Age · Exact 3×3×3 schematic · Editable visual reference for Magneticraft2 Studio</text>
+<rect x="18" y="126" width="744" height="506" rx="9" fill="#242b2c" stroke="#8c684d" stroke-width="2"/>
+<text x="44" y="162" class="sect">Front structure — integrated cam and guided die</text>
+<text x="44" y="187" class="small">Masonry rests on real blocks; the cam drive descends from the upper gantry, not from air</text>
+<rect x="90" y="549" width="579" height="44" fill="url(#st)" stroke="#34383a" stroke-width="4"/>
+<rect x="115" y="496" width="69" height="53" fill="url(#st)" stroke="#424a4a" stroke-width="3"/>
+<rect x="575" y="496" width="69" height="53" fill="url(#st)" stroke="#424a4a" stroke-width="3"/>
+<rect x="135" y="243" width="37" height="255" fill="#916440" stroke="#493329" stroke-width="5"/>
+<rect x="590" y="243" width="37" height="255" fill="#916440" stroke="#493329" stroke-width="5"/>
+<rect x="127" y="238" width="508" height="42" fill="#946541" stroke="#4c3528" stroke-width="6"/>
+<rect x="190" y="276" width="385" height="32" fill="url(#br)" stroke="#673a2c" stroke-width="4"/>
+<!-- die guides -->
+<rect x="299" y="307" width="26" height="180" fill="url(#st)" stroke="#414446" stroke-width="4"/>
+<rect x="446" y="307" width="26" height="180" fill="url(#st)" stroke="#414446" stroke-width="4"/>
+<!-- cam housing -->
+<rect x="338" y="282" width="92" height="55" fill="#444b4d" stroke="#c18461" stroke-width="7"/>
+<!-- movable piston -->
+<rect x="361" y="331" width="48" height="114" fill="url(#st)" stroke="#444447" stroke-width="4"/>
+<rect x="339" y="438" width="92" height="36" fill="url(#br)" stroke="#4e3833" stroke-width="5"/>
+<rect x="326" y="466" width="116" height="26" fill="#494e50" stroke="#d9ae91" stroke-width="5"/>
+<rect x="312" y="507" width="142" height="18" fill="#343e3d" stroke="#956747" stroke-width="3"/>
+<rect x="293" y="525" width="178" height="31" fill="url(#st)" stroke="#333" stroke-width="5"/>
+<rect x="348" y="501" width="67" height="7" fill="#cf8d63"/>
+<path d="M485 365 H568" stroke="#edb890" stroke-width="2.5" fill="none"/>
+<text x="573" y="361" class="small">Metal ram</text>
+<path d="M473 469 H568" stroke="#edb890" stroke-width="2.5"/>
+<text x="573" y="460" class="small">Die</text>
+<text x="44" y="610" class="small">Movement: rear horizontal Gear V2 shaft → enclosed eccentric/follower → vertical die stroke</text>
+<!-- Blueprint -->
+<rect x="783" y="126" width="397" height="506" rx="9" fill="#242b2c" stroke="#8c684d" stroke-width="2"/>
+<text x="803" y="161" class="sect">Canonical SOUTH JSON</text>
+<text x="803" y="185" class="small">Back (top row) → front (bottom row)</text>
+<text x="804" y="211" class="label">Y3: TOP</text><rect x="827" y="224" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="244">P</text><rect x="902" y="224" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="244">P</text><rect x="977" y="224" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="244">P</text><rect x="827" y="255" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="275">P</text><rect x="902" y="255" width="68" height="27" fill="#131f20" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="275">·</text><rect x="977" y="255" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="275">P</text><rect x="827" y="286" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="306">P</text><rect x="902" y="286" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="306">P</text><rect x="977" y="286" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="306">P</text><text x="804" y="348" class="label">Y2: MIDDLE</text><rect x="827" y="361" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="381">P</text><rect x="902" y="361" width="68" height="27" fill="#131f20" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="381">·</text><rect x="977" y="361" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="381">P</text><rect x="827" y="392" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="412">P</text><rect x="902" y="392" width="68" height="27" fill="#131f20" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="412">·</text><rect x="977" y="392" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="412">P</text><rect x="827" y="423" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="443">P</text><rect x="902" y="423" width="68" height="27" fill="#131f20" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="443">·</text><rect x="977" y="423" width="68" height="27" fill="#a67b51" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="443">P</text><text x="804" y="485" class="label">Y1: BASE</text><rect x="827" y="498" width="68" height="27" fill="#878b89" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="518">S</text><rect x="902" y="498" width="68" height="27" fill="#84a989" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="518">I</text><rect x="977" y="498" width="68" height="27" fill="#878b89" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="518">S</text><rect x="827" y="529" width="68" height="27" fill="#83a9c6" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="549">U</text><rect x="902" y="529" width="68" height="27" fill="#878b89" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="549">S</text><rect x="977" y="529" width="68" height="27" fill="#f5bd6c" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="549">O</text><rect x="827" y="560" width="68" height="27" fill="#878b89" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="861" y="580">S</text><rect x="902" y="560" width="68" height="27" fill="#efc18c" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="936" y="580">C</text><rect x="977" y="560" width="68" height="27" fill="#878b89" stroke="#233" stroke-width="1.4" rx="3"/><text class="tile" x="1011" y="580">S</text>
+<text x="802" y="617" class="small">I: rear shaft · U: left input · O: right output · C: front controller</text>
+<rect x="18" y="650" width="1164" height="120" rx="9" fill="#242b2c" stroke="#8c684d" stroke-width="2"/>
+<text x="41" y="681" class="sect">K1 gameplay and source constraints</text>
+<text x="41" y="712" class="label">4 Copper Sheets → 4 Copper Panels   |   160 powered ticks   |   ≥18 RPM / ≥8 torque</text>
+<text x="41" y="741" class="small">Die service: 384 batches. Panels + glass can craft a Copper Fluid Tank. Patchouli view horizontally mirrors the raw SOUTH blueprint.</text>
+</svg>

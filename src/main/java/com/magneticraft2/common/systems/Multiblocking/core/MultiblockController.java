@@ -326,7 +326,11 @@ public class MultiblockController {
             BlockPos offsetPos = entry.getKey();
             Block block = entry.getValue().getBlock();
 //            LOGGER.info("destroying " + offsetPos + " is block: " + block);
-            world.addFreshEntity(new ItemEntity(world, offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), new ItemStack(block)));
+            // Original blueprint AIR positions may now host V2 render/collision
+            // proxies. Restore them to AIR without spawning empty item entities.
+            if (block != Blocks.AIR) {
+                world.addFreshEntity(new ItemEntity(world, offsetPos.getX(), offsetPos.getY(), offsetPos.getZ(), new ItemStack(block)));
+            }
             world.setBlock(offsetPos, Blocks.AIR.defaultBlockState(), 2);
         }
         //Clean up after ourselves

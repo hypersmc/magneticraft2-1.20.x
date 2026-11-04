@@ -1,0 +1,57 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_center"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_north"
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_south"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_east"
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_west"
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_up"
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/bronze_air_duct_end_down"
+      }
+    }
+  ]
+}

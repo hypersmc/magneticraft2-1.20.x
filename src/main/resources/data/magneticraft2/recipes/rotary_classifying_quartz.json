@@ -1,0 +1,22 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:rotary_ore_classifier",
+  "input": {
+    "item": "magneticraft2:crushed_quartz"
+  },
+  "input_count": 4,
+  "output": {
+    "item": "magneticraft2:classified_quartz",
+    "count": 3
+  },
+  "byproduct": {
+    "item": "magneticraft2:crushed_quartz",
+    "count": 1
+  },
+  "byproduct_chance": 1,
+  "process_time": 180,
+  "mechanical": {
+    "min_speed": 24,
+    "torque": 4
+  }
+}

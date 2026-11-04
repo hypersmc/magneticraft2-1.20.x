@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BBB",
+    "CFC",
+    "BSB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "C": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "S": {
+      "item": "magneticraft2:bronze_ingot"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:charcoal_retort"
+  }
+}

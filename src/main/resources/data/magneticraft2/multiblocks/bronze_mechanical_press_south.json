@@ -1,0 +1,94 @@
+{
+  "name": "bronze_mechanical_press_south",
+  "structure": {
+    "dimensions": [
+      3,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "S",
+          "I",
+          "S"
+        ],
+        [
+          "U",
+          "S",
+          "O"
+        ],
+        [
+          "S",
+          "C",
+          "S"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "P",
+          "A",
+          "P"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "S": "minecraft:stone_bricks",
+      "I": "magneticraft2:mechanical_input_module",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:bronze_mechanical_press",
+      "A": "minecraft:air",
+      "P": "minecraft:oak_planks"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/bronze_mechanical_press_south",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:bronze_mechanical_press",
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        2,
+        -1
+      ]
+    ]
+  }
+}

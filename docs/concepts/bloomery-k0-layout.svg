@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+<rect width="1000" height="600" fill="#241f1b"/>
+<text x="40" y="60" font-family="sans-serif" font-size="31" font-weight="bold" fill="#f5ddae">Magneticraft2 · Bloomery K0 — 5×5×5 concept</text>
+<text x="40" y="93" font-family="sans-serif" font-size="16" fill="#d1b998">Design reference only: NOT an exact JSON multiblock layout</text>
+<g transform="translate(85 155)">
+<text x="0" y="-14" font-family="sans-serif" font-size="20" fill="#f3dfb9">Top: five by five</text>
+<rect x="0" y="0" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="62" y="0" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="124" y="0" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="186" y="0" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="248" y="0" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="0" y="62" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="62" y="62" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="124" y="62" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="186" y="62" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="248" y="62" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="0" y="124" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="62" y="124" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="124" y="124" width="60" height="60" fill="#1a1a1a" stroke="#332921" stroke-width="2"/><rect x="186" y="124" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="248" y="124" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="0" y="186" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="62" y="186" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="124" y="186" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="186" y="186" width="60" height="60" fill="#b17a53" stroke="#332921" stroke-width="2"/><rect x="248" y="186" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="0" y="248" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="62" y="248" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="124" y="248" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="186" y="248" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/><rect x="248" y="248" width="60" height="60" fill="#807d77" stroke="#332921" stroke-width="2"/>
+<path d="M -65 270 L -5 270" stroke="#5aa9bf" stroke-width="14"/><text x="-64" y="247" fill="#80d6e9" font-size="17">AIR</text>
+<text x="55" y="337" font-family="sans-serif" font-size="18" fill="#f0dab4">FRONT / SOUTH</text>
+</g>
+<g transform="translate(520 162)">
+<text x="0" y="-17" font-family="sans-serif" font-size="20" fill="#f3dfb9">Section: five high</text>
+<path d="M 66 50 L 66 270 L 290 270 L 290 50" stroke="#807d77" fill="#b17a53" stroke-width="28"/>
+<path d="M 132 31 L 132 240 L 222 240 L 222 31" fill="#231c16" stroke="#d1a076" stroke-width="9"/>
+<path d="M 148 224 L 206 224 L 180 164 Z" fill="#ef8136"/>
+<path d="M 6 210 L 125 210" stroke="#5aa9bf" stroke-width="15"/>
+<path d="M 176 0 L 176 37" stroke="#c0bdb6" stroke-width="11" stroke-dasharray="9"/>
+<text x="0" y="312" font-family="sans-serif" font-size="16" fill="#e9d9c0">Refractory shaft · side tuyere · open exhaust</text>
+</g>
+<text x="40" y="550" font-family="sans-serif" font-size="16" fill="#d3bea0">Actual controller/ports/shape require source, book and in-game visual verification.</text>
+</svg>

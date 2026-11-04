@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SBS",
+    "PCP",
+    "SFS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone_bricks"
+    },
+    "B": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "P": {
+      "item": "magneticraft2:copper_plate"
+    },
+    "C": {
+      "item": "magneticraft2:copper_fluid_tank"
+    },
+    "F": {
+      "item": "magneticraft2:multiblock_fluid_output"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:water_settling_tank"
+  }
+}

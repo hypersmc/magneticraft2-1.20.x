@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "magneticraft2:item/fired_refractory_ceramic"
+  }
+}

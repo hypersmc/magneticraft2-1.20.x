@@ -1,6 +1,5 @@
 package com.magneticraft2.client.model;
 
-import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -12,24 +11,19 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.data.ModelData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author JumpWatch on 04-07-2024
- * @Project mgc2-1.20
-* @version 1.0.0
+ * Existing custom multiblock geometry selector, now also used for V2
+ * filler chunks. A missing part is invisible, never a purple/black cube.
+ * The actual part geometry is vanilla-baked once by Minecraft's ModelManager.
  */
 public class MultiBlockModel extends BakedModelWrapper<BakedModel> {
-    public static final Logger LOGGER = LogManager.getLogger("MultiBlockModel");
-    private final Map<String, BakedModel> modelMap; // Assuming you have a map of named models
-
+    private final Map<String, BakedModel> modelMap;
 
     MultiBlockModel(BakedModel baseModel, Map<String, BakedModel> modelMap) {
         super(baseModel);
@@ -37,21 +31,26 @@ public class MultiBlockModel extends BakedModelWrapper<BakedModel> {
     }
 
     @Override
-    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @NotNull RandomSource rand, @NotNull ModelData extraData, @Nullable RenderType renderType) {
-        String modelKey = extraData.get(MultiBlockProperties.MODEL_NAME); // Assuming MODEL_NAME is set to "primitive" or "blueprintmb"
-        ResourceLocation submodelLocation = new ResourceLocation("magneticraft2", "multiblock/" + modelKey);
-
-        BakedModel submodel = Minecraft.getInstance().getModelManager().getModel(submodelLocation);
-        if (submodel == null) {
-            if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
-                System.out.println("Submodel " + modelKey + " not found!");
-            }
-            return Collections.emptyList();
+    public @NotNull List<BakedQuad> getQuads(@Nullable BlockState state,
+                                             @Nullable Direction side,
+                                             @NotNull RandomSource random,
+                                             @NotNull ModelData extraData,
+                                             @Nullable RenderType renderType) {
+        String modelKey = extraData.get(MultiBlockProperties.MODEL_NAME);
+        if (modelKey == null || modelKey.isBlank()) {
+            return super.getQuads(state, side, random, extraData, renderType);
         }
 
-        // Retrieve and return quads from the submodel
-        return submodel.getQuads(state, side, rand, extraData, renderType);
+        String path = modelKey.startsWith("multiblock/")
+                ? modelKey : "multiblock/" + modelKey;
+        ResourceLocation location = ResourceLocation.tryParse("magneticraft2:" + path);
+        if (location == null) return List.of();
 
-
+        var manager = Minecraft.getInstance().getModelManager();
+        BakedModel part = manager.getModel(location);
+        if (part == null || part == manager.getMissingModel() || part == this) {
+            return List.of();
+        }
+        return part.getQuads(state, side, random, extraData, renderType);
     }
 }

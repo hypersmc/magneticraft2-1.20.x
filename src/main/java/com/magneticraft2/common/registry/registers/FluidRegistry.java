@@ -154,6 +154,61 @@ public final class FluidRegistry {
         }
     }
 
+
+    // Wood Tar is a real process fluid, not an item output. Its formerly
+    // shipped item ID is kept in ItemRegistry for existing saves.
+    public static final RegistryObject<FluidType> WOOD_TAR_TYPE =
+            FLUID_TYPES.register("wood_tar", () -> new FluidType(
+                    FluidType.Properties.create()
+                            .descriptionId("fluid.magneticraft2.wood_tar")
+                            .density(1180)
+                            .viscosity(3500)
+            ) {
+                @Override
+                public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
+                    consumer.accept(new IClientFluidTypeExtensions() {
+                        private static final ResourceLocation STILL =
+                                new ResourceLocation(MOD_ID, "block/wood_tar_still");
+                        private static final ResourceLocation FLOW =
+                                new ResourceLocation(MOD_ID, "block/wood_tar_flow");
+
+                        @Override public ResourceLocation getStillTexture() { return STILL; }
+                        @Override public ResourceLocation getFlowingTexture() { return FLOW; }
+                    });
+                }
+            });
+
+    public static final RegistryObject<FlowingFluid> WOOD_TAR =
+            FLUIDS.register("wood_tar",
+                    () -> new ForgeFlowingFluid.Source(woodTarProperties()));
+    public static final RegistryObject<FlowingFluid> FLOWING_WOOD_TAR =
+            FLUIDS.register("flowing_wood_tar",
+                    () -> new ForgeFlowingFluid.Flowing(woodTarProperties()));
+
+    public static final RegistryObject<LiquidBlock> WOOD_TAR_BLOCK =
+            BlockRegistry.BLOCKS.register("wood_tar",
+                    () -> new LiquidBlock(WOOD_TAR,
+                            BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable()));
+
+    public static final RegistryObject<Item> WOOD_TAR_BUCKET =
+            ItemRegistry.ITEMS.register("wood_tar_bucket",
+                    () -> new BucketItem(WOOD_TAR,
+                            new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
+
+    private static ForgeFlowingFluid.Properties woodTarProperties() {
+        return WoodTarPropertiesHolder.PROPERTIES;
+    }
+
+    private static final class WoodTarPropertiesHolder {
+        private static final ForgeFlowingFluid.Properties PROPERTIES =
+                new ForgeFlowingFluid.Properties(
+                        WOOD_TAR_TYPE, WOOD_TAR, FLOWING_WOOD_TAR)
+                        .block(WOOD_TAR_BLOCK)
+                        .bucket(WOOD_TAR_BUCKET)
+                        .slopeFindDistance(2)
+                        .levelDecreasePerBlock(2);
+    }
+
     private FluidRegistry() {
     }
 

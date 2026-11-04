@@ -1,0 +1,193 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "stone": "minecraft:block/stone_bricks",
+    "timber": "magneticraft2:block/material/machine_timber",
+    "end": "magneticraft2:block/material/machine_timber_end",
+    "bronze": "magneticraft2:block/material/bronze_cast",
+    "bearing": "magneticraft2:block/material/bronze_machined",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "liner": "magneticraft2:block/component/chute_liner",
+    "particle": "magneticraft2:block/material/bronze_cast"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        0,
+        0
+      ],
+      "to": [
+        15,
+        4.25,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            11.75,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            11.75,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#stone",
+          "uv": [
+            5,
+            0,
+            15,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#stone",
+          "uv": [
+            5,
+            0,
+            15,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#stone",
+          "uv": [
+            5,
+            11.75,
+            15,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        5,
+        4.25,
+        5
+      ],
+      "faces": {
+        "east": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            11.75,
+            5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ]
+        },
+        "north": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            11.75,
+            5,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#stone",
+          "uv": [
+            0,
+            11.75,
+            5,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        4.25,
+        6
+      ],
+      "to": [
+        11,
+        8.5,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            6,
+            7.5,
+            16,
+            11.75
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            6,
+            7.5,
+            16,
+            11.75
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            6,
+            6,
+            11,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            6,
+            6,
+            11,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            6,
+            7.5,
+            11,
+            11.75
+          ]
+        }
+      }
+    }
+  ]
+}

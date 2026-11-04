@@ -7,6 +7,8 @@ import com.magneticraft2.common.systems.Blueprint.core.BlueprintManager;
 import com.magneticraft2.common.systems.HEAT.CapabilityHeat;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockManager;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
+import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
+import com.magneticraft2.common.systems.PRESSURE.SteamNetworkManager;
 import com.magneticraft2.common.systems.WATT.CapabilityWatt;
 import com.magneticraft2.common.systems.mgc2Network;
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
@@ -14,6 +16,8 @@ import com.magneticraft2.common.utils.Magneticraft2ConfigCommon;
 import com.magneticraft2.common.utils.Magneticraft2ConfigServer;
 import com.magneticraft2.compatibility.TOP.TOPCompatibility;
 import com.magneticraft2.server.MultiblockAndBlueprintReloadListener;
+import com.magneticraft2.common.hologram.HologramRecordingCatalog;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelProfiles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -73,6 +77,7 @@ public class magneticraft2 {
         modEventBus.addListener(this::preClient);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ContainerAndScreenRegistry::Screen);
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(SteamNetworkManager.class);
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> modEventBus.addListener(Clientsetup::init));
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Magneticraft2ConfigCommon.SPEC, "magneticraft2-common.toml");
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Magneticraft2ConfigClient.SPEC, "magneticraft2-client.toml");
@@ -95,6 +100,8 @@ public class magneticraft2 {
     @SubscribeEvent
     public void registerReloadListener(@NotNull AddReloadListenerEvent event){
         event.addListener(new MultiblockAndBlueprintReloadListener());
+        event.addListener(new MultiblockVoxelProfiles());
+        event.addListener(new HologramRecordingCatalog());
     }
     public void preinit(final FMLCommonSetupEvent event){
         mgc2Network.init();
@@ -106,6 +113,7 @@ public class magneticraft2 {
     public void registerCapabilities(RegisterCapabilitiesEvent event){
         CapabilityHeat.register(event);
         CapabilityPressure.register(event);
+        CapabilityPressurizedGas.register(event);
         CapabilityWatt.register(event);
     }
 }

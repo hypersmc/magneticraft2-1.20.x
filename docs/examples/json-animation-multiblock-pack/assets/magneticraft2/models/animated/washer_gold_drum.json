@@ -1,0 +1,7 @@
+{
+  "parent": "magneticraft2:multiblock/mechanical_ore_washer_rotor",
+  "textures": {
+    "copper": "minecraft:block/gold_block",
+    "particle": "minecraft:block/gold_block"
+  }
+}

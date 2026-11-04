@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " BC",
+    " SB",
+    "S  "
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:brick"
+    },
+    "C": {
+      "item": "magneticraft2:bronze_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:bronze_pouring_ladle"
+  }
+}

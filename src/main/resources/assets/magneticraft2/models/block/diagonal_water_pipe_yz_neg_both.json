@@ -1,0 +1,129 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "pipe": "magneticraft2:block/fluid_pipe",
+    "particle": "magneticraft2:block/fluid_pipe"
+  },
+  "elements": [
+    {
+      "from": [
+        6,
+        -3.31371,
+        6
+      ],
+      "to": [
+        10,
+        8,
+        10
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "x",
+        "angle": -45,
+        "rescale": false
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "south": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "east": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        8,
+        6
+      ],
+      "to": [
+        10,
+        19.31371,
+        10
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          8
+        ],
+        "axis": "x",
+        "angle": -45,
+        "rescale": false
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "south": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "east": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            1,
+            0,
+            5,
+            11.31371
+          ],
+          "texture": "#pipe"
+        }
+      }
+    }
+  ]
+}
