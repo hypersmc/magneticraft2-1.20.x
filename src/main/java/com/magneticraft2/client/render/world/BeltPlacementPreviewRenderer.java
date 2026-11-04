@@ -3,6 +3,8 @@ package com.magneticraft2.client.render.world;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.item.stage.copper.ItemBeltItem;
+import com.magneticraft2.common.item.stage.copper.CopperFluidPipeItem;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.systems.GEAR.BeltPath;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -38,8 +40,8 @@ import static com.magneticraft2.common.magneticraft2.MOD_ID;
  * amber = valid route, but not enough belt segments
  * red   = invalid/blocked route
  *
- * Both the Leather Drive Belt and the wide Item Belt use the same visual
- * language while keeping their own placement rules.
+ * Leather Drive Belts, Item Belts and diagonal Copper Fluid Pipes share
+ * the same survey-guide colors while retaining their own placement rules.
  */
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
 public final class BeltPlacementPreviewRenderer {
@@ -53,6 +55,7 @@ public final class BeltPlacementPreviewRenderer {
     private static final float ALPHA = 0.90F;
     private static final double ITEM_GUIDE_HALF_WIDTH = 0.31D;
     private static final double DRIVE_GUIDE_HALF_WIDTH = 0.11D;
+    private static final double PIPE_GUIDE_HALF_WIDTH = 0.14D;
     private static final double ENDPOINT_INFLATE = 0.035D;
 
     private BeltPlacementPreviewRenderer() {
@@ -155,7 +158,8 @@ public final class BeltPlacementPreviewRenderer {
                 level,
                 player,
                 main,
-                blockHit.getBlockPos()
+                blockHit.getBlockPos(),
+                blockHit.getDirection()
         );
         if (mainPreview != null) {
             return mainPreview;
@@ -165,16 +169,24 @@ public final class BeltPlacementPreviewRenderer {
                 level,
                 player,
                 player.getOffhandItem(),
-                blockHit.getBlockPos()
+                blockHit.getBlockPos(),
+                blockHit.getDirection()
         );
     }
 
     private static Preview buildPreviewForStack(ClientLevel level,
                                                 LocalPlayer player,
                                                 ItemStack stack,
-                                                BlockPos endPos) {
+                                                BlockPos endPos,
+                                                Direction hitFace) {
         if (stack == null || stack.isEmpty()) {
             return null;
+        }
+
+        BlockPos pipeStart = CopperFluidPipeItem.getSelectedStart(stack, level);
+        if (pipeStart != null) {
+            return buildCopperPipePreview(
+                    level, player, stack, pipeStart, endPos, hitFace);
         }
 
         BlockPos itemStart = ItemBeltItem.getSelectedStart(
@@ -206,6 +218,36 @@ public final class BeltPlacementPreviewRenderer {
         }
 
         return null;
+    }
+
+    private static Preview buildCopperPipePreview(
+            ClientLevel level, LocalPlayer player, ItemStack stack,
+            BlockPos startPos, BlockPos endPos, Direction hitFace) {
+        // Only other existing pipes are selectable endpoints. The direct
+        // diagonal path itself can be invalid and still draw red.
+        if (startPos.equals(endPos) || !level.hasChunkAt(startPos)
+                || !level.getBlockState(startPos).is(BlockRegistry.WATER_PIPE.get())
+                || !level.getBlockState(endPos).is(BlockRegistry.WATER_PIPE.get())) {
+            return null;
+        }
+
+        CopperFluidPipeItem.PlacementCheck placement =
+                CopperFluidPipeItem.evaluateConnection(
+                        level, player, stack, startPos, endPos, hitFace);
+        boolean enough = player.getAbilities().instabuild
+                || placement.requiredSections() == 0
+                || stack.getCount() >= placement.requiredSections();
+
+        // A direct straight line between the original two centres:
+        // no ghost elbows, added pipe block, or geometry rebuilding.
+        int dx = endPos.getX() - startPos.getX();
+        int dy = endPos.getY() - startPos.getY();
+        int dz = endPos.getZ() - startPos.getZ();
+        Direction.Axis guideAxis = dx == 0 ? Direction.Axis.X
+                : dy == 0 ? Direction.Axis.Y
+                : dz == 0 ? Direction.Axis.Z : Direction.Axis.Y;
+        return new Preview(startPos, endPos, guideAxis, null,
+                PIPE_GUIDE_HALF_WIDTH, placement.valid(), enough);
     }
 
     private static Preview buildItemBeltPreview(

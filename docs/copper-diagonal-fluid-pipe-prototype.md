@@ -122,3 +122,32 @@ link. Persistent deferred cleanup across unloaded chunks remains a
 completion requirement before we call this survival-safe in every situation.
 The original Copper pipe has only one optional diagonal branch per block.
 No unrestricted angles or separate pipe fluid simulation are introduced.
+
+## Direct-pipe construction guide (client preview)
+
+Sneak-right-click an ordinary Copper pipe with Copper Fluid Pipes in hand,
+then aim at a second ordinary Copper pipe. The **existing belt survey
+renderer** now draws a straight pair of rails with cross marks from the
+first pipe centre directly to the candidate second pipe centre.
+The two endpoints are outlined in the same colors as other belt guides:
+
+- **Green:** valid route, all placement checks pass, enough pipes in hand.
+- **Amber:** geometry and permissions pass, but fewer than span-minus-one
+  pipe items are held.
+- **Red:** unsupported angle/length, used endpoint or obstructed corridor.
+
+The renderer calls `CopperFluidPipeItem.evaluateConnection`, the **same**
+geometry/permissions validation the server placement calls. Client data may
+still be temporarily stale due to synchronization, so the server remains
+authoritative. No extra renderer, ticking block entities, fluid network
+or packet traffic is introduced.
+
+### Preview verification (pending)
+- [ ] Valid 45-degree XY/YZ slopes and XZ horizontal links show green.
+- [ ] Block the corridor; preview turns red without placing anything.
+- [ ] Invalid angle, out-of-range and busy endpoints show red.
+- [ ] Insufficient inventory gives amber; creative is green.
+- [ ] Clicking the second endpoint agrees with preview for all cases.
+- [ ] Main-hand/offhand selection, dimension changes and switching items.
+- [ ] Existing Leather and Item Belt previews still render correctly.
+- [ ] Confirm stable FPS while looking around with a pipe selected.
