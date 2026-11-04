@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import com.magneticraft2.common.systems.GEAR.BeltPath;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -53,9 +54,12 @@ public final class AnimationDefinition {
             models = Map.copyOf(models);
         }
     }
+    public record ItemVisual(String input, ItemDisplayContext display,
+                             float scale, Vec3 rotationDegrees) {}
     public record Component(ResourceLocation model, Vec3 modelOffset, Vec3 pivot,
                             RenderLayer layer, String parent, Condition visibleWhen,
-                            StaticRotation staticRotation, ModelVariants modelVariants) {}
+                            StaticRotation staticRotation, ModelVariants modelVariants,
+                            ItemVisual itemVisual) {}
     public enum SliderCrankRole { CRANK, ROD, FOLLOWER, SLIDER }
     public record SliderCrank(String input, Vec3 center, double radius, double rodLength,
                               double phaseDegrees, String crank, String rod,
@@ -108,12 +112,18 @@ public final class AnimationDefinition {
                                    double distance, double scale, double amplitude,
                                    double bias, double phaseDegrees, Waveform waveform,
                                    Condition when) {}
+    public record TransformKeyframe(double time, Vec3 position, Vec3 rotationDegrees) {}
+    public record TransformTrack(String target, String input,
+                                 List<TransformKeyframe> keyframes, Condition when) {
+        public TransformTrack { keyframes = List.copyOf(keyframes); }
+    }
     private record AxisSpec(Direction.Axis axis, double sign) {}
 
     private final Map<String, Component> components;
     private final Map<String, Input> inputs;
     private final Map<String, Map<Condition, RotationTrack>> rotations;
     private final Map<String, Map<Condition, TranslationTrack>> translations;
+    private final Map<String, Map<Condition, TransformTrack>> transforms;
     private final Map<String, List<String>> children;
     private final List<String> roots;
     private final Map<String, SliderCrank> sliderCranks;
@@ -124,6 +134,7 @@ public final class AnimationDefinition {
                                 Map<String, Input> inputs,
                                 Map<String, Map<Condition, RotationTrack>> rotations,
                                 Map<String, Map<Condition, TranslationTrack>> translations,
+                                Map<String, Map<Condition, TransformTrack>> transforms,
                                 Map<String, List<String>> children, List<String> roots,
                                 Map<String, SliderCrank> sliderCranks,
                                 Map<String, MechanismRole> mechanismRoles,
@@ -132,6 +143,7 @@ public final class AnimationDefinition {
         this.inputs = Map.copyOf(inputs);
         this.rotations = Map.copyOf(rotations);
         this.translations = Map.copyOf(translations);
+        this.transforms = Map.copyOf(transforms);
         this.children = Map.copyOf(children);
         this.roots = List.copyOf(roots);
         this.sliderCranks = Map.copyOf(sliderCranks);
@@ -208,6 +220,20 @@ public final class AnimationDefinition {
             if (condition.matches(activeStates)) {
                 TranslationTrack track = candidates.get(condition);
                 if (track != null) return track;
+            }
+        }
+        return null;
+    }
+
+    /** Bounded progress/pose tracks share existing state priority. */
+    public TransformTrack transform(String name, Set<State> activeStates) {
+        Map<Condition, TransformTrack> candidates = transforms.get(name);
+        if (candidates == null) return null;
+        for (Condition condition : List.of(Condition.OVERLOADED, Condition.WORN,
+                Condition.RUNNING, Condition.STOPPED, Condition.ALWAYS)) {
+            if (condition.matches(activeStates)) {
+                TransformTrack value = candidates.get(condition);
+                if (value != null) return value;
             }
         }
         return null;
@@ -318,8 +344,33 @@ public final class AnimationDefinition {
                 }
                 variants = new ModelVariants(selector, byStage);
             }
+            ItemVisual itemVisual = null;
+            if (data.has("item")) {
+                if (model != null || variants != null) {
+                    throw new JsonParseException(name + " cannot combine model and item");
+                }
+                JsonObject item = asObject(data.get("item"), name + ".item");
+                String channel = identifier(string(item, "input", name + ".item"), "item channel");
+                String displayName = item.has("display_context")
+                        ? string(item, "display_context", name + ".item") : "none";
+                ItemDisplayContext display = switch (displayName) {
+                    case "none" -> ItemDisplayContext.NONE;
+                    case "fixed" -> ItemDisplayContext.FIXED;
+                    case "ground" -> ItemDisplayContext.GROUND;
+                    default -> throw new JsonParseException(
+                            name + " invalid item display_context " + displayName);
+                };
+                double size = item.has("scale")
+                        ? finiteNumber(item.get("scale"), name + ".item.scale") : 1D;
+                if (size < 0.0625D || size > 4D) {
+                    throw new JsonParseException(name + " item scale outside [1/16,4]");
+                }
+                Vec3 rotation = item.has("rotation")
+                        ? vector(item.get("rotation"), name + ".item.rotation") : Vec3.ZERO;
+                itemVisual = new ItemVisual(channel, display, (float) size, rotation);
+            }
             components.put(name, new Component(model, offset, pivot, layer, parent, visible,
-                    staticRotation, variants));
+                    staticRotation, variants, itemVisual));
         }
 
         // Parent links are resolved once when resources are loaded, never per
@@ -363,7 +414,8 @@ public final class AnimationDefinition {
             String name = identifier(entry.getKey(), "input");
             JsonObject data = asObject(entry.getValue(), "input " + name);
             String source = string(data, "source", "input " + name);
-            if (!"mechanical.visual_angle_degrees".equals(source)) {
+            if (!"mechanical.visual_angle_degrees".equals(source)
+                    && !"machine.progress_normalized".equals(source)) {
                 throw new JsonParseException("Unsupported animation input source: " + source);
             }
             String module = identifier(string(data, "module", "input " + name), "module");
@@ -372,6 +424,7 @@ public final class AnimationDefinition {
 
         Map<String, Map<Condition, RotationTrack>> rotations = new HashMap<>();
         Map<String, Map<Condition, TranslationTrack>> translations = new HashMap<>();
+        Map<String, Map<Condition, TransformTrack>> transforms = new HashMap<>();
         JsonObject animations = asObject(required(root, "animations", "animation root"), "animations");
         if (animations.size() > 128) {
             throw new JsonParseException("animations cannot exceed 128 entries");
@@ -400,7 +453,6 @@ public final class AnimationDefinition {
                             "Track references unknown component or input: " + target + "/" + inputName);
                 }
                 String property = string(track, "property", animationName);
-                AxisSpec axis = axis(required(track, "axis", animationName));
                 double scale = track.has("scale")
                         ? finiteNumber(track.get("scale"), "track scale") : 1.0D;
                 if (Math.abs(scale) > 128.0D) {
@@ -416,6 +468,11 @@ public final class AnimationDefinition {
 
                 switch (property) {
                     case "rotation" -> {
+                        AxisSpec axis = axis(required(track, "axis", animationName));
+                        if (!"mechanical.visual_angle_degrees".equals(
+                                inputs.get(inputName).source())) {
+                            throw new JsonParseException("Rotation requires mechanical angle");
+                        }
                         RotationTrack compiled = new RotationTrack(target, inputName,
                                 axis.axis(), axis.sign() * scale, axis.sign() * phase, when);
                         Map<Condition, RotationTrack> candidates =
@@ -425,6 +482,11 @@ public final class AnimationDefinition {
                         }
                     }
                     case "translation" -> {
+                        AxisSpec axis = axis(required(track, "axis", animationName));
+                        if (!"mechanical.visual_angle_degrees".equals(
+                                inputs.get(inputName).source())) {
+                            throw new JsonParseException("Translation requires mechanical angle");
+                        }
                         double distance = finiteNumber(required(track, "distance", animationName),
                                 "track distance");
                         double amplitude = track.has("amplitude")
@@ -444,6 +506,60 @@ public final class AnimationDefinition {
                                 translations.computeIfAbsent(target, ignored -> new EnumMap<>(Condition.class));
                         if (candidates.putIfAbsent(when, compiled) != null) {
                             throw new JsonParseException("Duplicate translation track for " + target + "/" + when);
+                        }
+                    }
+                    case "transform_keyframes" -> {
+                        if (!"machine.progress_normalized".equals(
+                                inputs.get(inputName).source())) {
+                            throw new JsonParseException(
+                                    "transform_keyframes needs normalized processing progress");
+                        }
+                        if (track.has("axis") || track.has("distance")
+                                || track.has("scale") || track.has("phase_degrees")) {
+                            throw new JsonParseException(
+                                    "transform_keyframes uses positions/rotations, not angle fields");
+                        }
+                        JsonElement data = required(track, "keyframes", animationName);
+                        if (!data.isJsonArray()) {
+                            throw new JsonParseException("keyframes must be an array");
+                        }
+                        JsonArray keyframes = data.getAsJsonArray();
+                        if (keyframes.size() < 2 || keyframes.size() > 32) {
+                            throw new JsonParseException("keyframes must contain 2..32 entries");
+                        }
+                        List<TransformKeyframe> keys = new ArrayList<>();
+                        double previous = -1D;
+                        for (JsonElement elementKey : keyframes) {
+                            JsonObject key = asObject(elementKey, "keyframe");
+                            double time = finiteNumber(required(key, "time", "keyframe"),
+                                    "keyframe.time");
+                            if (time < 0D || time > 1D || time <= previous) {
+                                throw new JsonParseException(
+                                        "keyframe times must be increasing within [0,1]");
+                            }
+                            Vec3 position = vector(required(key, "position", "keyframe"),
+                                    "keyframe.position");
+                            Vec3 rotation = key.has("rotation")
+                                    ? vector(key.get("rotation"), "keyframe.rotation")
+                                    : Vec3.ZERO;
+                            if (Math.max(Math.abs(position.x), Math.max(
+                                    Math.abs(position.y), Math.abs(position.z))) > 16D) {
+                                throw new JsonParseException("keyframe offset exceeds 16 blocks");
+                            }
+                            keys.add(new TransformKeyframe(time, position, rotation));
+                            previous = time;
+                        }
+                        if (keys.get(0).time() != 0D || previous != 1D) {
+                            throw new JsonParseException(
+                                    "keyframes must begin at 0 and end at 1");
+                        }
+                        TransformTrack value = new TransformTrack(target, inputName, keys, when);
+                        Map<Condition, TransformTrack> candidates =
+                                transforms.computeIfAbsent(target,
+                                        ignored -> new EnumMap<>(Condition.class));
+                        if (candidates.putIfAbsent(when, value) != null) {
+                            throw new JsonParseException(
+                                    "Duplicate progress transform for " + target + "/" + when);
                         }
                     }
                     default -> throw new JsonParseException("Unsupported animation track property: " + property);
@@ -616,8 +732,12 @@ public final class AnimationDefinition {
         for (Map.Entry<String, Map<Condition, TranslationTrack>> entry : translations.entrySet()) {
             frozenTranslations.put(entry.getKey(), Map.copyOf(entry.getValue()));
         }
+        Map<String, Map<Condition, TransformTrack>> frozenTransforms = new HashMap<>();
+        for (Map.Entry<String, Map<Condition, TransformTrack>> entry : transforms.entrySet()) {
+            frozenTransforms.put(entry.getKey(), Map.copyOf(entry.getValue()));
+        }
         return new AnimationDefinition(components, inputs, frozen, frozenTranslations,
-                children, roots, mechanisms, mechanismRoles, beltLoops);
+                frozenTransforms, children, roots, mechanisms, mechanismRoles, beltLoops);
     }
 
     private static int verifyTreeDepth(String name, Map<String, List<String>> children, int depth) {
