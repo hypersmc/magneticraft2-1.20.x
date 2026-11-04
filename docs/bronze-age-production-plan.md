@@ -2,6 +2,43 @@
 
 Status: **canonical 16-machine Bronze Age implementation roadmap**, reconciled against draft PR #11 on **2026-10-31**. The earlier historical milestone notes below are retained for context.  In the machine tables below, **source implemented** means the code/resources exist on the draft branch, not that the full Forge build and in-game acceptance are complete. **Planned** means not yet implemented. Commit new content incrementally and preserve Copper-era functionality. Target progression: **Copper workshop -> Bronze industrial factory -> first iron bloom -> Iron Age**.
 
+## Bronze functional milestone and Java visual-runtime bridge — 2026-11-04
+
+**Player-established functional milestone:** The Magnetite → Wrought Iron
+production path is functioning in their Minecraft world; Iron Bloom heating
+creates the hot state and a live countdown. Existing Copper pipe assembly
+breaking and placement preview are also player-confirmed. This is the
+Bronze-to-Iron gameplay handoff milestone, **not** a claim that every edge
+case, machine visual, server release or model is finished.
+
+**New Java runtime source milestone:** The animation scene graph now accepts
+real ItemStack component bindings, optional normalized machine processing
+progress, and bounded position/rotation keyframes driven by that progress.
+The Forge Hammer opts into these real channels while preserving the
+original ram mechanical stroke and workpiece fallback. An optional resource
+pack demonstrates moving the actual forging item; see
+[real item/progress animation contract](json-animation-item-progress.md).
+
+**Next release acceptance:** Have the user launch the updated client,
+confirm the default Forge Hammer item does not duplicate or shift,
+then enable the test pack and verify the ItemStack follows real process
+progress, including stalls and F3+T fallback. New Java has **not yet**
+been independently Gradle-built or accepted in-game. The existing mod
+previously booted successfully before this latest code addition.
+
+**Studio is a separate development workstream.** Java visual authoring
+groundwork can be implemented without implementing Studio's editing UI
+here. Other machine-specific renderer opt-ins and actual remaining
+models/animations still need their own visual acceptance after Studio
+becomes suitable; do not label all Bronze visuals completed.
+
+**Scope boundary:** No extra Bronze machines or arbitrary high-torque
+drivetrain parts are authorized by this work. Other pipe diagonal support,
+especially Steam-specific pressure and rupture semantics, is a recorded
+transport requirement and not retroactively implemented by animation
+bindings. Multiplayer testing remains deferred until after Steam Age
+by the player's decision. PR #11 stays draft until authorized otherwise.
+
 ## Later player verification and updated scheduling — 2026-11-04
 
 - **Confirmed hot material behavior:** Refractory Kiln heating made the

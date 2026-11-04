@@ -1,3 +1,8 @@
+> **2026-11-04 additive extension:** Optional manifest
+> `scalar_channels` and `item_channels` now bind real normalized
+> machine progress and client-synchronized ItemStacks. Older manifests
+> need no modification. See [item/progress contract](json-animation-item-progress.md).
+>
 # Magneticraft2 machine visual packages — resource-pack contract v1
 
 **Branch:** `feature/json-driven-animation` / draft PR #12

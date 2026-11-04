@@ -23,6 +23,35 @@ documentation-only commit. Mergeability is not test approval.
 | Dedicated multiplayer / full release progression | **TBD / unverified**, not cancelled | Player feedback |
 | Asked to proceed with documentation and PR merge review | Update these status documents and PR description; **do not merge** | Authorized scope |
 
+## Java visual animation integration milestone — 2026-11-04
+
+Implemented in source after the earlier review:
+
+- Backward-compatible `AnimationFrame` and visual-manifest channels for
+  normalized real machine progress and client-synchronized ItemStacks.
+- Bounded, JSON-driven progress position/rotation keyframes shared by
+  baked models and true item visual components. No new rendering entities
+  or server-authoritative mechanics.
+- Bronze Forge Hammer item/processing progress integration with retained
+  old Java fallback and unchanged mechanical ram animation.
+- Dedicated data contract and optional moving-workpiece test resource pack:
+  [item/progress visual runtime](json-animation-item-progress.md).
+
+**Verification remains outstanding:** The main Minecraft mod was already
+reported booting by the player *before these new commits*. Therefore this
+new Java code still needs an actual compilation and Minecraft run.
+Run `node tools/animation/check-item-progress-contract.mjs`, the
+existing animation checks and `./gradlew build`; visually verify the
+Forge Hammer's real input, progress interpolation and resource-pack
+fallback. The code's structural contract checks passed during authoring,
+but that is not the same as a Forge client or dedicated server test.
+
+**Bronze handoff interpretation:** normal Wrought Iron gameplay is
+player-confirmed and the Java-side animation foundation is source
+implemented. That does not automatically mark the PR merged, all
+Bronze machine art complete or the runtime ready for release. Studio
+editing remains a separate project conversation.
+
 ## Follow-up user confirmations and scheduling decisions — 2026-11-04
 
 These supersede *planning assumptions* in the earlier review below. Historical

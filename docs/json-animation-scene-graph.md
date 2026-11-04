@@ -1,3 +1,10 @@
+> **2026-11-04 additive extension:** Java on the Bronze branch now also
+> supports real item components and normalized process-progress
+> keyframes. Existing `format_version: 1` scenes remain supported.
+> The earlier mechanical-only limitation statements below describe
+> historical implementation milestones. See
+> [item/progress animation contract](json-animation-item-progress.md).
+>
 # Magneticraft2 JSON animation scene graph (Forge 1.20.1)
 
 > **Stacked PR update:** `feature/json-mechanical-motion-tracks` adds
