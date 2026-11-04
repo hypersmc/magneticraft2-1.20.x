@@ -89,7 +89,7 @@ public final class CopperFluidPipeItem extends BlockItem {
         BlockState endState = level.getBlockState(end);
         BlockState middleState = BlockRegistry.DIAGONAL_WATER_PIPE.get()
                 .defaultBlockState()
-                .setValue(DiagonalWaterPipeBlock.AXIS, axis)
+                .setValue(DiagonalWaterPipeBlock.AXIS, placement.axis())
                 .setValue(DiagonalWaterPipeBlock.SECTION,
                         DiagonalWaterPipeBlock.Section.BOTH)
                 .setValue(DiagonalWaterPipeBlock.SOCKET,
