@@ -72,6 +72,8 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
     private ItemStack activeInput = ItemStack.EMPTY;
     private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private int progress;
+    private int visualProcessTime;
+    private long clientVisualSnapshotTick;
     private boolean running;
     private final ReplaceableMachinePart forgingDie =
             new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384);
@@ -93,6 +95,24 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         return (float)(.5D - .5D * Math.cos(Math.toRadians(angle)));
     }
     public ItemStack getWorkpiece() { return itemHandler.getStackInSlot(0); }
+    public ItemStack getFinishedWorkpiece() { return itemHandler.getStackInSlot(1); }
+
+    /**
+     * Client-only smooth progress inferred from the last server-authoritative
+     * packet. The running flag changes through the existing BE sync. No extra
+     * per-tick packet or gameplay-side process value is written by visuals.
+     */
+    public float getVisualProgress(float partialTicks) {
+        if (visualProcessTime <= 0) return 0F;
+        double ticks = progress;
+        if (running && level != null && level.isClientSide) {
+            double elapsed = level.getGameTime()
+                    + Math.max(0F, Math.min(1F, partialTicks))
+                    - clientVisualSnapshotTick;
+            ticks += Math.max(0D, elapsed);
+        }
+        return (float) Math.max(0D, Math.min(1D, ticks / visualProcessTime));
+    }
 
     public boolean acceptsRecipeInput(ItemStack stack) {
         return MultiblockRecipeHandler.acceptsInput(level, MACHINE, stack);
@@ -134,6 +154,7 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
     private void resetBatch() {
         if (progress == 0 && activeRecipe == null && activeInput.isEmpty()) return;
         progress = 0;
+        visualProcessTime = 0;
         activeRecipe = null;
         activeInput = ItemStack.EMPTY;
         setChanged();
@@ -168,6 +189,12 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             activeInput = inputStack.copy();
             activeInput.setCount(1);
             progress = 0;
+            setChanged();
+        }
+        // A saved pre-runtime-v1 batch may lack visualProcessTime.
+        // Initialize that field without resetting real saved progress.
+        if (visualProcessTime != recipe.getProcessTime()) {
+            visualProcessTime = recipe.getProcessTime();
             setChanged();
         }
         // No load while output is blocked or the die needs replacement.
@@ -396,6 +423,10 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         collision = MultiblockVoxelNbt.read(tag, "v2_voxel_collision");
         selection = MultiblockVoxelNbt.read(tag, "v2_voxel_selection");
         progress = Math.max(0, tag.getInt("ForgeProgress"));
+        visualProcessTime = Math.max(0, tag.getInt("ForgeVisualProcessTime"));
+        if (level != null && level.isClientSide) {
+            clientVisualSnapshotTick = level.getGameTime();
+        }
         activeRecipe = tag.contains("ForgeRecipe")
                 ? ResourceLocation.tryParse(tag.getString("ForgeRecipe")) : null;
         activeInput = ItemStack.of(tag.getCompound("ForgeActiveInput"));
@@ -412,6 +443,7 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         MultiblockVoxelNbt.write(tag, "v2_voxel_collision", collision);
         MultiblockVoxelNbt.write(tag, "v2_voxel_selection", selection);
         tag.putInt("ForgeProgress", progress);
+        tag.putInt("ForgeVisualProcessTime", visualProcessTime);
         tag.putBoolean("ForgeRunning", running);
         if (activeRecipe != null) tag.putString("ForgeRecipe", activeRecipe.toString());
         if (!activeInput.isEmpty()) tag.put("ForgeActiveInput", activeInput.save(new CompoundTag()));

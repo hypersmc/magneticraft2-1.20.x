@@ -1,0 +1,14 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:bronze_forge_hammer",
+  "angle_channels": {},
+  "integer_channels": {},
+  "scalar_channels": {
+    "work_progress": "process"
+  },
+  "item_channels": {
+    "workpiece": "workpiece",
+    "output": "output"
+  }
+}

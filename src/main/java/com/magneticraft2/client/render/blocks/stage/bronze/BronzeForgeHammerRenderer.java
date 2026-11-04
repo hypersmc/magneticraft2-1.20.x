@@ -1,5 +1,9 @@
 package com.magneticraft2.client.render.blocks.stage.bronze;
 
+import com.magneticraft2.client.animation.AnimationDefinition;
+import com.magneticraft2.client.animation.AnimationFrame;
+import com.magneticraft2.client.animation.AnimatedComponentRenderer;
+import com.magneticraft2.client.animation.MachineVisualRenderer;
 import com.magneticraft2.common.block.stage.bronze.BronzeForgeHammerBlock;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
@@ -18,11 +22,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
+import java.util.Set;
+
 /** Only the ram and current workpiece are dynamic. V2 renders the fixed frame. */
 public final class BronzeForgeHammerRenderer
         implements BlockEntityRenderer<BronzeForgeHammerBlockEntity> {
     private static final ResourceLocation RAM =
             new ResourceLocation("magneticraft2", "multiblock/bronze_forge_hammer_ram");
+    private static final ResourceLocation WORKPIECE_VISUAL =
+            new ResourceLocation("magneticraft2", "bronze_forge_hammer");
+    private static final Set<AnimationDefinition.State> RUNNING =
+            Set.of(AnimationDefinition.State.RUNNING);
+    private static final Set<AnimationDefinition.State> STOPPED =
+            Set.of(AnimationDefinition.State.STOPPED);
 
     public BronzeForgeHammerRenderer(BlockEntityRendererProvider.Context ignored) {}
 
@@ -56,7 +69,21 @@ public final class BronzeForgeHammerRenderer
         pose.popPose();
 
         ItemStack workpiece = hammer.getWorkpiece();
-        if (!workpiece.isEmpty()) {
+        // Scene-driven real ItemStack rendering is opt-in. The unchanged
+        // original Java workpiece is the complete fallback on missing or
+        // invalid pack scenes; the ram stays the accepted Gear V2 renderer.
+        AnimationFrame frame = new AnimationFrame(
+                Map.of(), hammer.isRunning() ? RUNNING : STOPPED, Map.of(),
+                Map.of("process", hammer.getVisualProgress(partial)),
+                Map.of("workpiece", workpiece,
+                       "output", hammer.getFinishedWorkpiece()));
+        AnimatedComponentRenderer.SceneResult scene =
+                MachineVisualRenderer.renderScene(WORKPIECE_VISUAL, frame,
+                        hammer.getBlockState(), pose, buffers, light, overlay);
+        AnimationDefinition.Component itemComponent = scene == null
+                ? null : scene.definition().component("workpiece");
+        boolean jsonItem = itemComponent != null && itemComponent.itemVisual() != null;
+        if (!jsonItem && !workpiece.isEmpty()) {
             ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
             pose.pushPose();
             // The center of the 5x4x3 anvil, NOT the controller/port surface.
