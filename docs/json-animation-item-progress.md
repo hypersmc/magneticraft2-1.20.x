@@ -1,7 +1,12 @@
 # Magneticraft2 visual animation v1 — real items and progress inputs
 
-**Status:** Forge 1.20.1 Java source implementation on draft Bronze PR #11.
-Not yet Gradle-compiled or verified in Minecraft since introduction.
+**Status (2026-11-04): Java runtime implemented and accepted in-game by the
+player.** After testing the final Forge Hammer item/progress work, the player
+reported **"all works"**. This is firsthand user confirmation of the
+requested functional behavior, not a separately captured CI log or measured
+performance benchmark. The exact `./gradlew build` task and automation
+scripts have not been independently evidenced in this review. The Studio
+editor/exporter remains its own workstream, and the PR remains draft.
 
 This extension preserves existing `format_version: 1` scenes and
 `machine_visuals` manifests. MGC2 Studio's editing UI and ZIP exporter are
@@ -122,15 +127,25 @@ The Forge Hammer is the first **end-to-end opted-in machine**.
   renderer before authoring a manifest. Existing other Bronze machine
   special-purpose item animations are not *automatically* migrated.
 
+## Verification — player acceptance recorded 2026-11-04
+
+After the in-game checklist was provided, the player confirmed that all
+of the new functionality works. Record the **Forge Hammer pilot's functional
+visual acceptance** here; do not infer logged Gradle output, dedicated
+multiplayer results, measured FPS or automatic integration across other
+machines. The following boxes distinguish the user's observed runtime
+acceptance from tests whose outputs were not separately supplied.
+
 ## Verification / acceptance before calling the milestone complete
 
 - [ ] `node tools/animation/check-item-progress-contract.mjs`
 - [ ] Existing animation validation scripts and JDK 17 `./gradlew build`
-- [ ] Forge in-game default appearance: no duplicate or moving workpiece
-  unexpectedly; no missing-texture/model warnings
-- [ ] Example resource pack moves the actual item at real progress, pauses
-  on stall, resumes without frame jumps, and disappears when slot empties
-- [ ] F3+T enable/disable and missing scene/manifest fallback
+- [x] **Player-confirmed:** Forge Hammer's in-game workpiece/animation
+  integration works as expected with the normal appearance.
+- [x] **Player-confirmed:** Example resource-pack item/progress behavior
+  works in the in-game test.
+- [x] **Player-confirmed:** Visual workflow and fallback behaved as expected
+  in the reported overall test; no separate per-scenario logs were supplied.
 - [ ] Machine facings N/E/S/W, save/reload and chunk unload
 - [ ] Regression against existing six manifest opt-in machines and
   old resource packs

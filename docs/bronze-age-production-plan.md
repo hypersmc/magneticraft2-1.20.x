@@ -19,12 +19,16 @@ original ram mechanical stroke and workpiece fallback. An optional resource
 pack demonstrates moving the actual forging item; see
 [real item/progress animation contract](json-animation-item-progress.md).
 
-**Next release acceptance:** Have the user launch the updated client,
-confirm the default Forge Hammer item does not duplicate or shift,
-then enable the test pack and verify the ItemStack follows real process
-progress, including stalls and F3+T fallback. New Java has **not yet**
-been independently Gradle-built or accepted in-game. The existing mod
-previously booted successfully before this latest code addition.
+**Player acceptance update, 2026-11-04:** The user reports that the
+completed Java-side Forge Hammer item/progress animation implementation
+**all works in-game**, after receiving the default-scene, demo resource
+pack, stall/resume and fallback test checklist. Thus the agreed **Bronze
+functional gameplay scope and Java visual runtime foundation are accepted
+at the player-test level**. Studio editing/export and the remaining
+machine artwork are tracked separately. The exact Gradle build task,
+individual script outputs, multiplayer and systematic regression logs
+are not independently documented by this user report; do not call the
+entire PR release-verified or merge it automatically.
 
 **Studio is a separate development workstream.** Java visual authoring
 groundwork can be implemented without implementing Studio's editing UI

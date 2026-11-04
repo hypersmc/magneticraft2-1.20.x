@@ -12,6 +12,23 @@ for a clean build, regression matrix or broad visual acceptance. GitHub
 reported the branch as *mergeable* (no current Git conflict) before this
 documentation-only commit. Mergeability is not test approval.
 
+## Functional Bronze milestone accepted by player — 2026-11-04
+
+The user confirmed the last agreed Java-side animation change works
+in-game after trying the Forge Hammer progress/item integration. Together
+with their earlier completed Magnetite Ore → Wrought Iron Ingot run,
+hot-bloom countdown, and Copper diagonal placement/break verification,
+the **agreed Bronze functional milestone can be recorded as accepted**.
+
+This is **not** equivalent to whole-PR completion or automated release
+certification. The MGC2 Studio user-facing authoring experience, remaining
+model and animation art, unimplemented diagonal variants on Bronze Air Duct
+and Steam Pipe networks, any unresolved chunk/persistence corner cases,
+and post-Steam multiplayer tests remain separately scoped. The exact
+Gradle packaging lifecycle result is not independently present in this
+review. PR #11 must stay draft and unmerged unless the user explicitly
+asks to change its state.
+
 ## 2026-11-04 player feedback and scope decisions
 
 | User feedback | Recorded decision | Evidence level |
@@ -37,13 +54,17 @@ Implemented in source after the earlier review:
 - Dedicated data contract and optional moving-workpiece test resource pack:
   [item/progress visual runtime](json-animation-item-progress.md).
 
-**Verification remains outstanding:** The main Minecraft mod was already
-reported booting by the player *before these new commits*. Therefore this
-new Java code still needs an actual compilation and Minecraft run.
-Run `node tools/animation/check-item-progress-contract.mjs`, the
-existing animation checks and `./gradlew build`; visually verify the
-Forge Hammer's real input, progress interpolation and resource-pack
-fallback. The code's structural contract checks passed during authoring,
+**In-game player acceptance received after the new commits (2026-11-04):**
+the player reports **"all works"** for the Java Forge Hammer item/progress
+integration, following the supplied in-game regression checklist. Record
+the new runtime milestone as **functionally verified by the player**,
+superseding the earlier "not yet Minecraft-tested" statement. A real
+game launch also evidences client execution; the exact results of
+`node tools/animation/check-item-progress-contract.mjs`, the other
+animation scripts and the `./gradlew build` lifecycle task have not been
+independently provided. Dedicated multiplayer is still deferred until
+after Steam Age; models and animations for other machines remain the
+separate MGC2 Studio workflow. The code's structural contract checks passed during authoring,
 but that is not the same as a Forge client or dedicated server test.
 
 **Bronze handoff interpretation:** normal Wrought Iron gameplay is
