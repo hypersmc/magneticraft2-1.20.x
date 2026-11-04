@@ -47,10 +47,24 @@ must be air, so thick tubes do not initially pass through stone walls.
 Placing a new solid block into that corridor stops fluid transport (the
 render model may still clip; see limitations).
 
-When a physical section or endpoint breaks, adjacent run halves remain
-recoverable and a loaded opposite endpoint's obsolete visual diagonal port
-is cleared. No stack is consumed until the complete placement succeeds.
-World saves store all ports in blockstates, requiring no dynamic tick work.
+Breaking **either ordinary endpoint** or **any intermediate diagonal
+section** of a complete, loaded direct run tears down all other generated
+sections and clears the diagonal port on each surviving ordinary endpoint.
+Both regular endpoint pipes remain when an intermediate part breaks, because
+they may also serve other fluid connections. Breaking an ordinary endpoint
+never destroys the *other* ordinary endpoint.
+
+Survival breaking drops exactly one normal Copper Fluid Pipe per removed
+section through its existing loot table; creative breaking drops none.
+The player-broken block itself is handled by normal Minecraft block breaking.
+A synchronous cascade guard prevents recursive destruction and item dupes.
+For non-player removal (e.g. an explosion), onRemove triggers the same bounded
+teardown. Old bent-style diagonal pieces remain on their established behavior.
+
+Every removal checks for a valid reciprocal direct line of at most eight grid
+steps and never force-loads missing chunks or tears down unrelated networks.
+No stack is consumed until the complete placement succeeds. World saves store
+all ports in blockstates, requiring no dynamic tick work.
 
 ### Legacy links
 
@@ -76,8 +90,18 @@ this direct mode if the straight geometry is desired.
 - [ ] Reject non-45-degree links, 1- or 9-step spans, a used endpoint,
       insufficient item stacks, obstructed cells/corners and protected cells.
       All failed placements must leave the world/inventory unchanged.
-- [ ] Break a middle section or an endpoint: no fluid movement across the gap,
-      no ghost links, no duplicate drops; restore and reconnect.
+- [ ] Break either end of a direct diagonal run: all generated sections
+      immediately break, the surviving ordinary pipe remains and loses
+      its diagonal arm, and survival item drops match the removed sections.
+- [ ] Break any middle section: all other generated sections break and
+      both ordinary endpoints remain connected to their original cardinal
+      networks without a diagonal arm.
+- [ ] Repeat with creative breaking: no generated-section item drops.
+- [ ] Repeat using non-player block removal/explosion: no duplicate drops
+      or recursion. Confirm ordinary straight pipes and old elbow-style
+      diagonal links are unaffected.
+- [ ] Verify interrupted/missing sections and unloaded adjacent chunks
+      never cause unrelated pipe blocks to be broken.
 - [ ] Save/reload, travel through chunks/dimensions, and test on a dedicated
       server with two clients.
 - [ ] Verify no frame stutter/performance regressions around numerous pipes.
@@ -91,8 +115,10 @@ block proxies. Placing blocks into those side cells after installation can
 create a visible intersection and selection/collision mismatch. Improving
 corner ownership is a separate review before calling the system complete.
 
-Breaking a pipe while the opposite endpoint's chunk is unloaded may leave a
-stale visual half-port there until the player reworks the run; fluid
-traversal still refuses missing segments and never forces chunk loading.
+Teardown requires a fully loaded reciprocal direct run. Breaking an endpoint
+when the opposite end is in an **unloaded chunk** is not yet guaranteed to
+remove all sections: the old detach fallback may only clear the visible
+link. Persistent deferred cleanup across unloaded chunks remains a
+completion requirement before we call this survival-safe in every situation.
 The original Copper pipe has only one optional diagonal branch per block.
 No unrestricted angles or separate pipe fluid simulation are introduced.

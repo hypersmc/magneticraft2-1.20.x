@@ -2,6 +2,8 @@ package com.magneticraft2.common.block.stage.copper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import com.magneticraft2.common.systems.fluid.DiagonalPipeBreakHandler;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -251,13 +253,25 @@ public class WaterPipeBlock extends Block {
     }
 
     @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state,
+                                  Player player) {
+        if (!level.isClientSide && state.getValue(DIAGONAL) != DiagonalPort.NONE) {
+            // Survival refunds all generated sections; creative never does.
+            DiagonalPipeBreakHandler.breakRun(level, pos, state,
+                    !player.getAbilities().instabuild);
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
     public void onRemove(BlockState oldState, Level level, BlockPos pos,
                          BlockState newState, boolean moving) {
-        if (oldState.getBlock() != newState.getBlock() && !level.isClientSide) {
+        if (oldState.getBlock() != newState.getBlock() && !level.isClientSide
+                && !DiagonalPipeBreakHandler.isBreakingRun()) {
             BlockPos step = oldState.getValue(DIAGONAL).step();
-            if (step != null) {
-                // Breaking one endpoint removes the opposite endpoint's
-                // visual link, but leaves the real pipe pieces recoverable.
+            if (step != null && !DiagonalPipeBreakHandler.breakRun(
+                    level, pos, oldState, true)) {
+                // Retain the prior cleanup for incomplete/legacy links.
                 DiagonalWaterPipeBlock.detachOppositeEndpoint(level, pos, step);
             }
         }

@@ -2,6 +2,8 @@ package com.magneticraft2.common.block.stage.copper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import com.magneticraft2.common.systems.fluid.DiagonalPipeBreakHandler;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -111,9 +113,22 @@ public final class DiagonalWaterPipeBlock extends Block {
     }
 
     @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state,
+                                  Player player) {
+        if (!level.isClientSide) {
+            DiagonalPipeBreakHandler.breakRun(level, pos, state,
+                    !player.getAbilities().instabuild);
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
     public void onRemove(BlockState oldState, Level level, BlockPos pos,
                          BlockState newState, boolean moving) {
-        if (oldState.getBlock() != newState.getBlock() && !level.isClientSide) {
+        if (oldState.getBlock() != newState.getBlock() && !level.isClientSide
+                && !DiagonalPipeBreakHandler.isBreakingRun()
+                && !DiagonalPipeBreakHandler.breakRun(level, pos, oldState, true)) {
+            // Older elbow-style pieces still use the original detach path.
             BlockPos step = oldState.getValue(AXIS).step();
             detachOppositeEndpoint(level, pos, step);
             detachOppositeEndpoint(level, pos,
