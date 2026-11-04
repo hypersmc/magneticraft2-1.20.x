@@ -366,7 +366,8 @@ public final class AnimationDefinition {
                     throw new JsonParseException(name + " item scale outside [1/16,4]");
                 }
                 Vec3 rotation = item.has("rotation")
-                        ? vector(item.get("rotation"), name + ".item.rotation") : Vec3.ZERO;
+                        ? angleVector(item.get("rotation"), name + ".item.rotation")
+                        : Vec3.ZERO;
                 itemVisual = new ItemVisual(channel, display, (float) size, rotation);
             }
             components.put(name, new Component(model, offset, pivot, layer, parent, visible,
@@ -540,7 +541,7 @@ public final class AnimationDefinition {
                             Vec3 position = vector(required(key, "position", "keyframe"),
                                     "keyframe.position");
                             Vec3 rotation = key.has("rotation")
-                                    ? vector(key.get("rotation"), "keyframe.rotation")
+                                    ? angleVector(key.get("rotation"), "keyframe.rotation")
                                     : Vec3.ZERO;
                             if (Math.max(Math.abs(position.x), Math.max(
                                     Math.abs(position.y), Math.abs(position.z))) > 16D) {
@@ -802,6 +803,21 @@ public final class AnimationDefinition {
         double z = finiteNumber(array.get(2), context + ".z");
         if (Math.abs(x) > 256 || Math.abs(y) > 256 || Math.abs(z) > 256) {
             throw new JsonParseException(context + " exceeds 256-block safety bound");
+        }
+        return new Vec3(x, y, z);
+    }
+
+    /** Rotations use degrees, not the bounded position-vector coordinate parser. */
+    private static Vec3 angleVector(JsonElement element, String context) {
+        if (!element.isJsonArray() || element.getAsJsonArray().size() != 3) {
+            throw new JsonParseException(context + " must have three degree values");
+        }
+        JsonArray values = element.getAsJsonArray();
+        double x = finiteNumber(values.get(0), context + ".x");
+        double y = finiteNumber(values.get(1), context + ".y");
+        double z = finiteNumber(values.get(2), context + ".z");
+        if (Math.abs(x) > 3600D || Math.abs(y) > 3600D || Math.abs(z) > 3600D) {
+            throw new JsonParseException(context + " rotation exceeds 3600 degrees");
         }
         return new Vec3(x, y, z);
     }

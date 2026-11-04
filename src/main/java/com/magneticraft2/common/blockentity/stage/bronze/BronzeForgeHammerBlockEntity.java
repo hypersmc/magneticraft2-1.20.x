@@ -73,7 +73,7 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
     private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private int progress;
     private int visualProcessTime;
-    private long clientVisualSnapshotTick;
+    private long clientVisualSnapshotTick = -1L;
     private boolean running;
     private final ReplaceableMachinePart forgingDie =
             new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384);
@@ -106,6 +106,10 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
         if (visualProcessTime <= 0) return 0F;
         double ticks = progress;
         if (running && level != null && level.isClientSide) {
+            if (clientVisualSnapshotTick < 0L) {
+                // Older saved worlds can initialize the BE before setLevel.
+                clientVisualSnapshotTick = level.getGameTime();
+            }
             double elapsed = level.getGameTime()
                     + Math.max(0F, Math.min(1F, partialTicks))
                     - clientVisualSnapshotTick;
