@@ -56,10 +56,70 @@ public final class DiagonalWaterPipeBlock extends Block {
             return false;
         }
         BlockState other = level.getBlockState(next);
-        return other.getBlock() instanceof DiagonalWaterPipeBlock
-                && other.getValue(AXIS) == state.getValue(AXIS)
-                && other.getValue(SECTION).opens(-sign)
-                && isCornerClear(level, pos, next);
+        if (!isCornerClear(level, pos, next)) {
+            return false;
+        }
+        if (other.getBlock() instanceof DiagonalWaterPipeBlock) {
+            return other.getValue(AXIS) == state.getValue(AXIS)
+                    && other.getValue(SECTION).opens(-sign);
+        }
+        if (other.getBlock() instanceof WaterPipeBlock) {
+            BlockPos otherPort = other.getValue(WaterPipeBlock.DIAGONAL).step();
+            return otherPort != null
+                    && otherPort.getX() == -step.getX() * sign
+                    && otherPort.getY() == -step.getY() * sign
+                    && otherPort.getZ() == -step.getZ() * sign;
+        }
+        return false;
+    }
+
+    /**
+     * When a physical section or existing endpoint is broken, clear the distant
+     * ordinary endpoint's diagonal port. The pieces remain in the world for
+     * ordinary breaking/collection; no hidden logical connection survives.
+     */
+    public static void detachOppositeEndpoint(Level level, BlockPos origin, BlockPos direction) {
+        for (int i = 1; i <= 8; i++) {
+            BlockPos pos = origin.offset(direction.getX() * i,
+                    direction.getY() * i, direction.getZ() * i);
+            if (!level.hasChunkAt(pos)) {
+                return; // Never force-load chunks while removing pipes.
+            }
+            BlockState state = level.getBlockState(pos);
+            if (state.getBlock() instanceof DiagonalWaterPipeBlock) {
+                BlockPos axis = state.getValue(AXIS).step();
+                if (axis.getX() * direction.getY() != axis.getY() * direction.getX()
+                        || axis.getX() * direction.getZ() != axis.getZ() * direction.getX()
+                        || axis.getY() * direction.getZ() != axis.getZ() * direction.getY()) {
+                    return;
+                }
+                continue;
+            }
+            if (state.getBlock() instanceof WaterPipeBlock) {
+                BlockPos opposite = state.getValue(WaterPipeBlock.DIAGONAL).step();
+                if (opposite != null
+                        && opposite.getX() == -direction.getX()
+                        && opposite.getY() == -direction.getY()
+                        && opposite.getZ() == -direction.getZ()) {
+                    level.setBlock(pos, state.setValue(
+                            WaterPipeBlock.DIAGONAL, WaterPipeBlock.DiagonalPort.NONE),
+                            Block.UPDATE_ALL);
+                }
+            }
+            return;
+        }
+    }
+
+    @Override
+    public void onRemove(BlockState oldState, Level level, BlockPos pos,
+                         BlockState newState, boolean moving) {
+        if (oldState.getBlock() != newState.getBlock() && !level.isClientSide) {
+            BlockPos step = oldState.getValue(AXIS).step();
+            detachOppositeEndpoint(level, pos, step);
+            detachOppositeEndpoint(level, pos,
+                    new BlockPos(-step.getX(), -step.getY(), -step.getZ()));
+        }
+        super.onRemove(oldState, level, pos, newState, moving);
     }
 
     /** The solid tube cannot cut between two opaque side blocks at a corner. */

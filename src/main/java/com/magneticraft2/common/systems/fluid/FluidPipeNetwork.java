@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.fluid;
 
 import com.magneticraft2.common.block.stage.copper.DiagonalWaterPipeBlock;
+import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -98,6 +99,31 @@ public final class FluidPipeNetwork {
                                 step.getZ() * sign);
                         if (!visited.contains(diagonal)) {
                             queue.addLast(diagonal.immutable());
+                        }
+                    }
+                }
+            }
+
+            if (pipeState.getBlock() instanceof WaterPipeBlock) {
+                BlockPos outgoing = pipeState.getValue(
+                        WaterPipeBlock.DIAGONAL).step();
+                if (outgoing != null) {
+                    BlockPos neighbour = pipePos.offset(
+                            outgoing.getX(), outgoing.getY(), outgoing.getZ());
+                    if ((ignoredPos == null || !ignoredPos.equals(neighbour))
+                            && level.hasChunkAt(neighbour)) {
+                        BlockState otherState = level.getBlockState(neighbour);
+                        if (otherState.getBlock() instanceof DiagonalWaterPipeBlock) {
+                            BlockPos axis = otherState.getValue(DiagonalWaterPipeBlock.AXIS).step();
+                            int sign = axis.equals(outgoing) ? -1
+                                    : axis.getX() == -outgoing.getX()
+                                            && axis.getY() == -outgoing.getY()
+                                            && axis.getZ() == -outgoing.getZ() ? 1 : 0;
+                            if (sign != 0 && DiagonalWaterPipeBlock.isConnectedDiagonal(
+                                    level, neighbour, otherState, sign)
+                                    && !visited.contains(neighbour)) {
+                                queue.addLast(neighbour.immutable());
+                            }
                         }
                     }
                 }
