@@ -44,12 +44,30 @@ later Steel design unless explicitly agreed otherwise.
 
 ### Iron 0 — practical use for Wrought Iron (first implementation target)
 
-**Candidate pilot:** a *Wrought Iron Shaft* (or comparable first
-replaceable load-bearing powertrain component). It must be produced
-using the existing Bronze workshop and installed in a real mechanical
-network, providing a measurable benefit compared with the wooden
-equivalent. Whether the exact first part is a shaft, bearing or coupling
-is **not yet settled**.
+**Candidate pilot:** the first *Wrought Iron powertrain upgrade*
+(for example a stronger geared transmission part, bearing/coupling, or
+shaft in a genuinely demanding configuration). It must be made from
+the existing Bronze workshop's Wrought Iron output and solve a measurable
+mechanical bottleneck. The exact item is **not yet settled**.
+
+**Gear V2 audit (source-checked against merged Bronze `master`):**
+- `ShaftBlockEntity_wood.getGearMaxTorque()` already returns **16**.
+  Consequently, an iron shaft offering only 16 torque or a cosmetic
+  material change does **not** automatically unlock a useful capability.
+- `GearBlockEntity.getGearMaxTorque()` defaults to **8**, while some
+  components override it. That is a possible bottleneck, not a reason
+  to change all wooden gear limits or invent iron source power.
+- `GearNetworkManager` propagates available torque by
+  `min(availableTorque, neighbor.getMaxTorque())`, evaluates actual
+  machine load separately and preserves axial shaft connections.
+  Therefore an isolated reinforced shaft cannot bypass a weaker
+  upstream wooden gear, gearbox or power source.
+- **Implementation decision:** reproduce a real case where the player's
+  Bronze-era power path becomes transmission-limited, determine the
+  minimum meaningful Iron replacement part(s) and only then assign
+  capacities, wear and recipes. If no such case exists, choose another
+  truly useful first Wrought Iron application rather than adding
+  decorative "higher tier" parts.
 
 Before writing gameplay code, audit existing `ShaftBlock_wood`,
 `ShaftBlockEntity_wood`, `GearNode`, `GearNetworkManager`, placement,
