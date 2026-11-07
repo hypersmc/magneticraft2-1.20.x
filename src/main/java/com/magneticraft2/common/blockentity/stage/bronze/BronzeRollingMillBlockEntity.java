@@ -10,6 +10,7 @@ import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelHost;
@@ -50,10 +51,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 /**
- * Bronze III cold Rolling Mill: Gear V2-driven, recipe-defined batches with
- * a replaceable pair of roller sleeves. No new shaft physics or screen/inventory GUI.
- * The first recipe cold-rolls existing Copper Plates to Copper Sheets.
- * Heated billet/bronze sheet/rod recipes remain future work with a genuine heat input.
+ * Gear V2-driven Rolling Mill with replaceable roller sleeves.
+ * Existing Copper Plates roll cold, while Iron bars and rods require
+ * actually heated wrought stock from the fueled Refractory Kiln.
+ * Real heat expiry and quality NBT survive interruptions and saves.
+ * No new shaft physics or independent GUI.
  */
 public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost {
@@ -151,6 +153,15 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             return;
         }
         ItemStack inputStack = itemHandler.getStackInSlot(0);
+        // Do not accumulate progress on cooled wrought stock. The entire
+        // operation requires the same server-time heat contract as forging.
+        if (HotBloomWorkpiece.requiresRollingHeat(recipe)
+                && !HotBloomWorkpiece.isHot(inputStack, level)) {
+            resetBatch();
+            releaseLoad();
+            setRunning(false);
+            return;
+        }
         if (!recipe.getId().equals(activeRecipe)
                 || !ItemStack.isSameItemSameTags(activeInput, inputStack)) {
             activeRecipe = recipe.getId();
@@ -159,8 +170,12 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             progress = 0;
             setChanged();
         }
+        // New Iron profiles retain input material quality but lose transient
+        // heat. Check the exact tagged output before registering any load.
+        ItemStack output = HotBloomWorkpiece.requiresRollingHeat(recipe)
+                ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
+                : recipe.getOutput();
         // No load while output is blocked or the roller sleeves need replacement.
-        ItemStack output = recipe.getOutput();
         if (!rollerSleeves.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
@@ -254,9 +269,15 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "need_more";
         } else if (!validRecipe(candidate)) {
             diagnostic = "recipe_unsupported";
+        } else if (HotBloomWorkpiece.requiresRollingHeat(candidate)
+                && !HotBloomWorkpiece.isHot(inputStack, world)) {
+            diagnostic = "iron_cold";
         } else if (!rollerSleeves.canOperate()) {
             diagnostic = "rollers_worn";
-        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+        } else if (!itemHandler.insertItem(1,
+                HotBloomWorkpiece.requiresRollingHeat(candidate)
+                        ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())
+                        : candidate.getOutput(), true).isEmpty()) {
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";

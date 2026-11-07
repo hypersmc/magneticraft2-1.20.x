@@ -34,11 +34,31 @@
       "type": "patchouli:spotlight",
       "item": "magneticraft2:wrought_iron_plate",
       "title": "First Wrought Iron Plate",
-      "text": "Produced through Kiln and Forge Hammer machine processing, visible in JEI. This is a full ingot-equivalent plate, not an ordinary crafting-table shortcut. Bars, rods and structural Iron blocks are later development slices."
+      "text": "Produced through Kiln and Forge Hammer machine processing, visible in JEI. This is a full ingot-equivalent plate, not an ordinary crafting-table shortcut. Bars and rods are produced next in the existing Rolling Mill; structural Iron blocks follow."
     },
     {
       "type": "text",
       "text": "$(bold)Toward stronger industry$()$(br2)The first Iron upgrade is longer-lived tooling. Stronger shafts, precision gears and heavier manufacturing are planned next, but require meaningful source and network load tests. A stronger part must not create power or bypass the limits of an existing wooden gear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron 0C — Rolling Wrought Iron$()$(br2)A hot Wrought Iron Ingot can enter the existing powered Bronze Rolling Mill instead of the Forge Hammer. At 16 RPM and 6 torque, 180 supplied ticks produce ONE Wrought Iron Bar. This is a shaped billet rolling process; the Forge Hammer still makes Plates from the same heated ingot."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Smaller Iron Rods$()$(br2)Bars must be heated again in the fueled Refractory Kiln for 240 HEAT-supplied ticks. Feed a HOT Bar to the Rolling Mill: 200 supplied ticks at 16 RPM and 6 torque produce FOUR slender Wrought Iron Rods. One bar represents one ingot-equivalent; each rod represents one quarter. Heat expires in world time, and the output retains material quality but does not stay hot. The original Copper Sheet recipe works cold."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_bar",
+      "title": "Forged and Rolled Bar",
+      "text": "Roll one hot Wrought Iron Ingot in the existing Bronze Rolling Mill. Use the Bar for structural metal and precise wrought rod production. Recipes are machine processing entries in JEI."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_rod",
+      "title": "Iron Rod Stock",
+      "text": "Four slim rods from one heated Bar. Iron Rods will become fasteners and supports for the first Iron factory building pieces."
     }
   ],
   "sortnum": 4,

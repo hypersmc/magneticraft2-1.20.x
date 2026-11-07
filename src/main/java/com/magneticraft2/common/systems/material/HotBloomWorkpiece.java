@@ -24,6 +24,8 @@ public final class HotBloomWorkpiece {
             new ResourceLocation("magneticraft2", "reheat_iron_bloom");
     private static final ResourceLocation REHEAT_WROUGHT_INGOT_RECIPE =
             new ResourceLocation("magneticraft2", "reheat_wrought_iron_ingot");
+    private static final ResourceLocation REHEAT_WROUGHT_BAR_RECIPE =
+            new ResourceLocation("magneticraft2", "reheat_wrought_iron_bar");
 
     private HotBloomWorkpiece() {}
 
@@ -32,7 +34,9 @@ public final class HotBloomWorkpiece {
         return (REHEAT_RECIPE.equals(recipe.getId())
                     && recipe.getOutput().is(ItemRegistry.ITEM_IRON_BLOOM.get()))
                 || (REHEAT_WROUGHT_INGOT_RECIPE.equals(recipe.getId())
-                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get()));
+                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get()))
+                || (REHEAT_WROUGHT_BAR_RECIPE.equals(recipe.getId())
+                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get()));
     }
 
     public static boolean requiresHeat(MultiblockProcessingRecipe recipe) {
@@ -42,9 +46,19 @@ public final class HotBloomWorkpiece {
                 || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get());
     }
 
+    /**
+     * Iron rolling uses the same finite hot-stock contract. Copper rolling
+     * remains cold and must never acquire an artificial heat requirement.
+     */
+    public static boolean requiresRollingHeat(MultiblockProcessingRecipe recipe) {
+        return recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
+    }
+
     public static boolean isHot(ItemStack stack, Level world) {
         if (stack.isEmpty() || (!stack.is(ItemRegistry.ITEM_IRON_BLOOM.get())
-                && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get()))) return false;
+                && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())
+                && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get()))) return false;
         CompoundTag tag = stack.getTag();
         return tag != null && tag.contains(HOT_UNTIL_TAG, Tag.TAG_LONG)
                 && tag.getLong(HOT_UNTIL_TAG) > world.getGameTime();

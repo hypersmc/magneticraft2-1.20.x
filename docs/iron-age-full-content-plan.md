@@ -40,8 +40,8 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `wrought_iron_ingot` | Existing Bloomery → hot Bloom → Forge Hammer | Entry material | DONE |
 | `wrought_iron_forge_die` | Existing 4 wrought ingots + blackstone recipe | Forge Hammer 768 vs Bronze 384 batches | DONE |
 | `wrought_iron_plate` | Heated ingot, existing Forge Hammer | Casing, frames, Press, gear blanks | PLAYER-CONFIRMED first plate (2026-11-07); further verification open |
-| `wrought_iron_bar` | Hot forge/roll ingot into straight section | Shaft stock, structural joints, sheath | CORE |
-| `wrought_iron_rod` | Draw/form smaller bar using existing workshop | Rivets, service parts | CORE |
+| `wrought_iron_bar` | Hot ingot → existing powered Rolling Mill | Shaft stock and first structural beams; 1 ingot-equivalent per Bar | SOURCE IMPLEMENTED — testing pending |
+| `wrought_iron_rod` | Hot Bar → existing Rolling Mill, 4 Rods | Quarter-ingot fastener/structural stock; precision drawing is later | SOURCE IMPLEMENTED — testing pending |
 | `wrought_iron_sheet` | Existing Rolling Mill on prepared plate | Riveted iron panels and light fittings | CORE |
 | `wrought_iron_rivets` | Cut/punch rods or bar, with valid yield ledger | Assembly, frames, casing | CORE |
 | `iron_gear_blank_medium` | Forge a medium gear preform | Lathe into medium precision gear | CORE |

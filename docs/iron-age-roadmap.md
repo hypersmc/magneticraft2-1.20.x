@@ -131,7 +131,24 @@ here. These verification tasks remain open.
 Bars, rods and general Iron blocks are *not* part of this slice.
 Multiplayer work remains deferred until AFTER Steam Age.
 
-## Next proposed milestones (following Iron 0A and Iron 0B)
+## Iron 0C — Wrought Iron Bar/Rod rolling (source implemented; tests pending)
+
+The existing **Bronze Rolling Mill** now performs Iron-specific hot rolling.
+Players can roll a still-hot Wrought Iron Ingot into **one Bar** (180
+powered ticks, 16 RPM, 6 torque), or reheat the Bar in the existing
+fuel-fired Refractory Kiln and roll **one Bar into four Rods** (200
+powered ticks, 16 RPM, 6 torque). Each Bar is one ingot-equivalent;
+each Rod is one-quarter. The Mill checks the same server-time 120-second
+heat stamp on every processing tick and transfers only persistent quality
+NBT to output. Original cold Copper Sheet production is unchanged.
+Recipe selection is machine-based: Forge Hammer makes Plate from hot
+Ingot; Rolling Mill makes Bar, so no recipe ambiguity.
+
+**Status:** code/JSON proposed in PR #18, full build and single-player
+tests pending. No new machine/multiblock. Multiplayer remains
+deferred until after Steam Age.
+
+## Next proposed milestones (following Iron 0A–0C)
 
 ### Iron II-A — investigate stronger transmission after first Iron tooling
 

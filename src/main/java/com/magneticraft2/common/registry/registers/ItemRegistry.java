@@ -12,6 +12,7 @@ import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronIngotItem;
+import com.magneticraft2.common.item.stage.iron.WroughtIronBarItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -181,6 +182,10 @@ public class ItemRegistry {
             ITEMS.register("wrought_iron_ingot", WroughtIronIngotItem::new);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_PLATE =
             ITEMS.register("wrought_iron_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<WroughtIronBarItem> ITEM_WROUGHT_IRON_BAR =
+            ITEMS.register("wrought_iron_bar", WroughtIronBarItem::new);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_ROD =
+            ITEMS.register("wrought_iron_rod", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
