@@ -40,6 +40,27 @@ for(const dir of axes){
 assert.equal(models,32);
 const v=j('data/magneticraft2/multiblock_voxels/iron_flywheel.json');
 assert.equal(v.collision.length,43);
+const blockstate=j('assets/magneticraft2/blockstates/iron_flywheel.json');
+const before=j('assets/magneticraft2/models/block/iron_flywheel_controller_unformed.json');
+const icon=j('assets/magneticraft2/models/item/iron_flywheel.json');
+assert.equal(before.elements.length,4);
+assert.equal(icon.parent,'magneticraft2:block/iron_flywheel_controller_unformed');
+for(const facing of axes){
+ assert.equal(blockstate.variants['facing='+facing+',is_formed=false'].model,
+  'magneticraft2:block/iron_flywheel_controller_unformed');
+ assert.equal(blockstate.variants['facing='+facing+',is_formed=true'].model,
+  'magneticraft2:block/iron_flywheel_controller');
+}
+assert.deepEqual(before.elements[0].from,[5,5,5]);
+assert.deepEqual(before.elements[0].to,[11,11,11]);
+for(const el of before.elements){
+ const [w,h,d]=el.to.map((v,i)=>v-el.from[i]);
+ for(const [face,uv] of Object.entries(el.faces)){
+  const size=face==='up'||face==='down'?[w,d]:
+   face==='east'||face==='west'?[d,h]:[w,h];
+  assert.deepEqual(uv.uv,[0,0,...size]);
+ }
+}
 const center=j('assets/magneticraft2/models/block/iron_flywheel_controller.json');
 assert.equal(center.elements.length,10,"Front and rear rings plus two connected support arms");
 assert.deepEqual(center.elements[0].from,[4,10,2]);

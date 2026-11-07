@@ -135,3 +135,14 @@ still requires JDK17 Gradle compilation and in-game acceptance.
 
 The rotating shaft is 0.92 blocks long, so its matching Voxel V2
 collision spans z=0.64–15.36 pixels, not the complete 16px cell.
+
+### Formation-dependent controller model
+
+The unformed controller now uses a compact, block-local forged shaft and
+journal housing, with 1:1 UVs and an exact 6×6×6 collision core. The
+completed multiblock instead uses the two separate supported bearing
+rings. All four `facing` blockstate variants select the correct model
+when the `is_formed` state changes. The item model also uses the compact
+controller. This avoids rendering unsupported/floating bearing rings
+before the foundations exist, without drawing a second stationary shaft
+when the formed renderer animates its own axle.

@@ -1,7 +1,7 @@
 {
   "variants": {
     "facing=south,is_formed=false": {
-      "model": "magneticraft2:block/iron_flywheel_controller",
+      "model": "magneticraft2:block/iron_flywheel_controller_unformed",
       "y": 0
     },
     "facing=south,is_formed=true": {
@@ -9,7 +9,7 @@
       "y": 0
     },
     "facing=west,is_formed=false": {
-      "model": "magneticraft2:block/iron_flywheel_controller",
+      "model": "magneticraft2:block/iron_flywheel_controller_unformed",
       "y": 90
     },
     "facing=west,is_formed=true": {
@@ -17,7 +17,7 @@
       "y": 90
     },
     "facing=north,is_formed=false": {
-      "model": "magneticraft2:block/iron_flywheel_controller",
+      "model": "magneticraft2:block/iron_flywheel_controller_unformed",
       "y": 180
     },
     "facing=north,is_formed=true": {
@@ -25,7 +25,7 @@
       "y": 180
     },
     "facing=east,is_formed=false": {
-      "model": "magneticraft2:block/iron_flywheel_controller",
+      "model": "magneticraft2:block/iron_flywheel_controller_unformed",
       "y": 270
     },
     "facing=east,is_formed=true": {
