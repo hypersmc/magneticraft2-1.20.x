@@ -582,3 +582,18 @@ No machine block, new metal tier, machining output or torque rule changes.
 Vanilla assembly currently does not copy toolholder quality to the cutter.
 See `docs/iron-age-precision-tooling-acceptance.md` for regression tests.
 Source implementation only; Gradle build, Node fixture and in-game tests pending.
+
+## Mechanical Metal Shear — high-load source integration audit (2026-11-08)
+
+The Large Water Wheel is **24-tooth** at its external rim but has a separate
+axle connection. Its 8–16 torque / 18–24 RPM source range means a 24→8 gear
+mesh delivers at most 5.33 torque and a 24→16 mesh at most 10.67: neither
+can run a 12-torque Shear even with Iron parts. Test a genuine 1:1 axle/shaft
+path first, then compare equivalent-ratio wood (8 capacity) and Iron (16+)
+paths. Do not misdiagnose ratio loss as material-capacity failure.
+
+The source-copied independent Shear motion classes compiled under Java 17 and
+passed 1,441 linkage poses in this session. No complete ForgeGradle build,
+contract-fixture run from the full checkout or Minecraft end-to-end runtime
+test occurred. The source integration checklist is documented in
+`docs/iron-age-stock-shear-acceptance.md`; PR #18 remains draft.

@@ -103,3 +103,81 @@ final quality; machine uses 18 authored SOUTH pieces and a dedicated
 rotated-model builder rather than new Studio-authored geometry.
 Quality-derived frame/block strength or wear is not invented.
 No Steel-age machinery or multiplayer testing has been started.
+
+## High-load integration checkpoint — 2026-11-08
+
+**Source audit:** The existing Large Water Wheel has a **24-tooth rim**
+(`WaterWheelBlockEntity.getGearTeeth()`), 18–24 RPM and 8–16 torque
+depending on water-drive engagement. The Mechanical Input Module handles
+16 torque, Wrought Iron Gearbox 16, Iron Shaft 24 and Iron Medium Gear 16;
+the equivalent Wooden Medium Gear and Wooden Right-Angle Gearbox are rated
+only 8. These are **component limits**, not guaranteed delivered power.
+
+Gear V2 increases RPM when a larger gear meshes with a smaller one, while
+available torque drops by the inverse ratio. At full water drive, directly
+meshing the large wheel's **24-tooth rim** to an 8-tooth medium gear gives
+a 3:1 speed-up and at most **5.33 torque**. A direct rim mesh with the
+16-tooth Iron Large Gear gives a 1.5:1 speed-up and at most **10.67 torque**.
+**Neither can supply the Shear's 12-torque requirement**, even with Iron
+parts. This is not evidence of a machine or material-capacity bug.
+
+**First successful path:** use the wheel's shaft-like axle and an
+uninterrupted **1:1 ratio** through a supported Iron Shaft / Iron Gearbox
+path to the formed Shear's real Mechanical Input Module. On the wheel's
+current provisional balance curve, 50% drive engagement yields **12 torque
+at 21 RPM** at the wheel, and full engagement up to **16 torque at 24
+RPM**. Those values are upstream theoretical supplies, not Minecraft
+measurements; use the in-world machine diagnostic to confirm the load is
+actually supplied after all real connections and competing consumers.
+
+**Separate material comparison:** after proving delivered >8 torque, use
+a genuinely equivalent-ratio path that includes a Wooden Medium Gear /
+Wooden Gearbox (8 maximum), and compare with the Iron counterparts.
+Avoid treating a gear-ratio change as a material upgrade. Do not
+temporarily override water-wheel power or machine requirements.
+
+**Actual current verification:** The independent source-copied
+`IronShearMotion.java` and `ShearMotionTest.java` compiled with
+`javac --release 17` and passed the **1,441-pose constant-length
+linkage test** in this session. The existing Shear, Forge Hammer and
+Frame recipe definitions, machine IDs, 1:1 input-module capacity and
+material flow were inspected via authenticated GitHub source reads.
+The source/JSON contract suite and complete JDK17 `./gradlew build`
+remain unrun because the assistant container cannot resolve GitHub
+to obtain the entire repository checkout. No actual Minecraft driven
+Shear / Forge / Frame end-to-end test was performed.
+
+### Required single-player test sequence
+
+1. Form the Shear from Patchouli in SOUTH; inspect the real input,
+   output, item ports, top-center AIR and shafts. Repeat other facings.
+2. Power **only the Shear**, from a realistically flowing Large Water
+   Wheel via an axle/1:1 Iron path. Check controller diagnostics for
+   >=16 RPM, >=12 locally delivered torque, source aggregate demand
+   <= source capacity, and `load supplied: true`. Keep the Hammer
+   disconnected during this first source-load test.
+3. Insert one Wrought Iron Rod via its real port. Confirm 180 supplied
+   ticks produce **four Iron Rivet Blanks**, not four finished rivets,
+   with one blade wear cycle. No output if the source stalls.
+4. Feed **four matching blanks** to the existing Forge Hammer at
+   >=20 RPM / 6 torque for 120 supplied ticks to make **four headed
+   Iron Rivets**. Check its die wears once and quality NBT follows.
+5. Craft a Riveted Iron Frame from **four finished Rivets + four
+   Wrought Iron Bars**, then inspect survival craft, drop and model.
+6. Repeat with a genuine wooden 8-torque bottleneck at the *same
+   effective ratio*. Check that it cannot supply 12 torque. Separately
+   try a direct **24-to-8 rim gear mesh**: it should fail due to the
+   3:1 ratio, even when the medium gear is Iron.
+7. Test interrupted power, output backpressure, 512-batch blade
+   expiry/replacement, save/reload and unformation. Check no item
+   duplication, lost quality or phantom processing.
+8. Re-run older Bronze Forge Hammer routes and Iron sheet rolling.
+   Measure rendering and inspect crank/blade/port geometry from
+   multiple angles; no invisible connections, stretching or severe FPS
+   drop is accepted.
+
+Run `node tools/iron-age/check-stock-shear-contract.mjs`,
+the independent Java linkage test, and `./gradlew build` in a full
+JDK17 checkout. Save the actual logs before marking the whole line
+verified. Multiplayer-specific work stays deferred until after Steam
+Age and PR #18 remains draft.

@@ -209,5 +209,61 @@ assert.ok(reg.includes('BLOCKS.register("bronze_mechanical_press"'));
 assert.ok(beReg.includes('BLOCK_ENTITIES.register("bronze_mechanical_press"'));
 assert.ok(java('common/blockentity/stage/bronze/BronzeMechanicalPressBlockEntity.java')
  .includes('ITEM_BRONZE_PRESS_DIE::get'));
+
+ // High-load source-to-consumer integration: the Large Wheel exposes a
+ // 24-tooth RIM but can also connect directly via its shaft-like axle.
+ // Wheel-to-gear meshing and axle/shaft transmission are not equivalent.
+ const wheel=java('common/blockentity/stage/copper/WaterWheelBlockEntity.java');
+ const network=java('common/systems/GEAR/GearNetworkManager.java');
+ const inputModule=java('common/blockentity/stage/copper/MechanicalInputModuleBlockEntity.java');
+ const ironMedium=java('common/blockentity/stage/iron/WroughtIronMediumGearBlockEntity.java');
+ const woodMedium=java('common/blockentity/stage/copper/MediumGearBlockEntity_wood.java');
+ const ironLarge=java('common/blockentity/stage/iron/WroughtIronLargeGearBlockEntity.java');
+ const ironBox=java('common/blockentity/stage/iron/WroughtIronGearboxBlockEntity.java');
+ const ironShaft=java('common/blockentity/stage/iron/WroughtIronShaftBlockEntity.java');
+ assert.ok(wheel.includes('return isLarge() ? 24 : 8;'),'Wheel rim uses 24/8 tooth topology');
+ assert.ok(wheel.includes('return isLarge() ? 16.0F : 6.0F;'),'Wheel max torque');
+ assert.ok(wheel.includes('return true;')&&wheel.includes('boolean isShaftLike()'),'Wheel supports axle connection');
+ for(const text of [
+   'float minRpm = isLarge() ? 18.0F : 12.0F;',
+   'float maxRpm = isLarge() ? 24.0F : 16.0F;',
+   'float minTorque = isLarge() ? 8.0F : 3.0F;',
+   'float maxTorque = isLarge() ? 16.0F : 6.0F;',
+   'float rpm = minRpm + (maxRpm - minRpm) * engagement;',
+   'float torque = minTorque + (maxTorque - minTorque) * engagement;'
+ ]) assert.ok(wheel.includes(text),'Wheel drive equation drifted: '+text);
+ assert.ok(network.includes('current.getTeeth() / (float) neighbor.getTeeth()'),
+  'Meshed gear RPM uses tooth ratio');
+ assert.ok(network.includes('current.getTorque() / Math.max(TORQUE_EPSILON, ratio)'),
+  'Torque must fall with RPM speed-up');
+ assert.ok(network.includes('connection.kind() == ConnectionKind.SHAFT'),
+  'Axial connection expected to be 1:1');
+ assert.ok(ironMedium.includes('return 16.0F;'));
+ assert.ok(woodMedium.includes('return 8.0F;'));
+ assert.ok(ironLarge.includes('return 24.0F;'));
+ assert.ok(ironBox.includes('return 16.0F;'));
+ assert.ok(ironShaft.includes('return 24.0F;'));
+ assert.ok(inputModule.includes('return 16.0F;'));
+ const neededTorque=stock.mechanical.torque,neededRpm=stock.mechanical.min_speed;
+ const atEngagement=e=>({torque:8+8*e,rpm:18+6*e});
+ const atHalf=atEngagement(.5),atFull=atEngagement(1);
+ assert.ok(atHalf.torque>=neededTorque&&atHalf.rpm>=neededRpm,
+  'Large Wheel at 50% engagement can supply 1:1 shear load');
+ assert.ok(atEngagement(.49).torque<neededTorque,
+  'Below 50% engagement cannot supply 12 torque on 1:1 path');
+ const meshed=(wheelTorque,drivenTeeth,capacity)=>
+  Math.min(wheelTorque/(24/drivenTeeth),capacity);
+ assert.ok(meshed(atFull.torque,8,16)<neededTorque,
+  '24-tooth wheel to 8-tooth Iron gear loses too much torque');
+ assert.ok(meshed(atFull.torque,16,24)<neededTorque,
+  '24-tooth wheel to 16-tooth Iron gear also loses too much torque');
+ assert.equal(meshed(atFull.torque,8,16),16/3);
+ assert.equal(meshed(atFull.torque,16,24),32/3);
+ assert.ok(Math.min(atFull.torque,8)<neededTorque,
+  'Wood medium gear must still limit a genuinely 1:1 high-torque path');
+ assert.ok(Math.min(atFull.torque,16)>=neededTorque,
+  'Iron medium gear can carry 12 torque on a 1:1 path');
+ assert.ok(atFull.rpm>=neededRpm);
+
 console.log('Iron III-A Stock Shear source/JSON/UV contract PASS; '+parts+
  ' parts, '+faces+' native UV faces (NOT a Forge build or in-game test).');
