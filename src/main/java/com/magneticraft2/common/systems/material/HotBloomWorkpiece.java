@@ -26,6 +26,10 @@ public final class HotBloomWorkpiece {
             new ResourceLocation("magneticraft2", "reheat_wrought_iron_ingot");
     private static final ResourceLocation REHEAT_WROUGHT_BAR_RECIPE =
             new ResourceLocation("magneticraft2", "reheat_wrought_iron_bar");
+    private static final ResourceLocation HEARTH_INGOTS =
+            new ResourceLocation("magneticraft2", "hearth_reheat_wrought_iron_ingots");
+    private static final ResourceLocation HEARTH_BARS =
+            new ResourceLocation("magneticraft2", "hearth_reheat_wrought_iron_bars");
 
     private HotBloomWorkpiece() {}
 
@@ -36,7 +40,13 @@ public final class HotBloomWorkpiece {
                 || (REHEAT_WROUGHT_INGOT_RECIPE.equals(recipe.getId())
                     && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get()))
                 || (REHEAT_WROUGHT_BAR_RECIPE.equals(recipe.getId())
-                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get()));
+                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get()))
+                || (HEARTH_INGOTS.equals(recipe.getId())
+                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())
+                    && recipe.getInputCount() == 4 && recipe.getOutput().getCount() == 4)
+                || (HEARTH_BARS.equals(recipe.getId())
+                    && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get())
+                    && recipe.getInputCount() == 4 && recipe.getOutput().getCount() == 4);
     }
 
     public static boolean requiresHeat(MultiblockProcessingRecipe recipe) {

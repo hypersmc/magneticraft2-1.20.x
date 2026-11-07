@@ -215,6 +215,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_IRON_FLOOR_GRATING = fromBlock(IRON_FLOOR_GRATING);
     public static final RegistryObject<Item> ITEM_IRON_CATWALK_RAILING = fromBlock(IRON_CATWALK_RAILING);
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
+    public static final RegistryObject<Item> ITEM_IRON_FORGE_HEARTH = fromBlock(IRON_FORGE_HEARTH);
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
             ITEMS.register("unfired_refractory_batch", () -> new Item(new Item.Properties()));

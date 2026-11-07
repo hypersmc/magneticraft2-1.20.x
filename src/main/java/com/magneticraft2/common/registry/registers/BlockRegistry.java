@@ -66,6 +66,7 @@ import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
 import com.magneticraft2.common.block.stage.iron.IronFloorGratingBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
+import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -173,6 +174,8 @@ public class BlockRegistry {
             BLOCKS.register("bloomery_furnace", BloomeryFurnaceBlock::new);
     public static final RegistryObject<RefractoryKilnBlock> REFRACTORY_KILN =
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
+    public static final RegistryObject<IronForgeHearthBlock> IRON_FORGE_HEARTH =
+            BLOCKS.register("iron_forge_hearth", IronForgeHearthBlock::new);
     public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =
             BLOCKS.register("ore_roasting_kiln", OreRoastingKilnBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =

@@ -17,6 +17,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockE
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
@@ -254,6 +255,8 @@ public class MultiblockItemPortBlockEntity
         // Iron Blooms. Only accept matching items through its real port.
         if(controller instanceof com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity kiln)
             return kiln.acceptsRecipeInput(stack);
+        if(controller instanceof IronForgeHearthBlockEntity hearth)
+            return hearth.acceptsRecipeInput(stack);
         if (controller instanceof OreRoastingKilnBlockEntity roaster)
             return roaster.acceptsRecipeInput(stack);
         if (controller instanceof BloomeryFurnaceBlockEntity bloomery)

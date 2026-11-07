@@ -579,5 +579,11 @@
   "item.magneticraft2.iron_gear_blank_large": "Assembled Large Iron Gear Blank",
   "item.magneticraft2.precision_iron_gear_large": "Machined Large Iron Gear",
   "item.magneticraft2.wrought_iron_gear_large": "Wrought Iron Large Gear",
-  "block.magneticraft2.wrought_iron_gear_large": "Wrought Iron Large Gear"
+  "block.magneticraft2.wrought_iron_gear_large": "Wrought Iron Large Gear",
+  "block.magneticraft2.iron_forge_hearth": "Iron Forge Hearth",
+  "item.magneticraft2.iron_forge_hearth": "Iron Forge Hearth",
+  "message.magneticraft2.iron_forge_hearth.incomplete": "Incomplete Iron Forge Hearth. Check the book.",
+  "message.magneticraft2.iron_forge_hearth.fuel_added": "Solid fuel queued.",
+  "message.magneticraft2.iron_forge_hearth.fuel_rejected": "Use matching solid furnace fuel (max 16).",
+  "message.magneticraft2.iron_forge_hearth.status": "Hearth fuel %s | burn %s | HEAT %s/%s | progress %s/%s | input %s | output %s"
 }

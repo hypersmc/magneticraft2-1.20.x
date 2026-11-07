@@ -1,0 +1,65 @@
+{
+  "name": "iron_forge_hearth_south",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "F",
+          "F"
+        ],
+        [
+          "B",
+          "F",
+          "B"
+        ],
+        [
+          "U",
+          "C",
+          "O"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "B": "minecraft:bricks",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:iron_forge_hearth",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/iron_forge_hearth_south",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [],
+    "voxel_profile": "magneticraft2:iron_forge_hearth"
+  }
+}

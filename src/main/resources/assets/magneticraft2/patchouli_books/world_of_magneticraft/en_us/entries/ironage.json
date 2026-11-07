@@ -234,6 +234,48 @@
       "title": "Riveted Iron Casing",
       "recipe": "magneticraft2:riveted_iron_casing",
       "text": "Enclose one Riveted Iron Frame with SIX Wrought Iron Plates to make a solid machine casing. Cut and head the rivets first using the Mechanical Metal Shear and existing Forge Hammer. Unlike the open Frame or thin Iron Plate Panel, this block is fully enclosed factory construction, using no extra machine or power source."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron IV-A — Forge Hearth$()$(br2)The Refractory Kiln continues to fire ceramics and reheat single Blooms, Ingots and Bars. The open Hearth instead heats FOUR matching Wrought Iron Ingots or FOUR matching Wrought Iron Bars in 360 supplied HEAT ticks. The whole stack receives the existing temporary hot-state timer and preserves its quality NBT; use it in the existing Forge Hammer or Rolling Mill. Blooms still use the Kiln."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Forge Hearth",
+      "recipe": "magneticraft2:iron_forge_hearth",
+      "text": "Craft the controller with 4 Wrought Iron Plates, 2 Iron Structural Beams, 2 Fired Refractory Ceramics and 1 Riveted Iron Frame. No new metal and no circular dependency."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Iron Forge Hearth",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "FFF",
+            "BFB",
+            "O0U"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:iron_forge_hearth",
+          "F": "magneticraft2:iron_machine_foundation",
+          "B": "minecraft:bricks",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "U": "magneticraft2:multiblock_item_input"
+        },
+        "symmetrical": false
+      },
+      "text": "3x3x2 construction. Bottom rear is 3 Iron Foundations, center brick–foundation–brick, and front genuine output–controller–input modules. Top ring has eight brick blocks and ONE required open AIR cell. The book preview mirrors left/right relative to SOUTH JSON for a player facing the controller. Right-click the controller to form."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Heating and fuel$()$(br2)Insert exactly FOUR matching wrought Iron Ingots or Bars at the input port. Right-click the controller with normal solid furnace fuel to queue up to 16 matching items. The batch needs stored HEAT for 360 processing ticks; blocked output pauses processing and new fuel ignition, while burning fuel completes its burn. Extract FOUR hot pieces from the output port. Sneak-right-click empty-handed to recover queued unused fuel. This open hearth uses natural draft; powered AIR is not implemented."
     }
   ],
   "sortnum": 4,
