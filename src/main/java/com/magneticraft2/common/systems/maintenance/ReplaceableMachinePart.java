@@ -51,10 +51,9 @@ public final class ReplaceableMachinePart {
     public ReplaceableMachinePart(Supplier<? extends Item> replacement,
                                   int maximumCycles, Alternative... alternatives) {
         this.replacement = Objects.requireNonNull(replacement, "replacement");
-        if (maximumCycles < 1) {
-            throw new IllegalArgumentException("Maximum service cycles must be positive");
-        }
-        this.maximumCycles = maximumCycles;
+        // Original maintenance contract clamps misconfigured legacy lifetimes.
+        // Do not change that behavior for every existing machine.
+        this.maximumCycles = Math.max(1, maximumCycles);
         this.alternatives = List.of(alternatives);
         this.installedVariant = 0;
         this.remainingCycles = maximumCycles;

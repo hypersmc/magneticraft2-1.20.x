@@ -4,8 +4,10 @@
 **Base:** `master` immediately after Bronze PR #11 merge
 (`5e5cb3440daa8bd642574c5f473bc5028fecfcb0`, 2026-11-04).
 **Branch:** `feature/iron-age-foundations`.
-**Next milestone:** *use the first Wrought Iron Ingot for a meaningful,
-installed upgrade of an existing working machine or mechanical power network*.
+**Current K1 implementation:** a Wrought Iron forging die gives the
+existing Bronze Forge Hammer a longer service lifetime (768 vs 384
+completed batches). Next is in-game verification, followed by an
+independently justified stronger drivetrain application.
 
 ## What is already working (not to be recreated)
 
@@ -71,11 +73,11 @@ verify item display/model and Patchouli/JEI crafting.
 
 **Status:** source candidate only until build and player in-game tests.
 
-## Proposed milestone sequence (not yet approved or implemented)
+## Next proposed milestones (following the source-implemented Iron 0A)
 
-### Iron 0 — practical use for Wrought Iron (first implementation target)
+### Iron 0B — investigate stronger transmission after first Iron tooling
 
-**Candidate pilot:** the first *Wrought Iron powertrain upgrade*
+**Future candidate:** a *Wrought Iron powertrain upgrade*
 (for example a stronger geared transmission part, bearing/coupling, or
 shaft in a genuinely demanding configuration). It must be made from
 the existing Bronze workshop's Wrought Iron output and solve a measurable
@@ -119,8 +121,11 @@ Acceptance criteria:
       recipe, JEI, Patchouli and all horizontal/vertical orientations.
 - [ ] `./gradlew build` and in-game regression, not just static inspection.
 
-**Decision required before K1:** first item type and numerical
-transmission/durability contract. Do not invent this silently.
+**Decision required before the transmission K1:** first drivetrain part
+and numerical transmission/durability contract. The Forge Hammer's
+Wrought Iron die is the first actual Iron 0A item, with its own
+explicitly documented 384 → 768 wear benefit. Do not assign
+unstated torque improvements to other Iron parts.
 
 ### Iron I — wrought-iron manufacturing
 
@@ -185,15 +190,18 @@ until the Steel Age contract is decided.
 
 ## First practical engineering checkpoint
 
-1. Confirm PR #11 has actually merged and use its `master` commit as base.
-2. Audit the existing Gear V2 shaft/gear/overload limits and identify the
-   smallest safe iron material upgrade compatible with real existing
-   machines. Include why a wooden shaft is insufficient in that test.
-3. Agree the first Iron part's gameplay role and mechanical limits.
-4. Implement *one* end-to-end loop (Wrought Iron → useful installed
-   component) with the existing recipe/JEI/book/data-driven patterns.
-5. Run JDK 17 `./gradlew build`, in-game placement, power, wear,
-   render/facing and old-world regressions; only then grow Iron I.
+1. [x] Base PR #18 on merged Bronze PR #11 and preserve the refactor PR #17.
+2. [x] Audit the existing Gear V2 shaft/gear limits without changing them.
+3. [x] Implement one first end-to-end Wrought Iron → forging die →
+   installed upgrade loop through existing crafting and Forge Hammer
+   maintenance, including JEI/Patchouli and a textured 3D item model.
+4. [ ] Compile with JDK 17 `./gradlew build`; test new/old maintenance
+   data, item wear/replacement and visuals in Minecraft.
+5. [ ] After the die is accepted, evaluate the real high-load network
+   bottleneck and select a useful forged Iron drivetrain part before
+   growing Iron I/II.
 
-**This kickoff is a planning artifact, not an Iron Age gameplay feature,
-not a merged code change, and not a claim of build or runtime validation.**
+**Status:** PR #18 contains the first Iron Age gameplay source candidate
+(the Wrought Iron Forge Die). The implementation has NOT been confirmed by
+an actual Gradle build or in-game use and is not merge-ready. Future Iron
+drivetrain upgrades remain proposals, not registered features.
