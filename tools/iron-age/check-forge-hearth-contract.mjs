@@ -36,7 +36,7 @@ assert.equal(rec.process_time,360);
 const phys=json("data/magneticraft2/multiblock_voxels/"+id+".json");
 assert.equal(phys.format,1);
 assert.equal(phys.unit,"model_pixels");
-assert.equal(phys.collision.length,26);
+assert.equal(phys.collision.length,33);
 const orientations=["south","west","north","east"];
 const canonical=[["FFF","BFB","UCO"],["BBB","BAB","BBB"]];
 const expectedCounts={F:4,B:10,U:1,O:1,C:1,A:1};
@@ -54,8 +54,24 @@ for(let y=0;y<2;y++)for(let z=0;z<3;z++)for(let x=0;x<3;x++){
  const ch=layers[y][z][x];if(!["B","F"].includes(ch))continue;
  const [dx,dy,dz]=[x-controller[0],y-controller[1],z-controller[2]];
  const model=json("assets/magneticraft2/models/multiblock/"+id+"_"+facing+"/part_"+dx+"_"+dy+"_"+dz+".json");
- assert.equal(model.parent,"minecraft:block/cube_all");
- assert.ok(model.textures.all.startsWith("magneticraft2:block/refractory_kiln/"));
+ if(y===1&&ch==="B"){
+  assert.equal(model.parent,"minecraft:block/block");
+  assert.equal(model.textures.brick,"magneticraft2:block/refractory_kiln/brick");
+  assert.ok(model.elements.length>=1);
+  for(const e of model.elements){
+   assert.ok(e.to[1]<=11,"The formed rim must stay below the visible stock rests");
+   const [w,h,d]=e.to.map((v,i)=>v-e.from[i]);
+   assert.ok([w,h,d].every(v=>v>0));
+   for(const [face,f] of Object.entries(e.faces)){
+    const dims=["up","down"].includes(face)?[w,d]:
+       ["east","west"].includes(face)?[d,h]:[w,h];
+    assert.deepEqual([f.uv[2]-f.uv[0],f.uv[3]-f.uv[1]],dims);
+   }
+  }
+ }else{
+  assert.equal(model.parent,"minecraft:block/cube_all");
+  assert.ok(model.textures.all.startsWith("magneticraft2:block/refractory_kiln/"));
+ }
  }
 }
 const book=json("assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json");
@@ -72,17 +88,38 @@ faces++;
 }}
 // A in the blueprint is a required EMPTY block only while constructing.
 // After formation it is the standard saved/rendered V2 filler proxy.
+// Every formed SOUTH brick collider comes from its matching baked model.
+// The floor and the AIR chamber keep their original positions.
+let rimIndex=9;
+const southBp=json("data/magneticraft2/multiblocks/"+id+"_south.json");
+for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+ if(southBp.structure.layout.layer2[z][x]!=="B")continue;
+ const model=json("assets/magneticraft2/models/multiblock/"+id+
+  "_south/part_"+(x-1)+"_1_"+(z-2)+".json");
+ for(const elem of model.elements){
+  const translated=[...elem.from.map((v,k)=>v+[x-1,1,z-2][k]*16),
+   ...elem.to.map((v,k)=>v+[x-1,1,z-2][k]*16)];
+  assert.deepEqual(phys.collision[rimIndex++],translated,
+   "No invisible full-height former brick collision");
+ }
+}
+assert.equal(rimIndex,24,"8 original top bricks become 15 low shaped pieces");
+const frontMouth=json("assets/magneticraft2/models/multiblock/"+id+
+ "_south/part_0_1_0.json");
+assert.equal(frontMouth.elements.length,5,"Front heating mouth must be open");
+assert.ok(frontMouth.elements.some(e=>e.to[1]===2));
+
 const airOffsets={south:[0,1,-1],west:[1,1,0],north:[0,1,1],east:[-1,1,0]};
 const chamberSouth=json("assets/magneticraft2/models/multiblock/"+id+"_south/part_0_1_-1.json");
 assert.equal(chamberSouth.parent,"minecraft:block/block");
 assert.equal(chamberSouth.elements.length,15);
 assert.equal(chamberSouth.textures.coal,"minecraft:block/coal_block");
 const physical=[0,2,3,4,5,11,12,13,14]; // all structural; coal is decorative.
-assert.equal(phys.collision.length,17+physical.length);
+assert.equal(phys.collision.length,9+15+physical.length);
 assert.deepEqual(phys.selection,phys.collision);
 for(let i=0;i<physical.length;i++){
  const shape=chamberSouth.elements[physical[i]];
- assert.deepEqual(phys.collision[17+i],[
+ assert.deepEqual(phys.collision[24+i],[
   ...shape.from.map((v,k)=>v+airOffsets.south[k]*16),
   ...shape.to.map((v,k)=>v+airOffsets.south[k]*16)
  ],"V2 selection/collision must match visual load-bearing hearth part");
