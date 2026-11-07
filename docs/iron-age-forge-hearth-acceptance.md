@@ -67,3 +67,13 @@ a full batch. Individual ingots, bars, and Blooms continue through Kiln.
 
 **Verification:** No Forge compile or in-game test performed by this source
 commit. Leave PR #18 draft and unmerged.
+
+## Studio concept reference
+
+`docs/reference/iron-forge-hearth-studio.svg` is the accepted **source-based
+concept layout**, not a model or runtime screenshot. The earlier generated
+mockups depicting mechanical gears, forced bellows, chimneys, degrees Celsius,
+steel refining or RPM requirements are inaccurate and rejected. This sheet
+illustrates exactly the 3×3×2 SOUTH blueprint, its real ports and air chamber,
+its 4-input/4-hot-output HEAT route, controller fuel and blocked state. All
+final art is still assigned to MGC2 Studio. Patchouli is authoritative.

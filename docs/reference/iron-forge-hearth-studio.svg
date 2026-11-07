@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#202b2b"/><stop offset="1" stop-color="#081013"/></linearGradient>
+<linearGradient id="panel" x2=".9" y2="1"><stop stop-color="#283336"/><stop offset="1" stop-color="#131b1c"/></linearGradient>
+<radialGradient id="glow"><stop stop-color="#e17b38" stop-opacity=".55"/><stop offset="1" stop-color="#e17b38" stop-opacity="0"/></radialGradient>
+<pattern id="lines" width="35" height="35" patternUnits="userSpaceOnUse"><path d="M35,0H0V35" fill="none" stroke="#ffffff" stroke-opacity=".04"/></pattern>
+</defs>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="url(#bg)" stroke="none" stroke-width="1"/>
+<rect x="0" y="0" width="1600" height="900" rx="0" fill="url(#lines)" stroke="none" stroke-width="1"/>
+<rect x="25" y="25" width="1560" height="125" rx="13" fill="#030708" stroke="none" stroke-width="1"/>
+<rect x="20" y="18" width="1560" height="125" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
+<circle cx="95" cy="81" r="42" fill="#756d5a" stroke="#e4a651" stroke-width="5"/><circle cx="95" cy="81" r="28" fill="#192629" stroke="#e4a651" stroke-width="2"/>
+<text x="95" y="94" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="850" fill="#f5b05e" text-anchor="middle">M</text>
+<text x="158" y="85" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="800" fill="#f0eee8" text-anchor="start">MAGNETICRAFT</text>
+<text x="519" y="85" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="900" fill="#f5ad45" text-anchor="start">2</text>
+<text x="160" y="116" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="700" fill="#b2c6c2" text-anchor="start">IRON AGE IV-A  •  WORKSHOP REHEATING</text>
+<rect x="1174" y="49" width="365" height="62" rx="12" fill="#302b26" stroke="#9a7949" stroke-width="2"/>
+<text x="1357" y="90" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="800" fill="#f9c884" text-anchor="middle">IRON FORGE HEARTH</text>
+<rect x="30" y="167" width="790" height="538" rx="13" fill="#030708" stroke="none" stroke-width="1"/>
+<rect x="25" y="160" width="790" height="538" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
+<rect x="840" y="167" width="740" height="385" rx="13" fill="#030708" stroke="none" stroke-width="1"/>
+<rect x="835" y="160" width="740" height="385" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
+<rect x="840" y="564" width="740" height="312" rx="13" fill="#030708" stroke="none" stroke-width="1"/>
+<rect x="835" y="557" width="740" height="312" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
+<rect x="30" y="717" width="790" height="159" rx="13" fill="#030708" stroke="none" stroke-width="1"/>
+<rect x="25" y="710" width="790" height="159" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
+<text x="55" y="202" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">THE MACHINE — ISOMETRIC CONCEPT</text>
+<text x="55" y="229" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c4d0cc" text-anchor="start">No gears, bellows, chimney or mechanical power connection</text>
+<rect x="45" y="246" width="750" height="431" rx="11" fill="#142022" stroke="none" stroke-width="1"/>
+<ellipse cx="419" cy="470" rx="312" ry="192" fill="url(#glow)"/>
+<polygon points="355,367 428,402 428,329 355,294" fill="#435258" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,367 428,402 428,329 501,294" fill="#35444b" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,259 501,294 428,329 355,294" fill="#89969a" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M360,350 l56,28" fill="none" stroke="#b3c4c4" stroke-width="1.5" opacity=".5"/>
+<polygon points="355,294 428,329 428,256 355,221" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,294 428,329 428,256 501,221" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,186 501,221 428,256 355,221" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M373,284 l36,18 M360,274 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="428,402 501,437 501,364 428,329" fill="#435258" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,402 501,437 501,364 574,329" fill="#35444b" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,294 574,329 501,364 428,329" fill="#89969a" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M433,385 l56,28" fill="none" stroke="#b3c4c4" stroke-width="1.5" opacity=".5"/>
+<polygon points="282,402 355,437 355,364 282,329" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,402 355,437 355,364 428,329" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,294 428,329 355,364 282,329" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M300,392 l36,18 M287,382 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="428,329 501,364 501,291 428,256" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,329 501,364 501,291 574,256" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,221 574,256 501,291 428,256" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M446,319 l36,18 M433,309 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="282,329 355,364 355,291 282,256" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,329 355,364 355,291 428,256" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,221 428,256 355,291 282,256" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M300,319 l36,18 M287,309 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="501,437 574,472 574,399 501,364" fill="#435258" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="647,437 574,472 574,399 647,364" fill="#35444b" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,329 647,364 574,399 501,364" fill="#89969a" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M506,420 l56,28" fill="none" stroke="#b3c4c4" stroke-width="1.5" opacity=".5"/>
+<polygon points="355,437 428,472 428,399 355,364" fill="#435258" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,437 428,472 428,399 501,364" fill="#35444b" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,329 501,364 428,399 355,364" fill="#89969a" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M360,420 l56,28" fill="none" stroke="#b3c4c4" stroke-width="1.5" opacity=".5"/>
+<polygon points="209,437 282,472 282,399 209,364" fill="#367da2" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,437 282,472 282,399 355,364" fill="#315975" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="282,329 355,364 282,399 209,364" fill="#6b9ab2" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="209,418.75 282,453.75 282,415.06 209,380.06" fill="#234157" stroke="#d6aa6a" stroke-width="1.6"/>
+<text x="245.5" y="420.905" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="800" fill="#abe6fb" text-anchor="middle">IN</text>
+<polygon points="501,364 574,399 574,326 501,291" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="647,364 574,399 574,326 647,291" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,256 647,291 574,326 501,291" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M519,354 l36,18 M506,344 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="209,364 282,399 282,326 209,291" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,364 282,399 282,326 355,291" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="282,256 355,291 282,326 209,291" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M227,354 l36,18 M214,344 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="428,472 501,507 501,434 428,399" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,472 501,507 501,434 574,399" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,364 574,399 501,434 428,399" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M446,462 l36,18 M433,452 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="282,472 355,507 355,434 282,399" fill="#5a534d" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,472 355,507 355,434 428,399" fill="#363636" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,364 428,399 355,434 282,399" fill="#8f8e86" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="282,453.75 355,488.75 355,450.06000000000006 282,415.06" fill="#312724" stroke="#d6aa6a" stroke-width="1.6"/>
+<text x="318.5" y="455.90500000000003" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="800" fill="#ffbe64" text-anchor="middle">FUEL</text>
+<polygon points="428,399 501,434 501,361 428,326" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="574,399 501,434 501,361 574,326" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,291 574,326 501,361 428,326" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M446,389 l36,18 M433,379 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="282,399 355,434 355,361 282,326" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,399 355,434 355,361 428,326" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,291 428,326 355,361 282,326" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M300,389 l36,18 M287,379 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<polygon points="355,507 428,542 428,469 355,434" fill="#b47447" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,507 428,542 428,469 501,434" fill="#8b5038" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,399 501,434 428,469 355,434" fill="#d4a275" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="355,488.75 428,523.75 428,485.05999999999995 355,450.06000000000006" fill="#4f3128" stroke="#d6aa6a" stroke-width="1.6"/>
+<text x="391.5" y="490.905" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="800" fill="#ffc58d" text-anchor="middle">OUT</text>
+<polygon points="355,434 428,469 428,396 355,361" fill="#8e4f42" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="501,434 428,469 428,396 501,361" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
+<polygon points="428,326 501,361 428,396 355,361" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
+<path d="M373,424 l36,18 M360,414 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
+<text x="61" y="653" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="700" fill="#f4c98d" text-anchor="start">CONCEPT ONLY — 17 SOLID CELLS + ONE OPEN AIR CELL</text>
+<text x="61" y="675" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="500" fill="#afc2c0" text-anchor="start">Construct the exact structure using Patchouli’s in-game preview.</text>
+<text x="862" y="202" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">JSON CONSTRUCTION — SOUTH FACING</text>
+<text x="862" y="228" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c6d1ca" text-anchor="start">Canonical layer order: rear row to front row</text>
+<text x="867" y="272" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#f2d8ba" text-anchor="start">BOTTOM — LAYER 1</text>
+<rect x="867" y="289" width="68" height="62" rx="5" fill="#89969a" stroke="#7a817f" stroke-width="1"/>
+<text x="901" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">F</text>
+<rect x="943" y="289" width="68" height="62" rx="5" fill="#89969a" stroke="#7a817f" stroke-width="1"/>
+<text x="977" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">F</text>
+<rect x="1019" y="289" width="68" height="62" rx="5" fill="#89969a" stroke="#7a817f" stroke-width="1"/>
+<text x="1053" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">F</text>
+<rect x="867" y="358" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="901" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="943" y="358" width="68" height="62" rx="5" fill="#89969a" stroke="#7a817f" stroke-width="1"/>
+<text x="977" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">F</text>
+<rect x="1019" y="358" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1053" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="867" y="427" width="68" height="62" rx="5" fill="#6b9ab2" stroke="#7a817f" stroke-width="1"/>
+<text x="901" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">U</text>
+<rect x="943" y="427" width="68" height="62" rx="5" fill="#8f8e86" stroke="#7a817f" stroke-width="1"/>
+<text x="977" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">C</text>
+<rect x="1019" y="427" width="68" height="62" rx="5" fill="#d4a275" stroke="#7a817f" stroke-width="1"/>
+<text x="1053" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">O</text>
+<text x="1210" y="272" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="700" fill="#f2d8ba" text-anchor="start">UPPER — LAYER 2</text>
+<rect x="1210" y="289" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1244" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1286" y="289" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1320" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1362" y="289" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1396" y="329" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1210" y="358" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1244" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1286" y="358" width="68" height="62" rx="5" fill="#0d1317" stroke="#7a817f" stroke-width="1"/>
+<text x="1320" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#e3ad71" text-anchor="middle">AIR</text>
+<rect x="1362" y="358" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1396" y="398" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1210" y="427" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1244" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1286" y="427" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1320" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<rect x="1362" y="427" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
+<text x="1396" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
+<text x="862" y="520" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="500" fill="#c5d0c6" text-anchor="start">F: Foundation   B: Bricks   U: Input   C: Controller   O: Output</text>
+<text x="864" y="602" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">PROCESSING  /  MATERIAL QUALITY PRESERVED</text>
+<rect x="857" y="622" width="687" height="102" rx="12" fill="#212c2d" stroke="#415052" stroke-width="1"/>
+<text x="880" y="658" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#e9f0e6" text-anchor="start">4 × WROUGHT INGOTS OR BARS</text>
+<text x="880" y="699" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f2b16c" text-anchor="start">→  4 × MATCHING HOT WORKPIECES</text>
+<text x="865" y="751" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="700" fill="#fbd59d" text-anchor="start">360 heated ticks</text>
+<text x="1140" y="751" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="700" fill="#fbd59d" text-anchor="start">12,000 HEAT threshold</text>
+<text x="865" y="780" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="500" fill="#c1d0c8" text-anchor="start">36,000 stored HEAT (config default)</text>
+<text x="865" y="808" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="500" fill="#c1d0c8" text-anchor="start">Solid furnace fuel only • no shaft, RPM or torque</text>
+<text x="865" y="837" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c1d0c8" text-anchor="start">HEAT expires after 2,400 world ticks (existing contract)</text>
+<text x="56" y="751" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">REAL INTERFACES & STATES</text>
+<text x="56" y="789" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="500" fill="#e0e6e1" text-anchor="start">U  →  item input      C  →  solid fuel &amp; status      O  →  hot items</text>
+<text x="56" y="818" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="500" fill="#c8d4d0" text-anchor="start">Idle: cools   •   Heating: fuel burns   •   Blocked: progress pauses</text>
+<text x="56" y="847" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c0c9c5" text-anchor="start">No Bloom consolidation or Steel refining; the existing Kiln remains useful.</text>
+</svg>

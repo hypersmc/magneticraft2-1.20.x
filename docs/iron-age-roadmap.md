@@ -451,3 +451,16 @@ upgrades remain proposals, not registered features. The user has explicitly
 deferred **all multiplayer-related implementation/testing until after Steam
 Age is complete**. PR #18 stays draft and unmerged pending a separate
 decision; player acceptance does not by itself authorize merging.
+
+
+## Iron IV-A — Forge Hearth source milestone (2026-11-07)
+
+Source commit `d6f039e11d65a8042d0cb2d9e4b0fa21d243c1ae`
+implements fueled four-piece reheating in a 3×3×2 JSON multiblock, reusing
+current HEAT, item ports, recipe serializer, hot-state NBT and server logic.
+The Kiln continues to fire ceramics and reheat single pieces/Blooms.
+The authoritative layout is in Patchouli. The concept sheet is
+`docs/reference/iron-forge-hearth-studio.svg`; visual finishing is deferred
+to MGC2 Studio. No mechanical input, AIR network, steel recipe or
+new material quality system is added. Build, in-game tests, visuals,
+chunk save/reload and regressions remain unverified. PR #18 stays draft.
