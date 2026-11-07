@@ -168,6 +168,57 @@ approved, without making factory construction depend on new machinery.
 in-game appearance/placement/rotation/drops/survival recipe testing
 remain open. Dedicated multiplayer remains deferred until after Steam.
 
+## Iron II-A — first Iron Medium Gear (source implemented; verification pending)
+
+**Source candidate:** The first actual Gear V2 Wrought Iron Medium Gear
+(`wrought_iron_gear_medium`) is registered with the existing medium
+gear's **8-tooth** topology, placement restrictions, blockstate rotations,
+power-driven rendering and sync. Only the material's maximum transmitted
+torque differs: the wood medium gear remains **8**, while the wrought
+iron medium gear is **16**. The new block entity delegates visual
+rendering to the proven wooden medium gear renderer. No new Gear V2
+network logic, source torque or arbitrary speed is created.
+
+**Survival manufacturing loop:**
+
+1. Existing Refractory Kiln heats a Wrought Iron Bar as before.
+2. A still-hot Bar is worked by the powered Forge Hammer at 20 RPM /
+   6 torque for 180 ticks into an `iron_gear_blank_medium`. This
+   extends the existing hot-workpiece output whitelist.
+3. The existing Bronze Mechanical Lathe, supplied with its flint-edged
+   cutter, machines the blank through a specific JSON recipe (160 ticks,
+   12 RPM / 5 torque) to a `precision_iron_gear_medium`. Working Iron
+   consumes **2 cutter durability**, compared with **1** for Bronze.
+   Bronze machining outputs and previous worlds keep their original
+   behavior. The Lathe passes the blank's quality NBT to the part.
+4. The player assembles the actual gear block from the precision gear,
+   three Wrought Iron Plates and one Wrought Iron Bar at the crafting
+   table. Vanilla crafting does **not** preserve ingredient quality
+   tags into the block ItemStack. Gear torque is intentionally material
+   capacity only; quality-driven gear ratings remain a separate,
+   unapproved rule. This limitation must not be hidden.
+
+The first Iron gear has its own machine/item registrations, 3D voxel
+model, native-density UVs, all orientation blockstates, pickaxe
+harvesting/drop, creative tab, recipes and Patchouli pages. Its
+dynamically rotating model uses the shared renderer. The wooden gear
+type/renderer/capacity are untouched except for additive protected
+constructors needed for reuse.
+
+**Important incomplete acceptance:** An Iron medium gear alone is
+*not* proof of sustained >8-torque factory operation. The source and
+full transmission path must permit that load; a loaded consumer higher
+than 8 torque is not yet introduced. The proposed Stock Shear is a later
+Iron milestone. In-game test the Iron/Wood gear meshes, phase and
+clearance, the actual 16-torque node value, all axes, rendered-to-collision
+consistency, old save states and source overload. No arbitrary offset or
+hidden mesh geometry is an acceptable fix.
+
+**Status:** implementation candidate only. No confirmed
+`./gradlew build`, Java runtime or player in-game verification.
+Bar/Rod rolling (Iron 0C) is still awaiting specific player acceptance.
+Multiplayer implementation/testing is deferred until after Steam Age.
+
 ## Next proposed milestones (following Iron 0A–0D)
 
 ### Iron II-A — investigate stronger transmission after first Iron tooling

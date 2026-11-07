@@ -44,8 +44,8 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `wrought_iron_rod` | Hot Bar → existing Rolling Mill, 4 Rods | Quarter-ingot fastener/structural stock; precision drawing is later | SOURCE IMPLEMENTED — testing pending |
 | `wrought_iron_sheet` | Existing Rolling Mill on prepared plate | Riveted iron panels and light fittings | CORE |
 | `wrought_iron_rivets` | Cut/punch rods or bar, with valid yield ledger | Assembly, frames, casing | CORE |
-| `iron_gear_blank_medium` | Forge a medium gear preform | Lathe into medium precision gear | CORE |
-| `precision_iron_gear_medium` | Lathe after suitable machining/cutter | Actual installed medium Iron Gear | CORE |
+| `iron_gear_blank_medium` | Forge 1 hot Wrought Bar at existing Forge Hammer | Existing Lathe with flint-tipped cutter | SOURCE IMPLEMENTED (not tested) |
+| `precision_iron_gear_medium` | Existing Bronze Lathe, 160 ticks at 12 RPM / 5 torque, double cutter wear | Craft 16-torque Iron gear with Plates/Bar | SOURCE IMPLEMENTED (not tested) |
 | `iron_gear_blank_large` | Forge larger blank with more ingot-equivalents | Lathe into large precision gear | CORE, later |
 | `precision_iron_gear_large` | Lathe with appropriate size/tool gating | Actual installed large Iron Gear | CORE, later |
 | `machined_iron_shaft` | Turn wrought iron bar in Lathe | Installed shaft, gearbox, flywheel | CORE |
@@ -71,7 +71,7 @@ See [Iron industrial factory expansion](iron-age-industrial-factory-expansion.md
 
 | Candidate ID | Type | Primary in-game function | Phase |
 | --- | --- | --- | --- |
-| `wrought_iron_gear_medium` | Gear V2 8-tooth gear | Real >8-torque route where the wooden medium gear bottlenecks | Iron II-A |
+| `wrought_iron_gear_medium` | Gear V2 8-tooth gear | 16 vs wooden 8 torque capacity, forge/lathe/assembly path | SOURCE IMPLEMENTED (not yet in-game verified) |
 | `wrought_iron_gear_large` | Gear V2 16-tooth gear | Strength/ratio choices, matching established mesh pitch | Iron II-B |
 | `wrought_iron_shaft` | Gear V2 X/Y/Z axial shaft | Sustained transmission and mechanically supported iron parts; no free torque | Iron II-B |
 | `wrought_iron_gearbox` | Gear V2 gearbox | Axis change without retaining wooden gearbox 8 limit | Iron II-B |
@@ -224,7 +224,7 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 | Iron 0B | First hot Wrought Iron Plate via existing Kiln and Hammer; bars/rods later | Player produced a plate in-game; fuel/HEAT expiry, output NBT, yield repetitions and old-system regressions still open | MAIN PATH PLAYER-CONFIRMED — build and full regressions pending |
 | Iron I-A | Hot Bar/Rod rolling + first Structural Beam/Plate Panel/Foundation | Cold Iron rejected, Copper unchanged; X/Y/Z beams, facing panels, survival recipes and native UVs | SOURCE IMPLEMENTED — build and player tests pending |
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
-| Iron II-A | Iron Medium Gear under measured load | >8-torque demand runs using legitimate source, fails in wooden-constrained path | PROPOSAL |
+| Iron II-A | Forge / Lathe / craft the 16-torque Iron Medium Gear | Block/item/JSON/renderer source implemented; **real >8-torque consumer and Gear V2 acceptance still untested** | SOURCE IMPLEMENTED — tests pending |
 | Iron II-B | Iron Shaft/Large Gear/Gearbox + early factory construction palette | Connections, ratios and overload; usable Beam, Grating, Panel, Foundation, Railing and Hatch | PROPOSAL |
 | Iron III-A | Iron Stock Shear and Blade | Heavy stock/fasteners, real load, blocked output, item wear and no duplication | PROPOSAL |
 | Iron III-B | Riveted Casing/Frame and **consumer-gated Mechanical Draw Bench** | Factory building works; draw bench only if distinct precise rod output is genuinely useful | PROPOSAL |

@@ -81,6 +81,24 @@
       "title": "Iron Machine Foundation",
       "recipe": "magneticraft2:iron_machine_foundation",
       "text": "Stone brick base with wrought iron top and structural beam reinforcement. A full-sized foundation for factory buildings and later heavy equipment; it has no imaginary vibration simulation."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron II-A — Forge a Gear$()$(br2)Use the existing fueled Refractory Kiln to reheat a Wrought Iron Bar. Move it to the powered Bronze Forge Hammer with a working forging die. One still-hot Bar becomes ONE Forged Iron Gear Blank after 180 supplied ticks at 20 RPM and 6 torque.$(br2)No new furnace, forge or material-quality shortcut is required."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Machine the Gear Teeth$()$(br2)Insert the gear blank into the EXISTING formed Bronze Mechanical Lathe, with its flint-tipped Bronze Lathe Cutter. Iron machining needs 12 RPM and 5 torque over 160 ticks and wears the cutter by TWO durability; Bronze gear/bearing operations still use ONE.$(br2)The result is a Machined Iron Gear that retains workpiece quality metadata."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Medium Gear",
+      "recipe": "magneticraft2:wrought_iron_gear_medium",
+      "text": "Assemble the precision-machined gear with three Wrought Iron Plates and a Wrought Iron Bar. This is a true Gear V2 medium gear: eight teeth, matching existing mesh/placement and rotating at the supplied network phase."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Stronger, Not a Generator$()$(br2)The wooden medium gear is limited to 8 torque. The Wrought Iron Medium Gear has a 16-torque capacity but does NOT increase water-wheel torque, RPM or gear-network output. Mixed networks are still limited by their weakest gear, gearbox, source, mechanical module or connected load.$(br2)An isolated Iron gear cannot solve an 8-torque wooden gearbox bottleneck. A real greater-than-8-torque consumer comes later in Iron Age."
     }
   ],
   "sortnum": 4,
