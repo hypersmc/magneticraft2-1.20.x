@@ -65,6 +65,10 @@ assert.match(java('common/registry/registers/ItemRegistry.java'),
  /ITEM_PRECISION_IRON_GEAR_MEDIUM/);
 assert.match(java('common/registry/registers/ItemRegistry.java'),
  /ITEM_WROUGHT_IRON_GEAR_MEDIUM/);
+const jei=java('compatibility/JEI/MagneticraftJeiPlugin.java');
+const jeiModel=java('compatibility/JEI/MultiblockJeiRecipe.java');
+assert.match(jei,/MultiblockJeiRecipe\.BRONZE_MECHANICAL_LATHE/);
+assert.match(jeiModel,/new ResourceLocation\("magneticraft2", "bronze_mechanical_lathe"\)/);
 const client=java('client/Clientsetup.java');
 assert.match(client,/GEAR_MEDIUM_BE_IRON\.get\(\), WroughtIronMediumGearRenderer::new/);
 const renderer=java('client/render/blocks/stage/iron/WroughtIronMediumGearRenderer.java');
