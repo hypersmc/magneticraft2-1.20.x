@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<rect x="0" y="0" width="1600" height="900" rx="8" fill="#111b21" stroke="#111b21" stroke-width="2"/>
+<rect x="22" y="20" width="1556" height="114" rx="8" fill="#243238" stroke="#536167" stroke-width="2"/>
+<text x="67" y="91" font-family="Arial,Helvetica,sans-serif" font-size="44" font-weight="900" fill="#f6eee4" text-anchor="start">MAGNETICRAFT2</text>
+<text x="520" y="91" font-family="Arial,Helvetica,sans-serif" font-size="30" font-weight="800" fill="#f3b876" text-anchor="start">IRON AGE • LARGE FLYWHEEL</text>
+<rect x="24" y="159" width="905" height="668" rx="8" fill="#243238" stroke="#536167" stroke-width="2"/>
+<rect x="946" y="159" width="632" height="357" rx="8" fill="#243238" stroke="#536167" stroke-width="2"/>
+<rect x="946" y="530" width="632" height="297" rx="8" fill="#243238" stroke="#536167" stroke-width="2"/>
+<text x="65" y="210" font-family="Arial,Helvetica,sans-serif" font-size="29" font-weight="800" fill="#f6d298" text-anchor="start">FORMED 3×3 VERTICAL MACHINE</text>
+<text x="65" y="238" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#cad6d2" text-anchor="start">Approx. 2.4-block rotating iron rim, one-block thick</text>
+<circle cx="476" cy="485" r="235" fill="none" stroke="#495d62" stroke-width="52"/>
+<circle cx="476" cy="485" r="235" fill="none" stroke="#93a2a5" stroke-width="30" stroke-dasharray="49 12"/>
+<line x1="476" y1="485" x2="692.20" y2="485.00" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="628.88" y2="637.88" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="476.00" y2="701.20" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="323.12" y2="637.88" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="259.80" y2="485.00" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="323.12" y2="332.12" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="476.00" y2="268.80" stroke="#7d8c91" stroke-width="16"/>
+<line x1="476" y1="485" x2="628.88" y2="332.12" stroke="#7d8c91" stroke-width="16"/>
+<circle cx="476" cy="485" r="36" fill="#a48f69" stroke="#34454d" stroke-width="12"/>
+<rect x="137" y="727" width="210" height="47" rx="8" fill="#697d84" stroke="#536167" stroke-width="2"/>
+<rect x="606" y="727" width="210" height="47" rx="8" fill="#697d84" stroke="#536167" stroke-width="2"/>
+<text x="476" y="800" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="800" fill="#efd5aa" text-anchor="middle">TWO FOUNDATION FEET • ONE AXIAL GEAR V2 NODE</text>
+<text x="979" y="208" font-family="Arial,Helvetica,sans-serif" font-size="25" font-weight="800" fill="#f6d298" text-anchor="start">CONSTRUCTION — SOUTH FACING</text>
+<text x="980" y="240" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#cad6d2" text-anchor="start">Vertical slice; one block deep</text>
+<rect x="1038" y="262" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1104" y="305" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1184" y="262" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1250" y="305" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1330" y="262" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1396" y="305" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1038" y="339" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1104" y="382" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1184" y="339" width="132" height="66" rx="8" fill="#d5ad72" stroke="#7c9197" stroke-width="2"/>
+<text x="1250" y="382" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#142328" text-anchor="middle">C</text>
+<rect x="1330" y="339" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1396" y="382" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1038" y="416" width="132" height="66" rx="8" fill="#6b8389" stroke="#7c9197" stroke-width="2"/>
+<text x="1104" y="459" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#142328" text-anchor="middle">F</text>
+<rect x="1184" y="416" width="132" height="66" rx="8" fill="#18262c" stroke="#dba56e" stroke-width="2"/>
+<text x="1250" y="459" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#f4b979" text-anchor="middle">AIR</text>
+<rect x="1330" y="416" width="132" height="66" rx="8" fill="#6b8389" stroke="#7c9197" stroke-width="2"/>
+<text x="1396" y="459" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="800" fill="#142328" text-anchor="middle">F</text>
+<text x="975" y="508" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="600" fill="#e7b978" text-anchor="start">AIR = empty before forming; V2 reserves it afterward</text>
+<text x="979" y="573" font-family="Arial,Helvetica,sans-serif" font-size="26" font-weight="800" fill="#f6d298" text-anchor="start">INERTIA CONTRACT</text>
+<text x="978" y="624" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#f2d095" text-anchor="start">12 torque finite coast</text>
+<text x="978" y="668" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="600" fill="#d7e1df" text-anchor="start">24 torque structural axle limit</text>
+<text x="978" y="711" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="600" fill="#d7e1df" text-anchor="start">No extra engine, generator or power source</text>
+<text x="978" y="750" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#d7e1df" text-anchor="start">Wooden Flywheel retains its original behavior</text>
+<text x="55" y="867" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#b5c6c2" text-anchor="start">CONCEPT REFERENCE, NOT AN IN-GAME SCREENSHOT • SUPPORTS AND RIM STILL REQUIRE MINECRAFT VISUAL VERIFICATION</text>
+</svg>

@@ -280,6 +280,44 @@
     {
       "type": "text",
       "text": "$(bold)Heating and fuel$()$(br2)Insert exactly FOUR matching wrought Iron Ingots or Bars at the input port. Right-click the controller with normal solid furnace fuel to queue up to 16 matching items. The batch needs stored HEAT for 360 processing ticks; blocked output pauses processing and new fuel ignition, while burning fuel completes its burn. Extract FOUR hot pieces from the output port. Sneak-right-click empty-handed to recover queued unused fuel. This open hearth uses natural draft; powered AIR is not implemented."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron IV-B — Wrought Iron Flywheel$()$(br2)The Iron Flywheel is a REAL 3×3 vertical machine, one block thick, not a one-block wheel with oversized graphics. The central axle is its only Gear V2 node. Build two Iron Machine Foundations at the bottom corners, and leave SIX required positions AIR around the axle. Right-click the axle to form. The formed rim and supports use the V2 clearance area; no AIR pipe or second power system is required."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Flywheel",
+      "recipe": "magneticraft2:iron_flywheel",
+      "text": "Craft the axle assembly from four Wrought Iron Plates, two Bars, one Riveted Iron Frame, one machined Large Iron Gear and one Wrought Iron Shaft. The two Iron Machine Foundations are separate construction pieces."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Wrought Iron Flywheel",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "___"
+          ],
+          [
+            "_0_"
+          ],
+          [
+            "F_F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:iron_flywheel",
+          "F": "magneticraft2:iron_machine_foundation"
+        },
+        "symmetrical": false
+      },
+      "text": "Vertical SOUTH-facing view, one block deep: TOP AIR–AIR–AIR. MIDDLE AIR–controller–AIR. BOTTOM Foundation–AIR–Foundation. Place the controller as the center axle, orienting the shaft horizontally. Leave all six AIR spaces empty BEFORE forming; they become reserved V2 model/clearance proxies, not air resource inputs. Other horizontal facings rotate this structure."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Finite rotational inertia$()$(br2)The Wooden Flywheel coasts at up to 6 torque. The Iron Flywheel temporarily carries up to 12 torque and decays more slowly under the same load, using Gear V2's existing finite inertia model. Its axle is rated for 24 torque but does NOT raise the Water Wheel's real power output or eliminate wooden gearbox bottlenecks. Axial shafts connect only after the 3×3 structure forms. Breaking the assembly drops its original non-AIR blocks and clears the wheel proxies."
     }
   ],
   "sortnum": 4,

@@ -475,3 +475,13 @@ is generated directly from the low masonry, rather than invisible full
 brick cells. Texture UVs follow actual face dimensions. Existing formed
 structures must be unformed/reformed to refresh persisted snapshots.
 Forge compilation/in-game visual tests are still outstanding.
+
+
+## Iron IV-B — Wrought Iron Flywheel source milestone
+
+The proposed heavy flywheel is implemented at the source stage: actual
+3×3×1 vertical footprint, two foundation supports, six reserved AIR
+cells, one 2.4-block diameter rotating rim, Gear V2's original finite
+coasting with 12-torque Iron limit. Build, physical meshing, coasting,
+multiblock teardown/reload, visuals and FPS remain unverified.
+See `docs/iron-age-flywheel-acceptance.md`. PR #18 stays draft.

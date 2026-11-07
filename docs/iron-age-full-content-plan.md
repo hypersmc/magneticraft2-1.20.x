@@ -296,3 +296,14 @@ pass for this Large Gear or newly changed input appearance.
 **Pending:** full JDK17 `./gradlew build`, standalone Node fixtures,
 Minecraft machining, saved worlds, Gear V2 meshing/load/phase checks,
 new input bearing appearance, visual FPS and regressions.
+
+
+## Iron IV-B — Wrought Iron Flywheel source milestone
+
+3×3×1 vertical Iron flywheel, one Gear V2 axle, two Iron Foundations and
+six required AIR cells reserved by V2 proxies. Original Wood retains
+6-torque inertia; Iron coasts at 12 with 0.40× Wood decay (provisional).
+The 24-torque Iron axle is not new power generation. Source tests and
+visual construction reference are in `tools/iron-age/check-iron-flywheel-contract.mjs`
+and `docs/reference/iron-flywheel-studio.svg`. Compilation and in-game
+acceptance remain open; keep PR #18 draft.
