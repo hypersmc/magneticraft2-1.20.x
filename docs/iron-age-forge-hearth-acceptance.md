@@ -87,7 +87,7 @@ blueprints. It is **not a resource input**. At formation the existing
 `MultiblockRenderParts.assign` validates that exact original AIR cell,
 places the standard multiblockfiller, and assigns the pre-baked chamber part
 `part_<dx>_1_<dz>.json`. This is exactly the mechanism previously used
-for the Iron Stock Shear. Unforming restores the original AIR cell.
+for the Iron Stock Shear. On teardown, the AIR proxy clears and the original non-AIR structure blocks drop as items.
 
 The new formed model uses 15 block-local, native-UV cuboids. It includes a
 refractory tray directly on the Iron Foundation underneath, dark charcoal
@@ -147,8 +147,10 @@ V2 collider is regenerated from these exact parts: 9 lower cells + 15
 rim parts + 9 solid chamber support parts = **33** collision/selection
 boxes. No imaginary full-height brick wall remains when formed.
 
-Because V2 saves formed shape/model snapshots, **UNFORM and REFORM** any
-already formed Hearth to refresh the visible model and physical hitbox.
+Because V2 saves formed shape/model snapshots, **DISMANTLE and REBUILD**
+previously formed Hearths to refresh the visible model and physical hitbox.
+The existing teardown drops the original non-AIR block items rather than
+restoring the construction blocks in-place.
 
 ### Focused in-game checklist
 1. Assemble the original 3×3×2 from eight normal upper bricks and one
@@ -157,7 +159,8 @@ already formed Hearth to refresh the visible model and physical hitbox.
    bed and genuinely supported iron stock rails from multiple angles.
 3. Test both selection and collision: no full-height invisible walls;
    no walking through rendered brick or metal support pieces.
-4. Unform/break and confirm ordinary full bricks and AIR are restored.
+4. Dismantle/break and confirm the original brick ITEMS drop and the
+   entire structure becomes AIR; rebuild the multiblock from those drops.
 5. Reload world, F3+T, adjacent chunk views, texture mapping and FPS.
 6. Repeat four-to-four ingot/bar HEAT batch and original Kiln regression.
 

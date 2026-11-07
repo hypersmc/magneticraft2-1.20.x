@@ -275,7 +275,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Build:$() place EIGHT ordinary Brick blocks around the upper-center AIR — leave that AIR cell EMPTY.$(br2)$(bold)Form:$() the bricks become lower walls and a front loading mouth; the AIR cell automatically fills with a refractory tray, charcoal and iron stock rests supported by the brickwork. These are model parts, not craftable blocks or a new AIR input. Unforming restores the original full-height Brick blocks and AIR."
+      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Build:$() place EIGHT ordinary Brick blocks around the upper-center AIR — leave that AIR cell EMPTY.$(br2)$(bold)Form:$() the bricks become lower walls and a front loading mouth; the AIR cell automatically fills with a refractory tray, charcoal and iron stock rests supported by the brickwork. These are model parts, not craftable blocks or a new AIR input. Breaking the formed multiblock clears the structure, drops its original block items and removes the generated AIR proxy; rebuild it from those drops."
     },
     {
       "type": "text",
