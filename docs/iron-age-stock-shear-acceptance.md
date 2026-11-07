@@ -1,9 +1,11 @@
 # Iron III-A — Stock Shear, Wrought Rivets and Riveted Frame
 
-**Status 2026-11-07:** Source-level implementation candidate in draft
-PR #18. NO Gradle build, Node fixture run or in-game acceptance has been
-verified in this session. Multiplayer testing and multiplayer-specific
-work are deferred until AFTER Steam Age per user instruction.
+**Status 2026-11-08:** The player confirmed the Mechanical Metal Shear
+**already worked at initial implementation and still works in-game**. This
+accepts its primary operation; it is not new evidence that the 2026-11-08
+source audit fixed a fault. Complete JDK17 Gradle build, the full Node
+fixture and individual edge-case regressions remain unverified. Multiplayer
+testing and multiplayer-specific work are deferred until AFTER Steam Age.
 
 ## Intent and balance
 
@@ -181,3 +183,17 @@ the independent Java linkage test, and `./gradlew build` in a full
 JDK17 checkout. Save the actual logs before marking the whole line
 verified. Multiplayer-specific work stays deferred until after Steam
 Age and PR #18 remains draft.
+
+## Player acceptance clarification — 2026-11-08
+
+The player explicitly confirmed: **"it already worked when it was made but
+it still does"**. Therefore the Shear's principal in-game operation is a
+previously accepted feature that continues to work. Do not schedule more
+core debugging of this machine without new failure evidence. The ratio
+analysis and checks added in the source-audit follow-up are regression
+coverage, not a bug fix. Treat outstanding blocked-output, save migration,
+512-cycle wear, all-facing visuals, multi-machine loading and full build
+checks as separate verification, not evidence that the feature is broken.
+
+Next agreed development focus is the existing Iron Forge Hearth. No
+Forge Hearth functionality was implemented in this documentation change.
