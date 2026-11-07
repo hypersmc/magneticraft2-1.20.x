@@ -79,7 +79,7 @@ assert.match(sharedBoxRenderer,/proportionalUv \? \(float\) sizeX : texelWindow\
 assert.match(sharedBoxRenderer,/renderBevelGear/);
 assert.match(sharedBoxRenderer,/renderPortShaft/);
 assert.match(sharedBoxRenderer,/renderPortSupport/);
-assert.match(sharedBoxRenderer,/proportionalUv \\? consumer : support/);
+assert.ok(sharedBoxRenderer.includes('proportionalUv ? consumer : support'));
 assert.match(sharedBoxRenderer,/VertexConsumer structural/);
 assert.match(sharedBoxRenderer,/VertexConsumer bearing/);
 
