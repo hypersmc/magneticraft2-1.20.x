@@ -39,7 +39,11 @@ public class LargeGearBlock_wood extends GearBlock {
     private VoxelShape North = VoxelShapeUtils.rotate(downshape(), Direction.NORTH);
     private VoxelShape West = VoxelShapeUtils.rotate(downshape(), Direction.WEST);
     public LargeGearBlock_wood() {
-        super(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+        this(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+    }
+    /** Reuse exact 16-tooth placement for stronger metals without altering wood. */
+    protected LargeGearBlock_wood(BlockBehaviour.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false));
     }
 

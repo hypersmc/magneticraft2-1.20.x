@@ -114,6 +114,28 @@
     },
     {
       "type": "text",
+      "text": "$(bold)Iron II-C — Large Gear Stock$()$(br2)Assemble a heavy large gear blank from FOUR Wrought Iron Bars, FOUR Plates and a Riveted Iron Frame. This is a rough assembled rim, not a forged finished tooth profile. Use the existing Bronze Mechanical Lathe with a functioning cutter to machine its 16 teeth: 160 supplied ticks at 12 RPM and 8 torque. The larger cut wears the cutter by THREE durability (medium Iron uses two; Bronze still one)."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Assembled Large Gear Blank",
+      "recipe": "magneticraft2:iron_gear_blank_large",
+      "text": "A rough heavy gear wheel made from shaped wrought stock around an existing Riveted Iron Frame. The Metal Shear and Forge Hammer supply the headed rivets used in its frame; Iron II-A machining provides the precedent."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Machine the Large Iron Ring",
+      "item": "magneticraft2:precision_iron_gear_large",
+      "text": "The Bronze Mechanical Lathe machines the large blank into a full 16-tooth wheel. Its cutter wears by three uses, and material quality travels into the result. One large blank becomes one precision ring; no duplicate lathe or fictional free power source."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Large Gear",
+      "recipe": "magneticraft2:wrought_iron_gear_large",
+      "text": "Assemble the machined 16-tooth rim with a Wrought Iron Shaft and THREE Wrought Iron Plates. Rated 24 torque as a component, but existing water wheels still supply at most 16 torque and the Mechanical Input Module still caps at 16; Iron Medium Gears and Gearboxes cap at 16, wood may be weaker. The large gear changes gear ratio but never creates torque."
+    },
+    {
+      "type": "text",
       "text": "$(bold)Stronger, Not a Generator$()$(br2)The wooden medium gear is limited to 8 torque. The Wrought Iron Medium Gear has a 16-torque capacity but does NOT increase water-wheel torque, RPM or gear-network output. Mixed networks are still limited by their weakest gear, gearbox, source, mechanical module or connected load.$(br2)An isolated Iron gear cannot solve an 8-torque wooden gearbox bottleneck. A real greater-than-8-torque consumer comes later in Iron Age."
     },
     {

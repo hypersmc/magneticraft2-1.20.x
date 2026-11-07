@@ -190,6 +190,10 @@ public class ItemRegistry {
             ITEMS.register("iron_gear_blank_medium", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_MEDIUM =
             ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_GEAR_BLANK_LARGE =
+            ITEMS.register("iron_gear_blank_large", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_LARGE =
+            ITEMS.register("precision_iron_gear_large", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_IRON_SHEAR_BLADE =
             ITEMS.register("iron_shear_blade", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_RIVETED_IRON_FRAME = fromBlock(RIVETED_IRON_FRAME);
@@ -201,6 +205,8 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_IRON_STOCK_SHEAR = fromBlock(IRON_STOCK_SHEAR);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_MEDIUM =
             fromBlock(WROUGHT_IRON_GEAR_MEDIUM);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_LARGE =
+            fromBlock(WROUGHT_IRON_GEAR_LARGE);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEARBOX = fromBlock(WROUGHT_IRON_GEARBOX);
     public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);

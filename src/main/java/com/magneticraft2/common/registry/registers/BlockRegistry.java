@@ -6,6 +6,7 @@ import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
 import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronLargeGearBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronShaftBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronGearboxBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
@@ -181,6 +182,8 @@ public class BlockRegistry {
     // Iron II-A: a stronger 8-tooth Gear V2 node, not a new power source.
     public static final RegistryObject<WroughtIronMediumGearBlock> WROUGHT_IRON_GEAR_MEDIUM =
             BLOCKS.register("wrought_iron_gear_medium", WroughtIronMediumGearBlock::new);
+    public static final RegistryObject<WroughtIronLargeGearBlock> WROUGHT_IRON_GEAR_LARGE =
+            BLOCKS.register("wrought_iron_gear_large", WroughtIronLargeGearBlock::new);
     // Iron II-B: reinforced axial and right-angle transmission.
     public static final RegistryObject<WroughtIronShaftBlock> WROUGHT_IRON_SHAFT =
             BLOCKS.register("wrought_iron_shaft", WroughtIronShaftBlock::new);

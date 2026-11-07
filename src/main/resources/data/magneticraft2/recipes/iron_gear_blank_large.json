@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PBP",
+    "BFB",
+    "PBP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "B": {
+      "item": "magneticraft2:wrought_iron_bar"
+    },
+    "F": {
+      "item": "magneticraft2:riveted_iron_frame"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_gear_blank_large",
+    "count": 1
+  }
+}

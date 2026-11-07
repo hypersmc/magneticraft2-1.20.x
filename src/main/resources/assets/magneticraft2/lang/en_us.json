@@ -575,5 +575,9 @@
   "block.magneticraft2.iron_floor_grating": "Iron Floor Grating",
   "item.magneticraft2.iron_floor_grating": "Iron Floor Grating",
   "block.magneticraft2.iron_catwalk_railing": "Iron Catwalk Railing",
-  "item.magneticraft2.iron_catwalk_railing": "Iron Catwalk Railing"
+  "item.magneticraft2.iron_catwalk_railing": "Iron Catwalk Railing",
+  "item.magneticraft2.iron_gear_blank_large": "Assembled Large Iron Gear Blank",
+  "item.magneticraft2.precision_iron_gear_large": "Machined Large Iron Gear",
+  "item.magneticraft2.wrought_iron_gear_large": "Wrought Iron Large Gear",
+  "block.magneticraft2.wrought_iron_gear_large": "Wrought Iron Large Gear"
 }

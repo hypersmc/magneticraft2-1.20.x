@@ -59,12 +59,14 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     private static final float MIN_RPM=12F, TORQUE=2.5F;
     private static final ResourceLocation LATHE_MACHINE =
             new ResourceLocation("magneticraft2", "bronze_mechanical_lathe");
-    // The Iron pilot uses one existing JSON machining recipe. Avoid a
-    // generic lathe refactor until more actual workpieces need one.
+    // Only the two supported Iron gear blanks use recipe lookup; all older
+    // Bronze gear/bearing machining remains on its established code path.
     @Nullable private MultiblockProcessingRecipe cachedIronGearRecipe;
 
     @Nullable private MultiblockProcessingRecipe ironGearRecipe() {
-        if (level == null || !workpiece.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())) {
+        boolean medium = workpiece.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
+        boolean large = workpiece.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get());
+        if (level == null || (!medium && !large)) {
             cachedIronGearRecipe = null;
             return null;
         }
@@ -72,7 +74,8 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             MultiblockProcessingRecipe recipe = MultiblockRecipeHandler.findRecipe(
                     level, LATHE_MACHINE, workpiece);
             if (recipe != null && recipe.getInputCount() == 1
-                    && recipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get())
+                    && ((medium && recipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get()))
+                        || (large && recipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get())))
                     && recipe.getProcessTime() == CYCLE_TICKS
                     && recipe.getMinSpeed() > 0F && recipe.getTorque() > 0F
                     && recipe.getByproduct().isEmpty()
@@ -125,7 +128,9 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         return mounted.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
                 || mounted.is(ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get())
                 || mounted.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())
-                || mounted.is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get());
+                || mounted.is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get())
+                || mounted.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get())
+                || mounted.is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get());
     }
     /** Travel is fixed in model pixels, shared by the server-side and renderer contracts. */
     public float getCuttingDepthPixels() {
@@ -229,9 +234,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         output=finished;
         workpiece=ItemStack.EMPTY;
         cachedIronGearRecipe = null;
-        // The existing flint-edged cutter can shape wrought iron, but at
-        // twice the wear per batch. Bronze machining still costs one use.
-        int damage=cutter.getDamageValue()+(ironRecipe == null ? 1 : 2);
+        // Larger Iron ring machining uses three cutter cycles; Medium Iron
+        // uses two and original Bronze recipes remain at one.
+        int cutterCost = ironRecipe == null ? 1
+                : ironRecipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get()) ? 3 : 2;
+        int damage=cutter.getDamageValue()+cutterCost;
         if(damage>=cutter.getMaxDamage())cutter=ItemStack.EMPTY;
         else cutter.setDamageValue(damage);
         machiningTicks=0;
@@ -276,7 +283,8 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             cutter=held.copy();cutter.setCount(1);
         }else if(held.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
                 ||held.is(ItemRegistry.ITEM_ROUGH_BRONZE_BEARING.get())
-                ||held.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())){
+                ||held.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())
+                ||held.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get())){
             if(!workpiece.isEmpty()||!output.isEmpty()){
                 player.displayClientMessage(Component.literal("Remove the previous workpiece/output first."),true);return;
             }

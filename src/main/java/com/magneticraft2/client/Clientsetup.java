@@ -18,6 +18,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.GearboxBlockEntity_wo
 import com.magneticraft2.client.render.blocks.stage.copper.CustomGearboxBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MediumGearBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronMediumGearRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronLargeGearRenderer;
 import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronShaftRenderer;
 import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronGearboxRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.PulleyBlockEntity_woodRenderer;
@@ -122,6 +123,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), LargeGearBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), MediumGearBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_IRON.get(), WroughtIronMediumGearRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_IRON.get(), WroughtIronLargeGearRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_IRON.get(), WroughtIronShaftRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_IRON.get(), WroughtIronGearboxRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
