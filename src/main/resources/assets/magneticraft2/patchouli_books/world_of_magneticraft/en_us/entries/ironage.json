@@ -283,7 +283,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Iron IV-B — Wrought Iron Flywheel$()$(br2)The Iron Flywheel is a REAL 3×3 vertical machine, one block thick, not a one-block wheel with oversized graphics. The central axle is its only Gear V2 node. Build two Iron Machine Foundations at the bottom corners, and leave SIX required positions AIR around the axle. Right-click the axle to form. The formed rim and supports use the V2 clearance area; no AIR pipe or second power system is required."
+      "text": "$(bold)Iron IV-B — Wrought Iron Flywheel$()$(br2)The Iron Flywheel is a REAL 3×3 vertical machine, one block thick, not a one-block wheel with oversized graphics. The central axle is its only Gear V2 node. Build two Iron Machine Foundations at the bottom corners, and leave SIX required positions AIR around the axle. Right-click the axle to form. The formed rim and supports use the V2 clearance area; no AIR pipe or second power system is required. The two formed bearing rings are located forward and behind the wheel plane. Each is carried by an iron crossarm and a foundation-supported upright, so the shaft is mechanically supported while its neighboring axial cells remain available for external shafts."
     },
     {
       "type": "patchouli:crafting",
@@ -313,7 +313,7 @@
         },
         "symmetrical": false
       },
-      "text": "Vertical SOUTH-facing view, one block deep: TOP AIR–AIR–AIR. MIDDLE AIR–controller–AIR. BOTTOM Foundation–AIR–Foundation. Place the controller as the center axle, orienting the shaft horizontally. Leave all six AIR spaces empty BEFORE forming; they become reserved V2 model/clearance proxies, not air resource inputs. Other horizontal facings rotate this structure."
+      "text": "Vertical SOUTH-facing view, one block deep: TOP AIR–AIR–AIR. MIDDLE AIR–controller–AIR. BOTTOM Foundation–AIR–Foundation. Place the controller as the center axle, orienting the shaft horizontally. Leave all six AIR spaces empty BEFORE forming; they become reserved V2 model/clearance proxies, not air resource inputs. Other horizontal facings rotate this structure. The foundation posts support two separate axial bearing rings around the rotating center shaft. The build arrangement is unchanged from the first 3×3 variant; dismantle and rebuild old formed flywheels to refresh their saved models."
     },
     {
       "type": "text",

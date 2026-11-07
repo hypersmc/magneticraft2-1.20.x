@@ -485,3 +485,18 @@ cells, one 2.4-block diameter rotating rim, Gear V2's original finite
 coasting with 12-torque Iron limit. Build, physical meshing, coasting,
 multiblock teardown/reload, visuals and FPS remain unverified.
 See `docs/iron-age-flywheel-acceptance.md`. PR #18 stays draft.
+
+
+### Iron Flywheel axial-bearing correction (in-game screenshot follow-up)
+
+Player screenshots demonstrated unsupported side arms and a wood-colored
+wheel near the Iron supports. The source Iron BER itself binds no wood
+textures, so the wood identity must be checked in an isolated runtime
+case. Meanwhile the actual geometry defect is corrected: split front
+and rear iron bearing rings, supported by crossarms reaching the two
+foundation-supported uprights, straddle the center wheel plane in the
+existing 3×3×1 structure. 43 matching Voxel V2 physical regions; no
+3×3×3 expansion or new power network. Regenerate with
+`tools/iron-age/build-iron-flywheel-bearings.mjs --check`.
+This remains a source prototype pending Gradle compilation, actual
+visual/rotational checks, collisions and durability regressions.

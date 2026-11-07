@@ -8,6 +8,18 @@
 <rect x="946" y="530" width="632" height="297" rx="8" fill="#243238" stroke="#536167" stroke-width="2"/>
 <text x="65" y="210" font-family="Arial,Helvetica,sans-serif" font-size="29" font-weight="800" fill="#f6d298" text-anchor="start">FORMED 3×3 VERTICAL MACHINE</text>
 <text x="65" y="238" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="600" fill="#cad6d2" text-anchor="start">Approx. 2.4-block rotating iron rim, one-block thick</text>
+<g id="split-bearing-mechanism">
+<rect x="57" y="258" width="344" height="101" rx="9" fill="#101a1e" stroke="#c19a6a" stroke-width="2"/>
+<text x="72" y="284" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="800" fill="#f6d49a">SPLIT BEARING SUPPORT — SIDE VIEW</text>
+<line x1="85" y1="315" x2="370" y2="315" stroke="#a8b4b9" stroke-width="5"/>
+<rect x="160" y="303" width="28" height="24" fill="#596e77" stroke="#c4b38b" stroke-width="2"/>
+<rect x="270" y="303" width="28" height="24" fill="#596e77" stroke="#c4b38b" stroke-width="2"/>
+<rect x="219" y="290" width="19" height="50" fill="#384851" stroke="#b7c0c0" stroke-width="2"/>
+<line x1="174" y1="340" x2="174" y2="353" stroke="#87969d" stroke-width="7"/>
+<line x1="284" y1="340" x2="284" y2="353" stroke="#87969d" stroke-width="7"/>
+<text x="85" y="347" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#d5dbd2">FRONT BEARING</text>
+<text x="270" y="347" font-family="Arial,Helvetica,sans-serif" font-size="12" fill="#d5dbd2">REAR</text>
+</g>
 <circle cx="476" cy="485" r="235" fill="none" stroke="#495d62" stroke-width="52"/>
 <circle cx="476" cy="485" r="235" fill="none" stroke="#93a2a5" stroke-width="30" stroke-dasharray="49 12"/>
 <line x1="476" y1="485" x2="692.20" y2="485.00" stroke="#7d8c91" stroke-width="16"/>

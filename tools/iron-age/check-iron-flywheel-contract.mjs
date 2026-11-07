@@ -39,14 +39,44 @@ for(const dir of axes){
 }
 assert.equal(models,32);
 const v=j('data/magneticraft2/multiblock_voxels/iron_flywheel.json');
-assert.equal(v.collision.length,37);
+assert.equal(v.collision.length,43);
 const center=j('assets/magneticraft2/models/block/iron_flywheel_controller.json');
-assert.equal(center.elements.length,2,"No duplicate baked moving axle");
-assert.deepEqual(center.elements[0].from,[5,5,11]);
-assert.deepEqual(center.elements[0].to,[11,11,15]);
-assert.ok(!v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'));
+assert.equal(center.elements.length,10,"Front and rear rings plus two connected support arms");
+assert.deepEqual(center.elements[0].from,[4,10,2]);
+assert.deepEqual(center.elements[0].to,[12,12,5]);
+assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'),
+ "A rotating visible shaft still needs a physical collision envelope");
+assert.ok(!center.elements.some(e=>JSON.stringify(e.from)==='[7,7,0]'),
+ "Shaft must NOT be duplicated as a fixed model");
 assert.ok(!v.collision.some(b=>JSON.stringify(b)==='[0,7,11,16,9,15]'));
 assert.deepEqual(v.collision,v.selection);
+// The shaft rotates along Z. Each bearing is supported at a distinct
+// axial depth; no support may enter the wheel's swept z=5.28..10.72.
+const modelPart=(name)=>j('assets/magneticraft2/models/multiblock/iron_flywheel_south/part_'+name+'.json');
+const frontParts=center.elements.slice(0,4),rearParts=center.elements.slice(4,8);
+assert.ok(frontParts.every(e=>e.from[2]===2&&e.to[2]===5));
+assert.ok(rearParts.every(e=>e.from[2]===11&&e.to[2]===14));
+assert.deepEqual(center.elements[8].from,[0,6,2]);
+assert.deepEqual(center.elements[8].to,[4,8,5]);
+assert.deepEqual(center.elements[9].from,[12,6,11]);
+assert.deepEqual(center.elements[9].to,[16,8,14]);
+assert.deepEqual(modelPart('-1_0_0').elements[1].to,[16,8,5]);
+assert.deepEqual(modelPart('1_0_0').elements[1].from,[0,6,11]);
+assert.deepEqual(modelPart('-1_-1_0').elements[1].to,[11,16,5]);
+assert.deepEqual(modelPart('1_-1_0').elements[1].to,[11,16,14]);
+assert.deepEqual(modelPart('-1_0_0').elements[0].from,[5,0,2]);
+assert.deepEqual(modelPart('1_0_0').elements[0].from,[5,0,11]);
+const stationary=v.collision.slice(0,18),rim=v.collision.slice(-24);
+const intersects=(a,b)=>a.slice(0,3).every((n,i)=>
+ n<b[i+3]-1e-9&&b[i]<a[i+3]-1e-9);
+assert.ok(stationary.every(x=>rim.every(y=>!intersects(x,y))),
+ "Stationary bearing or support would hit the moving rim");
+const bearingRenderer=s('client/render/blocks/stage/iron/WroughtIronFlywheelRenderer.java');
+assert.ok(bearingRenderer.includes('dark_work_iron.png'));
+assert.ok(bearingRenderer.includes('bronze_machined.png'));
+assert.ok(!bearingRenderer.includes('oak_planks.png'),
+ "Wood appearance in player screenshot cannot be attributed to Iron BER texture");
+
 const r=j('data/magneticraft2/recipes/iron_flywheel.json');
 assert.equal(r.result.item,'magneticraft2:iron_flywheel');
 assert.deepEqual(r.pattern,['PBP','FGS','PBP']);
@@ -68,4 +98,4 @@ assert.ok(j('data/minecraft/tags/blocks/mineable/pickaxe.json').values.includes(
 assert.ok(j('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json')
   .pages.some(p=>p.name==='Wrought Iron Flywheel'));
 console.log('Iron Flywheel static contract PASS: '+models+' models, '+faces+
- ' native UV faces, 37 V2 collision boxes. Build and game tests not run.');
+ ' native UV faces, 43 V2 collision boxes. Build and game tests not run.');
