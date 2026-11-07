@@ -26,6 +26,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.OverloadDisconnectBlo
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBrakeBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBellowsBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.FlywheelBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronFlywheelRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalOreWasherBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalWaterPumpBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArmBlockEntityRenderer;
@@ -133,6 +134,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRANK_BE_WOOD.get(), CrankBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_BELLOWS_BE.get(), MechanicalBellowsBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.FLYWHEEL_BE_WOOD.get(), FlywheelBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.IRON_FLYWHEEL_BE.get(), WroughtIronFlywheelRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_ORE_WASHER_BE.get(), MechanicalOreWasherBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_WATER_PUMP_BE.get(), MechanicalWaterPumpBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_TRANSFER_ARM_BE.get(), MechanicalTransferArmBlockEntityRenderer::new);

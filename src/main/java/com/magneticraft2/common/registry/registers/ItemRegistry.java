@@ -250,6 +250,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_CRANK_WOOD = fromBlock(CRANK_WOOD);
     public static final RegistryObject<Item> ITEM_MECHANICAL_BELLOWS = fromBlock(MECHANICAL_BELLOWS);
     public static final RegistryObject<Item> ITEM_FLYWHEEL_WOOD = fromBlock(FLYWHEEL_WOOD);
+    public static final RegistryObject<Item> ITEM_IRON_FLYWHEEL = fromBlock(IRON_FLYWHEEL);
     public static final RegistryObject<Item> ITEM_MECHANICAL_ORE_WASHER = fromBlock(MECHANICAL_ORE_WASHER);
     public static final RegistryObject<Item> ITEM_MECHANICAL_SIFTER = fromBlock(MECHANICAL_SIFTER);
     public static final RegistryObject<Item> ITEM_MECHANICAL_INPUT_MODULE = fromBlock(MECHANICAL_INPUT_MODULE);

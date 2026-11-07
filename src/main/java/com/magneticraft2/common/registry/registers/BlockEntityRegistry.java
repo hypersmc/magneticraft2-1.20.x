@@ -20,6 +20,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MechanicalWaterPumpBloc
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalTransferArmBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CopperFluidTankBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.iron.WroughtIronFlywheelBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
@@ -123,6 +124,10 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<CrankBlockEntity_wood>> CRANK_BE_WOOD = BLOCK_ENTITIES.register("crank_wood", () -> BlockEntityType.Builder.of(CrankBlockEntity_wood::new, BlockRegistry.CRANK_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalBellowsBlockEntity>> MECHANICAL_BELLOWS_BE = BLOCK_ENTITIES.register("mechanical_bellows", () -> BlockEntityType.Builder.of(MechanicalBellowsBlockEntity::new, BlockRegistry.MECHANICAL_BELLOWS.get()).build(null));
     public static final RegistryObject<BlockEntityType<FlywheelBlockEntity_wood>> FLYWHEEL_BE_WOOD = BLOCK_ENTITIES.register("flywheel_wood", () -> BlockEntityType.Builder.of(FlywheelBlockEntity_wood::new, BlockRegistry.FLYWHEEL_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<WroughtIronFlywheelBlockEntity>> IRON_FLYWHEEL_BE =
+            BLOCK_ENTITIES.register("iron_flywheel",() ->
+                    BlockEntityType.Builder.of(WroughtIronFlywheelBlockEntity::new,
+                            BlockRegistry.IRON_FLYWHEEL.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalOreWasherBlockEntity>> MECHANICAL_ORE_WASHER_BE = BLOCK_ENTITIES.register("mechanical_ore_washer", () -> BlockEntityType.Builder.of(MechanicalOreWasherBlockEntity::new, BlockRegistry.MECHANICAL_ORE_WASHER.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalSifterBlockEntity>> MECHANICAL_SIFTER_BE = BLOCK_ENTITIES.register("mechanical_sifter", () -> BlockEntityType.Builder.of(MechanicalSifterBlockEntity::new, BlockRegistry.MECHANICAL_SIFTER.get()).build(null));
     public static final RegistryObject<BlockEntityType<BronzeMoldTableBlockEntity>> BRONZE_MOLD_TABLE_BE =

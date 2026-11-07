@@ -209,7 +209,7 @@ public class FlywheelBlockEntity_woodRenderer
         stack.popPose();
     }
 
-    private void orientLocalXToAxis(
+    public static void orientLocalXToAxis(
             PoseStack stack,
             Direction.Axis axis) {
         switch (axis) {
@@ -228,110 +228,8 @@ public class FlywheelBlockEntity_woodRenderer
         }
     }
 
-    private void drawBox(
-            PoseStack stack,
-            VertexConsumer consumer,
-            int packedLight,
-            double sizeX,
-            double sizeY,
-            double sizeZ) {
-
-        double x0 = -sizeX * 0.5D;
-        double x1 = sizeX * 0.5D;
-        double y0 = -sizeY * 0.5D;
-        double y1 = sizeY * 0.5D;
-        double z0 = -sizeZ * 0.5D;
-        double z1 = sizeZ * 0.5D;
-
-        PoseStack.Pose pose =
-                stack.last();
-
-        quad(consumer, pose, packedLight,
-                x0, y1, z0, x0, y1, z1,
-                x1, y1, z1, x1, y1, z0,
-                0.0F, 1.0F, 0.0F);
-        quad(consumer, pose, packedLight,
-                x0, y0, z1, x0, y0, z0,
-                x1, y0, z0, x1, y0, z1,
-                0.0F, -1.0F, 0.0F);
-        quad(consumer, pose, packedLight,
-                x0, y0, z1, x1, y0, z1,
-                x1, y1, z1, x0, y1, z1,
-                0.0F, 0.0F, 1.0F);
-        quad(consumer, pose, packedLight,
-                x1, y0, z0, x0, y0, z0,
-                x0, y1, z0, x1, y1, z0,
-                0.0F, 0.0F, -1.0F);
-        quad(consumer, pose, packedLight,
-                x1, y0, z1, x1, y0, z0,
-                x1, y1, z0, x1, y1, z1,
-                1.0F, 0.0F, 0.0F);
-        quad(consumer, pose, packedLight,
-                x0, y0, z0, x0, y0, z1,
-                x0, y1, z1, x0, y1, z0,
-                -1.0F, 0.0F, 0.0F);
-    }
-
-    private void quad(
-            VertexConsumer consumer,
-            PoseStack.Pose pose,
-            int packedLight,
-            double x0, double y0, double z0,
-            double x1, double y1, double z1,
-            double x2, double y2, double z2,
-            double x3, double y3, double z3,
-            float nx, float ny, float nz) {
-
-        vertex(consumer, pose, packedLight,
-                x0, y0, z0, 0.0F, 0.0F,
-                nx, ny, nz);
-        vertex(consumer, pose, packedLight,
-                x1, y1, z1, 0.0F, 1.0F,
-                nx, ny, nz);
-        vertex(consumer, pose, packedLight,
-                x2, y2, z2, 1.0F, 1.0F,
-                nx, ny, nz);
-        vertex(consumer, pose, packedLight,
-                x3, y3, z3, 1.0F, 0.0F,
-                nx, ny, nz);
-    }
-
-    private void vertex(
-            VertexConsumer consumer,
-            PoseStack.Pose pose,
-            int packedLight,
-            double x,
-            double y,
-            double z,
-            float u,
-            float v,
-            float nx,
-            float ny,
-            float nz) {
-
-        consumer.vertex(
-                        pose.pose(),
-                        (float) x,
-                        (float) y,
-                        (float) z
-                )
-                .color(
-                        1.0F,
-                        1.0F,
-                        1.0F,
-                        1.0F
-                )
-                .uv(u, v)
-                .overlayCoords(
-                        OverlayTexture.NO_OVERLAY
-                )
-                .uv2(packedLight)
-                .normal(
-                        pose.normal(),
-                        nx,
-                        ny,
-                        nz
-                )
-                .endVertex();
+    private static void drawBox(PoseStack pose, VertexConsumer consumer,
+            int light,double x,double y,double z) {
+        FlywheelMesh.drawBox(pose,consumer,light,x,y,z,false);
     }
 }

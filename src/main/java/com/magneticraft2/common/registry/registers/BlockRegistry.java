@@ -32,6 +32,7 @@ import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmUpperBlock;
 import com.magneticraft2.common.block.stage.copper.CopperFluidTankBlock;
 import com.magneticraft2.common.block.stage.copper.FlywheelBlock_wood;
+import com.magneticraft2.common.block.stage.iron.WroughtIronFlywheelBlock;
 import com.magneticraft2.common.block.stage.copper.CrankBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
@@ -138,6 +139,8 @@ public class BlockRegistry {
     public static final RegistryObject<CrankBlock_wood> CRANK_WOOD = BLOCKS.register("crank_wood", CrankBlock_wood::new);
     public static final RegistryObject<MechanicalBellowsBlock> MECHANICAL_BELLOWS = BLOCKS.register("mechanical_bellows", MechanicalBellowsBlock::new);
     public static final RegistryObject<FlywheelBlock_wood> FLYWHEEL_WOOD = BLOCKS.register("flywheel_wood", FlywheelBlock_wood::new);
+    public static final RegistryObject<WroughtIronFlywheelBlock> IRON_FLYWHEEL =
+            BLOCKS.register("iron_flywheel",WroughtIronFlywheelBlock::new);
     public static final RegistryObject<MechanicalOreWasherBlock> MECHANICAL_ORE_WASHER = BLOCKS.register("mechanical_ore_washer", MechanicalOreWasherBlock::new);
     public static final RegistryObject<MechanicalSifterBlock> MECHANICAL_SIFTER = BLOCKS.register("mechanical_sifter", MechanicalSifterBlock::new);
     public static final RegistryObject<BronzePatternMakerBlock> BRONZE_PATTERN_MAKER =

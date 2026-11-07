@@ -585,5 +585,9 @@
   "message.magneticraft2.iron_forge_hearth.incomplete": "Incomplete Iron Forge Hearth. Check the book.",
   "message.magneticraft2.iron_forge_hearth.fuel_added": "Solid fuel queued.",
   "message.magneticraft2.iron_forge_hearth.fuel_rejected": "Use matching solid furnace fuel (max 16).",
-  "message.magneticraft2.iron_forge_hearth.status": "Hearth fuel %s | burn %s | HEAT %s/%s | progress %s/%s | input %s | output %s"
+  "message.magneticraft2.iron_forge_hearth.status": "Hearth fuel %s | burn %s | HEAT %s/%s | progress %s/%s | input %s | output %s",
+  "block.magneticraft2.iron_flywheel": "Wrought Iron Flywheel",
+  "item.magneticraft2.iron_flywheel": "Wrought Iron Flywheel",
+  "message.magneticraft2.iron_flywheel.incomplete": "Iron Flywheel: two foundations and free 3×3 vertical space required.",
+  "message.magneticraft2.iron_flywheel.formed": "Large Iron Flywheel formed. Connect an axial shaft."
 }
