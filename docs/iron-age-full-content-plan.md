@@ -43,7 +43,7 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `wrought_iron_bar` | Hot ingot → existing powered Rolling Mill | Shaft stock and first structural beams; 1 ingot-equivalent per Bar | SOURCE IMPLEMENTED — testing pending |
 | `wrought_iron_rod` | Hot Bar → existing Rolling Mill, 4 Rods | Quarter-ingot fastener/structural stock; precision drawing is later | SOURCE IMPLEMENTED — testing pending |
 | `wrought_iron_sheet` | Existing Rolling Mill on prepared plate | Riveted iron panels and light fittings | CORE |
-| `wrought_iron_rivets` | Cut/punch rods or bar, with valid yield ledger | Assembly, frames, casing | CORE |
+| `iron_rivet` | 1 Wrought Iron Rod → 4 Rivets in powered Stock Shear | Riveted Iron Frame, later casing/assembly | SOURCE IMPLEMENTED — game tests pending |
 | `iron_gear_blank_medium` | Forge 1 hot Wrought Bar at existing Forge Hammer | Existing Lathe with flint-tipped cutter | SOURCE IMPLEMENTED (not tested) |
 | `precision_iron_gear_medium` | Existing Bronze Lathe, 160 ticks at 12 RPM / 5 torque, double cutter wear | Craft 16-torque Iron gear with Plates/Bar | SOURCE IMPLEMENTED (not tested) |
 | `iron_gear_blank_large` | Forge larger blank with more ingot-equivalents | Lathe into large precision gear | CORE, later |
@@ -51,7 +51,7 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `machined_iron_shaft` | Potential later Lathe turning of iron bar for tighter shaft tolerances | Iron machine upgrades if genuine precision/wear needs established | CONDITIONAL — first Iron Shaft currently assembled from rolled Bar + machined Bronze bearings |
 | `iron_bearing_housing` | Forging and existing Precision Boring Machine | Gearbox/flywheel, physical bearing seats | CORE |
 | `iron_lathe_cutter` | Forge/grind serviceable iron-capable cutter | Work Iron on existing Lathe | CORE if Bronze cutter cannot |
-| `iron_shear_blade` | Forged tool from wrought stock | Replaceable blade in Stock Shear | CORE |
+| `iron_shear_blade` | 2 Wrought Iron Plates + 1 Rod → Shear Blade | Replaceable 512-batch Stock Shear tooling | SOURCE IMPLEMENTED — game tests pending |
 | `iron_press_die` | Iron tool upgrade | Iron panel forming or longer service | CONDITIONAL |
 | `iron_roller_sleeves` | Iron tool upgrade | More demanding rolling, real wear benefit | CONDITIONAL |
 | `graphite_lubricant` | Actual processed Graphite | Bearing maintenance reduction | CONDITIONAL |
@@ -75,8 +75,8 @@ See [Iron industrial factory expansion](iron-age-industrial-factory-expansion.md
 | `wrought_iron_gear_large` | Gear V2 16-tooth gear | Strength/ratio choices, matching established mesh pitch | Iron II-B |
 | `wrought_iron_shaft` | Gear V2 X/Y/Z axial shaft | 24 max torque, existing wood 16; current 16-torque sources unchanged | SOURCE IMPLEMENTED — in-game tests pending |
 | `wrought_iron_gearbox` | Gear V2 gearbox | Existing 1:1 right-angle ports, 16 max torque vs wood 8 | SOURCE IMPLEMENTED — in-game tests pending |
-| `riveted_iron_frame` | Structural full block | Genuine heavy machine support in multiblock layouts | Iron II-B |
-| `iron_stock_shear` | **New JSON multiblock** | High-load mechanical stock cutting/punching and fasteners | Iron III |
+| `riveted_iron_frame` | 4 wrought Bars + 4 Iron Rivets | Open factory structural block, accurate collision | SOURCE IMPLEMENTED — game tests pending |
+| `iron_stock_shear` | **New 3×3×2 JSON multiblock** | Genuine 12-torque cutting (16 RPM), 1 Rod → 4 Rivets | SOURCE IMPLEMENTED — game tests pending |
 | `riveted_iron_casing` | Full iron casing block | Enclosure and structural ingredient for heavy machinery | Iron III |
 | `iron_forge_hearth` | **New JSON multiblock** | Batch heating of iron stock, fuel/HEAT/AIR logistics, not another Bloomery | Iron III/IV |
 | `iron_flywheel` | Gear V2 inertia block | More stored angular momentum than the wooden flywheel | Iron IV |
@@ -216,6 +216,41 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 - **Studio:** Models/animations authored in separate MGC2 Studio workstream; Java exposes real item/progress state and maintains functional placeholders without duplicated renderers.
 - **Multiplayer:** As expressly agreed, **ALL multiplayer-specific implementation and testing is deferred until AFTER Steam Age is finished**. This is **not** an Iron or Steel gate. Keep gameplay server-authoritative and preserve saves, but do not schedule dedicated-server/multi-client work now.
 
+### Iron III-A Stock Shear implementation candidate — 2026-11-07
+
+The first Iron machine requiring a **real 12-torque mechanical load at
+16 RPM** is implemented in the Iron draft branch. Its 3×3×2
+datapack multiblock uses the previously introduced Iron Machine
+Foundation, Iron Structural Beam, a distinct controller, the real
+Gear V2 Mechanical Input Module and actual Item Input/Output modules.
+The blade is a replaceable 512-cycle machine part and wears only
+on completed batches; a jammed output blocks load and completion.
+
+Its first conservative, useful processing route is
+**1 Wrought Iron Rod → 4 Iron Rivets** in 180 supplied ticks,
+feeding **4 Iron Rivets + 4 Wrought Iron Bars → 1 Riveted Iron Frame**.
+No Metal, heat or Steel Age shortcuts are added. The first machine
+should be constructible without its own rivet output (avoids a
+circular progression dependency). The Stock Shear is a separate
+cutting operation from the existing Bronze Press, Lathe and
+Rolling Mill.
+
+Machine wiring reuses the Bronze Press's proven JSON/voxel V2,
+item port, maintenance, progress, load and static/baked-model
+contracts without refactoring the Bronze Press. The forge/metal
+quality of input stock is propagated to the actual output, with
+temporary hot-state metadata removed; crafting the final frame
+does not automatically carry ingredient quality tags to the
+placed BlockItem.
+
+**Stage:** source implemented, not compiled or run in Minecraft.
+Specifically the 12-torque path is **not** player-verified; a high
+rated node is not proof of available source power. Required:
+construction/formation in all four facings, real output/overload
+tests with Wooden 8 vs Iron 16 routes, save/load, blade replacement,
+world break, item port automation and actual visual/model/UV
+verification. No multiplayer-specific tests until after Steam Age.
+
 ## 9. Work order and acceptance criteria
 
 | Phase | Deliverable | Acceptance evidence | Status |
@@ -226,7 +261,7 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
 | Iron II-A | Forge / Lathe / craft the 16-torque Iron Medium Gear | Block/item/JSON/renderer source implemented; **real >8-torque consumer and Gear V2 acceptance still untested** | SOURCE IMPLEMENTED — tests pending |
 | Iron II-B | Wrought Iron Shaft (24) and 1:1 right-angle Gearbox (16); Large Gear and remaining factory blocks later | Separate Gear V2 BEs; preserve wood 16/8, axis and port behavior; validate genuine >8 load only with a real consumer | SHAFT + GEARBOX SOURCE IMPLEMENTED — build/player tests pending; large gear and remaining blocks proposals |
-| Iron III-A | Iron Stock Shear and Blade | Heavy stock/fasteners, real load, blocked output, item wear and no duplication | PROPOSAL |
+| Iron III-A | Stock Shear, replaceable Blade, rivets and Riveted Iron Frame | 12-torque actual machine, JSON 3×3×2 blueprint, 512-cycle blade; in-game load and I/O still unverified | SOURCE IMPLEMENTED — build and in-game tests pending |
 | Iron III-B | Riveted Casing/Frame and **consumer-gated Mechanical Draw Bench** | Factory building works; draw bench only if distinct precise rod output is genuinely useful | PROPOSAL |
 | Iron IV-A | Iron Forge Hearth, Iron Flywheel | Real hot-batch throughput/inertia difference; kiln/flywheel still useful | PROPOSAL |
 | Iron IV-B | Steel Age material/infrastructure handoff | Actual wrought components prepare new technological capability; **no premature Steel recipes** | PROPOSAL |

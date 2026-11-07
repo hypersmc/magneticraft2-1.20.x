@@ -261,6 +261,30 @@ fixtures and in-game motor/gear orientation, visual, torque, break,
 reload, performance tests. Multiplayer remains explicitly deferred
 until after Steam Age.
 
+## Iron III-A — Stock Shear, Rivets and Riveted Frame (source only)
+
+A new JSON-driven 3×3×2 Stock Shear now introduces a genuinely
+higher-demand Gear V2 consumer: **12 torque at 16 RPM** over
+180 supplied ticks. It cuts one existing Wrought Iron Rod into
+four quality-preserving Rivets. Four Rivets with four Wrought
+Iron Bars yield one useful Riveted Iron Frame. The shear blade
+lasts 512 completed batches and must be replaced when worn.
+The first machine is built from prior Wrought Iron parts, so
+no self-gating metal loop is introduced.
+
+The existing Bronze Mechanical Press and Gear V2 physics remain
+untouched; the Shear has its own controller, BE, JSON machine
+recipes, I/O and material model. New construction requires
+existing Iron Foundations/Beams plus real modules. The book
+shows the full structure and the operational requirements.
+
+**Stage:** source/prototype only, Gradle compile, real machine
+formation, model/animation and loaded power network NOT verified.
+Do not assume a 16-capacity source can run a 12-torque consumer
+until confirmed with actual water flow, load module and all
+intervening gear/gearbox nodes. All multiplayer work remains
+postponed until after Steam.
+
 ## Remaining proposed milestones (after Iron II-B source implementation)
 
 ### Iron II-A — investigate stronger transmission after first Iron tooling
