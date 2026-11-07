@@ -11,6 +11,8 @@ import com.magneticraft2.common.item.stage.copper.CopperFluidPipeItem;
 import com.magneticraft2.common.item.stage.copper.LeatherBeltItem;
 import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
+import com.magneticraft2.common.item.stage.iron.WroughtIronIngotItem;
+import com.magneticraft2.common.item.stage.iron.WroughtIronBarItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -118,6 +120,9 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_HAMMER = fromBlock(BRONZE_FORGE_HAMMER);
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_DIE =
             ITEMS.register("bronze_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Iron I: a forged replacement for the existing Bronze Forge Hammer die.
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_FORGE_DIE =
+            ITEMS.register("wrought_iron_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLING_MILL = fromBlock(BRONZE_ROLLING_MILL);
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLER_SLEEVES =
             ITEMS.register("bronze_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
@@ -173,8 +178,25 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_MAGNETITE_CONCENTRATE = ITEMS.register("magnetite_concentrate", () -> new Item(new Item.Properties()));
     public static final RegistryObject<IronBloomItem> ITEM_IRON_BLOOM =
             ITEMS.register("iron_bloom", IronBloomItem::new);
-    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_INGOT =
-            ITEMS.register("wrought_iron_ingot", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<WroughtIronIngotItem> ITEM_WROUGHT_IRON_INGOT =
+            ITEMS.register("wrought_iron_ingot", WroughtIronIngotItem::new);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_PLATE =
+            ITEMS.register("wrought_iron_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<WroughtIronBarItem> ITEM_WROUGHT_IRON_BAR =
+            ITEMS.register("wrought_iron_bar", WroughtIronBarItem::new);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_ROD =
+            ITEMS.register("wrought_iron_rod", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_GEAR_BLANK_MEDIUM =
+            ITEMS.register("iron_gear_blank_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_MEDIUM =
+            ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_MEDIUM =
+            fromBlock(WROUGHT_IRON_GEAR_MEDIUM);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEARBOX = fromBlock(WROUGHT_IRON_GEARBOX);
+    public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);
+    public static final RegistryObject<Item> ITEM_IRON_PLATE_PANEL = fromBlock(IRON_PLATE_PANEL);
+    public static final RegistryObject<Item> ITEM_IRON_MACHINE_FOUNDATION = fromBlock(IRON_MACHINE_FOUNDATION);
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =

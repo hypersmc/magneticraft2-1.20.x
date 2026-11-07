@@ -5,6 +5,9 @@ import com.magneticraft2.common.hologram.AncientProjectorBlock;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
+import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronShaftBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronGearboxBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
@@ -57,9 +60,12 @@ import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
+import com.magneticraft2.common.block.stage.iron.IronStructuralBeamBlock;
+import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -168,6 +174,25 @@ public class BlockRegistry {
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
             BLOCKS.register("bronze_casting_basin", BronzeCastingBasinBlock::new);
+    // Iron II-A: a stronger 8-tooth Gear V2 node, not a new power source.
+    public static final RegistryObject<WroughtIronMediumGearBlock> WROUGHT_IRON_GEAR_MEDIUM =
+            BLOCKS.register("wrought_iron_gear_medium", WroughtIronMediumGearBlock::new);
+    // Iron II-B: reinforced axial and right-angle transmission.
+    public static final RegistryObject<WroughtIronShaftBlock> WROUGHT_IRON_SHAFT =
+            BLOCKS.register("wrought_iron_shaft", WroughtIronShaftBlock::new);
+    public static final RegistryObject<WroughtIronGearboxBlock> WROUGHT_IRON_GEARBOX =
+            BLOCKS.register("wrought_iron_gearbox", WroughtIronGearboxBlock::new);
+
+    // Iron 0D: simple factory construction blocks (no block entities/tickers).
+    public static final RegistryObject<IronStructuralBeamBlock> IRON_STRUCTURAL_BEAM =
+            BLOCKS.register("iron_structural_beam", IronStructuralBeamBlock::new);
+    public static final RegistryObject<IronPlatePanelBlock> IRON_PLATE_PANEL =
+            BLOCKS.register("iron_plate_panel", IronPlatePanelBlock::new);
+    public static final RegistryObject<Block> IRON_MACHINE_FOUNDATION =
+            BLOCKS.register("iron_machine_foundation", () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .strength(5.0F, 6.0F).sound(SoundType.METAL)
+                            .requiresCorrectToolForDrops()));
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(

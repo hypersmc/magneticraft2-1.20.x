@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "magneticraft2:block/iron_structural_beam"
+    },
+    "axis=x": {
+      "model": "magneticraft2:block/iron_structural_beam",
+      "x": 90,
+      "y": 90
+    },
+    "axis=z": {
+      "model": "magneticraft2:block/iron_structural_beam",
+      "x": 90
+    }
+  }
+}

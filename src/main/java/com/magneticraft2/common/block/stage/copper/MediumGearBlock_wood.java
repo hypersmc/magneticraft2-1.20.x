@@ -41,9 +41,13 @@ public class MediumGearBlock_wood extends GearBlock {
 
 
     public MediumGearBlock_wood() {
-        super(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
-        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false));
+        this(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+    }
 
+    /** Shared 8-tooth gear placement/geometry with material-specific durability. */
+    protected MediumGearBlock_wood(BlockBehaviour.Properties properties) {
+        super(properties);
+        this.registerDefaultState(this.stateDefinition.any().setValue(POWERED, false));
     }
 
     @Override

@@ -36,9 +36,12 @@ public class GearboxBlock_wood extends Block implements EntityBlock {
     public static final DirectionProperty OUTPUT = DirectionProperty.create("output");
 
     public GearboxBlock_wood() {
-        super(BlockBehaviour.Properties.of()
-                .strength(2.5F)
-                .noOcclusion());
+        this(BlockBehaviour.Properties.of().strength(2.5F).noOcclusion());
+    }
+
+    /** Reuse proven port orientation and interaction rules with stronger housing. */
+    protected GearboxBlock_wood(BlockBehaviour.Properties properties) {
+        super(properties);
 
         registerDefaultState(stateDefinition.any()
                 .setValue(INPUT, Direction.WEST)
@@ -98,7 +101,7 @@ public class GearboxBlock_wood extends Block implements EntityBlock {
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
             BlockEntityType<A> actual,
             BlockEntityType<E> expected,
             BlockEntityTicker<? super E> ticker) {

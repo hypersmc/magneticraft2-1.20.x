@@ -1,0 +1,13 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:refractory_kiln",
+  "input": {
+    "item": "magneticraft2:wrought_iron_ingot"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:wrought_iron_ingot",
+    "count": 1
+  },
+  "process_time": 240
+}

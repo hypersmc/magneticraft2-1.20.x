@@ -1,0 +1,398 @@
+# Iron Age — foundations and development roadmap (Forge 1.20.1)
+
+**Status (2026-11-07):** Iron 0A's Wrought Iron Forging Die has player acceptance, and Iron 0B's first Wrought Iron Plate has now been produced successfully by the player in-game. Bars/rods, factory blocks and other planned features remain proposals. Build and broader regression results are tracked separately.
+**Base:** `master` immediately after Bronze PR #11 merge
+(`5e5cb3440daa8bd642574c5f473bc5028fecfcb0`, 2026-11-04).
+**Branch:** `feature/iron-age-foundations`.
+**Current K1 implementation:** a Wrought Iron forging die gives the
+existing Bronze Forge Hammer a longer service lifetime (768 vs 384
+completed batches). Next is in-game verification, followed by an
+independently justified stronger drivetrain application.
+
+## Iron Age factory construction + third multiblock proposal — 2026-11-07
+
+The complete Iron design now includes a cohesive **factory construction
+palette** (Frame, Casing, Beam, Grating, Panel, Foundation, Railing,
+Hatch), on top of the existing Gear V2 and hot-metal progression.
+A **Mechanical Draw Bench** is the proposed third distinct Iron
+multiblock, but requires actual calibrated-rod consumers before
+implementation. An Iron Mechanical Hoist/Gantry remains conditional
+until a credible lifting use and implementation are designed.
+
+See [Iron Age industrial factory expansion](iron-age-industrial-factory-expansion.md)
+for block identities, progression order, visual contracts and
+Steel/Steam boundaries. **Total proposed core: 16 registered blocks
+(3 multiblocks + 5 mechanical + 8 structural).** This is planning
+and not a green light to implement every candidate.
+
+## Detailed Iron Age content plan — 2026-11-07
+
+The proposed full materials, blocks, three distinct proposed multiblocks, mechanical
+upgrades, heavy manufacturing and Steel handoff are specified in
+[Iron Age full content plan](iron-age-full-content-plan.md).
+
+That file is a **design proposal**, not authorization to implement every
+candidate. The first Forge Die is player-accepted; the rest require
+incremental scope review, build and in-game verification. Multiplayer
+remains deferred until after Steam.
+
+## What is already working (not to be recreated)
+
+- The player has completed the Magnetite → Stamp Mill/Washer/Sifter →
+  concentrated iron ore → Bloomery → Iron Bloom → heated bloom in the
+  Refractory Kiln → Mechanical Forge Hammer → **Wrought Iron Ingot** route.
+  Required extra fuel, flux and other consumables were supplied. The hot
+  bloom displayed a real countdown.
+- The current `wrought_iron_ingot` is already registered in
+  `ItemRegistry`, and is produced by the existing Bronze-to-Iron recipe.
+  It is the **material entry point**, not an invitation to duplicate iron
+  smelting with a vanilla furnace recipe.
+- Existing Gear V2 supplies RPM, torque/overload and gears/shafts; existing
+  Bronze Lathe, Forge Hammer, Rolling Mill, Press, Boring Machine and
+  Assembly Station should remain relevant to Iron processing.
+- The JSON multiblock, V2 models/voxels, maintenance system, JEI, Patchouli
+  and JSON-driven item/progress visual interface exist. Extend their
+  machine-specific bindings; do not introduce a parallel animation engine.
+- Bronze PR #11 merged into `master` on 2026-11-04. Separate long-running
+  refactoring PR #17 must not be accidentally merged or rewritten.
+
+## Iron Age design principle
+
+**Iron increases strength, scale, repairability, and operating capability.**
+Bronze is for precision casting and workshop tooling; Iron is for forged
+load-bearing parts and genuinely heavier industrial processes. Stronger
+materials do **not** provide free torque or RPM. A reinforced shaft can
+transmit more power from a legitimate source, but cannot create power.
+
+Iron must advance existing production loops without making Stone, Copper
+or Bronze machinery obsolete. This age is **not** Steel Age; controlled
+industrial steel metallurgy and its advanced equipment belong to the
+later Steel design unless explicitly agreed otherwise.
+
+## Iron 0A — Wrought Iron Forge Die (first focused K1 implementation)
+
+The first Iron Age gameplay slice upgrades a **real, installed tool** rather
+than introducing a decorative high-tier shaft. The existing Forge Hammer
+accepts a Wrought Iron Forging Die made from four Wrought Iron Ingots
+and a polished-blackstone striking insert. It lasts **768 completed
+batches**, compared with **384** for the existing Bronze Forge Die.
+Mechanical loads, heat, recipes, output quantities and the original
+bronze die remain unchanged.
+
+The maintenance contract now permits opt-in replacement variants and
+saves the installed item registry ID, preserving the original
+`RemainingCycles` NBT format for legacy machines and Bronze-die worlds.
+Changing the installed material consumes one replacement die, even if
+the previous one was not exhausted. The installed part is not an
+extractable item or an automation input slot.
+
+**Reason for this choice:** a standalone higher-torque shaft provides no
+useful upgrade if its network still routes through a 8-torque wooden
+gear. An upgraded forge die has an immediately measurable purpose
+while leaving reinforced power transmission to Iron II.
+
+**K1 acceptance:** craft from real Wrought Iron; install in an existing
+formed Hammer; inspect current tier/life; complete cycles, reach wear
+thresholds and run it to exhaustion; replace with either tier; restart
+a world with existing Bronze Forge Hammer NBT; recover from a save with
+installed Iron die; compare idle/paused and successful operations;
+verify item display/model and Patchouli/JEI crafting.
+
+**Player acceptance (2026-11-07):** The player reported **"yep works!"** after receiving the Iron 0A test checklist for crafting, die installation, service life, replacement, save/reload, and visual/book integration. Record the Iron 0A gameplay milestone as **player-confirmed functioning in-game**. The report is an overall confirmation, not separate logs for each test or measured wear/FPS data. The exact `node tools/iron-age/check-forge-die-contract.mjs` and JDK 17 `./gradlew build` outputs have not been independently supplied. Do not relabel those tasks as passed without logs.
+
+**Multiplayer scope decision reaffirmed (2026-11-07):** **ALL multiplayer-related work and testing is deferred until Steam Age is finished**, per the user's explicit instruction. Do not make multiplayer verification a blocker for Iron Age development, or claim dedicated-server/multi-client testing passed. Continue to avoid knowingly client-only gameplay logic and preserve future multiplayer compatibility; full verification will be performed after Steam Age.
+
+
+## Iron 0B — hot Wrought Iron Plate (source implementation; tests pending)
+
+The first Iron 0B slice extends the **existing fueled Refractory Kiln**
+and **powered Bronze Forge Hammer**, not a new multiblock. The Kiln
+reheats a Wrought Iron Ingot in 240 HEAT-supplied ticks and grants
+the existing 2400-world-tick (120-second) server-time heat state. The
+Hammer requires at least 20 RPM, 6 torque and 160 supplied ticks to
+convert ONE hot ingot into ONE Wrought Iron Plate.
+
+Existing heat-NBT/quality propagation is reused. Finished plates do not
+retain temporary forging heat. The ingot provides a hot/cold tooltip and
+the plate has a UV-safe 3D item model using the existing dark worked-iron
+texture. The original Bloom → Wrought Iron and Copper Plate recipes
+must remain unchanged. JEI reads the new JSON machine recipes, and
+Patchouli documents the two-machine route.
+
+**Player confirmation (2026-11-07):** The player reported **"yep, got
+a wrought iron plate"**, confirming that the new Refractory Kiln →
+Forge Hammer production chain yielded a Wrought Iron Plate in-game.
+This verifies the main successful crafting/processing path, **not**
+independent proof of fuel balance, exact yield over repeated batches,
+expiry/reheat rejection, quality-tag preservation, blocked outputs,
+die wear, save/reload, item visuals, or old-recipe regressions.
+`./gradlew build` and the Node static fixture have no recorded results
+here. These verification tasks remain open.
+Bars, rods and general Iron blocks are *not* part of this slice.
+Multiplayer work remains deferred until AFTER Steam Age.
+
+## Iron 0C — Wrought Iron Bar/Rod rolling (source implemented; tests pending)
+
+The existing **Bronze Rolling Mill** now performs Iron-specific hot rolling.
+Players can roll a still-hot Wrought Iron Ingot into **one Bar** (180
+powered ticks, 16 RPM, 6 torque), or reheat the Bar in the existing
+fuel-fired Refractory Kiln and roll **one Bar into four Rods** (200
+powered ticks, 16 RPM, 6 torque). Each Bar is one ingot-equivalent;
+each Rod is one-quarter. The Mill checks the same server-time 120-second
+heat stamp on every processing tick and transfers only persistent quality
+NBT to output. Original cold Copper Sheet production is unchanged.
+Recipe selection is machine-based: Forge Hammer makes Plate from hot
+Ingot; Rolling Mill makes Bar, so no recipe ambiguity.
+
+**Status:** code/JSON proposed in PR #18, full build and single-player
+tests pending. No new machine/multiblock. Multiplayer remains
+deferred until after Steam Age.
+
+## Iron 0D — first factory-building blocks (source implemented; tests pending)
+
+Three simple survival-craftable Iron construction blocks now follow from
+the first hot-worked materials: **Iron Structural Beam** (X/Y/Z I-beam
+with collision matching its metal cross-section), **Iron Plate Panel**
+(thin facing-oriented wall/casing with thin collision) and **Iron Machine
+Foundation** (full stone-and-iron support block). They use existing
+Wrought Iron Bars/Rods/Plates plus stone bricks in conservative recipes.
+The palette is genuinely useful for industrial player builds with no
+new machine, block entities, animation system or per-tick physics.
+
+All three have BlockItems, native-UV Minecraft block models, blockstates,
+loot/drop tables, pickaxe tags, localized names, JEI crafting and Patchouli.
+The first Iron multiblocks can later use these structural blocks where
+approved, without making factory construction depend on new machinery.
+
+**Status:** source implementation only; actual `./gradlew build` and
+in-game appearance/placement/rotation/drops/survival recipe testing
+remain open. Dedicated multiplayer remains deferred until after Steam.
+
+## Iron II-A — first Iron Medium Gear (source implemented; verification pending)
+
+**Source candidate:** The first actual Gear V2 Wrought Iron Medium Gear
+(`wrought_iron_gear_medium`) is registered with the existing medium
+gear's **8-tooth** topology, placement restrictions, blockstate rotations,
+power-driven rendering and sync. Only the material's maximum transmitted
+torque differs: the wood medium gear remains **8**, while the wrought
+iron medium gear is **16**. The new block entity delegates visual
+rendering to the proven wooden medium gear renderer. No new Gear V2
+network logic, source torque or arbitrary speed is created.
+
+**Survival manufacturing loop:**
+
+1. Existing Refractory Kiln heats a Wrought Iron Bar as before.
+2. A still-hot Bar is worked by the powered Forge Hammer at 20 RPM /
+   6 torque for 180 ticks into an `iron_gear_blank_medium`. This
+   extends the existing hot-workpiece output whitelist.
+3. The existing Bronze Mechanical Lathe, supplied with its flint-edged
+   cutter, machines the blank through a specific JSON recipe (160 ticks,
+   12 RPM / 5 torque) to a `precision_iron_gear_medium`. Working Iron
+   consumes **2 cutter durability**, compared with **1** for Bronze.
+   Bronze machining outputs and previous worlds keep their original
+   behavior. The Lathe passes the blank's quality NBT to the part.
+4. The player assembles the actual gear block from the precision gear,
+   three Wrought Iron Plates and one Wrought Iron Bar at the crafting
+   table. Vanilla crafting does **not** preserve ingredient quality
+   tags into the block ItemStack. Gear torque is intentionally material
+   capacity only; quality-driven gear ratings remain a separate,
+   unapproved rule. This limitation must not be hidden.
+
+The first Iron gear has its own machine/item registrations, 3D voxel
+model, native-density UVs, all orientation blockstates, pickaxe
+harvesting/drop, creative tab, recipes and Patchouli pages. Its
+dynamically rotating model uses the shared renderer. The wooden gear
+type/renderer/capacity are untouched except for additive protected
+constructors needed for reuse.
+
+**Important incomplete acceptance:** An Iron medium gear alone is
+*not* proof of sustained >8-torque factory operation. The source and
+full transmission path must permit that load; a loaded consumer higher
+than 8 torque is not yet introduced. The proposed Stock Shear is a later
+Iron milestone. In-game test the Iron/Wood gear meshes, phase and
+clearance, the actual 16-torque node value, all axes, rendered-to-collision
+consistency, old save states and source overload. No arbitrary offset or
+hidden mesh geometry is an acceptable fix.
+
+**Status:** implementation candidate only. No confirmed
+`./gradlew build`, Java runtime or player in-game verification.
+Bar/Rod rolling (Iron 0C) is still awaiting specific player acceptance.
+Multiplayer implementation/testing is deferred until after Steam Age.
+
+## Iron II-B — Wrought Iron Shaft and Gearbox (source implementation, pending test)
+
+Two more Gear V2 nodes are now source-implemented on PR #18:
+`wrought_iron_shaft` (axial 1:1 drive, 24-torque structural
+capacity) and `wrought_iron_gearbox` (right-angle reversible 1:1
+drive, 16-torque capacity). The wooden shaft remains 16 and the
+wooden right-angle gearbox remains 8.
+
+**Actual benefit:** The Iron gearbox removes an 8-torque right-angle
+bottleneck if the large water wheel, other gear nodes and actual
+consumer support greater load. The new shaft's capacity above 16
+is future headroom, *not* more current source power. A separate
+higher-than-8-torque factory consumer is still needed for end-to-end
+proof, and mixed wood/iron networks remain limited by their weakest
+node.
+
+**Implementation:** Both blocks specialize the existing Wood
+Shaft/Gearbox code, keeping axial port rules, right-angle direction,
+in-world port swapping, Gear V2 load semantics, update sync and server
+ticks. Each has its own block entity/registry ID so saved wooden
+installations are not retyped. Iron Shaft uses the same backed model
+rotation and axle geometry with dark worked iron, while the Iron
+Gearbox reuses the established *dynamic bevel gear rendering geometry*
+with metal/bronze textures rather than copying or repainting the
+wooden enclosure at runtime. Stationary cages use the existing
+proportionate model with Iron/Bronze texture assignments.
+
+**Survival:** Shaft = one wrought bar + two precision bronze bearings.
+Gearbox = two wrought shafts, two precision iron gears, four wrought
+plates and one precision bronze bearing. Existing forge/rolling/
+lathe production chains supply them; neither recipe is circular.
+All have block items, creative-tab entries, simple crafting recipes,
+loot, pickaxe tags, named models and Patchouli pages. There is no
+new forged material quality modifier for their torque ratings:
+vanilla crafting-table assembly does not propagate source quality
+NBT, as with the first iron gear.
+
+**Verification not performed:** `./gradlew build`, committed Node
+fixtures and in-game motor/gear orientation, visual, torque, break,
+reload, performance tests. Multiplayer remains explicitly deferred
+until after Steam Age.
+
+## Remaining proposed milestones (after Iron II-B source implementation)
+
+### Iron II-A — investigate stronger transmission after first Iron tooling
+
+**Future candidate:** a *Wrought Iron powertrain upgrade*
+(for example a stronger geared transmission part, bearing/coupling, or
+shaft in a genuinely demanding configuration). It must be made from
+the existing Bronze workshop's Wrought Iron output and solve a measurable
+mechanical bottleneck. The exact item is **not yet settled**.
+
+**Gear V2 audit (source-checked against merged Bronze `master`):**
+- `ShaftBlockEntity_wood.getGearMaxTorque()` already returns **16**.
+  Consequently, an iron shaft offering only 16 torque or a cosmetic
+  material change does **not** automatically unlock a useful capability.
+- `GearBlockEntity.getGearMaxTorque()` defaults to **8**, while some
+  components override it. That is a possible bottleneck, not a reason
+  to change all wooden gear limits or invent iron source power.
+- `GearNetworkManager` propagates available torque by
+  `min(availableTorque, neighbor.getMaxTorque())`, evaluates actual
+  machine load separately and preserves axial shaft connections.
+  Therefore an isolated reinforced shaft cannot bypass a weaker
+  upstream wooden gear, gearbox or power source.
+- **Implementation decision:** reproduce a real case where the player's
+  Bronze-era power path becomes transmission-limited, determine the
+  minimum meaningful Iron replacement part(s) and only then assign
+  capacities, wear and recipes. If no such case exists, choose another
+  truly useful first Wrought Iron application rather than adding
+  decorative "higher tier" parts.
+
+Before writing gameplay code, audit existing `ShaftBlock_wood`,
+`ShaftBlockEntity_wood`, `GearNode`, `GearNetworkManager`, placement,
+registries, connection rules, overload semantics, drops and saved NBT.
+Reuse the established Gear V2 node behavior.
+
+Acceptance criteria:
+
+- [ ] Item/recipe consumes legitimate Wrought Iron from the existing chain.
+- [ ] A real powered installation behaves correctly under low/high load,
+      reversal, source stop, overload, adjacent wooden shaft and
+      gear/gearbox connections; a high-capacity part does **not** increase
+      the actual power source's output.
+- [ ] Material limits and wear differences are explicit, testable and
+      visibly communicable; no unexplained default-torque boost.
+- [ ] Existing wooden networks and saved worlds behave as before.
+- [ ] Correct model/UV, mechanical connection, block/item registry, loot,
+      recipe, JEI, Patchouli and all horizontal/vertical orientations.
+- [ ] `./gradlew build` and in-game regression, not just static inspection.
+
+**Decision required before the transmission K1:** first drivetrain part
+and numerical transmission/durability contract. The Forge Hammer's
+Wrought Iron die is the first actual Iron 0A item, with its own
+explicitly documented 384 → 768 wear benefit. Do not assign
+unstated torque improvements to other Iron parts.
+
+### Iron I — wrought-iron manufacturing
+
+Introduce **only the material forms needed by actual machine components**:
+forged shaft stock, plate/sheet, bars/rods, forged fittings or fasteners.
+First investigate whether the Bronze Forge Hammer, Rolling Mill and Lathe
+can perform their realistic operations with an additive recipe rather than
+creating new single-purpose copies.
+
+- [ ] Conservation and byproducts for each step (offcuts/slag where real).
+- [ ] HEAT conditions for hot forging and sensible cold-working limits.
+- [ ] Input quality metadata propagation using existing conventions.
+- [ ] No bypass around first Wrought Iron from Bloomery/Kiln/Hammer.
+
+### Iron II — robust power transmission and machine upgrades
+
+Reassess material-specific gearing/shafts, couplings, bearing housings,
+higher process loads and visible replaceable wear parts **based on concrete
+consumers**, not on new decorative content. Build on the existing Gear V2
+load/state model and prove that mixed wooden/bronze/iron networks work.
+
+### Iron III — useful heavy manufacturing
+
+Candidate directions for later design review: heavier forming or cutting,
+larger industrial throughput, material handling and service access.
+A machine must solve a real production bottleneck or enable a new
+material; **none of these candidate machines is yet authorized or
+registered**. Prefer upgrades to existing multiblocks where credible.
+
+### Iron IV — Steel Age handoff
+
+Establish meaningful iron-part production and the industrial requirements
+for controlled carbon/temperature work. Do not prematurely add a
+Steel Ingot smelting shortcut or claim a specific steelmaking furnace
+until the Steel Age contract is decided.
+
+## Cross-age systems: preserved decisions
+
+- **Material quality:** Existing vanilla-vs-mod Copper quality decisions
+  must be preserved. Iron part quality/impurity consequences need a
+  separate agreed specification, not unrelated new grade maths.
+- **Wear:** Use existing `ReplaceableMachinePart` where appropriate,
+  but not every part should decay simply to add upkeep.
+- **Pollution:** An established cross-age systems goal, not silently
+  declared implemented or required for this first Iron pilot.
+  Sources, emissions, environmental effects, mitigation and balance
+  require their own system design across Bronze → later ages.
+- **Resources:** The 31-mineral age matrix lists Graphite, Anthracite and
+  Sphalerite as *conditional* Iron candidates. Do not add ore processing
+  without a specific named consumer, meaningful industrial difference
+  and compatible resource/material conservation.
+- **Visuals:** Work in MGC2 Studio is separate. Java may expose its real
+  synchronized item/progress state to the existing animation system;
+  do not start throwaway custom animation infrastructure.
+- **Pipes:** AIR/STEAM/water are different networks. The requested
+  all-orientation diagonal pipe variants remain separately scoped,
+  with Steam rupture physics preserved. Do not gate first Iron work
+  on Steam's implementation.
+- **Multiplayer:** The user scheduled dedicated-server multi-client
+  acceptance after Steam Age. Continue server-authoritative logic
+  and preserve save compatibility meanwhile.
+
+## First practical engineering checkpoint
+
+1. [x] Base PR #18 on merged Bronze PR #11 and preserve the refactor PR #17.
+2. [x] Audit the existing Gear V2 shaft/gear limits without changing them.
+3. [x] Implement one first end-to-end Wrought Iron → forging die →
+   installed upgrade loop through existing crafting and Forge Hammer
+   maintenance, including JEI/Patchouli and a textured 3D item model.
+4. [ ] Compile with JDK 17 `./gradlew build`; test new/old maintenance
+   data, item wear/replacement and visuals in Minecraft.
+5. [ ] After the die is accepted, evaluate the real high-load network
+   bottleneck and select a useful forged Iron drivetrain part before
+   growing Iron I/II.
+
+**Status (2026-11-07):** PR #18's first Iron Age gameplay feature has been
+**accepted in-game by the player**. Full `./gradlew build` and independent
+test-script results remain undocumented here. Additional Iron drivetrain
+upgrades remain proposals, not registered features. The user has explicitly
+deferred **all multiplayer-related implementation/testing until after Steam
+Age is complete**. PR #18 stays draft and unmerged pending a separate
+decision; player acceptance does not by itself authorize merging.

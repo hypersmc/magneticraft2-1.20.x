@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_rolling_mill",
+  "input": {
+    "item": "magneticraft2:wrought_iron_ingot"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:wrought_iron_bar",
+    "count": 1
+  },
+  "process_time": 180,
+  "mechanical": {
+    "min_speed": 16,
+    "torque": 6
+  }
+}

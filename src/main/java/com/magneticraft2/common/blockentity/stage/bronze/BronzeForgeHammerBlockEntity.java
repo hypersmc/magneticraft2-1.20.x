@@ -76,7 +76,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
     private long clientVisualSnapshotTick = -1L;
     private boolean running;
     private final ReplaceableMachinePart forgingDie =
-            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384);
+            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384,
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_WROUGHT_IRON_FORGE_DIE::get, 768));
 
     public BronzeForgeHammerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(), pos, state);
@@ -177,9 +179,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             return;
         }
         ItemStack inputStack = itemHandler.getStackInSlot(0);
-        // Only cold copper needs no heat. Consolidation is always hot work,
-        // and heat must remain valid throughout every supplied hammer tick.
-        // A cooled bloom can be reheated at the existing Refractory Kiln.
+        // Existing Copper Plate forming stays cold. Iron Bloom consolidation
+        // and Wrought Iron Plate forging both require actual hot stock for
+        // every supplied tick; expired workpieces must be reheated.
         if (HotBloomWorkpiece.requiresHeat(recipe)
                 && !HotBloomWorkpiece.isHot(inputStack, level)) {
             resetBatch();
@@ -303,7 +305,12 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "bloom_cold";
         } else if (!forgingDie.canOperate()) {
             diagnostic = "die_worn";
-        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+        } else if (!itemHandler.insertItem(1,
+                HotBloomWorkpiece.requiresHeat(candidate)
+                        ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())
+                        : candidate.getOutput(), true).isEmpty()) {
+            // Match the NBT-aware output reservation used during actual
+            // forging, including material quality on the Iron plate.
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";

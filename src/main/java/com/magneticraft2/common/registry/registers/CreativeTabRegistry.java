@@ -43,6 +43,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
                         entries.accept(ItemRegistry.item_bellowsmultiblockmodule.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_STRUCTURAL_BEAM.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_PLATE_PANEL.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_MACHINE_FOUNDATION.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->
@@ -111,6 +114,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_MILL.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FORGE_HAMMER.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FORGE_DIE.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_FORGE_DIE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_ROLLING_MILL.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_ROLLER_SLEEVES.get());
                         entries.accept(ItemRegistry.ITEM_COPPER_SHEET.get());
@@ -140,6 +144,14 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_MAGNETITE_CONCENTRATE.get());
                         entries.accept(ItemRegistry.ITEM_IRON_BLOOM.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
+                        entries.accept(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_GEAR_MEDIUM.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_SHAFT.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_GEARBOX.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
                         entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());
