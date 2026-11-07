@@ -26,6 +26,7 @@ import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_w
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronMediumGearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronShaftBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronGearboxBlockEntity;
+import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -138,6 +139,10 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("bronze_rolling_mill", () ->
                     BlockEntityType.Builder.of(BronzeRollingMillBlockEntity::new,
                             BlockRegistry.BRONZE_ROLLING_MILL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<IronStockShearBlockEntity>> IRON_STOCK_SHEAR_BE =
+            BLOCK_ENTITIES.register("iron_stock_shear", () ->
+                    BlockEntityType.Builder.of(IronStockShearBlockEntity::new,
+                            BlockRegistry.IRON_STOCK_SHEAR.get()).build(null));
     public static final RegistryObject<BlockEntityType<BronzeMechanicalPressBlockEntity>> BRONZE_MECHANICAL_PRESS_BE =
             BLOCK_ENTITIES.register("bronze_mechanical_press", () ->
                     BlockEntityType.Builder.of(BronzeMechanicalPressBlockEntity::new,

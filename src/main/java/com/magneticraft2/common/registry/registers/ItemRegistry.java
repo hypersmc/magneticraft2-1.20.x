@@ -190,6 +190,11 @@ public class ItemRegistry {
             ITEMS.register("iron_gear_blank_medium", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_MEDIUM =
             ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_SHEAR_BLADE =
+            ITEMS.register("iron_shear_blade", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_IRON_RIVET =
+            ITEMS.register("iron_rivet", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_STOCK_SHEAR = fromBlock(IRON_STOCK_SHEAR);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_MEDIUM =
             fromBlock(WROUGHT_IRON_GEAR_MEDIUM);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);

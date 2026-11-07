@@ -62,6 +62,7 @@ import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.block.stage.iron.IronStructuralBeamBlock;
 import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
+import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
@@ -183,6 +184,9 @@ public class BlockRegistry {
     public static final RegistryObject<WroughtIronGearboxBlock> WROUGHT_IRON_GEARBOX =
             BLOCKS.register("wrought_iron_gearbox", WroughtIronGearboxBlock::new);
 
+    // Iron III-A: heavy stock cutting, with a replaceable blade.
+    public static final RegistryObject<IronStockShearBlock> IRON_STOCK_SHEAR =
+            BLOCKS.register("iron_stock_shear", IronStockShearBlock::new);
     // Iron 0D: simple factory construction blocks (no block entities/tickers).
     public static final RegistryObject<IronStructuralBeamBlock> IRON_STRUCTURAL_BEAM =
             BLOCKS.register("iron_structural_beam", IronStructuralBeamBlock::new);
