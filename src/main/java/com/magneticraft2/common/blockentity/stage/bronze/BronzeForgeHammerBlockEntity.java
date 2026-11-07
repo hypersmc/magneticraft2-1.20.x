@@ -305,7 +305,12 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "bloom_cold";
         } else if (!forgingDie.canOperate()) {
             diagnostic = "die_worn";
-        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+        } else if (!itemHandler.insertItem(1,
+                HotBloomWorkpiece.requiresHeat(candidate)
+                        ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())
+                        : candidate.getOutput(), true).isEmpty()) {
+            // Match the NBT-aware output reservation used during actual
+            // forging, including material quality on the Iron plate.
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";
