@@ -30,7 +30,12 @@ public final class WroughtIronFlywheelRenderer
         stack.mulPose(Axis.XP.rotationDegrees(wheel.getVisualRotationDegrees(partial)));
         VertexConsumer iron=buffers.getBuffer(RenderType.entityCutoutNoCull(IRON));
         VertexConsumer bearing=buffers.getBuffer(RenderType.entityCutoutNoCull(BRONZE));
-        FlywheelMesh.drawBox(stack,iron,light,0.92D,0.125D,0.125D,true);
+        // The existing Wrought Iron Shaft model spans all 16 pixels of its
+        // block along the axis (2x2px profile). Match that exactly here:
+        // a 0.92-block axle left a 0.04-block air gap at BOTH ends.
+        // This full-block shaft ends flush at the neighboring block face,
+        // without extending into the neighboring shaft or bearing.
+        FlywheelMesh.drawBox(stack,iron,light,1.00D,0.125D,0.125D,true);
         for(int i=0;i<SPOKES;i++){
             stack.pushPose();
             stack.mulPose(Axis.XP.rotationDegrees(i*360F/SPOKES));

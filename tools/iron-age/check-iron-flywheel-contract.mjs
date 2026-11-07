@@ -65,10 +65,24 @@ const center=j('assets/magneticraft2/models/block/iron_flywheel_controller.json'
 assert.equal(center.elements.length,10,"Front and rear rings plus two connected support arms");
 assert.deepEqual(center.elements[0].from,[4,10,2]);
 assert.deepEqual(center.elements[0].to,[12,12,5]);
-assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0.64,9,9,15.36]'),
+assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'),
  "A rotating visible shaft still needs a physical collision envelope");
 assert.ok(!center.elements.some(e=>JSON.stringify(e.from)==='[7,7,0]'),
  "Shaft must NOT be duplicated as a fixed model");
+// The neighboring Wrought Iron Shaft has a 2x2 pixel cross-section and
+// fills its entire block along the rotation axis. The formed flywheel
+// spindle must end EXACTLY at the neighboring block face, not 0.04
+// blocks short and not beyond the face into a second shaft.
+const ironShaftModel=j('assets/magneticraft2/models/block/wrought_iron_shaft.json');
+assert.equal(ironShaftModel.elements.length,1);
+const shaft=ironShaftModel.elements[0],shaftSize=shaft.to.map((x,i)=>x-shaft.from[i]);
+assert.deepEqual(shaftSize,[2,16,2]); // local Y; blockstate rotates to Z
+assert.deepEqual(v.collision[18],[7,7,0,9,9,16]);
+assert.deepEqual(v.selection[18],[7,7,0,9,9,16]);
+// The shaft remains renderer-owned: no duplicate stationary formed rod.
+assert.ok(!center.elements.some(e=>e.from[2]===0&&e.to[2]===16
+  &&e.from[0]===7&&e.to[0]===9));
+
 assert.ok(!v.collision.some(b=>JSON.stringify(b)==='[0,7,11,16,9,15]'));
 assert.deepEqual(v.collision,v.selection);
 // The shaft rotates along Z. Each bearing is supported at a distinct
@@ -113,7 +127,7 @@ assert.ok(be.includes('collision=null;'));
 assert.ok(be.includes('level.setBlock(old.getKey(),old.getValue(),Block.UPDATE_ALL)'));
 assert.ok(wood.includes('getInertiaTorque(){return INERTIA_TORQUE;}'));
 assert.ok(s('client/render/blocks/stage/iron/WroughtIronFlywheelRenderer.java')
-  .includes('FlywheelMesh.drawBox(stack,iron,light,0.92D,0.125D,0.125D,true)'));
+  .includes('FlywheelMesh.drawBox(stack,iron,light,1.00D,0.125D,0.125D,true)'));
 assert.ok(s('common/block/general/Multiblockfiller.java').includes('flywheel.dismantleWheel()'));
 assert.ok(j('data/minecraft/tags/blocks/mineable/pickaxe.json').values.includes('magneticraft2:iron_flywheel'));
 assert.ok(j('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json')

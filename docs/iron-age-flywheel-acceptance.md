@@ -133,8 +133,12 @@ drop as items rather than restoring in place.
 **Verification:** Source geometry and collision check only; this revision
 still requires JDK17 Gradle compilation and in-game acceptance.
 
-The rotating shaft is 0.92 blocks long, so its matching Voxel V2
-collision spans z=0.64–15.36 pixels, not the complete 16px cell.
+The former 0.92-block rotating shaft left a 0.04-block gap at either
+connection to a full-length existing Wrought Iron Shaft. The rotating
+shaft now spans exactly 1.00 block / 16 model pixels along the axle,
+with matching 2×2-pixel cross-section and Voxel V2 collision from
+z=0 to z=16. This makes both ends flush at their respective block
+boundaries, with no overlapping extension into neighboring shafts.
 
 ### Formation-dependent controller model
 
@@ -146,3 +150,25 @@ when the `is_formed` state changes. The item model also uses the compact
 controller. This avoids rendering unsupported/floating bearing rings
 before the foundations exist, without drawing a second stationary shaft
 when the formed renderer animates its own axle.
+
+### Both-side axial shaft gap (player screenshot follow-up)
+
+The screenshot showed identical short air gaps between the formed
+flywheel spindle and neighboring Wrought Iron Shafts on both axial
+sides. Root cause in source: renderer drew a 0.92-block central axle,
+while the existing 2×2-pixel Wrought Iron Shaft model occupies the full
+block length. This was symmetrical by construction (0.04-block setback
+at each face). The flywheel renderer now draws an exact 1.00-block
+axle with the same 2×2-pixel cross-section, and the single axle V2
+collision cuboid spans the corresponding 16 model pixels.
+
+No adjustments to the bearing rings, frame offsets, 3×3×1 structure,
+visual textures, Gear V2 connections, source torque, or old wooden
+flywheel were made. This is a block-face alignment fix, not an
+arbitrary overlap hiding the seam.
+
+**In-game test:** dismantle and rebuild a formed Iron Flywheel to
+refresh its V2 collision snapshot; test Wrought Iron Shaft connections
+from BOTH axial faces with stopped and powered machinery, and check
+all four facings. If a gap remains, inspect block-entity identity
+and exact target geometry rather than extending past block boundaries.

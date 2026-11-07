@@ -305,7 +305,7 @@ const overlaps=(a,b)=>a.slice(0,3).every((n,i)=>
  n<b[i+3]-1e-9&&b[i]<a[i+3]-1e-9);
 assert.ok(!staticBoxes.some(a=>moving.some(b=>overlaps(a,b))),
  "Static support intersects swept rim");
-const boxes=[...staticBoxes,[7,7,0.64,9,9,15.36],...moving];
+const boxes=[...staticBoxes,[7,7,0,9,9,16],...moving];
 assert.equal(boxes.length,43);
 files.set("data/magneticraft2/multiblock_voxels/iron_flywheel.json",
  json({format:1,unit:"model_pixels",collision:boxes,selection:boxes}));
