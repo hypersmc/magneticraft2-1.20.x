@@ -285,7 +285,38 @@ until confirmed with actual water flow, load module and all
 intervening gear/gearbox nodes. All multiplayer work remains
 postponed until after Steam.
 
-## Remaining proposed milestones (after Iron II-B source implementation)
+## Iron II-C — 16-tooth Wrought Iron Large Gear (source implemented, pending test)
+
+A new 24-rated Large Gear uses the existing 16-tooth Gear V2 placement, ratios,
+network phase and wooden large-gear rendering path. It is assembled from a
+machined rim, wrought plates and an existing wrought shaft. Its rough rim is
+crafted from four bars, four plates and a Riveted Iron Frame; the existing
+Bronze Lathe cuts it at 12 RPM / 8 torque over 160 supplied ticks with three
+cutter durability. Medium Iron remains two wear, Bronze remains one. There is
+no new machine, power generation or change to old saved gear IDs.
+
+Commit `f4a91992ca0b52fb6d829cf676789954c3d01f84`. The model has
+16 rooted teeth, a 2-pixel axle and native-density iron UVs. The 24-torque
+rating is a transmission limit, not a source; Iron medium gears/gearboxes
+and Mechanical Input Modules still limit their connected path to 16.
+
+### Existing input module — formed Iron visual tier
+
+Commit `6cecfacdc29ad833753524e525a7bb1df83da0a1` replaces the
+formed Iron Stock Shear's copper/wood module appearance with a supported iron
+housing, bronze bearing and 2-pixel iron shaft. The controller is identified
+from an opt-in data-pack block tag and already persisted controller position;
+there is **no new mechanical input block, save ID, machine blueprint or torque
+upgrade**. Copper and Bronze retain the original visual family.
+
+**Status:** Both changes source-implemented and statically inspected. Full
+JDK17 Gradle build, actual Node fixture runs, Minecraft rendering, machining,
+module coupling, overload, collision and save/reload remain **unverified**.
+See `docs/iron-age-large-gear-acceptance.md` and
+`docs/iron-age-input-bearing-acceptance.md`. PR #18 remains draft; model
+texture finishing is deferred to MGC2 Studio and multiplayer to after Steam.
+
+## Remaining proposed milestones (after Iron II-C source implementation)
 
 ### Iron II-A — investigate stronger transmission after first Iron tooling
 

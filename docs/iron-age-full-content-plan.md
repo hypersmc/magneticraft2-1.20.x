@@ -46,8 +46,8 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `iron_rivet` | 1 Wrought Iron Rod → 4 Rivets in powered Stock Shear | Riveted Iron Frame, later casing/assembly | SOURCE IMPLEMENTED — game tests pending |
 | `iron_gear_blank_medium` | Forge 1 hot Wrought Bar at existing Forge Hammer | Existing Lathe with flint-tipped cutter | SOURCE IMPLEMENTED (not tested) |
 | `precision_iron_gear_medium` | Existing Bronze Lathe, 160 ticks at 12 RPM / 5 torque, double cutter wear | Craft 16-torque Iron gear with Plates/Bar | SOURCE IMPLEMENTED (not tested) |
-| `iron_gear_blank_large` | Forge larger blank with more ingot-equivalents | Lathe into large precision gear | CORE, later |
-| `precision_iron_gear_large` | Lathe with appropriate size/tool gating | Actual installed large Iron Gear | CORE, later |
+| `iron_gear_blank_large` | Assemble 4 Bars + 4 Plates + 1 Riveted Frame into a rough wheel | Existing Bronze Lathe takes it to precise 16-tooth rim | SOURCE IMPLEMENTED — in-game pending |
+| `precision_iron_gear_large` | Existing Bronze Lathe, 160 ticks at 12 RPM / 8 torque, 3 cutter wear | Assemble larger Iron gear with Plates and Iron Shaft | SOURCE IMPLEMENTED — in-game pending |
 | `machined_iron_shaft` | Potential later Lathe turning of iron bar for tighter shaft tolerances | Iron machine upgrades if genuine precision/wear needs established | CONDITIONAL — first Iron Shaft currently assembled from rolled Bar + machined Bronze bearings |
 | `iron_bearing_housing` | Forging and existing Precision Boring Machine | Gearbox/flywheel, physical bearing seats | CORE |
 | `iron_lathe_cutter` | Forge/grind serviceable iron-capable cutter | Work Iron on existing Lathe | CORE if Bronze cutter cannot |
@@ -72,19 +72,19 @@ See [Iron industrial factory expansion](iron-age-industrial-factory-expansion.md
 | Candidate ID | Type | Primary in-game function | Phase |
 | --- | --- | --- | --- |
 | `wrought_iron_gear_medium` | Gear V2 8-tooth gear | 16 vs wooden 8 torque capacity, forge/lathe/assembly path | SOURCE IMPLEMENTED (not yet in-game verified) |
-| `wrought_iron_gear_large` | Gear V2 16-tooth gear | Strength/ratio choices, matching established mesh pitch | Iron II-B |
+| `wrought_iron_gear_large` | Gear V2 16-tooth gear | 24 torque structural ceiling; real ratio/phase, no power gain | SOURCE IMPLEMENTED — build/in-game pending |
 | `wrought_iron_shaft` | Gear V2 X/Y/Z axial shaft | 24 max torque, existing wood 16; current 16-torque sources unchanged | SOURCE IMPLEMENTED — in-game tests pending |
 | `wrought_iron_gearbox` | Gear V2 gearbox | Existing 1:1 right-angle ports, 16 max torque vs wood 8 | SOURCE IMPLEMENTED — in-game tests pending |
 | `riveted_iron_frame` | 4 wrought Bars + 4 Iron Rivets | Open factory structural block, accurate collision | SOURCE IMPLEMENTED — game tests pending |
 | `iron_stock_shear` | **New 3×3×2 JSON multiblock** | Genuine 12-torque cutting (16 RPM), 1 Rod → 4 Rivets | SOURCE IMPLEMENTED — game tests pending |
-| `riveted_iron_casing` | Full iron casing block | Enclosure and structural ingredient for heavy machinery | Iron III |
+| `riveted_iron_casing` | Full iron casing block | Enclosure and structural ingredient for heavy machinery | SOURCE IMPLEMENTED — in-game pending |
 | `iron_forge_hearth` | **New JSON multiblock** | Batch heating of iron stock, fuel/HEAT/AIR logistics, not another Bloomery | Iron III/IV |
 | `iron_flywheel` | Gear V2 inertia block | More stored angular momentum than the wooden flywheel | Iron IV |
 | `iron_structural_beam` | X/Y/Z structural beam | Visible supported columns, factory spans and multiblock framing | Iron I/II |
-| `iron_floor_grating` | Cutout floor/walkway block | Industrial platforms and catwalks with proper collision | Iron I/II |
+| `iron_floor_grating` | Cutout floor/walkway block | Open walkable/waterloggable grating with matching collision | PLAYER-CONFIRMED waterlogging; other tests pending |
 | `iron_plate_panel` | Thin facing-oriented panel | Machine bay walls, lighter than a full Riveted Casing | Iron I/II |
 | `iron_machine_foundation` | Full foundation block | Heavy machine flooring and valid multiblock construction support | Iron I/II |
-| `iron_catwalk_railing` | Connected edge railing | Safe walkways and industrial service access | Iron II |
+| `iron_catwalk_railing` | Connected edge railing | Safe walkways and industrial service access | SOURCE IMPLEMENTED; screenshot shows straight-run render |
 | `iron_service_hatch` | Hinged access block | Factory service access without extra machine interface | Iron II |
 | `iron_mechanical_draw_bench` | **Third proposed JSON multiblock**, consumer-gated | Draw precise wrought rods/pins through a powered, wear-limited die | Iron III |
 
@@ -260,7 +260,7 @@ verification. No multiplayer-specific tests until after Steam Age.
 | Iron I-A | Hot Bar/Rod rolling + first Structural Beam/Plate Panel/Foundation | Cold Iron rejected, Copper unchanged; X/Y/Z beams, facing panels, survival recipes and native UVs | SOURCE IMPLEMENTED — build and player tests pending |
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
 | Iron II-A | Forge / Lathe / craft the 16-torque Iron Medium Gear | Block/item/JSON/renderer source implemented; **real >8-torque consumer and Gear V2 acceptance still untested** | SOURCE IMPLEMENTED — tests pending |
-| Iron II-B | Wrought Iron Shaft (24) and 1:1 right-angle Gearbox (16); Large Gear and remaining factory blocks later | Separate Gear V2 BEs; preserve wood 16/8, axis and port behavior; validate genuine >8 load only with a real consumer | SHAFT + GEARBOX SOURCE IMPLEMENTED — build/player tests pending; large gear and remaining blocks proposals |
+| Iron II-B/C | Wrought Iron Shaft (24), Gearbox (16), Large Gear (24), existing 16-tooth topology | Separate Gear V2 BEs, preserved wood 16/8, ratios and machine loads. 16-tooth ring now machined using existing Lathe | SOURCE IMPLEMENTED — large gear build/game tests pending |
 | Iron III-A | Stock Shear, replaceable Blade, rivets and Riveted Iron Frame | 12-torque actual machine, JSON 3×3×2 blueprint, 512-cycle blade; in-game load and I/O still unverified | SOURCE IMPLEMENTED — build and in-game tests pending |
 | Iron III-B | Riveted Casing/Frame and **consumer-gated Mechanical Draw Bench** | Factory building works; draw bench only if distinct precise rod output is genuinely useful | PROPOSAL |
 | Iron IV-A | Iron Forge Hearth, Iron Flywheel | Real hot-batch throughput/inertia difference; kiln/flywheel still useful | PROPOSAL |
@@ -271,3 +271,28 @@ verification. No multiplayer-specific tests until after Steam Age.
 **Separate acceptance:** Studio-authored finished visuals/polish and all multiplayer tests **after Steam**. Do not label entire Iron Age release-ready from one demonstration.
 
 **Change management:** This document records the full proposed age scope. Do not silently implement optional candidates, change approved other-age mechanics, merge PR #18, modify unrelated PR #17, or claim unperformed builds and gameplay tests.
+
+
+## Iron II-C implementation update — 2026-11-07
+
+Large Iron Gear and its two stock items are source-implemented in PR #18 at
+`f4a91992ca0b52fb6d829cf676789954c3d01f84`. The existing Bronze
+Lathe extends its approved Iron-gear recipe handling narrowly from Medium
+to Medium/Large; 160 ticks remain unchanged for save compatibility, while
+the Large blank requires 8 torque and wears the cutter by 3. The final
+Iron Large Gear has 16 teeth and a 24-torque structural limit. Neither
+it nor any upgraded gear creates torque; the existing source is <=16.
+All models still need in-game visual acceptance and eventual Studio polish.
+
+Formed Iron machine input visuals gain a 2-pixel wrought shaft and supported
+iron bearing via a JSON block tag of qualifying machine controllers
+(`iron_input_visual_controllers`), while the existing module stays 16-torque
+and preserves all registered IDs. See the dedicated acceptance checklist.
+
+**Player acceptance:** Floor Grating waterlogging explicitly confirmed.
+Riveted Iron Frame produced successfully. These do not imply an acceptance
+pass for this Large Gear or newly changed input appearance.
+
+**Pending:** full JDK17 `./gradlew build`, standalone Node fixtures,
+Minecraft machining, saved worlds, Gear V2 meshing/load/phase checks,
+new input bearing appearance, visual FPS and regressions.
