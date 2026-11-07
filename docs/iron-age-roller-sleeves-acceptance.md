@@ -1,6 +1,6 @@
 # Wrought Iron Roller Sleeves — focused Iron tooling upgrade
 
-**Branch:** `feature/iron-age-foundations`, draft PR #18. **Stage:** source implementation; build and in-game validation pending.
+**Branch:** `feature/iron-age-foundations`, draft PR #18. **Stage:** source implemented; primary behavior player-confirmed in-game on 2026-11-08; build and full regression validation pending.
 
 ## Why this exists
 
@@ -67,3 +67,17 @@ node tools/iron-age/check-iron-roller-sleeves-contract.mjs
 No successful compilation or Minecraft testing is claimed by this
 source-only addition. Keep PR #18 draft/unmerged; multiplayer testing
 remains deferred until after Steam Age.
+
+## Player in-game acceptance — 2026-11-08
+
+The player replied **"yep!"** after receiving the Wrought Iron Roller
+Sleeves in-game test checklist. Record the primary replacement upgrade as
+**player-confirmed working in-game**. This is overall acceptance feedback,
+not a separate report for each scenario: precise 1024/512 wear accounting,
+pre-upgrade save migration, both-way swaps, sustained load/overload,
+quality, reload, visual FPS and prior rolling recipes remain individually
+unverified unless further test evidence is provided.
+
+The committed Node fixture and JDK 17 `./gradlew build` have not been
+run or documented here. Keep PR #18 draft/unmerged; multiplayer work is
+still deferred until after Steam Age.
