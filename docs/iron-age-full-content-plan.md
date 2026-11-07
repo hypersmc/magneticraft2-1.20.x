@@ -221,7 +221,7 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 | Phase | Deliverable | Acceptance evidence | Status |
 | --- | --- | --- | --- |
 | **Iron 0A** | Wrought Iron Forge Die in existing Bronze Hammer | Actual item, 768 life, service / save / visuals | **DONE — player confirmed 2026-11-07** |
-| Iron 0B | Heat-safe Wrought Iron Plate/Bar/Rod using existing Kiln and Hammer | Fuel and heat actually needed; NBT/mass conserved | PROPOSAL |
+| Iron 0B | First hot Wrought Iron Plate via existing Kiln and Hammer; bars/rods later | Fuel/HEAT expiry, output NBT, exact 1→1 yield and old-system regressions | SOURCE IMPLEMENTED — uncompiled/player testing pending |
 | Iron I-A | Rolling/Pressing Iron sheet and fittings | Cold bypass blocked where applicable; old Copper recipes still work | PROPOSAL |
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
 | Iron II-A | Iron Medium Gear under measured load | >8-torque demand runs using legitimate source, fails in wooden-constrained path | PROPOSAL |

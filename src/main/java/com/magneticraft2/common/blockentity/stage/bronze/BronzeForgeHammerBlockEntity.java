@@ -179,9 +179,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             return;
         }
         ItemStack inputStack = itemHandler.getStackInSlot(0);
-        // Only cold copper needs no heat. Consolidation is always hot work,
-        // and heat must remain valid throughout every supplied hammer tick.
-        // A cooled bloom can be reheated at the existing Refractory Kiln.
+        // Existing Copper Plate forming stays cold. Iron Bloom consolidation
+        // and Wrought Iron Plate forging both require actual hot stock for
+        // every supplied tick; expired workpieces must be reheated.
         if (HotBloomWorkpiece.requiresHeat(recipe)
                 && !HotBloomWorkpiece.isHot(inputStack, level)) {
             resetBatch();

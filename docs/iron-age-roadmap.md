@@ -103,9 +103,31 @@ verify item display/model and Patchouli/JEI crafting.
 **Multiplayer scope decision reaffirmed (2026-11-07):** **ALL multiplayer-related work and testing is deferred until Steam Age is finished**, per the user's explicit instruction. Do not make multiplayer verification a blocker for Iron Age development, or claim dedicated-server/multi-client testing passed. Continue to avoid knowingly client-only gameplay logic and preserve future multiplayer compatibility; full verification will be performed after Steam Age.
 
 
-## Next proposed milestones (following the source-implemented Iron 0A)
+## Iron 0B — hot Wrought Iron Plate (source implementation; tests pending)
 
-### Iron 0B — investigate stronger transmission after first Iron tooling
+The first Iron 0B slice extends the **existing fueled Refractory Kiln**
+and **powered Bronze Forge Hammer**, not a new multiblock. The Kiln
+reheats a Wrought Iron Ingot in 240 HEAT-supplied ticks and grants
+the existing 2400-world-tick (120-second) server-time heat state. The
+Hammer requires at least 20 RPM, 6 torque and 160 supplied ticks to
+convert ONE hot ingot into ONE Wrought Iron Plate.
+
+Existing heat-NBT/quality propagation is reused. Finished plates do not
+retain temporary forging heat. The ingot provides a hot/cold tooltip and
+the plate has a UV-safe 3D item model using the existing dark worked-iron
+texture. The original Bloom → Wrought Iron and Copper Plate recipes
+must remain unchanged. JEI reads the new JSON machine recipes, and
+Patchouli documents the two-machine route.
+
+**Status:** source implemented on PR #18, NOT yet Gradle-compiled or
+tested in-game. Verify actual fuel, temperature, expiry, NBT/quality,
+output blocking, die wear, saving, power pauses, model and old recipes.
+Bars, rods and general Iron blocks are *not* part of this slice.
+Multiplayer work remains deferred until AFTER Steam Age.
+
+## Next proposed milestones (following Iron 0A and Iron 0B)
+
+### Iron II-A — investigate stronger transmission after first Iron tooling
 
 **Future candidate:** a *Wrought Iron powertrain upgrade*
 (for example a stronger geared transmission part, bearing/coupling, or

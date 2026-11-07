@@ -518,8 +518,11 @@
   "item.magneticraft2.magnetite_concentrate": "Magnetite Concentrate",
   "item.magneticraft2.iron_bloom": "Iron Bloom",
   "item.magneticraft2.wrought_iron_ingot": "Wrought Iron Ingot",
+  "item.magneticraft2.wrought_iron_plate": "Wrought Iron Plate",
   "item.magneticraft2.wrought_iron_forge_die": "Wrought Iron Forging Die",
   "tooltip.magneticraft2.iron_bloom.hot": "Forging hot: %s s remaining",
   "tooltip.magneticraft2.iron_bloom.cold": "Cold bloom — reheat in a fueled Refractory Kiln",
-  "message.magneticraft2.bronze_forge_hammer.reason.bloom_cold": "Iron Bloom must be reheated; hot work cools with world time"
+  "tooltip.magneticraft2.wrought_iron_ingot.hot": "Forging hot: %s s remaining",
+  "tooltip.magneticraft2.wrought_iron_ingot.cold": "Cold wrought iron — reheat in a fueled Refractory Kiln to forge plates",
+  "message.magneticraft2.bronze_forge_hammer.reason.bloom_cold": "Iron workpiece is cold — reheat it in a fueled Refractory Kiln"
 }

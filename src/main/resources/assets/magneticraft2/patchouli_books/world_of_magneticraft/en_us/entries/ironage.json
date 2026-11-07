@@ -24,6 +24,20 @@
     },
     {
       "type": "text",
+      "text": "$(bold)Iron 0B — Heating Wrought Iron$()$(br2)A Wrought Iron Ingot leaves the Bronze-to-Iron consolidation chain cold. Feed ONE ingot into the EXISTING fueled Refractory Kiln. After 240 HEAT-supplied firing ticks, the same ingot gains a new 120-second forging-heat timer, visible on its tooltip. The kiln consumes actual fuel; the ingot does not become a second special item."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Forging a Wrought Iron Plate$()$(br2)Move the still-hot ingot into the EXISTING powered Forge Hammer with a usable Bronze or Wrought Iron Forging Die. Gear V2 must supply at least 20 RPM and 6 torque for 160 supplied ticks. ONE hot ingot becomes ONE Wrought Iron Plate. Material quality is retained, but the temporary heat tag is removed. Cold or expired ingots must be reheated."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_plate",
+      "title": "First Wrought Iron Plate",
+      "text": "Produced through Kiln and Forge Hammer machine processing, visible in JEI. This is a full ingot-equivalent plate, not an ordinary crafting-table shortcut. Bars, rods and structural Iron blocks are later development slices."
+    },
+    {
+      "type": "text",
       "text": "$(bold)Toward stronger industry$()$(br2)The first Iron upgrade is longer-lived tooling. Stronger shafts, precision gears and heavier manufacturing are planned next, but require meaningful source and network load tests. A stronger part must not create power or bypass the limits of an existing wooden gear."
     }
   ],
