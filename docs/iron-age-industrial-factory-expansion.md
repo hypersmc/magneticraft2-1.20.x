@@ -113,3 +113,15 @@ All six additions below are **proposed core construction blocks**. Frame and Cas
 - **PR management:** Keep PR #18 draft, do not merge it or modify long-running PR #17 unless requested. Update the roadmap as users approve individual designs and finish them.
 
 **No Java or resource implementation is authorized by this expansion alone.**
+
+## Iron Service Hatch — incremental implementation update (2026-11-07)
+
+The planned `iron_service_hatch` has been individually approved as the
+next focused scope after player-accepted Iron Flywheel behavior and added
+in source on draft PR #18. It uses standard Minecraft 1.20.1 trapdoor
+behavior, normal manual/redstone controls, waterlogging, metal sounds,
+consistent iron/bronze framing and 1:1 UVs. Construction uses existing
+Wrought Iron Plates, Bars and Rods. No new BE, manufacturing controller,
+Steel alloy, precision Draw Bench or Hoist has been added. This update
+does not authorize any other optional candidate from the design catalog.
+See `docs/iron-age-service-hatch-acceptance.md` for required testing.

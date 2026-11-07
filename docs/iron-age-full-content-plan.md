@@ -307,3 +307,15 @@ The 24-torque Iron axle is not new power generation. Source tests and
 visual construction reference are in `tools/iron-age/check-iron-flywheel-contract.mjs`
 and `docs/reference/iron-flywheel-studio.svg`. Compilation and in-game
 acceptance remain open; keep PR #18 draft.
+
+## Planned Iron Service Hatch — source delivery note (2026-11-07)
+
+The remaining factory service-access block `iron_service_hatch` has a
+registered source implementation (vanilla TrapDoorBlock inheritance),
+manual and redstone opening using a registered hand-operable metal
+BlockSetType, waterlogging, four horizontal facings, top/bottom halves,
+five-piece native-UV models in closed/open states and an early-Iron
+survival recipe. It creates two hatches from two Wrought Iron Plates,
+one Bar and one Rod. No premature high-demand machine or new material
+is involved. In-game functional confirmation, model/collision checks,
+`./gradlew build` and regressions are still outstanding.

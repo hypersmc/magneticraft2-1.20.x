@@ -500,3 +500,28 @@ existing 3×3×1 structure. 43 matching Voxel V2 physical regions; no
 `tools/iron-age/build-iron-flywheel-bearings.mjs --check`.
 This remains a source prototype pending Gradle compilation, actual
 visual/rotational checks, collisions and durability regressions.
+
+## Iron II-D — Iron Service Hatch (source milestone, 2026-11-07)
+
+The remaining planned factory-access block `iron_service_hatch` is now
+source-implemented on draft PR #18 as an ordinary manually operable,
+redstone-driven, waterloggable **vanilla TrapDoorBlock** rather than a new
+block entity or machine interface. The new iron-sounding BlockSetType
+keeps the normal IRON trapdoor metal open/close sounds while enabling
+manual operation; normal 1.20.1 FACING/HALF/OPEN/POWERED/WATERLOGGED states,
+placement and neighbor handling are delegated to vanilla. This does
+not introduce a pressure seal or automatic maintenance-hatch protocol.
+
+Two Wrought Iron Plates, one Bar and one Rod craft two hatches, requiring
+only existing early-Iron materials rather than the Stock Shear's rivets.
+The item appears in the construction creative tab, has native-density
+metal-framed block models, drop table and pickaxe tags, and a Patchouli
+entry. Geometry follows the vanilla 16×3×16 closed and 16×16×3 opened
+hitboxes, including every horizontal facing.
+
+**Unverified:** full JDK17 Forge build, placement top/bottom, hand/redstone
+interaction, waterlogging, survival crafting, drops, reload and model
+UV/rendering in Minecraft. The independent JSON/source fixture is in
+`tools/iron-age/check-iron-service-hatch-contract.mjs`. Test before
+marking the hatch complete. No change was made to the flywheel or HEAT
+systems. PR #18 stays draft, multiplayer remains deferred until after Steam.
