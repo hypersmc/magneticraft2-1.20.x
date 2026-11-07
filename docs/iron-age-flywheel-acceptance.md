@@ -1,6 +1,6 @@
 # Iron IV-B — Wrought Iron Flywheel
 
-**Source milestone for draft PR #18. Not compiled or in-game tested.**
+**Player-confirmed working in-game (2026-11-08) on draft PR #18.** Full JDK 17 Gradle compilation and specific regression cases remain separately unverified.
 
 ## 3×3 machine contract
 - A 3-block-wide, 3-block-high, 1-block-deep *vertical* machine.
@@ -172,3 +172,18 @@ refresh its V2 collision snapshot; test Wrought Iron Shaft connections
 from BOTH axial faces with stopped and powered machinery, and check
 all four facings. If a gap remains, inspect block-entity identity
 and exact target geometry rather than extending past block boundaries.
+
+## Player confirmation — 2026-11-08
+
+The player expressly confirmed that **the Iron Flywheel is working in-game**.
+Treat the principal Flywheel functionality as player-accepted rather than
+an untested source-only prototype. Do not schedule further general flywheel
+rework without a concrete reported issue.
+
+This general confirmation is not a detailed test log: final individual
+shaft-gap views on both sides, each orientation, measured inertia under
+specific loads, older save migration, F3+T, teardown/drop checks, and FPS
+measurements remain individually undocumented unless separately supplied.
+No full JDK17 `./gradlew build` is recorded for this milestone.
+PR #18 remains draft/unmerged and multiplayer work is deferred until
+after Steam Age.
