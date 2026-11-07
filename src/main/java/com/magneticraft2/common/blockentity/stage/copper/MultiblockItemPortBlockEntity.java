@@ -16,6 +16,7 @@ import com.magneticraft2.common.blockentity.stage.bronze.OreRoastingKilnBlockEnt
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeForgeHammerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
+import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
@@ -264,6 +265,8 @@ public class MultiblockItemPortBlockEntity
             return mill.acceptsRecipeInput(stack);
         if (controller instanceof BronzeMechanicalPressBlockEntity press)
             return press.acceptsRecipeInput(stack);
+        if (controller instanceof IronStockShearBlockEntity shear)
+            return shear.acceptsRecipeInput(stack);
         if (controller instanceof BronzePrecisionBoringMachineBlockEntity borer)
             return borer.acceptsRecipeInput(stack);
         if (controller instanceof BronzeMechanicalSawmillBlockEntity sawmill)
