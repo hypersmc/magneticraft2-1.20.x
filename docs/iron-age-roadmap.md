@@ -462,8 +462,11 @@ The Kiln continues to fire ceramics and reheat single pieces/Blooms.
 The authoritative layout is in Patchouli. The concept sheet is
 `docs/reference/iron-forge-hearth-studio.svg`; visual finishing is deferred
 to MGC2 Studio. No mechanical input, AIR network, steel recipe or
-new material quality system is added. Build, in-game tests, visuals,
-chunk save/reload and regressions remain unverified. PR #18 stays draft.
+new material quality system is added. **The player confirmed on
+2026-11-08 that the Hearth works in-game and was previously tested.** Its
+main functionality is accepted; full JDK17 Gradle build, exact fuel/HEAT
+accounting, all-facing visuals, chunk save/reload and individual regressions
+are not independently documented. PR #18 stays draft.
 
 
 ### Iron Forge Hearth — geometry readability correction
