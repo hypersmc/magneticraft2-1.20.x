@@ -39,11 +39,12 @@ for(const dir of axes){
 }
 assert.equal(models,32);
 const v=j('data/magneticraft2/multiblock_voxels/iron_flywheel.json');
-assert.equal(v.collision.length,38);
+assert.equal(v.collision.length,37);
 const center=j('assets/magneticraft2/models/block/iron_flywheel_controller.json');
-assert.deepEqual(center.elements[0].from,[7,7,0]);
-assert.deepEqual(center.elements[0].to,[9,9,16]);
-assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'));
+assert.equal(center.elements.length,2,"No duplicate baked moving axle");
+assert.deepEqual(center.elements[0].from,[5,5,11]);
+assert.deepEqual(center.elements[0].to,[11,11,15]);
+assert.ok(!v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'));
 assert.ok(!v.collision.some(b=>JSON.stringify(b)==='[0,7,11,16,9,15]'));
 assert.deepEqual(v.collision,v.selection);
 const r=j('data/magneticraft2/recipes/iron_flywheel.json');
@@ -60,9 +61,11 @@ assert.ok(be.includes('for(var old:ctrl.getBlockMap().entrySet())'));
 assert.ok(be.includes('collision=null;'));
 assert.ok(be.includes('level.setBlock(old.getKey(),old.getValue(),Block.UPDATE_ALL)'));
 assert.ok(wood.includes('getInertiaTorque(){return INERTIA_TORQUE;}'));
+assert.ok(s('client/render/blocks/stage/iron/WroughtIronFlywheelRenderer.java')
+  .includes('FlywheelMesh.drawBox(stack,iron,light,0.92D,0.125D,0.125D,true)'));
 assert.ok(s('common/block/general/Multiblockfiller.java').includes('flywheel.dismantleWheel()'));
 assert.ok(j('data/minecraft/tags/blocks/mineable/pickaxe.json').values.includes('magneticraft2:iron_flywheel'));
 assert.ok(j('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json')
   .pages.some(p=>p.name==='Wrought Iron Flywheel'));
 console.log('Iron Flywheel static contract PASS: '+models+' models, '+faces+
- ' native UV faces, 38 V2 collision boxes. Build and game tests not run.');
+ ' native UV faces, 37 V2 collision boxes. Build and game tests not run.');

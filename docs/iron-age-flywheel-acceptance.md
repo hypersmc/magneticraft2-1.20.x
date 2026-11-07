@@ -17,7 +17,7 @@
 - One 2.4-block-diameter client-rendered rim: 24 segments, 8 spokes,
   iron weights and bronze bearing. Fixed supports are baked V2 models.
   Texture face coordinates are proportional to size (no stretching).
-  The 38-box V2 profile contains stationary bearing supports and a
+  The 37-box V2 profile contains stationary bearing supports and a
   conservative moving-rim swept envelope; never a solid invisible disk.
 - Original part map, formed flag, stored inertia, collision and selection
   are saved. Breaking center or a filler uses the existing multi teardown
@@ -69,3 +69,10 @@ In-game acceptance: attach shafts on each axial side and verify there is
 no transverse/floating shaft; obstruct an AIR cell before forming and
 confirm no block loss; repeat after saving/reloading. No build or runtime
 claim has been made for this source correction.
+
+### Single rendered axle
+The stationary Iron Flywheel controller model no longer draws a shaft
+that overlaps the rotating shaft owned by its renderer. Two stationary
+bearing/journal cuboids remain. The center's matching static shaft voxel
+is removed from the server profile; 37 physical/swept rim shapes remain.
+Check both axle ends for z-fighting, correct support and 1:1 rotation.
