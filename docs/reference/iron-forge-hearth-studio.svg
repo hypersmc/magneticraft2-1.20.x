@@ -25,6 +25,18 @@
 <rect x="25" y="710" width="790" height="159" rx="13" fill="url(#panel)" stroke="#626760" stroke-width="2"/>
 <text x="55" y="202" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">THE MACHINE — ISOMETRIC CONCEPT</text>
 <text x="55" y="229" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c4d0cc" text-anchor="start">No gears, bellows, chimney or mechanical power connection</text>
+<g id="auto-hearth-interior-reference">
+ <rect x="68" y="262" width="262" height="103" rx="9" fill="#121a1e" stroke="#c6975d" stroke-width="2"/>
+ <text x="83" y="287" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="800" fill="#f6cf97">BEFORE: LEAVE CENTER AIR</text>
+ <rect x="90" y="298" width="49" height="49" rx="3" fill="#6d756d" stroke="#acaf9c" stroke-width="2"/>
+ <rect x="99" y="307" width="31" height="31" fill="#1d1c1a" stroke="#c4a883" stroke-width="2"/>
+ <rect x="102" y="313" width="25" height="4" fill="#74878e"/><rect x="102" y="327" width="25" height="4" fill="#74878e"/>
+ <text x="153" y="312" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="800" fill="#ffc184">AFTER FORMING</text>
+ <text x="153" y="333" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="500" fill="#dce6e0">Charcoal tray + iron rails</text>
+ <text x="153" y="350" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="500" fill="#bfcfc7">Auto-rendered • not placed</text>
+ <path d="M330 337 L414 361" fill="none" stroke="#e5b173" stroke-width="2" stroke-dasharray="5 4"/>
+ <polygon points="416,362 406,353 402,367" fill="#e5b173"/>
+</g>
 <rect x="45" y="246" width="750" height="431" rx="11" fill="#142022" stroke="none" stroke-width="1"/>
 <ellipse cx="419" cy="470" rx="312" ry="192" fill="url(#glow)"/>
 <polygon points="355,367 428,402 428,329 355,294" fill="#435258" stroke="#1b2224" stroke-width="1.6"/>
@@ -98,7 +110,7 @@
 <polygon points="501,434 428,469 428,396 501,361" fill="#704136" stroke="#1b2224" stroke-width="1.6"/>
 <polygon points="428,326 501,361 428,396 355,361" fill="#b98164" stroke="#1b2224" stroke-width="1.6"/>
 <path d="M373,424 l36,18 M360,414 l63,31" fill="none" stroke="#c99976" stroke-width="1" opacity=".55"/>
-<text x="61" y="653" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="700" fill="#f4c98d" text-anchor="start">CONCEPT ONLY — 17 SOLID CELLS + ONE OPEN AIR CELL</text>
+<text x="61" y="653" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="700" fill="#f4c98d" text-anchor="start">BUILD: 17 BLOCKS + AIR • FORMED: CHARCOAL TRAY APPEARS</text>
 <text x="61" y="675" font-family="Arial,Helvetica,sans-serif" font-size="15" font-weight="500" fill="#afc2c0" text-anchor="start">Construct the exact structure using Patchouli’s in-game preview.</text>
 <text x="862" y="202" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">JSON CONSTRUCTION — SOUTH FACING</text>
 <text x="862" y="228" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="500" fill="#c6d1ca" text-anchor="start">Canonical layer order: rear row to front row</text>
@@ -141,6 +153,7 @@
 <rect x="1362" y="427" width="68" height="62" rx="5" fill="#b98164" stroke="#7a817f" stroke-width="1"/>
 <text x="1396" y="467" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#eaf1ec" text-anchor="middle">B</text>
 <text x="862" y="520" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="500" fill="#c5d0c6" text-anchor="start">F: Foundation   B: Bricks   U: Input   C: Controller   O: Output</text>
+<text x="862" y="540" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#f2be84" text-anchor="start">AIR = empty before formation; the machine generates its firebed afterward.</text>
 <text x="864" y="602" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f8d59b" text-anchor="start">PROCESSING  /  MATERIAL QUALITY PRESERVED</text>
 <rect x="857" y="622" width="687" height="102" rx="12" fill="#212c2d" stroke="#415052" stroke-width="1"/>
 <text x="880" y="658" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#e9f0e6" text-anchor="start">4 × WROUGHT INGOTS OR BARS</text>

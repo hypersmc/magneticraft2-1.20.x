@@ -15,7 +15,9 @@ a full batch. Individual ingots, bars, and Blooms continue through Kiln.
 ## First balance contract (provisional HEAT, not Celsius)
 - 3×3×2 real JSON multiblock; one controller, one genuine item input,
   one genuine primary output, 4 iron foundation blocks, 10 brick blocks,
-  and one required upper AIR. Model/voxel snapshots generated from one layout.
+  and one required upper AIR **before formation**. Forming adds a cached V2
+  render proxy with the charcoal firebed and stock rests; no additional
+  player-placed block or new gas/air/pressure system is involved.
 - Controller recipe: 4 Wrought Iron Plates, 2 Iron Structural Beams,
   2 Fired Refractory Ceramics, 1 Riveted Iron Frame. No recipe loops.
 - Two JSON processing recipes: input count 4, output count 4,
@@ -77,3 +79,45 @@ steel refining or RPM requirements are inaccurate and rejected. This sheet
 illustrates exactly the 3×3×2 SOUTH blueprint, its real ports and air chamber,
 its 4-input/4-hot-output HEAT route, controller fuel and blocked state. All
 final art is still assigned to MGC2 Studio. Patchouli is authoritative.
+
+## AIR-anchor interior — verified source contract, in-game tests outstanding
+
+The top-center cell remains `minecraft:air` in the four JSON construction
+blueprints. It is **not a resource input**. At formation the existing
+`MultiblockRenderParts.assign` validates that exact original AIR cell,
+places the standard multiblockfiller, and assigns the pre-baked chamber part
+`part_<dx>_1_<dz>.json`. This is exactly the mechanism previously used
+for the Iron Stock Shear. Unforming restores the original AIR cell.
+
+The new formed model uses 15 block-local, native-UV cuboids. It includes a
+refractory tray directly on the Iron Foundation underneath, dark charcoal
+and five coal chunks, four short wrought-iron retaining edges, two wall-
+anchored iron support brackets and two stock-rest bars. The bracket ends
+touch the surrounding brick blocks. There are no floating components,
+full-block fake collision boxes, added machine entities, new registry IDs or
+per-frame renderer allocations. The 9 load-bearing shapes have matching
+Voxel V2 collision and selection; decorative coal intentionally does not.
+The firebed is deliberately UNLIT while idle. It does not fake flames or
+new HEAT processing rules; status remains in the existing controller.
+
+Orientation offsets (controller-relative, model cells): SOUTH `[0,1,-1]`,
+WEST `[1,1,0]`, NORTH `[0,1,1]`, EAST `[-1,1,0]`.
+
+### Follow-up in-game regression tests
+1. Build each facing using **real AIR** in the upper center, and form the
+   machine. Confirm the charcoal tray and stock rests appear automatically.
+2. Place a block in that required AIR: formation must fail. Remove it:
+   formation must work. No separate air-input blocks/items are needed.
+3. Check attachment to brick walls and lower foundation, all 4 camera
+   orientations, hitboxes and proper native UV density (no stretching).
+4. Save/reload and press F3+T; confirm the chamber stays rendered with
+   correct collision and no missing-model placeholders or duplicate parts.
+5. Unform/break the multiblock: the proxy disappears, the chamber position
+   restores AIR and no phantom drops/collision remain.
+6. Repeat 4→4 ingot/bar heating, output blockage, fuel, HEAT and Kiln
+   regression checks; none of those gameplay contracts should change.
+
+Model regeneration: `node tools/iron-age/build-forge-hearth-chamber.mjs --check`
+(or `--write` when intentionally regenerating resources). The source
+is the SOUTH chamber file plus the four authoritative JSON blueprints.
+Compilation and game visuals are still unverified until tested.

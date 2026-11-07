@@ -271,7 +271,11 @@
         },
         "symmetrical": false
       },
-      "text": "3x3x2 construction. Bottom rear is 3 Iron Foundations, center brick–foundation–brick, and front genuine output–controller–input modules. Top ring has eight brick blocks and ONE required open AIR cell. The book preview mirrors left/right relative to SOUTH JSON for a player facing the controller. Right-click the controller to form."
+      "text": "3×3×2 construction. Top center must be AIR WHEN BUILDING; do NOT place a block there. When the structure forms, the existing V2 renderer automatically creates the supported charcoal firebed and iron stock rests in that location. No AIR item, pressure or gas input exists. Bottom: three rear Iron Foundations, brick–foundation–brick center, real output–controller–input front. Top: eight bricks with that one initially empty cell. Left/right in this book preview are mirrored relative to SOUTH JSON."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Before formation:$() leave the top-center position empty. The JSON blueprint verifies it is air.$(br2)$(bold)After formation:$() Magneticraft2 creates a V2 multiblock render proxy in that same space. Its refractory tray rests on the Iron Foundation below, with a real charcoal bed, an iron retaining rim, and two stock rails supported by brackets attached to the surrounding brickwork. You do NOT craft or place those interior parts individually. Unforming restores AIR. This space is the hearth chamber, not an AIR resource input."
     },
     {
       "type": "text",

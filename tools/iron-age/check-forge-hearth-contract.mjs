@@ -36,7 +36,7 @@ assert.equal(rec.process_time,360);
 const phys=json("data/magneticraft2/multiblock_voxels/"+id+".json");
 assert.equal(phys.format,1);
 assert.equal(phys.unit,"model_pixels");
-assert.equal(phys.collision.length,17);
+assert.equal(phys.collision.length,26);
 const orientations=["south","west","north","east"];
 const canonical=[["FFF","BFB","UCO"],["BBB","BAB","BBB"]];
 const expectedCounts={F:4,B:10,U:1,O:1,C:1,A:1};
@@ -70,4 +70,52 @@ const dims=["up","down"].includes(face)?[w,d]:["east","west"].includes(face)?[d,
 assert.deepEqual([f.uv[2]-f.uv[0],f.uv[3]-f.uv[1]],dims);
 faces++;
 }}
+// A in the blueprint is a required EMPTY block only while constructing.
+// After formation it is the standard saved/rendered V2 filler proxy.
+const airOffsets={south:[0,1,-1],west:[1,1,0],north:[0,1,1],east:[-1,1,0]};
+const chamberSouth=json("assets/magneticraft2/models/multiblock/"+id+"_south/part_0_1_-1.json");
+assert.equal(chamberSouth.parent,"minecraft:block/block");
+assert.equal(chamberSouth.elements.length,15);
+assert.equal(chamberSouth.textures.coal,"minecraft:block/coal_block");
+const physical=[0,2,3,4,5,11,12,13,14]; // all structural; coal is decorative.
+assert.equal(phys.collision.length,17+physical.length);
+assert.deepEqual(phys.selection,phys.collision);
+for(let i=0;i<physical.length;i++){
+ const shape=chamberSouth.elements[physical[i]];
+ assert.deepEqual(phys.collision[17+i],[
+  ...shape.from.map((v,k)=>v+airOffsets.south[k]*16),
+  ...shape.to.map((v,k)=>v+airOffsets.south[k]*16)
+ ],"V2 selection/collision must match visual load-bearing hearth part");
+}
+const rotate=(from,to,d)=>{
+ const [x,y,z]=from,[a,b,c]=to;
+ if(d==="south")return [from,to];
+ if(d==="north")return [[16-a,y,16-c],[16-x,b,16-z]];
+ if(d==="east")return [[z,y,16-a],[c,b,16-x]];
+ return [[16-c,y,x],[16-z,b,a]];
+};
+for(const facing of orientations){
+ const bp=json("data/magneticraft2/multiblocks/"+id+"_"+facing+".json");
+ assert.deepEqual(bp.settings.render_air_anchors,[airOffsets[facing]]);
+ const m=json("assets/magneticraft2/models/multiblock/"+id+"_"+
+   facing+"/part_"+airOffsets[facing].join("_")+".json");
+ assert.deepEqual(m.textures,chamberSouth.textures);
+ assert.equal(m.elements.length,15);
+ for(let i=0;i<m.elements.length;i++){
+  const e=m.elements[i],s=chamberSouth.elements[i];
+  assert.deepEqual([e.from,e.to],rotate(s.from,s.to,facing),
+    "Directional part geometry mismatch "+facing+" element "+i);
+  const [w,h,d]=e.to.map((n,k)=>n-e.from[k]);
+  for(const [face,uv] of Object.entries(e.faces)){
+   const dims=["up","down"].includes(face)?[w,d]:
+    ["east","west"].includes(face)?[d,h]:[w,h];
+   assert.deepEqual([uv.uv[2]-uv.uv[0],uv.uv[3]-uv.uv[1]],dims,
+    "Native UV mismatch "+facing+" "+face);
+  }
+ }
+}
+assert.ok(book.pages.some(p=>p.text?.includes("Why AIR in the middle")));
+console.log("Iron Forge Hearth AIR anchor contract PASS: four directions, 15 model "+
+ "parts each, 9 model-matched structural collision components; player leaves AIR.");
+
 console.log("Iron Forge Hearth JSON/source contract PASS, "+faces+" 1:1 controller UV faces. Full Forge build and in-game behavior NOT checked.");
