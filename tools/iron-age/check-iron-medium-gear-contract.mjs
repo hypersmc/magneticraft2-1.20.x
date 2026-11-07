@@ -89,62 +89,69 @@ assert.match(latheSource,/finished\.setTag\(workpiece\.getTag\(\)\.copy\(\)\)/);
 assert.match(latheSource,/ITEM_ROUGH_BRONZE_GEAR\.get\(\)/);
 assert.match(latheSource,/ITEM_ROUGH_BRONZE_BEARING\.get\(\)/);
 const model=json('assets/magneticraft2/models/block/wrought_iron_gear_medium.json');
+const precision=json('assets/magneticraft2/models/item/precision_iron_gear_medium.json');
 assert.equal(model.parent,'minecraft:block/block');
 assert.equal(model.textures.iron,'magneticraft2:block/material/dark_work_iron');
 assert.equal(model.textures.collar,'magneticraft2:block/material/bronze_machined');
-assert.equal(model.elements.length,24,'rim, 4 spokes, 8 teeth, slim axle, hub, 2 collars');
-let faceCount=0,rotatedTeeth=0;
-for(const element of model.elements){
- const [x,y,z]=element.to.map((v,i)=>v-element.from[i]);
+assert.equal(model.elements.length,43);
+assert.equal(precision.elements.length,34);
+assert.deepEqual(precision.elements,model.elements.slice(0,34),
+ 'precision part must share rim, spokes, teeth and hub');
+const rim=model.elements.slice(0,18),spokes=model.elements.slice(18,22);
+const teeth=model.elements.slice(22,30),hub=model.elements.slice(30,34);
+const shaft=model.elements[34],collars=model.elements.slice(35);
+assert.equal(teeth.length,8);
+assert.equal(teeth.filter(e=>e.rotation).length,4);
+assert.ok(teeth.filter(e=>e.rotation).every(e=>e.rotation.axis==='y'&&Math.abs(e.rotation.angle)===45));
+assert.deepEqual(shaft.from,[7,0,7]);assert.deepEqual(shaft.to,[9,16,9]);
+assert.equal(collars.length,8);
+let faceCount=0;
+for(const m of [model,precision])for(const e of m.elements){
+ const [x,y,z]=e.to.map((v,i)=>v-e.from[i]);
  assert.ok([x,y,z].every(n=>n>0));
- if(element.rotation){
-  assert.equal(element.rotation.axis,'y');
-  assert.ok(Math.abs(element.rotation.angle)===45);
-  rotatedTeeth++;
- }
- for(const [side,face] of Object.entries(element.faces)){
-  const [w,h]=side==='up'||side==='down'?[x,z]:
-    side==='east'||side==='west'?[z,y]:[x,y];
-  assert.deepEqual([face.uv[2]-face.uv[0],face.uv[3]-face.uv[1]],
-   [w,h],'stretched '+side);
-  assert.ok(model.textures[face.texture.substring(1)]);
+ for(const [side,f]of Object.entries(e.faces)){
+  const [w,h]=side==='up'||side==='down'?[x,z]:side==='east'||side==='west'?[z,y]:[x,y];
+  assert.deepEqual([f.uv[2]-f.uv[0],f.uv[3]-f.uv[1]],[w,h],'stretched '+side);
+  assert.ok(m.textures[f.texture.substring(1)]);
   faceCount++;
  }
 }
-assert.equal(rotatedTeeth,4,'expected four 45-degree diagonal teeth');
-assert.equal(faceCount,144,'24 textured cuboids');
-const precision=json('assets/magneticraft2/models/item/precision_iron_gear_medium.json');
-assert.equal(precision.elements.length,23,'machined gear without the full axle');
-assert.deepEqual(precision.elements.slice(0,20),model.elements.slice(0,20),
-  'machined precision part must match the block gear rim/spokes/teeth');
-const ring=model.elements.slice(0,8);
-const spokes=model.elements.slice(8,12);
-const teeth=model.elements.slice(12,20);
-assert.equal(teeth.filter(e=>!!e.rotation).length,4);
-assert.ok(teeth.every(e=>e.from[1]===7&&e.to[1]===9));
-assert.ok(ring.every(e=>e.from[1]===7.2&&e.to[1]===8.8));
-assert.ok(spokes.every(e=>e.from[1]===7.2&&e.to[1]===8.8));
-const edges=[[0,4],[0,5],[1,6],[1,7],[2,4],[2,6],[3,5],[3,7]];
-const touching=(a,b)=>[0,2].some(axis=>{
- const other=axis===0?2:0;
- return (a.to[axis]===b.from[axis]||b.to[axis]===a.from[axis])
-  &&Math.min(a.to[other],b.to[other])>Math.max(a.from[other],b.from[other]);
-});
-for(const [i,k] of edges)assert.ok(touching(ring[i],ring[k]),
-  'rim segments not face-connected: '+i+','+k);
-for(let i=0;i<ring.length;i++)for(let k=i+1;k<ring.length;k++){
- const dx=Math.min(ring[i].to[0],ring[k].to[0])
-   -Math.max(ring[i].from[0],ring[k].from[0]);
- const dz=Math.min(ring[i].to[2],ring[k].to[2])
-   -Math.max(ring[i].from[2],ring[k].from[2]);
- assert.ok(dx<=0||dz<=0,'overlapping rim top faces cause z-fighting');
+assert.equal(faceCount,462);
+const areaXZ=(a,b)=>Math.max(0,Math.min(a.to[0],b.to[0])-Math.max(a.from[0],b.from[0]))
+ *Math.max(0,Math.min(a.to[2],b.to[2])-Math.max(a.from[2],b.from[2]));
+const touching=(a,b)=>[0,2].some(i=>
+ (Math.abs(a.to[i]-b.from[i])<1e-8||Math.abs(b.to[i]-a.from[i])<1e-8)
+ &&Math.min(a.to[2-i],b.to[2-i])>Math.max(a.from[2-i],b.from[2-i]));
+for(let i=0;i<rim.length;i++)for(let j=i+1;j<rim.length;j++)
+ assert.equal(areaXZ(rim[i],rim[j]),0,'rim coplanar top overlap');
+const reached=new Set([0]);
+for(let changed=true;changed;){changed=false;
+ for(const i of [...reached])for(let j=0;j<rim.length;j++)
+ if(!reached.has(j)&&touching(rim[i],rim[j])){reached.add(j);changed=true;}
 }
-const fullAxles=model.elements.filter(e=>e.from[1]===0&&e.to[1]===16);
-assert.equal(fullAxles.length,1,'retain a single supported, narrower through-shaft');
-const oldWood=json('assets/magneticraft2/models/block/gear_medium_wood.json');
-assert.ok(oldWood.elements.length>=20,'do not replace the working wooden gear model');
-assert.ok(model.elements.every(e=>!e.rotation||Math.abs(e.rotation.angle)===45));
-
+assert.equal(reached.size,rim.length,'rim is not continuous');
+const contains=(e,x,z)=>{
+ if(e.rotation){const t=e.rotation.angle*Math.PI/180,dx=x-8,dz=z-8;
+  x=8+Math.cos(t)*dx-Math.sin(t)*dz;
+  z=8+Math.sin(t)*dx+Math.cos(t)*dz;
+ }
+ return x>=e.from[0]&&x<e.to[0]&&z>=e.from[2]&&z<e.to[2];
+};
+const contact=(parts,e)=>{
+ const step=.125;let hits=0;
+ for(let z=0;z<16;z+=step)for(let x=0;x<16;x+=step){
+  const px=x+step/2,pz=z+step/2;
+  if(contains(e,px,pz)&&parts.some(q=>contains(q,px,pz)))hits++;
+ }
+ return hits*step*step;
+};
+for(const [i,tooth] of teeth.entries())
+ assert.ok(contact(rim,tooth)>1,'DETACHED tooth '+i+' after rotation');
+for(const [i,spoke] of spokes.entries()){
+ assert.ok(contact(rim,spoke)>1,'spoke '+i+' detached from rim');
+ assert.ok(contact(hub,spoke)>1,'spoke '+i+' detached from hub');
+}
+assert.ok(json('assets/magneticraft2/models/block/gear_medium_wood.json').elements.length>=20);
 const variants=json('assets/magneticraft2/blockstates/wrought_iron_gear_medium.json').variants;
 assert.equal(Object.keys(variants).length,7);
 assert.equal(variants['powered=true'].model,'magneticraft2:block/invis');

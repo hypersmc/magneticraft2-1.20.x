@@ -73,6 +73,35 @@ and no ring top faces overlap. This is source-level geometry
 verification only; exact cog-to-wood meshing, all axes, and camera/
 frame-rate checks still require actual Minecraft testing.
 
+## Second revision: correction of detached teeth (2026-11-07)
+
+The player rejected the previous model in-game: four diagonal teeth
+were floating like diamonds, the ring looked square, and the central
+hub looked disconnected. The first source test checked valid rotation
+angles and rim-to-rim joins but **not tooth-to-rim contact after
+45-degree rotation**. That was a validation failure.
+
+The corrective model uses a circular 16-pixel stepped rim, merged
+into 18 non-overlapping connected cuboids; four inset radial spokes;
+eight narrower teeth *rooted through the rim*, including all four
+rotated teeth; and an open central bored hub with a supported shaft
+and two bronze retaining-collar rings. The separate machined
+precision-gear item uses exactly the same rim/spokes/teeth/hub
+without the assembled shaft/collars.
+
+The regression fixture now samples every rotated tooth against
+the rim and every spoke against both the rim and central hub,
+requires positive contact area, validates full rim connectivity,
+rejects coplanar rim faces and verifies native 1:1 UV density.
+The ring UVs are recalculated **after** cuboid merging.
+
+No Forge/gear logic, torque ratings, client renderer, item IDs,
+recipes, placement rules or wood gearing were changed. The
+higher element count may affect rendering performance and has NOT
+been measured. This correction is **source-verified only**:
+in-game tooth contact, mesh phase, item appearance, FPS and
+orientation acceptance still need testing.
+
 ## Verification checklist (single-player)
 
 - [ ] JDK 17 `./gradlew build` with actual output.
