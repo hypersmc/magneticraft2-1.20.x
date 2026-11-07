@@ -70,6 +70,8 @@
     "magneticraft2:iron_machine_foundation",
     "magneticraft2:wrought_iron_gear_medium",
     "magneticraft2:wrought_iron_shaft",
-    "magneticraft2:wrought_iron_gearbox"
+    "magneticraft2:wrought_iron_gearbox",
+    "magneticraft2:iron_stock_shear",
+    "magneticraft2:riveted_iron_frame"
   ]
 }

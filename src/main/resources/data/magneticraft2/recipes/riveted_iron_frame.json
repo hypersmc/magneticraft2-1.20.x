@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RBR",
+    "B B",
+    "RBR"
+  ],
+  "key": {
+    "R": {
+      "item": "magneticraft2:iron_rivet"
+    },
+    "B": {
+      "item": "magneticraft2:wrought_iron_bar"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:riveted_iron_frame",
+    "count": 1
+  }
+}

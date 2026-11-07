@@ -192,6 +192,7 @@ public class ItemRegistry {
             ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_IRON_SHEAR_BLADE =
             ITEMS.register("iron_shear_blade", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_RIVETED_IRON_FRAME = fromBlock(RIVETED_IRON_FRAME);
     public static final RegistryObject<Item> ITEM_IRON_RIVET =
             ITEMS.register("iron_rivet", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_IRON_STOCK_SHEAR = fromBlock(IRON_STOCK_SHEAR);
