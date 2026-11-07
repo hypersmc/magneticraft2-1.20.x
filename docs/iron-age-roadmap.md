@@ -486,7 +486,11 @@ The proposed heavy flywheel is implemented at the source stage: actual
 3×3×1 vertical footprint, two foundation supports, six reserved AIR
 cells, one 2.4-block diameter rotating rim, Gear V2's original finite
 coasting with 12-torque Iron limit. Build, physical meshing, coasting,
-multiblock teardown/reload, visuals and FPS remain unverified.
+multiblock teardown/reload, visuals and FPS remain unverified in the
+original source milestone record. **Player confirmation on 2026-11-08:**
+the Iron Flywheel works in-game; its main functionality is accepted.
+Individual build, final alignment screenshots, specific load, save/reload
+and FPS regressions remain separately undocumented.
 See `docs/iron-age-flywheel-acceptance.md`. PR #18 stays draft.
 
 
