@@ -26,19 +26,31 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
     private final ResourceLocation gearTexture;
     private final ResourceLocation shaftTexture;
     private final ResourceLocation supportTexture;
+    private final boolean proportionalUv;
 
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
-        this(context, OAK, SHAFT, SUPPORT);
+        // Preserve the accepted wooden gearbox's original 2-texel-minimum
+        // sampling without silently changing its texture appearance.
+        this(context, OAK, SHAFT, SUPPORT, false);
     }
 
-    /** Share established bevel geometry and animations, not wood textures. */
+    /** Reuse the same geometry with appropriate materials and true scale UVs. */
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context,
                                            ResourceLocation gearTexture,
                                            ResourceLocation shaftTexture,
                                            ResourceLocation supportTexture) {
+        this(context, gearTexture, shaftTexture, supportTexture, true);
+    }
+
+    private GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context,
+                                            ResourceLocation gearTexture,
+                                            ResourceLocation shaftTexture,
+                                            ResourceLocation supportTexture,
+                                            boolean proportionalUv) {
         this.gearTexture = gearTexture;
         this.shaftTexture = shaftTexture;
         this.supportTexture = supportTexture;
+        this.proportionalUv = proportionalUv;
     }
 
     @Override
@@ -433,9 +445,12 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
          * minimum 2x2 texel patch. This gives small teeth/spokes readable wood
          * grain without smearing or over-compressing the texture.
          */
-        float uvX = texelWindow(sizeX);
-        float uvY = texelWindow(sizeY);
-        float uvZ = texelWindow(sizeZ);
+        // Metal geometry uses the face's real block-unit dimensions, so a
+        // 0.04-block tooth never samples a 2/16-wide (stretched) texel strip.
+        // Keep the previously accepted minimum texture window for WOOD only.
+        float uvX = proportionalUv ? (float) sizeX : texelWindow(sizeX);
+        float uvY = proportionalUv ? (float) sizeY : texelWindow(sizeY);
+        float uvZ = proportionalUv ? (float) sizeZ : texelWindow(sizeZ);
 
         PoseStack.Pose pose = stack.last();
 
