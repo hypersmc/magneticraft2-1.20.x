@@ -592,8 +592,9 @@ can run a 12-torque Shear even with Iron parts. Test a genuine 1:1 axle/shaft
 path first, then compare equivalent-ratio wood (8 capacity) and Iron (16+)
 paths. Do not misdiagnose ratio loss as material-capacity failure.
 
-The source-copied independent Shear motion classes compiled under Java 17 and
-passed 1,441 linkage poses in this session. No complete ForgeGradle build,
+The source-copied independent Shear motion classes compiled using JDK 21
+with `javac --release 17` (Java 17 class format) and passed 1,441
+linkage poses in this session. This does not verify a JDK 17 Gradle build. No complete ForgeGradle build,
 contract-fixture run from the full checkout or Minecraft end-to-end runtime
 test occurred. The source integration checklist is documented in
 `docs/iron-age-stock-shear-acceptance.md`; PR #18 remains draft.
