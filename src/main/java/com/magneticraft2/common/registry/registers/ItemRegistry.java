@@ -126,6 +126,9 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLING_MILL = fromBlock(BRONZE_ROLLING_MILL);
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLER_SLEEVES =
             ITEMS.register("bronze_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
+    // An optional longer-lived maintenance part for the existing Bronze Rolling Mill.
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_ROLLER_SLEEVES =
+            ITEMS.register("wrought_iron_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_COPPER_SHEET =
             ITEMS.register("copper_sheet", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BRONZE_MECHANICAL_PRESS = fromBlock(BRONZE_MECHANICAL_PRESS);

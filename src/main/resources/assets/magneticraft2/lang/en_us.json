@@ -562,6 +562,7 @@
   "item.magneticraft2.iron_plate_panel": "Iron Plate Panel",
   "item.magneticraft2.iron_machine_foundation": "Iron Machine Foundation",
   "item.magneticraft2.wrought_iron_forge_die": "Wrought Iron Forging Die",
+  "item.magneticraft2.wrought_iron_roller_sleeves": "Wrought Iron Roller Sleeves",
   "tooltip.magneticraft2.iron_bloom.hot": "Forging hot: %s s remaining",
   "tooltip.magneticraft2.iron_bloom.cold": "Cold bloom — reheat in a fueled Refractory Kiln",
   "tooltip.magneticraft2.wrought_iron_ingot.hot": "Forging hot: %s s remaining",

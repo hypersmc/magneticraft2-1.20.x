@@ -559,3 +559,13 @@ load, finish time, output quality, copper/hot-iron recipe regressions,
 blocked outputs, roller wear, runtime visuals and JDK17 Gradle build
 remain unverified. See `docs/iron-age-sheet-acceptance.md`. Keep
 PR #18 draft and multiplayer work postponed until after Steam Age.
+
+## Wrought Iron Roller Sleeves — maintenance follow-on (2026-11-08)
+
+The existing Bronze Rolling Mill's 512-batch Bronze sleeve service limit now
+supports an optional 1024-batch Wrought Iron pair, reusing the Forge Hammer's
+material-tier maintenance contract. Iron sheet rolling is still 12 torque and
+16 RPM; this is a wear/replacement benefit, not free power or improved yield.
+Original saved `MillRollers` Bronze NBT and Bronze sleeves remain intact.
+Full implementation and acceptance scope: `docs/iron-age-roller-sleeves-acceptance.md`.
+Source candidate only; JDK 17 Gradle build and in-game results are pending.

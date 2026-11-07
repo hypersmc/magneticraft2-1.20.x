@@ -90,3 +90,11 @@ real driven mill throughput and quality/output handling.
 Hatch placed behavior, Gear V2 manager, machine formation, Copper
 recipes, Steel/Steam pipeline or multiplayer systems. Keep PR #18
 draft and unmerged; multiplayer-specific work remains after Steam Age.
+
+## Player report — 2026-11-08
+
+The player said they had **"just tested the plate one"** before asking to
+continue development. This records that a recent Plate-related in-game
+check occurred, but does **not** identify which acceptance cases passed or
+independently confirm sheet output, exact 12-torque behavior, saved NBT or
+old-recipe regressions. Keep those individual tests open until reported.

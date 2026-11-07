@@ -338,6 +338,16 @@
       "title": "Rolled Iron Sheet Panels",
       "recipe": "magneticraft2:iron_plate_panel_from_sheets",
       "text": "TWO Wrought Iron Sheets make ONE Iron Plate Panel. Powering the Mill to make thin stock improves material efficiency over the original two-Plate manual construction recipe, which remains available. TWO Sheets, a Bar and a Rod also make two Iron Service Hatches; the previous Plate-based hatch recipe still works. Vanilla crafting does not propagate source quality to block items."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Service the Rolling Mill$()$(br2)Cold-finishing Wrought Iron Sheets puts the existing Bronze Rolling Mill to work at 12 torque. Its original Bronze Roller Sleeves last 512 completed batches. Wrought Iron Roller Sleeves are an optional longer-lived replacement: 1024 completed batches.$(br2)Neither sleeve tier changes speed, torque requirements, yield or heat rules. Idle machines, stalls and blocked output do not wear sleeves."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Roller Sleeves",
+      "recipe": "magneticraft2:wrought_iron_roller_sleeves",
+      "text": "Four rolled Wrought Iron Bars, two precision-bored Bronze Bushings and one polished blackstone support make the replacement sleeve pair. Install by right-clicking the FORMED Bronze Rolling Mill with the item; one is consumed. Sneak-right-click empty-handed to inspect installed material and remaining cycles. Replacing a pristine same-tier sleeve consumes nothing; swapping materials replaces the old part without refund."
     }
   ],
   "sortnum": 4,

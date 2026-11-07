@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "I I",
+    "BPB",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "item": "magneticraft2:wrought_iron_bar"
+    },
+    "B": {
+      "item": "magneticraft2:bronze_bushing"
+    },
+    "P": {
+      "item": "minecraft:polished_blackstone"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:wrought_iron_roller_sleeves",
+    "count": 1
+  }
+}

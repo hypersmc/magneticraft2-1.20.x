@@ -78,7 +78,9 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
     private int progress;
     private boolean running;
     private final ReplaceableMachinePart rollerSleeves =
-            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_ROLLER_SLEEVES::get, 512);
+            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_ROLLER_SLEEVES::get, 512,
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_WROUGHT_IRON_ROLLER_SLEEVES::get, 1024));
 
     public BronzeRollingMillBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_ROLLING_MILL_BE.get(), pos, state);
