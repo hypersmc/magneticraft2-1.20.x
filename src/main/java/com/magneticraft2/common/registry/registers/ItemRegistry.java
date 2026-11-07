@@ -233,6 +233,12 @@ public class ItemRegistry {
             ITEMS.register("bronze_pouring_ladle", BronzePouringLadleItem::new);
     public static final RegistryObject<Item> ITEM_LATHE_CUTTER =
             ITEMS.register("bronze_lathe_cutter", () -> new Item(new Item.Properties().durability(64)));
+    // One cold wrought rod is precision-bored into a cutter holder in the existing Bronze Boring Machine.
+    public static final RegistryObject<Item> ITEM_PRECISION_IRON_TOOLHOLDER =
+            ITEMS.register("precision_iron_toolholder", () -> new Item(new Item.Properties()));
+    // Retains the Flint cutting edge, with a more durable wrought-iron mounting assembly.
+    public static final RegistryObject<Item> ITEM_IRON_LATHE_CUTTER =
+            ITEMS.register("iron_lathe_cutter", () -> new Item(new Item.Properties().durability(128)));
     public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_GEAR =
             ITEMS.register("precision_bronze_gear", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRECISION_BRONZE_BEARING =

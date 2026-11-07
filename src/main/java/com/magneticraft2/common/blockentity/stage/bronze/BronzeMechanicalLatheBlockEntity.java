@@ -275,10 +275,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             }
             player.displayClientMessage(Component.literal(
                     "Lathe: "+(running?"cutting":(!workpiece.isEmpty()?"stalled / waiting for Gear V2 drive":"idle"))+
-                    " | "+machiningTicks+"/"+CYCLE_TICKS+" | tool "+(cutter.isEmpty()?"missing":(cutter.getMaxDamage()-cutter.getDamageValue())+" uses")),true);
+                    " | "+machiningTicks+"/"+CYCLE_TICKS+" | tool "+(cutter.isEmpty()?"missing":(cutter.getMaxDamage()-cutter.getDamageValue())+" durability")),true);
             return;
         }
-        if(held.is(ItemRegistry.ITEM_LATHE_CUTTER.get())){
+        if(held.is(ItemRegistry.ITEM_LATHE_CUTTER.get())
+                || held.is(ItemRegistry.ITEM_IRON_LATHE_CUTTER.get())){
             if(!cutter.isEmpty()){player.displayClientMessage(Component.literal("Remove the installed cutter first."),true);return;}
             cutter=held.copy();cutter.setCount(1);
         }else if(held.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())

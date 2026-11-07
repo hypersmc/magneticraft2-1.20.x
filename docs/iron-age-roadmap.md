@@ -569,3 +569,16 @@ material-tier maintenance contract. Iron sheet rolling is still 12 torque and
 Original saved `MillRollers` Bronze NBT and Bronze sleeves remain intact.
 Full implementation and acceptance scope: `docs/iron-age-roller-sleeves-acceptance.md`.
 Source candidate only; JDK 17 Gradle build and in-game results are pending.
+
+## Precision Iron Lathe Tooling — machine component follow-on (2026-11-08)
+
+A cold Wrought Iron Rod is precision-bored on the **existing Bronze Precision
+Boring Machine** (20 RPM / 8 torque / 240 supplied ticks) into a machined
+Iron Toolholder, retaining source-quality NBT. The holder + one bored Bronze
+Bushing + Flint assemble a Wrought Iron Lathe Cutter (128 durability vs the
+64-durability existing Bronze Cutter). The original Lathe accepts either and
+still uses 1 durability on Bronze, 2 on medium Iron and 3 on large Iron.
+No machine block, new metal tier, machining output or torque rule changes.
+Vanilla assembly currently does not copy toolholder quality to the cutter.
+See `docs/iron-age-precision-tooling-acceptance.md` for regression tests.
+Source implementation only; Gradle build, Node fixture and in-game tests pending.

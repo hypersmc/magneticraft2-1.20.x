@@ -348,6 +348,22 @@
       "title": "Wrought Iron Roller Sleeves",
       "recipe": "magneticraft2:wrought_iron_roller_sleeves",
       "text": "Four rolled Wrought Iron Bars, two precision-bored Bronze Bushings and one polished blackstone support make the replacement sleeve pair. Install by right-clicking the FORMED Bronze Rolling Mill with the item; one is consumed. Sneak-right-click empty-handed to inspect installed material and remaining cycles. Replacing a pristine same-tier sleeve consumes nothing; swapping materials replaces the old part without refund."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Precision Iron Lathe Tooling$()$(br2)The existing Bronze Precision Boring Machine can work one cold Wrought Iron Rod into one Precision Iron Toolholder. The bore operation costs 8 torque at 20 RPM for 240 supplied ticks, wearing the normal abrasive boring bit once after a successful batch. This is a real machine recipe, not a crafting-table shortcut. No forging-heat timer is needed for the cold rod."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Precision Iron Toolholder",
+      "item": "magneticraft2:precision_iron_toolholder",
+      "text": "The bored wrought-iron holder has a seat for a Bronze Bushing and a flint cutting insert. Source quality NBT survives the Boring Machine step. A normal crafting table does not transfer that NBT into the assembled cutter; no quality-dependent tool rating has been introduced."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Lathe Cutter",
+      "recipe": "magneticraft2:iron_lathe_cutter",
+      "text": "Assemble one bored Iron Toolholder, one Bronze Bushing and one Flint. Right-click the existing formed Bronze Mechanical Lathe with the cutter when its cutter slot is empty. It has 128 durability instead of 64 for the old Bronze cutter; both cutters still spend 1 durability on Bronze work, 2 on Medium Iron gears, and 3 on Large Iron gears. No new machine, faster cutting, extra power or early Steel metallurgy."
     }
   ],
   "sortnum": 4,
