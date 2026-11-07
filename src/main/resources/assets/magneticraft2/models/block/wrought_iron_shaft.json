@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "wood": "magneticraft2:block/material/dark_work_iron",
-    "end": "magneticraft2:block/material/bronze_machined",
-    "particle": "magneticraft2:block/material/dark_work_iron"
+    "end": "magneticraft2:block/material/dark_work_iron",
+    "particle": "magneticraft2:block/material/dark_work_iron",
+    "iron": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": [
     {
@@ -25,7 +25,7 @@
             11,
             16
           ],
-          "texture": "#wood"
+          "texture": "#iron"
         },
         "east": {
           "uv": [
@@ -34,7 +34,7 @@
             11,
             16
           ],
-          "texture": "#wood"
+          "texture": "#iron"
         },
         "south": {
           "uv": [
@@ -43,7 +43,7 @@
             11,
             16
           ],
-          "texture": "#wood"
+          "texture": "#iron"
         },
         "west": {
           "uv": [
@@ -52,7 +52,7 @@
             11,
             16
           ],
-          "texture": "#wood"
+          "texture": "#iron"
         },
         "up": {
           "uv": [

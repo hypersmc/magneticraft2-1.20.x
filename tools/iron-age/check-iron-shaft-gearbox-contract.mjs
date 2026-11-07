@@ -79,6 +79,9 @@ assert.match(sharedBoxRenderer,/proportionalUv \? \(float\) sizeX : texelWindow\
 assert.match(sharedBoxRenderer,/renderBevelGear/);
 assert.match(sharedBoxRenderer,/renderPortShaft/);
 assert.match(sharedBoxRenderer,/renderPortSupport/);
+assert.match(sharedBoxRenderer,/proportionalUv \\? consumer : support/);
+assert.match(sharedBoxRenderer,/VertexConsumer structural/);
+assert.match(sharedBoxRenderer,/VertexConsumer bearing/);
 
 const book=json('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json');
 const pickaxe=json('data/minecraft/tags/blocks/mineable/pickaxe.json');
@@ -122,6 +125,22 @@ for(const id of ids){
    'magneticraft2:block/wrought_iron_gearbox');
  }
 }
+// The first in-game screenshot showed wood-looking exposed shaft ends
+// and an overwhelmingly bronze/wood-looking interior. Keep bronze
+// confined to the actual bearing journal, not shafts or frame supports.
+const shaftVisual=json('assets/magneticraft2/models/block/wrought_iron_shaft.json');
+const gearboxVisual=json('assets/magneticraft2/models/block/wrought_iron_gearbox.json');
+const ironTex='magneticraft2:block/material/dark_work_iron';
+const bronzeTex='magneticraft2:block/material/bronze_machined';
+assert.equal(shaftVisual.textures.iron,ironTex);
+assert.equal(shaftVisual.textures.end,ironTex,'shaft ends must be iron, not bronze/wood-like');
+assert.equal(gearboxVisual.textures.frame,ironTex);
+assert.equal(gearboxVisual.textures.base,ironTex,'structural floor must be iron');
+assert.ok(!Object.values(shaftVisual.textures).includes(bronzeTex),
+ 'iron shaft unexpectedly has wooden-looking bronze caps');
+assert.match(sharedBoxRenderer,/renderPortSupport\(\s*stack,\s*proportionalUv \? consumer : support,\s*support/);
+assert.match(sharedBoxRenderer,/drawBox\([\s\S]*?structural,/);
+assert.match(sharedBoxRenderer,/drawBox\([\s\S]*?bearing,/);
 const shaftRecipe=json('data/magneticraft2/recipes/wrought_iron_shaft.json');
 const boxRecipe=json('data/magneticraft2/recipes/wrought_iron_gearbox.json');
 assert.deepEqual(shaftRecipe.pattern,[' B ',' R ',' B ']);

@@ -2,7 +2,7 @@
   "parent": "minecraft:block/block",
   "textures": {
     "frame": "magneticraft2:block/material/dark_work_iron",
-    "base": "magneticraft2:block/material/bronze_machined",
+    "base": "magneticraft2:block/material/dark_work_iron",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": [

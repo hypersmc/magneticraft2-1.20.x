@@ -129,8 +129,14 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         orientLocalXToDirection(stack, port);
 
         // Fixed support tied into the cage. The wooden axle rotates inside it.
+        // The iron variant reuses all the geometry but cannot leave the
+        // structural cage brace coated in bronze. Only the actual bearing
+        // journal is bronze; load-bearing braces and cheeks remain iron.
+        // The existing wooden variant still uses its original support
+        // texture everywhere, with no layout or UV-policy changes.
         renderPortSupport(
                 stack,
+                proportionalUv ? consumer : support,
                 support,
                 packedLight
         );
@@ -162,7 +168,8 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
 
     private void renderPortSupport(
             PoseStack stack,
-            VertexConsumer consumer,
+            VertexConsumer structural,
+            VertexConsumer bearing,
             int packedLight) {
         /*
          * Local +X points toward the active gearbox face.
@@ -174,13 +181,13 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
          */
         stack.pushPose();
 
-        // Full-width wooden cross-brace. The static housing rails sit near
+        // Full-width load-bearing cross-brace. The static housing rails sit near
         // +/-0.44 from center, so this visibly terminates inside both rails.
         stack.pushPose();
         stack.translate(0.405D, 0.0D, 0.0D);
         drawBox(
                 stack,
-                consumer,
+                structural,
                 packedLight,
                 0.095D,
                 0.095D,
@@ -194,7 +201,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.translate(0.405D, 0.0D, 0.0D);
         drawBox(
                 stack,
-                consumer,
+                bearing,
                 packedLight,
                 0.125D,
                 0.245D,
@@ -208,7 +215,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.translate(0.405D, 0.170D, 0.0D);
         drawBox(
                 stack,
-                consumer,
+                structural,
                 packedLight,
                 0.105D,
                 0.095D,
@@ -220,7 +227,7 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.translate(0.405D, -0.170D, 0.0D);
         drawBox(
                 stack,
-                consumer,
+                structural,
                 packedLight,
                 0.105D,
                 0.095D,

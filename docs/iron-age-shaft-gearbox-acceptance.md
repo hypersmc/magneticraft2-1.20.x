@@ -86,6 +86,38 @@ bevel-gear manufacturing workpiece was **not** introduced in this
 slice. Its material and mechanical output remain provisional until
 survival testing and visual gear meshing are accepted.
 
+## First in-game visual feedback and targeted correction — 2026-11-07
+
+The player's in-game screenshot shows two **brown/wood-looking exposed
+Iron Shaft ends** and an Iron Gearbox whose internals appear wooden
+inside a dark iron cage. This was not acceptable visual evidence
+for an Iron Age drivetrain.
+
+Source-level root causes: the Iron Shaft's top/bottom faces used the
+Bronze bearing texture as a *full end cap*; the gearbox's entire
+floor used Bronze, and its original Wood gearbox renderer covered
+the full-width structural cross-braces plus bearing cheeks with
+Bronze. These are excessive material applications, not evidence
+that the Gear V2 network needs changing.
+
+**Focused correction:** The shaft sides and exposed ends use
+`dark_work_iron` at native face UV size. The right-angle gearbox
+keeps its existing stable 13-cuboid housing but changes the floor
+to dark iron; the shared renderer now draws load-bearing braces
+and bearing retaining cheeks in Iron for the metal variant while
+leaving only the supported center bearing in Bronze. The Wooden
+Gearbox continues to use its original oak/wood textures and UV
+sampling. The existing Iron medium gear is not altered.
+
+**Limitations:** This corrects the demonstrably bad texture
+assignments. The external gearbox's **frame shape still derives
+from the established wooden model**; a bespoke housing may be
+appropriate later after the player accepts the present geometry.
+It would be inaccurate to claim the whole gearbox has a new
+3D model or realistic machined bevel tooth form. The screenshots
+do not prove every orientation or motor behavior. Check the result
+from several angles while rotating and idle.
+
 ## Single-player acceptance checklist
 
 - [ ] Run `node tools/iron-age/check-iron-shaft-gearbox-contract.mjs`.
