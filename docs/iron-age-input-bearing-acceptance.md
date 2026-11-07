@@ -43,3 +43,13 @@ misleading wooden drive even though the rest of its machinery was iron.
    bottlenecks stay unchanged. Verify saving, re-forming and old worlds.
 7. Multiplayer acceptance still deferred until after Steam Age.
 No build, runtime, FPS or resource-pack reload claim is made here.
+
+## Player acceptance report — 2026-11-07
+
+The player answered **yes** to reforming the Mechanical Metal Shear with
+the new Iron input bearing/shaft and to checking Copper/Bronze machines
+still have their original appearance. Record those specific *in-game*
+checks as player-reported PASS. The module's 16-torque limit, save/reload,
+all horizontal orientations, F3+T resource reload and multiplayer behavior
+were not individually evidenced by these yes answers. This is functional
+player evidence, not a full rendering/regression signoff.

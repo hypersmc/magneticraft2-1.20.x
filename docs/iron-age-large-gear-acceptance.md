@@ -40,3 +40,43 @@ still require execution in a full checkout and Minecraft.
 6. Check static/rotating model, collider, textures, teeth, drop, tooltip, creative,
    JEI and Patchouli; inspect above/below and benchmark large connected networks.
 7. Keep PR draft/unmerged. Multiplayer work deferred until after Steam Age.
+
+## Player verification and physical meshing defect — 2026-11-07
+
+The player explicitly answered **yes** to all four prior in-game checks:
+large blank -> existing Bronze Lathe machining (including cutter wear),
+Large Gear crafting/rotation and 8/16 compatibility, formed Iron Shear
+bearing appearance, and older Copper/Bronze input appearance. Record
+those as reported in-game successes; they do not prove every save/load,
+collision, stress, FPS or all-orientations criterion above.
+
+**Open visual/mechanical defect (player screenshot, four 16-tooth Iron Large
+Gears in a 2x2 network):** Gear V2 deliberately allows 16-tooth gears
+to form straight external meshes with axle centers separated by **2 blocks**
+= 32 model pixels. The current large model has tooth tips at approximately
+15.24px radius (including an outer tooth corner). Even a tip-to-tip contact
+would leave at least **1.52px gap** at the approved 32px center distance;
+tooth-to-root contact leaves more. The gear graph may treat a pair as
+connected even though the models visually **do not mesh**. This is a known
+correctness/acceptance issue, not an accepted final model.
+
+The Iron Large Gear also currently specifies a broad in-plane square
+collision shape, which does not match the visibly open annular body; test
+and correct this as part of geometrical acceptance. Do **not** solve either
+problem using a concealed renderer offset, fake contact, or stretched UVs.
+
+**Constraint discovered during source-level experiments:** Gear V2 also
+allows 8/16-tooth diagonal connections at sqrt(2) blocks (~22.63 model
+pixels). Increasing Large Gear rim/tooth radius merely to close a 16/16
+32px mesh increases intersections with existing Medium gears at the
+allowed diagonal connection. The current model already has small
+cross-component intersections in a sampled polygon test. Any correction
+must preserve *both* legal meshing layouts across all phases, not simply
+make the four-Large-Gear screenshot look close.
+
+Next acceptance gate: prove visible tooth-to-gap engagement and no significant
+intersection for Large/Large, Medium/Large and existing wooden geometries,
+in stopped and powered states over a full tooth-pitch rotation; verify
+shape against rendered ring and shaft and check both X/Y/Z axes. This
+needs measured geometry QA and actual in-game views. No geometry or Gear V2
+rule changed by this note, and this milestone is **NOT visually complete**.
