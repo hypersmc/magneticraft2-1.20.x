@@ -18,7 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-/** Only the cam-driven die and workpiece are dynamic; V2 renders the static frame. */
+/** Only the gear-driven shear blade and workpiece are dynamic; V2 owns the frame. */
 public final class IronStockShearRenderer
         implements BlockEntityRenderer<IronStockShearBlockEntity> {
     private static final ResourceLocation RAM =
@@ -51,7 +51,7 @@ public final class IronStockShearRenderer
         BlockRenderDispatcher dispatcher = Minecraft.getInstance().getBlockRenderer();
         dispatcher.getModelRenderer().renderModel(pose.last(),
                 buffers.getBuffer(RenderType.cutout()),
-                BlockRegistry.BRONZE_MECHANICAL_PRESS.get().defaultBlockState(),
+                BlockRegistry.IRON_STOCK_SHEAR.get().defaultBlockState(),
                 ram, 1F, 1F, 1F, light, overlay);
         pose.popPose();
 

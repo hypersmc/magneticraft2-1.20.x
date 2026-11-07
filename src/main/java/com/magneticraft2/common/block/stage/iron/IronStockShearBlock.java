@@ -28,7 +28,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** Formable, JSON-defined 3x3x3 Bronze Iron Stock Shear with V2 collision and mechanical input. */
+/** Formable, JSON-defined 3x3x2 Iron Stock Shear with V2 collision and mechanical input. */
 public final class IronStockShearBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED = BooleanProperty.create("is_formed");
 
@@ -57,7 +57,7 @@ public final class IronStockShearBlock extends BaseBlockMagneticraft2 {
         if(world.isClientSide) return InteractionResult.SUCCESS;
         if(!mill.isFormed()) mill.onRightClick();
         if(mill.isFormed())mill.interactable(state,world,pos,player,hand,hit);
-        else player.displayClientMessage(Component.literal("Incomplete Iron Stock Shear: see Bronze Age construction layout."),true);
+        else player.displayClientMessage(Component.literal("Incomplete Iron Stock Shear: see Iron Age construction layout."),true);
         return InteractionResult.CONSUME;
     }
     @Override public boolean onDestroyedByPlayer(BlockState state,Level world,BlockPos pos,

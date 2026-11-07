@@ -19,6 +19,7 @@ import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.maintenance.ReplaceableMachinePart;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,7 +51,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 
 /**
- * Bronze III sheet-forming Iron Stock Shear, powered by existing Gear V2.
+ * Iron III-A stock-cutting Iron Stock Shear, powered by existing Gear V2.
  * Cuts wrought Iron stock into rivets for Iron factory construction.
  * Server-owned load/wear accounting; no second mechanical power system.
  */
@@ -68,6 +69,9 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
     @Nullable private VoxelShape collision, selection;
     @Nullable private ResourceLocation activeRecipe;
     private ItemStack activeInput = ItemStack.EMPTY;
+    // Derived per batch, including source quality and with temporary hot
+    // state removed; rebuilt after reload without clearing saved progress.
+    private ItemStack activeOutput = ItemStack.EMPTY;
     private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private int progress;
     private boolean running;
@@ -137,6 +141,7 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
         progress = 0;
         activeRecipe = null;
         activeInput = ItemStack.EMPTY;
+        activeOutput = ItemStack.EMPTY;
         setChanged();
     }
     private void tickShearing() {
@@ -153,16 +158,21 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
             return;
         }
         ItemStack inputStack = itemHandler.getStackInSlot(0);
-        if (!recipe.getId().equals(activeRecipe)
-                || !ItemStack.isSameItemSameTags(activeInput, inputStack)) {
+        boolean inputOrRecipeChanged = !recipe.getId().equals(activeRecipe)
+                || !ItemStack.isSameItemSameTags(activeInput, inputStack);
+        if (inputOrRecipeChanged) {
             activeRecipe = recipe.getId();
             activeInput = inputStack.copy();
             activeInput.setCount(1);
             progress = 0;
             setChanged();
         }
-        // No load while output is blocked or the press die needs replacement.
-        ItemStack output = recipe.getOutput();
+        if (inputOrRecipeChanged || activeOutput.isEmpty()) {
+            activeOutput = HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput());
+        }
+        // The EXACT metadata-carrying output must fit before reserving load.
+        // No progression or blade wear while the output slot is blocked.
+        ItemStack output = activeOutput;
         if (!shearBlade.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
@@ -215,7 +225,7 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
     }
 
     /**
-     * Explicit feedback for a GUI-less machine. Copper on the press bed proves only
+     * Explicit feedback for a GUI-less machine. Stock on the cutting bed proves only
      * that the item port accepted it, NOT that Gear V2 can supply the demanded
      * RPM and torque. Check the actual server-side module and load state here.
      * Recipe enumeration occurs ONLY on player interaction, not each tick.
@@ -258,7 +268,8 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
             diagnostic = "recipe_unsupported";
         } else if (!shearBlade.canOperate()) {
             diagnostic = "die_worn";
-        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+        } else if (!itemHandler.insertItem(1, HotBloomWorkpiece.consolidate(
+                    inputStack, candidate.getOutput()), true).isEmpty()) {
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";
@@ -385,6 +396,7 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
         activeRecipe = tag.contains("ShearRecipe")
                 ? ResourceLocation.tryParse(tag.getString("ShearRecipe")) : null;
         activeInput = ItemStack.of(tag.getCompound("ShearActiveInput"));
+        activeOutput = ItemStack.EMPTY;
         shearBlade.load(tag.getCompound("ShearBlade"));
         // Never assume stale client RUNNING state is authoritative after reload.
         running = tag.getBoolean("ShearRunning");
@@ -451,8 +463,8 @@ public final class IronStockShearBlockEntity extends BaseBlockEntityMagneticraft
     @Override public boolean WattCanSend() { return false; }
     @Override public boolean EnergyCanReceive() { return false; }
     @Override public boolean EnergyCanSend() { return false; }
-    @Override public boolean ShearureCanReceive() { return false; }
-    @Override public boolean ShearureCanSend() { return false; }
+    @Override public boolean PressureCanReceive() { return false; }
+    @Override public boolean PressureCanSend() { return false; }
     @Override public Level getThisWorld() { return level; }
     @Override public BlockPos getThisPosition() { return worldPosition; }
     @Override public AABB getRenderBoundingBox() {
