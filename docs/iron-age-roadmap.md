@@ -1,6 +1,6 @@
 # Iron Age — foundations and development roadmap (Forge 1.20.1)
 
-**Status (2026-11-07):** Iron Age gameplay has begun. Iron 0A's Wrought Iron Forging Die was implemented on PR #18 and the player has confirmed it works in-game. Further planned milestones remain proposals; release/build and systematic regression evidence are tracked separately.
+**Status (2026-11-07):** Iron 0A's Wrought Iron Forging Die has player acceptance, and Iron 0B's first Wrought Iron Plate has now been produced successfully by the player in-game. Bars/rods, factory blocks and other planned features remain proposals. Build and broader regression results are tracked separately.
 **Base:** `master` immediately after Bronze PR #11 merge
 (`5e5cb3440daa8bd642574c5f473bc5028fecfcb0`, 2026-11-04).
 **Branch:** `feature/iron-age-foundations`.
@@ -119,9 +119,15 @@ texture. The original Bloom → Wrought Iron and Copper Plate recipes
 must remain unchanged. JEI reads the new JSON machine recipes, and
 Patchouli documents the two-machine route.
 
-**Status:** source implemented on PR #18, NOT yet Gradle-compiled or
-tested in-game. Verify actual fuel, temperature, expiry, NBT/quality,
-output blocking, die wear, saving, power pauses, model and old recipes.
+**Player confirmation (2026-11-07):** The player reported **"yep, got
+a wrought iron plate"**, confirming that the new Refractory Kiln →
+Forge Hammer production chain yielded a Wrought Iron Plate in-game.
+This verifies the main successful crafting/processing path, **not**
+independent proof of fuel balance, exact yield over repeated batches,
+expiry/reheat rejection, quality-tag preservation, blocked outputs,
+die wear, save/reload, item visuals, or old-recipe regressions.
+`./gradlew build` and the Node static fixture have no recorded results
+here. These verification tasks remain open.
 Bars, rods and general Iron blocks are *not* part of this slice.
 Multiplayer work remains deferred until AFTER Steam Age.
 
