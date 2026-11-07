@@ -103,8 +103,20 @@ public final class WroughtIronFlywheelBlockEntity extends FlywheelBlockEntity_wo
         try{
             MultiblockRenderParts.assign(level,worldPosition,ctrl,"iron_flywheel",
                     facing,mb.getSettings().getRenderAirAnchors(),PROFILE);
-        }catch(RuntimeException e){
-            ctrl.destroyStructure(level);
+        }catch(RuntimeException invalid){
+            // A failed model/voxel assignment must not dismantle the user's
+            // valid construction or spawn duplicate item drops. Restore the
+            // exact original blocks, including AIR, before reporting failure.
+            // These are the same snapshots used by normal teardown.
+            for(var old:ctrl.getBlockMap().entrySet()){
+                level.setBlock(old.getKey(),old.getValue(),Block.UPDATE_ALL);
+            }
+            collision=null;
+            selection=null;
+            org.apache.logging.log4j.LogManager
+                    .getLogger("Magneticraft2IronFlywheel")
+                    .error("Could not form iron flywheel at {}",worldPosition,invalid);
+            broadcast();
             return false;
         }
         assembly=ctrl;

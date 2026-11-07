@@ -50,3 +50,22 @@
 performance, actual loaded coasting, save and teardown behavior require
 player verification. Textures remain provisional for MGC2 Studio.
 Multiplayer deferred until after Steam. Keep PR #18 draft/unmerged.
+
+## Correctness preflight: aligned central shaft and formation rollback
+
+The SOUTH controller's fixed axle model/voxel was initially authored
+across X, although the rotating wheel's shaft is along Z. The fixed
+axle and matching collision now follow the same SOUTH Z-axis as the
+rotating hub and connect end-to-end at the controller's axial faces.
+The three-dimensional model rotates with the controller for WEST/NORTH/EAST.
+
+The V2 assignment failure path now restores all originally validated
+blocks in place from the controller's existing block map, including
+all six required AIR positions, **without dropping construction items**.
+Only successful formation commits the new formed flag and stored map.
+This does not change ordinary intentional dismantling behavior.
+
+In-game acceptance: attach shafts on each axial side and verify there is
+no transverse/floating shaft; obstruct an AIR cell before forming and
+confirm no block loss; repeat after saving/reloading. No build or runtime
+claim has been made for this source correction.
