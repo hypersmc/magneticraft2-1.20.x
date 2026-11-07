@@ -48,7 +48,7 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `precision_iron_gear_medium` | Existing Bronze Lathe, 160 ticks at 12 RPM / 5 torque, double cutter wear | Craft 16-torque Iron gear with Plates/Bar | SOURCE IMPLEMENTED (not tested) |
 | `iron_gear_blank_large` | Forge larger blank with more ingot-equivalents | Lathe into large precision gear | CORE, later |
 | `precision_iron_gear_large` | Lathe with appropriate size/tool gating | Actual installed large Iron Gear | CORE, later |
-| `machined_iron_shaft` | Turn wrought iron bar in Lathe | Installed shaft, gearbox, flywheel | CORE |
+| `machined_iron_shaft` | Potential later Lathe turning of iron bar for tighter shaft tolerances | Iron machine upgrades if genuine precision/wear needs established | CONDITIONAL — first Iron Shaft currently assembled from rolled Bar + machined Bronze bearings |
 | `iron_bearing_housing` | Forging and existing Precision Boring Machine | Gearbox/flywheel, physical bearing seats | CORE |
 | `iron_lathe_cutter` | Forge/grind serviceable iron-capable cutter | Work Iron on existing Lathe | CORE if Bronze cutter cannot |
 | `iron_shear_blade` | Forged tool from wrought stock | Replaceable blade in Stock Shear | CORE |
@@ -225,7 +225,7 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 | Iron I-A | Hot Bar/Rod rolling + first Structural Beam/Plate Panel/Foundation | Cold Iron rejected, Copper unchanged; X/Y/Z beams, facing panels, survival recipes and native UVs | SOURCE IMPLEMENTED — build and player tests pending |
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
 | Iron II-A | Forge / Lathe / craft the 16-torque Iron Medium Gear | Block/item/JSON/renderer source implemented; **real >8-torque consumer and Gear V2 acceptance still untested** | SOURCE IMPLEMENTED — tests pending |
-| Iron II-B | Iron Shaft/Large Gear/Gearbox + early factory construction palette | Connections, ratios and overload; usable Beam, Grating, Panel, Foundation, Railing and Hatch | PROPOSAL |
+| Iron II-B | Wrought Iron Shaft (24) and 1:1 right-angle Gearbox (16); Large Gear and remaining factory blocks later | Separate Gear V2 BEs; preserve wood 16/8, axis and port behavior; validate genuine >8 load only with a real consumer | SHAFT + GEARBOX SOURCE IMPLEMENTED — build/player tests pending; large gear and remaining blocks proposals |
 | Iron III-A | Iron Stock Shear and Blade | Heavy stock/fasteners, real load, blocked output, item wear and no duplication | PROPOSAL |
 | Iron III-B | Riveted Casing/Frame and **consumer-gated Mechanical Draw Bench** | Factory building works; draw bench only if distinct precise rod output is genuinely useful | PROPOSAL |
 | Iron IV-A | Iron Forge Hearth, Iron Flywheel | Real hot-batch throughput/inertia difference; kiln/flywheel still useful | PROPOSAL |

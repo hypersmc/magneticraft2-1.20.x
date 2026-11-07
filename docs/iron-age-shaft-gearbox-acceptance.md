@@ -72,6 +72,20 @@ NBT is not propagated into crafted BlockItems**, matching the
 current Iron Gear implementation; no quality-dependent torque boost
 or service life system was silently introduced.
 
+## Manufacturing design boundary
+
+The shaft currently uses a rolled iron bar and **two genuinely machined
+precision Bronze bearings**. It is an attainable preliminary iron drive
+shaft, not proof that the Bronze Lathe now supports general wrought
+shaft turning; that separate `machined_iron_shaft` item remains a
+conditional later refinement if a real tolerance/wear need emerges.
+
+The gearbox recipe's two precision machined iron gears are treated as
+source parts for the proven in-world bevel mechanism; a dedicated
+bevel-gear manufacturing workpiece was **not** introduced in this
+slice. Its material and mechanical output remain provisional until
+survival testing and visual gear meshing are accepted.
+
 ## Single-player acceptance checklist
 
 - [ ] Run `node tools/iron-age/check-iron-shaft-gearbox-contract.mjs`.
