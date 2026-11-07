@@ -47,6 +47,32 @@ durability or transmission ratings were approved, so none were added.
 - No other Steel/Steam tech, multiblock redesign or global network
   torque adjustment in this implementation slice.
 
+## Visual refinement — 2026-11-07
+
+**Player evidence:** The first Iron Medium Gear worked in-game, but its
+block model looked like a bulky eight-pointed star with an oversized
+center. This is a visual polish request, not a Gear V2 mechanics
+redesign.
+
+**Revision:** A 24-cuboid gear model has a face-connected stepped-
+octagonal wrought-iron rim, four short spokes, eight slimmer radial
+teeth, a 2-pixel through-shaft and restrained bronze hub collars.
+The ring top/bottom faces **do not overlap**, avoiding coplanar
+z-fighting. Tooth roots are deliberately full-thickness (2 units)
+while the ring/web are 1.6 units thick, a physically plausible
+cross-section, not a hidden offset. Both stationary blockstates and
+the driven BlockEntityRenderer use the **same JSON model**; the
+existing renderer, Gear V2 phase/ratio/torque, block entity, collision
+rules, items and machine recipes remain unchanged. The separate
+precision gear item shares the same rim and tooth shape, but has
+no finished full-length axle.
+
+**Resource QA:** All 144 block faces and precision-part faces use
+native 1:1 UV mapping, ring segments join by actual shared faces,
+and no ring top faces overlap. This is source-level geometry
+verification only; exact cog-to-wood meshing, all axes, and camera/
+frame-rate checks still require actual Minecraft testing.
+
 ## Verification checklist (single-player)
 
 - [ ] JDK 17 `./gradlew build` with actual output.
@@ -66,6 +92,8 @@ durability or transmission ratings were approved, so none were added.
   Test load/overload with source capacity and *all* connected nodes.
   A genuine >8 load requires a later heavy consumer; don't claim this
   acceptance based only on a simulated node rating.
+- [ ] Inspect the NEW continuous rim, open web, slim hub and tooth tip
+  geometry in both stopped/rotating states at every supported axis.
 - [ ] Place multiple Iron/Wood gears and check for visible teeth overlap,
   floating rims, misplaced axle/bearing, rendering glitches, wrong UVs,
   FPS drops, collision mismatch and correct animation switching.

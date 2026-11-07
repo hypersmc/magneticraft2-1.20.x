@@ -92,7 +92,7 @@ const model=json('assets/magneticraft2/models/block/wrought_iron_gear_medium.jso
 assert.equal(model.parent,'minecraft:block/block');
 assert.equal(model.textures.iron,'magneticraft2:block/material/dark_work_iron');
 assert.equal(model.textures.collar,'magneticraft2:block/material/bronze_machined');
-assert.ok(model.elements.length>=19);
+assert.equal(model.elements.length,24,'rim, 4 spokes, 8 teeth, slim axle, hub, 2 collars');
 let faceCount=0,rotatedTeeth=0;
 for(const element of model.elements){
  const [x,y,z]=element.to.map((v,i)=>v-element.from[i]);
@@ -112,7 +112,39 @@ for(const element of model.elements){
  }
 }
 assert.equal(rotatedTeeth,4,'expected four 45-degree diagonal teeth');
-assert.ok(faceCount>=114);
+assert.equal(faceCount,144,'24 textured cuboids');
+const precision=json('assets/magneticraft2/models/item/precision_iron_gear_medium.json');
+assert.equal(precision.elements.length,23,'machined gear without the full axle');
+assert.deepEqual(precision.elements.slice(0,20),model.elements.slice(0,20),
+  'machined precision part must match the block gear rim/spokes/teeth');
+const ring=model.elements.slice(0,8);
+const spokes=model.elements.slice(8,12);
+const teeth=model.elements.slice(12,20);
+assert.equal(teeth.filter(e=>!!e.rotation).length,4);
+assert.ok(teeth.every(e=>e.from[1]===7&&e.to[1]===9));
+assert.ok(ring.every(e=>e.from[1]===7.2&&e.to[1]===8.8));
+assert.ok(spokes.every(e=>e.from[1]===7.2&&e.to[1]===8.8));
+const edges=[[0,4],[0,5],[1,6],[1,7],[2,4],[2,6],[3,5],[3,7]];
+const touching=(a,b)=>[0,2].some(axis=>{
+ const other=axis===0?2:0;
+ return (a.to[axis]===b.from[axis]||b.to[axis]===a.from[axis])
+  &&Math.min(a.to[other],b.to[other])>Math.max(a.from[other],b.from[other]);
+});
+for(const [i,k] of edges)assert.ok(touching(ring[i],ring[k]),
+  'rim segments not face-connected: '+i+','+k);
+for(let i=0;i<ring.length;i++)for(let k=i+1;k<ring.length;k++){
+ const dx=Math.min(ring[i].to[0],ring[k].to[0])
+   -Math.max(ring[i].from[0],ring[k].from[0]);
+ const dz=Math.min(ring[i].to[2],ring[k].to[2])
+   -Math.max(ring[i].from[2],ring[k].from[2]);
+ assert.ok(dx<=0||dz<=0,'overlapping rim top faces cause z-fighting');
+}
+const fullAxles=model.elements.filter(e=>e.from[1]===0&&e.to[1]===16);
+assert.equal(fullAxles.length,1,'retain a single supported, narrower through-shaft');
+const oldWood=json('assets/magneticraft2/models/block/gear_medium_wood.json');
+assert.ok(oldWood.elements.length>=20,'do not replace the working wooden gear model');
+assert.ok(model.elements.every(e=>!e.rotation||Math.abs(e.rotation.angle)===45));
+
 const variants=json('assets/magneticraft2/blockstates/wrought_iron_gear_medium.json').variants;
 assert.equal(Object.keys(variants).length,7);
 assert.equal(variants['powered=true'].model,'magneticraft2:block/invis');
