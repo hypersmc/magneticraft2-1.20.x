@@ -44,7 +44,7 @@ const center=j('assets/magneticraft2/models/block/iron_flywheel_controller.json'
 assert.equal(center.elements.length,10,"Front and rear rings plus two connected support arms");
 assert.deepEqual(center.elements[0].from,[4,10,2]);
 assert.deepEqual(center.elements[0].to,[12,12,5]);
-assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0,9,9,16]'),
+assert.ok(v.collision.some(b=>JSON.stringify(b)==='[7,7,0.64,9,9,15.36]'),
  "A rotating visible shaft still needs a physical collision envelope");
 assert.ok(!center.elements.some(e=>JSON.stringify(e.from)==='[7,7,0]'),
  "Shaft must NOT be duplicated as a fixed model");

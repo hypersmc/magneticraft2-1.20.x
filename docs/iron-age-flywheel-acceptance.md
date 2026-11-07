@@ -106,7 +106,7 @@ All 32 filler models for the four horizontal directions are regenerated,
 with native face-size UV mapping and no hidden geometry offsets.
 
 Voxel V2 now has **43 physical shapes**: 18 genuine fixed-model supports,
-1 stationary collision envelope for the renderer-owned rotating shaft,
+1 exact-length collision envelope for the renderer-owned 0.92-block rotating shaft,
 and the 24 unchanged swept-rim segments. No extra entities, physics
 manager, power producer or per-tick rendering allocations were added.
 
@@ -132,3 +132,6 @@ drop as items rather than restoring in place.
 
 **Verification:** Source geometry and collision check only; this revision
 still requires JDK17 Gradle compilation and in-game acceptance.
+
+The rotating shaft is 0.92 blocks long, so its matching Voxel V2
+collision spans z=0.64–15.36 pixels, not the complete 16px cell.
