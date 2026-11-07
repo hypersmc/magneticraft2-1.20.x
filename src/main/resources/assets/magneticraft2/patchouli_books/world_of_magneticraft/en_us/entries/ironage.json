@@ -59,6 +59,28 @@
       "item": "magneticraft2:wrought_iron_rod",
       "title": "Iron Rod Stock",
       "text": "Four slim rods from one heated Bar. Iron Rods will become fasteners and supports for the first Iron factory building pieces."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron 0D — Building a Factory$()$(br2)Your first structural iron blocks are crafted from hot-worked material using an ordinary crafting table. A Structural Beam uses FOUR Wrought Iron Bars plus ONE Rod as its center fitting. Iron Plate Panels use TWO Wrought Iron Plates. Beams can be placed along X/Y/Z, Panels face the player, and neither needs a ticking block entity."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Structural Beam",
+      "recipe": "magneticraft2:iron_structural_beam",
+      "text": "A visibly supported I-shaped industrial beam for columns, rafters and machine structures. Requires bars and a rod, made with the existing Rolling Mill."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Plate Panel",
+      "recipe": "magneticraft2:iron_plate_panel",
+      "text": "Thin factory wall panel from two Wrought Iron Plates. Facing and collision match its actual physical plate; it is not a full metal cube."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Machine Foundation",
+      "recipe": "magneticraft2:iron_machine_foundation",
+      "text": "Stone brick base with wrought iron top and structural beam reinforcement. A full-sized foundation for factory buildings and later heavy equipment; it has no imaginary vibration simulation."
     }
   ],
   "sortnum": 4,

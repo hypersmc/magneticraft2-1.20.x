@@ -148,7 +148,27 @@ Ingot; Rolling Mill makes Bar, so no recipe ambiguity.
 tests pending. No new machine/multiblock. Multiplayer remains
 deferred until after Steam Age.
 
-## Next proposed milestones (following Iron 0A–0C)
+## Iron 0D — first factory-building blocks (source implemented; tests pending)
+
+Three simple survival-craftable Iron construction blocks now follow from
+the first hot-worked materials: **Iron Structural Beam** (X/Y/Z I-beam
+with collision matching its metal cross-section), **Iron Plate Panel**
+(thin facing-oriented wall/casing with thin collision) and **Iron Machine
+Foundation** (full stone-and-iron support block). They use existing
+Wrought Iron Bars/Rods/Plates plus stone bricks in conservative recipes.
+The palette is genuinely useful for industrial player builds with no
+new machine, block entities, animation system or per-tick physics.
+
+All three have BlockItems, native-UV Minecraft block models, blockstates,
+loot/drop tables, pickaxe tags, localized names, JEI crafting and Patchouli.
+The first Iron multiblocks can later use these structural blocks where
+approved, without making factory construction depend on new machinery.
+
+**Status:** source implementation only; actual `./gradlew build` and
+in-game appearance/placement/rotation/drops/survival recipe testing
+remain open. Dedicated multiplayer remains deferred until after Steam.
+
+## Next proposed milestones (following Iron 0A–0D)
 
 ### Iron II-A — investigate stronger transmission after first Iron tooling
 

@@ -43,6 +43,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.item_primitivestoragecellarmultiblock.get());
                         entries.accept(ItemRegistry.item_primitivefurnacemultiblock_nogui.get());
                         entries.accept(ItemRegistry.item_bellowsmultiblockmodule.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_STRUCTURAL_BEAM.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_PLATE_PANEL.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_MACHINE_FOUNDATION.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->
