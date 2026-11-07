@@ -605,3 +605,30 @@ linkage poses in this session. This does not verify a JDK 17 Gradle build. No co
 contract-fixture run from the full checkout or Minecraft end-to-end runtime
 test occurred. The source integration checklist is documented in
 `docs/iron-age-stock-shear-acceptance.md`; PR #18 remains draft.
+
+## Iron Bearing Housing — last planned core component (2026-11-08)
+
+The existing forged `iron_gear_blank_medium` now has an **alternative,
+machine-distinct finishing path** in the Bronze Precision Boring Machine:
+1 forged Gear Blank -> 1 `iron_bearing_housing` at 20 RPM / 8 torque /
+240 powered ticks. Unlike creating an unnecessary new forged stock item,
+this reuses real hot forging and retains quality tags through both
+operations. The housing has a real open pocket for a separate bronze
+liner and two attached mounting feet.
+
+The machined Housing + a real Bronze Bushing now supply **optional
+alternative recipes** for the current Wrought Iron Gearbox and Iron
+Flywheel. Both original crafting routes and all machine/power/render
+IDs are untouched. No false torque or inertia benefit is claimed.
+See `docs/iron-age-bearing-housing-acceptance.md` for exact resource
+accounting and in-game verification.
+
+**Mechanical Draw Bench decision:** remains consumer-gated and
+**not implemented**. Currently available Iron Rod consumers do not
+establish an additional NEED for calibrated drawn stock. Do not
+manufacture new recipe dependencies just to reach 16 registered
+blocks; 15 of 16 original candidates are registered, with the
+Draw Bench intentionally deferred.
+
+**Stage:** source delivered on PR #18; this slice awaits JDK17
+`./gradlew build`, committed fixture run and Minecraft acceptance.

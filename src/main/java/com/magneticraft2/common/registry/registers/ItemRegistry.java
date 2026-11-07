@@ -196,6 +196,10 @@ public class ItemRegistry {
             ITEMS.register("iron_gear_blank_medium", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_MEDIUM =
             ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
+    // Bored from an existing forged Iron Gear Blank on the Bronze Precision Boring Machine.
+    // Carries the forged metal provenance; bronze liner is fitted only at machine assembly.
+    public static final RegistryObject<Item> ITEM_IRON_BEARING_HOUSING =
+            ITEMS.register("iron_bearing_housing", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_IRON_GEAR_BLANK_LARGE =
             ITEMS.register("iron_gear_blank_large", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_LARGE =

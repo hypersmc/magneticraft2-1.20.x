@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PHP",
+    "FGS",
+    "PBP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "H": {
+      "item": "magneticraft2:iron_bearing_housing"
+    },
+    "F": {
+      "item": "magneticraft2:riveted_iron_frame"
+    },
+    "G": {
+      "item": "magneticraft2:precision_iron_gear_large"
+    },
+    "S": {
+      "item": "magneticraft2:wrought_iron_shaft"
+    },
+    "B": {
+      "item": "magneticraft2:bronze_bushing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_flywheel",
+    "count": 1
+  }
+}

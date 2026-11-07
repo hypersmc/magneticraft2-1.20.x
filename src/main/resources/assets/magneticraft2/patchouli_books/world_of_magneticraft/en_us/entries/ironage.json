@@ -364,6 +364,28 @@
       "title": "Wrought Iron Lathe Cutter",
       "recipe": "magneticraft2:iron_lathe_cutter",
       "text": "Assemble one bored Iron Toolholder, one Bronze Bushing and one Flint. Right-click the existing formed Bronze Mechanical Lathe with the cutter when its cutter slot is empty. It has 128 durability instead of 64 for the old Bronze cutter; both cutters still spend 1 durability on Bronze work, 2 on Medium Iron gears, and 3 on Large Iron gears. No new machine, faster cutting, extra power or early Steel metallurgy."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bored Iron Bearing Housing$()$(br2)The forged Medium Iron Gear Blank is useful for more than gear teeth. Take ONE blank (forged from a hot Wrought Iron Bar) to the existing Bronze Precision Boring Machine to open a supported shaft-bearing pocket. The machine requires 20 RPM, 8 torque and 240 supplied ticks; the original Abrasive Boring Bit wears once per successful batch. The same blank can still go to the Mechanical Lathe for an Iron Gear."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Iron Bearing Housing",
+      "item": "magneticraft2:iron_bearing_housing",
+      "text": "A forged wrought-iron journal support with a real open shaft pocket and mounting feet. Material quality follows the forged blank into the machined housing; temporary forging heat is removed before this cold process. Fit a separately machined Bronze Bushing when assembling a complete machine, so the rotating shaft never bears directly on bare wrought iron."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bored-Housing Gearbox",
+      "recipe": "magneticraft2:wrought_iron_gearbox_bearing_housing",
+      "text": "An alternative Wrought Iron Right-Angle Gearbox assembly uses one bored Iron Bearing Housing, one Bronze Bushing, two machined Iron Gears, two Iron Shafts and three Iron Plates. The original four-plate / Precision Bronze Bearing gearbox recipe remains available, and Gear V2 torque and ratios are identical."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bored-Housing Flywheel",
+      "recipe": "magneticraft2:iron_flywheel_bearing_housing",
+      "text": "An alternative Wrought Iron Flywheel assembly uses one bored Housing and one Bronze Bushing instead of its original two rolled Bars. The forged Housing already cost one Bar, so this substitutes boring/bronze machining work for one ingot-equivalent of Iron. It does not change the flywheel structure, bearing mesh, inertia, source power or wear. The original recipe remains valid."
     }
   ],
   "sortnum": 4,
