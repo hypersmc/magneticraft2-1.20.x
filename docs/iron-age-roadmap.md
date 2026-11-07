@@ -9,9 +9,25 @@ existing Bronze Forge Hammer a longer service lifetime (768 vs 384
 completed batches). Next is in-game verification, followed by an
 independently justified stronger drivetrain application.
 
+## Iron Age factory construction + third multiblock proposal — 2026-11-07
+
+The complete Iron design now includes a cohesive **factory construction
+palette** (Frame, Casing, Beam, Grating, Panel, Foundation, Railing,
+Hatch), on top of the existing Gear V2 and hot-metal progression.
+A **Mechanical Draw Bench** is the proposed third distinct Iron
+multiblock, but requires actual calibrated-rod consumers before
+implementation. An Iron Mechanical Hoist/Gantry remains conditional
+until a credible lifting use and implementation are designed.
+
+See [Iron Age industrial factory expansion](iron-age-industrial-factory-expansion.md)
+for block identities, progression order, visual contracts and
+Steel/Steam boundaries. **Total proposed core: 16 registered blocks
+(3 multiblocks + 5 mechanical + 8 structural).** This is planning
+and not a green light to implement every candidate.
+
 ## Detailed Iron Age content plan — 2026-11-07
 
-The proposed full materials, blocks, two new multiblocks, mechanical
+The proposed full materials, blocks, three distinct proposed multiblocks, mechanical
 upgrades, heavy manufacturing and Steel handoff are specified in
 [Iron Age full content plan](iron-age-full-content-plan.md).
 

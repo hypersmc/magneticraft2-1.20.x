@@ -61,7 +61,13 @@ Avoid unnecessary ingot → plate → bar → rod loops that create mass. Establ
 
 ## 4. Core new blocks (proposed)
 
-**Nine new registered blocks**, including **two new JSON-formed multiblocks**, divided into coherent build slices.
+**Expanded proposal (2026-11-07): 16 new registered blocks**, including
+**three distinct JSON-formed multiblocks**, **five mechanical infrastructure
+blocks** and **eight structural/factory-construction blocks**. This is a
+design target, not a feature quota or approval to implement all proposals.
+The Mechanical Draw Bench is gated on genuine consumers. The Mechanical
+Hoist/Gantry is a separate, conditional design and not included in 16.
+See [Iron industrial factory expansion](iron-age-industrial-factory-expansion.md).
 
 | Candidate ID | Type | Primary in-game function | Phase |
 | --- | --- | --- | --- |
@@ -74,8 +80,21 @@ Avoid unnecessary ingot → plate → bar → rod loops that create mass. Establ
 | `riveted_iron_casing` | Full iron casing block | Enclosure and structural ingredient for heavy machinery | Iron III |
 | `iron_forge_hearth` | **New JSON multiblock** | Batch heating of iron stock, fuel/HEAT/AIR logistics, not another Bloomery | Iron III/IV |
 | `iron_flywheel` | Gear V2 inertia block | More stored angular momentum than the wooden flywheel | Iron IV |
+| `iron_structural_beam` | X/Y/Z structural beam | Visible supported columns, factory spans and multiblock framing | Iron I/II |
+| `iron_floor_grating` | Cutout floor/walkway block | Industrial platforms and catwalks with proper collision | Iron I/II |
+| `iron_plate_panel` | Thin facing-oriented panel | Machine bay walls, lighter than a full Riveted Casing | Iron I/II |
+| `iron_machine_foundation` | Full foundation block | Heavy machine flooring and valid multiblock construction support | Iron I/II |
+| `iron_catwalk_railing` | Connected edge railing | Safe walkways and industrial service access | Iron II |
+| `iron_service_hatch` | Hinged access block | Factory service access without extra machine interface | Iron II |
+| `iron_mechanical_draw_bench` | **Third proposed JSON multiblock**, consumer-gated | Draw precise wrought rods/pins through a powered, wear-limited die | Iron III |
 
-**Not all nine need to be built immediately.** Start with material forms and the iron medium gear. The two new multiblocks must have real industrial purposes rather than being copies of existing Bronze stations.
+**Not all 16 need to be built immediately.** The initial Iron material
+forms and factory construction starter palette should be available through
+the reused Bronze workshop, without demanding a machine to make the parts
+needed to build itself. The three new multiblocks must have real,
+distinct processes; the Draw Bench is not implemented unless precise
+drawn stock has real consumers. General construction blocks need not
+invent simulation systems to justify their usefulness.
 
 ### New Iron Stock Shear (core)
 
@@ -94,16 +113,33 @@ Avoid unnecessary ingot → plate → bar → rod loops that create mass. Establ
 - **Unlock rule:** The existing Refractory Kiln must be sufficient to produce the first iron components, so the Hearth cannot create a circular crafting gate.
 - **Steel boundary:** Not a blast furnace, steel converter, pig-iron duplication trick or Steam boiler.
 
-### Other conditional blocks (not included in the nine)
+### Third multiblock and factory construction expansion
+
+**Mechanical Draw Bench:** A long, real Gear V2-powered bench for drawing
+prepared rod stock through replaceable dies. Distinct from the Rolling
+Mill (rolling profiles) and Lathe (turning). **Proposed only:** require
+at least two actual consumers for precisely drawn output before approving
+its controller. See the
+[Iron industrial factory expansion](iron-age-industrial-factory-expansion.md)
+for complete process, port and validation gates.
+
+**Industrial factory building palette:** In addition to existing planned
+Frame and Casing, plan Beam, Grating, Panel, Foundation, Railing and Hatch.
+The palette supports actual player-built machine halls and safe access
+without custom block entities for ordinary construction. All blocks
+are proposals, not registered content.
+
+### Other conditional blocks (not included in the 16)
 
 | Candidate | Only implement when… |
 | --- | --- |
 | Iron Bearing Support | A genuine shaft-span/support/wear rule needs a visible block |
-| Iron Winch / Hoist | Specific useful world interaction is designed without per-tick entity workarounds |
+| Mechanical Hoist / Gantry | Prove a distinctive, bounded lifting operation not already served by belts/arms; moving world blocks requires separate explicit approval and architecture |
 | Gravity Iron Bulk Chute | Existing belts/arms cannot provide a needed bulk gravity route |
 | Heavy Iron Upsetting Press | Unique thick-stock shape cannot be forged/stamped on the Bronze Hammer/Press |
 | Reinforced Iron Tank | Named fluid/thermal consumer actually needs a different capacity/material |
 | Iron Clutch / Pulley | Source audit demonstrates a real transmission bottleneck in the existing part |
+| Iron service ladder, catwalk stairs/slabs, service door or bracing variants | A useful industrial build variant; shared modeling/recipe family and no unnecessary block entities |
 
 **Do not build by default:** an Iron Grinder, Iron Washer, duplicate Lathe, second Rolling Mill, second Press, duplicate Boring Machine, new Copper/Steam pipe skins, or Iron-age steelmaking.
 
@@ -133,11 +169,16 @@ Large Water Wheel → Proper iron gear path + valid shaft/gearbox
   → actual >8 torque at a demanding consumer
   → Iron Stock Shear (materials cut to size + rivets)
 
-IRON III / IV — HEAVY CONSTRUCTION
-Cut stock + rivets + rolled/pressed sheets → riveted frame and casing
+IRON II / III / IV — FACTORY CONSTRUCTION AND HEAVY MANUFACTURING
+First hot iron bars/plates → Beam + Grating + Panel + Foundation
+  → player-built Iron workshop (no new heavy controller required)
+Cut stock + rivets + rolled/pressed sheets → Riveted Frame + Casing
+  → Iron Stock Shear (heavy stock cutting) 
+  → Mechanical Draw Bench [only with useful precision-rod consumers]
   → Iron Forge Hearth (heating productivity)
-  → Iron Flywheel (more finite inertia / short interruption support)
-  → substantial iron machine foundation for separately designed Steel Age
+  → Iron Flywheel (finite inertia / short-interruption support)
+  → structural and machined material foundation for separate Steel Age
+Optional Hoist/Gantry [only after world-interaction feasibility decision]
 ```
 
 **Required gameplay gates:** (A) real Wrought Iron — DONE; (B) hot plate/bar/rod; (C) functional precision Iron gear through existing Lathe; (D) genuinely higher-capacity network proven under load; (E) stock cutting and structural Iron; (F) useful Hearth/inertia and Steel construction prerequisites.
@@ -184,13 +225,13 @@ Propose an **Iron medium gear capable of up to 16** as an investigation target, 
 | Iron I-A | Rolling/Pressing Iron sheet and fittings | Cold bypass blocked where applicable; old Copper recipes still work | PROPOSAL |
 | Iron I-B | Lathe Iron blank support + Boring Housing | Existing Bronze lathe production unaffected; precision products real | PROPOSAL |
 | Iron II-A | Iron Medium Gear under measured load | >8-torque demand runs using legitimate source, fails in wooden-constrained path | PROPOSAL |
-| Iron II-B | Iron Shaft/Large Gear/Gearbox/Frame | Connections, ratios, overload, wear and facings accepted | PROPOSAL |
+| Iron II-B | Iron Shaft/Large Gear/Gearbox + early factory construction palette | Connections, ratios and overload; usable Beam, Grating, Panel, Foundation, Railing and Hatch | PROPOSAL |
 | Iron III-A | Iron Stock Shear and Blade | Heavy stock/fasteners, real load, blocked output, item wear and no duplication | PROPOSAL |
-| Iron III-B | Riveted Iron Casing and useful structural recipes | Survival-craftable, machine construction consumer present | PROPOSAL |
+| Iron III-B | Riveted Casing/Frame and **consumer-gated Mechanical Draw Bench** | Factory building works; draw bench only if distinct precise rod output is genuinely useful | PROPOSAL |
 | Iron IV-A | Iron Forge Hearth, Iron Flywheel | Real hot-batch throughput/inertia difference; kiln/flywheel still useful | PROPOSAL |
 | Iron IV-B | Steel Age material/infrastructure handoff | Actual wrought components prepare new technological capability; **no premature Steel recipes** | PROPOSAL |
 
-**Definition of functional completion:** Wrought products genuinely forged with heat and power; iron components improve a demonstrable transmission bottleneck; at least one genuinely new heavy-processing operation; useful structural blocks; reliable player-testable road into Steel; regression tests for old world/recipes/power and a recorded JDK 17 `./gradlew build`.
+**Definition of functional completion:** Wrought products genuinely forged with heat and power; iron components improve a demonstrable transmission bottleneck; at least one genuinely new heavy-processing operation; a cohesive survival-craftable factory palette usable for player buildings and multiblock structures; genuine distinction for any Draw Bench; reliable player-testable road into Steel; regression tests for old world/recipes/power and a recorded JDK 17 `./gradlew build`.
 
 **Separate acceptance:** Studio-authored finished visuals/polish and all multiplayer tests **after Steam**. Do not label entire Iron Age release-ready from one demonstration.
 
