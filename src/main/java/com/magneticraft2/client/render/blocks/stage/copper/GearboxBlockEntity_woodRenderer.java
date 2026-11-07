@@ -23,7 +23,22 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
     private static final ResourceLocation SUPPORT =
             new ResourceLocation("minecraft", "textures/block/oak_planks.png");
 
+    private final ResourceLocation gearTexture;
+    private final ResourceLocation shaftTexture;
+    private final ResourceLocation supportTexture;
+
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
+        this(context, OAK, SHAFT, SUPPORT);
+    }
+
+    /** Share established bevel geometry and animations, not wood textures. */
+    public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context,
+                                           ResourceLocation gearTexture,
+                                           ResourceLocation shaftTexture,
+                                           ResourceLocation supportTexture) {
+        this.gearTexture = gearTexture;
+        this.shaftTexture = shaftTexture;
+        this.supportTexture = supportTexture;
     }
 
     @Override
@@ -37,11 +52,11 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.translate(0.5D, 0.5D, 0.5D);
 
         VertexConsumer oak =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(OAK));
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(gearTexture));
         VertexConsumer shaft =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(SHAFT));
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(shaftTexture));
         VertexConsumer support =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(SUPPORT));
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(supportTexture));
 
         Direction input = gearbox.getInputDirection();
         Direction output = gearbox.getOutputDirection();

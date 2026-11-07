@@ -192,6 +192,8 @@ public class ItemRegistry {
             ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_MEDIUM =
             fromBlock(WROUGHT_IRON_GEAR_MEDIUM);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEARBOX = fromBlock(WROUGHT_IRON_GEARBOX);
     public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);
     public static final RegistryObject<Item> ITEM_IRON_PLATE_PANEL = fromBlock(IRON_PLATE_PANEL);
     public static final RegistryObject<Item> ITEM_IRON_MACHINE_FOUNDATION = fromBlock(IRON_MACHINE_FOUNDATION);

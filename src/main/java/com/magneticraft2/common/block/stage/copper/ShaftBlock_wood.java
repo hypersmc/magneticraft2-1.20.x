@@ -35,7 +35,12 @@ public class ShaftBlock_wood extends GearBlock {
     private static final VoxelShape Z_AXIS_SHAPE = Shapes.box(0.3125, 0.3125, 0.0, 0.6875, 0.6875, 1.0);
 
     public ShaftBlock_wood() {
-        super(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+        this(BlockBehaviour.Properties.of().strength(3.5F).noOcclusion());
+    }
+
+    /** Keep the original shaft's blockstate and axis rules for metal variants. */
+    protected ShaftBlock_wood(BlockBehaviour.Properties properties) {
+        super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.UP)
                 .setValue(ROTATING, false));

@@ -19,7 +19,13 @@ import static com.magneticraft2.common.block.stage.copper.ShaftBlock_wood.ROTATI
  */
 public class ShaftBlockEntity_wood extends GearBlockEntity {
     public ShaftBlockEntity_wood(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.SHAFT_BE_WOOD.get(), pos, state);
+        this(BlockEntityRegistry.SHAFT_BE_WOOD.get(), pos, state);
+    }
+
+    /** Metal shafts inherit all Gear V2 synchronization and axial behavior. */
+    protected ShaftBlockEntity_wood(net.minecraft.world.level.block.entity.BlockEntityType<?> type,
+                                    BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState state, E blockEntity) {
