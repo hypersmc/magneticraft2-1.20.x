@@ -193,6 +193,7 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_IRON_SHEAR_BLADE =
             ITEMS.register("iron_shear_blade", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_RIVETED_IRON_FRAME = fromBlock(RIVETED_IRON_FRAME);
+    public static final RegistryObject<Item> ITEM_RIVETED_IRON_CASING = fromBlock(RIVETED_IRON_CASING);
     public static final RegistryObject<Item> ITEM_IRON_RIVET_BLANK =
             ITEMS.register("iron_rivet_blank", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_IRON_RIVET =

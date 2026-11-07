@@ -186,6 +186,12 @@
       "title": "Riveted Iron Frame",
       "recipe": "magneticraft2:riveted_iron_frame",
       "text": "Four Wrought Iron Bars and four headed Iron Rivets form an open, rigid factory frame. This is a genuine useful Iron building block with matching collision, not a cosmetic product with no purpose."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Riveted Iron Casing",
+      "recipe": "magneticraft2:riveted_iron_casing",
+      "text": "Enclose one Riveted Iron Frame with SIX Wrought Iron Plates to make a solid machine casing. Cut and head the rivets first using the Mechanical Metal Shear and existing Forge Hammer. Unlike the open Frame or thin Iron Plate Panel, this block is fully enclosed factory construction, using no extra machine or power source."
     }
   ],
   "sortnum": 4,

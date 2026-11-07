@@ -190,6 +190,12 @@ public class BlockRegistry {
             BLOCKS.register("iron_stock_shear", IronStockShearBlock::new);
     public static final RegistryObject<RivetedIronFrameBlock> RIVETED_IRON_FRAME =
             BLOCKS.register("riveted_iron_frame", RivetedIronFrameBlock::new);
+    // Iron III-A: structural casing uses the established frame and iron plates.
+    // It is an ordinary block with no special renderer, entity or ticker.
+    public static final RegistryObject<Block> RIVETED_IRON_CASING =
+            BLOCKS.register("riveted_iron_casing", () -> new Block(
+                    BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops()));
     // Iron 0D: simple factory construction blocks (no block entities/tickers).
     public static final RegistryObject<IronStructuralBeamBlock> IRON_STRUCTURAL_BEAM =
             BLOCKS.register("iron_structural_beam", IronStructuralBeamBlock::new);

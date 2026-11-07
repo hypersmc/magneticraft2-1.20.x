@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PPP",
+    " F ",
+    "PPP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "F": {
+      "item": "magneticraft2:riveted_iron_frame"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:riveted_iron_casing",
+    "count": 1
+  }
+}

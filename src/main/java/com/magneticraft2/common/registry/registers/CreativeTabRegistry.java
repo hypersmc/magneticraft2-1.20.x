@@ -156,6 +156,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_IRON_RIVET_BLANK.get());
                         entries.accept(ItemRegistry.ITEM_IRON_RIVET.get());
                         entries.accept(ItemRegistry.ITEM_RIVETED_IRON_FRAME.get());
+                        entries.accept(ItemRegistry.ITEM_RIVETED_IRON_CASING.get());
                         entries.accept(ItemRegistry.ITEM_IRON_STOCK_SHEAR.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
