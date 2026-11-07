@@ -1,12 +1,30 @@
 {
   "name": "Iron Age",
-  "description": "",
+  "description": "Upgrade the Bronze industrial workshop using Wrought Iron.",
   "category": "magneticraft2:walkthrough",
-  "icon": "minecraft:iron_ingot",
+  "icon": "magneticraft2:wrought_iron_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Iron Age progression will follow the earlier metallurgy stages."
+      "text": "$(bold)Entering Iron Age$()$(br2)The Bronze workshop produces your first Wrought Iron Ingot: concentrate Magnetite, reduce it with charcoal, Calcite flux, HEAT and AIR in the Bloomery, reheat the Iron Bloom in the Refractory Kiln, then consolidate it in the powered Forge Hammer before the hot timer expires.$(br2)Unlike vanilla smelting, this industrial chain is your Iron Age starting point."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Your first Iron machine upgrade$()$(br2)Use Wrought Iron Ingots to make a longer-lived forging die for your EXISTING Bronze Forge Hammer.$(br2)The Bronze die provides 384 successful batches; the Wrought Iron die lasts 768. It does not increase RPM, torque, processing output or the machine's mechanical power."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Forging Die",
+      "recipe": "magneticraft2:wrought_iron_forge_die",
+      "text": "Four Wrought Iron Ingots and a polished blackstone anvil insert. Right-click a formed Bronze Forge Hammer with the die to install it. This consumes the replacement die, even when replacing an existing bronze part."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Servicing the Hammer$()$(br2)Sneak-right-click the formed Forge Hammer with an empty hand to inspect installed die material and remaining batches. Right-click normally while holding a replacement Bronze or Wrought Iron die to service the machine.$(br2)Wear advances only after a completed workpiece; stalled or idle power does not consume die life. Existing Bronze dies and saved machine wear remain usable."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Toward stronger industry$()$(br2)The first Iron upgrade is longer-lived tooling. Stronger shafts, precision gears and heavier manufacturing are planned next, but require meaningful source and network load tests. A stronger part must not create power or bypass the limits of an existing wooden gear."
     }
   ],
   "sortnum": 4,

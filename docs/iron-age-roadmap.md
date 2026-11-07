@@ -40,6 +40,37 @@ or Bronze machinery obsolete. This age is **not** Steel Age; controlled
 industrial steel metallurgy and its advanced equipment belong to the
 later Steel design unless explicitly agreed otherwise.
 
+## Iron 0A — Wrought Iron Forge Die (first focused K1 implementation)
+
+The first Iron Age gameplay slice upgrades a **real, installed tool** rather
+than introducing a decorative high-tier shaft. The existing Forge Hammer
+accepts a Wrought Iron Forging Die made from four Wrought Iron Ingots
+and a polished-blackstone striking insert. It lasts **768 completed
+batches**, compared with **384** for the existing Bronze Forge Die.
+Mechanical loads, heat, recipes, output quantities and the original
+bronze die remain unchanged.
+
+The maintenance contract now permits opt-in replacement variants and
+saves the installed item registry ID, preserving the original
+`RemainingCycles` NBT format for legacy machines and Bronze-die worlds.
+Changing the installed material consumes one replacement die, even if
+the previous one was not exhausted. The installed part is not an
+extractable item or an automation input slot.
+
+**Reason for this choice:** a standalone higher-torque shaft provides no
+useful upgrade if its network still routes through a 8-torque wooden
+gear. An upgraded forge die has an immediately measurable purpose
+while leaving reinforced power transmission to Iron II.
+
+**K1 acceptance:** craft from real Wrought Iron; install in an existing
+formed Hammer; inspect current tier/life; complete cycles, reach wear
+thresholds and run it to exhaustion; replace with either tier; restart
+a world with existing Bronze Forge Hammer NBT; recover from a save with
+installed Iron die; compare idle/paused and successful operations;
+verify item display/model and Patchouli/JEI crafting.
+
+**Status:** source candidate only until build and player in-game tests.
+
 ## Proposed milestone sequence (not yet approved or implemented)
 
 ### Iron 0 — practical use for Wrought Iron (first implementation target)

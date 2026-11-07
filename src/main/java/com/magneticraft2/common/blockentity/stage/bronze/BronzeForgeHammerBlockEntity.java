@@ -76,7 +76,9 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
     private long clientVisualSnapshotTick = -1L;
     private boolean running;
     private final ReplaceableMachinePart forgingDie =
-            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384);
+            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_FORGE_DIE::get, 384,
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_WROUGHT_IRON_FORGE_DIE::get, 768));
 
     public BronzeForgeHammerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(), pos, state);

@@ -118,6 +118,9 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_HAMMER = fromBlock(BRONZE_FORGE_HAMMER);
     public static final RegistryObject<Item> ITEM_BRONZE_FORGE_DIE =
             ITEMS.register("bronze_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Iron I: a forged replacement for the existing Bronze Forge Hammer die.
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_FORGE_DIE =
+            ITEMS.register("wrought_iron_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLING_MILL = fromBlock(BRONZE_ROLLING_MILL);
     public static final RegistryObject<Item> ITEM_BRONZE_ROLLER_SLEEVES =
             ITEMS.register("bronze_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));

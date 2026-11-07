@@ -111,6 +111,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BRONZE_STAMP_MILL.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FORGE_HAMMER.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_FORGE_DIE.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_FORGE_DIE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_ROLLING_MILL.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_ROLLER_SLEEVES.get());
                         entries.accept(ItemRegistry.ITEM_COPPER_SHEET.get());

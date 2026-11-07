@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "III",
+    " I ",
+    " P "
+  ],
+  "key": {
+    "I": {
+      "item": "magneticraft2:wrought_iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:polished_blackstone"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:wrought_iron_forge_die",
+    "count": 1
+  }
+}
