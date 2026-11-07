@@ -211,6 +211,10 @@ public class Clientsetup {
         }
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
+        // Both are looked up directly by the Mechanical Input BER when
+        // linked to an Iron machine controller; register even on first bake.
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing_iron"));
+        event.register(new ResourceLocation(MOD_ID, "block/wrought_iron_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));

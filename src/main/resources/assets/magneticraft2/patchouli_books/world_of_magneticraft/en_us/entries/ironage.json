@@ -169,6 +169,10 @@
       "text": "Controller only: wrought plates, existing Iron Structural Beams and a machined Iron Gear. The controller is front-center on the ground layer; the real rear-center Mechanical Input connects to the powertrain."
     },
     {
+      "type": "text",
+      "text": "$(bold)Iron machine drive bearing$()$(br2)The Metal Shear uses the SAME existing Mechanical Input Module from the Copper and Bronze ages. When it forms an Iron machine, the module is shown with a wrought-iron bearing frame, bronze journal and correctly sized 2-pixel Iron Shaft instead of the early copper/oak look. The input is still rated 16 torque: this is a visual tier change, not a free mechanical upgrade or a different multiblock construction ingredient."
+    },
+    {
       "type": "patchouli:multiblock",
       "name": "Mechanical Metal Shear",
       "enable_visualize": true,
