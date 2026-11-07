@@ -22,10 +22,14 @@ public final class IronStructuralBeamBlock extends RotatedPillarBlock {
             Block.box(3, 0, 3, 13, 16, 5),
             Block.box(3, 0, 11, 13, 16, 13),
             Block.box(7, 0, 5, 9, 16, 11)).optimize();
+    // The axis=x blockstate applies x=90, y=90 to the Y-axis model.
+    // Its flanges are therefore horizontal (thin in Y), not thin in Z.
+    // Keep the selection/collision boxes in the same orientation as the
+    // rendered I-beam instead of rotating only the texture/model.
     private static final VoxelShape X = Shapes.or(
-            Block.box(0, 3, 3, 16, 13, 5),
-            Block.box(0, 3, 11, 16, 13, 13),
-            Block.box(0, 7, 5, 16, 9, 11)).optimize();
+            Block.box(0, 3, 3, 16, 5, 13),
+            Block.box(0, 11, 3, 16, 13, 13),
+            Block.box(0, 5, 7, 16, 11, 9)).optimize();
     private static final VoxelShape Z = Shapes.or(
             Block.box(3, 3, 0, 13, 5, 16),
             Block.box(3, 11, 0, 13, 13, 16),

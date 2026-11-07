@@ -80,6 +80,28 @@ for(const id of ids) {
 }
 const axes=json('assets/magneticraft2/blockstates/iron_structural_beam.json').variants;
 assert.deepEqual(Object.keys(axes).sort(),['axis=x','axis=y','axis=z']);
+// The I-beam's X-axis collision previously had its cross-section rotated
+// 90 degrees relative to the blockstate-rendered model. Verify geometry,
+// not just that all three blockstate variants exist.
+assert.equal(axes['axis=x'].x,90);
+assert.equal(axes['axis=x'].y,90);
+const beamModel=json('assets/magneticraft2/models/block/iron_structural_beam.json');
+const beamSource=java('block/stage/iron/IronStructuralBeamBlock.java');
+const xShape=beamSource.match(/private static final VoxelShape X = Shapes\\.or\\(([\\s\\S]*?)\\)\\.optimize\\(\\);/);
+assert.ok(xShape,'X-axis collision boxes not found');
+const boxBounds=[...xShape[1].matchAll(/Block\\.box\\(([^)]*)\\)/g)]
+  .map(m=>m[1].split(',').map(n=>Number(n.trim())));
+assert.equal(boxBounds.length,beamModel.elements.length,'X collision cuboid count');
+// Blockstate x=90, y=90 transform in block-centered coordinates:
+// (x,y,z) -> (y, 16-z, 16-x); each rotated model cuboid must exactly
+// match a collision cuboid, independent of box ordering.
+const expectedX=beamModel.elements.map(e=>[
+  e.from[1],16-e.to[2],16-e.to[0],
+  e.to[1],16-e.from[2],16-e.from[0]
+]);
+const sortBoxes=boxes=>boxes.map(b=>b.join(',')).sort();
+assert.deepEqual(sortBoxes(boxBounds),sortBoxes(expectedX),
+  'X-axis beam collision/selection cuboids must match its rendered model');
 const faces=json('assets/magneticraft2/blockstates/iron_plate_panel.json').variants;
 assert.deepEqual(Object.keys(faces).sort(),['facing=east','facing=north','facing=south','facing=west']);
 const tag=json('data/minecraft/tags/blocks/mineable/pickaxe.json');
