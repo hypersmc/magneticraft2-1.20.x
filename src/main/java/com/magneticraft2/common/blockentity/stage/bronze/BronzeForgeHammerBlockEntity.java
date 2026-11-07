@@ -204,7 +204,10 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             setChanged();
         }
         // No load while output is blocked or the die needs replacement.
+        // Cold heading of the shear's small blanks preserves source quality,
+        // without changing the existing cold Copper or hot Iron contracts.
         ItemStack output = HotBloomWorkpiece.requiresHeat(recipe)
+                || inputStack.is(ItemRegistry.ITEM_IRON_RIVET_BLANK.get())
                 ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
                 : recipe.getOutput();
         if (!forgingDie.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
@@ -307,6 +310,7 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "die_worn";
         } else if (!itemHandler.insertItem(1,
                 HotBloomWorkpiece.requiresHeat(candidate)
+                        || inputStack.is(ItemRegistry.ITEM_IRON_RIVET_BLANK.get())
                         ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())
                         : candidate.getOutput(), true).isEmpty()) {
             // Match the NBT-aware output reservation used during actual

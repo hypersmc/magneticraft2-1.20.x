@@ -69,7 +69,9 @@ let written=0;
 for(const [file,expected]of generated){
  if(args.has('--check')){
   assert.ok(fs.existsSync(file),'Missing generated file '+file);
-  assert.equal(fs.readFileSync(file,'utf8'),expected,
+  // JSON formatting is not geometry. Compare every parsed field exactly,
+  // retaining material, UV, dimensions and orientation checks for compact files.
+  assert.deepEqual(JSON.parse(fs.readFileSync(file,'utf8')),JSON.parse(expected),
    'Model part stale: '+path.relative(root,file));
  } else {
   fs.mkdirSync(path.dirname(file),{recursive:true});
@@ -77,6 +79,6 @@ for(const [file,expected]of generated){
   written++;
  }
 }
-console.log('Iron Stock Shear '+(args.has('--check')?'PASS: 72 exact model parts':
+console.log('Iron Stock Shear '+(args.has('--check')?'PASS: 72 exact model definitions':
  'wrote '+written+' directional model parts')+
  ' (not a Gradle build or in-game visual test)');

@@ -6,7 +6,7 @@
   },
   "input_count": 1,
   "output": {
-    "item": "magneticraft2:iron_rivet",
+    "item": "magneticraft2:iron_rivet_blank",
     "count": 4
   },
   "process_time": 180,

@@ -122,17 +122,17 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Iron III-A — Stock Shearing$()$(br2)Our first heavy Iron machine uses genuinely greater power than ordinary wooden medium gears or wooden gearboxes can transmit. Craft the controller and build the 3×3×2 open shear frame shown next. The input, output and mechanical drive are ACTUAL module blocks, not painted decorations.$(br2)One Wrought Iron Rod is cut into FOUR Iron Rivets in 180 supplied ticks, requiring 16 RPM and 12 torque. A large Water Wheel can supply up to 16, subject to flowing water and the complete power path."
+      "text": "$(bold)Mechanical Metal Shear$()$(br2)This machine cuts iron rods into short blanks. A moving blade passes a fixed cutting edge, driven by the rear shaft, equal pulleys, crank and connecting rod.$(br2)ONE Wrought Iron Rod becomes FOUR Iron Rivet Blanks after 180 supplied ticks at 16 RPM and 12 torque. Cutting does not form a rivet head: finish the blanks in the existing Forge Hammer."
     },
     {
       "type": "patchouli:crafting",
-      "title": "Stock Shear Controller",
+      "title": "Metal Shear Controller",
       "recipe": "magneticraft2:iron_stock_shear",
       "text": "Controller only: wrought plates, existing Iron Structural Beams and a machined Iron Gear. The controller is front-center on the ground layer; the real rear-center Mechanical Input connects to the powertrain."
     },
     {
       "type": "patchouli:multiblock",
-      "name": "Iron Stock Shear",
+      "name": "Mechanical Metal Shear",
       "enable_visualize": true,
       "multiblock": {
         "pattern": [
@@ -163,7 +163,7 @@
       "type": "patchouli:crafting",
       "title": "Replaceable Iron Shear Blade",
       "recipe": "magneticraft2:iron_shear_blade",
-      "text": "Install this forged blade in the formed Stock Shear. It lasts 512 completed cutting batches. No blade life is lost when stalled, unpowered or output-blocked. Right-click with a blade to replace; sneak-right-click empty-handed to inspect wear."
+      "text": "Install this forged blade in the formed Metal Shear. It lasts 512 completed cutting batches. No blade life is lost when stalled, unpowered or output-blocked. Right-click with a blade to replace; sneak-right-click empty-handed to inspect wear."
     },
     {
       "type": "text",
@@ -171,15 +171,21 @@
     },
     {
       "type": "patchouli:spotlight",
+      "item": "magneticraft2:iron_rivet_blank",
+      "title": "Cut Rivet Blanks",
+      "text": "The Metal Shear cuts one Wrought Iron Rod into four short, headless blanks. Material quality is retained. These are not finished rivets and cannot replace Iron Rivets in frame crafting."
+    },
+    {
+      "type": "patchouli:spotlight",
       "item": "magneticraft2:iron_rivet",
-      "title": "Sheared Iron Rivets",
-      "text": "One Wrought Iron Rod becomes four Rivets in the powered Stock Shear. This respects the one-ingot-to-four-rod stock ledger; Rivets are used to make structural Iron Frames."
+      "title": "Form the Rivet Heads",
+      "text": "Insert FOUR matching Iron Rivet Blanks into the existing Mechanical Forge Hammer. Cold heading takes 120 supplied ticks at 20 RPM and 6 torque, using a working Bronze or Wrought Iron Forging Die. FOUR blanks become FOUR Iron Rivets, retaining material quality and using one die batch. Small blanks need no kiln reheating; hot-ingot and bloom recipes keep their heat requirements."
     },
     {
       "type": "patchouli:crafting",
       "title": "Riveted Iron Frame",
       "recipe": "magneticraft2:riveted_iron_frame",
-      "text": "Four Wrought Iron Bars and four cut Iron Rivets form an open, rigid factory frame. This is a genuine useful Iron building block with matching collision, not a cosmetic product with no purpose."
+      "text": "Four Wrought Iron Bars and four headed Iron Rivets form an open, rigid factory frame. This is a genuine useful Iron building block with matching collision, not a cosmetic product with no purpose."
     }
   ],
   "sortnum": 4,

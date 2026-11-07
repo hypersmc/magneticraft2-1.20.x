@@ -42,7 +42,10 @@ const output=be.indexOf('if (inputOrRecipeChanged || activeOutput.isEmpty())');
 assert.ok(output>=0,'Derived output cache must not reset saved progress');
 assert.ok(r.includes('multiblock/iron_stock_shear_blade'));
 assert.ok(r.includes('BlockRegistry.IRON_STOCK_SHEAR.get().defaultBlockState()'));
-assert.ok(r.includes('shear.getShearStroke(partial)'));
+assert.ok(r.includes('input.getVisualRotationDegrees(partial)'));
+assert.ok(r.includes('IronShearMotion.sliderY(pinX, pinY)'));
+assert.ok(r.includes('IronShearMotion.linkDegrees(pinX, pinY, sliderY)'));
+assert.ok(!r.includes('pose.scale('), 'No scaled rod or stretched moving models');
 assert.ok(!r.includes('BRONZE_MECHANICAL_PRESS'));
 const itemPort=java('common/blockentity/stage/copper/MultiblockItemPortBlockEntity.java');
 assert.ok(itemPort.includes('controller instanceof IronStockShearBlockEntity shear'));
@@ -70,9 +73,22 @@ assert.equal(stock.type,'magneticraft2:multiblock_processing');
 assert.equal(stock.machine,'magneticraft2:iron_stock_shear');
 assert.deepEqual(stock.input,{item:'magneticraft2:wrought_iron_rod'});
 assert.equal(stock.input_count,1);
-assert.deepEqual(stock.output,{item:'magneticraft2:iron_rivet',count:4});
+assert.deepEqual(stock.output,{item:'magneticraft2:iron_rivet_blank',count:4});
 assert.equal(stock.process_time,180);
 assert.deepEqual(stock.mechanical,{min_speed:16,torque:12});
+const heading=recipe('forge_iron_rivets');
+assert.equal(heading.machine,'magneticraft2:bronze_forge_hammer');
+assert.deepEqual(heading.input,{item:'magneticraft2:iron_rivet_blank'});
+assert.equal(heading.input_count,4);
+assert.deepEqual(heading.output,{item:'magneticraft2:iron_rivet',count:4});
+assert.equal(heading.process_time,120);
+assert.deepEqual(heading.mechanical,{min_speed:20,torque:6});
+assert.ok(ir.includes('ITEM_IRON_RIVET_BLANK'));
+assert.ok(tab.includes('ItemRegistry.ITEM_IRON_RIVET_BLANK.get()'));
+assert.ok(client.includes('IronStockShearRenderer.registerModels(event)'));
+const hammer=java('common/blockentity/stage/bronze/BronzeForgeHammerBlockEntity.java');
+assert.equal(hammer.split('inputStack.is(ItemRegistry.ITEM_IRON_RIVET_BLANK.get())').length-1,2,
+ 'Heading reservation and diagnostics must both preserve material NBT');
 const frame=recipe('riveted_iron_frame');
 assert.equal(frame.type,'minecraft:crafting_shaped');
 assert.equal(frame.result.item,'magneticraft2:riveted_iron_frame');
@@ -90,10 +106,17 @@ const id='iron_stock_shear';
 const directions=['south','north','east','west'];
 const south=json('data/magneticraft2/multiblocks/iron_stock_shear_south.json');
 const positions=layout=>{
- const p={};for(let y=0;y<2;y++)for(let z=0;z<3;z++)for(let x=0;x<3;x++){
-  const c=layout['layer'+(y+1)][z][x];
-  (p[c]??=[]).push([x-1,y,z-2]);
+ // Model offsets are relative to this orientation's controller, not a
+ // hard-coded SOUTH origin. Require exactly one controller before comparing.
+ const cells=[];
+ for(let y=0;y<2;y++)for(let z=0;z<3;z++)for(let x=0;x<3;x++){
+  cells.push([layout['layer'+(y+1)][z][x],x,y,z]);
  }
+ const controllers=cells.filter(([c])=>c==='C');
+ assert.equal(controllers.length,1,'Exactly one controller per layout');
+ const [,cx,cy,cz]=controllers[0];
+ const p={};
+ for(const [c,x,y,z]of cells)(p[c]??=[]).push([x-cx,y-cy,z-cz]);
  return p;
 };
 const orig=positions(south.structure.layout);
@@ -147,7 +170,17 @@ assert.equal(parts,72,'4 facings times 18 model parts');
 const voxel=json('data/magneticraft2/multiblock_voxels/iron_stock_shear.json');
 assert.equal(voxel.format,1);
 assert.equal(voxel.unit,'model_pixels');
-assert.equal(voxel.collision.length,42);
+// Compare real baked static cuboids rather than retaining a stale fixed count.
+const expectedVoxels=[];
+for(const points of Object.values(orig))for(const [x,y,z] of points){
+ const m=json('assets/magneticraft2/models/multiblock/iron_stock_shear_south/'+
+  'part_'+x+'_'+y+'_'+z+'.json');
+ for(const e of m.elements)expectedVoxels.push([
+  e.from[0]+16*x,e.from[1]+16*y,e.from[2]+16*z,
+  e.to[0]+16*x,e.to[1]+16*y,e.to[2]+16*z]);
+}
+const sortedBoxes=boxes=>boxes.map(b=>JSON.stringify(b)).sort();
+assert.deepEqual(sortedBoxes(voxel.collision),sortedBoxes(expectedVoxels));
 assert.deepEqual(voxel.collision,voxel.selection);
 for(const b of voxel.collision){
  assert.equal(b.length,6);
@@ -156,7 +189,7 @@ for(const b of voxel.collision){
 const blockstates=json('assets/magneticraft2/blockstates/iron_stock_shear.json');
 assert.equal(Object.keys(blockstates.variants).length,8);
 const book=json('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json');
-assert.ok(book.pages.some(p=>p.type==='patchouli:multiblock'&&p.name==='Iron Stock Shear'));
+assert.ok(book.pages.some(p=>p.type==='patchouli:multiblock'&&p.name==='Mechanical Metal Shear'));
 for(const id of ['iron_stock_shear','iron_shear_blade','riveted_iron_frame'])
  assert.ok(book.pages.some(p=>p.recipe==='magneticraft2:'+id));
 const lang=json('assets/magneticraft2/lang/en_us.json');

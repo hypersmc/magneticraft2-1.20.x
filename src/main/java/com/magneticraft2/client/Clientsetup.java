@@ -240,6 +240,7 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_rolling_mill_roller"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_press_ram"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/iron_stock_shear_blade"));
+        IronStockShearRenderer.registerModels(event);
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_spindle"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_sawmill_blade"));
