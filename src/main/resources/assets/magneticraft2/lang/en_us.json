@@ -571,5 +571,9 @@
   "message.magneticraft2.bronze_rolling_mill.reason.iron_cold": "Wrought iron must be hot — use a fueled Refractory Kiln",
   "message.magneticraft2.bronze_forge_hammer.reason.bloom_cold": "Iron workpiece is cold — reheat it in a fueled Refractory Kiln",
   "block.magneticraft2.riveted_iron_casing": "Riveted Iron Casing",
-  "item.magneticraft2.riveted_iron_casing": "Riveted Iron Casing"
+  "item.magneticraft2.riveted_iron_casing": "Riveted Iron Casing",
+  "block.magneticraft2.iron_floor_grating": "Iron Floor Grating",
+  "item.magneticraft2.iron_floor_grating": "Iron Floor Grating",
+  "block.magneticraft2.iron_catwalk_railing": "Iron Catwalk Railing",
+  "item.magneticraft2.iron_catwalk_railing": "Iron Catwalk Railing"
 }

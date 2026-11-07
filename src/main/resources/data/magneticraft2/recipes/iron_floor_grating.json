@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "B B",
+    " P ",
+    " P "
+  ],
+  "key": {
+    "B": {
+      "item": "magneticraft2:wrought_iron_bar"
+    },
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_floor_grating",
+    "count": 4
+  }
+}

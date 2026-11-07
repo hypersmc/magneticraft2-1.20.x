@@ -73,6 +73,8 @@
     "magneticraft2:wrought_iron_gearbox",
     "magneticraft2:iron_stock_shear",
     "magneticraft2:riveted_iron_frame",
-    "magneticraft2:riveted_iron_casing"
+    "magneticraft2:riveted_iron_casing",
+    "magneticraft2:iron_floor_grating",
+    "magneticraft2:iron_catwalk_railing"
   ]
 }

@@ -62,6 +62,8 @@ import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.block.stage.iron.IronStructuralBeamBlock;
 import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
+import com.magneticraft2.common.block.stage.iron.IronFloorGratingBlock;
+import net.minecraft.world.level.block.FenceBlock;
 import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
@@ -206,6 +208,14 @@ public class BlockRegistry {
                     BlockBehaviour.Properties.of()
                             .strength(5.0F, 6.0F).sound(SoundType.METAL)
                             .requiresCorrectToolForDrops()));
+    // Iron factory access: walkable, waterloggable open-grid decking.
+    public static final RegistryObject<IronFloorGratingBlock> IRON_FLOOR_GRATING =
+            BLOCKS.register("iron_floor_grating", IronFloorGratingBlock::new);
+    // Vanilla fence topology/shape gives safe automatically connected catwalk rails.
+    public static final RegistryObject<FenceBlock> IRON_CATWALK_RAILING =
+            BLOCKS.register("iron_catwalk_railing", () -> new FenceBlock(
+                    BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(

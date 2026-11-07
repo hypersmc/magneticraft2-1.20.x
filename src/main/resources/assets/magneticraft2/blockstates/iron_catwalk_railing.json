@@ -1,0 +1,48 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "magneticraft2:block/iron_catwalk_railing_post"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/iron_catwalk_railing_side",
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/iron_catwalk_railing_side",
+        "y": 90,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/iron_catwalk_railing_side",
+        "y": 180,
+        "uvlock": true
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/iron_catwalk_railing_side",
+        "y": 270,
+        "uvlock": true
+      }
+    }
+  ]
+}

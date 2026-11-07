@@ -84,6 +84,22 @@
     },
     {
       "type": "text",
+      "text": "$(bold)Iron Factory Walkways$()$(br2)Make raised platforms using Wrought Iron Floor Grating: narrow, open metal bars let light through and can hold water without pretending to be a solid steel cube. Add connecting Catwalk Railings around exposed edges, using real fence connections and collision. These simple building pieces use the existing hot-rolling material chain; no new machine is required."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Floor Grating",
+      "recipe": "magneticraft2:iron_floor_grating",
+      "text": "TWO Wrought Iron Bars and TWO Wrought Iron Plates yield FOUR open-grille walkway blocks. Set them across supported iron beams or foundations for factory catwalks. They are walkable, waterloggable and have collision matched to their real bars."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Catwalk Railing",
+      "recipe": "magneticraft2:iron_catwalk_railing",
+      "text": "TWO Wrought Iron Bars and FOUR Iron Rods yield FOUR railings. Like ordinary fences, railings connect to neighboring rails and sturdy blocks, with a protective raised collision shape. Use them around your grated platforms."
+    },
+    {
+      "type": "text",
       "text": "$(bold)Iron II-A — Forge a Gear$()$(br2)Use the existing fueled Refractory Kiln to reheat a Wrought Iron Bar. Move it to the powered Bronze Forge Hammer with a working forging die. One still-hot Bar becomes ONE Forged Iron Gear Blank after 180 supplied ticks at 20 RPM and 6 torque.$(br2)No new furnace, forge or material-quality shortcut is required."
     },
     {

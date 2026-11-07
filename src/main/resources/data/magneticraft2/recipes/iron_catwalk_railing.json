@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RBR",
+    "RBR"
+  ],
+  "key": {
+    "R": {
+      "item": "magneticraft2:wrought_iron_rod"
+    },
+    "B": {
+      "item": "magneticraft2:wrought_iron_bar"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_catwalk_railing",
+    "count": 4
+  }
+}
