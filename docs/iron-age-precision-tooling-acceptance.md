@@ -1,7 +1,7 @@
 # Precision Iron Tooling — bored holder and wrought-fitted Lathe Cutter
 
 **Branch:** `feature/iron-age-foundations`, draft PR #18.
-**Stage:** source implemented; not yet compiled or player-tested.
+**Stage:** player-confirmed working in-game (primary path); compilation and detailed regressions unverified.
 
 ## Player-facing reason for this milestone
 
@@ -80,3 +80,17 @@ node tools/iron-age/check-precision-tooling-contract.mjs
 The JSON/model static checks are not equivalent to running a
 full ForgeGradle build or testing in-game. Keep PR #18 draft and
 unmerged; multiplayer testing remains deferred until after Steam Age.
+
+## Player acceptance — 2026-11-08
+
+The player replied **"yep!"** after the precision-tooling in-game checklist.
+Record the **main manufacturing and installation path as player-confirmed
+working in-game**. This is general acceptance feedback, not individual
+proof of each regression scenario. Exact durability accounting for all
+workpiece types, wear exhaustion, quality-tag handling, save/reload,
+old-world compatibility, blocked outputs, build logs, and visual/FPS
+measurements remain individually unverified unless separately reported.
+
+The Java 17 Gradle build and committed Node fixture have not been run
+in this session. Keep PR #18 draft and unmerged; multiplayer-specific
+work remains deferred until after Steam Age.
