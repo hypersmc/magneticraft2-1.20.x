@@ -5,6 +5,7 @@ import com.magneticraft2.common.hologram.AncientProjectorBlock;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
+import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
@@ -171,6 +172,9 @@ public class BlockRegistry {
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
             BLOCKS.register("bronze_casting_basin", BronzeCastingBasinBlock::new);
+    // Iron II-A: a stronger 8-tooth Gear V2 node, not a new power source.
+    public static final RegistryObject<WroughtIronMediumGearBlock> WROUGHT_IRON_GEAR_MEDIUM =
+            BLOCKS.register("wrought_iron_gear_medium", WroughtIronMediumGearBlock::new);
     // Iron 0D: simple factory construction blocks (no block entities/tickers).
     public static final RegistryObject<IronStructuralBeamBlock> IRON_STRUCTURAL_BEAM =
             BLOCKS.register("iron_structural_beam", IronStructuralBeamBlock::new);

@@ -43,7 +43,8 @@ public final class HotBloomWorkpiece {
         // The existing Bloom consolidation remains hot-only. Iron 0B adds
         // plate forging; other shaped materials join only when implemented.
         return recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())
-                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get());
+                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
     }
 
     /**

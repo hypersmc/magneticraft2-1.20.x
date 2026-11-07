@@ -147,6 +147,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
+                        entries.accept(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_GEAR_MEDIUM.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
                         entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());

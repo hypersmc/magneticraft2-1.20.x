@@ -23,6 +23,7 @@ import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_woo
 import com.magneticraft2.common.blockentity.stage.copper.CrankBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ItemBeltBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.MediumGearBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.iron.WroughtIronMediumGearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -96,6 +97,10 @@ public class BlockEntityRegistry {
     //Copper
 
     public static final RegistryObject<BlockEntityType<MediumGearBlockEntity_wood>> GEAR_MEDIUM_BE_WOOD = BLOCK_ENTITIES.register("gear_medium_wood", () -> BlockEntityType.Builder.of(MediumGearBlockEntity_wood::new, BlockRegistry.GEAR_MEDIUM_WOOD.get()).build(null));
+    public static final RegistryObject<BlockEntityType<WroughtIronMediumGearBlockEntity>> GEAR_MEDIUM_BE_IRON =
+            BLOCK_ENTITIES.register("wrought_iron_gear_medium",
+                    () -> BlockEntityType.Builder.of(WroughtIronMediumGearBlockEntity::new,
+                            BlockRegistry.WROUGHT_IRON_GEAR_MEDIUM.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearBlockEntity_wood>> GEAR_LARGE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood", () -> BlockEntityType.Builder.of(LargeGearBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<LargeGearWithHandleBlockEntity_wood>> GEAR_LARGE_WITH_HANDLE_BE_WOOD = BLOCK_ENTITIES.register("gear_large_wood_with_handle", () -> BlockEntityType.Builder.of(LargeGearWithHandleBlockEntity_wood::new, BlockRegistry.GEAR_LARGE_WITH_HANDLE_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<ShaftBlockEntity_wood>> SHAFT_BE_WOOD = BLOCK_ENTITIES.register("shaft_wood", () -> BlockEntityType.Builder.of(ShaftBlockEntity_wood::new, BlockRegistry.SHAFT_WOOD.get()).build(null));

@@ -186,6 +186,12 @@ public class ItemRegistry {
             ITEMS.register("wrought_iron_bar", WroughtIronBarItem::new);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_ROD =
             ITEMS.register("wrought_iron_rod", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_IRON_GEAR_BLANK_MEDIUM =
+            ITEMS.register("iron_gear_blank_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PRECISION_IRON_GEAR_MEDIUM =
+            ITEMS.register("precision_iron_gear_medium", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEAR_MEDIUM =
+            fromBlock(WROUGHT_IRON_GEAR_MEDIUM);
     public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);
     public static final RegistryObject<Item> ITEM_IRON_PLATE_PANEL = fromBlock(IRON_PLATE_PANEL);
     public static final RegistryObject<Item> ITEM_IRON_MACHINE_FOUNDATION = fromBlock(IRON_MACHINE_FOUNDATION);

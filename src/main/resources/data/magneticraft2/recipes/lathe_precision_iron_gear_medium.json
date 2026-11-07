@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_mechanical_lathe",
+  "input": {
+    "item": "magneticraft2:iron_gear_blank_medium"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:precision_iron_gear_medium",
+    "count": 1
+  },
+  "process_time": 160,
+  "mechanical": {
+    "min_speed": 12,
+    "torque": 5
+  }
+}

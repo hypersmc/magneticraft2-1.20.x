@@ -23,7 +23,13 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
  */
 public class MediumGearBlockEntity_wood extends GearBlockEntity {
     public MediumGearBlockEntity_wood(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), pos, state);
+        this(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), pos, state);
+    }
+
+    /** Iron gear specialization reuses exactly the established Gear V2 ticker. */
+    protected MediumGearBlockEntity_wood(net.minecraft.world.level.block.entity.BlockEntityType<?> type,
+            BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {
