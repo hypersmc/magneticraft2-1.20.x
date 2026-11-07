@@ -18,6 +18,11 @@ Existing Bloomery -> Iron Bloom -> Refractory Kiln -> Forge Hammer
   -> Wrought Iron Medium Gear [8 teeth; 16 torque transmission limit]
 ```
 
+The lathe qualifies mechanical load against raw network RPM (matching
+the already-correct Rolling Mill pattern), then requires Gear V2's
+authoritative supplied state. This prevents source-overload load
+flickering without allowing work while overloaded.
+
 The lathe handles one new defined JSON recipe, preserving hardcoded
 Bronze gear/bearing workpiece compatibility. The Forge Hammer uses
 the existing hot-state gate; material-quality NBT survives forge and

@@ -82,6 +82,8 @@ assert.match(latheSource,/MultiblockRecipeHandler\.findRecipe/);
 assert.match(latheSource,/ironRecipe\.getTorque\(\)/);
 assert.match(latheSource,/ironRecipe\.getMinSpeed\(\)/);
 assert.match(latheSource,/cachedIronGearRecipe = null/);
+assert.ok(latheSource.includes('boolean canAttempt=node.getSpeed()>=rpmRequired'));
+assert.ok(!latheSource.includes('boolean canAttempt=node.getEffectiveSpeed()>=rpmRequired'));
 assert.match(latheSource,/ironRecipe == null \? 1 : 2/);
 assert.match(latheSource,/finished\.setTag\(workpiece\.getTag\(\)\.copy\(\)\)/);
 assert.match(latheSource,/ITEM_ROUGH_BRONZE_GEAR\.get\(\)/);

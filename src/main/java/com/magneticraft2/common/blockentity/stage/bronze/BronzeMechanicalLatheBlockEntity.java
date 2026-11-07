@@ -192,7 +192,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         float torqueRequired = ironRecipe == null ? TORQUE : ironRecipe.getTorque();
         // Source/load evaluation is still performed by the existing Gear V2
         // manager; the Iron recipe asks for more work, not free power.
-        boolean canAttempt=node.getEffectiveSpeed()>=rpmRequired
+        // Qualify using RAW network RPM. Effective RPM becomes zero
+        // during overload; using it would remove the load on the next
+        // tick, clear overload and repeatedly reapply it.
+        // supplied() below still blocks machining when overloaded.
+        boolean canAttempt=node.getSpeed()>=rpmRequired
                 && node.getTorque()+.01F>=torqueRequired;
         GearNetworkManager manager=GearNetworkManager.getInstance();
         manager.setMechanicalLoad(level,worldPosition,input.getBlockPos(),torqueRequired,canAttempt);
