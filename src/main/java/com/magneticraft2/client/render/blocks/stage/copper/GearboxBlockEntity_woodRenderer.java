@@ -27,11 +27,15 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
     private final ResourceLocation shaftTexture;
     private final ResourceLocation supportTexture;
     private final boolean proportionalUv;
+    // The wooden coupling is intentionally broad; the Iron drivetrain
+    // uses the 2-pixel axle visible on the established Iron Medium Gear.
+    private final double portAxleThickness;
+    private final double portCouplingThickness;
 
     public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context) {
         // Preserve the accepted wooden gearbox's original 2-texel-minimum
         // sampling without silently changing its texture appearance.
-        this(context, OAK, SHAFT, SUPPORT, false);
+        this(context, OAK, SHAFT, SUPPORT, false, 0.105D, 0.375D);
     }
 
     /** Reuse the same geometry with appropriate materials and true scale UVs. */
@@ -39,18 +43,36 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                                            ResourceLocation gearTexture,
                                            ResourceLocation shaftTexture,
                                            ResourceLocation supportTexture) {
-        this(context, gearTexture, shaftTexture, supportTexture, true);
+        this(context, gearTexture, shaftTexture, supportTexture, true, 0.105D, 0.375D);
+    }
+
+    /**
+     * Explicit physical axle/coupling dimensions for differently-sized
+     * drivetrains. Does not confuse model dimensions with the UV policy.
+     */
+    public GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context,
+                                           ResourceLocation gearTexture,
+                                           ResourceLocation shaftTexture,
+                                           ResourceLocation supportTexture,
+                                           double portAxleThickness,
+                                           double portCouplingThickness) {
+        this(context, gearTexture, shaftTexture, supportTexture, true,
+                portAxleThickness, portCouplingThickness);
     }
 
     private GearboxBlockEntity_woodRenderer(BlockEntityRendererProvider.Context context,
                                             ResourceLocation gearTexture,
                                             ResourceLocation shaftTexture,
                                             ResourceLocation supportTexture,
-                                            boolean proportionalUv) {
+                                            boolean proportionalUv,
+                                            double portAxleThickness,
+                                            double portCouplingThickness) {
         this.gearTexture = gearTexture;
         this.shaftTexture = shaftTexture;
         this.supportTexture = supportTexture;
         this.proportionalUv = proportionalUv;
+        this.portAxleThickness = portAxleThickness;
+        this.portCouplingThickness = portCouplingThickness;
     }
 
     @Override
@@ -150,17 +172,18 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
                 packedLight,
                 0.265D,
                 0.470D,
-                0.105D
+                portAxleThickness
         );
 
-        // Full-size coupling at the block face, matching a normal Wooden Shaft.
+        // Both couplings end at the block face. Iron uses a 2-pixel
+        // cross-section, matching the connected Iron Shaft and gear axle.
         drawBoxAtLocalX(
                 stack,
                 consumer,
                 packedLight,
                 0.455D,
                 0.090D,
-                0.375D
+                portCouplingThickness
         );
 
         stack.popPose();

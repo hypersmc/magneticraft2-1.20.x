@@ -73,8 +73,18 @@ const sharedBoxRenderer=java('client/render/blocks/stage/copper/GearboxBlockEnti
 assert.match(ironShaftRenderer,/shared\.render\(entity, partialTicks/);
 assert.match(ironBoxRenderer,/shared\.render\(entity, partialTicks/);
 assert.match(ironBoxRenderer,/context, IRON, IRON, BRONZE/);
-assert.match(sharedBoxRenderer,/this\(context, OAK, SHAFT, SUPPORT, false\)/);
-assert.match(sharedBoxRenderer,/this\(context, gearTexture, shaftTexture, supportTexture, true\)/);
+assert.match(ironBoxRenderer,/0\.125D, 0\.125D/);
+assert.match(sharedBoxRenderer,/portAxleThickness/);
+assert.match(sharedBoxRenderer,/portCouplingThickness/);
+assert.match(sharedBoxRenderer,/0\.470D,\s*portAxleThickness/);
+assert.match(sharedBoxRenderer,/0\.090D,\s*portCouplingThickness/);
+assert.match(ironShaftBlock,/SHAPE_Y = Block\.box\(7, 0, 7, 9, 16, 9\)/);
+assert.match(ironShaftBlock,/SHAPE_X = Block\.box\(0, 7, 7, 16, 9, 9\)/);
+assert.match(ironShaftBlock,/SHAPE_Z = Block\.box\(7, 7, 0, 9, 9, 16\)/);
+assert.match(ironShaftBlock,/getCollisionShape/);
+assert.match(ironShaftBlock,/return getShape\(state, level, pos, context\)/);
+assert.match(sharedBoxRenderer,/this\(context, OAK, SHAFT, SUPPORT, false, 0\.105D, 0\.375D\)/);
+assert.match(sharedBoxRenderer,/this\(context, gearTexture, shaftTexture, supportTexture, true, 0\.105D, 0\.375D\)/);
 assert.match(sharedBoxRenderer,/proportionalUv \? \(float\) sizeX : texelWindow\(sizeX\)/);
 assert.match(sharedBoxRenderer,/renderBevelGear/);
 assert.match(sharedBoxRenderer,/renderPortShaft/);
@@ -129,6 +139,15 @@ for(const id of ids){
 // and an overwhelmingly bronze/wood-looking interior. Keep bronze
 // confined to the actual bearing journal, not shafts or frame supports.
 const shaftVisual=json('assets/magneticraft2/models/block/wrought_iron_shaft.json');
+const shaftElement=shaftVisual.elements[0];
+assert.deepEqual(shaftElement.from,[7,0,7]);
+assert.deepEqual(shaftElement.to,[9,16,9]);
+assert.equal(shaftElement.to[0]-shaftElement.from[0],2);
+const gearVisual=json('assets/magneticraft2/models/block/wrought_iron_gear_medium.json');
+const fullGearAxles=gearVisual.elements.filter(e=>e.from[1]===0 && e.to[1]===16);
+assert.equal(fullGearAxles.length,1);
+assert.deepEqual(fullGearAxles[0].from,[7,0,7]);
+assert.deepEqual(fullGearAxles[0].to,[9,16,9]);
 const gearboxVisual=json('assets/magneticraft2/models/block/wrought_iron_gearbox.json');
 const ironTex='magneticraft2:block/material/dark_work_iron';
 const bronzeTex='magneticraft2:block/material/bronze_machined';

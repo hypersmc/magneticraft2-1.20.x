@@ -118,16 +118,49 @@ It would be inaccurate to claim the whole gearbox has a new
 do not prove every orientation or motor behavior. Check the result
 from several angles while rotating and idle.
 
+## Iron shaft cross-section alignment — 2026-11-07
+
+Player screenshot identified a **real geometric mismatch**: the
+Wrought Iron Shaft was still 6×6 Minecraft model units (copied
+from the wooden shaft), but the new Iron Medium Gear has a **2×2
+through-axle** (model bounds [7,0,7] → [9,16,9]). The gearbox
+renderer likewise had a 6×6 outer coupler inherited from wood.
+
+**Correction:** Wrought Iron Shaft now has a 2×2 cross-section at
+every axis, with X/Y/Z outline **and collision** boxes matching
+the model. Its existing single-piece JSON uses unscaled, native
+2×16 side-face UVs and 2×2 end-face UVs. The already accepted
+Iron Medium Gear model and existing wooden shaft remain unchanged.
+
+The existing gearbox renderer now exposes explicit axle and
+coupling thicknesses to its Iron-only call site: **0.125 blocks**
+(2 model pixels) for both. Original wooden gearbox axle (0.105)
+and wide 0.375-block (6px) wooden coupling remain unchanged,
+as does the previous four-argument constructor behavior.
+This is purely an installed geometry alignment; network nodes,
+ratios, max torques, materials, registry IDs and saved data are
+untouched.
+
+**In-game acceptance:** place Iron Shaft into an Iron Medium Gear
+on X, Y and Z; both static and powered geometry should meet at
+the same 2×2 cross-section. Connect through the Iron Gearbox's
+two perpendicular outputs, inspect the actual shaft and coupling
+junction, highlight/collision and rotation from multiple angles.
+Check the wooden parts have not become narrow or changed behavior.
+
 ## Single-player acceptance checklist
 
 - [ ] Run `node tools/iron-age/check-iron-shaft-gearbox-contract.mjs`.
 - [ ] Run `./gradlew build` with JDK 17; preserve actual output.
 - [ ] Craft both items in survival; confirm JEI, Patchouli, item
       model, pickaxe harvesting, drops and creative placement.
-- [ ] Place Iron Shaft along X/Y/Z; compare placement/collision
-      and angular direction against existing Wooden Shaft.
+- [ ] Place Iron Shaft along X/Y/Z; confirm its new narrow 2×2
+      model AND voxel/collision outline match the Iron Medium Gear
+      axle. The original wooden shaft remains 6×6.
 - [ ] Test Wooden Shaft → Iron Shaft → Iron Medium Gear and back,
       including stopped, reverse and stalled/overloaded states.
+- [ ] Check that Iron Gearbox coupling and Iron Shaft both have a
+      coherent 2×2 junction while the wooden coupling remains 6×6.
 - [ ] Place Iron Gearbox with all practical perpendicular port
       pairings. Right-click to cycle OUTPUT and sneak-right-click
       with empty hand to swap INPUT/OUTPUT. Verify 1:1 rotation

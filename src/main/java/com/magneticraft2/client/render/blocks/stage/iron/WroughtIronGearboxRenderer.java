@@ -21,7 +21,10 @@ public final class WroughtIronGearboxRenderer
     private final GearboxBlockEntity_woodRenderer shared;
 
     public WroughtIronGearboxRenderer(BlockEntityRendererProvider.Context context) {
-        shared = new GearboxBlockEntity_woodRenderer(context, IRON, IRON, BRONZE);
+        // 2 / 16 block width on both the gearbox axle and its coupling:
+        // one continuous diameter through gear, shaft and gearbox.
+        shared = new GearboxBlockEntity_woodRenderer(context, IRON, IRON, BRONZE,
+                0.125D, 0.125D);
     }
 
     @Override
