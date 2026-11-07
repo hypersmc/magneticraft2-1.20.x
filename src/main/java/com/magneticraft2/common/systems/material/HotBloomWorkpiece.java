@@ -9,10 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * Server-authoritative forging heat for existing Iron Blooms and Wrought
- * Iron Ingots. Both keep their original registry IDs. The Refractory Kiln
+ * Server-authoritative forging heat for existing Iron Blooms, Wrought
+ * Iron Ingots and Iron Bars. All keep their original registry IDs. The Refractory Kiln
  * grants temporary heat only through identified, fueled processing recipes;
- * the Forge Hammer checks expiry at every supplied processing tick.
+ * the Forge Hammer and Rolling Mill check expiry at every supplied processing tick.
  * No fake hot item IDs, client clocks or extra item entities.
  *
  * Historical class name retained for the accepted Bronze Bloom route.

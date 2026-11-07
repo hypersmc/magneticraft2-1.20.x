@@ -230,8 +230,8 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
                 notify = true;
             }
             ItemStack product = recipe.getOutput();
-            // Reheating an Iron Bloom or Wrought Iron Ingot requires real
-            // fuel, HEAT and a dedicated datapack recipe. The timestamp is
+            // Reheating an Iron Bloom, Wrought Iron Ingot or Iron Bar
+            // requires real fuel, HEAT and a dedicated datapack recipe. The timestamp is
             // authoritative world game-time, not client cosmetic state.
             // Use the same tagged product for BOTH reservation and commit.
             if (HotBloomWorkpiece.isReheatRecipe(recipe)) {

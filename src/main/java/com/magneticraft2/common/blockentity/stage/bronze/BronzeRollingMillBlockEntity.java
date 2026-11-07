@@ -71,6 +71,9 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
     @Nullable private VoxelShape collision, selection;
     @Nullable private ResourceLocation activeRecipe;
     private ItemStack activeInput = ItemStack.EMPTY;
+    // Derived result, cached per batch so quality-tag copying does not
+    // allocate a new ItemStack every machine tick. Rebuilt after load.
+    private ItemStack activeOutput = ItemStack.EMPTY;
     private ItemStack lastInput = ItemStack.EMPTY, lastOutput = ItemStack.EMPTY;
     private int progress;
     private boolean running;
@@ -137,6 +140,7 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
         progress = 0;
         activeRecipe = null;
         activeInput = ItemStack.EMPTY;
+        activeOutput = ItemStack.EMPTY;
         setChanged();
     }
     private void tickRolling() {
@@ -163,18 +167,20 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             return;
         }
         if (!recipe.getId().equals(activeRecipe)
-                || !ItemStack.isSameItemSameTags(activeInput, inputStack)) {
+                || !ItemStack.isSameItemSameTags(activeInput, inputStack)
+                || activeOutput.isEmpty()) {
             activeRecipe = recipe.getId();
             activeInput = inputStack.copy();
             activeInput.setCount(1);
+            activeOutput = HotBloomWorkpiece.requiresRollingHeat(recipe)
+                    ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
+                    : recipe.getOutput();
             progress = 0;
             setChanged();
         }
-        // New Iron profiles retain input material quality but lose transient
-        // heat. Check the exact tagged output before registering any load.
-        ItemStack output = HotBloomWorkpiece.requiresRollingHeat(recipe)
-                ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
-                : recipe.getOutput();
+        // Check the actual quality-tagged output and preserve that exact
+        // immutable batch result for reservation and final insertion.
+        ItemStack output = activeOutput;
         // No load while output is blocked or the roller sleeves need replacement.
         if (!rollerSleeves.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
@@ -404,6 +410,9 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
         activeRecipe = tag.contains("MillRecipe")
                 ? ResourceLocation.tryParse(tag.getString("MillRecipe")) : null;
         activeInput = ItemStack.of(tag.getCompound("MillActiveInput"));
+        // Safe derived cache: rebuild from the current input and recipe on
+        // the first resumed tick, never persist redundant output NBT.
+        activeOutput = ItemStack.EMPTY;
         rollerSleeves.load(tag.getCompound("MillRollers"));
         // Never assume stale client RUNNING state is authoritative after reload.
         running = tag.getBoolean("MillRunning");
