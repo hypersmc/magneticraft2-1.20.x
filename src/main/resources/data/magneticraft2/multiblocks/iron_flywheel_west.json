@@ -1,0 +1,92 @@
+{
+  "name": "iron_flywheel_west",
+  "structure": {
+    "dimensions": [
+      1,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F"
+        ],
+        [
+          "A"
+        ],
+        [
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "A"
+        ],
+        [
+          "C"
+        ],
+        [
+          "A"
+        ]
+      ],
+      "layer3": [
+        [
+          "A"
+        ],
+        [
+          "A"
+        ],
+        [
+          "A"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "A": "minecraft:air",
+      "C": "magneticraft2:iron_flywheel"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/iron_flywheel_west",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:iron_flywheel",
+    "render_air_anchors": [
+      [
+        0,
+        -1,
+        0
+      ],
+      [
+        0,
+        0,
+        -1
+      ],
+      [
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        1,
+        -1
+      ],
+      [
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        1
+      ]
+    ]
+  }
+}
