@@ -59,7 +59,13 @@
     "fluid": false,
     "inputs": [],
     "outputs": [],
-    "render_air_anchors": [],
+    "render_air_anchors": [
+      [
+        -1,
+        1,
+        0
+      ]
+    ],
     "voxel_profile": "magneticraft2:iron_forge_hearth"
   }
 }
