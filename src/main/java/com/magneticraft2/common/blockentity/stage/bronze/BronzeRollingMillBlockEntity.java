@@ -178,7 +178,7 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
         // This cache is not persisted. Rebuild it after loading without
         // invalidating real, already-saved progress on the same batch.
         if (inputOrRecipeChanged || activeOutput.isEmpty()) {
-            activeOutput = HotBloomWorkpiece.requiresRollingHeat(recipe)
+            activeOutput = HotBloomWorkpiece.preservesRollingQuality(recipe)
                     ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
                     : recipe.getOutput();
         }
@@ -285,7 +285,7 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
         } else if (!rollerSleeves.canOperate()) {
             diagnostic = "rollers_worn";
         } else if (!itemHandler.insertItem(1,
-                HotBloomWorkpiece.requiresRollingHeat(candidate)
+                HotBloomWorkpiece.preservesRollingQuality(candidate)
                         ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())
                         : candidate.getOutput(), true).isEmpty()) {
             diagnostic = "output_blocked";

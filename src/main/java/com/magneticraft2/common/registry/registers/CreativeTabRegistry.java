@@ -149,6 +149,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_IRON_BLOOM.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get());
+                        entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_SHEET.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get());
                         entries.accept(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
                         entries.accept(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());

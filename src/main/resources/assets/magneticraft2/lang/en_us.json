@@ -591,5 +591,6 @@
   "message.magneticraft2.iron_flywheel.incomplete": "Iron Flywheel: two foundations and free 3×3 vertical space required.",
   "message.magneticraft2.iron_flywheel.formed": "Large Iron Flywheel formed. Connect an axial shaft.",
   "block.magneticraft2.iron_service_hatch": "Iron Service Hatch",
-  "item.magneticraft2.iron_service_hatch": "Iron Service Hatch"
+  "item.magneticraft2.iron_service_hatch": "Iron Service Hatch",
+  "item.magneticraft2.wrought_iron_sheet": "Wrought Iron Sheet"
 }

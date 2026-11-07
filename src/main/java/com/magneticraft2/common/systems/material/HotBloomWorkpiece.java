@@ -66,6 +66,16 @@ public final class HotBloomWorkpiece {
                 || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
     }
 
+    /**
+     * Quality transfer and an expiring heat requirement are separate.
+     * Cold-finished wrought sheets keep plate quality without requiring
+     * an unavailable reheat-plate machine. Copper output remains unchanged.
+     */
+    public static boolean preservesRollingQuality(MultiblockProcessingRecipe recipe) {
+        return requiresRollingHeat(recipe)
+                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_SHEET.get());
+    }
+
     public static boolean isHot(ItemStack stack, Level world) {
         if (stack.isEmpty() || (!stack.is(ItemRegistry.ITEM_IRON_BLOOM.get())
                 && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())

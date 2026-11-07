@@ -182,6 +182,9 @@ public class ItemRegistry {
             ITEMS.register("wrought_iron_ingot", WroughtIronIngotItem::new);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_PLATE =
             ITEMS.register("wrought_iron_plate", () -> new Item(new Item.Properties()));
+    // Cold-finished wrought sheet, two half-ingot sheets per forged plate.
+    public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHEET =
+            ITEMS.register("wrought_iron_sheet", () -> new Item(new Item.Properties()));
     public static final RegistryObject<WroughtIronBarItem> ITEM_WROUGHT_IRON_BAR =
             ITEMS.register("wrought_iron_bar", WroughtIronBarItem::new);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_ROD =

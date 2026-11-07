@@ -328,6 +328,16 @@
       "title": "Iron Service Hatch",
       "recipe": "magneticraft2:iron_service_hatch",
       "text": "Two Plates, a Wrought Iron Bar and a Rod produce two sturdy metal access hatches. No Stock Shear, new metal grade or powered machine is added to this construction recipe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron I-C — Cold-Finished Sheet$()$(br2)The existing Bronze Rolling Mill cold-finishes a forged Wrought Iron Plate into TWO thin Sheets. Unlike hot Ingot→Bar or hot Bar→Rod rolling, this finishing pass does not require an expiring hot timer; it demands 16 RPM, 12 torque and 240 supplied ticks. It still wears the installed Roller Sleeves. Quality NBT carries over to both Sheets and temporary heat is removed. The two Sheets together contain one Plate's metal; an interrupted or blocked batch creates nothing."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Rolled Iron Sheet Panels",
+      "recipe": "magneticraft2:iron_plate_panel_from_sheets",
+      "text": "TWO Wrought Iron Sheets make ONE Iron Plate Panel. Powering the Mill to make thin stock improves material efficiency over the original two-Plate manual construction recipe, which remains available. TWO Sheets, a Bar and a Rod also make two Iron Service Hatches; the previous Plate-based hatch recipe still works. Vanilla crafting does not propagate source quality to block items."
     }
   ],
   "sortnum": 4,
