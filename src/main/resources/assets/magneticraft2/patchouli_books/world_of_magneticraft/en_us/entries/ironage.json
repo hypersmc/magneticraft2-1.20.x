@@ -271,11 +271,11 @@
         },
         "symmetrical": false
       },
-      "text": "3×3×2 construction. Top center must be AIR WHEN BUILDING; do NOT place a block there. When the structure forms, the existing V2 renderer automatically creates the supported charcoal firebed and iron stock rests in that location. No AIR item, pressure or gas input exists. Bottom: three rear Iron Foundations, brick–foundation–brick center, real output–controller–input front. Top: eight bricks with that one initially empty cell. Left/right in this book preview are mirrored relative to SOUTH JSON."
+      "text": "3×3×2. BUILD with eight normal full BRICKS around the required upper-center AIR cell. After forming, the existing V2 part renderer visually reshapes those bricks into a LOW stepped masonry firebox, with a clear loading mouth at the FRONT. The center AIR automatically becomes the supported charcoal bed and two iron stock rests. Do not place the interior pieces yourself. This AIR is NOT a gas, air or power input. Bottom: rear 3 Iron Foundations, middle Brick–Foundation–Brick, front real Output–Controller–Input. This book preview mirrors SOUTH JSON left/right."
     },
     {
       "type": "text",
-      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Before formation:$() leave the top-center position empty. The JSON blueprint verifies it is air.$(br2)$(bold)After formation:$() Magneticraft2 creates a V2 multiblock render proxy in that same space. Its refractory tray rests on the Iron Foundation below, with a real charcoal bed, an iron retaining rim, and two stock rails supported by brackets attached to the surrounding brickwork. You do NOT craft or place those interior parts individually. Unforming restores AIR. This space is the hearth chamber, not an AIR resource input."
+      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Build:$() place EIGHT ordinary Brick blocks around the upper-center AIR — leave that AIR cell EMPTY.$(br2)$(bold)Form:$() the bricks become lower walls and a front loading mouth; the AIR cell automatically fills with a refractory tray, charcoal and iron stock rests supported by the brickwork. These are model parts, not craftable blocks or a new AIR input. Unforming restores the original full-height Brick blocks and AIR."
     },
     {
       "type": "text",

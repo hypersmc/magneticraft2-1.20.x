@@ -464,3 +464,14 @@ The authoritative layout is in Patchouli. The concept sheet is
 to MGC2 Studio. No mechanical input, AIR network, steel recipe or
 new material quality system is added. Build, in-game tests, visuals,
 chunk save/reload and regressions remain unverified. PR #18 stays draft.
+
+
+### Iron Forge Hearth — geometry readability correction
+
+Player screenshots exposed full-height formed brick models blocking the
+AIR-anchor firebed. The 3×3×2 full-brick construction is preserved while
+formed render parts are lowered and opened at the front. Voxel V2 collision
+is generated directly from the low masonry, rather than invisible full
+brick cells. Texture UVs follow actual face dimensions. Existing formed
+structures must be unformed/reformed to refresh persisted snapshots.
+Forge compilation/in-game visual tests are still outstanding.

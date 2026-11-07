@@ -121,3 +121,45 @@ Model regeneration: `node tools/iron-age/build-forge-hearth-chamber.mjs --check`
 (or `--write` when intentionally regenerating resources). The source
 is the SOUTH chamber file plus the four authoritative JSON blueprints.
 Compilation and game visuals are still unverified until tested.
+
+## Open formed brick rim — geometry correction from player screenshots
+
+The screenshot shows an enclosed, nearly full-height 3×3 brick platform,
+which conceals the formed Hearth's AIR-anchor charcoal and stock rails.
+The source cause is the eight unchanged `cube_all` upper bricks and their
+matching **full-height invisible collision shapes**. This is a geometry defect,
+not a new texture requirement.
+
+**Construction is unchanged:** eight ordinary Bricks plus top-center AIR,
+3×3×2. Once formed, the original V2 filler renderer now supplies:
+
+- back corners 8/16 high and back-center 9/16 + 1/16 iron coping;
+- side mid-bricks 7/16 high + 1/16 iron coping on the inner edges;
+- front corners 5/16 high;
+- front center a real OPEN workpiece mouth: 2/16 low sill, two brick
+  cheeks 5/16 high, and two slender wrought-iron edge strips 6/16 high.
+
+The 15 existing AIR-anchor chamber cuboids remain supported by the
+foundation and masonry; they are no longer hidden by full-height bricks.
+All 32 upper-brick facing models are new block-local baked part geometry
+with native 1:1 UVs rather than `cube_all` slab stretching. The server Voxel
+V2 collider is regenerated from these exact parts: 9 lower cells + 15
+rim parts + 9 solid chamber support parts = **33** collision/selection
+boxes. No imaginary full-height brick wall remains when formed.
+
+Because V2 saves formed shape/model snapshots, **UNFORM and REFORM** any
+already formed Hearth to refresh the visible model and physical hitbox.
+
+### Focused in-game checklist
+1. Assemble the original 3×3×2 from eight normal upper bricks and one
+   required AIR. Form all four facings; Patchouli layout is unchanged.
+2. Visually check the low back/side rim, front loading opening, charcoal
+   bed and genuinely supported iron stock rails from multiple angles.
+3. Test both selection and collision: no full-height invisible walls;
+   no walking through rendered brick or metal support pieces.
+4. Unform/break and confirm ordinary full bricks and AIR are restored.
+5. Reload world, F3+T, adjacent chunk views, texture mapping and FPS.
+6. Repeat four-to-four ingot/bar HEAT batch and original Kiln regression.
+
+**Stage:** source/model correction; JDK17 Gradle build, Minecraft rendering,
+physics and regressions not yet verified. Keep PR #18 draft.
