@@ -87,9 +87,9 @@ assert.equal(axes['axis=x'].x,90);
 assert.equal(axes['axis=x'].y,90);
 const beamModel=json('assets/magneticraft2/models/block/iron_structural_beam.json');
 const beamSource=java('block/stage/iron/IronStructuralBeamBlock.java');
-const xShape=beamSource.match(/private static final VoxelShape X = Shapes\\.or\\(([\\s\\S]*?)\\)\\.optimize\\(\\);/);
+const xShape=beamSource.match(/private static final VoxelShape X = Shapes\.or\(([\s\S]*?)\)\.optimize\(\);/);
 assert.ok(xShape,'X-axis collision boxes not found');
-const boxBounds=[...xShape[1].matchAll(/Block\\.box\\(([^)]*)\\)/g)]
+const boxBounds=[...xShape[1].matchAll(/Block\.box\(([^)]*)\)/g)]
   .map(m=>m[1].split(',').map(n=>Number(n.trim())));
 assert.equal(boxBounds.length,beamModel.elements.length,'X collision cuboid count');
 // Blockstate x=90, y=90 transform in block-centered coordinates:
