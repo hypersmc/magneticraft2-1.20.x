@@ -3,7 +3,7 @@
   "ambientocclusion": false,
   "textures": {
     "iron": "magneticraft2:block/material/dark_work_iron",
-    "bronze": "magneticraft2:block/material/bronze_machined",
+    "bearing": "magneticraft2:block/material/bronze_machined",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": [
@@ -79,7 +79,7 @@
       "from": [
         5,
         3,
-        1
+        2
       ],
       "to": [
         11,
@@ -110,7 +110,7 @@
           "uv": [
             0,
             0,
-            4,
+            3,
             13
           ]
         },
@@ -119,7 +119,7 @@
           "uv": [
             0,
             0,
-            4,
+            3,
             13
           ]
         },
@@ -129,7 +129,7 @@
             0,
             0,
             6,
-            4
+            3
           ]
         },
         "down": {
@@ -138,75 +138,7 @@
             0,
             0,
             6,
-            4
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        14,
-        0
-      ],
-      "to": [
-        12,
-        16,
-        6
-      ],
-      "faces": {
-        "north": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "south": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            8,
-            2
-          ]
-        },
-        "east": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            6,
-            2
-          ]
-        },
-        "west": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            6,
-            2
-          ]
-        },
-        "up": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            8,
-            6
-          ]
-        },
-        "down": {
-          "texture": "#bronze",
-          "uv": [
-            0,
-            0,
-            8,
-            6
+            3
           ]
         }
       }

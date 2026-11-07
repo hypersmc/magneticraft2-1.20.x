@@ -3,7 +3,7 @@
   "ambientocclusion": false,
   "textures": {
     "iron": "magneticraft2:block/material/dark_work_iron",
-    "bronze": "magneticraft2:block/material/bronze_machined",
+    "bearing": "magneticraft2:block/material/bronze_machined",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": []
