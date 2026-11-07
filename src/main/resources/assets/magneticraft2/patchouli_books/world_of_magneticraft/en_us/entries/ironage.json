@@ -318,6 +318,16 @@
     {
       "type": "text",
       "text": "$(bold)Finite rotational inertia$()$(br2)The Wooden Flywheel coasts at up to 6 torque. The Iron Flywheel temporarily carries up to 12 torque and decays more slowly under the same load, using Gear V2's existing finite inertia model. Its axle is rated for 24 torque but does NOT raise the Water Wheel's real power output or eliminate wooden gearbox bottlenecks. Axial shafts connect only after the 3×3 structure forms. Breaking the assembly drops its original non-AIR blocks and clears the wheel proxies."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron Service Access$()$(br2)The Iron factory palette now includes a hinged Service Hatch for maintenance passages and catwalk floors. It is a normal hand-operated metal trapdoor: right-click to open or close, or control it with redstone. It supports ceiling and floor placement, all four horizontal facings, and waterlogging. It is not a machine port, pressure seal or new multiblock; build it using existing Wrought Iron Plates, Bar and Rod."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Service Hatch",
+      "recipe": "magneticraft2:iron_service_hatch",
+      "text": "Two Plates, a Wrought Iron Bar and a Rod produce two sturdy metal access hatches. No Stock Shear, new metal grade or powered machine is added to this construction recipe."
     }
   ],
   "sortnum": 4,

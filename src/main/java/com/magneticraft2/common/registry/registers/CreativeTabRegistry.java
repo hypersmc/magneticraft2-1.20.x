@@ -48,6 +48,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_IRON_MACHINE_FOUNDATION.get());
                         entries.accept(ItemRegistry.ITEM_IRON_FLOOR_GRATING.get());
                         entries.accept(ItemRegistry.ITEM_IRON_CATWALK_RAILING.get());
+                        entries.accept(ItemRegistry.ITEM_IRON_SERVICE_HATCH.get());
                     })
                     .build());
     public static final RegistryObject<CreativeModeTab> MGC2Items = TABS.register("magneticraft2_items", () ->

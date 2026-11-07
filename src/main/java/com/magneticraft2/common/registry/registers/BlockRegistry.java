@@ -65,6 +65,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
 import com.magneticraft2.common.block.stage.iron.IronStructuralBeamBlock;
 import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
 import com.magneticraft2.common.block.stage.iron.IronFloorGratingBlock;
+import com.magneticraft2.common.block.stage.iron.IronServiceHatchBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
@@ -225,6 +226,9 @@ public class BlockRegistry {
             BLOCKS.register("iron_catwalk_railing", () -> new FenceBlock(
                     BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
                             .sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
+    // Iron service access: vanilla trapdoor redstone, manual hinge and waterlogging.
+    public static final RegistryObject<IronServiceHatchBlock> IRON_SERVICE_HATCH =
+            BLOCKS.register("iron_service_hatch", IronServiceHatchBlock::new);
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(
