@@ -1,6 +1,6 @@
 # Iron IV-A — Iron Forge Hearth (first fueled batch reheater)
 
-**Stage:** source implementation on draft PR #18, not built or game-accepted.
+**Stage (2026-11-08):** Player-confirmed functional in-game. Complete Gradle build, all-orientation rendering, save/reload and other detailed regression cases are not independently verified.
 
 ## Why it exists
 
@@ -166,3 +166,9 @@ restoring the construction blocks in-place.
 
 **Stage:** source/model correction; JDK17 Gradle build, Minecraft rendering,
 physics and regressions not yet verified. Keep PR #18 draft.
+
+## Player-confirmed functionality — 2026-11-08
+
+The player explicitly reported that **the Iron Forge Hearth already works and has been tested in-game**. Its primary functionality should be treated as accepted, not as an untested or broken source prototype. Do not repeat general Hearth implementation/debug work without a specific observed failure.
+
+This statement does not individually establish that all four orientations, brick/model collision, old-world migration, F3+T reloads, exact HEAT/fuel balance, save/reload and FPS checks passed. Those remain separate verification items. A full JDK 17 `./gradlew build` has not been documented in this development session. PR #18 remains draft and unmerged.
