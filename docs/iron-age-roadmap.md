@@ -1,6 +1,6 @@
 # Iron Age — foundations and development roadmap (Forge 1.20.1)
 
-**Status:** kickoff / proposed gameplay scope; not yet an implemented Iron Age.
+**Status (2026-11-07):** Iron Age gameplay has begun. Iron 0A's Wrought Iron Forging Die was implemented on PR #18 and the player has confirmed it works in-game. Further planned milestones remain proposals; release/build and systematic regression evidence are tracked separately.
 **Base:** `master` immediately after Bronze PR #11 merge
 (`5e5cb3440daa8bd642574c5f473bc5028fecfcb0`, 2026-11-04).
 **Branch:** `feature/iron-age-foundations`.
@@ -71,7 +71,10 @@ a world with existing Bronze Forge Hammer NBT; recover from a save with
 installed Iron die; compare idle/paused and successful operations;
 verify item display/model and Patchouli/JEI crafting.
 
-**Status:** source candidate only until build and player in-game tests.
+**Player acceptance (2026-11-07):** The player reported **"yep works!"** after receiving the Iron 0A test checklist for crafting, die installation, service life, replacement, save/reload, and visual/book integration. Record the Iron 0A gameplay milestone as **player-confirmed functioning in-game**. The report is an overall confirmation, not separate logs for each test or measured wear/FPS data. The exact `node tools/iron-age/check-forge-die-contract.mjs` and JDK 17 `./gradlew build` outputs have not been independently supplied. Do not relabel those tasks as passed without logs.
+
+**Multiplayer scope decision reaffirmed (2026-11-07):** **ALL multiplayer-related work and testing is deferred until Steam Age is finished**, per the user's explicit instruction. Do not make multiplayer verification a blocker for Iron Age development, or claim dedicated-server/multi-client testing passed. Continue to avoid knowingly client-only gameplay logic and preserve future multiplayer compatibility; full verification will be performed after Steam Age.
+
 
 ## Next proposed milestones (following the source-implemented Iron 0A)
 
@@ -201,7 +204,10 @@ until the Steel Age contract is decided.
    bottleneck and select a useful forged Iron drivetrain part before
    growing Iron I/II.
 
-**Status:** PR #18 contains the first Iron Age gameplay source candidate
-(the Wrought Iron Forge Die). The implementation has NOT been confirmed by
-an actual Gradle build or in-game use and is not merge-ready. Future Iron
-drivetrain upgrades remain proposals, not registered features.
+**Status (2026-11-07):** PR #18's first Iron Age gameplay feature has been
+**accepted in-game by the player**. Full `./gradlew build` and independent
+test-script results remain undocumented here. Additional Iron drivetrain
+upgrades remain proposals, not registered features. The user has explicitly
+deferred **all multiplayer-related implementation/testing until after Steam
+Age is complete**. PR #18 stays draft and unmerged pending a separate
+decision; player acceptance does not by itself authorize merging.
