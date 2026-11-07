@@ -1,0 +1,9 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "magneticraft2:block/wrought_iron_gearbox"
+      }
+    }
+  ]
+}

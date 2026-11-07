@@ -99,6 +99,26 @@
     {
       "type": "text",
       "text": "$(bold)Stronger, Not a Generator$()$(br2)The wooden medium gear is limited to 8 torque. The Wrought Iron Medium Gear has a 16-torque capacity but does NOT increase water-wheel torque, RPM or gear-network output. Mixed networks are still limited by their weakest gear, gearbox, source, mechanical module or connected load.$(br2)An isolated Iron gear cannot solve an 8-torque wooden gearbox bottleneck. A real greater-than-8-torque consumer comes later in Iron Age."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron II-B — Forged Drive Shafts$()$(br2)Build a Wrought Iron Shaft from one Wrought Iron Bar and two Precision Bronze Bearings. It uses the established shaft placement rules and connects only along its X, Y or Z axis.$(br2)The iron shaft can withstand up to 24 torque, but it does not generate power; a large water wheel still supplies no more than 16 and a wooden Medium Gear or Gearbox still limits its own branch to 8."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Shaft",
+      "recipe": "magneticraft2:wrought_iron_shaft",
+      "text": "One rolled Wrought Iron Bar and two machined Bronze Bearings. Place along the clicked face's axis, just like the existing wooden shaft. Rotate only when supplied by a valid Gear V2 network."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron Right-Angle Gearbox$()$(br2)This forged gearbox retains the existing wooden gearbox's INPUT and OUTPUT side configuration, reversible 1:1 shaft drive and right-angle sign convention, but supports 16 torque instead of 8.$(br2)It uses two Precision Iron Gears, two Wrought Iron Shafts, four Plates and one Precision Bronze Bearing. Sneak-right-click empty-handed to swap the ports, or right-click to select the next perpendicular output."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Gearbox",
+      "recipe": "magneticraft2:wrought_iron_gearbox",
+      "text": "The same functional miter gearbox you know from Copper Age, now fitted with iron shafts, machined gear parts and bronze-bearing support. Higher capacity is only useful when the whole power path and source support the load."
     }
   ],
   "sortnum": 4,

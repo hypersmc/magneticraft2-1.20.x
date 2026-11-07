@@ -168,6 +168,48 @@ approved, without making factory construction depend on new machinery.
 in-game appearance/placement/rotation/drops/survival recipe testing
 remain open. Dedicated multiplayer remains deferred until after Steam.
 
+## Iron II-B — Wrought Iron Shaft and Gearbox (source implementation, pending test)
+
+Two more Gear V2 nodes are now source-implemented on PR #18:
+`wrought_iron_shaft` (axial 1:1 drive, 24-torque structural
+capacity) and `wrought_iron_gearbox` (right-angle reversible 1:1
+drive, 16-torque capacity). The wooden shaft remains 16 and the
+wooden right-angle gearbox remains 8.
+
+**Actual benefit:** The Iron gearbox removes an 8-torque right-angle
+bottleneck if the large water wheel, other gear nodes and actual
+consumer support greater load. The new shaft's capacity above 16
+is future headroom, *not* more current source power. A separate
+higher-than-8-torque factory consumer is still needed for end-to-end
+proof, and mixed wood/iron networks remain limited by their weakest
+node.
+
+**Implementation:** Both blocks specialize the existing Wood
+Shaft/Gearbox code, keeping axial port rules, right-angle direction,
+in-world port swapping, Gear V2 load semantics, update sync and server
+ticks. Each has its own block entity/registry ID so saved wooden
+installations are not retyped. Iron Shaft uses the same backed model
+rotation and axle geometry with dark worked iron, while the Iron
+Gearbox reuses the established *dynamic bevel gear rendering geometry*
+with metal/bronze textures rather than copying or repainting the
+wooden enclosure at runtime. Stationary cages use the existing
+proportionate model with Iron/Bronze texture assignments.
+
+**Survival:** Shaft = one wrought bar + two precision bronze bearings.
+Gearbox = two wrought shafts, two precision iron gears, four wrought
+plates and one precision bronze bearing. Existing forge/rolling/
+lathe production chains supply them; neither recipe is circular.
+All have block items, creative-tab entries, simple crafting recipes,
+loot, pickaxe tags, named models and Patchouli pages. There is no
+new forged material quality modifier for their torque ratings:
+vanilla crafting-table assembly does not propagate source quality
+NBT, as with the first iron gear.
+
+**Verification not performed:** `./gradlew build`, committed Node
+fixtures and in-game motor/gear orientation, visual, torque, break,
+reload, performance tests. Multiplayer remains explicitly deferred
+until after Steam Age.
+
 ## Iron II-A — first Iron Medium Gear (source implemented; verification pending)
 
 **Source candidate:** The first actual Gear V2 Wrought Iron Medium Gear

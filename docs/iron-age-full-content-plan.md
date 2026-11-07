@@ -73,8 +73,8 @@ See [Iron industrial factory expansion](iron-age-industrial-factory-expansion.md
 | --- | --- | --- | --- |
 | `wrought_iron_gear_medium` | Gear V2 8-tooth gear | 16 vs wooden 8 torque capacity, forge/lathe/assembly path | SOURCE IMPLEMENTED (not yet in-game verified) |
 | `wrought_iron_gear_large` | Gear V2 16-tooth gear | Strength/ratio choices, matching established mesh pitch | Iron II-B |
-| `wrought_iron_shaft` | Gear V2 X/Y/Z axial shaft | Sustained transmission and mechanically supported iron parts; no free torque | Iron II-B |
-| `wrought_iron_gearbox` | Gear V2 gearbox | Axis change without retaining wooden gearbox 8 limit | Iron II-B |
+| `wrought_iron_shaft` | Gear V2 X/Y/Z axial shaft | 24 max torque, existing wood 16; current 16-torque sources unchanged | SOURCE IMPLEMENTED — in-game tests pending |
+| `wrought_iron_gearbox` | Gear V2 gearbox | Existing 1:1 right-angle ports, 16 max torque vs wood 8 | SOURCE IMPLEMENTED — in-game tests pending |
 | `riveted_iron_frame` | Structural full block | Genuine heavy machine support in multiblock layouts | Iron II-B |
 | `iron_stock_shear` | **New JSON multiblock** | High-load mechanical stock cutting/punching and fasteners | Iron III |
 | `riveted_iron_casing` | Full iron casing block | Enclosure and structural ingredient for heavy machinery | Iron III |
