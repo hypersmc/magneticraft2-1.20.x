@@ -148,6 +148,38 @@ two perpendicular outputs, inspect the actual shaft and coupling
 junction, highlight/collision and rotation from multiple angles.
 Check the wooden parts have not become narrow or changed behavior.
 
+## Root cause: bronze buffer bleeding into iron geometry — 2026-11-07
+
+The player's post-axle-fix screenshot shows the Iron Shaft/Housing
+now correct, but **the gearbox's bevel gears AND full-width braces are
+still bronze/wood coloured**. The code already specified dark iron for
+the structural pieces. Therefore simply changing the textures again
+would only hide the symptom.
+
+**Rendering root cause:** The shared right-angle gearbox BER acquired
+three separate `VertexConsumer` objects from a `MultiBufferSource`
+*before* it emitted any vertices. Forge's shared immediate-buffer
+path may reuse a single `BufferBuilder` when the render type changes.
+The final consumer acquisition selected the bronze support texture,
+so subsequent intended Iron vertices could be rendered as bronze.
+This explains the screenshot despite correct material names in Java.
+
+**Fix:** Group all existing procedural geometry into material
+passes. Resolve a `VertexConsumer` just before drawing (1) bevel gears,
+(2) shaft couplings, (3) stationary cage braces, and finally
+(4) central bearing sleeves. Only the actual bearing sleeves use
+the Bronze support texture for Iron. The old Wooden gearbox still
+uses oak-plank gears/braces and its original shaft wood material.
+The geometric dimensions, animation, port coordinates, Iron 2px
+coupling width, Gear V2 logic, saved nodes and recipe data are unchanged.
+
+The iron bevel mesh and cheeks should finally render in dark worked
+iron rather than inheriting the last bronze texture. The visual
+result is **not verified** until the player checks the updated
+Minecraft client, both stationary and rotating, with multiple
+perpendicular port selections. Static inspection alone cannot
+prove which GPU buffers were active at render time.
+
 ## Single-player acceptance checklist
 
 - [ ] Run `node tools/iron-age/check-iron-shaft-gearbox-contract.mjs`.

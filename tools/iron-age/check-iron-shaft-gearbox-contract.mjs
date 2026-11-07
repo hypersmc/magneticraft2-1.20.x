@@ -89,9 +89,23 @@ assert.match(sharedBoxRenderer,/proportionalUv \? \(float\) sizeX : texelWindow\
 assert.match(sharedBoxRenderer,/renderBevelGear/);
 assert.match(sharedBoxRenderer,/renderPortShaft/);
 assert.match(sharedBoxRenderer,/renderPortSupport/);
-assert.ok(sharedBoxRenderer.includes('proportionalUv ? consumer : support'));
-assert.match(sharedBoxRenderer,/VertexConsumer structural/);
-assert.match(sharedBoxRenderer,/VertexConsumer bearing/);
+// RenderType consumers must be resolved per material pass, not all
+// pre-fetched before drawing; they may share a mutable BufferBuilder.
+assert.match(sharedBoxRenderer,/VertexConsumer gears\s*=/);
+assert.match(sharedBoxRenderer,/VertexConsumer shafts\s*=/);
+assert.match(sharedBoxRenderer,/VertexConsumer structure\s*=/);
+assert.match(sharedBoxRenderer,/VertexConsumer bearings\s*=/);
+assert.ok(sharedBoxRenderer.includes('proportionalUv ? shaftTexture : supportTexture'));
+assert.match(sharedBoxRenderer,/renderPortSupport\(stack, structure, packedLight, input, false\)/);
+assert.match(sharedBoxRenderer,/renderPortSupport\(stack, bearings, packedLight, input, true\)/);
+assert.ok(sharedBoxRenderer.indexOf('renderBevelGear(stack, gears') <
+          sharedBoxRenderer.indexOf('VertexConsumer shafts'));
+assert.ok(sharedBoxRenderer.indexOf('renderPortShaft(stack, shafts') <
+          sharedBoxRenderer.indexOf('VertexConsumer structure'));
+assert.ok(sharedBoxRenderer.indexOf('renderPortSupport(stack, structure') <
+          sharedBoxRenderer.indexOf('VertexConsumer bearings'));
+assert.equal((sharedBoxRenderer.match(/drawBox\(stack, consumer, packedLight,/g)||[]).length,4,
+ 'three structural cuboids and one center bearing retain their geometry');
 
 const book=json('assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/ironage.json');
 const pickaxe=json('data/minecraft/tags/blocks/mineable/pickaxe.json');
@@ -157,9 +171,10 @@ assert.equal(gearboxVisual.textures.frame,ironTex);
 assert.equal(gearboxVisual.textures.base,ironTex,'structural floor must be iron');
 assert.ok(!Object.values(shaftVisual.textures).includes(bronzeTex),
  'iron shaft unexpectedly has wooden-looking bronze caps');
-assert.match(sharedBoxRenderer,/renderPortSupport\(\s*stack,\s*proportionalUv \? consumer : support,\s*support/);
-assert.match(sharedBoxRenderer,/drawBox\([\s\S]*?structural,/);
-assert.match(sharedBoxRenderer,/drawBox\([\s\S]*?bearing,/);
+assert.match(sharedBoxRenderer,/renderPortSupport\(stack, structure, packedLight, output, false\)/);
+assert.match(sharedBoxRenderer,/renderPortSupport\(stack, bearings, packedLight, output, true\)/);
+assert.ok(!sharedBoxRenderer.includes('VertexConsumer oak ='));
+assert.ok(!sharedBoxRenderer.includes('VertexConsumer support ='));
 const shaftRecipe=json('data/magneticraft2/recipes/wrought_iron_shaft.json');
 const boxRecipe=json('data/magneticraft2/recipes/wrought_iron_gearbox.json');
 assert.deepEqual(shaftRecipe.pattern,[' B ',' R ',' B ']);

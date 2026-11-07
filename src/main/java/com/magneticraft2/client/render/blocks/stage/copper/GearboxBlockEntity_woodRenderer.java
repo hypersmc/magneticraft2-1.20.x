@@ -85,52 +85,44 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
         stack.pushPose();
         stack.translate(0.5D, 0.5D, 0.5D);
 
-        VertexConsumer oak =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(gearTexture));
-        VertexConsumer shaft =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(shaftTexture));
-        VertexConsumer support =
-                bufferSource.getBuffer(RenderType.entityCutoutNoCull(supportTexture));
-
         Direction input = gearbox.getInputDirection();
         Direction output = gearbox.getOutputDirection();
 
         float inputAngle = gearbox.getVisualRotationDegrees(partialTicks);
         float outputAngle = gearbox.getOutputVisualRotationDegrees(partialTicks);
 
-        renderPortShaft(
-                stack,
-                shaft,
-                support,
-                packedLight,
-                input,
-                inputAngle * axisDirectionSign(input)
-        );
-        renderPortShaft(
-                stack,
-                shaft,
-                support,
-                packedLight,
-                output,
-                outputAngle * axisDirectionSign(output)
-        );
+        // A MultiBufferSource may reuse its underlying BufferBuilder across
+        // different RenderTypes. Fetch the consumer JUST BEFORE each material
+        // pass; holding Iron and Bronze consumers simultaneously previously
+        // caused the bronze texture to cover the entire Iron gearbox.
+        // Draw both ports of each material together to avoid extra flushes.
+        VertexConsumer gears =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(gearTexture));
+        renderBevelGear(stack, gears, packedLight,
+                input, inputAngle * axisDirectionSign(input), false);
+        renderBevelGear(stack, gears, packedLight,
+                output, outputAngle * axisDirectionSign(output) + 22.5F, true);
 
-        renderBevelGear(
-                stack,
-                oak,
-                packedLight,
-                input,
-                inputAngle * axisDirectionSign(input),
-                false
-        );
-        renderBevelGear(
-                stack,
-                oak,
-                packedLight,
-                output,
-                outputAngle * axisDirectionSign(output) + 22.5F,
-                true
-        );
+        VertexConsumer shafts =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(shaftTexture));
+        renderPortShaft(stack, shafts, packedLight,
+                input, inputAngle * axisDirectionSign(input));
+        renderPortShaft(stack, shafts, packedLight,
+                output, outputAngle * axisDirectionSign(output));
+
+        // Structural supports are Iron for the Iron gearbox and Oak for
+        // the original wooden gearbox. Only the actual bearing journals
+        // receive the bronze material on the Iron variant.
+        VertexConsumer structure = bufferSource.getBuffer(
+                RenderType.entityCutoutNoCull(
+                        proportionalUv ? shaftTexture : supportTexture));
+        renderPortSupport(stack, structure, packedLight, input, false);
+        renderPortSupport(stack, structure, packedLight, output, false);
+
+        VertexConsumer bearings =
+                bufferSource.getBuffer(RenderType.entityCutoutNoCull(supportTexture));
+        renderPortSupport(stack, bearings, packedLight, input, true);
+        renderPortSupport(stack, bearings, packedLight, output, true);
 
         stack.popPose();
     }
@@ -141,122 +133,76 @@ public class GearboxBlockEntity_woodRenderer implements BlockEntityRenderer<Gear
      * all the way through the gearbox; on UP/DOWN ports that appeared as a huge
      * wooden cube sitting directly on top of the gears.
      */
+    /**
+     * Rotating axle/coupling only. Bearings and structural supports are
+     * drawn in independent material batches after the shafts.
+     */
     private void renderPortShaft(PoseStack stack,
                                  VertexConsumer consumer,
-                                 VertexConsumer support,
                                  int packedLight,
                                  Direction port,
                                  float rotation) {
         stack.pushPose();
         orientLocalXToDirection(stack, port);
-
-        // Fixed support tied into the cage. The wooden axle rotates inside it.
-        // The iron variant reuses all the geometry but cannot leave the
-        // structural cage brace coated in bronze. Only the actual bearing
-        // journal is bronze; load-bearing braces and cheeks remain iron.
-        // The existing wooden variant still uses its original support
-        // texture everywhere, with no layout or UV-policy changes.
-        renderPortSupport(
-                stack,
-                proportionalUv ? consumer : support,
-                support,
-                packedLight
-        );
-
         stack.mulPose(Axis.XP.rotationDegrees(rotation));
 
         // Continuous axle from the gear hub to the outer coupling.
         drawBoxAtLocalX(
-                stack,
-                consumer,
-                packedLight,
-                0.265D,
-                0.470D,
-                portAxleThickness
+                stack, consumer, packedLight,
+                0.265D, 0.470D, portAxleThickness
         );
 
-        // Both couplings end at the block face. Iron uses a 2-pixel
-        // cross-section, matching the connected Iron Shaft and gear axle.
+        // Port coupling shares the Iron Shaft's 2px cross-section (wood
+        // retains its existing 6px coupling).
         drawBoxAtLocalX(
-                stack,
-                consumer,
-                packedLight,
-                0.455D,
-                0.090D,
-                portCouplingThickness
+                stack, consumer, packedLight,
+                0.455D, 0.090D, portCouplingThickness
         );
 
         stack.popPose();
     }
 
-    private void renderPortSupport(
-            PoseStack stack,
-            VertexConsumer structural,
-            VertexConsumer bearing,
-            int packedLight) {
-        /*
-         * Local +X points toward the active gearbox face.
-         *
-         * This is a real structural cross-member, not a small decorative
-         * collar. It spans from one side of the wooden cage to the other and
-         * carries the bearing at its center, so the shaft/gear assembly has an
-         * obvious physical support path from every normal viewing angle.
-         */
+    /**
+     * Stationary gearbox support. Draw either the structural steel/wood
+     * brace pieces OR the bronze/wood center bearing, never both through
+     * simultaneous consumers backed by a shared mutable BufferBuilder.
+     */
+    private void renderPortSupport(PoseStack stack,
+                                   VertexConsumer consumer,
+                                   int packedLight,
+                                   Direction port,
+                                   boolean bearingOnly) {
         stack.pushPose();
+        orientLocalXToDirection(stack, port);
 
-        // Full-width load-bearing cross-brace. The static housing rails sit near
-        // +/-0.44 from center, so this visibly terminates inside both rails.
-        stack.pushPose();
-        stack.translate(0.405D, 0.0D, 0.0D);
-        drawBox(
-                stack,
-                structural,
-                packedLight,
-                0.095D,
-                0.095D,
-                0.875D
-        );
-        stack.popPose();
+        if (bearingOnly) {
+            // Supported central bearing sleeve around the rotating axle.
+            stack.pushPose();
+            stack.translate(0.405D, 0.0D, 0.0D);
+            drawBox(stack, consumer, packedLight,
+                    0.125D, 0.245D, 0.245D);
+            stack.popPose();
+        } else {
+            // Full-width brace terminates in the inner cage rails.
+            stack.pushPose();
+            stack.translate(0.405D, 0.0D, 0.0D);
+            drawBox(stack, consumer, packedLight,
+                    0.095D, 0.095D, 0.875D);
+            stack.popPose();
 
-        // Thicker center bearing block where the rotating axle passes through
-        // the cross-member.
-        stack.pushPose();
-        stack.translate(0.405D, 0.0D, 0.0D);
-        drawBox(
-                stack,
-                bearing,
-                packedLight,
-                0.125D,
-                0.245D,
-                0.245D
-        );
-        stack.popPose();
+            // Top/bottom retaining cheeks capture the bearing.
+            stack.pushPose();
+            stack.translate(0.405D, 0.170D, 0.0D);
+            drawBox(stack, consumer, packedLight,
+                    0.105D, 0.095D, 0.310D);
+            stack.popPose();
 
-        // Small upper/lower cheeks make the bearing read as captured by the
-        // brace rather than pasted onto its front face.
-        stack.pushPose();
-        stack.translate(0.405D, 0.170D, 0.0D);
-        drawBox(
-                stack,
-                structural,
-                packedLight,
-                0.105D,
-                0.095D,
-                0.310D
-        );
-        stack.popPose();
-
-        stack.pushPose();
-        stack.translate(0.405D, -0.170D, 0.0D);
-        drawBox(
-                stack,
-                structural,
-                packedLight,
-                0.105D,
-                0.095D,
-                0.310D
-        );
-        stack.popPose();
+            stack.pushPose();
+            stack.translate(0.405D, -0.170D, 0.0D);
+            drawBox(stack, consumer, packedLight,
+                    0.105D, 0.095D, 0.310D);
+            stack.popPose();
+        }
 
         stack.popPose();
     }
