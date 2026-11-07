@@ -49,7 +49,7 @@ Bronze gives us precision casting, mechanical manufacturing, industrial ore prep
 | `iron_gear_blank_large` | Assemble 4 Bars + 4 Plates + 1 Riveted Frame into a rough wheel | Existing Bronze Lathe takes it to precise 16-tooth rim | SOURCE IMPLEMENTED — in-game pending |
 | `precision_iron_gear_large` | Existing Bronze Lathe, 160 ticks at 12 RPM / 8 torque, 3 cutter wear | Assemble larger Iron gear with Plates and Iron Shaft | SOURCE IMPLEMENTED — in-game pending |
 | `machined_iron_shaft` | Potential later Lathe turning of iron bar for tighter shaft tolerances | Iron machine upgrades if genuine precision/wear needs established | CONDITIONAL — first Iron Shaft currently assembled from rolled Bar + machined Bronze bearings |
-| `iron_bearing_housing` | Forging and existing Precision Boring Machine | Gearbox/flywheel, physical bearing seats | CORE |
+| `iron_bearing_housing` | Existing hot Bar → Forge Hammer's Medium Iron Gear Blank → Precision Boring Machine | Optional alternative Gearbox/Flywheel assembly with a Bronze Bushing | SOURCE IMPLEMENTED — in-game testing pending (2026-11-08) |
 | `iron_lathe_cutter` | Forge/grind serviceable iron-capable cutter | Work Iron on existing Lathe | CORE if Bronze cutter cannot |
 | `iron_shear_blade` | 2 Wrought Iron Plates + 1 Rod → Shear Blade | Replaceable 512-batch Stock Shear tooling | SOURCE IMPLEMENTED — game tests pending |
 | `iron_press_die` | Iron tool upgrade | Iron panel forming or longer service | CONDITIONAL |
@@ -334,3 +334,24 @@ Plate recipe retained. Efficient Sheet Panel manufacture costs half
 the metal of direct manual panel crafting, but requires real Gear V2
 power and roller wear. No Draw Bench/Steam/Steel unlock is implied.
 See `docs/iron-age-sheet-acceptance.md` and the source contract.
+
+## 2026-11-08 — Iron Bearing Housing component and Draw Bench decision
+
+The planned Iron Bearing Housing **item** is now source-implemented as a
+material-conserving alternative to spending a forged Medium Iron Gear Blank
+on Lathe gear machining. The existing Bronze Precision Boring Machine makes
+one `iron_bearing_housing` from one `iron_gear_blank_medium` at 20 RPM /
+8 torque / 240 supplied ticks. Two **optional crafting alternatives**
+incorporate the bored Housing and a real Bronze Bushing in the already
+implemented Iron Gearbox and Iron Flywheel. Their original recipes remain.
+No new registered block or machine was created by this component.
+See `docs/iron-age-bearing-housing-acceptance.md` for the exact ledger,
+NBT expectations, recipe IDs and verification checklist.
+
+Of the originally proposed **16 registered Iron blocks**, **15 are
+implemented in source**. The proposed Mechanical Draw Bench remains the
+single conditional omission: no approved precision-drawn stock currently
+has the two distinct functional consumers required by the original gate.
+It is therefore **deferred, not silently cancelled or considered
+implemented**. The 15/16 figure is a content count, **not** a build or
+regression verification score.
