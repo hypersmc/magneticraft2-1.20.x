@@ -9,6 +9,17 @@ existing Bronze Forge Hammer a longer service lifetime (768 vs 384
 completed batches). Next is in-game verification, followed by an
 independently justified stronger drivetrain application.
 
+## Detailed Iron Age content plan — 2026-11-07
+
+The proposed full materials, blocks, two new multiblocks, mechanical
+upgrades, heavy manufacturing and Steel handoff are specified in
+[Iron Age full content plan](iron-age-full-content-plan.md).
+
+That file is a **design proposal**, not authorization to implement every
+candidate. The first Forge Die is player-accepted; the rest require
+incremental scope review, build and in-game verification. Multiplayer
+remains deferred until after Steam.
+
 ## What is already working (not to be recreated)
 
 - The player has completed the Magnetite → Stamp Mill/Washer/Sifter →
