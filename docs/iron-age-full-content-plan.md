@@ -319,3 +319,18 @@ survival recipe. It creates two hatches from two Wrought Iron Plates,
 one Bar and one Rod. No premature high-demand machine or new material
 is involved. In-game functional confirmation, model/collision checks,
 `./gradlew build` and regressions are still outstanding.
+
+### Iron I-C — cold-finished Sheet stock implementation (2026-11-07)
+
+`wrought_iron_sheet` is now the output of a specifically powered
+**cold-finishing** recipe on the existing Bronze Rolling Mill.
+One previously forged Plate (1 ingot-equivalent) produces **two**
+half-ingot-equivalent Sheets at 16 RPM, 12 torque, 240 ticks.
+Quality NBT transfers to sheet; temporary heat does not. The old
+Copper Sheet recipe and hot-bar/hot-rod rolling remain intact.
+The Sheet makes Iron Plate Panels and Iron Service Hatches through
+additional thinner-stock crafting alternatives, with each legacy
+Plate recipe retained. Efficient Sheet Panel manufacture costs half
+the metal of direct manual panel crafting, but requires real Gear V2
+power and roller wear. No Draw Bench/Steam/Steel unlock is implied.
+See `docs/iron-age-sheet-acceptance.md` and the source contract.

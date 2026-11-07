@@ -65,3 +65,16 @@ UVs, recipe and tags. It is not compilation nor game acceptance.
 waterlogged runtime checks, visual screenshots, survival drops.
 The user has deferred multiplayer-specific work until after Steam Age.
 PR #18 stays draft and unmerged.
+
+## Player feedback and later sheet-stock alternative
+
+Player reported **“the hatch works”** on 2026-11-07. Record core
+hatch functionality as **player-reported PASS**, not as individual
+measured/automated redstone, waterlogging, drop or four-orientation tests.
+
+The subsequent Iron I-C sheet-stock slice adds an **optional**
+2 Sheet + 1 Bar + 1 Rod → 2 Hatch crafting recipe. It retains
+the original 2 Plate + 1 Bar + 1 Rod → 2 Hatch recipe and does not
+change the registered hatch block, collision, redstone or waterlogging.
+New recipe and source verification are separate from the player's
+earlier acceptance of hatch behavior.

@@ -525,3 +525,37 @@ UV/rendering in Minecraft. The independent JSON/source fixture is in
 `tools/iron-age/check-iron-service-hatch-contract.mjs`. Test before
 marking the hatch complete. No change was made to the flywheel or HEAT
 systems. PR #18 stays draft, multiplayer remains deferred until after Steam.
+
+## Iron I-C — Cold Wrought Iron Sheet (source implementation, 2026-11-07)
+
+The first thin wrought stock now comes from the existing powered Bronze
+Rolling Mill, not a duplicate Iron machine: **1 forged Wrought Iron Plate
+→ 2 Wrought Iron Sheets** in **240 supplied ticks at ≥16 RPM / 12 torque**.
+This is a *cold-finishing pass* on already forged, low-carbon wrought
+iron; it does not falsely require a new plate-reheat path or invent
+permanent hot sheet items. The genuinely higher load needs a working
+Iron drivetrain, and the Mill retains real roller-sleeve wear,
+output reservation, power interruptions and progress handling.
+
+The new sheets are **one-half plate (one-half ingot equivalent) each**.
+The Roll's quality-NBT propagation is intentionally separate from the
+hot-stock requirement: Iron Sheet, hot Iron Bars and hot Iron Rods
+all preserve quality without transferring temporary heat; original
+Copper cold rolling keeps its previous output-tag behavior.
+
+The immediately useful consumers are two **additive**, opt-in
+efficient factory construction recipes:
+- 2 Sheets (one original Plate worth of metal) → 1 Iron Plate Panel;
+- 2 Sheets + 1 Wrought Iron Bar + 1 Rod → 2 Iron Service Hatches.
+
+These do **not** remove or alter the original 2-Plate Panel recipe nor
+the original 2-Plate/Bar/Rod Hatch recipe. The material-saving benefit
+of spending powered machine time is explicit. Finished crafted blocks,
+as with all ordinary crafting table outputs, do not propagate the
+input ingredient quality NBT automatically.
+
+**Status:** source and JSON implemented only; in-game shaping, power
+load, finish time, output quality, copper/hot-iron recipe regressions,
+blocked outputs, roller wear, runtime visuals and JDK17 Gradle build
+remain unverified. See `docs/iron-age-sheet-acceptance.md`. Keep
+PR #18 draft and multiplayer work postponed until after Steam Age.
