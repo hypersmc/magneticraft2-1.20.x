@@ -166,17 +166,21 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             setRunning(false);
             return;
         }
-        if (!recipe.getId().equals(activeRecipe)
-                || !ItemStack.isSameItemSameTags(activeInput, inputStack)
-                || activeOutput.isEmpty()) {
+        boolean inputOrRecipeChanged = !recipe.getId().equals(activeRecipe)
+                || !ItemStack.isSameItemSameTags(activeInput, inputStack);
+        if (inputOrRecipeChanged) {
             activeRecipe = recipe.getId();
             activeInput = inputStack.copy();
             activeInput.setCount(1);
+            progress = 0;
+            setChanged();
+        }
+        // This cache is not persisted. Rebuild it after loading without
+        // invalidating real, already-saved progress on the same batch.
+        if (inputOrRecipeChanged || activeOutput.isEmpty()) {
             activeOutput = HotBloomWorkpiece.requiresRollingHeat(recipe)
                     ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
                     : recipe.getOutput();
-            progress = 0;
-            setChanged();
         }
         // Check the actual quality-tagged output and preserve that exact
         // immutable batch result for reservation and final insertion.
