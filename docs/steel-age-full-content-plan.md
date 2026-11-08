@@ -1,11 +1,13 @@
 # Steel Age — content and progression plan
 
 **Magneticraft2 / Forge 1.20.1** · **2026-11-08**  
-**State:** design and implementation gates, **not gameplay source implemented**.  
-**Stacked on:** Iron Age draft PR #18 (`feature/iron-age-foundations`).  
+**State (updated 2026-11-08):** first Steel loop implemented and player-reported working in-game; later Steel stages remain design candidates. Full Java build and complete regression verification are not established by this document.  
+**Branch:** Steel PR #19 (`feature/steel-age-foundations`), now targeting `master`; Iron PR #18 was merged on 2026-11-08.  
 **Age order:** Stone → Copper → Bronze → Iron → **Steel** → Steam → Gasoline → Electric Generator → Nuclear.
 
 ## 1. Established direction
+
+**Current planning continuation:** [Steel II–V fabrication and Steam handoff](steel-age-steam-readiness-roadmap.md). The upcoming electrical conversion/grid is designed separately in [Electrical power and cable design contract](electrical-power-network-design-contract.md). The historical candidate register and implementation gates below describe the design at the time it was drafted, and are not an up-to-date implementation checklist on their own.
 
 The earlier Steel plan specified **Coke Oven → Blast Furnace → Steel Refining
 Furnace**, followed by larger-scale rolling/pressing and infrastructure
@@ -170,6 +172,4 @@ Patchouli, exercise full power/fuel/output blocking/recovery, saves and
 drops, and inspect real visuals/UV/performance. Independent static checks
 never substitute for a build or in-game test.
 
-**Current state:** this document changes no gameplay, models,
-registries, recipes or old machine behavior. No Steel production has
-been implemented or accepted in-game. PR #18 remains draft/unmerged.
+**Current state (2026-11-08 update):** the first Coke → Pig Iron → Refined Steel → Steel Forge Die loop now exists in source and the player reports it working in-game. Iron PR #18 has been merged. Steel PR #19 remains a draft targeting `master`; Steel II–V remain proposals, not implemented features. This document still makes no gameplay, model, registry or recipe changes.
