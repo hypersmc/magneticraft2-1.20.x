@@ -108,11 +108,25 @@ public final class MultiblockRenderParts {
             // Bloomery gets a small reusable, once-baked palette: its
             // foundation, tiered shaft, side tuyere and open hearth do not
             // require one JSON/model allocation for each occupied cell.
-            String modelKey = machineId.equals("bloomery_furnace")
-                    ? BloomeryModelParts.key(facing, dx, dy, dz,
-                            originalBlocks.get(partPos).isAir())
-                    : machineId + "_" + facing.getName()
+            String modelKey;
+            if (machineId.equals("bloomery_furnace")) {
+                modelKey = BloomeryModelParts.key(facing, dx, dy, dz,
+                        originalBlocks.get(partPos).isAir());
+            } else if (machineId.startsWith("steel_")) {
+                // Three Steel furnaces reuse a small baked block palette
+                // rather than allocating hundreds of duplicate cube JSONs.
+                BlockState old = originalBlocks.get(partPos);
+                Direction tuyereSide = facing.getClockWise();
+                BlockPos tuyere = master.relative(tuyereSide, 2)
+                        .relative(facing.getOpposite(), 2).above();
+                modelKey = "steel_process/" + (partPos.equals(tuyere)
+                        && !machineId.equals("steel_coke_oven") ? "tuyere"
+                        : old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get())
+                        ? "foundation" : "refractory");
+            } else {
+                modelKey = machineId + "_" + facing.getName()
                         + "/part_" + dx + "_" + dy + "_" + dz;
+            }
 
             // Preserve at most half a block of actual physical protrusion from
             // explicitly specified AIR anchors. Ordinary filler collision and

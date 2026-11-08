@@ -171,6 +171,12 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_RIVETED_IRON_CASING.get());
                         entries.accept(ItemRegistry.ITEM_IRON_STOCK_SHEAR.get());
                         entries.accept(ItemRegistry.ITEM_IRON_FORGE_HEARTH.get());
+                        entries.accept(ItemRegistry.ITEM_STEEL_COKE_OVEN.get());
+                        entries.accept(ItemRegistry.ITEM_STEEL_BLAST_FURNACE.get());
+                        entries.accept(ItemRegistry.ITEM_STEEL_REFINING_FURNACE.get());
+                        entries.accept(ItemRegistry.ITEM_METALLURGICAL_COKE.get());
+                        entries.accept(ItemRegistry.ITEM_PIG_IRON.get());
+                        entries.accept(ItemRegistry.ITEM_REFINED_STEEL_INGOT.get());
                         entries.accept(ItemRegistry.ITEM_ORE_ROASTING_KILN.get());
                         entries.accept(ItemRegistry.ITEM_UNFIRED_REFRACTORY_BATCH.get());
                         entries.accept(ItemRegistry.ITEM_FIRED_REFRACTORY_CERAMIC.get());

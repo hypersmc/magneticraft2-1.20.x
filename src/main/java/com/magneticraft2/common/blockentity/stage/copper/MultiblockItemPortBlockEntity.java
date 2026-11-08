@@ -18,6 +18,8 @@ import com.magneticraft2.common.blockentity.stage.bronze.BronzeRollingMillBlockE
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalPressBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
+import com.magneticraft2.common.recipe.multiblock.SteelProcessRecipe;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzePrecisionBoringMachineBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalSawmillBlockEntity;
 import com.magneticraft2.common.blockentity.stage.bronze.BronzeMechanicalAssemblyStationBlockEntity;
@@ -262,6 +264,11 @@ public class MultiblockItemPortBlockEntity
         if (controller instanceof BloomeryFurnaceBlockEntity bloomery)
             return bloomery.acceptsIngredientSlot(0,stack)
                     || bloomery.acceptsIngredientSlot(3,stack);
+        if (controller instanceof SteelProcessBlockEntity furnace) {
+            for (int slot : SteelProcessRecipe.INPUT_SLOTS)
+                if (furnace.acceptsIngredientSlot(slot,stack))return true;
+            return false;
+        }
         if (controller instanceof BronzeForgeHammerBlockEntity hammer)
             return hammer.acceptsRecipeInput(stack);
         if (controller instanceof BronzeRollingMillBlockEntity mill)
@@ -313,6 +320,13 @@ public class MultiblockItemPortBlockEntity
             }
             return false;
         }
+        if (controller instanceof SteelProcessBlockEntity furnace) {
+            for (int slot : SteelProcessRecipe.INPUT_SLOTS)
+                if (furnace.acceptsIngredientSlot(slot,stack)
+                        && controller.itemHandler.insertItem(slot,stack,false).isEmpty())
+                    return true;
+            return false;
+        }
         return controller.itemHandler
                 .insertItem(
                         0,
@@ -346,6 +360,13 @@ public class MultiblockItemPortBlockEntity
         if (controller instanceof BloomeryFurnaceBlockEntity) {
             ItemStack ore=controller.itemHandler.extractItem(0,64,false);
             return ore.isEmpty() ? controller.itemHandler.extractItem(3,64,false) : ore;
+        }
+        if (controller instanceof SteelProcessBlockEntity) {
+            for (int slot : SteelProcessRecipe.INPUT_SLOTS) {
+                ItemStack extracted=controller.itemHandler.extractItem(slot,64,false);
+                if(!extracted.isEmpty())return extracted;
+            }
+            return ItemStack.EMPTY;
         }
         return controller.itemHandler
                 .extractItem(
@@ -601,6 +622,9 @@ public class MultiblockItemPortBlockEntity
             if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
                     && getController() instanceof BloomeryFurnaceBlockEntity)
                 return 2;
+            if (getPortMode() == MultiblockItemPortBlock.PortMode.INPUT
+                    && getController() instanceof SteelProcessBlockEntity)
+                return 3;
             return getPortMode()
                     == MultiblockItemPortBlock.PortMode.COMBINED_OUTPUT
                     ? 2
@@ -656,6 +680,8 @@ public class MultiblockItemPortBlockEntity
                     && !assembly.acceptsIngredientSlot(mapped, stack)) return stack;
             if (controller instanceof BloomeryFurnaceBlockEntity bloomery
                     && !bloomery.acceptsIngredientSlot(mapped,stack)) return stack;
+            if (controller instanceof SteelProcessBlockEntity furnace
+                    && !furnace.acceptsIngredientSlot(mapped,stack)) return stack;
             return controller.itemHandler.insertItem(mapped, stack, simulate);
         }
 
@@ -735,6 +761,8 @@ public class MultiblockItemPortBlockEntity
                         || assembly.acceptsIngredientSlot(mapped, stack))
                     && (!(controller instanceof BloomeryFurnaceBlockEntity bloomery)
                         || bloomery.acceptsIngredientSlot(mapped, stack))
+                    && (!(controller instanceof SteelProcessBlockEntity furnace)
+                        || furnace.acceptsIngredientSlot(mapped, stack))
                     && controller.itemHandler.isItemValid(mapped, stack);
         }
 
@@ -746,6 +774,10 @@ public class MultiblockItemPortBlockEntity
             if (controller instanceof BloomeryFurnaceBlockEntity
                     && mode == MultiblockItemPortBlock.PortMode.INPUT)
                 return slot == 0 ? 0 : slot == 1 ? 3 : -1;
+            if (controller instanceof SteelProcessBlockEntity
+                    && mode == MultiblockItemPortBlock.PortMode.INPUT)
+                return slot >= 0 && slot < SteelProcessRecipe.INPUT_SLOTS.length
+                        ? SteelProcessRecipe.INPUT_SLOTS[slot] : -1;
             if (controller instanceof BronzeMechanicalAssemblyStationBlockEntity) {
                 if (mode == MultiblockItemPortBlock.PortMode.INPUT)
                     return slot >= 0 && slot < 4 ? slot : -1;

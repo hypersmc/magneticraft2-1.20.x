@@ -2,6 +2,7 @@ package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import net.minecraft.core.Direction;
@@ -172,6 +173,17 @@ public class Multiblockfiller_tile extends BlockEntity {
                     instanceof BloomeryFurnaceBlockEntity bloomery) {
                 return bloomery.getSideTuyereCapability(cap, side, worldPosition);
             }
+        }
+        // Steel reduction/refining shares the actual Bloomery AIR port
+        // contract. The controller independently validates exact world
+        // position, facing and formation before giving out its handler.
+        if (side != null && renderPart.startsWith("steel_")
+                && (cap == CapabilityPressure.PRESSURE || cap == CapabilityPressurizedGas.GAS)
+                && level != null) {
+            BlockPos controllerPos = getControllerPos();
+            if (level.hasChunkAt(controllerPos)
+                    && level.getBlockEntity(controllerPos) instanceof SteelProcessBlockEntity furnace)
+                return furnace.getSideTuyereCapability(cap, side, worldPosition);
         }
         return super.getCapability(cap, side);
     }

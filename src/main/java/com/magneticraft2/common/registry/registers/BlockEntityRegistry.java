@@ -30,6 +30,7 @@ import com.magneticraft2.common.blockentity.stage.iron.WroughtIronShaftBlockEnti
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronGearboxBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -198,6 +199,12 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("iron_forge_hearth", () ->
                     BlockEntityType.Builder.of(IronForgeHearthBlockEntity::new,
                             BlockRegistry.IRON_FORGE_HEARTH.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelProcessBlockEntity>> STEEL_PROCESS_BE =
+            BLOCK_ENTITIES.register("steel_process", () ->
+                    BlockEntityType.Builder.of(SteelProcessBlockEntity::new,
+                            BlockRegistry.STEEL_COKE_OVEN.get(),
+                            BlockRegistry.STEEL_BLAST_FURNACE.get(),
+                            BlockRegistry.STEEL_REFINING_FURNACE.get()).build(null));
     public static final RegistryObject<BlockEntityType<OreRoastingKilnBlockEntity>> ORE_ROASTING_KILN_BE =
             BLOCK_ENTITIES.register("ore_roasting_kiln", () ->
                     BlockEntityType.Builder.of(OreRoastingKilnBlockEntity::new,

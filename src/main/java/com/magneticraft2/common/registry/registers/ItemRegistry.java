@@ -227,6 +227,15 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_IRON_SERVICE_HATCH = fromBlock(IRON_SERVICE_HATCH);
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_IRON_FORGE_HEARTH = fromBlock(IRON_FORGE_HEARTH);
+    public static final RegistryObject<Item> ITEM_STEEL_COKE_OVEN = fromBlock(STEEL_COKE_OVEN);
+    public static final RegistryObject<Item> ITEM_STEEL_BLAST_FURNACE = fromBlock(STEEL_BLAST_FURNACE);
+    public static final RegistryObject<Item> ITEM_STEEL_REFINING_FURNACE = fromBlock(STEEL_REFINING_FURNACE);
+    public static final RegistryObject<Item> ITEM_METALLURGICAL_COKE =
+            ITEMS.register("metallurgical_coke", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PIG_IRON =
+            ITEMS.register("pig_iron", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_INGOT =
+            ITEMS.register("refined_steel_ingot", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
             ITEMS.register("unfired_refractory_batch", () -> new Item(new Item.Properties()));

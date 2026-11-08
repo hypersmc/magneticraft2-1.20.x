@@ -69,6 +69,7 @@ import com.magneticraft2.common.block.stage.iron.IronServiceHatchBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
+import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -180,6 +181,13 @@ public class BlockRegistry {
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
     public static final RegistryObject<IronForgeHearthBlock> IRON_FORGE_HEARTH =
             BLOCKS.register("iron_forge_hearth", IronForgeHearthBlock::new);
+    // Steel entry: three distinct JSON-formed machines, shared thermal backend.
+    public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
+            BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));
+    public static final RegistryObject<SteelProcessBlock> STEEL_BLAST_FURNACE =
+            BLOCKS.register("steel_blast_furnace", () -> new SteelProcessBlock("steel_blast_furnace"));
+    public static final RegistryObject<SteelProcessBlock> STEEL_REFINING_FURNACE =
+            BLOCKS.register("steel_refining_furnace", () -> new SteelProcessBlock("steel_refining_furnace"));
     public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =
             BLOCKS.register("ore_roasting_kiln", OreRoastingKilnBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
