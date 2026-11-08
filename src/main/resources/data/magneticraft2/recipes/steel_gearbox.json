@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "GIG",
+    " S "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:refined_steel_plate"
+    },
+    "G": {
+      "item": "magneticraft2:precision_iron_gear_medium"
+    },
+    "I": {
+      "item": "magneticraft2:wrought_iron_gearbox"
+    },
+    "S": {
+      "item": "magneticraft2:steel_shaft"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_gearbox",
+    "count": 1
+  }
+}
