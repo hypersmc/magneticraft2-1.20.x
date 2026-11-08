@@ -606,5 +606,17 @@
   "jei.magneticraft2.kiln_tar_layout_tooltip": "Wood Tar requires the FIRST Refractory Kiln multiblock shown in Patchouli, with a Fluid Input block in the second-layer side wall. The later original solid-only layout cannot accept liquid fuel.",
   "jei.magneticraft2.kiln_tar_layout_extra": "See FIRST Patchouli Kiln layout",
   "jei.magneticraft2.kiln_required_port": "Required port:",
-  "jei.magneticraft2.kiln_tar_port_tooltip": "Required for Wood Tar: place the Fluid Input block IN the second-layer side wall of the first Refractory Kiln blueprint in Patchouli. This is a structural component, not fuel."
+  "jei.magneticraft2.kiln_tar_port_tooltip": "Required for Wood Tar: place the Fluid Input block IN the second-layer side wall of the first Refractory Kiln blueprint in Patchouli. This is a structural component, not fuel.",
+  "block.magneticraft2.steel_coke_oven": "Steel Coke Oven",
+  "item.magneticraft2.steel_coke_oven": "Steel Coke Oven Controller",
+  "block.magneticraft2.steel_blast_furnace": "Steel Blast Furnace",
+  "item.magneticraft2.steel_blast_furnace": "Steel Blast Furnace Controller",
+  "block.magneticraft2.steel_refining_furnace": "Steel Refining Furnace",
+  "item.magneticraft2.steel_refining_furnace": "Steel Refining Furnace Controller",
+  "item.magneticraft2.metallurgical_coke": "Metallurgical Coke",
+  "item.magneticraft2.pig_iron": "Pig Iron",
+  "item.magneticraft2.refined_steel_ingot": "Refined Steel Ingot",
+  "item.magneticraft2.steel_forge_die": "Steel Forge Die",
+  "jei.magneticraft2.steel_coke_fuel_hint": "Requires solid firebox fuel",
+  "jei.magneticraft2.steel_air_fuel_hint": "Coke fuel + continuous AIR"
 }

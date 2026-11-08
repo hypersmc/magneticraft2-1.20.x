@@ -3,6 +3,7 @@ package com.magneticraft2.compatibility.JEI;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
+import com.magneticraft2.common.recipe.multiblock.SteelProcessRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -70,6 +71,12 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "ore_roasting_kiln");
     public static final ResourceLocation BLOOMERY_FURNACE =
             new ResourceLocation("magneticraft2", "bloomery_furnace");
+    public static final ResourceLocation STEEL_COKE_OVEN =
+            new ResourceLocation("magneticraft2", "steel_coke_oven");
+    public static final ResourceLocation STEEL_BLAST_FURNACE =
+            new ResourceLocation("magneticraft2", "steel_blast_furnace");
+    public static final ResourceLocation STEEL_REFINING_FURNACE =
+            new ResourceLocation("magneticraft2", "steel_refining_furnace");
 
     private final ResourceLocation id;
     private final ResourceLocation machine;
@@ -100,6 +107,21 @@ public final class MultiblockJeiRecipe {
         this.processTime = Math.max(1, processTime);
         this.minSpeed = Math.max(0.0F, minSpeed);
         this.torque = Math.max(0.0F, torque);
+    }
+
+    public static MultiblockJeiRecipe from(SteelProcessRecipe recipe) {
+        List<List<ItemStack>> inputs = new ArrayList<>();
+        for (int i = 0; i < recipe.inputCount(); i++) {
+            SteelProcessRecipe.IngredientCount part = recipe.input(i);
+            inputs.add(stacksFor(part.ingredient(), part.count()));
+        }
+        List<Output> products = new ArrayList<>();
+        products.add(new Output(recipe.output(), 1.0F));
+        if (!recipe.slag().isEmpty())
+            products.add(new Output(recipe.slag(), 1.0F));
+        return new MultiblockJeiRecipe(recipe.getId(), recipe.machine(),
+                inputs, products, FluidStack.EMPTY, FluidStack.EMPTY,
+                recipe.processTime(), 0F, 0F);
     }
 
     public static MultiblockJeiRecipe from(BloomeryRecipe recipe) {

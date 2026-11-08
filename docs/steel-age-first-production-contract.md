@@ -179,3 +179,41 @@ claiming implementation.
 `docs/ore-processing-by-age.json`,
 `docs/pressure-and-gas-networks.md`, and PR #18's
 `docs/iron-age-full-content-plan.md`.
+
+## Source implementation checkpoint — 2026-11-08
+
+The three first-Steel controllers, reusable server furnace backend,
+validated `magneticraft2:steel_process` recipe type, 12 JSON
+multiblock orientations, Voxel V2 profiles, 16×16-native temporary
+baked rendering palette, AIR tuyere and genuine shared item ports are
+source-implemented on Steel PR #19. The branch was synchronized with
+Iron PR #18 including merged Wood Tar PR #20, but **Iron PR #18 has
+not been merged into master**.
+
+The initial manufacturing ledger is provisional and deliberately simple:
+
+| Step | Real material inputs | Explicit energy/input conditions | Guaranteed outputs |
+| --- | --- | --- | --- |
+| Coke Oven | 4 Coal | separate solid firebox fuel, HEAT threshold | 4 Metallurgical Coke |
+| Blast Furnace | 4 Magnetite Concentrate + 2 Coke + 1 Calcite | separate Coke furnace fuel, HEAT and sustained AIR | 2 Pig Iron + 2 Slag |
+| Refining Furnace | 2 Pig Iron | separate Coke furnace fuel, higher HEAT and sustained AIR | 2 Refined Steel Ingots + 1 Slag |
+| First useful Steel | 4 Refined Steel Ingots + 1 existing Iron Forge Die | existing Bronze Forge Hammer maintenance | Steel Forge Die: 1536 batches instead of Iron 768 / Bronze 384 |
+
+The Forge Hammer extension uses the existing stable
+`ReplaceableMachinePart` alternative-material NBT mechanism. The
+existing Iron and Bronze forging recipes, mechanical loads and wear
+remain unchanged. Coke fuel is not freely spawned by running the
+carbonization furnace; coal input and separate solid fuel are consumed.
+
+For this first gate AIR remains explicitly typed and transported by
+existing Bronze air ducts; the compressor/blower is already developed.
+Pressure/STEAM networks are neither replaced nor used as fuel.
+The 3x4x3/5x5x5 placeholder brick/iron rendering is NOT MGC2 Studio
+quality, but it provides identifiable physical furnace structures with
+native-density textures and real collision, rather than floating parts.
+
+**Source implementation is not verification.** A JDK17
+`./gradlew build`, actual in-game item I/O/AIR/heat tests, saved-world
+checks, rendering and JEI UI verification are still required before
+the player can confirm first Steel and Iron PR #18 is considered for
+merging. See `docs/steel-age-first-production-acceptance.md`.
