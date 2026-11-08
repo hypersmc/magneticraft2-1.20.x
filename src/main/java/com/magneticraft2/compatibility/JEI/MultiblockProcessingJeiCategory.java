@@ -1,6 +1,7 @@
 package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -231,6 +232,22 @@ public class MultiblockProcessingJeiCategory
                     62,
                     0x404040,
                     false
+            );
+        }
+
+        if (MultiblockJeiRecipe.REFRACTORY_KILN.equals(recipe.getMachine())) {
+            // Fuel is an optional furnace supply, not an amount consumed
+            // by each recipe result. See the separate JEI liquid-fuel usage.
+            guiGraphics.drawString(
+                    font, Component.translatable("jei.magneticraft2.kiln_tar_hint"),
+                    8, 75, 0x404040, false
+            );
+            guiGraphics.drawString(
+                    font,
+                    Component.translatable("jei.magneticraft2.kiln_tar_rate",
+                            RefractoryKilnBlockEntity.WOOD_TAR_IGNITION_MB,
+                            RefractoryKilnBlockEntity.WOOD_TAR_BURN_TICKS),
+                    8, 86, 0x404040, false
             );
         }
     }

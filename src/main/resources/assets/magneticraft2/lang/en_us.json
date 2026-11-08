@@ -351,7 +351,7 @@
   "item.magneticraft2.fired_refractory_ceramic": "Fired Refractory Ceramic",
   "message.magneticraft2.refractory_kiln.fuel_added": "Kiln fuel added",
   "message.magneticraft2.refractory_kiln.fuel_rejected": "Kiln fuel rejected (invalid or queue full)",
-  "message.magneticraft2.refractory_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Firing: %s/%s | Input: %s | Output: %s",
+  "message.magneticraft2.refractory_kiln.status": "Fuel: %s | Burning: %s ticks | HEAT: %s/%s | Firing: %s/%s | Input: %s | Output: %s | Wood Tar: %s/%s mB",
   "block.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
   "item.magneticraft2.ore_roasting_kiln": "Ore Roasting Kiln",
   "message.magneticraft2.ore_roasting_kiln.incomplete": "Ore Roasting Kiln incomplete",
@@ -596,5 +596,15 @@
   "message.magneticraft2.iron_flywheel.formed": "Large Iron Flywheel formed. Connect an axial shaft.",
   "block.magneticraft2.iron_service_hatch": "Iron Service Hatch",
   "item.magneticraft2.iron_service_hatch": "Iron Service Hatch",
-  "item.magneticraft2.wrought_iron_sheet": "Wrought Iron Sheet"
+  "item.magneticraft2.wrought_iron_sheet": "Wrought Iron Sheet",
+  "jei.magneticraft2.kiln_liquid_fuel": "Kiln Liquid Fuels",
+  "jei.magneticraft2.kiln_tar_hint": "Wood Tar needs Fluid Input build",
+  "jei.magneticraft2.kiln_tar_rate": "%s mB = %s burn ticks",
+  "jei.magneticraft2.kiln_fuel_amount": "%s mB Wood Tar",
+  "jei.magneticraft2.kiln_fuel_ticks": "%s burn ticks",
+  "jei.magneticraft2.kiln_tar_layout_short": "Build Kiln with Fluid Input",
+  "jei.magneticraft2.kiln_tar_layout_tooltip": "Wood Tar requires the FIRST Refractory Kiln multiblock shown in Patchouli, with a Fluid Input block in the second-layer side wall. The later original solid-only layout cannot accept liquid fuel.",
+  "jei.magneticraft2.kiln_tar_layout_extra": "See FIRST Patchouli Kiln layout",
+  "jei.magneticraft2.kiln_required_port": "Required port:",
+  "jei.magneticraft2.kiln_tar_port_tooltip": "Required for Wood Tar: place the Fluid Input block IN the second-layer side wall of the first Refractory Kiln blueprint in Patchouli. This is a structural component, not fuel."
 }
