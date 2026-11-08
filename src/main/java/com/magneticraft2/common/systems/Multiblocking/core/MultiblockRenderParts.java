@@ -120,7 +120,8 @@ public final class MultiblockRenderParts {
                 BlockPos tuyere = master.relative(tuyereSide, 2)
                         .relative(facing.getOpposite(), 2).above();
                 modelKey = "steel_process/" + (partPos.equals(tuyere)
-                        && !machineId.equals("steel_coke_oven") ? "tuyere"
+                        && !machineId.equals("steel_coke_oven")
+                        ? "tuyere_" + tuyereSide.getName()
                         : old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get())
                         ? "foundation" : "refractory");
             } else {

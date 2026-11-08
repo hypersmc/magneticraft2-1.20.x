@@ -236,6 +236,10 @@ public class ItemRegistry {
             ITEMS.register("pig_iron", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_INGOT =
             ITEMS.register("refined_steel_ingot", () -> new Item(new Item.Properties()));
+    // First useful Steel product; existing Forge Hammer maintenance handles
+    // stable save IDs and the 384/768/1536 material service tiers.
+    public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =
+            ITEMS.register("steel_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
             ITEMS.register("unfired_refractory_batch", () -> new Item(new Item.Properties()));

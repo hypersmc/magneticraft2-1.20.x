@@ -180,7 +180,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)4 — First useful Steel$()$(br2)Make a Steel Forge Die from four Refined Steel Ingots and a high-grade furnace fitting. Install it in your EXISTING Bronze Forge Hammer: it lasts 1536 completed batches versus the Wrought Iron Die's 768 and the Bronze Die's 384. This does not create torque or bypass the existing hot-workpiece system. Produce and install this die to confirm your first usable Steel."
+      "text": "$(bold)4 — First useful Steel$()$(br2)Use four Refined Steel Ingots and your existing Wrought Iron Forging Die to craft a hardened Steel Forge Die. Install it in the SAME Bronze Forge Hammer through the existing replaceable-part interaction. It lasts 1536 successful batches, versus 768 for Wrought Iron and 384 for Bronze. The upgraded die does not increase RPM, torque, output or bypass the timed hot-stock requirement.$(br2)Producing and installing your first Steel Forge Die completes the Iron-to-Steel gameplay handoff."
     },
     {
       "type": "patchouli:crafting",
