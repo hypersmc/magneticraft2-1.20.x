@@ -82,6 +82,10 @@
     "magneticraft2:iron_service_hatch",
     "magneticraft2:steel_coke_oven",
     "magneticraft2:steel_blast_furnace",
-    "magneticraft2:steel_refining_furnace"
+    "magneticraft2:steel_refining_furnace",
+    "magneticraft2:steel_gear_medium",
+    "magneticraft2:steel_gear_large",
+    "magneticraft2:steel_shaft",
+    "magneticraft2:steel_gearbox"
   ]
 }

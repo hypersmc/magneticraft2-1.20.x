@@ -199,6 +199,34 @@
       "type": "patchouli:crafting",
       "title": "Steel Roller Sleeves",
       "recipe": "magneticraft2:steel_roller_sleeves"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)7 — Steel III: Heavy Transmission$()$(br2)Steel Medium Gear (8 teeth) and Steel Gearbox (right-angle 1:1) can transmit 32 game-torque; Steel Large Gear (16 teeth) and Steel Shaft are rated 48. These figures are structural capacity, NOT new generated power. The same gear-ratio, direction, shaft, meshing and overload rules apply. Wooden and Wrought Iron bottlenecks still limit the network; the Water Wheel cannot magically deliver 32 torque."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Shaft",
+      "recipe": "magneticraft2:steel_shaft"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Medium Gear",
+      "recipe": "magneticraft2:steel_gear_medium"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Large Gear",
+      "recipe": "magneticraft2:steel_gear_large"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Gearbox",
+      "recipe": "magneticraft2:steel_gearbox"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steam-ready Drivetrain$()$(br2)Craft Steel stock using the hot-worked Forge Hammer and Rolling Mill routes, then reinforce the existing Iron gear/shaft path with Steel. Test shaft axes, gear teeth, 8:16 ratio, gearbox port direction, load and disconnects. A future Steam Engine will provide the high-torque source needed to exercise the complete Steel rated capacity. Final geometry belongs to MGC2 Studio; current block models reuse Iron visual assets."
     }
   ]
 }

@@ -628,5 +628,13 @@
   "message.magneticraft2.bronze_rolling_mill.reason.steel_rollers_required": "Steel rolling needs Steel Roller Sleeves fitted to the existing mill",
   "message.magneticraft2.bronze_rolling_mill.reason.steel_cold": "Steel stock has cooled; reheat four ingots or bars in the fueled Iron Forge Hearth",
   "tooltip.magneticraft2.steel_stock.hot": "Steel workpiece hot: %s s remaining",
-  "tooltip.magneticraft2.steel_stock.cold": "Cold steel — reheat four matching pieces in the Iron Forge Hearth"
+  "tooltip.magneticraft2.steel_stock.cold": "Cold steel — reheat four matching pieces in the Iron Forge Hearth",
+  "block.magneticraft2.steel_gear_medium": "Steel Medium Gear",
+  "item.magneticraft2.steel_gear_medium": "Steel Medium Gear",
+  "block.magneticraft2.steel_gear_large": "Steel Large Gear",
+  "item.magneticraft2.steel_gear_large": "Steel Large Gear",
+  "block.magneticraft2.steel_shaft": "Steel Shaft",
+  "item.magneticraft2.steel_shaft": "Steel Shaft",
+  "block.magneticraft2.steel_gearbox": "Steel Gearbox",
+  "item.magneticraft2.steel_gearbox": "Steel Gearbox"
 }

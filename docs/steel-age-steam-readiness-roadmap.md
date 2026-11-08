@@ -135,3 +135,16 @@ This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Ro
 - All recipes use the existing data-driven `multiblock_processing` or vanilla shaped recipe formats; the old IDs, save data, ports, machinery and acceptance tests are untouched. Steel HEAT defaults and tooling lifetimes remain provisional balance values.
 
 **Regression:** reheating stalls on insufficient HEAT or full output; 4 inputs → 4 hot outputs; hot expires using server world time; blank Steel Die/old Roller Sleeves block new Steel-only work; Steel upgrades allow processing; correct RPM, torque, source overload and wear; input top-ups, output blocking and save/reload do not duplicate metal; total one ingot equivalent per plate or bar, 4 rods per bar; Copper/Wrought Iron work exactly as before. Run `./gradlew build` with JDK 17 and in-game checks before reporting completion.
+
+### Steel III first transmission slice — 2026-11-08
+
+**Source implemented, NOT built/runtime verified:** Steel Medium Gear (8 teeth, 32 game-torque), Steel Large Gear (16 teeth, 48), Steel Shaft (axial 48), Steel Gearbox (two-port, reversible 1:1 right-angle, 32). These block classes reuse the existing Iron placement/collision behavior. Their BEs reuse Copper's proven Gear V2 nodes and override only `getGearMaxTorque()`. No new mechanical network or generator has been added.
+
+- Four distinct Steel blocks/BlockEntities/items, shaped recipes, pickaxe tags, self-drops, localized names and Patchouli crafting pages; recipes use existing Steel II Plates/Bars, Iron parts and Bronze precision bearings. Their recipes intentionally form an upgrade path; no Steel III machine is needed to make the first Steel.
+- Static block/item models inherit actual Iron models and UVs, rather than copying or stretching geometry. The shared Gear V2 client renderers are delegated to. Final visual modeling remains MGC2 Studio's responsibility.
+- Steel Medium↔Large gearing remains 8:16. Gearbox direction and ratio, shaft alignment, phase, source load, clutch/disconnect and overload evaluation remain unchanged.
+- **Limitation:** the existing Large Water Wheel's up-to-16 torque cannot prove the 32/48 Steel headroom in-game. Real higher-load tests require the first Steam Engine or another approved strong source; a Steel node creates no torque.
+- **Deferred:** Steel high-load clutch, coupling, brake and optional gearbox customization. Inspect the present clutch/protection implementations and demonstrate actual bottlenecks before adding duplicates.
+- **Quality:** vanilla shaped crafting does not carry input item provenance/quality NBT; do not claim such transfer without a dedicated recipe system.
+
+**In-game regression checklist:** craft four variants from actual Steel II stock; test all shaft/gear axes, 8:16 mesh and ratio, all gearbox port orientations and direction; inspect rotating/stopped BER appearance at multiple camera angles and after F3+T; connect wooden/Iron bottlenecks and verify overload remains; break/drop/reconnect, save/reload and chunk boundaries; check Copper/Bronze/Iron old mechanical machines unchanged. On Steam Age integration, test >16 torque source throughput, 32/48 ceilings, aggregation, clamp/stall, protective disconnect and regeneration prevention. Run `./gradlew build` under JDK 17 and the contract checker before accepting source as verified.
