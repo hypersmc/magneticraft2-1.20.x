@@ -64,6 +64,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "water_settling_tank");
     public static final ResourceLocation CHARCOAL_RETORT =
             new ResourceLocation("magneticraft2", "charcoal_retort");
+    public static final ResourceLocation REFRACTORY_KILN =
+            new ResourceLocation("magneticraft2", "refractory_kiln");
     public static final ResourceLocation ORE_ROASTING_KILN =
             new ResourceLocation("magneticraft2", "ore_roasting_kiln");
     public static final ResourceLocation BLOOMERY_FURNACE =

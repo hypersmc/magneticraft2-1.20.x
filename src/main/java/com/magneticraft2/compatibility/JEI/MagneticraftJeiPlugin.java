@@ -1,6 +1,10 @@
 package com.magneticraft2.compatibility.JEI;
 
 import com.magneticraft2.common.magneticraft2;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.registry.registers.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
@@ -43,6 +47,9 @@ public class MagneticraftJeiPlugin implements IModPlugin {
                 new MultiblockProcessingJeiCategory(
                         registration.getJeiHelpers()
                                 .getGuiHelper()
+                ),
+                new KilnLiquidFuelJeiCategory(
+                        registration.getJeiHelpers().getGuiHelper()
                 )
         );
     }
@@ -50,6 +57,19 @@ public class MagneticraftJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(
             IRecipeRegistration registration) {
+        // Distinct JEI fuel usage, NOT an extra processing recipe: a heat
+        // buffer can burn many 50 mB batches per item. Keep the input
+        // amount and burn duration sourced from the actual Kiln constants.
+        registration.addRecipes(
+                KilnLiquidFuelJeiCategory.TYPE,
+                List.of(new KilnLiquidFuelJeiCategory.FuelRecipe(
+                        KilnLiquidFuelJeiCategory.WOOD_TAR_ID,
+                        new FluidStack(FluidRegistry.WOOD_TAR.get(),
+                                RefractoryKilnBlockEntity.WOOD_TAR_IGNITION_MB),
+                        RefractoryKilnBlockEntity.WOOD_TAR_BURN_TICKS
+                ))
+        );
+
         var level = Minecraft.getInstance().level;
         if (level == null) {
             magneticraft2.LOGGER.warn(
@@ -169,6 +189,11 @@ public class MagneticraftJeiPlugin implements IModPlugin {
         registerCatalyst(registration, MultiblockJeiRecipe.ROTARY_ORE_CLASSIFIER);
         registerCatalyst(registration, MultiblockJeiRecipe.WATER_SETTLING_TANK);
         registerCatalyst(registration, MultiblockJeiRecipe.CHARCOAL_RETORT);
+        registerCatalyst(registration, MultiblockJeiRecipe.REFRACTORY_KILN);
+        registration.addRecipeCatalyst(
+                new ItemStack(BlockRegistry.REFRACTORY_KILN.get()),
+                KilnLiquidFuelJeiCategory.TYPE
+        );
         registerCatalyst(registration, MultiblockJeiRecipe.ORE_ROASTING_KILN);
         registerCatalyst(registration, MultiblockJeiRecipe.BLOOMERY_FURNACE);
     }

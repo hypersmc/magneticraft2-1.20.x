@@ -101,3 +101,32 @@ and full `./gradlew build` under JDK17 before gameplay acceptance.
 Neither has been executed against the full source checkout here:
 GitHub hostname resolution in the container is unavailable.
 Multiplayer-specific tests remain deferred until after Steam Age.
+
+## JEI discoverability — 2026-11-08
+
+The existing `multiblock_processing` JEI display **does not** treat Wood Tar
+as a processing ingredient because a single output can consume a variable
+amount of fuel depending on retained HEAT, configuration and elapsed burn.
+Instead, every actual Refractory Kiln processing recipe now shows a short
+optional fuel hint and the live **50 mB = 80 burning ticks** setting.
+
+A separate JEI `kiln_liquid_fuel` category registers a Wood Tar **fluid
+INPUT** (not a Wood Tar Bucket or obsolete Wood Tar item). JEI Uses on the
+fluid can discover the Kiln; the Refractory Kiln Controller is a recipe
+catalyst in both processing and fuel categories. The fuel entry gives the
+50 mB / 80 tick conversion and describes the **optional formed Fluid Input
+blueprint** from Patchouli. No new physical JSON processing recipe,
+crafting item output, heat bypass, fuel registration or simulation logic
+is introduced. The quantities come from the actual Kiln BlockEntity
+constants, so JEI cannot drift from the in-game 50/80 rate.
+
+JEI acceptance: (1) press U on Wood Tar **fluid**, verify the Kiln fuel
+usage; (2) open the Kiln controller's uses and verify the new fuel and
+existing processing tabs; (3) inspect any real Kiln processing recipe,
+verify the visible Wood Tar fuel hint and burn rate; (4) verify the old
+solid-fuel recipes are unmodified and the original solid-only structure
+is not described as accepting tar; (5) test localization, no category
+clipping, and tooltip clarity at normal Minecraft GUI scale.
+
+JEI source/static test: `node tools/wood-tar/check-kiln-jei-contract.mjs`.
+Full JDK17 `./gradlew build` and Minecraft GUI verification remain open.

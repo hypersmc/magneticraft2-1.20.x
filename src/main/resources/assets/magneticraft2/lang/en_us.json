@@ -596,5 +596,12 @@
   "message.magneticraft2.iron_flywheel.formed": "Large Iron Flywheel formed. Connect an axial shaft.",
   "block.magneticraft2.iron_service_hatch": "Iron Service Hatch",
   "item.magneticraft2.iron_service_hatch": "Iron Service Hatch",
-  "item.magneticraft2.wrought_iron_sheet": "Wrought Iron Sheet"
+  "item.magneticraft2.wrought_iron_sheet": "Wrought Iron Sheet",
+  "jei.magneticraft2.kiln_liquid_fuel": "Kiln Liquid Fuels",
+  "jei.magneticraft2.kiln_tar_hint": "Alternative fuel: Wood Tar",
+  "jei.magneticraft2.kiln_tar_rate": "%s mB = %s burn ticks",
+  "jei.magneticraft2.kiln_fuel_amount": "%s mB Wood Tar",
+  "jei.magneticraft2.kiln_fuel_ticks": "%s burn ticks",
+  "jei.magneticraft2.kiln_tar_layout_short": "Requires the optional fluid inlet",
+  "jei.magneticraft2.kiln_tar_layout_tooltip": "Use the optional Refractory Kiln Fluid Input blueprint in Patchouli. The original Kiln remains solid-fuel-only. Solid fuel takes priority if both are present."
 }
