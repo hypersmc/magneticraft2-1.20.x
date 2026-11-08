@@ -119,7 +119,7 @@ Every implemented slice needs: `./gradlew build` (JDK 17), JSON validation, item
 
 ### Steel II implementation candidate — 2026-11-08
 
-This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Roller Sleeves using the existing Iron Forge Hearth, Bronze Forge Hammer, and Bronze Rolling Mill. This is not yet player-verified, built or Steam Age complete. The first Coke/Pig Iron/Steel/Die loop remains player accepted.
+This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Roller Sleeves using the existing Iron Forge Hearth, Bronze Forge Hammer, and Bronze Rolling Mill. The ingot and bar have client-side hot/cold tooltips backed by the same server-time tag. The Steel Hearth recipe lookup caches its machine ID rather than allocating a new ID each tick. This is not yet player-verified, built or Steam Age complete. The first Coke/Pig Iron/Steel/Die loop remains player accepted.
 
 - Four Steel Ingots/Steel Bars are reheated in the existing 4-slot-batch Forge Hearth using a real solid-fuel firebox, with a distinct configurable minimum Steel HEAT threshold (default 18,000 abstract HEAT; max against the existing wrought threshold). Existing refractory kiln cannot silently forge Steel. Metallurgical Coke is accepted as 3,200 burn ticks. No added gas/pressure/electricity.
 - A hot Steel Ingot + an installed Steel Forge Die + 20 RPM / 10 torque → one Refined Steel Plate (200 powered ticks). The existing Forge Hammer maintenance contract enforces the installed tier; older Bronze/Iron outputs still work with their existing dies.

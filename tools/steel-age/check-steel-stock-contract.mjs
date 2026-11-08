@@ -46,6 +46,12 @@ assert.equal(rollers.key.S.item,"magneticraft2:wrought_iron_roller_sleeves");
 const stock=read("src/main/java/com/magneticraft2/common/systems/material/HotBloomWorkpiece.java");
 for(const term of ["isSteelReheatRecipe","requiresSteelDie","requiresSteelRollers","ITEM_REFINED_STEEL_BAR","ITEM_REFINED_STEEL_INGOT"])
  assert(stock.includes(term),"missing stock rule "+term);
+const steelItem=read("src/main/java/com/magneticraft2/common/item/stage/steel/SteelStockItem.java");
+assert(reg.includes('ITEMS.register("refined_steel_ingot", SteelStockItem::new)'));
+assert(reg.includes('ITEMS.register("refined_steel_bar", SteelStockItem::new)'));
+assert(steelItem.includes("HotBloomWorkpiece.isHot(stack, level)"));
+assert(stock.includes("FORGE_HEARTH_MACHINE"));
+assert(!stock.includes('new ResourceLocation("magneticraft2", "iron_forge_hearth")'));
 const hearth=read("src/main/java/com/magneticraft2/common/blockentity/stage/iron/IronForgeHearthBlockEntity.java");
 const hammer=read("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BronzeForgeHammerBlockEntity.java");
 const mill=read("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BronzeRollingMillBlockEntity.java");

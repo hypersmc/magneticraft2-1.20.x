@@ -626,5 +626,7 @@
   "message.magneticraft2.bronze_forge_hammer.reason.steel_die_required": "Steel plate forging needs a Steel Forge Die fitted to the hammer",
   "message.magneticraft2.bronze_forge_hammer.reason.steel_cold": "Steel ingot has cooled; reheat four ingots in the fueled Iron Forge Hearth",
   "message.magneticraft2.bronze_rolling_mill.reason.steel_rollers_required": "Steel rolling needs Steel Roller Sleeves fitted to the existing mill",
-  "message.magneticraft2.bronze_rolling_mill.reason.steel_cold": "Steel stock has cooled; reheat four ingots or bars in the fueled Iron Forge Hearth"
+  "message.magneticraft2.bronze_rolling_mill.reason.steel_cold": "Steel stock has cooled; reheat four ingots or bars in the fueled Iron Forge Hearth",
+  "tooltip.magneticraft2.steel_stock.hot": "Steel workpiece hot: %s s remaining",
+  "tooltip.magneticraft2.steel_stock.cold": "Cold steel — reheat four matching pieces in the Iron Forge Hearth"
 }

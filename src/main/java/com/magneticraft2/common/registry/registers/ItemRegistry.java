@@ -13,6 +13,7 @@ import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronIngotItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronBarItem;
+import com.magneticraft2.common.item.stage.steel.SteelStockItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -235,13 +236,13 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_PIG_IRON =
             ITEMS.register("pig_iron", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_INGOT =
-            ITEMS.register("refined_steel_ingot", () -> new Item(new Item.Properties()));
+            ITEMS.register("refined_steel_ingot", SteelStockItem::new);
     // Steel II: one ingot-equivalent per plate or bar; four quarter-stock rods
     // per bar. Existing workshop BEs and hot-stock rules perform processing.
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_PLATE =
             ITEMS.register("refined_steel_plate", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_BAR =
-            ITEMS.register("refined_steel_bar", () -> new Item(new Item.Properties()));
+            ITEMS.register("refined_steel_bar", SteelStockItem::new);
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_ROD =
             ITEMS.register("refined_steel_rod", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_STEEL_ROLLER_SLEEVES =
