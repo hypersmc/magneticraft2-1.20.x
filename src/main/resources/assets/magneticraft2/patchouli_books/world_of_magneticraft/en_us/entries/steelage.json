@@ -70,24 +70,24 @@
       "multiblock": {
         "pattern": [
           [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
             "BBBBB",
             "BBBBB",
             "BB_BB",
             "BBBBB",
-            "BBBBB"
-          ],
-          [
-            "BBBBB",
-            "B___B",
-            "B___B",
-            "B___B",
-            "BBBBB"
-          ],
-          [
-            "BBBBB",
-            "B___B",
-            "B___B",
-            "B___B",
             "BBBBB"
           ],
           [
@@ -132,17 +132,17 @@
       "multiblock": {
         "pattern": [
           [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
             "BBBBB",
             "BBBBB",
             "BB_BB",
             "BBBBB",
-            "BBBBB"
-          ],
-          [
-            "BBBBB",
-            "B___B",
-            "B___B",
-            "B___B",
             "BBBBB"
           ],
           [

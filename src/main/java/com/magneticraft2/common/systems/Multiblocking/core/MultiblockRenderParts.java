@@ -113,17 +113,57 @@ public final class MultiblockRenderParts {
                 modelKey = BloomeryModelParts.key(facing, dx, dy, dz,
                         originalBlocks.get(partPos).isAir());
             } else if (machineId.startsWith("steel_")) {
-                // Three Steel furnaces reuse a small baked block palette
-                // rather than allocating hundreds of duplicate cube JSONs.
+                // Distinct baked facade parts for each furnace, selected only
+                // once at formation. No per-frame geometry or textures.
                 BlockState old = originalBlocks.get(partPos);
                 Direction tuyereSide = facing.getClockWise();
                 BlockPos tuyere = master.relative(tuyereSide, 2)
                         .relative(facing.getOpposite(), 2).above();
-                modelKey = "steel_process/" + (partPos.equals(tuyere)
-                        && !machineId.equals("steel_coke_oven")
-                        ? "tuyere_" + tuyereSide.getName()
-                        : old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get())
-                        ? "foundation" : "refractory");
+                int depth = -(dx * facing.getStepX() + dz * facing.getStepZ());
+                int lateral = dx * tuyereSide.getStepX() + dz * tuyereSide.getStepZ();
+                String part;
+                if (!machineId.equals("steel_coke_oven") && partPos.equals(tuyere)) {
+                    part = "tuyere_" + tuyereSide.getName();
+                } else if (old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get())) {
+                    part = "foundation";
+                } else if (machineId.equals("steel_coke_oven")) {
+                    if (depth == 0 && lateral == 0 && dy == 1) {
+                        part = "coke_lower_" + facing.getName();
+                    } else if (depth == 0 && lateral == 0 && dy == 2) {
+                        part = "coke_upper_" + facing.getName();
+                    } else if (depth == 0 && Math.abs(lateral) == 1) {
+                        part = "frame_" + facing.getName();
+                    } else {
+                        part = dy == 3 ? "roof" : "refractory";
+                    }
+                } else if (machineId.equals("steel_blast_furnace")) {
+                    if (depth == 1 && lateral == 0 && dy == 3) {
+                        part = "blast_fire_" + facing.getName();
+                    } else if ((dy >= 3 && Math.abs(lateral) == 1)
+                            || (depth == 0 && dy <= 2 && Math.abs(lateral) == 2)) {
+                        part = "frame_" + facing.getName();
+                    } else if (dy == 2) {
+                        part = "roof";
+                    } else if (dy == 4) {
+                        part = "chimney";
+                    } else {
+                        part = "refractory";
+                    }
+                } else {
+                    // Refining: wider enclosed hearth with metal roof and vent.
+                    if (depth == 0 && dy == 2 && Math.abs(lateral) <= 1) {
+                        part = "refine_fire_" + facing.getName();
+                    } else if (depth == 0 && dy <= 2 && Math.abs(lateral) == 2) {
+                        part = "frame_" + facing.getName();
+                    } else if (dy == 3) {
+                        part = "roof";
+                    } else if (dy == 4) {
+                        part = "chimney";
+                    } else {
+                        part = "refractory";
+                    }
+                }
+                modelKey = "steel_process/" + part;
             } else {
                 modelKey = machineId + "_" + facing.getName()
                         + "/part_" + dx + "_" + dy + "_" + dz;
