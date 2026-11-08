@@ -1,0 +1,217 @@
+{
+  "name": "steel_blast_furnace_east",
+  "structure": {
+    "dimensions": [
+      5,
+      5,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "F"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "U"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "C"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "O"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "Y"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "A"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer3": [
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer4": [
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "A",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer5": [
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "A",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "B": "minecraft:bricks",
+      "C": "magneticraft2:steel_blast_furnace",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "Y": "magneticraft2:multiblock_item_byproduct_output",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/steel_blast_furnace_east",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [],
+    "voxel_profile": "magneticraft2:steel_blast_furnace"
+  }
+}

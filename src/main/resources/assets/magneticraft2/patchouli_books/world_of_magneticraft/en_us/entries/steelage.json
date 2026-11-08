@@ -1,0 +1,191 @@
+{
+  "name": "Steel Age",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:refined_steel_ingot",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)Entering the Steel Age$()$(br2)Start with the existing Wrought Iron workshop: make Iron Machine Foundations, Frames, Casings, Plates and Fired Refractory Ceramics. Steel's first complete loop requires a Coke Oven, Blast Furnace and a refining furnace. Each is a distinct JSON multiblock. You cannot craft your first Steel from vanilla Iron and Coal."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)1 — Metallurgical Coke$()$(br2)Form the Coke Oven (3x4x3) using the next Visualize. Supply four ordinary Coal through its REAL Item Input and fuel at the controller. It outputs four Metallurgical Coke from its Item Output after 720 HEAT-supplied ticks. This fuel can then run the higher-temperature Blast and Refining furnaces. Coal carbonization vents volatiles; no fake Wood Tar or Coal Tar is generated."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Coke Oven Controller",
+      "recipe": "magneticraft2:steel_coke_oven"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Coke Oven",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "OBU"
+          ],
+          [
+            "FFF",
+            "FFF",
+            "F0F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_coke_oven",
+          "B": "minecraft:bricks",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "U": "magneticraft2:multiblock_item_input",
+          "F": "magneticraft2:iron_machine_foundation"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)2 — Blast Reduction$()$(br2)Prepare Magnetite Concentrate in the existing ore workshop. Form the 5x5x5 Blast Furnace with REAL Item Input, Primary Output and Slag Output ports. Supply 4 Concentrate + 2 Metallurgical Coke + 1 Calcite through the input port's THREE recipe slots. Add Metallurgical Coke as firebox fuel at the controller, and connect a Bronze AIR Duct to the LEFT side-wall tuyere. The 1200-tick reduction produces 2 Pig Iron and 2 Slag. No AIR or no Coke means no finished iron."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Blast Furnace Controller",
+      "recipe": "magneticraft2:steel_blast_furnace"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Blast Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
+          ],
+          [
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FU0OY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_blast_furnace",
+          "B": "minecraft:bricks",
+          "F": "magneticraft2:iron_machine_foundation",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)3 — Controlled Steel Refining$()$(br2)A Blast Furnace makes high-carbon Pig Iron; it is NOT finished Steel. Form the distinct 5x5x5 Refining Furnace with its input, primary output, slag output and left wall AIR tuyere. Insert 2 Pig Iron, fuel with Metallurgical Coke and supply sustained AIR from the existing blower. The 1000-tick refining process produces 2 Refined Steel Ingots and separate refining Slag. HEAT and AIR are consumed during powered progress."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Refining Furnace Controller",
+      "recipe": "magneticraft2:steel_refining_furnace"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Refining Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
+          ],
+          [
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FU0OY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_refining_furnace",
+          "B": "minecraft:bricks",
+          "F": "magneticraft2:iron_machine_foundation",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)4 — First useful Steel$()$(br2)Make a Steel Forge Die from four Refined Steel Ingots and a high-grade furnace fitting. Install it in your EXISTING Bronze Forge Hammer: it lasts 1536 completed batches versus the Wrought Iron Die's 768 and the Bronze Die's 384. This does not create torque or bypass the existing hot-workpiece system. Produce and install this die to confirm your first usable Steel."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Forge Die",
+      "recipe": "magneticraft2:steel_forge_die"
+    }
+  ]
+}

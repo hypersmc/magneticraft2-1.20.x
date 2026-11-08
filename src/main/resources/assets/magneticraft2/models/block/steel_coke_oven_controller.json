@@ -1,0 +1,6 @@
+{
+  "parent": "magneticraft2:block/iron_forge_hearth_controller",
+  "textures": {
+    "iron": "magneticraft2:block/refractory_kiln/soot"
+  }
+}

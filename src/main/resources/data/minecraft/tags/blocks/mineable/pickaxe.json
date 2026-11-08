@@ -79,6 +79,9 @@
     "magneticraft2:wrought_iron_gear_large",
     "magneticraft2:iron_forge_hearth",
     "magneticraft2:iron_flywheel",
-    "magneticraft2:iron_service_hatch"
+    "magneticraft2:iron_service_hatch",
+    "magneticraft2:steel_coke_oven",
+    "magneticraft2:steel_blast_furnace",
+    "magneticraft2:steel_refining_furnace"
   ]
 }
