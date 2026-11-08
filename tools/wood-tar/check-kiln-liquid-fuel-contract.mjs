@@ -50,13 +50,20 @@ for(const [dir,[x,z]] of Object.entries(xy)){
  assert.equal(diff,1,"exactly one wall-brick swap");
 }
 const book=json(asset+"assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json");
-const original=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln");
-const alt=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln — Liquid Inlet");
-assert(original&&alt);
-assert.equal(original.multiblock.pattern[2][2],"B___B");
-assert.equal(alt.multiblock.pattern[2][2],"B___B");
-assert.equal(alt.multiblock.pattern[2][3],"B___F");
-assert.equal(alt.multiblock.mapping.F,"magneticraft2:multiblock_fluid_input");
+const fluidBookPage=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln");
+const solidBookPage=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln — Solid Fuel");
+assert(fluidBookPage&&solidBookPage);
+assert.ok(book.pages.indexOf(fluidBookPage)<book.pages.indexOf(solidBookPage),"fluid inlet must be FIRST");
+assert.equal(fluidBookPage.multiblock.mapping.F,"magneticraft2:multiblock_fluid_input");
+assert.equal(fluidBookPage.multiblock.pattern[2][3],"B___F");
+assert.equal(solidBookPage.multiblock.pattern[2][3],"B___B");
+for(let y=0;y<4;y++)for(let z=0;z<5;z++){
+  const map=row=>[...row].reverse().map(c=>c==="C"?"0":c==="A"?"_":c).join("");
+  const liquid=json(db+"refractory_kiln_tarfuel_south.json");
+  const solid=json(db+"refractory_kiln_south.json");
+  assert.equal(fluidBookPage.multiblock.pattern[3-y][z],map(liquid.structure.layout["layer"+(y+1)][z]),"fluid projection drift");
+  assert.equal(solidBookPage.multiblock.pattern[3-y][z],map(solid.structure.layout["layer"+(y+1)][z]),"solid projection drift");
+}
 const lang=json(asset+"assets/magneticraft2/lang/en_us.json");
 assert(lang["message.magneticraft2.refractory_kiln.status"].includes("Wood Tar: %s/%s mB"));
 console.log("PASS: four additive liquid Kilns, unchanged originals, private port, persisted exact-debit Wood Tar heat");

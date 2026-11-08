@@ -603,8 +603,8 @@
   "jei.magneticraft2.kiln_fuel_amount": "%s mB Wood Tar",
   "jei.magneticraft2.kiln_fuel_ticks": "%s burn ticks",
   "jei.magneticraft2.kiln_tar_layout_short": "Build Kiln with Fluid Input",
-  "jei.magneticraft2.kiln_tar_layout_tooltip": "Wood Tar works only with the alternate Refractory Kiln multiblock containing a Fluid Input block. The original solid-fuel-only Kiln cannot accept liquid fuel.",
-  "jei.magneticraft2.kiln_tar_layout_extra": "See alternate Patchouli layout",
+  "jei.magneticraft2.kiln_tar_layout_tooltip": "Wood Tar requires the FIRST Refractory Kiln multiblock shown in Patchouli, with a Fluid Input block in the second-layer side wall. The later original solid-only layout cannot accept liquid fuel.",
+  "jei.magneticraft2.kiln_tar_layout_extra": "See FIRST Patchouli Kiln layout",
   "jei.magneticraft2.kiln_required_port": "Required port:",
-  "jei.magneticraft2.kiln_tar_port_tooltip": "Required multiblock component: replace the specified second-layer side-wall Brick with a Fluid Input block (see the alternate Refractory Kiln layout in Patchouli). This block is not consumed as fuel."
+  "jei.magneticraft2.kiln_tar_port_tooltip": "Required for Wood Tar: place the Fluid Input block IN the second-layer side wall of the first Refractory Kiln blueprint in Patchouli. This is a structural component, not fuel."
 }

@@ -36,8 +36,9 @@ Same input/output item modules, controller, render resource keys, 5x4x5
 footprint, Voxel V2 profile, and recipes. The formed Fluid Input remains
 a real module at its source world location rather than a filler model;
 its own outward-facing fluid port and existing five-tick/250-mB passive
-pull logic connect it to the Copper fluid network. Patchouli includes
-a SECOND Visualize page using the proper SOUTH mirrored column order.
+pull logic connect it to the Copper fluid network. Patchouli now puts the fluid-inlet variant FIRST in the main construction
+Visualize, with the old solid-fuel-only variant following as a separate
+page. The existing SOUTH mirrored column order is preserved.
 
 The dedicated private Kiln fluid handler is passed **only to the formed
 Fluid Input module** after verifying its controller link and membership
@@ -74,7 +75,7 @@ mint filled buckets and any remainder is lost.
 1. Original solid-only Kiln (all four facings): forms and makes both
    fired refractory ceramics and heated Iron workpieces unchanged.
 2. New optional inlet blueprint (all four): forms precisely as
-   Patchouli's *second* Visualize shows; no missing shell tiles,
+   Patchouli's *first* Kiln Visualize shows; no missing shell tiles,
    occluded fluid inlet, texture distortion or FPS regression.
 3. Charcoal Retort four Logs + normal fuel → four Charcoal + 250 mB
    **liquid** Wood Tar. Pipe liquid through the real Retort outlet,
@@ -148,3 +149,21 @@ The original solid-only structure, the four optional formations,
 their models, resource locations, port connections, solid-fuel
 operation, 50 mB / 80 burn-tick ratio and save data are all unchanged.
 This is only JEI presentation and its resource tests.
+
+## Corrected first construction guide — 2026-11-08
+
+Player feedback identified that the original solid-only Kiln was still
+the FIRST Patchouli multiblock visualization. The Wood Tar structure was
+hidden two pages later, leading to the impression that the multiblock
+had no Fluid Input. The FIRST Refractory Kiln visualization now shows
+the real `multiblock_fluid_input` block in the second-layer side wall.
+The original 5x4x5 solid-only structure remains available under the
+"Refractory Kiln — Solid Fuel" visualization, for existing saves.
+The crafting guide, Bronze III introduction, firing text and JEI help
+now all refer to the correct first layout. Regression fixtures validate
+both book patterns cell-by-cell against the corresponding SOUTH JSON
+multiblock definitions after the established reversal/mirroring.
+
+No source machine/formation JSONs or fuel mechanics changed. PR #20
+remains stacked and unmerged, so test the actual PR #20 branch in-game
+rather than PR #18 or #19.

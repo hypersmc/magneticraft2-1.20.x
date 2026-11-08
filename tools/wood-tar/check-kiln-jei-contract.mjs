@@ -54,7 +54,8 @@ for(const key of ["kiln_liquid_fuel","kiln_tar_hint","kiln_tar_rate",
   assert.ok(lang["jei.magneticraft2."+key]);
 assert.equal(lang["jei.magneticraft2.kiln_tar_rate"],"%s mB = %s burn ticks");
 assert.match(lang["jei.magneticraft2.kiln_tar_hint"],/Wood Tar.*Fluid Input/);
-assert.match(lang["jei.magneticraft2.kiln_tar_layout_tooltip"],/alternate Refractory Kiln multiblock containing a Fluid Input block/);
+assert.match(lang["jei.magneticraft2.kiln_tar_layout_tooltip"],/FIRST Refractory Kiln multiblock shown in Patchouli/);
+assert.match(lang["jei.magneticraft2.kiln_tar_layout_extra"],/FIRST Patchouli Kiln layout/);
 assert.match(lang["jei.magneticraft2.kiln_tar_port_tooltip"],/Required multiblock component/);
 
 // The structural component displayed in JEI must be the exact same
@@ -69,7 +70,11 @@ for(const facing of ["south","north","east","west"]){
   assert.equal(Object.values(regular.structure.layout).flat(2).filter(b=>b==="F").length,0);
 }
 const bronzeBook=JSON.parse(read("src/main/resources/assets/magneticraft2/patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json"));
-const alternative=bronzeBook.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln — Liquid Inlet");
-assert(alternative);
-assert.equal(alternative.multiblock.mapping.F,"magneticraft2:multiblock_fluid_input");
+const first=bronzeBook.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln");
+const old=bronzeBook.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln — Solid Fuel");
+assert(first&&old);
+assert.ok(bronzeBook.pages.indexOf(first)<bronzeBook.pages.indexOf(old));
+assert.equal(first.multiblock.mapping.F,"magneticraft2:multiblock_fluid_input");
+assert.equal(first.multiblock.pattern[2][3],"B___F");
+assert.equal(old.multiblock.pattern[2][3],"B___B");
 console.log("PASS: Wood Tar fluid JEI uses + actual required Fluid Input module, preserved original Kiln, fuel values");
