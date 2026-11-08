@@ -51,7 +51,11 @@ assert(reg.includes('ITEMS.register("refined_steel_ingot", SteelStockItem::new)'
 assert(reg.includes('ITEMS.register("refined_steel_bar", SteelStockItem::new)'));
 assert(steelItem.includes("HotBloomWorkpiece.isHot(stack, level)"));
 assert(stock.includes("FORGE_HEARTH_MACHINE"));
-assert(!stock.includes('new ResourceLocation("magneticraft2", "iron_forge_hearth")'));
+const steelReheatMethod=stock.slice(
+ stock.indexOf("public static boolean isSteelReheatRecipe"),
+ stock.indexOf("public static boolean requiresSteelDie"));
+assert(!steelReheatMethod.includes("new ResourceLocation("),
+ "Steel recipe recognition must not allocate IDs during ticks");
 const hearth=read("src/main/java/com/magneticraft2/common/blockentity/stage/iron/IronForgeHearthBlockEntity.java");
 const hammer=read("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BronzeForgeHammerBlockEntity.java");
 const mill=read("src/main/java/com/magneticraft2/common/blockentity/stage/bronze/BronzeRollingMillBlockEntity.java");
