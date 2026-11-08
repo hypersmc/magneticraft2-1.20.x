@@ -379,7 +379,7 @@
       "type": "patchouli:crafting",
       "title": "Bored-Housing Gearbox",
       "recipe": "magneticraft2:wrought_iron_gearbox_bearing_housing",
-      "text": "An alternative Wrought Iron Right-Angle Gearbox assembly uses one bored Iron Bearing Housing, one Bronze Bushing, two machined Iron Gears, two Iron Shafts and three Iron Plates. The original four-plate / Precision Bronze Bearing gearbox recipe remains available, and Gear V2 torque and ratios are identical."
+      "text": "A material-saving alternative for the Wrought Iron Right-Angle Gearbox: two Iron Plates, two machined Iron Gears, two Iron Shafts, one bored Iron Bearing Housing and TWO Bronze Bushings. The Housing already costs one forged Bar, so this route uses three instead of four iron ingot-equivalents for the casing/bearing portion. It takes extra precision boring and one additional Bronze Bushing compared with the simpler legacy build. Both recipes create the exact same Gearbox, with unchanged Gear V2 power, ratios and save data."
     },
     {
       "type": "patchouli:crafting",

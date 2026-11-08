@@ -61,13 +61,24 @@ for(const [oldR,newR,expectedOutput] of [
  assert.equal(newR.key.H.item,"magneticraft2:iron_bearing_housing");
  assert.equal(newR.key.B.item,"magneticraft2:bronze_bushing");
  assert.equal(ingredientCount(newR,"H"),1);
- assert.equal(ingredientCount(newR,"B"),1);
+ assert.equal(ingredientCount(newR,"B"),expectedOutput==="magneticraft2:wrought_iron_gearbox"?2:1);
  assert.equal(ingredientCount(oldR,"H"),0);
 }
 assert.deepEqual(oldGearbox.pattern,["PGP","SBS","PGP"]);
-assert.deepEqual(newGearbox.pattern,["PGB","SHS","PGP"]);
+assert.deepEqual(newGearbox.pattern,["PGP","SHS","BGB"]);
 assert.equal(ingredientCount(oldGearbox,"P"),4);
-assert.equal(ingredientCount(newGearbox,"P"),3);
+assert.equal(ingredientCount(newGearbox,"P"),2);
+assert.equal(ingredientCount(newGearbox,"B"),2);
+// Housing starts as a forged one-Bar Gear Blank (1 ingot-equivalent).
+// Savings must be real, not a performance buff or 2-for-1 output.
+assert.equal(oldGearbox.result.count,1);
+assert.equal(newGearbox.result.count,1);
+assert.equal(ingredientCount(oldGearbox,"P") -
+  (ingredientCount(newGearbox,"P") + bore.input_count),1,
+  "Housing path must save exactly one iron ingot-equivalent");
+assert.equal(ingredientCount(newGearbox,"B") -
+  ingredientCount(oldGearbox,"B"),1,
+  "Housing alternate must use two separate bronze bushings");
 assert.equal(ingredientCount(newGearbox,"G"),2);
 assert.equal(ingredientCount(newGearbox,"S"),2);
 assert.deepEqual(oldFly.pattern,["PBP","FGS","PBP"]);

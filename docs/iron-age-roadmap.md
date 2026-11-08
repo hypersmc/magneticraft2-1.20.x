@@ -632,3 +632,23 @@ Draw Bench intentionally deferred.
 
 **Stage:** source delivered on PR #18; this slice awaits JDK17
 `./gradlew build`, committed fixture run and Minecraft acceptance.
+
+### Bearing Housing Gearbox recipe choice correction — 2026-11-08
+
+The player identified that the first alternative Gearbox recipe
+(3 Plates + 1 Housing whose blank costs a Bar + a Bronze Bushing)
+did not save Iron compared with the original four-Plate recipe.
+The new symmetrical `PGP / SHS / BGB` layout uses **2 Plates +
+1 Housing (1 forged Bar) + 2 Bronze Bushings**, still with two
+Precision Medium Iron Gears and two Iron Shafts. This exchanges
+additional Bronze and powered precision machining for **one fewer
+Iron ingot-equivalent** in the housing/casing portion. The original
+four-Plate + Precision Bronze Bearing recipe and the previously
+material-saving Flywheel alternative remain unchanged; existing
+Gearbox behavior and saved machines are unaffected.
+
+This is meaningful player choice in fabrication inputs, not a claim
+that a differently crafted Gearbox has different torque, wear or
+inertia. No new Gear V2 shaft support rule was added just to justify
+this part; that would require a separately established design need.
+Source fixture and full Gradle/in-game tests remain distinct.

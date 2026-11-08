@@ -355,3 +355,18 @@ has the two distinct functional consumers required by the original gate.
 It is therefore **deferred, not silently cancelled or considered
 implemented**. The 15/16 figure is a content count, **not** a build or
 regression verification score.
+
+### Housing assembly cost correction — 2026-11-08
+
+Following player feedback, the Bearing Housing alternative Gearbox
+recipe now costs **2 Wrought Iron Plates + 1 machined Iron Bearing
+Housing (made from a Bar) + 2 precision-bored Bronze Bushings**, plus
+the original two Medium precision Iron Gears and two Iron Shafts. The
+original Gearbox recipe still costs 4 Plates + 1 Precision Bronze
+Bearing. Thus the alternative saves **one** ingot-equivalent of Iron
+and deliberately spends more Bronze and workshop time; it is no
+longer an extra-processing route with no Iron saving. Both recipes
+produce the same machine without invented performance changes.
+The Iron Flywheel housing alternative was already material-saving.
+We did not introduce a Gear V2 support/wear subsystem just to give
+this item an independent simulation rule.
