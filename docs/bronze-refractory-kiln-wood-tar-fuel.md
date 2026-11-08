@@ -1,0 +1,96 @@
+# Refractory Kiln — optional liquid Wood Tar fuel
+
+**2026-11-08 · Forge 1.20.1 · stage: source implemented, NOT compiled or tested in-game.**
+**Branch:** feature/bronze-wood-tar-kiln-fuel (stacked on Iron PR #18, independent of Steel PR #19).
+
+## Purpose and reuse
+
+The existing Charcoal Retort produces **250 mB real Wood Tar fluid plus four Charcoal**
+from four Logs. Copper Fluid Pipes/Tanks can transport and store this fluid, but
+it previously had no consumer. This adds a meaningful heat use without creating
+new machine or fluid registry IDs. Wood Tar **item** remains legacy compatibility
+and is NOT converted from or to the liquid.
+
+## Backward-compatible optional multiblock
+
+The FOUR original `refractory_kiln_<facing>` 5x4x5 JSONs are untouched.
+Additional `refractory_kiln_tarfuel_<facing>` layouts replace exactly
+one SECOND-layer side-wall Brick with the existing real
+`multiblock_fluid_input` module:
+
+| Facing | Zero-based layer2 wall coordinate (x,z) |
+| --- | --- |
+| South | (0,2), west side |
+| North | (4,2), east side |
+| East | (2,4), south side |
+| West | (2,0), north side |
+
+Same input/output item modules, controller, render resource keys, 5x4x5
+footprint, Voxel V2 profile, and recipes. The formed Fluid Input remains
+a real module at its source world location rather than a filler model;
+its own outward-facing fluid port and existing five-tick/250-mB passive
+pull logic connect it to the Copper fluid network. Patchouli includes
+a SECOND Visualize page using the proper SOUTH mirrored column order.
+
+The dedicated private Kiln fluid handler is passed **only to the formed
+Fluid Input module** after verifying its controller link and membership
+in the saved original multiblock block map. Neither inventory nor fluid
+capabilities are exposed on the Kiln controller itself, and an ordinary
+unformed Fluid Input cannot bypass the multiblock.
+
+## Fuel rules
+
+| Fuel | Burn duration | Heat behavior |
+| --- | --- | --- |
+| Forge-compatible solid fuel item | unchanged Forge item burn duration | existing configurable HEAT gain and loss |
+| **50 mB Wood Tar fluid** | **80 burn ticks** | same existing configurable HEAT gain and loss |
+
+The Retort's 250 mB yield provides exactly 400 kiln burn ticks if all
+consumed. The new Kiln-only tank holds **4,000 mB** of Wood Tar and
+accepts no other fluid. Incoming fluid is buffered without generating
+HEAT. Only when the existing kiln already has a valid workpiece,
+unblocked output, and heat needs topping up does it burn:
+**solid fuel first**, otherwise debit exactly 50 mB from the tank
+*before* starting 80 burn ticks. An already burning fuel batch
+continues to burn while an output becomes blocked, just as before.
+Partial remainders <50 mB cannot ignite. No free HEAT,
+automatically minted fluid, new source or changed recipes.
+
+The new tank is persisted in `KilnWoodTarFuelTank`; old saved Kilns
+load with an empty tank and unchanged `KilnFuel`/`KilnBurnRemaining`.
+As with other current process tanks, drain buffered Wood Tar into
+external storage before dismantling; breaking the Kiln does not
+mint filled buckets and any remainder is lost.
+
+## In-game regression checklist
+
+1. Original solid-only Kiln (all four facings): forms and makes both
+   fired refractory ceramics and heated Iron workpieces unchanged.
+2. New optional inlet blueprint (all four): forms precisely as
+   Patchouli's *second* Visualize shows; no missing shell tiles,
+   occluded fluid inlet, texture distortion or FPS regression.
+3. Charcoal Retort four Logs + normal fuel → four Charcoal + 250 mB
+   **liquid** Wood Tar. Pipe liquid through the real Retort outlet,
+   Copper Fluid Tank/Pipe and new Kiln Fluid Input.
+4. Verify exactly **50 mB used before each 80 burn ticks**; 250 mB
+   fuels 400 ticks. Kiln HEAT threshold/gain/loss and recipe progress
+   are unaffected.
+5. When solid and Wood Tar coexist, solid starts first; it does not
+   eat Wood Tar until solid supplies are exhausted.
+6. Try water/dirty water and other liquids; all must be rejected.
+   Direct controller capability fill/drain and module drain must fail.
+7. Block the item output: no **new** fuel starts, progress stalls;
+   already burning fuel finishes normally. Check no duplication.
+8. Save/unload/reload with stored Wood Tar, a remainder <50 mB,
+   and a partially completed 80-tick liquid-fuel burn; confirm exact
+   persistence and no fuel reset.
+9. Break/unform/reform, test attached copper pipes and standalone
+   invalid modules. Confirm no stale links or material duplication.
+10. Confirm retained original JEI recipes, original visual guide,
+    old save compatibility and Wood Tar legacy Retort items.
+
+Run `node tools/wood-tar/check-kiln-liquid-fuel-contract.mjs`
+and full `./gradlew build` under JDK17 before gameplay acceptance.
+Neither has been executed against the full source checkout here:
+GitHub hostname resolution in the container is unavailable.
+Multiplayer-specific tests remain deferred until after Steam Age.

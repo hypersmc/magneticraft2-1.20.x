@@ -431,6 +431,57 @@
       "text": "Form the same 5×4×5 kiln. Feed prepared refractory batches through the left real Item Input port. Add solid fuel at the controller. Empty-hand right-click shows HEAT and progress; sneak-click retrieves unused queued fuel. Collect fired ceramic from the right Item Output port. Keep the roof flue AIR."
     },
     {
+      "type": "text",
+      "text": "$(bold)Optional Liquid Wood Tar Fuel$()$(br2)The Charcoal Retort supplies 250 mB of real Wood Tar per four Logs. To burn it, rebuild the kiln using the following alternative blueprint, with a Fluid Input in place of one left-side wall Brick. Copper fluid pipes/tanks feed the port directly. The original solid-only Kiln still forms and works unchanged.$(br2)Every 50 mB gives 80 burning ticks using existing HEAT gain/loss settings (250 mB = 400 ticks). Solid fuel takes precedence. The controller shows stored Wood Tar; drain before dismantling."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Refractory Kiln — Liquid Inlet",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBBBB",
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___F",
+            "B___B",
+            "BOBUB"
+          ],
+          [
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SSSSS",
+            "SS0SS"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:refractory_kiln",
+          "S": "minecraft:stone_bricks",
+          "B": "minecraft:bricks",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "F": "magneticraft2:multiblock_fluid_input"
+        },
+        "symmetrical": false
+      },
+      "text": "Optional liquid-fuel Kiln: use this alternate 5x4x5 construction. Replace the left-side middle Brick on the SECOND layer with the real Fluid Input (F). Connect its outward face to a Copper Pipe or Fluid Tank receiving Wood Tar from the Charcoal Retort. The usual solid fuel at the controller still works; 50 mB Wood Tar provides 80 burn ticks. The original solid-only Kiln remains fully supported."
+    },
+    {
       "type": "patchouli:crafting",
       "title": "Prepare Refractory Batch",
       "recipe": "magneticraft2:unfired_refractory_batch",

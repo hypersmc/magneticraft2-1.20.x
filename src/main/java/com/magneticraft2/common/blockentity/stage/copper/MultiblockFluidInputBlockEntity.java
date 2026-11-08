@@ -3,6 +3,7 @@ package com.magneticraft2.common.blockentity.stage.copper;
 import com.magneticraft2.common.block.stage.copper.MultiblockFluidInputBlock;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.blockentity.stage.bronze.RefractoryKilnBlockEntity;
 import com.magneticraft2.common.systems.Multiblocking.core.IMultiblockModule;
 import com.magneticraft2.common.systems.fluid.FluidPipeNetwork;
 import net.minecraft.core.BlockPos;
@@ -214,6 +215,11 @@ public class MultiblockFluidInputBlockEntity
         if (controller == null) {
             return null;
         }
+
+        // The Kiln has no public controller fluid capability. Its formed
+        // optional inlet verifies ownership and original JSON membership.
+        if (controller instanceof RefractoryKilnBlockEntity kiln)
+            return kiln.getTarFuelPortHandler(worldPosition);
 
         return controller
                 .getCapability(
