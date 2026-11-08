@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import org.jetbrains.annotations.NotNull;
+
 
 /**
  * Wood Tar fuel information is separate from ordinary multiblock item
@@ -37,7 +37,7 @@ public final class KilnLiquidFuelJeiCategory
     private final IDrawable icon;
 
     public KilnLiquidFuelJeiCategory(IGuiHelper guiHelper) {
-        background = guiHelper.createBlankDrawable(168, 74);
+        background = guiHelper.createBlankDrawable(168, 94);
         icon = guiHelper.createDrawableItemStack(
                 new ItemStack(BlockRegistry.REFRACTORY_KILN.get()));
     }
@@ -63,6 +63,14 @@ public final class KilnLiquidFuelJeiCategory
                 .addItemStack(new ItemStack(BlockRegistry.REFRACTORY_KILN.get()))
                 .addTooltipCallback((slot, tooltip) -> tooltip.add(
                         Component.translatable("jei.magneticraft2.kiln_tar_layout_tooltip")));
+
+        // Structural requirement, NOT an item consumed during burning:
+        // the *alternative* Kiln blueprint requires this real module
+        // replacing a side wall brick. The solid-only blueprint does not.
+        builder.addSlot(RecipeIngredientRole.CATALYST, 140, 46)
+                .addItemStack(new ItemStack(BlockRegistry.MULTIBLOCK_FLUID_INPUT.get()))
+                .addTooltipCallback((slot, tooltip) -> tooltip.add(
+                        Component.translatable("jei.magneticraft2.kiln_tar_port_tooltip")));
     }
 
     @Override public void draw(
@@ -76,8 +84,14 @@ public final class KilnLiquidFuelJeiCategory
                 Component.translatable("jei.magneticraft2.kiln_fuel_ticks",
                         recipe.burnTicks()), 35, 35, 0x404040, false);
         graphics.drawString(font,
+                Component.translatable("jei.magneticraft2.kiln_required_port"),
+                59, 50, 0x404040, false);
+        graphics.drawString(font,
                 Component.translatable("jei.magneticraft2.kiln_tar_layout_short"),
-                8, 56, 0x404040, false);
+                8, 70, 0x404040, false);
+        graphics.drawString(font,
+                Component.translatable("jei.magneticraft2.kiln_tar_layout_extra"),
+                8, 82, 0x404040, false);
     }
 
     @Override public ResourceLocation getRegistryName(FuelRecipe recipe) {

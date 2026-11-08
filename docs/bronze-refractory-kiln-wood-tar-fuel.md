@@ -130,3 +130,21 @@ clipping, and tooltip clarity at normal Minecraft GUI scale.
 
 JEI source/static test: `node tools/wood-tar/check-kiln-jei-contract.mjs`.
 Full JDK17 `./gradlew build` and Minecraft GUI verification remain open.
+
+## JEI structure requirement — 2026-11-08 follow-up
+
+In-game design clarification: the liquid-fuel variant **requires a real
+`magneticraft2:multiblock_fluid_input` block** in its 5x4x5 formation;
+merely having liquid Wood Tar in a tank near the solid-only Kiln is
+insufficient. The new JEI fuel category now shows two nonconsumed
+structural catalyst slots: the existing Refractory Kiln Controller and
+the registered **Fluid Input block**, plus a Wood Tar fluid INPUT slot.
+A visible "Required port" label and text instruct players to use the
+alternate Patchouli multiblock blueprint. The existing processing
+category now explicitly says **"Wood Tar needs Fluid Input build"**
+rather than implying the original Kiln can burn liquid fuel.
+
+The original solid-only structure, the four optional formations,
+their models, resource locations, port connections, solid-fuel
+operation, 50 mB / 80 burn-tick ratio and save data are all unchanged.
+This is only JEI presentation and its resource tests.
