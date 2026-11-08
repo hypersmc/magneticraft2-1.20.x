@@ -117,6 +117,12 @@ Every implemented slice needs: `./gradlew build` (JDK 17), JSON validation, item
 - Safe boiler pressure, water/steam rate, exhaust/condensation, safety valve response and mechanical Steam output balance.
 - The later Electric Generator Age's AC/DC policy and voltage numbers: see [electrical design contract](electrical-power-network-design-contract.md), which uses AC-first as a **provisional design assumption**, not an approved balance value.
 
+### Steel II player acceptance — 2026-11-08
+
+**Player report:** The newly added Steel II stock-working path works in-game. This accepts the Steel II playable-production milestone: existing Iron Forge Hearth reheating, hot Steel Plate forging using the Steel Die, Steel Roller Sleeves upgrade, and hot Steel Bar/Rod rolling. The report is player test evidence, not an independently recorded full ForgeGradle build, exhaustive regression suite, or dedicated multiplayer test. Do not change the existing model-work ownership (MGC2 Studio).
+
+**Next targeted milestone:** Steel III — heavy-load shafts/gears/transmission. Inspect actual existing Iron mechanical blocks, their torque limits and recipe/renderer systems before changing source. Design only the smallest upgrades that create a useful distinction for future Steam engine loads. The AC electrical grid belongs to Electric Generator Age and remains design-only.
+
 ### Steel II implementation candidate — 2026-11-08
 
 This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Roller Sleeves using the existing Iron Forge Hearth, Bronze Forge Hammer, and Bronze Rolling Mill. The ingot and bar have client-side hot/cold tooltips backed by the same server-time tag. The Steel Hearth recipe lookup caches its machine ID rather than allocating a new ID each tick. This is not yet player-verified, built or Steam Age complete. The first Coke/Pig Iron/Steel/Die loop remains player accepted.
