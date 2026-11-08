@@ -1,0 +1,72 @@
+{
+  "name": "iron_stock_shear_west",
+  "structure": {
+    "dimensions": [
+      3,
+      2,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "U",
+          "F"
+        ],
+        [
+          "C",
+          "F",
+          "M"
+        ],
+        [
+          "F",
+          "O",
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "A",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "M": "magneticraft2:mechanical_input_module",
+      "U": "magneticraft2:multiblock_item_input",
+      "O": "magneticraft2:multiblock_item_primary_output",
+      "C": "magneticraft2:iron_stock_shear",
+      "B": "magneticraft2:iron_structural_beam",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/iron_stock_shear_west",
+    "inventory": true,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "voxel_profile": "magneticraft2:iron_stock_shear",
+    "render_air_anchors": [
+      [
+        1,
+        1,
+        0
+      ]
+    ]
+  }
+}

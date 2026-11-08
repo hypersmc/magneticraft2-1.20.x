@@ -5,6 +5,10 @@ import com.magneticraft2.common.hologram.AncientProjectorBlock;
 import com.magneticraft2.common.block.general.ores.deepslate.*;
 import com.magneticraft2.common.block.general.ores.normal.*;
 import com.magneticraft2.common.block.stage.copper.LargeGearBlock_wood;
+import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronLargeGearBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronShaftBlock;
+import com.magneticraft2.common.block.stage.iron.WroughtIronGearboxBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
@@ -28,6 +32,7 @@ import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmBlock;
 import com.magneticraft2.common.block.stage.copper.MechanicalTransferArmUpperBlock;
 import com.magneticraft2.common.block.stage.copper.CopperFluidTankBlock;
 import com.magneticraft2.common.block.stage.copper.FlywheelBlock_wood;
+import com.magneticraft2.common.block.stage.iron.WroughtIronFlywheelBlock;
 import com.magneticraft2.common.block.stage.copper.CrankBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ItemBeltBlock;
 import com.magneticraft2.common.block.stage.copper.MediumGearBlock_wood;
@@ -57,9 +62,18 @@ import com.magneticraft2.common.block.stage.bronze.CharcoalRetortBlock;
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.OreRoastingKilnBlock;
 import com.magneticraft2.common.block.stage.bronze.BronzeCastingBasinBlock;
+import com.magneticraft2.common.block.stage.iron.IronStructuralBeamBlock;
+import com.magneticraft2.common.block.stage.iron.IronPlatePanelBlock;
+import com.magneticraft2.common.block.stage.iron.IronFloorGratingBlock;
+import com.magneticraft2.common.block.stage.iron.IronServiceHatchBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
+import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
+import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -126,6 +140,8 @@ public class BlockRegistry {
     public static final RegistryObject<CrankBlock_wood> CRANK_WOOD = BLOCKS.register("crank_wood", CrankBlock_wood::new);
     public static final RegistryObject<MechanicalBellowsBlock> MECHANICAL_BELLOWS = BLOCKS.register("mechanical_bellows", MechanicalBellowsBlock::new);
     public static final RegistryObject<FlywheelBlock_wood> FLYWHEEL_WOOD = BLOCKS.register("flywheel_wood", FlywheelBlock_wood::new);
+    public static final RegistryObject<WroughtIronFlywheelBlock> IRON_FLYWHEEL =
+            BLOCKS.register("iron_flywheel",WroughtIronFlywheelBlock::new);
     public static final RegistryObject<MechanicalOreWasherBlock> MECHANICAL_ORE_WASHER = BLOCKS.register("mechanical_ore_washer", MechanicalOreWasherBlock::new);
     public static final RegistryObject<MechanicalSifterBlock> MECHANICAL_SIFTER = BLOCKS.register("mechanical_sifter", MechanicalSifterBlock::new);
     public static final RegistryObject<BronzePatternMakerBlock> BRONZE_PATTERN_MAKER =
@@ -162,12 +178,57 @@ public class BlockRegistry {
             BLOCKS.register("bloomery_furnace", BloomeryFurnaceBlock::new);
     public static final RegistryObject<RefractoryKilnBlock> REFRACTORY_KILN =
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
+    public static final RegistryObject<IronForgeHearthBlock> IRON_FORGE_HEARTH =
+            BLOCKS.register("iron_forge_hearth", IronForgeHearthBlock::new);
     public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =
             BLOCKS.register("ore_roasting_kiln", OreRoastingKilnBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
             BLOCKS.register("bronze_foundry", BronzeFoundryBlock::new);
     public static final RegistryObject<BronzeCastingBasinBlock> BRONZE_CASTING_BASIN =
             BLOCKS.register("bronze_casting_basin", BronzeCastingBasinBlock::new);
+    // Iron II-A: a stronger 8-tooth Gear V2 node, not a new power source.
+    public static final RegistryObject<WroughtIronMediumGearBlock> WROUGHT_IRON_GEAR_MEDIUM =
+            BLOCKS.register("wrought_iron_gear_medium", WroughtIronMediumGearBlock::new);
+    public static final RegistryObject<WroughtIronLargeGearBlock> WROUGHT_IRON_GEAR_LARGE =
+            BLOCKS.register("wrought_iron_gear_large", WroughtIronLargeGearBlock::new);
+    // Iron II-B: reinforced axial and right-angle transmission.
+    public static final RegistryObject<WroughtIronShaftBlock> WROUGHT_IRON_SHAFT =
+            BLOCKS.register("wrought_iron_shaft", WroughtIronShaftBlock::new);
+    public static final RegistryObject<WroughtIronGearboxBlock> WROUGHT_IRON_GEARBOX =
+            BLOCKS.register("wrought_iron_gearbox", WroughtIronGearboxBlock::new);
+
+    // Iron III-A: heavy stock cutting, with a replaceable blade.
+    public static final RegistryObject<IronStockShearBlock> IRON_STOCK_SHEAR =
+            BLOCKS.register("iron_stock_shear", IronStockShearBlock::new);
+    public static final RegistryObject<RivetedIronFrameBlock> RIVETED_IRON_FRAME =
+            BLOCKS.register("riveted_iron_frame", RivetedIronFrameBlock::new);
+    // Iron III-A: structural casing uses the established frame and iron plates.
+    // It is an ordinary block with no special renderer, entity or ticker.
+    public static final RegistryObject<Block> RIVETED_IRON_CASING =
+            BLOCKS.register("riveted_iron_casing", () -> new Block(
+                    BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    // Iron 0D: simple factory construction blocks (no block entities/tickers).
+    public static final RegistryObject<IronStructuralBeamBlock> IRON_STRUCTURAL_BEAM =
+            BLOCKS.register("iron_structural_beam", IronStructuralBeamBlock::new);
+    public static final RegistryObject<IronPlatePanelBlock> IRON_PLATE_PANEL =
+            BLOCKS.register("iron_plate_panel", IronPlatePanelBlock::new);
+    public static final RegistryObject<Block> IRON_MACHINE_FOUNDATION =
+            BLOCKS.register("iron_machine_foundation", () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .strength(5.0F, 6.0F).sound(SoundType.METAL)
+                            .requiresCorrectToolForDrops()));
+    // Iron factory access: walkable, waterloggable open-grid decking.
+    public static final RegistryObject<IronFloorGratingBlock> IRON_FLOOR_GRATING =
+            BLOCKS.register("iron_floor_grating", IronFloorGratingBlock::new);
+    // Vanilla fence topology/shape gives safe automatically connected catwalk rails.
+    public static final RegistryObject<FenceBlock> IRON_CATWALK_RAILING =
+            BLOCKS.register("iron_catwalk_railing", () -> new FenceBlock(
+                    BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion()));
+    // Iron service access: vanilla trapdoor redstone, manual hinge and waterlogging.
+    public static final RegistryObject<IronServiceHatchBlock> IRON_SERVICE_HATCH =
+            BLOCKS.register("iron_service_hatch", IronServiceHatchBlock::new);
     public static final RegistryObject<MechanicalInputModuleBlock> MECHANICAL_INPUT_MODULE = BLOCKS.register("mechanical_input_module", MechanicalInputModuleBlock::new);
     public static final RegistryObject<MultiblockItemPortBlock> MULTIBLOCK_ITEM_INPUT =
             BLOCKS.register(

@@ -11,6 +11,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -36,6 +39,15 @@ public class MechanicalInputModuleBlockEntityRenderer
             new ResourceLocation("magneticraft2", "block/shaft_wood");
     private static final ResourceLocation HOUSING_MODEL =
             new ResourceLocation("magneticraft2", "block/mechanical_input_module_housing");
+    private static final ResourceLocation IRON_SHAFT_MODEL =
+            new ResourceLocation("magneticraft2", "block/wrought_iron_shaft");
+    private static final ResourceLocation IRON_HOUSING_MODEL =
+            new ResourceLocation("magneticraft2", "block/mechanical_input_module_housing_iron");
+    // JSON data-pack tag is the age-specific visual contract; not another
+    // block ID or mechanical network. Future Iron controllers may join it.
+    private static final TagKey<Block> IRON_VISUAL_CONTROLLERS =
+            TagKey.create(Registries.BLOCK, new ResourceLocation(
+                    "magneticraft2", "iron_input_visual_controllers"));
 
     private final Map<ResourceLocation, List<BakedQuad>> quadCache =
             new HashMap<>();
@@ -69,12 +81,21 @@ public class MechanicalInputModuleBlockEntityRenderer
         Direction.Axis axis = state.getValue(FACING).getAxis();
         float rotation =
                 blockEntity.getVisualRotationDegrees(partialTicks);
+        // Formed Iron multiblocks receive the new bearing and matching
+        // 2px wrought-iron shaft. Copper/Bronze/unformed modules remain
+        // completely unchanged in appearance and gameplay capability.
+        var level = blockEntity.getLevel();
+        var controllerPos = blockEntity.getLinkedControllerPosition();
+        boolean ironVisual = formed && level != null && controllerPos != null
+                && level.getBlockState(controllerPos).is(IRON_VISUAL_CONTROLLERS);
+        ResourceLocation housing = ironVisual ? IRON_HOUSING_MODEL : HOUSING_MODEL;
+        ResourceLocation shaft = ironVisual ? IRON_SHAFT_MODEL : SHAFT_MODEL;
 
         // Housing is always visible whenever the BER owns this module.
         poseStack.pushPose();
         orientCanonicalYAxisTo(axis, poseStack);
         renderModel(
-                HOUSING_MODEL,
+                housing,
                 poseStack,
                 buffer,
                 packedLight,
@@ -102,7 +123,7 @@ public class MechanicalInputModuleBlockEntityRenderer
         poseStack.translate(-0.5D, -0.5D, -0.5D);
 
         renderModel(
-                SHAFT_MODEL,
+                shaft,
                 poseStack,
                 buffer,
                 packedLight,

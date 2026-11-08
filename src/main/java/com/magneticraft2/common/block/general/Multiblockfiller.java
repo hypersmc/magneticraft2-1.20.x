@@ -104,6 +104,12 @@ public class Multiblockfiller extends BaseEntityBlock {
                 if (controllerEntity instanceof BaseBlockEntityMagneticraft2 multiblockController) {
                     multiblockController.onDestroy(level); // Call onDestroy on the controller
                 }
+                // Iron Flywheel is a Gear V2 BE, not BaseBlockEntityMagneticraft2.
+                // Use its existing multiblock teardown when any part is broken.
+                if (controllerEntity instanceof
+                        com.magneticraft2.common.blockentity.stage.iron.WroughtIronFlywheelBlockEntity flywheel) {
+                    flywheel.dismantleWheel();
+                }
             }
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);

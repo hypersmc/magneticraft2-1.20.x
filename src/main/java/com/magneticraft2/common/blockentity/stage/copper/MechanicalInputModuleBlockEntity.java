@@ -29,6 +29,14 @@ public class MechanicalInputModuleBlockEntity
     private int controllerY;
     private int controllerZ;
     private boolean formedModule;
+    // Cached from the same controller coordinates already persisted by the
+    // JSON multiblock; avoids creating a position on each render frame.
+    private BlockPos linkedControllerPosition = BlockPos.ZERO;
+
+    @Nullable
+    public BlockPos getLinkedControllerPosition() {
+        return formedModule ? linkedControllerPosition : null;
+    }
 
     public MechanicalInputModuleBlockEntity(
             BlockPos pos,
@@ -242,6 +250,7 @@ public class MechanicalInputModuleBlockEntity
         controllerX = tag.getInt("controller_x");
         controllerY = tag.getInt("controller_y");
         controllerZ = tag.getInt("controller_z");
+        linkedControllerPosition = new BlockPos(controllerX, controllerY, controllerZ);
         formedModule = tag.getBoolean("isformed");
     }
 

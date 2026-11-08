@@ -64,6 +64,21 @@
     "magneticraft2:bronze_foundry_sand_mixer",
     "magneticraft2:bronze_industrial_air_blower",
     "magneticraft2:bronze_air_duct",
-    "magneticraft2:bloomery_furnace"
+    "magneticraft2:bloomery_furnace",
+    "magneticraft2:iron_structural_beam",
+    "magneticraft2:iron_plate_panel",
+    "magneticraft2:iron_machine_foundation",
+    "magneticraft2:wrought_iron_gear_medium",
+    "magneticraft2:wrought_iron_shaft",
+    "magneticraft2:wrought_iron_gearbox",
+    "magneticraft2:iron_stock_shear",
+    "magneticraft2:riveted_iron_frame",
+    "magneticraft2:riveted_iron_casing",
+    "magneticraft2:iron_floor_grating",
+    "magneticraft2:iron_catwalk_railing",
+    "magneticraft2:wrought_iron_gear_large",
+    "magneticraft2:iron_forge_hearth",
+    "magneticraft2:iron_flywheel",
+    "magneticraft2:iron_service_hatch"
   ]
 }

@@ -17,11 +17,16 @@ import com.magneticraft2.client.render.blocks.stage.copper.ConveyorRollerBlockEn
 import com.magneticraft2.client.render.blocks.stage.copper.GearboxBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.CustomGearboxBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MediumGearBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronMediumGearRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronLargeGearRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronShaftRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronGearboxRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.PulleyBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.OverloadDisconnectBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBrakeBlockEntity_woodRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalBellowsBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.FlywheelBlockEntity_woodRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.WroughtIronFlywheelRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalOreWasherBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalWaterPumpBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArmBlockEntityRenderer;
@@ -35,6 +40,7 @@ import com.magneticraft2.client.render.blocks.stage.bronze.BronzeStampMillRender
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeForgeHammerRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeRollingMillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalPressRenderer;
+import com.magneticraft2.client.render.blocks.stage.iron.IronStockShearRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzePrecisionBoringMachineRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalSawmillRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundrySandMixerRenderer;
@@ -117,6 +123,10 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_WITH_HANDLE_BE_WOOD.get(), LargeGearWithHandleBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), LargeGearBlock_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_WOOD.get(), MediumGearBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_MEDIUM_BE_IRON.get(), WroughtIronMediumGearRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_IRON.get(), WroughtIronLargeGearRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_IRON.get(), WroughtIronShaftRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_IRON.get(), WroughtIronGearboxRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CLUTCH_BE_WOOD.get(), ClutchBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.OVERLOAD_DISCONNECT_BE_WOOD.get(), OverloadDisconnectBlockEntity_woodRenderer::new);
@@ -124,6 +134,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.CRANK_BE_WOOD.get(), CrankBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_BELLOWS_BE.get(), MechanicalBellowsBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.FLYWHEEL_BE_WOOD.get(), FlywheelBlockEntity_woodRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.IRON_FLYWHEEL_BE.get(), WroughtIronFlywheelRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_ORE_WASHER_BE.get(), MechanicalOreWasherBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_WATER_PUMP_BE.get(), MechanicalWaterPumpBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_TRANSFER_ARM_BE.get(), MechanicalTransferArmBlockEntityRenderer::new);
@@ -137,6 +148,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(), BronzeForgeHammerRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_ROLLING_MILL_BE.get(), BronzeRollingMillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_PRESS_BE.get(), BronzeMechanicalPressRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.IRON_STOCK_SHEAR_BE.get(), IronStockShearRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_PRECISION_BORING_MACHINE_BE.get(), BronzePrecisionBoringMachineRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_SAWMILL_BE.get(), BronzeMechanicalSawmillRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_SAND_MIXER_BE.get(), BronzeFoundrySandMixerRenderer::new);
@@ -201,6 +213,10 @@ public class Clientsetup {
         }
         event.register(new ResourceLocation(MOD_ID, "block/shaft_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing"));
+        // Both are looked up directly by the Mechanical Input BER when
+        // linked to an Iron machine controller; register even on first bake.
+        event.register(new ResourceLocation(MOD_ID, "block/mechanical_input_module_housing_iron"));
+        event.register(new ResourceLocation(MOD_ID, "block/wrought_iron_shaft"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_small_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/pulley_large_wood"));
         event.register(new ResourceLocation(MOD_ID, "block/mechanical_water_pump_drive"));
@@ -231,6 +247,8 @@ public class Clientsetup {
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_forge_hammer_ram"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_rolling_mill_roller"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_press_ram"));
+        event.register(new ResourceLocation(MOD_ID, "multiblock/iron_stock_shear_blade"));
+        IronStockShearRenderer.registerModels(event);
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_coupling"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_precision_boring_machine_spindle"));
         event.register(new ResourceLocation(MOD_ID, "multiblock/bronze_mechanical_sawmill_blade"));

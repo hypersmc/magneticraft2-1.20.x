@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:iron_stock_shear",
+  "input": {
+    "item": "magneticraft2:wrought_iron_rod"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:iron_rivet_blank",
+    "count": 4
+  },
+  "process_time": 180,
+  "mechanical": {
+    "min_speed": 16,
+    "torque": 12
+  }
+}

@@ -18,7 +18,13 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class GearboxBlockEntity_wood extends GearBlockEntity {
     public GearboxBlockEntity_wood(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), pos, state);
+        this(BlockEntityRegistry.GEARBOX_BE_WOOD.get(), pos, state);
+    }
+
+    /** Iron version reuses the same right-angle graph edges and port signs. */
+    protected GearboxBlockEntity_wood(net.minecraft.world.level.block.entity.BlockEntityType<?> type,
+                                      BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public static <E extends BlockEntity> void serverTick(Level level,

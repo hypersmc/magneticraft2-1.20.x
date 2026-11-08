@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PP ",
+    " R ",
+    "   "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "R": {
+      "item": "magneticraft2:wrought_iron_rod"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_shear_blade",
+    "count": 1
+  }
+}

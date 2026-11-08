@@ -23,7 +23,14 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
  */
 public class LargeGearBlockEntity_wood extends GearBlockEntity {
     public LargeGearBlockEntity_wood(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), pos, state);
+        this(BlockEntityRegistry.GEAR_LARGE_BE_WOOD.get(), pos, state);
+    }
+
+    /** Material variants share the proven 16-tooth ticker, not a new Gear V2 node. */
+    protected LargeGearBlockEntity_wood(
+            net.minecraft.world.level.block.entity.BlockEntityType<?> type,
+            BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public static <E extends BlockEntity> void serverTick(Level level, BlockPos pos, BlockState estate, E e) {

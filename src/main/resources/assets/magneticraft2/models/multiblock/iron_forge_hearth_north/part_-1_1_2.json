@@ -1,0 +1,79 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "brick": "magneticraft2:block/refractory_kiln/brick",
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "particle": "magneticraft2:block/refractory_kiln/brick"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        8,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            8
+          ]
+        },
+        "south": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#brick",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PBP",
+    "SSS",
+    "SSS"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "B": {
+      "item": "magneticraft2:iron_structural_beam"
+    },
+    "S": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_machine_foundation",
+    "count": 1
+  }
+}

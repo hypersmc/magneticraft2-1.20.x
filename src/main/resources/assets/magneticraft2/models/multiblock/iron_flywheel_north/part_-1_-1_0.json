@@ -1,0 +1,147 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "iron": "magneticraft2:block/material/dark_work_iron",
+    "bearing": "magneticraft2:block/material/bronze_machined",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        0
+      ],
+      "to": [
+        15,
+        3,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            14,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            14,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            7,
+            3
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            7,
+            3
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            14,
+            7
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            14,
+            7
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        3,
+        2
+      ],
+      "to": [
+        11,
+        16,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            6,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            6,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            3,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            3,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            6,
+            3
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            6,
+            3
+          ]
+        }
+      }
+    }
+  ]
+}

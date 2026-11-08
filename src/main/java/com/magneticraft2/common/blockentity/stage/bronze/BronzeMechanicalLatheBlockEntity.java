@@ -4,6 +4,9 @@ import com.magneticraft2.common.block.stage.bronze.BronzeMechanicalLatheBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
+import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
+import net.minecraft.resources.ResourceLocation;
 import com.magneticraft2.common.blockentity.stage.copper.MechanicalInputModuleBlockEntity;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
@@ -54,6 +57,35 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     private boolean running;
     private static final int CYCLE_TICKS=160;
     private static final float MIN_RPM=12F, TORQUE=2.5F;
+    private static final ResourceLocation LATHE_MACHINE =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_lathe");
+    // Only the two supported Iron gear blanks use recipe lookup; all older
+    // Bronze gear/bearing machining remains on its established code path.
+    @Nullable private MultiblockProcessingRecipe cachedIronGearRecipe;
+
+    @Nullable private MultiblockProcessingRecipe ironGearRecipe() {
+        boolean medium = workpiece.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
+        boolean large = workpiece.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get());
+        if (level == null || (!medium && !large)) {
+            cachedIronGearRecipe = null;
+            return null;
+        }
+        if (cachedIronGearRecipe == null) {
+            MultiblockProcessingRecipe recipe = MultiblockRecipeHandler.findRecipe(
+                    level, LATHE_MACHINE, workpiece);
+            if (recipe != null && recipe.getInputCount() == 1
+                    && ((medium && recipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get()))
+                        || (large && recipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get())))
+                    && recipe.getProcessTime() == CYCLE_TICKS
+                    && recipe.getMinSpeed() > 0F && recipe.getTorque() > 0F
+                    && recipe.getByproduct().isEmpty()
+                    && recipe.getFluidInput().isEmpty()
+                    && recipe.getFluidOutput().isEmpty()) {
+                cachedIronGearRecipe = recipe;
+            }
+        }
+        return cachedIronGearRecipe;
+    }
 
     public ItemStack getWorkpiece(){return workpiece;}
     public ItemStack getCutter(){return cutter;}
@@ -94,7 +126,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     public boolean isGearWorkpiece() {
         ItemStack mounted = output.isEmpty() ? workpiece : output;
         return mounted.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
-                || mounted.is(ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get());
+                || mounted.is(ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get())
+                || mounted.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())
+                || mounted.is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_MEDIUM.get())
+                || mounted.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get())
+                || mounted.is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get());
     }
     /** Travel is fixed in model pixels, shared by the server-side and renderer contracts. */
     public float getCuttingDepthPixels() {
@@ -144,7 +180,11 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
     }
     private void tickMachining(){
         if(level==null)return;
-        boolean hasWork=formed && !workpiece.isEmpty() && output.isEmpty()
+        MultiblockProcessingRecipe ironRecipe = ironGearRecipe();
+        boolean bronzeWorkpiece = workpiece.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
+                || workpiece.is(ItemRegistry.ITEM_ROUGH_BRONZE_BEARING.get());
+        boolean hasWork=formed && (bronzeWorkpiece || ironRecipe != null)
+                && !workpiece.isEmpty() && output.isEmpty()
                 && !cutter.isEmpty() && cutter.getDamageValue()<cutter.getMaxDamage();
         MechanicalInputModuleBlockEntity input=hasWork?getMechanicalInput():null;
         if(!hasWork||input==null){
@@ -153,9 +193,18 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             return;
         }
         GearNode node=input.getOrCreateGearNode();
-        boolean canAttempt=node.getEffectiveSpeed()>=MIN_RPM && node.getTorque()+.01F>=TORQUE;
+        float rpmRequired = ironRecipe == null ? MIN_RPM : ironRecipe.getMinSpeed();
+        float torqueRequired = ironRecipe == null ? TORQUE : ironRecipe.getTorque();
+        // Source/load evaluation is still performed by the existing Gear V2
+        // manager; the Iron recipe asks for more work, not free power.
+        // Qualify using RAW network RPM. Effective RPM becomes zero
+        // during overload; using it would remove the load on the next
+        // tick, clear overload and repeatedly reapply it.
+        // supplied() below still blocks machining when overloaded.
+        boolean canAttempt=node.getSpeed()>=rpmRequired
+                && node.getTorque()+.01F>=torqueRequired;
         GearNetworkManager manager=GearNetworkManager.getInstance();
-        manager.setMechanicalLoad(level,worldPosition,input.getBlockPos(),TORQUE,canAttempt);
+        manager.setMechanicalLoad(level,worldPosition,input.getBlockPos(),torqueRequired,canAttempt);
         if(!canAttempt||!manager.getMechanicalLoadState(level,worldPosition).supplied()){
             setRunning(false);
             return;
@@ -177,13 +226,19 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             if(level.getGameTime()%20==0)sync();
             return;
         }
-        ItemStack finished=new ItemStack(workpiece.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
-                ?ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get()
-                :ItemRegistry.ITEM_PRECISION_BRONZE_BEARING.get());
+        ItemStack finished = ironRecipe != null ? ironRecipe.getOutput()
+                : new ItemStack(workpiece.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
+                        ? ItemRegistry.ITEM_PRECISION_BRONZE_GEAR.get()
+                        : ItemRegistry.ITEM_PRECISION_BRONZE_BEARING.get());
         if(workpiece.hasTag())finished.setTag(workpiece.getTag().copy());
         output=finished;
         workpiece=ItemStack.EMPTY;
-        int damage=cutter.getDamageValue()+1;
+        cachedIronGearRecipe = null;
+        // Larger Iron ring machining uses three cutter cycles; Medium Iron
+        // uses two and original Bronze recipes remain at one.
+        int cutterCost = ironRecipe == null ? 1
+                : ironRecipe.getOutput().is(ItemRegistry.ITEM_PRECISION_IRON_GEAR_LARGE.get()) ? 3 : 2;
+        int damage=cutter.getDamageValue()+cutterCost;
         if(damage>=cutter.getMaxDamage())cutter=ItemStack.EMPTY;
         else cutter.setDamageValue(damage);
         machiningTicks=0;
@@ -220,18 +275,22 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
             }
             player.displayClientMessage(Component.literal(
                     "Lathe: "+(running?"cutting":(!workpiece.isEmpty()?"stalled / waiting for Gear V2 drive":"idle"))+
-                    " | "+machiningTicks+"/"+CYCLE_TICKS+" | tool "+(cutter.isEmpty()?"missing":(cutter.getMaxDamage()-cutter.getDamageValue())+" uses")),true);
+                    " | "+machiningTicks+"/"+CYCLE_TICKS+" | tool "+(cutter.isEmpty()?"missing":(cutter.getMaxDamage()-cutter.getDamageValue())+" durability")),true);
             return;
         }
-        if(held.is(ItemRegistry.ITEM_LATHE_CUTTER.get())){
+        if(held.is(ItemRegistry.ITEM_LATHE_CUTTER.get())
+                || held.is(ItemRegistry.ITEM_IRON_LATHE_CUTTER.get())){
             if(!cutter.isEmpty()){player.displayClientMessage(Component.literal("Remove the installed cutter first."),true);return;}
             cutter=held.copy();cutter.setCount(1);
         }else if(held.is(ItemRegistry.ITEM_ROUGH_BRONZE_GEAR.get())
-                ||held.is(ItemRegistry.ITEM_ROUGH_BRONZE_BEARING.get())){
+                ||held.is(ItemRegistry.ITEM_ROUGH_BRONZE_BEARING.get())
+                ||held.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())
+                ||held.is(ItemRegistry.ITEM_IRON_GEAR_BLANK_LARGE.get())){
             if(!workpiece.isEmpty()||!output.isEmpty()){
                 player.displayClientMessage(Component.literal("Remove the previous workpiece/output first."),true);return;
             }
             workpiece=held.copy();workpiece.setCount(1);machiningTicks=0;
+            cachedIronGearRecipe = null;
         }else return;
         if(!player.getAbilities().instabuild)held.shrink(1);
         sync();
@@ -308,6 +367,8 @@ public final class BronzeMechanicalLatheBlockEntity extends BaseBlockEntityMagne
         super.load(tag);
         MultiblockPersistentData data=loadMultiblockData(tag);
         workpiece=ItemStack.of(tag.getCompound("LatheWorkpiece"));
+        // Derived from current recipe manager after a world reload.
+        cachedIronGearRecipe = null;
         cutter=ItemStack.of(tag.getCompound("LatheCutter"));
         output=ItemStack.of(tag.getCompound("LatheOutput"));
         machiningTicks=Math.max(0,Math.min(CYCLE_TICKS,tag.getInt("LatheProgress")));

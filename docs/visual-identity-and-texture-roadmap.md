@@ -178,3 +178,20 @@ The classifier screenshots exposed another anti-pattern: component geometry coul
 ### 2026-10-23 — Do not duplicate functional bearings
 
 Follow-up images of the V4 classifier revealed two substantial metal braces across the mesh inlet. That was caused by modeling a stationary rear bearing in front of the functional Mechanical Input module's own copper housing and shaft. **V5 removes the redundant bearing and braces**; the rear and front hoops rest on compact external supports instead. General Magneticraft2 rule: a formed multiblock should reuse real module housing/shaft imagery wherever practical, not surround it with redundant model-only bearings, phantom gear couplings or opaque crossbars through the rotating machine. Keep genuine functional item modules exposed and screen openings visually unobstructed.
+
+## 2026-11-07 — Iron Age texture differentiation deferred to MGC2 Studio
+
+Player verified that the Iron gearbox's material rendering was
+corrected in-game and chose to **continue progression rather than
+retexture the entire Iron drivetrain**. The Iron Shaft, Medium
+Gear, Gearbox and present industrial frame palette appear too
+uniform when all use `dark_work_iron`. This is a known visual
+identity/polish issue, not authorization to change mechanical
+ratios, parts, recipes or the existing pixel-scale UV convention.
+
+**Studio follow-up:** build a small reusable, high-contrast Iron
+material family for forged stock, machined gear teeth, structural
+frames, bearing journals and wear marks. Keep existing material
+paths and MGC2 Studio's authored-model workflow. No new PNGs or
+global recoloring were attempted as part of Iron III-A gameplay.
+

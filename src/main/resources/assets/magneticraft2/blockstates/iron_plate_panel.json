@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/iron_plate_panel",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/iron_plate_panel",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/iron_plate_panel",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/iron_plate_panel",
+      "y": 270
+    }
+  }
+}

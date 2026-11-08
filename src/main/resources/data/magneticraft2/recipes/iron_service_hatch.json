@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PBP",
+    " R "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "B": {
+      "item": "magneticraft2:wrought_iron_bar"
+    },
+    "R": {
+      "item": "magneticraft2:wrought_iron_rod"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_service_hatch",
+    "count": 2
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " F ",
+    " B ",
+    " H "
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "B": {
+      "item": "magneticraft2:bronze_bushing"
+    },
+    "H": {
+      "item": "magneticraft2:precision_iron_toolholder"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_lathe_cutter",
+    "count": 1
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PBP",
+    "BGB",
+    "PBP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "B": {
+      "item": "magneticraft2:iron_structural_beam"
+    },
+    "G": {
+      "item": "magneticraft2:precision_iron_gear_medium"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:iron_stock_shear",
+    "count": 1
+  }
+}

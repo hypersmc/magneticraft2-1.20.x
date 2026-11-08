@@ -36,6 +36,11 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> KilnPassiveHeatLoss;
         public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> KilnFiringHeatPerTick;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatCapacity;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatPerFuelTick;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthPassiveHeatLoss;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatingThreshold;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatingHeatPerTick;
         // Provisional high-temperature ore-roasting balance in HEAT units.
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatCapacity;
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatPerFuelTick;
@@ -106,6 +111,18 @@ public class Magneticraft2ConfigCommon {
                     .defineInRange("firingThreshold", 9000, 1, 1000000);
             KilnFiringHeatPerTick = builder.comment("HEAT consumed per firing tick")
                     .defineInRange("firingHeatPerTick", 6, 1, 100000);
+            builder.pop();
+            builder.push("Iron Forge Hearth (provisional batch reheating, HEAT units)");
+            HearthHeatCapacity = builder.comment("Stored thermal HEAT; not degrees Celsius")
+                    .defineInRange("heatCapacity", 36000, 1, 1000000);
+            HearthHeatPerFuelTick = builder.comment("HEAT per solid fuel burn tick")
+                    .defineInRange("heatPerFuelTick", 36, 1, 100000);
+            HearthPassiveHeatLoss = builder.comment("Passive HEAT loss per loaded tick")
+                    .defineInRange("passiveHeatLoss", 2, 0, 100000);
+            HearthHeatingThreshold = builder.comment("HEAT threshold for wrought batches")
+                    .defineInRange("heatingThreshold", 12000, 1, 1000000);
+            HearthHeatingHeatPerTick = builder.comment("HEAT consumed by batch per tick")
+                    .defineInRange("heatingHeatPerTick", 16, 1, 100000);
             builder.pop();
             builder.push("Ore Roasting Kiln (provisional K2, Magneticraft HEAT units)");
             RoasterHeatCapacity = builder.comment("Maximum brick thermal mass HEAT, not degrees Celsius")

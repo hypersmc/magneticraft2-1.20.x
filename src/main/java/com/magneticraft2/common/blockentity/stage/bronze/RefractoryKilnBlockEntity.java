@@ -2,6 +2,9 @@ package com.magneticraft2.common.blockentity.stage.bronze;
 
 import com.magneticraft2.common.block.stage.bronze.RefractoryKilnBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
+import com.magneticraft2.common.blockentity.stage.copper.MultiblockFluidInputBlockEntity;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.registry.registers.FluidRegistry;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
@@ -25,6 +28,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -53,6 +59,61 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
     private static final String PREFIX = "refractory_kiln_";
     private static final ResourceLocation MACHINE = new ResourceLocation("magneticraft2", "refractory_kiln");
     private static final int FUEL_QUEUE_LIMIT = 16;
+    // One 250 mB Retort batch gives 400 Kiln burning ticks via 5 x 50 mB.
+    // Both fuels use the existing configurable HEAT gain and passive loss.
+    public static final int WOOD_TAR_CAPACITY_MB = 4000;
+    public static final int WOOD_TAR_IGNITION_MB = 50;
+    public static final int WOOD_TAR_BURN_TICKS = 80;
+
+    private final FluidTank woodTarFuelTank = new FluidTank(WOOD_TAR_CAPACITY_MB,
+            stack -> stack.getFluid() == FluidRegistry.WOOD_TAR.get()) {
+        @Override protected void onContentsChanged() { sync(); }
+    };
+
+    // Only the genuine, formed wall module may request this private handler.
+    private final IFluidHandler tarFuelInput = new IFluidHandler() {
+        @Override public int getTanks() { return 1; }
+        @Override public @NotNull FluidStack getFluidInTank(int tank) {
+            return tank == 0 ? woodTarFuelTank.getFluid().copy() : FluidStack.EMPTY;
+        }
+        @Override public int getTankCapacity(int tank) {
+            return tank == 0 ? WOOD_TAR_CAPACITY_MB : 0;
+        }
+        @Override public boolean isFluidValid(int tank, @NotNull FluidStack fluid) {
+            return tank == 0 && !fluid.isEmpty()
+                    && fluid.getFluid() == FluidRegistry.WOOD_TAR.get();
+        }
+        @Override public int fill(FluidStack resource, FluidAction action) {
+            return formed && isLiquidFuelBlueprint()
+                    ? woodTarFuelTank.fill(resource, action) : 0;
+        }
+        @Override public @NotNull FluidStack drain(FluidStack fluid, FluidAction action) {
+            return FluidStack.EMPTY;
+        }
+        @Override public @NotNull FluidStack drain(int amount, FluidAction action) {
+            return FluidStack.EMPTY;
+        }
+    };
+
+    private boolean isLiquidFuelBlueprint() {
+        return blueprintName.startsWith("refractory_kiln_tarfuel_");
+    }
+
+    /**
+     * For the existing Fluid Input module only: stale or unrelated
+     * standalone modules must never access the internal Wood Tar tank.
+     */
+    @Nullable public IFluidHandler getTarFuelPortHandler(BlockPos portPos) {
+        MultiblockController controller = getMultiblockController();
+        if (!formed || !isLiquidFuelBlueprint() || level == null
+                || controller == null) return null;
+        BlockState member = controller.getBlockMap().get(portPos);
+        if (member == null || !member.is(BlockRegistry.MULTIBLOCK_FLUID_INPUT.get()))
+            return null;
+        if (!(level.getBlockEntity(portPos) instanceof MultiblockFluidInputBlockEntity port)
+                || !worldPosition.equals(port.getControllerPos())) return null;
+        return tarFuelInput;
+    }
     private ItemStack fuel = ItemStack.EMPTY;
     private int burnRemaining, burnTotal, progress;
     @Nullable private ResourceLocation activeRecipeId;
@@ -230,9 +291,9 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
                 notify = true;
             }
             ItemStack product = recipe.getOutput();
-            // Re-firing an Iron Bloom requires real fuel, sustained HEAT and
-            // a dedicated datapack recipe. The timestamp is authoritative
-            // world game-time, not client-side cosmetic item state.
+            // Reheating an Iron Bloom, Wrought Iron Ingot or Iron Bar
+            // requires real fuel, HEAT and a dedicated datapack recipe. The timestamp is
+            // authoritative world game-time, not client cosmetic state.
             // Use the same tagged product for BOTH reservation and commit.
             if (HotBloomWorkpiece.isReheatRecipe(recipe)) {
                 product = HotBloomWorkpiece.heatInKiln(candidate, product, level);
@@ -240,13 +301,26 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
             // Reserve output before new ignition, firing progress or input removal.
             boolean outputFits = itemHandler.insertItem(1, product, true).isEmpty();
             if (outputFits) {
-                if (burnRemaining <= 0 && (long) heat < (long) threshold + cost && !fuel.isEmpty()) {
+                if (burnRemaining <= 0 && (long) heat < (long) threshold + cost) {
+                    // Solid fuel keeps priority. Liquid ignition only occurs when
+                    // the workpiece/output is valid and more heat is needed.
                     int time = fuelTime(fuel);
                     if (time > 0) {
                         fuel.shrink(1);
                         if (fuel.isEmpty()) fuel = ItemStack.EMPTY;
                         burnRemaining = time;
                         burnTotal = time;
+                        changed = true;
+                        notify = true;
+                    } else if (isLiquidFuelBlueprint()
+                            && woodTarFuelTank.getFluidAmount() >= WOOD_TAR_IGNITION_MB) {
+                        FluidStack consumed = woodTarFuelTank.drain(
+                                WOOD_TAR_IGNITION_MB, IFluidHandler.FluidAction.EXECUTE);
+                        if (consumed.getAmount() != WOOD_TAR_IGNITION_MB
+                                || consumed.getFluid() != FluidRegistry.WOOD_TAR.get())
+                            throw new IllegalStateException("Kiln Wood Tar fuel debit failed");
+                        burnRemaining = WOOD_TAR_BURN_TICKS;
+                        burnTotal = WOOD_TAR_BURN_TICKS;
                         changed = true;
                         notify = true;
                     }
@@ -317,7 +391,8 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
                 heatHandler.getMaxHeatStored(), progress,
                 recipe == null ? 0 : recipe.getProcessTime(),
                 itemHandler.getStackInSlot(0).getCount(),
-                itemHandler.getStackInSlot(1).getCount()), true);
+                itemHandler.getStackInSlot(1).getCount(),
+                woodTarFuelTank.getFluidAmount(), WOOD_TAR_CAPACITY_MB), true);
     }
 
     @Override public void onDestroy(Level world) {
@@ -340,6 +415,7 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         localVoxelCollision = MultiblockVoxelNbt.read(tag, "v2_voxel_collision");
         localVoxelSelection = MultiblockVoxelNbt.read(tag, "v2_voxel_selection");
         fuel = ItemStack.of(tag.getCompound("KilnFuel"));
+        woodTarFuelTank.readFromNBT(tag.getCompound("KilnWoodTarFuelTank"));
         burnTotal = Math.max(0, tag.getInt("KilnBurnTotal"));
         burnRemaining = Math.max(0, Math.min(burnTotal, tag.getInt("KilnBurnRemaining")));
         progress = Math.max(0, tag.getInt("KilnProgress"));
@@ -357,6 +433,7 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
         if (!voxelProfileName.isBlank()) tag.putString("v2_voxel_profile", voxelProfileName);
         MultiblockVoxelNbt.write(tag, "v2_voxel_collision", localVoxelCollision);
         MultiblockVoxelNbt.write(tag, "v2_voxel_selection", localVoxelSelection);
+        tag.put("KilnWoodTarFuelTank", woodTarFuelTank.writeToNBT(new CompoundTag()));
         tag.putInt("KilnBurnTotal", burnTotal);
         tag.putInt("KilnBurnRemaining", burnRemaining);
         tag.putInt("KilnProgress", progress);
@@ -398,7 +475,9 @@ public final class RefractoryKilnBlockEntity extends BaseBlockEntityMagneticraft
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(
             @NotNull Capability<T> cap, @Nullable Direction side) {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();
+        // No controller-wide inventory or fluid bypass: only formed ports.
+        if (cap == ForgeCapabilities.ITEM_HANDLER || cap == ForgeCapabilities.FLUID_HANDLER)
+            return LazyOptional.empty();
         return super.getCapability(cap, side);
     }
 

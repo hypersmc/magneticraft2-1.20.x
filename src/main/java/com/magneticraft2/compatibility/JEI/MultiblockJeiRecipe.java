@@ -40,10 +40,14 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "mechanical_sifter");
     public static final ResourceLocation BRONZE_STAMP_MILL =
             new ResourceLocation("magneticraft2", "bronze_stamp_mill");
+    public static final ResourceLocation BRONZE_MECHANICAL_LATHE =
+            new ResourceLocation("magneticraft2", "bronze_mechanical_lathe");
     public static final ResourceLocation BRONZE_FORGE_HAMMER =
             new ResourceLocation("magneticraft2", "bronze_forge_hammer");
     public static final ResourceLocation BRONZE_ROLLING_MILL =
             new ResourceLocation("magneticraft2", "bronze_rolling_mill");
+    public static final ResourceLocation IRON_STOCK_SHEAR =
+            new ResourceLocation("magneticraft2", "iron_stock_shear");
     public static final ResourceLocation BRONZE_MECHANICAL_PRESS =
             new ResourceLocation("magneticraft2", "bronze_mechanical_press");
     public static final ResourceLocation BRONZE_PRECISION_BORING_MACHINE =
@@ -60,6 +64,8 @@ public final class MultiblockJeiRecipe {
             new ResourceLocation("magneticraft2", "water_settling_tank");
     public static final ResourceLocation CHARCOAL_RETORT =
             new ResourceLocation("magneticraft2", "charcoal_retort");
+    public static final ResourceLocation REFRACTORY_KILN =
+            new ResourceLocation("magneticraft2", "refractory_kiln");
     public static final ResourceLocation ORE_ROASTING_KILN =
             new ResourceLocation("magneticraft2", "ore_roasting_kiln");
     public static final ResourceLocation BLOOMERY_FURNACE =

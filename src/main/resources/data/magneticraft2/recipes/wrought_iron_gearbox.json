@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PGP",
+    "SBS",
+    "PGP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "G": {
+      "item": "magneticraft2:precision_iron_gear_medium"
+    },
+    "S": {
+      "item": "magneticraft2:wrought_iron_shaft"
+    },
+    "B": {
+      "item": "magneticraft2:precision_bronze_bearing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:wrought_iron_gearbox",
+    "count": 1
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "waterlogged=false": {
+      "model": "magneticraft2:block/iron_floor_grating"
+    },
+    "waterlogged=true": {
+      "model": "magneticraft2:block/iron_floor_grating"
+    }
+  }
+}

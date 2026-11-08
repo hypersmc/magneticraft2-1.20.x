@@ -1,12 +1,391 @@
 {
   "name": "Iron Age",
-  "description": "",
+  "description": "Upgrade the Bronze industrial workshop using Wrought Iron.",
   "category": "magneticraft2:walkthrough",
-  "icon": "minecraft:iron_ingot",
+  "icon": "magneticraft2:wrought_iron_ingot",
   "pages": [
     {
       "type": "text",
-      "text": "Iron Age progression will follow the earlier metallurgy stages."
+      "text": "$(bold)Entering Iron Age$()$(br2)The Bronze workshop produces your first Wrought Iron Ingot: concentrate Magnetite, reduce it with charcoal, Calcite flux, HEAT and AIR in the Bloomery, reheat the Iron Bloom in the Refractory Kiln, then consolidate it in the powered Forge Hammer before the hot timer expires.$(br2)Unlike vanilla smelting, this industrial chain is your Iron Age starting point."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Your first Iron machine upgrade$()$(br2)Use Wrought Iron Ingots to make a longer-lived forging die for your EXISTING Bronze Forge Hammer.$(br2)The Bronze die provides 384 successful batches; the Wrought Iron die lasts 768. It does not increase RPM, torque, processing output or the machine's mechanical power."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Forging Die",
+      "recipe": "magneticraft2:wrought_iron_forge_die",
+      "text": "Four Wrought Iron Ingots and a polished blackstone anvil insert. Right-click a formed Bronze Forge Hammer with the die to install it. This consumes the replacement die, even when replacing an existing bronze part."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Servicing the Hammer$()$(br2)Sneak-right-click the formed Forge Hammer with an empty hand to inspect installed die material and remaining batches. Right-click normally while holding a replacement Bronze or Wrought Iron die to service the machine.$(br2)Wear advances only after a completed workpiece; stalled or idle power does not consume die life. Existing Bronze dies and saved machine wear remain usable."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron 0B — Heating Wrought Iron$()$(br2)A Wrought Iron Ingot leaves the Bronze-to-Iron consolidation chain cold. Feed ONE ingot into the EXISTING fueled Refractory Kiln. After 240 HEAT-supplied firing ticks, the same ingot gains a new 120-second forging-heat timer, visible on its tooltip. The kiln consumes actual fuel; the ingot does not become a second special item."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Forging a Wrought Iron Plate$()$(br2)Move the still-hot ingot into the EXISTING powered Forge Hammer with a usable Bronze or Wrought Iron Forging Die. Gear V2 must supply at least 20 RPM and 6 torque for 160 supplied ticks. ONE hot ingot becomes ONE Wrought Iron Plate. Material quality is retained, but the temporary heat tag is removed. Cold or expired ingots must be reheated."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_plate",
+      "title": "First Wrought Iron Plate",
+      "text": "Produced through Kiln and Forge Hammer machine processing, visible in JEI. This is a full ingot-equivalent plate, not an ordinary crafting-table shortcut. Bars and rods are produced next in the existing Rolling Mill; structural Iron blocks follow."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Toward stronger industry$()$(br2)The first Iron upgrade is longer-lived tooling. Stronger shafts, precision gears and heavier manufacturing are planned next, but require meaningful source and network load tests. A stronger part must not create power or bypass the limits of an existing wooden gear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron 0C — Rolling Wrought Iron$()$(br2)A hot Wrought Iron Ingot can enter the existing powered Bronze Rolling Mill instead of the Forge Hammer. At 16 RPM and 6 torque, 180 supplied ticks produce ONE Wrought Iron Bar. This is a shaped billet rolling process; the Forge Hammer still makes Plates from the same heated ingot."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Smaller Iron Rods$()$(br2)Bars must be heated again in the fueled Refractory Kiln for 240 HEAT-supplied ticks. Feed a HOT Bar to the Rolling Mill: 200 supplied ticks at 16 RPM and 6 torque produce FOUR slender Wrought Iron Rods. One bar represents one ingot-equivalent; each rod represents one quarter. Heat expires in world time, and the output retains material quality but does not stay hot. The original Copper Sheet recipe works cold."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_bar",
+      "title": "Forged and Rolled Bar",
+      "text": "Roll one hot Wrought Iron Ingot in the existing Bronze Rolling Mill. Use the Bar for structural metal and precise wrought rod production. Recipes are machine processing entries in JEI."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:wrought_iron_rod",
+      "title": "Iron Rod Stock",
+      "text": "Four slim rods from one heated Bar. Iron Rods will become fasteners and supports for the first Iron factory building pieces."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron 0D — Building a Factory$()$(br2)Your first structural iron blocks are crafted from hot-worked material using an ordinary crafting table. A Structural Beam uses FOUR Wrought Iron Bars plus ONE Rod as its center fitting. Iron Plate Panels use TWO Wrought Iron Plates. Beams can be placed along X/Y/Z, Panels face the player, and neither needs a ticking block entity."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Structural Beam",
+      "recipe": "magneticraft2:iron_structural_beam",
+      "text": "A visibly supported I-shaped industrial beam for columns, rafters and machine structures. Requires bars and a rod, made with the existing Rolling Mill."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Plate Panel",
+      "recipe": "magneticraft2:iron_plate_panel",
+      "text": "Thin factory wall panel from two Wrought Iron Plates. Facing and collision match its actual physical plate; it is not a full metal cube."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Machine Foundation",
+      "recipe": "magneticraft2:iron_machine_foundation",
+      "text": "Stone brick base with wrought iron top and structural beam reinforcement. A full-sized foundation for factory buildings and later heavy equipment; it has no imaginary vibration simulation."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron Factory Walkways$()$(br2)Make raised platforms using Wrought Iron Floor Grating: narrow, open metal bars let light through and can hold water without pretending to be a solid steel cube. Add connecting Catwalk Railings around exposed edges, using real fence connections and collision. These simple building pieces use the existing hot-rolling material chain; no new machine is required."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Floor Grating",
+      "recipe": "magneticraft2:iron_floor_grating",
+      "text": "TWO Wrought Iron Bars and TWO Wrought Iron Plates yield FOUR open-grille walkway blocks. Set them across supported iron beams or foundations for factory catwalks. They are walkable, waterloggable and have collision matched to their real bars."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Catwalk Railing",
+      "recipe": "magneticraft2:iron_catwalk_railing",
+      "text": "TWO Wrought Iron Bars and FOUR Iron Rods yield FOUR railings. Like ordinary fences, railings connect to neighboring rails and sturdy blocks, with a protective raised collision shape. Use them around your grated platforms."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron II-A — Forge a Gear$()$(br2)Use the existing fueled Refractory Kiln to reheat a Wrought Iron Bar. Move it to the powered Bronze Forge Hammer with a working forging die. One still-hot Bar becomes ONE Forged Iron Gear Blank after 180 supplied ticks at 20 RPM and 6 torque.$(br2)No new furnace, forge or material-quality shortcut is required."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Machine the Gear Teeth$()$(br2)Insert the gear blank into the EXISTING formed Bronze Mechanical Lathe, with its flint-tipped Bronze Lathe Cutter. Iron machining needs 12 RPM and 5 torque over 160 ticks and wears the cutter by TWO durability; Bronze gear/bearing operations still use ONE.$(br2)The result is a Machined Iron Gear that retains workpiece quality metadata."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Medium Gear",
+      "recipe": "magneticraft2:wrought_iron_gear_medium",
+      "text": "Assemble the precision-machined gear with three Wrought Iron Plates and a Wrought Iron Bar. This is a true Gear V2 medium gear: eight teeth, matching existing mesh/placement and rotating at the supplied network phase."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron II-C — Large Gear Stock$()$(br2)Assemble a heavy large gear blank from FOUR Wrought Iron Bars, FOUR Plates and a Riveted Iron Frame. This is a rough assembled rim, not a forged finished tooth profile. Use the existing Bronze Mechanical Lathe with a functioning cutter to machine its 16 teeth: 160 supplied ticks at 12 RPM and 8 torque. The larger cut wears the cutter by THREE durability (medium Iron uses two; Bronze still one)."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Assembled Large Gear Blank",
+      "recipe": "magneticraft2:iron_gear_blank_large",
+      "text": "A rough heavy gear wheel made from shaped wrought stock around an existing Riveted Iron Frame. The Metal Shear and Forge Hammer supply the headed rivets used in its frame; Iron II-A machining provides the precedent."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Machine the Large Iron Ring",
+      "item": "magneticraft2:precision_iron_gear_large",
+      "text": "The Bronze Mechanical Lathe machines the large blank into a full 16-tooth wheel. Its cutter wears by three uses, and material quality travels into the result. One large blank becomes one precision ring; no duplicate lathe or fictional free power source."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Large Gear",
+      "recipe": "magneticraft2:wrought_iron_gear_large",
+      "text": "Assemble the machined 16-tooth rim with a Wrought Iron Shaft and THREE Wrought Iron Plates. Rated 24 torque as a component, but existing water wheels still supply at most 16 torque and the Mechanical Input Module still caps at 16; Iron Medium Gears and Gearboxes cap at 16, wood may be weaker. The large gear changes gear ratio but never creates torque."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Stronger, Not a Generator$()$(br2)The wooden medium gear is limited to 8 torque. The Wrought Iron Medium Gear has a 16-torque capacity but does NOT increase water-wheel torque, RPM or gear-network output. Mixed networks are still limited by their weakest gear, gearbox, source, mechanical module or connected load.$(br2)An isolated Iron gear cannot solve an 8-torque wooden gearbox bottleneck. A real greater-than-8-torque consumer comes later in Iron Age."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron II-B — Forged Drive Shafts$()$(br2)Build a Wrought Iron Shaft from one Wrought Iron Bar and two Precision Bronze Bearings. It uses the established shaft placement rules and connects only along its X, Y or Z axis.$(br2)The iron shaft can withstand up to 24 torque, but it does not generate power; a large water wheel still supplies no more than 16 and a wooden Medium Gear or Gearbox still limits its own branch to 8."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Shaft",
+      "recipe": "magneticraft2:wrought_iron_shaft",
+      "text": "One rolled Wrought Iron Bar and two machined Bronze Bearings. Place along the clicked face's axis, just like the existing wooden shaft. Rotate only when supplied by a valid Gear V2 network."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron Right-Angle Gearbox$()$(br2)This forged gearbox retains the existing wooden gearbox's INPUT and OUTPUT side configuration, reversible 1:1 shaft drive and right-angle sign convention, but supports 16 torque instead of 8.$(br2)It uses two Precision Iron Gears, two Wrought Iron Shafts, four Plates and one Precision Bronze Bearing. Sneak-right-click empty-handed to swap the ports, or right-click to select the next perpendicular output."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Gearbox",
+      "recipe": "magneticraft2:wrought_iron_gearbox",
+      "text": "The same functional miter gearbox you know from Copper Age, now fitted with iron shafts, machined gear parts and bronze-bearing support. Higher capacity is only useful when the whole power path and source support the load."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Mechanical Metal Shear$()$(br2)This machine cuts iron rods into short blanks. A moving blade passes a fixed cutting edge, driven by the rear shaft, equal pulleys, crank and connecting rod.$(br2)ONE Wrought Iron Rod becomes FOUR Iron Rivet Blanks after 180 supplied ticks at 16 RPM and 12 torque. Cutting does not form a rivet head: finish the blanks in the existing Forge Hammer."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Metal Shear Controller",
+      "recipe": "magneticraft2:iron_stock_shear",
+      "text": "Controller only: wrought plates, existing Iron Structural Beams and a machined Iron Gear. The controller is front-center on the ground layer; the real rear-center Mechanical Input connects to the powertrain."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron machine drive bearing$()$(br2)The Metal Shear uses the SAME existing Mechanical Input Module from the Copper and Bronze ages. When it forms an Iron machine, the module is shown with a wrought-iron bearing frame, bronze journal and correctly sized 2-pixel Iron Shaft instead of the early copper/oak look. The input is still rated 16 torque: this is a visual tier change, not a free mechanical upgrade or a different multiblock construction ingredient."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Mechanical Metal Shear",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "FMF",
+            "OFU",
+            "F0F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:iron_stock_shear",
+          "F": "magneticraft2:iron_machine_foundation",
+          "M": "magneticraft2:mechanical_input_module",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "B": "magneticraft2:iron_structural_beam"
+        },
+        "symmetrical": false
+      },
+      "text": "Two layers high, three wide and three deep. The book preview is mirrored left/right relative to SOUTH JSON to match the player-facing view. Ground: Iron Machine Foundations, rear-center mechanical input, one real LEFT item input and one real RIGHT primary output, front-center controller. Top: 8 Iron Structural Beams around the single required center AIR cell. Keep it empty while constructing; right-click the controller to form."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Replaceable Iron Shear Blade",
+      "recipe": "magneticraft2:iron_shear_blade",
+      "text": "Install this forged blade in the formed Metal Shear. It lasts 512 completed cutting batches. No blade life is lost when stalled, unpowered or output-blocked. Right-click with a blade to replace; sneak-right-click empty-handed to inspect wear."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why Iron Power Matters$()$(br2)An ordinary Wooden Medium Gear and Wooden Right-Angle Gearbox each allow only 8 torque. The Shear needs 12: test with a 16-capacity Iron Medium Gear and Iron Gearbox, the existing Mechanical Input Module and a correctly flowing Large Water Wheel.$(br2)The 24-rated Iron Shaft does not itself provide more power. A fully wooden 8-limited path must remain unable to run the Shear."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:iron_rivet_blank",
+      "title": "Cut Rivet Blanks",
+      "text": "The Metal Shear cuts one Wrought Iron Rod into four short, headless blanks. Material quality is retained. These are not finished rivets and cannot replace Iron Rivets in frame crafting."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "magneticraft2:iron_rivet",
+      "title": "Form the Rivet Heads",
+      "text": "Insert FOUR matching Iron Rivet Blanks into the existing Mechanical Forge Hammer. Cold heading takes 120 supplied ticks at 20 RPM and 6 torque, using a working Bronze or Wrought Iron Forging Die. FOUR blanks become FOUR Iron Rivets, retaining material quality and using one die batch. Small blanks need no kiln reheating; hot-ingot and bloom recipes keep their heat requirements."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Riveted Iron Frame",
+      "recipe": "magneticraft2:riveted_iron_frame",
+      "text": "Four Wrought Iron Bars and four headed Iron Rivets form an open, rigid factory frame. This is a genuine useful Iron building block with matching collision, not a cosmetic product with no purpose."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Riveted Iron Casing",
+      "recipe": "magneticraft2:riveted_iron_casing",
+      "text": "Enclose one Riveted Iron Frame with SIX Wrought Iron Plates to make a solid machine casing. Cut and head the rivets first using the Mechanical Metal Shear and existing Forge Hammer. Unlike the open Frame or thin Iron Plate Panel, this block is fully enclosed factory construction, using no extra machine or power source."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron IV-A — Forge Hearth$()$(br2)The Refractory Kiln continues to fire ceramics and reheat single Blooms, Ingots and Bars. The open Hearth instead heats FOUR matching Wrought Iron Ingots or FOUR matching Wrought Iron Bars in 360 supplied HEAT ticks. The whole stack receives the existing temporary hot-state timer and preserves its quality NBT; use it in the existing Forge Hammer or Rolling Mill. Blooms still use the Kiln."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Forge Hearth",
+      "recipe": "magneticraft2:iron_forge_hearth",
+      "text": "Craft the controller with 4 Wrought Iron Plates, 2 Iron Structural Beams, 2 Fired Refractory Ceramics and 1 Riveted Iron Frame. No new metal and no circular dependency."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Iron Forge Hearth",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "FFF",
+            "BFB",
+            "O0U"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:iron_forge_hearth",
+          "F": "magneticraft2:iron_machine_foundation",
+          "B": "minecraft:bricks",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "U": "magneticraft2:multiblock_item_input"
+        },
+        "symmetrical": false
+      },
+      "text": "3×3×2. BUILD with eight normal full BRICKS around the required upper-center AIR cell. After forming, the existing V2 part renderer visually reshapes those bricks into a LOW stepped masonry firebox, with a clear loading mouth at the FRONT. The center AIR automatically becomes the supported charcoal bed and two iron stock rests. Do not place the interior pieces yourself. This AIR is NOT a gas, air or power input. Bottom: rear 3 Iron Foundations, middle Brick–Foundation–Brick, front real Output–Controller–Input. This book preview mirrors SOUTH JSON left/right."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Why AIR in the middle?$()$(br2)$(bold)Build:$() place EIGHT ordinary Brick blocks around the upper-center AIR — leave that AIR cell EMPTY.$(br2)$(bold)Form:$() the bricks become lower walls and a front loading mouth; the AIR cell automatically fills with a refractory tray, charcoal and iron stock rests supported by the brickwork. These are model parts, not craftable blocks or a new AIR input. Breaking the formed multiblock clears the structure, drops its original block items and removes the generated AIR proxy; rebuild it from those drops."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Heating and fuel$()$(br2)Insert exactly FOUR matching wrought Iron Ingots or Bars at the input port. Right-click the controller with normal solid furnace fuel to queue up to 16 matching items. The batch needs stored HEAT for 360 processing ticks; blocked output pauses processing and new fuel ignition, while burning fuel completes its burn. Extract FOUR hot pieces from the output port. Sneak-right-click empty-handed to recover queued unused fuel. This open hearth uses natural draft; powered AIR is not implemented."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron IV-B — Wrought Iron Flywheel$()$(br2)The Iron Flywheel is a REAL 3×3 vertical machine, one block thick, not a one-block wheel with oversized graphics. The central axle is its only Gear V2 node. Build two Iron Machine Foundations at the bottom corners, and leave SIX required positions AIR around the axle. Right-click the axle to form. The formed rim and supports use the V2 clearance area; no AIR pipe or second power system is required. The two formed bearing rings are located forward and behind the wheel plane. Each is carried by an iron crossarm and a foundation-supported upright, so the shaft is mechanically supported while its neighboring axial cells remain available for external shafts."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Flywheel",
+      "recipe": "magneticraft2:iron_flywheel",
+      "text": "Craft the axle assembly from four Wrought Iron Plates, two Bars, one Riveted Iron Frame, one machined Large Iron Gear and one Wrought Iron Shaft. The two Iron Machine Foundations are separate construction pieces."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Wrought Iron Flywheel",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "___"
+          ],
+          [
+            "_0_"
+          ],
+          [
+            "F_F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:iron_flywheel",
+          "F": "magneticraft2:iron_machine_foundation"
+        },
+        "symmetrical": false
+      },
+      "text": "Vertical SOUTH-facing view, one block deep: TOP AIR–AIR–AIR. MIDDLE AIR–controller–AIR. BOTTOM Foundation–AIR–Foundation. Place the controller as the center axle, orienting the shaft horizontally. Leave all six AIR spaces empty BEFORE forming; they become reserved V2 model/clearance proxies, not air resource inputs. Other horizontal facings rotate this structure. The foundation posts support two separate axial bearing rings around the rotating center shaft. The build arrangement is unchanged from the first 3×3 variant; dismantle and rebuild old formed flywheels to refresh their saved models."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Finite rotational inertia$()$(br2)The Wooden Flywheel coasts at up to 6 torque. The Iron Flywheel temporarily carries up to 12 torque and decays more slowly under the same load, using Gear V2's existing finite inertia model. Its axle is rated for 24 torque but does NOT raise the Water Wheel's real power output or eliminate wooden gearbox bottlenecks. Axial shafts connect only after the 3×3 structure forms. Breaking the assembly drops its original non-AIR blocks and clears the wheel proxies."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron Service Access$()$(br2)The Iron factory palette now includes a hinged Service Hatch for maintenance passages and catwalk floors. It is a normal hand-operated metal trapdoor: right-click to open or close, or control it with redstone. It supports ceiling and floor placement, all four horizontal facings, and waterlogging. It is not a machine port, pressure seal or new multiblock; build it using existing Wrought Iron Plates, Bar and Rod."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Iron Service Hatch",
+      "recipe": "magneticraft2:iron_service_hatch",
+      "text": "Two Plates, a Wrought Iron Bar and a Rod produce two sturdy metal access hatches. No Stock Shear, new metal grade or powered machine is added to this construction recipe."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Iron I-C — Cold-Finished Sheet$()$(br2)The existing Bronze Rolling Mill cold-finishes a forged Wrought Iron Plate into TWO thin Sheets. Unlike hot Ingot→Bar or hot Bar→Rod rolling, this finishing pass does not require an expiring hot timer; it demands 16 RPM, 12 torque and 240 supplied ticks. It still wears the installed Roller Sleeves. Quality NBT carries over to both Sheets and temporary heat is removed. The two Sheets together contain one Plate's metal; an interrupted or blocked batch creates nothing."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Rolled Iron Sheet Panels",
+      "recipe": "magneticraft2:iron_plate_panel_from_sheets",
+      "text": "TWO Wrought Iron Sheets make ONE Iron Plate Panel. Powering the Mill to make thin stock improves material efficiency over the original two-Plate manual construction recipe, which remains available. TWO Sheets, a Bar and a Rod also make two Iron Service Hatches; the previous Plate-based hatch recipe still works. Vanilla crafting does not propagate source quality to block items."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Service the Rolling Mill$()$(br2)Cold-finishing Wrought Iron Sheets puts the existing Bronze Rolling Mill to work at 12 torque. Its original Bronze Roller Sleeves last 512 completed batches. Wrought Iron Roller Sleeves are an optional longer-lived replacement: 1024 completed batches.$(br2)Neither sleeve tier changes speed, torque requirements, yield or heat rules. Idle machines, stalls and blocked output do not wear sleeves."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Roller Sleeves",
+      "recipe": "magneticraft2:wrought_iron_roller_sleeves",
+      "text": "Four rolled Wrought Iron Bars, two precision-bored Bronze Bushings and one polished blackstone support make the replacement sleeve pair. Install by right-clicking the FORMED Bronze Rolling Mill with the item; one is consumed. Sneak-right-click empty-handed to inspect installed material and remaining cycles. Replacing a pristine same-tier sleeve consumes nothing; swapping materials replaces the old part without refund."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Precision Iron Lathe Tooling$()$(br2)The existing Bronze Precision Boring Machine can work one cold Wrought Iron Rod into one Precision Iron Toolholder. The bore operation costs 8 torque at 20 RPM for 240 supplied ticks, wearing the normal abrasive boring bit once after a successful batch. This is a real machine recipe, not a crafting-table shortcut. No forging-heat timer is needed for the cold rod."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Precision Iron Toolholder",
+      "item": "magneticraft2:precision_iron_toolholder",
+      "text": "The bored wrought-iron holder has a seat for a Bronze Bushing and a flint cutting insert. Source quality NBT survives the Boring Machine step. A normal crafting table does not transfer that NBT into the assembled cutter; no quality-dependent tool rating has been introduced."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Wrought Iron Lathe Cutter",
+      "recipe": "magneticraft2:iron_lathe_cutter",
+      "text": "Assemble one bored Iron Toolholder, one Bronze Bushing and one Flint. Right-click the existing formed Bronze Mechanical Lathe with the cutter when its cutter slot is empty. It has 128 durability instead of 64 for the old Bronze cutter; both cutters still spend 1 durability on Bronze work, 2 on Medium Iron gears, and 3 on Large Iron gears. No new machine, faster cutting, extra power or early Steel metallurgy."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Bored Iron Bearing Housing$()$(br2)The forged Medium Iron Gear Blank is useful for more than gear teeth. Take ONE blank (forged from a hot Wrought Iron Bar) to the existing Bronze Precision Boring Machine to open a supported shaft-bearing pocket. The machine requires 20 RPM, 8 torque and 240 supplied ticks; the original Abrasive Boring Bit wears once per successful batch. The same blank can still go to the Mechanical Lathe for an Iron Gear."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "title": "Iron Bearing Housing",
+      "item": "magneticraft2:iron_bearing_housing",
+      "text": "A forged wrought-iron journal support with a real open shaft pocket and mounting feet. Material quality follows the forged blank into the machined housing; temporary forging heat is removed before this cold process. Fit a separately machined Bronze Bushing when assembling a complete machine, so the rotating shaft never bears directly on bare wrought iron."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bored-Housing Gearbox",
+      "recipe": "magneticraft2:wrought_iron_gearbox_bearing_housing",
+      "text": "A material-saving alternative for the Wrought Iron Right-Angle Gearbox: two Iron Plates, two machined Iron Gears, two Iron Shafts, one bored Iron Bearing Housing and TWO Bronze Bushings. The Housing already costs one forged Bar, so this route uses three instead of four iron ingot-equivalents for the casing/bearing portion. It takes extra precision boring and one additional Bronze Bushing compared with the simpler legacy build. Both recipes create the exact same Gearbox, with unchanged Gear V2 power, ratios and save data."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Bored-Housing Flywheel",
+      "recipe": "magneticraft2:iron_flywheel_bearing_housing",
+      "text": "An alternative Wrought Iron Flywheel assembly uses one bored Housing and one Bronze Bushing instead of its original two rolled Bars. The forged Housing already cost one Bar, so this substitutes boring/bronze machining work for one ingot-equivalent of Iron. It does not change the flywheel structure, bearing mesh, inertia, source power or wear. The original recipe remains valid."
     }
   ],
   "sortnum": 4,

@@ -27,17 +27,19 @@ public class FlywheelBlockEntity_wood
     private float storedSpeed = 0.0F;
     private int storedDirection = 1;
 
-    public FlywheelBlockEntity_wood(
-            BlockPos pos,
-            BlockState state) {
-        super(
-                BlockEntityRegistry
-                        .FLYWHEEL_BE_WOOD
-                        .get(),
-                pos,
-                state
-        );
+    public FlywheelBlockEntity_wood(BlockPos pos, BlockState state) {
+        this(BlockEntityRegistry.FLYWHEEL_BE_WOOD.get(), pos, state);
     }
+    /** Material variants keep this one Gear V2 inertia implementation. */
+    protected FlywheelBlockEntity_wood(
+            net.minecraft.world.level.block.entity.BlockEntityType<?> type,
+            BlockPos pos, BlockState state) {
+        super(type,pos,state);
+    }
+    /** Available coasting torque; never permanent source power. */
+    public float getInertiaTorque(){return INERTIA_TORQUE;}
+    /** Wood keeps its original decay exactly. */
+    protected float getCoastDecayScale(){return 1F;}
 
     public static <E extends BlockEntity> void serverTick(
             Level level,
@@ -77,7 +79,7 @@ public class FlywheelBlockEntity_wood
         var node = getOrCreateGearNode();
         node.setSource(true);
         node.setSpeed(storedSpeed);
-        node.setTorque(INERTIA_TORQUE);
+        node.setTorque(getInertiaTorque());
         node.setMaxTorque(getGearMaxTorque());
         node.setOverloaded(false);
         node.setDirectionMultiplier(
@@ -116,7 +118,7 @@ public class FlywheelBlockEntity_wood
                 Math.max(
                         0.0F,
                         sourceEquivalentDemand
-                                / INERTIA_TORQUE
+                                / Math.max(0.001F, getInertiaTorque())
                 );
 
         float decay =
@@ -130,10 +132,7 @@ public class FlywheelBlockEntity_wood
                         );
 
         storedSpeed *=
-                Math.max(
-                        0.0F,
-                        1.0F - decay
-                );
+                Math.max(0.0F, 1.0F - decay * getCoastDecayScale());
 
         var node = getOrCreateGearNode();
 
@@ -143,7 +142,7 @@ public class FlywheelBlockEntity_wood
         }
 
         node.setSpeed(storedSpeed);
-        node.setTorque(INERTIA_TORQUE);
+        node.setTorque(getInertiaTorque());
         node.setDirectionMultiplier(
                 storedDirection
         );
