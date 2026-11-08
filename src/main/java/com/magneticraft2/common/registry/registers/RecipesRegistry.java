@@ -3,6 +3,7 @@ package com.magneticraft2.common.registry.registers;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
+import com.magneticraft2.common.recipe.multiblock.SteelProcessRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_grinder_multiblockrecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
@@ -36,6 +37,8 @@ public class RecipesRegistry {
     public static final RegistryObject<RecipeSerializer<MultiblockProcessingRecipe>> multiblock_processing = RECIPE_SERIALIZERS.register("multiblock_processing", () -> MultiblockProcessingRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<BloomeryRecipe>> bloomery_reduction =
             RECIPE_SERIALIZERS.register("bloomery_reduction", () -> BloomeryRecipe.Serializer.INSTANCE);
+    public static final RegistryObject<RecipeSerializer<SteelProcessRecipe>> steel_process =
+            RECIPE_SERIALIZERS.register("steel_process", () -> SteelProcessRecipe.Serializer.INSTANCE);
     public static final RegistryObject<RecipeSerializer<MechanicalAssemblyRecipe>> mechanical_assembly =
             RECIPE_SERIALIZERS.register("mechanical_assembly", () -> MechanicalAssemblyRecipe.Serializer.INSTANCE);
 
