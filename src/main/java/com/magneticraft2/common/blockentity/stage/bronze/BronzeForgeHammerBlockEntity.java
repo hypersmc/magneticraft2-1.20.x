@@ -82,6 +82,11 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
                     new ReplaceableMachinePart.Alternative(
                             ItemRegistry.ITEM_STEEL_FORGE_DIE::get, 1536));
 
+    private boolean toolingSupports(MultiblockProcessingRecipe recipe) {
+        return !HotBloomWorkpiece.requiresSteelDie(recipe)
+                || forgingDie.isInstalled(ItemRegistry.ITEM_STEEL_FORGE_DIE.get());
+    }
+
     public BronzeForgeHammerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_FORGE_HAMMER_BE.get(), pos, state);
         menuProvider = null;
@@ -212,7 +217,8 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
                 || inputStack.is(ItemRegistry.ITEM_IRON_RIVET_BLANK.get())
                 ? HotBloomWorkpiece.consolidate(inputStack, recipe.getOutput())
                 : recipe.getOutput();
-        if (!forgingDie.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
+        if (!forgingDie.canOperate() || !toolingSupports(recipe)
+                || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
             return;
@@ -307,9 +313,11 @@ public final class BronzeForgeHammerBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "recipe_unsupported";
         } else if (HotBloomWorkpiece.requiresHeat(candidate)
                 && !HotBloomWorkpiece.isHot(inputStack, world)) {
-            diagnostic = "bloom_cold";
+            diagnostic = HotBloomWorkpiece.requiresSteelDie(candidate) ? "steel_cold" : "bloom_cold";
         } else if (!forgingDie.canOperate()) {
             diagnostic = "die_worn";
+        } else if (!toolingSupports(candidate)) {
+            diagnostic = "steel_die_required";
         } else if (!itemHandler.insertItem(1,
                 HotBloomWorkpiece.requiresHeat(candidate)
                         || inputStack.is(ItemRegistry.ITEM_IRON_RIVET_BLANK.get())

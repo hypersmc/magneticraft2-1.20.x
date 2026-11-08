@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_rolling_mill",
+  "input": {
+    "item": "magneticraft2:refined_steel_bar"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:refined_steel_rod",
+    "count": 4
+  },
+  "process_time": 240,
+  "mechanical": {
+    "min_speed": 16,
+    "torque": 10
+  }
+}

@@ -40,6 +40,7 @@ public class Magneticraft2ConfigCommon {
         public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatPerFuelTick;
         public final ForgeConfigSpec.ConfigValue<Integer> HearthPassiveHeatLoss;
         public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatingThreshold;
+        public final ForgeConfigSpec.ConfigValue<Integer> HearthSteelHeatingThreshold;
         public final ForgeConfigSpec.ConfigValue<Integer> HearthHeatingHeatPerTick;
         // Provisional high-temperature ore-roasting balance in HEAT units.
         public final ForgeConfigSpec.ConfigValue<Integer> RoasterHeatCapacity;
@@ -121,6 +122,8 @@ public class Magneticraft2ConfigCommon {
                     .defineInRange("passiveHeatLoss", 2, 0, 100000);
             HearthHeatingThreshold = builder.comment("HEAT threshold for wrought batches")
                     .defineInRange("heatingThreshold", 12000, 1, 1000000);
+            HearthSteelHeatingThreshold = builder.comment("Minimum HEAT for Steel stock batches (must be <= Hearth capacity)")
+                    .defineInRange("steelHeatingThreshold", 18000, 1, 1000000);
             HearthHeatingHeatPerTick = builder.comment("HEAT consumed by batch per tick")
                     .defineInRange("heatingHeatPerTick", 16, 1, 100000);
             builder.pop();

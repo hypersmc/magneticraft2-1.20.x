@@ -186,6 +186,19 @@
       "type": "patchouli:crafting",
       "title": "Steel Forge Die",
       "recipe": "magneticraft2:steel_forge_die"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)5 — Steel II: Hot Stock$()$(br2)Steel cannot be rolled cold. Queue 4 Refined Steel Ingots in the existing Iron Forge Hearth; fire with a real solid fuel (Metallurgical Coke is supported) until the higher Steel HEAT threshold is reached. It returns the SAME 4 ingots tagged temporarily hot. Fuel is not the material input. Use the Steel Forge Die on the existing powered Forge Hammer to forge 1 hot ingot into 1 Steel Plate (20 RPM, 10 torque)."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)6 — Steel Rolling$()$(br2)Craft Steel Roller Sleeves with 4 forged Steel Plates and existing Wrought Iron Roller Sleeves, then install them on your SAME Bronze Rolling Mill. With 16 RPM and 10 torque, roll 1 hot Steel Ingot into 1 Steel Bar. Reheat 4 Steel Bars in the Iron Forge Hearth and roll 1 hot Steel Bar into 4 Steel Rods. Steel stock quality is preserved, temporary hot NBT is removed from shaped output, and powered batches consume tooling life only on completion."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Roller Sleeves",
+      "recipe": "magneticraft2:steel_roller_sleeves"
     }
   ]
 }

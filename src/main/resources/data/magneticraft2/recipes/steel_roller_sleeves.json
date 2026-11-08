@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PSP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:refined_steel_plate"
+    },
+    "S": {
+      "item": "magneticraft2:wrought_iron_roller_sleeves"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_roller_sleeves",
+    "count": 1
+  }
+}

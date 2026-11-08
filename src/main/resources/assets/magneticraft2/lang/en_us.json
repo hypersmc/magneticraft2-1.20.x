@@ -618,5 +618,13 @@
   "item.magneticraft2.refined_steel_ingot": "Refined Steel Ingot",
   "item.magneticraft2.steel_forge_die": "Steel Forge Die",
   "jei.magneticraft2.steel_coke_fuel_hint": "Requires solid firebox fuel",
-  "jei.magneticraft2.steel_air_fuel_hint": "Coke fuel + continuous AIR"
+  "jei.magneticraft2.steel_air_fuel_hint": "Coke fuel + continuous AIR",
+  "item.magneticraft2.refined_steel_plate": "Refined Steel Plate",
+  "item.magneticraft2.refined_steel_bar": "Refined Steel Bar",
+  "item.magneticraft2.refined_steel_rod": "Refined Steel Rod",
+  "item.magneticraft2.steel_roller_sleeves": "Steel Roller Sleeves",
+  "message.magneticraft2.bronze_forge_hammer.reason.steel_die_required": "Steel plate forging needs a Steel Forge Die fitted to the hammer",
+  "message.magneticraft2.bronze_forge_hammer.reason.steel_cold": "Steel ingot has cooled; reheat four ingots in the fueled Iron Forge Hearth",
+  "message.magneticraft2.bronze_rolling_mill.reason.steel_rollers_required": "Steel rolling needs Steel Roller Sleeves fitted to the existing mill",
+  "message.magneticraft2.bronze_rolling_mill.reason.steel_cold": "Steel stock has cooled; reheat four ingots or bars in the fueled Iron Forge Hearth"
 }

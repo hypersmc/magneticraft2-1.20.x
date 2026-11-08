@@ -116,3 +116,16 @@ Every implemented slice needs: `./gradlew build` (JDK 17), JSON validation, item
 - Exact Steel materials/tool wear values and which hardened-tool consumers justify heat treatment.
 - Safe boiler pressure, water/steam rate, exhaust/condensation, safety valve response and mechanical Steam output balance.
 - The later Electric Generator Age's AC/DC policy and voltage numbers: see [electrical design contract](electrical-power-network-design-contract.md), which uses AC-first as a **provisional design assumption**, not an approved balance value.
+
+### Steel II implementation candidate — 2026-11-08
+
+This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Roller Sleeves using the existing Iron Forge Hearth, Bronze Forge Hammer, and Bronze Rolling Mill. This is not yet player-verified, built or Steam Age complete. The first Coke/Pig Iron/Steel/Die loop remains player accepted.
+
+- Four Steel Ingots/Steel Bars are reheated in the existing 4-slot-batch Forge Hearth using a real solid-fuel firebox, with a distinct configurable minimum Steel HEAT threshold (default 18,000 abstract HEAT; max against the existing wrought threshold). Existing refractory kiln cannot silently forge Steel. Metallurgical Coke is accepted as 3,200 burn ticks. No added gas/pressure/electricity.
+- A hot Steel Ingot + an installed Steel Forge Die + 20 RPM / 10 torque → one Refined Steel Plate (200 powered ticks). The existing Forge Hammer maintenance contract enforces the installed tier; older Bronze/Iron outputs still work with their existing dies.
+- 4 Steel Plates + 1 existing Wrought Iron Roller Sleeves → Steel Roller Sleeves. This Steel tier is an optional installed maintenance item in the existing Rolling Mill, with 2,048 completed batches (Bronze 512, Iron 1,024). No new machine multiblock.
+- Hot Steel Ingot → 1 Bar (220 powered ticks) and hot Steel Bar → 4 Rods (240 powered ticks), each at 16 RPM / 10 torque, using installed Steel sleeves. The Hearth can reheat 4 bars; rod pieces are quarter-ingot stock. Quality/NBT is transferred by the existing HotBloomWorkpiece.consolidate helper with heat metadata removed on finished product.
+- Four registered item models initially reuse existing Wrought Iron pixel-perfect geometry and dark worked-iron material texture as explicit MGC2 Studio placeholders; no new geometry/texture artwork is claimed.
+- All recipes use the existing data-driven `multiblock_processing` or vanilla shaped recipe formats; the old IDs, save data, ports, machinery and acceptance tests are untouched. Steel HEAT defaults and tooling lifetimes remain provisional balance values.
+
+**Regression:** reheating stalls on insufficient HEAT or full output; 4 inputs → 4 hot outputs; hot expires using server world time; blank Steel Die/old Roller Sleeves block new Steel-only work; Steel upgrades allow processing; correct RPM, torque, source overload and wear; input top-ups, output blocking and save/reload do not duplicate metal; total one ingot equivalent per plate or bar, 4 rods per bar; Copper/Wrought Iron work exactly as before. Run `./gradlew build` with JDK 17 and in-game checks before reporting completion.

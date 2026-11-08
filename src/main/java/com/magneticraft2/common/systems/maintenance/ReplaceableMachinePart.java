@@ -75,6 +75,10 @@ public final class ReplaceableMachinePart {
     public int getMaximumCycles() {
         return lifetimeAt(installedVariant);
     }
+    /** Matches the actual installed registry item, not a disposable tier index. */
+    public boolean isInstalled(Item item) {
+        return item != null && itemAt(installedVariant) == item;
+    }
 
     public boolean canOperate() {
         return remainingCycles > 0;

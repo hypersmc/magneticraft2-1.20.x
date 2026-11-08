@@ -236,6 +236,16 @@ public class ItemRegistry {
             ITEMS.register("pig_iron", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_REFINED_STEEL_INGOT =
             ITEMS.register("refined_steel_ingot", () -> new Item(new Item.Properties()));
+    // Steel II: one ingot-equivalent per plate or bar; four quarter-stock rods
+    // per bar. Existing workshop BEs and hot-stock rules perform processing.
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_PLATE =
+            ITEMS.register("refined_steel_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_BAR =
+            ITEMS.register("refined_steel_bar", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_ROD =
+            ITEMS.register("refined_steel_rod", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_STEEL_ROLLER_SLEEVES =
+            ITEMS.register("steel_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =
