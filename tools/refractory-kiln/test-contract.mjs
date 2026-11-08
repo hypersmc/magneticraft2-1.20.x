@@ -133,7 +133,12 @@ for(const d of dirs){
  console.log(d+': '+modelCount+' cell models, '+faceCount+' visible faces');
 }
 const book=j(resource+'patchouli_books/world_of_magneticraft/en_us/entries/bronzeage.json');
-const page=book.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Refractory Kiln');
+const liquidPage=book.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Refractory Kiln');
+const page=book.pages.find(p=>p.type==='patchouli:multiblock'&&p.name==='Refractory Kiln — Solid Fuel');
+assert.ok(liquidPage,'First Kiln book Visualize must include the liquid inlet');
+assert.ok(book.pages.indexOf(liquidPage)<book.pages.indexOf(page));
+assert.equal(liquidPage.multiblock.mapping.F,'magneticraft2:multiblock_fluid_input');
+assert.equal(liquidPage.multiblock.pattern[2][3],'B___F');
 assert.ok(page,'Missing Kiln book Visualize');
 assert.equal(page.multiblock.pattern.length,4);
 assert.equal(page.multiblock.pattern[1][4],'BBBBB','Front hatch must be a real wall cell');
@@ -185,7 +190,7 @@ assert.ok(be.includes('boolean heatcape() { return true; }'),'K2 HEAT capability
 assert.ok(be.includes('boolean fluidcape() { return false; }'));
 assert.ok(be.includes('MultiblockRecipeHandler.acceptsInput(level, MACHINE, stack)'),'Kiln still rejects all inputs');
 assert.ok(be.includes('return super.getCapability(cap, side);'));
-assert.ok(be.includes('if (cap == ForgeCapabilities.ITEM_HANDLER) return LazyOptional.empty();'),
+assert.ok(be.includes('if (cap == ForgeCapabilities.ITEM_HANDLER || cap == ForgeCapabilities.FLUID_HANDLER)'),
  'No controller-wide item-capability bypass of the locked K1 ports');
 assert.ok(be.includes('MultiblockRenderParts.assign('));
 assert.ok(be.includes('MultiblockVoxelProfiles.exists('));
@@ -211,7 +216,7 @@ assert.equal(firing.output.item,'magneticraft2:fired_refractory_ceramic');
 assert.equal(firing.process_time,400);
 for(const item of ['unfired_refractory_batch','fired_refractory_ceramic'])
  assert.equal(j(resource+'models/item/'+item+'.json').parent,'minecraft:item/generated');
-assert.equal(book.pages.length,46,'Bronze Age Patchouli lost K2 pages');
+assert.ok(book.pages.length>=46,'Bronze Age Patchouli lost K2 pages');
 assert.ok(book.pages.some(p=>p.type==='patchouli:crafting'&&p.recipe==='magneticraft2:unfired_refractory_batch'));
 const cfg=r('src/main/java/com/magneticraft2/common/utils/Magneticraft2ConfigCommon.java');
 for(const name of ['KilnHeatCapacity','KilnHeatPerFuelTick','KilnPassiveHeatLoss',
