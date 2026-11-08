@@ -93,7 +93,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -102,7 +102,7 @@
           ]
         },
         "south": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -111,7 +111,7 @@
           ]
         },
         "east": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -120,7 +120,7 @@
           ]
         },
         "west": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -129,7 +129,7 @@
           ]
         },
         "up": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -138,7 +138,7 @@
           ]
         },
         "down": {
-          "texture": "#brick",
+          "texture": "#iron",
           "uv": [
             0,
             0,
@@ -348,74 +348,6 @@
             0,
             1,
             11
-          ]
-        }
-      }
-    },
-    {
-      "from": [
-        0,
-        2,
-        0
-      ],
-      "to": [
-        2,
-        14,
-        5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            2,
-            12
-          ]
-        },
-        "south": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            2,
-            12
-          ]
-        },
-        "east": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            5,
-            12
-          ]
-        },
-        "west": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            5,
-            12
-          ]
-        },
-        "up": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            2,
-            5
-          ]
-        },
-        "down": {
-          "texture": "#iron",
-          "uv": [
-            0,
-            0,
-            2,
-            5
           ]
         }
       }
