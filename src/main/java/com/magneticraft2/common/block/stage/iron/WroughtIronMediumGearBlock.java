@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /** The exact existing 8-tooth Gear V2 placement rules, with forged iron. */
-public final class WroughtIronMediumGearBlock extends MediumGearBlock_wood {
+public class WroughtIronMediumGearBlock extends MediumGearBlock_wood {
     public WroughtIronMediumGearBlock() {
         super(BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
                 .sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());

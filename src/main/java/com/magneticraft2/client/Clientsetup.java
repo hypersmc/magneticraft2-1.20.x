@@ -127,6 +127,29 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEAR_LARGE_BE_IRON.get(), WroughtIronLargeGearRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_IRON.get(), WroughtIronShaftRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.GEARBOX_BE_IRON.get(), WroughtIronGearboxRenderer::new);
+        // Steel variants share the existing Gear V2 render path; no duplicate mesh.
+        var steelIron = new ResourceLocation("magneticraft2", "textures/block/material/dark_work_iron.png");
+        var steelBronze = new ResourceLocation("magneticraft2", "textures/block/material/bronze_machined.png");
+        event.registerBlockEntityRenderer(BlockEntityRegistry.STEEL_GEAR_MEDIUM_BE.get(), ctx -> {
+            var shared = new MediumGearBlockEntity_woodRenderer(ctx);
+            return (entity, partial, pose, buffer, light, overlay) ->
+                    shared.render(entity, partial, pose, buffer, light, overlay);
+        });
+        event.registerBlockEntityRenderer(BlockEntityRegistry.STEEL_GEAR_LARGE_BE.get(), ctx -> {
+            var shared = new LargeGearBlock_woodRenderer(ctx);
+            return (entity, partial, pose, buffer, light, overlay) ->
+                    shared.render(entity, partial, pose, buffer, light, overlay);
+        });
+        event.registerBlockEntityRenderer(BlockEntityRegistry.STEEL_SHAFT_BE.get(), ctx -> {
+            var shared = new ShaftBlockEntity_woodRenderer(ctx);
+            return (entity, partial, pose, buffer, light, overlay) ->
+                    shared.render(entity, partial, pose, buffer, light, overlay);
+        });
+        event.registerBlockEntityRenderer(BlockEntityRegistry.STEEL_GEARBOX_BE.get(), ctx -> {
+            var shared = new GearboxBlockEntity_woodRenderer(ctx, steelIron, steelIron, steelBronze, 0.125D, 0.125D);
+            return (entity, partial, pose, buffer, light, overlay) ->
+                    shared.render(entity, partial, pose, buffer, light, overlay);
+        });
         event.registerBlockEntityRenderer(BlockEntityRegistry.SHAFT_BE_WOOD.get(), ShaftBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.CLUTCH_BE_WOOD.get(), ClutchBlockEntity_woodRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.OVERLOAD_DISCONNECT_BE_WOOD.get(), OverloadDisconnectBlockEntity_woodRenderer::new);

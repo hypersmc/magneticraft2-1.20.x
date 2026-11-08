@@ -9,6 +9,10 @@ import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronLargeGearBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronShaftBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronGearboxBlock;
+import com.magneticraft2.common.block.stage.steel.SteelMediumGearBlock;
+import com.magneticraft2.common.block.stage.steel.SteelLargeGearBlock;
+import com.magneticraft2.common.block.stage.steel.SteelShaftBlock;
+import com.magneticraft2.common.block.stage.steel.SteelGearboxBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
@@ -204,6 +208,16 @@ public class BlockRegistry {
             BLOCKS.register("wrought_iron_shaft", WroughtIronShaftBlock::new);
     public static final RegistryObject<WroughtIronGearboxBlock> WROUGHT_IRON_GEARBOX =
             BLOCKS.register("wrought_iron_gearbox", WroughtIronGearboxBlock::new);
+
+    // Steel III: only stronger transmission, never extra source power.
+    public static final RegistryObject<SteelMediumGearBlock> STEEL_GEAR_MEDIUM =
+            BLOCKS.register("steel_gear_medium", SteelMediumGearBlock::new);
+    public static final RegistryObject<SteelLargeGearBlock> STEEL_GEAR_LARGE =
+            BLOCKS.register("steel_gear_large", SteelLargeGearBlock::new);
+    public static final RegistryObject<SteelShaftBlock> STEEL_SHAFT =
+            BLOCKS.register("steel_shaft", SteelShaftBlock::new);
+    public static final RegistryObject<SteelGearboxBlock> STEEL_GEARBOX =
+            BLOCKS.register("steel_gearbox", SteelGearboxBlock::new);
 
     // Iron III-A: heavy stock cutting, with a replaceable blade.
     public static final RegistryObject<IronStockShearBlock> IRON_STOCK_SHEAR =

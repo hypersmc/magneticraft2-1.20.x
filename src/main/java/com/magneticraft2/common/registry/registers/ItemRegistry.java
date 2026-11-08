@@ -220,6 +220,11 @@ public class ItemRegistry {
             fromBlock(WROUGHT_IRON_GEAR_LARGE);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEARBOX = fromBlock(WROUGHT_IRON_GEARBOX);
+    // Steel III mechanical transmission with stable distinct registry IDs.
+    public static final RegistryObject<Item> ITEM_STEEL_GEAR_MEDIUM = fromBlock(STEEL_GEAR_MEDIUM);
+    public static final RegistryObject<Item> ITEM_STEEL_GEAR_LARGE = fromBlock(STEEL_GEAR_LARGE);
+    public static final RegistryObject<Item> ITEM_STEEL_SHAFT = fromBlock(STEEL_SHAFT);
+    public static final RegistryObject<Item> ITEM_STEEL_GEARBOX = fromBlock(STEEL_GEARBOX);
     public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);
     public static final RegistryObject<Item> ITEM_IRON_PLATE_PANEL = fromBlock(IRON_PLATE_PANEL);
     public static final RegistryObject<Item> ITEM_IRON_MACHINE_FOUNDATION = fromBlock(IRON_MACHINE_FOUNDATION);

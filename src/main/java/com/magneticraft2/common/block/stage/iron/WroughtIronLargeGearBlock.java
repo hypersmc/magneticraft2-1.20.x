@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /** Large, 16-tooth iron gear: existing placement, angle, mesh and network semantics. */
-public final class WroughtIronLargeGearBlock extends LargeGearBlock_wood {
+public class WroughtIronLargeGearBlock extends LargeGearBlock_wood {
     private static final VoxelShape IRON_SHAPE = Shapes.or(
             // Real iron axle is 2x2 pixels, unlike the 6x6 wooden shaft.
             net.minecraft.world.level.block.Block.box(7,0,7,9,16,9),
