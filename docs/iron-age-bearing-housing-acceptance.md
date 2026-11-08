@@ -142,3 +142,17 @@ old original `wrought_iron_gearbox` recipe remains exactly unchanged.
 This is a recipe-balance correction, **not** a physical bearing-support
 simulation. If the new trade is still unattractive in survival, gather
 real material/process costs before changing it again.
+
+## Player confirmation — revised Gearbox recipe (2026-11-08)
+
+The player reported **"yep that did the trick!"** after testing the
+material-saving alternative Gearbox crafting recipe introduced in commit
+`c2ecfceb26ad9a9ef9e984e02c2832e886d87d59`.
+Record the **revised recipe's primary in-game functionality as
+player-confirmed working**. The revised 2-Plate / 1-Housing / 2-Bushing
+crafting arrangement now offers a meaningful alternative to the old
+four-Plate/Precision-Bronze-Bearing recipe. This confirmation does
+**not** individually establish the exact JEI/book behavior, all
+Bearing Housing production edge cases, durability/quality NBT,
+old-world migration, full JDK17 Gradle build, or full regression suite.
+No further recipe redesign is warranted without a specific issue.
