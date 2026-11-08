@@ -82,3 +82,9 @@ until AFTER Steam Age per project decision.
 - Voxel collision/selection for the formed hearth aligns with the new recessed geometry. The saved V2 part IDs have changed, so **unform and rebuild existing test structures**; do not use old filler states as evidence of this pass.
 - Uses only previously existing Magneticraft2 16px textures, native-scale UVs, and once-baked model parts. No continuous renderer, entity or tick allocation was introduced.
 - **Verification gate:** source/resource structural checks and native UV bounds; run JDK 17 Gradle build, test all 12 orientations, examine the furnace fronts and sides from near and far, check AIR/ports, controller interaction and performance in-game. Cosmetic differences versus the samples remain subject to player acceptance.
+
+### Steel item quantity synchronization review — 2026-11-08
+
+Static inspection found the controller's change detector compared item identity/tags but not count; the saved display input snapshots also reduced counts to one. Port input/output quantity changes with the same item ID could therefore be missed by client sync. The detector now uses `ItemStack.matches` and saves full input stack snapshots. Recipe identity matching deliberately still ignores stack counts so topping up ingredients does not erase ongoing progress. The contract fixture asserts these safeguards.
+
+**Player regression:** with all three machines formed, add and remove part of an existing input stack and extract only part of output/slag; verify the actual displayed stack updates without F3+T and production progress is unaffected by topping up. Forge compilation and in-game behavior are not yet verified.

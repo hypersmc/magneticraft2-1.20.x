@@ -97,4 +97,10 @@ const mod=read("src/main/java/com/magneticraft2/common/blockentity/stage/copper/
 assert.match(mod,/controller instanceof SteelProcessBlockEntity/);
 const jei=read("src/main/java/com/magneticraft2/compatibility/JEI/MagneticraftJeiPlugin.java");
 assert.match(jei,/getAllRecipesFor\(SteelProcessRecipe.Type.INSTANCE\)/);
+// Distinguish quantity changes from material-identity changes. Topping up
+// inputs must not restart progress; amount changes must sync to the client.
+assert.match(furnace,/boolean different=!ItemStack\.matches\(/);
+assert.match(furnace,/different\|=!ItemStack\.matches\(/);
+assert.equal((furnace.match(/lastInputs\[i\]=itemHandler\.getStackInSlot\(SteelProcessRecipe\.INPUT_SLOTS\[i\]\)\.copy\(\);/g)||[]).length,2);
+assert.match(furnace,/ItemStack\.isSameItemSameTags\(now,activeInputs\[i\]\)/);
 console.log("PASS Steel first loop: validated 12 formations, materials, AIR, physical ports, tool, JEI and book");

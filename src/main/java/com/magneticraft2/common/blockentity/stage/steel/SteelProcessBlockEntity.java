@@ -226,11 +226,11 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
         if(world.isClientSide || !(tile instanceof SteelProcessBlockEntity furnace))return;
         furnace.tickProcess();
         if(furnace.level==null)return;
-        boolean different=!ItemStack.isSameItemSameTags(
+        boolean different=!ItemStack.matches(
                 furnace.lastOutput,furnace.itemHandler.getStackInSlot(1))
                 || !ItemStack.isSameItemSameTags(
                         furnace.lastSlag,furnace.itemHandler.getStackInSlot(2));
-        for(int i=0;i<3;i++)different|=!ItemStack.isSameItemSameTags(
+        for(int i=0;i<3;i++)different|=!ItemStack.matches(
                 furnace.lastInputs[i],furnace.itemHandler.getStackInSlot(SteelProcessRecipe.INPUT_SLOTS[i]));
         if(different)furnace.sync();
     }
@@ -348,7 +348,7 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
         activeRecipeId=tag.contains("SteelRecipe")
                 ?ResourceLocation.tryParse(tag.getString("SteelRecipe")):null;
         for(int i=0;i<3;i++)activeInputs[i]=ItemStack.of(tag.getCompound("SteelActiveInput"+i));
-        for(int i=0;i<3;i++)lastInputs[i]=identity(itemHandler.getStackInSlot(SteelProcessRecipe.INPUT_SLOTS[i]));
+        for(int i=0;i<3;i++)lastInputs[i]=itemHandler.getStackInSlot(SteelProcessRecipe.INPUT_SLOTS[i]).copy();
         lastOutput=itemHandler.getStackInSlot(1).copy();lastSlag=itemHandler.getStackInSlot(2).copy();
     }
     @Override protected void saveAdditional(CompoundTag tag){
@@ -374,7 +374,7 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
     @Override public CompoundTag sync(){
         setChanged();
         for(int i=0;i<3;i++)
-            lastInputs[i]=identity(itemHandler.getStackInSlot(SteelProcessRecipe.INPUT_SLOTS[i]));
+            lastInputs[i]=itemHandler.getStackInSlot(SteelProcessRecipe.INPUT_SLOTS[i]).copy();
         lastOutput=itemHandler.getStackInSlot(1).copy();
         lastSlag=itemHandler.getStackInSlot(2).copy();
         if(level!=null&&!level.isClientSide)
