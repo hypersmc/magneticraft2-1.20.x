@@ -10,6 +10,7 @@ import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import com.magneticraft2.common.systems.PRESSURE.IPressurizedGasHandler;
 import com.magneticraft2.common.systems.PRESSURE.LegacyAirPort;
+import com.magneticraft2.common.systems.PRESSURE.IPressureStorage;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelHost;
@@ -75,8 +76,35 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
     private Direction matchedFacing = Direction.SOUTH;
     private List<BlockPos> renderAirAnchors = List.of();
     @Nullable private VoxelShape localVoxelCollision, localVoxelSelection;
-    private final LazyOptional<IPressurizedGasHandler> gasInput =
-            LazyOptional.of(() -> new LegacyAirPort(pressureHandler));
+    // Expose only a receive-only view on the physical side tuyere. The
+    // legacy pressure storage internally supports extraction to consume AIR
+    // during processing; external callers must not be able to drain it.
+    private LazyOptional<IPressureStorage> airInlet = LazyOptional.of(this::newAirInlet);
+    private LazyOptional<IPressurizedGasHandler> gasInput =
+            LazyOptional.of(() -> new LegacyAirPort(airInlet.orElseThrow(
+                    () -> new IllegalStateException("Steel AIR inlet unavailable"))));
+
+    private IPressureStorage newAirInlet() {
+        return new IPressureStorage() {
+            @Override public int receivePressure(int units, boolean simulate) {
+                return canReceive() && units > 0
+                        ? pressureHandler.receivePressure(units, simulate) : 0;
+            }
+            @Override public int extractPressure(int units, boolean simulate) {
+                return 0;
+            }
+            @Override public int getPressureStored() {
+                return formed && airRequired() ? pressureHandler.getPressureStored() : 0;
+            }
+            @Override public int getMaxPressureStored() { return AIR_CAPACITY; }
+            @Override public boolean canReceive() { return formed && airRequired(); }
+            @Override public boolean canSend() { return false; }
+            @Override public boolean setReceive(boolean enabled) {
+                return enabled && canReceive();
+            }
+            @Override public boolean setSend(boolean enabled) { return !enabled; }
+        };
+    }
 
     public SteelProcessBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.STEEL_PROCESS_BE.get(), pos, state);
@@ -119,7 +147,7 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
         BlockPos inlet = worldPosition.relative(outward, 2)
                 .relative(matchedFacing.getOpposite(), 2).above();
         if (side != outward || !inlet.equals(portPos)) return LazyOptional.empty();
-        if (cap == CapabilityPressure.PRESSURE) return pressure.cast();
+        if (cap == CapabilityPressure.PRESSURE) return airInlet.cast();
         if (cap == CapabilityPressurizedGas.GAS) return gasInput.cast();
         return LazyOptional.empty();
     }
@@ -331,7 +359,17 @@ public final class SteelProcessBlockEntity extends BaseBlockEntityMagneticraft2
         }
         super.onDestroy(world);
     }
-    @Override public void invalidateCaps(){super.invalidateCaps();gasInput.invalidate();}
+    @Override public void invalidateCaps() {
+        super.invalidateCaps();
+        airInlet.invalidate();
+        gasInput.invalidate();
+    }
+    @Override public void reviveCaps() {
+        super.reviveCaps();
+        airInlet = LazyOptional.of(this::newAirInlet);
+        gasInput = LazyOptional.of(() -> new LegacyAirPort(airInlet.orElseThrow(
+                () -> new IllegalStateException("Steel AIR inlet unavailable"))));
+    }
     @Override public void load(CompoundTag tag){
         super.load(tag);
         MultiblockPersistentData data=loadMultiblockData(tag);

@@ -88,3 +88,9 @@ until AFTER Steam Age per project decision.
 Static inspection found the controller's change detector compared item identity/tags but not count; the saved display input snapshots also reduced counts to one. Port input/output quantity changes with the same item ID could therefore be missed by client sync. The detector now uses `ItemStack.matches` and saves full input stack snapshots. Recipe identity matching deliberately still ignores stack counts so topping up ingredients does not erase ongoing progress. The contract fixture asserts these safeguards.
 
 **Player regression:** with all three machines formed, add and remove part of an existing input stack and extract only part of output/slag; verify the actual displayed stack updates without F3+T and production progress is unaffected by topping up. Forge compilation and in-game behavior are not yet verified.
+
+### Steel AIR inlet isolation review — 2026-11-08
+
+The actual Steel side tuyere previously exposed its internal legacy `IPressureStorage`. The shared legacy storage can permit extraction even when its `canSend()` reports false, due to its internal extraction implementation. The formed Steel tuyere now returns a receive-only pressure view and a typed GAS/AIR view wrapping that same guarded inlet. Internal recipe AIR consumption continues to read the internal buffer without any new power source. Both public capabilities are invalidated/revived on BE lifecycle transitions. This change is restricted to Steel; it does not modify global pressure storage behavior or existing Bronze machines.
+
+**Player regression:** verify powered Bronze Industrial Air Blower → AIR duct → left-side Steel furnace tuyere supplies air; callers cannot extract AIR through either input capability; dismantling/reloading makes an inlet unavailable rather than a free source. Repeat after unloading/reloading chunks. Typed STEAM must not connect. Multiplayer-specific testing remains deferred.

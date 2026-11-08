@@ -103,4 +103,12 @@ assert.match(furnace,/boolean different=!ItemStack\.matches\(/);
 assert.match(furnace,/different\|=!ItemStack\.matches\(/);
 assert.equal((furnace.match(/lastInputs\[i\]=itemHandler\.getStackInSlot\(SteelProcessRecipe\.INPUT_SLOTS\[i\]\)\.copy\(\);/g)||[]).length,2);
 assert.match(furnace,/ItemStack\.isSameItemSameTags\(now,activeInputs\[i\]\)/);
+// Steel side AIR is an intake, never a public source of free AIR. The
+// controller can internally burn one AIR charge per 5 supplied ticks.
+assert.match(furnace,/if \(cap == CapabilityPressure\.PRESSURE\) return airInlet\.cast\(\);/);
+assert.match(furnace,/private IPressureStorage newAirInlet\(\)/);
+assert.match(furnace,/int extractPressure\(int units, boolean simulate\) \{/);
+assert.match(furnace,/private LazyOptional<IPressureStorage> airInlet/);
+assert.match(furnace,/airInlet\.invalidate\(\)/);
+assert.match(furnace,/airInlet = LazyOptional\.of\(this::newAirInlet\)/);
 console.log("PASS Steel first loop: validated 12 formations, materials, AIR, physical ports, tool, JEI and book");
