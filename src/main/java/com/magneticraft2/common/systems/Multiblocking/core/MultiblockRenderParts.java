@@ -127,37 +127,6 @@ public final class MultiblockRenderParts {
                         : SteelProcessModelParts.key(machineId, facing, dx, dy, dz,
                                 old.isAir(), old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get()));
             } else {
-                        part = dy == 3 ? "roof" : "refractory";
-                    }
-                } else if (machineId.equals("steel_blast_furnace")) {
-                    if (depth == 1 && lateral == 0 && dy == 3) {
-                        part = "blast_fire_" + facing.getName();
-                    } else if ((dy >= 3 && Math.abs(lateral) == 1)
-                            || (depth == 0 && dy <= 2 && Math.abs(lateral) == 2)) {
-                        part = "frame_" + facing.getName();
-                    } else if (dy == 2) {
-                        part = "roof";
-                    } else if (dy == 4) {
-                        part = "chimney";
-                    } else {
-                        part = "refractory";
-                    }
-                } else {
-                    // Refining: wider enclosed hearth with metal roof and vent.
-                    if (depth == 0 && dy == 2 && Math.abs(lateral) <= 1) {
-                        part = "refine_fire_" + facing.getName();
-                    } else if (depth == 0 && dy <= 2 && Math.abs(lateral) == 2) {
-                        part = "frame_" + facing.getName();
-                    } else if (dy == 3) {
-                        part = "roof";
-                    } else if (dy == 4) {
-                        part = "chimney";
-                    } else {
-                        part = "refractory";
-                    }
-                }
-                modelKey = "steel_process/" + part;
-            } else {
                 modelKey = machineId + "_" + facing.getName()
                         + "/part_" + dx + "_" + dy + "_" + dz;
             }
