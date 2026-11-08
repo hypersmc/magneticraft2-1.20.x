@@ -20,10 +20,17 @@ one SECOND-layer side-wall Brick with the existing real
 
 | Facing | Zero-based layer2 wall coordinate (x,z) |
 | --- | --- |
-| South | (0,2), west side |
-| North | (4,2), east side |
-| East | (2,4), south side |
-| West | (2,0), north side |
+| South | (0,3), west side |
+| North | (4,1), east side |
+| East | (3,4), south side |
+| West | (1,0), north side |
+
+The inlet is positioned one cell toward the front, rather than at the
+dead-center of the wall, because the existing shared Fluid Input module
+chooses its outward face from the controller-to-module offset. These
+positions are exactly 90-degree rotations of each other, ensuring
+WEST/EAST/SOUTH/NORTH outward-facing ports respectively without changing
+generic module code.
 
 Same input/output item modules, controller, render resource keys, 5x4x5
 footprint, Voxel V2 profile, and recipes. The formed Fluid Input remains

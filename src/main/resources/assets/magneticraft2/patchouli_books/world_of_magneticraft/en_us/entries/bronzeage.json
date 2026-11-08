@@ -457,8 +457,8 @@
           [
             "BBBBB",
             "B___B",
-            "B___F",
             "B___B",
+            "B___F",
             "BOBUB"
           ],
           [
@@ -479,7 +479,7 @@
         },
         "symmetrical": false
       },
-      "text": "Optional liquid-fuel Kiln: use this alternate 5x4x5 construction. Replace the left-side middle Brick on the SECOND layer with the real Fluid Input (F). Connect its outward face to a Copper Pipe or Fluid Tank receiving Wood Tar from the Charcoal Retort. The usual solid fuel at the controller still works; 50 mB Wood Tar provides 80 burn ticks. The original solid-only Kiln remains fully supported."
+      "text": "Optional liquid-fuel Kiln: use this alternate 5x4x5 construction. Replace the left-side Brick one block toward the FRONT on the SECOND layer with the real Fluid Input (F). Connect its outward face to a Copper Pipe or Fluid Tank receiving Wood Tar from the Charcoal Retort. The usual solid fuel at the controller still works; 50 mB Wood Tar provides 80 burn ticks. The original solid-only Kiln remains fully supported."
     },
     {
       "type": "patchouli:crafting",

@@ -22,8 +22,16 @@ for(const [test,re,label] of [
  [kiln,/cap == ForgeCapabilities\.ITEM_HANDLER \|\| cap == ForgeCapabilities\.FLUID_HANDLER/,"no controller bypass"],
  [port,/kiln\.getTarFuelPortHandler\(worldPosition\)/,"port delegates to kiln"]
 ])assert.match(test,re,label);
-const xy={south:[0,2],north:[4,2],east:[2,4],west:[2,0]};
+const xy={south:[0,3],north:[4,1],east:[3,4],west:[1,0]};
+// Shared module picks the axis with greatest absolute delta; break
+// ties in favor of X. All four ports must actually face OUT of the wall.
+const controllers={south:[2,4],north:[2,0],east:[4,2],west:[0,2]};
+const outward={south:"west",north:"east",east:"south",west:"north"};
+const facing=(dx,dz)=>Math.abs(dx)>=Math.abs(dz)&&dx!==0
+  ?dx>0?"east":"west":dz>0?"south":"north";
 for(const [dir,[x,z]] of Object.entries(xy)){
+ const [cx,cz]=controllers[dir];
+ assert.equal(facing(x-cx,z-cz),outward[dir],"port must face its actual exterior wall");
  const old=json(db+"refractory_kiln_"+dir+".json");
  const newer=json(db+"refractory_kiln_tarfuel_"+dir+".json");
  assert.equal(newer.name,"refractory_kiln_tarfuel_"+dir);
@@ -46,7 +54,8 @@ const original=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Ref
 const alt=book.pages.find(p=>p.type==="patchouli:multiblock"&&p.name==="Refractory Kiln — Liquid Inlet");
 assert(original&&alt);
 assert.equal(original.multiblock.pattern[2][2],"B___B");
-assert.equal(alt.multiblock.pattern[2][2],"B___F");
+assert.equal(alt.multiblock.pattern[2][2],"B___B");
+assert.equal(alt.multiblock.pattern[2][3],"B___F");
 assert.equal(alt.multiblock.mapping.F,"magneticraft2:multiblock_fluid_input");
 const lang=json(asset+"assets/magneticraft2/lang/en_us.json");
 assert(lang["message.magneticraft2.refractory_kiln.status"].includes("Wood Tar: %s/%s mB"));
