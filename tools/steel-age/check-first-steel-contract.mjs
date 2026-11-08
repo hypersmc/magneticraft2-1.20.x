@@ -51,8 +51,10 @@ for(const [id,info] of Object.entries(machines)){
  const profile=json(data+"multiblock_voxels/"+id+".json");
  assert.equal(profile.unit,"model_pixels");
  assert.deepEqual(profile.collision,profile.selection);
- assert.equal(profile.collision.length,
-  Object.values(south.structure.layout).flat(2).filter(x=>x!=="A").length);
+ const occupied=Object.values(south.structure.layout).flat(2).filter(x=>x!=="A").length;
+ assert.equal(profile.collision.length,occupied+(info.air?
+  (id==="steel_refining_furnace"?9:5):0));
+ assert.deepEqual(south.settings.render_air_anchors,info.air?[[0,1,0]]:[]);
  assert(profile.collision.every(b=>b.every(n=>Number.isInteger(n))));
  const craft=json(data+"recipes/"+id+".json");
  assert.equal(craft.result.item,"magneticraft2:"+id);

@@ -211,7 +211,13 @@
     "fluid": false,
     "inputs": [],
     "outputs": [],
-    "render_air_anchors": [],
+    "render_air_anchors": [
+      [
+        0,
+        1,
+        0
+      ]
+    ],
     "voxel_profile": "magneticraft2:steel_refining_furnace"
   }
 }

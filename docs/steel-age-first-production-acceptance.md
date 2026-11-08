@@ -71,3 +71,14 @@ regressions or incorrect fuel/AIR handling as mere Studio work.
 
 Dedicated multiplayer-specific implementation and tests remain deferred
 until AFTER Steam Age per project decision.
+
+### Steel sample-matching visual pass (2026-11-08)
+
+- The player-provided in-game screenshot still showed the three furnaces as flat masonry despite the initial silhouette pass. The separate generated design samples are the visual references, NOT screenshots of the implemented game models.
+- Coke now has recessed working doors, a heavier inspection grille, plated front corners, and a dark-lined top vent.
+- Blast now has a supported front hearth in its existing front-center AIR cell, stronger jambs/lintel, a plated shoulder ledge, an inset upper-shaft intake, and a soot-lined top flue.
+- Refining now has a THREE-block-wide recessed hearth (two existing brick-wing cells plus the front-center AIR cell), separate overhead vent panels, an iron roof cornice, and a lined exhaust hood.
+- Structural footprint, port locations, input/output roles, heat/fuel/AIR processing, and recipe JSONs were not changed. The previously empty front-center layer-2 cell in Blast/Refining becomes a formed-state V2 proxy at controller-relative [0,1,0]; prior to formation it MUST still be built as air.
+- Voxel collision/selection for the formed hearth aligns with the new recessed geometry. The saved V2 part IDs have changed, so **unform and rebuild existing test structures**; do not use old filler states as evidence of this pass.
+- Uses only previously existing Magneticraft2 16px textures, native-scale UVs, and once-baked model parts. No continuous renderer, entity or tick allocation was introduced.
+- **Verification gate:** source/resource structural checks and native UV bounds; run JDK 17 Gradle build, test all 12 orientations, examine the furnace fronts and sides from near and far, check AIR/ports, controller interaction and performance in-game. Cosmetic differences versus the samples remain subject to player acceptance.
