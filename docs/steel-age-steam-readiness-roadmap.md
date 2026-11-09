@@ -187,3 +187,32 @@ The large/large visible tooth gap has received a **real shared baked-model tooth
 6. Inspect temporary item models in inventory and world from multiple camera angles; delegate any finished curved section model to MGC2 Studio, with native UVs and no floating geometry.
 
 **This is fabrication only:** Boiler Shell Section has no operational STEAM, WATER, HEAT, pressure, boiler formation, fuel consumption or engine power. Actual functioning Boiler/Engine remains Steam Age, after subsequent Steel IV component work.
+
+
+### Steel IV-B — Boiler closure and pressure-fitting stock (source implemented, 2026-11-09)
+
+The player confirmed Steel IV-A (hot Steel Bars → Heavy Plate → Boiler Shell Section) works in-game. Steel IV-B adds three further **static** fabrication items and upgrades the existing Boring Machine. Do not interpret these as a boiler, working valves or a new pressure network.
+
+| Output item | Existing powered workshop | Input | Tool | Mechanical load |
+| --- | --- | --- | --- | --- |
+| `boiler_end_plate` | Bronze Precision Boring Machine | 1 Heavy Steel Plate (4 ingot-equivalents) | Steel Boring Bit | 20 RPM / 12 torque / 300 ticks |
+| `boiler_reinforcement_flange` | Bronze Mechanical Press | 2 Refined Steel Plates (2 ingot-equivalents) | Steel Press Die | 18 RPM / 14 torque / 240 ticks |
+| `pressure_pipe_coupling` | Bronze Precision Boring Machine | 1 Refined Steel Bar (1 ingot-equivalent) | Steel Boring Bit | 20 RPM / 12 torque / 260 ticks |
+
+A Steel Boring Bit is crafted by upgrading the existing Abrasive Boring Bit with **three Refined Steel Plates and one Steel Rod**. It lasts 1,536 successful boring batches; the existing Abrasive Bit lasts 384. The bit is installed with the existing `ReplaceableMachinePart` interaction and persisted by registered item ID, not an unstable index. The original Bronze/Iron boring recipes, their quality behavior, wear, saves and UI remain on their established paths.
+
+**Process semantics:** the single-input `multiblock_processing` recipe type already supports these recipes; no new serializer/network packet or machine BE is needed. The existing Press now recognizes flanges as another item requiring the Steel Press Die and preserves quality/provenance through a tagged-output reservation. The Boring Machine checks actual installed Steel Boring Bit for End Plates/Couplings on every supplied tick; those outputs preserve input quality but strip a temporary `hot_until` property. Other boring recipes continue copying their input NBT as before. Neither process consumes workpieces or wears tools when output is blocked or mechanical power is absent.
+
+**Material accounting:** end plate consumes one Heavy Plate (four bars/ingots); flange consumes two ordinary Steel Plates (two ingot-equivalents); coupling consumes one Steel Bar (one ingot-equivalent). The upgraded bit is tooling, not extra output material. No fake duplication, hidden pressure storage, steam, or water functionality.
+
+**Visual status:** the player noted that several existing Steel items look alike and hot/cold state is not clearly represented. All new item models reuse existing valid Magneticraft2 shapes (Heavy Plate, Iron Bearing Housing, Steel Shaft, Abrasive Bit) **only as placeholders**. This issue remains open for MGC2 Studio to produce original recognizable models and appropriate heated-stock visuals, without stretching textures or disrupting save/processing code.
+
+**Acceptance:** run `node tools/steel-age/check-steel-boiler-hardware.mjs` in a full checkout and `./gradlew build` with JDK 17; then conduct the following in-game checks:
+1. With a Steel Boring Bit, machine 1 Heavy Plate → 1 End Plate, verify 4-ingot-equivalent conservation and quality-tag transfer; with only Abrasive Bit, verify process refuses without consuming/wearing.
+2. Machine 1 cold or still-hot Steel Bar → 1 Pipe Coupling; ensure the output keeps quality but removes `hot_until`. Verify output-full, tool expiry and source overload conditions.
+3. With Steel Press Die, press 2 Refined Steel Plates → 1 Reinforcement Flange; with Bronze Die, ensure no processing. Both variants should still press Copper Panels.
+4. Save/reload every upgraded machine after part installation and during a batch; progress, input stock, installed tool IDs and remaining wear must persist appropriately. No duplicate output on chunk reload.
+5. Confirm JEI's existing multiblock processing category lists the three recipes and Patchouli shows how to craft/install the Steel Boring Bit. Inspect material models in inventory, world and held state from multiple camera angles.
+6. Re-test Iron Bearing Housing, Precision Toolholder, Boiler Shell Section, Copper Panels, Gear V2 load and material-quality rules. Multi-client and performance measurements remain unverified.
+
+**Stage:** source implementation and static inspection, not compiled or accepted in Minecraft. Working pressurized components, end-plate joints, leak safety, boiler assembly and Steam engines are separate future milestones.
