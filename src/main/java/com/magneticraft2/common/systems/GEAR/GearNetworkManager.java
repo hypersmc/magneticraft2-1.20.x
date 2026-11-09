@@ -296,7 +296,10 @@ public class GearNetworkManager {
         boolean shouldDecayThisTick = shouldDecayThisTick(level);
         if (shouldDecayThisTick) {
             for (GearNode gear : gears.values()) {
-                if (!activelyDriven.contains(gear.getPosition())) {
+                if (!activelyDriven.contains(gear.getPosition())
+                        && !(gear.isSource() && incompatibleDrives.contains(gear.getPosition()))) {
+                    // Keep the live source RPM intact across a temporary
+                    // kinematic jam so removing the offending gear recovers.
                     gear.decayMotion(DECAY_FACTOR, STOP_EPSILON);
                 }
             }
