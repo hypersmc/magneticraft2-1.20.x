@@ -244,6 +244,27 @@
     {
       "type": "text",
       "text": "$(bold)Steam Plant Construction$()$(br2)A Boiler Shell Section is a fabrication component, NOT a functioning boiler. It has no fluid, HEAT, PRESSURE or STEAM capability. Later Steel IV work will define boiler end plates, flanges, valves and actual assembly consumers. Do not create or consume live pressurized steam until the Steam Age vertical slice. Current item models reuse existing Steel stock shapes as temporary MGC2 Studio placeholders."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)10 — Steel IV-B: Boiler End Plates$()$(br2)The Boiler Shell Section is the curved wall, not an entire boiler. For a machined closure plate, put ONE Heavy Steel Plate into the existing Precision Boring Machine. Upgrade its replaceable Abrasive Boring Bit to a Steel Boring Bit (reinforced using 3 Refined Steel Plates and one Steel Rod). At 20 RPM and 12 torque, bore the Heavy Plate for 300 powered ticks to produce ONE Boiler End Plate, keeping its steel quality. The early Abrasive Boring Bit cannot machine this stock."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Boring Bit",
+      "recipe": "magneticraft2:steel_boring_bit"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)11 — Boiler Reinforcement Flanges$()$(br2)With the Steel Press Die already fitted to the existing Mechanical Press, feed TWO normal Refined Steel Plates into its real item input. At 18 RPM and 14 torque, 240 supplied ticks produce ONE Boiler Reinforcement Flange. The batch consumes both plates, preserves their quality and wears the installed die once. Bronze pressing still works without a Steel die for Copper Panels, but cannot form a boiler flange."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)12 — Pressure-Rated Pipe Couplings$()$(br2)Use the upgraded Precision Boring Machine with its Steel Boring Bit on ONE Refined Steel Bar. At 20 RPM, 12 torque and 260 supplied ticks, machine ONE Pressure-Rated Pipe Coupling. The source metal quality is preserved; the temporary hot-stock timestamp is removed from the finished fitting. A pipe coupling is stock for future boiler/piping construction, not a working pressurized network connector yet."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steel IV Components — Not Yet a Boiler$()$(br2)You can now fabricate Heavy Steel Plates, curved Boiler Shell Sections, machined Boiler End Plates, Reinforcement Flanges and Pressure-Rated Pipe Couplings using existing machines. None of these items supplies steam, heat, water, or pressure; they do not automatically become a boiler when placed. Functional Steam comes in Steam Age, with server-authoritative pressure, safety, fuel and mechanical torque. All three new component item appearances are temporary MGC2 Studio placeholders."
     }
   ]
 }
