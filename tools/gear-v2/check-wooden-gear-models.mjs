@@ -63,3 +63,67 @@ assert(network.includes("isPhysicalLargeGear(neighborGearBlockEntity)"));
 assert(network.includes("entity instanceof LargeGearWithHandleBlockEntity_wood"));
 assert(network.includes("entity instanceof LargeGearBlockEntity_wood"));
 console.log("PASS three Wooden Gear models, native UV, handle, item inheritance, 40 RPM and crossed-gear eligibility");
+
+
+// 3D oriented-box sweep: the handled lever must not collide with a crossed
+// Large Gear when the shared half-tooth phase is applied.
+const models=["gear_large_wood","gear_large_wood_with_handle"].map(n=>json(B+n+".json"));
+const axes=["X","Y","Z"],rad=Math.PI/180;
+function rotate(axis,degrees,[x,y,z]){
+ const a=degrees*rad,c=Math.cos(a),s=Math.sin(a);
+ return axis==="X"?[x,c*y-s*z,s*y+c*z]
+  :axis==="Y"?[c*x+s*z,y,-s*x+c*z]
+  :[c*x-s*y,s*x+c*y,z];
+}
+const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+function cube(el,axis,angle,offset){
+ let center=el.from.map((v,i)=>(v+el.to[i])/2-8);
+ let basis=[[1,0,0],[0,1,0],[0,0,1]];
+ const half=el.from.map((v,i)=>(el.to[i]-v)/2);
+ function turn(a,d){center=rotate(a,d,center);basis=basis.map(v=>rotate(a,d,v));}
+ if(el.rotation)turn("Y",el.rotation.angle);
+ // Matched to 1.20.1 blockstates: X-east x=90,y=90; Y-down identity; Z-north x=90.
+ if(axis==="X"){turn("X",90);turn("Y",90);}
+ else if(axis==="Z")turn("X",90);
+ turn(axis,angle);
+ return{center:center.map((v,i)=>v+offset[i]),basis,half,
+   extent:[0,1,2].map(i=>basis.reduce((s,v,k)=>s+Math.abs(v[i])*half[k],0))};
+}
+function intersects(a,b){
+ const d=b.center.map((v,i)=>v-a.center[i]);
+ for(let i=0;i<3;i++)if(Math.abs(d[i])>=a.extent[i]+b.extent[i]-1e-5)return false;
+ const tests=[...a.basis,...b.basis];
+ for(const u of a.basis)for(const v of b.basis)tests.push(cross(u,v));
+ for(const axis of tests){
+  if(dot(axis,axis)<1e-7)continue;
+  const ra=a.basis.reduce((s,v,i)=>s+Math.abs(dot(axis,v))*a.half[i],0);
+  const rb=b.basis.reduce((s,v,i)=>s+Math.abs(dot(axis,v))*b.half[i],0);
+  if(Math.abs(dot(axis,d))>=ra+rb-1e-5)return false;
+ }
+ return true;
+}
+let tested=0;
+for(const source of models){
+ for(const firstAxis of axes)for(const secondAxis of axes){
+  if(firstAxis===secondAxis)continue;
+  for(const a of [-1,1])for(const b of [-1,1]){
+   const offset=[0,0,0];
+   offset[axes.indexOf(firstAxis)]=16*a;
+   offset[axes.indexOf(secondAxis)]=16*b;
+   const sign=a===b?1:-1;
+   for(let frame=0;frame<8;frame++){
+    const angle=22.5*frame/8;
+    const first=source.elements.map(el=>cube(el,firstAxis,angle,[0,0,0]));
+    const other=models[0].elements.map(el=>cube(el,secondAxis,sign*angle+11.25,offset));
+    for(const x of first)for(const y of other)
+      assert(!intersects(x,y),
+        "Crossed wooden gear collision at "+firstAxis+"/"+secondAxis+
+        ", offset "+a+","+b+", frame "+frame);
+    tested++;
+   }
+  }
+ }
+}
+assert.equal(tested,384);
+console.log("PASS 384 wooden crossed-gear swept samples (including handled lever)");
