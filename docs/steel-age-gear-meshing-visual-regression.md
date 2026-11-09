@@ -56,3 +56,7 @@ At the permitted 32-pixel large/large centre distance, the radial tooth envelope
 **Known regression risk:** the game also supports medium/large diagonal meshing at 16√2 pixels. The earlier static overlap approximation flags more possible interpenetrations with larger tips. This is **not resolved by a proof**. In particular, visually inspect medium/large links across full rotation; if collisions occur, the next change should be a consistent model tooth/root/phase redesign, not a renderer translation or hidden geometry. MGC2 Studio remains the owner of final model work.
 
 **Verify:** restart/reload resource packs; connect two Steel Large Gears two blocks apart on XZ, XY and YZ planes, from all angles and while moving/paused; inspect Steel+Iron Large pair and diagonal Steel Large/Steel Medium; test stops/restarts, gear ratio and overlays, shaft alignment and texture UVs. Do not label Steel III visuals complete until all configurations pass.
+
+## Create-model reference comparison (2026-11-09)
+
+The player supplied Create small/large cogwheel JSONs as sizing references. The measured geometry and acceptance contract are in [Create cogwheel reference study](steel-age-gear-create-proportions-study.md). **Create does not support the same parallel large/large arrangement that Magneticraft2 currently supports**, and its 30-pixel large diameter would leave a ~1.85-pixel minimum envelope gap at the current 32-pixel centre distance. The existing large-tooth extension is still not user-accepted. This comparison does not implement a new model.
