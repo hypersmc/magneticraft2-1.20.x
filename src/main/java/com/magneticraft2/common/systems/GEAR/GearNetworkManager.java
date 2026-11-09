@@ -167,6 +167,11 @@ public class GearNetworkManager {
         // the temporary inertial source for that component.
         prepareFlywheelSources(level, gears);
 
+        // A gear train must have one consistent signed RPM at every node.
+        // Conflicting loops and incompatible parallel sources are not
+        // mechanically driveable; do not arbitrarily choose the first BFS path.
+        Set<BlockPos> incompatibleDrives = findIncompatibleDriveComponents(level, gears);
+
         Queue<GearNode> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
         Set<BlockPos> activelyDriven = new HashSet<>();
@@ -180,14 +185,19 @@ public class GearNetworkManager {
                 // counter-clockwise rotation from their physical input. Downstream
                 // shafts/belts preserve it and external gears reverse exactly once.
                 gear.setMeshPhaseDegrees(0.0F);
-                gear.setOverloaded(gear.getTorque() > gear.getMaxTorque() + TORQUE_EPSILON);
+                boolean incompatible = incompatibleDrives.contains(gear.getPosition());
+                gear.setOverloaded(incompatible
+                        || gear.getTorque() > gear.getMaxTorque() + TORQUE_EPSILON);
                 visited.add(gear.getPosition());
-                activelyDriven.add(gear.getPosition());
                 if (!gear.isOverloaded()) {
+                    activelyDriven.add(gear.getPosition());
                     queue.add(gear);
-                } else {
+                } else if (!incompatible) {
+                    // Existing source torque overload behavior is preserved.
                     gear.setSpeed(0.0F);
                 }
+                // Incompatible connections are transient: retain the source's
+                // raw RPM so breaking the bad loop can recover next tick.
             }
         }
 
@@ -289,6 +299,19 @@ public class GearNetworkManager {
                 if (!activelyDriven.contains(gear.getPosition())) {
                     gear.decayMotion(DECAY_FACTOR, STOP_EPSILON);
                 }
+            }
+        }
+
+        // Decay clears stale overload flags on detached nodes. Reapply the
+        // kinematic stop after decay, without mutating persisted source RPM.
+        for (BlockPos pos : incompatibleDrives) {
+            GearNode blocked = gears.get(pos);
+            if (blocked == null) {
+                continue;
+            }
+            blocked.setOverloaded(true);
+            if (!blocked.isSource()) {
+                blocked.setSourcePos(null);
             }
         }
 
@@ -490,6 +513,118 @@ public class GearNetworkManager {
         }
 
         return component;
+    }
+
+
+    /**
+     * Verify all edges of a connected kinetic component, including edges to
+     * nodes already visited by a traversal. A loop may not demand incompatible
+     * signed speeds, and two active sources may not drive incompatible RPM or
+     * rotation directions through the same component.
+     *
+     * This uses the existing cached physical connections. It is O(V+E) once
+     * per server network evaluation and does not allocate or tick cable/block
+     * entities, rebuild placement geometry, or change save data.
+     */
+    private Set<BlockPos> findIncompatibleDriveComponents(
+            Level level, Map<BlockPos, GearNode> gears) {
+        Set<BlockPos> invalid = new HashSet<>();
+        Set<BlockPos> examined = new HashSet<>();
+        Map<BlockPos, Double> relative = new HashMap<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        List<BlockPos> component = new ArrayList<>();
+
+        for (GearNode root : gears.values()) {
+            BlockPos rootPos = root.getPosition();
+            if (!examined.add(rootPos)) {
+                continue;
+            }
+            queue.add(rootPos);
+            relative.put(rootPos, 1.0D);
+            component.clear();
+            boolean conflicting = false;
+
+            while (!queue.isEmpty()) {
+                BlockPos position = queue.poll();
+                GearNode current = gears.get(position);
+                if (current == null) {
+                    continue;
+                }
+                component.add(position);
+                double currentRate = relative.get(position);
+
+                for (GearConnection edge : getConnectedGears(position, level)) {
+                    GearNode neighbor = gears.get(edge.neighborPos());
+                    if (neighbor == null) {
+                        continue;
+                    }
+                    double multiplier = getConnectionSpeedRatio(edge, current, neighbor)
+                            * getConnectionDriveSign(level, edge, current, neighbor);
+                    double predicted = currentRate * multiplier;
+                    Double assigned = relative.get(neighbor.getPosition());
+                    if (!Double.isFinite(predicted) || Math.abs(predicted) > 1.0E9D) {
+                        conflicting = true;
+                    }
+                    if (assigned == null) {
+                        relative.put(neighbor.getPosition(), predicted);
+                        examined.add(neighbor.getPosition());
+                        queue.add(neighbor.getPosition());
+                    } else if (!approximatelySameSignedRPM(predicted, assigned)) {
+                        conflicting = true;
+                    }
+                }
+            }
+
+            // Two sources must agree on the same reference rotation; comparing
+            // *signed* RPM also catches sources that fight in opposite directions.
+            Double rootSourceRPM = null;
+            for (BlockPos position : component) {
+                GearNode gear = gears.get(position);
+                if (gear == null || !gear.isSource() || gear.getSpeed() <= STOP_EPSILON) {
+                    continue;
+                }
+                double ratio = relative.get(position);
+                double sourceRPM = gear.getSpeed() * gear.getDirectionMultiplier();
+                if (!Double.isFinite(ratio) || Math.abs(ratio) < 1.0E-9D) {
+                    conflicting = true;
+                    continue;
+                }
+                double atRoot = sourceRPM / ratio;
+                if (!Double.isFinite(atRoot)
+                        || rootSourceRPM != null
+                        && !approximatelySameSignedRPM(atRoot, rootSourceRPM)) {
+                    conflicting = true;
+                } else if (rootSourceRPM == null) {
+                    rootSourceRPM = atRoot;
+                }
+            }
+
+            if (conflicting) {
+                invalid.addAll(component);
+            }
+        }
+        return invalid;
+    }
+
+    private boolean approximatelySameSignedRPM(double a, double b) {
+        return Double.isFinite(a) && Double.isFinite(b)
+                && Math.abs(a - b) <= 0.001D * Math.max(1.0D, Math.max(Math.abs(a), Math.abs(b)));
+    }
+
+    private int getConnectionDriveSign(Level level, GearConnection edge,
+                                       GearNode current, GearNode neighbor) {
+        return switch (edge.kind()) {
+            case SHAFT, BELT -> 1;
+            case GEAR_MESH -> -1;
+            case RIGHT_ANGLE -> getRightAngleDirectionSign(
+                    level, current.getPosition(), neighbor.getPosition());
+            case CUSTOM_GEARBOX -> getCustomGearboxDirectionSign(
+                    level, current.getPosition(), neighbor.getPosition());
+            case PERPENDICULAR_GEAR_MESH ->
+                    GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+        };
     }
 
     /**
@@ -868,7 +1003,8 @@ public class GearNetworkManager {
         Queue<GearNode> queue = new ArrayDeque<>();
 
         for (GearNode gear : gears.values()) {
-            if (!gear.isSource() || gear.getSpeed() <= STOP_EPSILON) {
+            if (!gear.isSource() || gear.getSpeed() <= STOP_EPSILON
+                    || gear.isOverloaded()) {
                 continue;
             }
 
