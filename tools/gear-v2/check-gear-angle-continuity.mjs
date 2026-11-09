@@ -63,7 +63,12 @@ function run(drivingTeeth, middleTeeth, outputTeeth, rpm, direction, ticks) {
     const rawOutputOld=normalize(rawOutput);
     if(Math.abs(difference(rawOutputOld,outputPrediction))>40)broken++;
   }
-  assert(broken>0,"regression reproduction: old locking must produce jumps");
+  // The original defect is specific to 16T -> 8T -> 16T: normalizing
+  // the faster intermediate gear aliases its next 16T neighbor by 180.
+  // The reverse-sized chain is a healthy control, not a failing baseline.
+  if(drivingTeeth===16 && middleTeeth===8 && outputTeeth===16){
+    assert(broken>0,"old locking must reproduce 16T/8T/16T jumps");
+  }
   return {input:drivingTeeth+"T",via:middleTeeth+"T",output:outputTeeth+"T",
     rpm,direction,ticks,oldLargeCorrections:broken,newCorrections:0};
 }
