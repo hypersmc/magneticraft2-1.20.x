@@ -216,3 +216,10 @@ A Steel Boring Bit is crafted by upgrading the existing Abrasive Boring Bit with
 6. Re-test Iron Bearing Housing, Precision Toolholder, Boiler Shell Section, Copper Panels, Gear V2 load and material-quality rules. Multi-client and performance measurements remain unverified.
 
 **Stage:** source implementation and static inspection, not compiled or accepted in Minecraft. Working pressurized components, end-plate joints, leak safety, boiler assembly and Steam engines are separate future milestones.
+
+
+### Steel IV-C — vessel assembly design started (2026-11-09)
+
+The player reported successfully producing all three Steel IV-B hardware items in-game. This accepts their *basic production paths* only; tooling, wear, quality, blocked outputs, persistence and compilation remain separately unverified. The player also encountered ambiguity between ordinary Refined Steel Plates and Heavy Steel Plates because the placeholder item models look alike. Distinct inventory-scale MGC2 Studio visual identity is a gameplay acceptance requirement before calling the full Steel IV experience complete.
+
+**Design contract committed:** [Steel IV-C boiler vessel assembly](steel-iv-c-boiler-vessel-assembly-contract.md). The existing IV-B outputs are items, not world-placeable vessel blocks. Steel IV-C must establish a legitimate part-to-structure manufacturing route using existing mechanical assembly and JSON multiblock conventions; the 3×3 cross-section / 3–5-block-length horizontal vessel is preliminary and intentionally not implemented as an arbitrary final blueprint. Shell/end-cap/flange/coupling counts and faithful module geometry require resolution before registering structural blocks. No working boiler, fluid/steam port, fuel burner, operating valve, pressure law or Steam engine is authorized by this documentation. **State: documented design only, not implemented or built.**
