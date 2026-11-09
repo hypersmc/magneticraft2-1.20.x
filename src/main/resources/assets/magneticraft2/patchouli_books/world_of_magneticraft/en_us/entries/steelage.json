@@ -226,7 +226,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Steam-ready Drivetrain$()$(br2)Craft Steel stock using the hot-worked Forge Hammer and Rolling Mill routes, then reinforce the existing Iron gear/shaft path with Steel. Test shaft axes, gear teeth, 8:16 ratio, gearbox port direction, load and disconnects. A future Steam Engine will provide the high-torque source needed to exercise the complete Steel rated capacity. Final geometry belongs to MGC2 Studio; current block models reuse Iron visual assets."
+      "text": "$(bold)Steam-ready Drivetrain$()$(br2)Steel upgrades use the same Gear V2 connections as Wood/Iron. 16T Large + 16T Large mesh ONLY at perpendicular axes with one-block offsets along both axles, turning power 90 degrees. For parallel Large gears, bridge with an 8T Medium gear diagonally; the Large gears do not mesh directly. Medium + Medium connect adjacent (1:1); Medium + Large connect diagonally (2:1). Wrongly closed loops or incompatible sources stall, never create free mechanical power. Final gear visuals remain under MGC2 Studio."
     }
   ]
 }

@@ -1,4 +1,6 @@
-# Steel / Iron gears: visible tooth-mesh gap
+# Steel / Iron gears: visible tooth-mesh gap 
+
+> **2026-11-09 architectural update:** the earlier large/large parallel meshing requirement in this historical diagnostic is now **superseded**. Under the new [Gear V2 Create-like connection contract](gear-v2-create-like-mesh-architecture.md), parallel Large Gears do not mesh; crossed perpendicular Large Gears do. The preceding screenshot investigations and radial measurements remain as historical test evidence, not current acceptance targets.
 
 **2026-11-09 · player-reported visual defect · geometry patch pushed, in-game retest pending**  
 **Scope:** Steel III Steel Large Gear (inherits `wrought_iron_gear_large` geometry) and the shared Iron gearing / Gear V2 placement rules. This records the geometry diagnosis, the focused model-resource correction, and the MGC2 Studio acceptance contract. No gameplay/network rule has changed.
