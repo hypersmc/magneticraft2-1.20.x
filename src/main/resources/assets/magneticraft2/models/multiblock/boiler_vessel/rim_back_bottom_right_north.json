@@ -278,6 +278,142 @@
           ]
         }
       }
+    },
+    {
+      "from": [
+        10,
+        0,
+        0
+      ],
+      "to": [
+        14,
+        9,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            4,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            4,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            9
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            4,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        10,
+        0,
+        14
+      ],
+      "to": [
+        14,
+        9,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            4,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            4,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            2,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            2,
+            9
+          ]
+        },
+        "up": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
+        },
+        "down": {
+          "texture": "#joint",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
+        }
+      }
     }
   ]
 }
