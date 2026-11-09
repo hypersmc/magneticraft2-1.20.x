@@ -1,7 +1,7 @@
 # Steel II–V: fabrication, transmission and Steam-ready machinery
 
 **Magneticraft2 · Forge 1.20.1 · design baseline 2026-11-08**  
-**Status:** planning contract, NOT implemented gameplay. See [existing Steel full content plan](steel-age-full-content-plan.md) for materials, ore policy and first-loop invariants.  
+**Status:** ongoing roadmap; Steel I–III have player-tested gameplay slices, and Steel IV-A has a source implementation awaiting build and in-game verification. Unimplemented Steel IV/V candidates below remain plans. See [existing Steel full content plan](steel-age-full-content-plan.md) for materials, ore policy and first-loop invariants.  
 **Progression:** Stone → Copper → Bronze → Iron (merged) → **Steel** → Steam → Gasoline → Electric Generator → Nuclear.
 
 ## 1. Already accepted, versus proposed
@@ -156,3 +156,34 @@ The player's screenshot confirms a **visible gap between two Steel Large Gear to
 ### 2026-11-09 Steel III visual correction follow-up
 
 The large/large visible tooth gap has received a **real shared baked-model tooth extension** (Iron Large Gear model, inherited by Steel), with per-face proportional UVs and no renderer or Gear V2 code change. This is an unverified candidate; medium/large diagonal meshing is a known possible visual regression. Review [gear mesh visual acceptance](steel-age-gear-meshing-visual-regression.md) and require in-game evidence before acceptance.
+
+
+### Steel IV-A — Heavy Plate and boiler-shell forming (source implementation, 2026-11-09)
+
+**Scope:** exactly the first Steel IV fabrication chain. This reuses the **existing Iron Forge Hearth, Bronze Forge Hammer and Bronze Mechanical Press**, which are already JSON multiblocks. No Plate Bending Machine, Boiler controller, Steam Engine or new pressure system was registered.
+
+| Operation | Machine and real inputs | Valid output | Gate |
+| --- | --- | --- | --- |
+| Steel Bars → Hot Steel Bars | Existing Iron Forge Hearth: four identical bars, solid fuel + higher Steel HEAT | Same four temporarily hot bars | Steel reheat contract already accepted |
+| Hot Bars → Heavy Steel Plate | Existing powered Forge Hammer: four hot `refined_steel_bar` | One `heavy_steel_plate` | Steel Forge Die, 20 RPM, 12 torque, 320 supplied ticks |
+| Craft Steel Press Die | Vanilla shaped recipe: four `refined_steel_plate` and one existing `bronze_press_die` | One `steel_press_die` | No machine added, die is a service upgrade |
+| Heavy Plate → Curved shell | Existing powered Mechanical Press: one `heavy_steel_plate` | One `boiler_shell_section` | Installed Steel Press Die, 18 RPM, 14 torque, 240 supplied ticks |
+
+**Mass ledger:** one Steel Bar = one ingot-equivalent; four hot Bars = one four-ingot-equivalent Heavy Plate = one four-ingot-equivalent Shell Section. The tooling recipe consumes additional four Steel Plates in a reusable Steel Press Die (1,536 completed Press batches, versus 384 for Bronze). No material is duplicated by reheating, forging, or pressing. The heat expires by server game time; the Forge Hammer requires actual hot bars throughout a batch, and cannot work them cold.
+
+**Quality and persistence:** the Forge Hammer already uses `HotBloomWorkpiece.consolidate()` to transfer the input bar's quality/provenance into the finished Heavy Plate while removing the expiring hot-tag. The Mechanical Press now does the same for this specific one-input/one-output shell-forming recipe and reserves the *tagged* output before consuming an input. Existing Copper Panel recipes still use their unchanged output flow. The Steel Press Die extends the existing `ReplaceableMachinePart` with stable item-ID NBT; old Press saves remain Bronze with their saved wear. Worn, absent or wrong-tier dies block new batches. Manual status feedback identifies the missing Steel Die.
+
+**Non-circular balance:** the two new mechanical operations request at most 14 torque, within an existing maximum 16-torque water-wheel source before Steam, but an inadequate wooden or bronze drivetrain can still overload under real Gear V2 load. The 40-RPM handled Large Gear has only 8 torque and therefore cannot directly power these Steel IV forming operations. This is intentional and rewards stronger transmission.
+
+**Visual ownership:** `heavy_steel_plate`, `boiler_shell_section` and `steel_press_die` use existing valid Steel item-model parents as **explicit temporary placeholders**, not final curved steel geometry. MGC2 Studio owns their final item/formed-workpiece visual identity; no machine multiblock structure was changed, so existing Patchouli build visualizations remain correct.
+
+**Verification stage:** source implementation; static JSON/source contract checks and machine capacity/recipe review are not equivalent to `./gradlew build` or in-game acceptance. Next gate: execute `node tools/steel-age/check-steel-boiler-fabrication.mjs` and `./gradlew build` using a full JDK 17 checkout, then do the following in-game checks:
+
+1. Forge four hot Steel Bars into one Heavy Plate, preserving a tagged bar's quality and removing the hot timeout from the output; reject cold bars, three bars, Bronze/Iron dies, blocked output and missing mechanical supply.
+2. Verify available 20 RPM/12 torque and output reservation across save/reload, reload while mid-batch, and hot-stock expiry; confirm wear decreases by exactly one only on completed batches.
+3. Craft Steel Press Die; install in the **same** formed Press and confirm its wear, status and save/reload. A Bronze die must still press Copper Panels but **not** a Boiler Shell; a Steel die must do both.
+4. Press one Heavy Plate into one Shell at 18 RPM/14 torque, preserving its material quality; test output full, interrupted power and zero-load idle state. One Plate must never produce multiple Shell Sections.
+5. Verify the JEI generic multiblock recipes and Patchouli pages, break/unform/ports, each formed facing, mixed Steel/Iron mechanical power networks and unobstructed item transfers.
+6. Inspect temporary item models in inventory and world from multiple camera angles; delegate any finished curved section model to MGC2 Studio, with native UVs and no floating geometry.
+
+**This is fabrication only:** Boiler Shell Section has no operational STEAM, WATER, HEAT, pressure, boiler formation, fuel consumption or engine power. Actual functioning Boiler/Engine remains Steam Age, after subsequent Steel IV component work.
