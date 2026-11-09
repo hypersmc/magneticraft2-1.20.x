@@ -35,6 +35,7 @@ import com.magneticraft2.common.blockentity.stage.steel.SteelGearboxBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -219,6 +220,9 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("iron_forge_hearth", () ->
                     BlockEntityType.Builder.of(IronForgeHearthBlockEntity::new,
                             BlockRegistry.IRON_FORGE_HEARTH.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelBoilerVesselBlockEntity>> STEEL_BOILER_VESSEL_BE =
+            BLOCK_ENTITIES.register("steel_boiler_vessel", () -> BlockEntityType.Builder.of(
+                    SteelBoilerVesselBlockEntity::new, BlockRegistry.STEEL_BOILER_VESSEL.get()).build(null));
     public static final RegistryObject<BlockEntityType<SteelProcessBlockEntity>> STEEL_PROCESS_BE =
             BLOCK_ENTITIES.register("steel_process", () ->
                     BlockEntityType.Builder.of(SteelProcessBlockEntity::new,

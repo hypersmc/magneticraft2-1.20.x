@@ -75,6 +75,7 @@ import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
 import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerStructuralBlock;
+import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -191,6 +192,9 @@ public class BlockRegistry {
             BLOCKS.register("boiler_shell_panel", () -> new SteelBoilerStructuralBlock(true));
     public static final RegistryObject<SteelBoilerStructuralBlock> BOILER_END_JOINT =
             BLOCKS.register("boiler_end_joint", () -> new SteelBoilerStructuralBlock(false));
+    // Steel IV-C physically constructed vessel; entirely inert until Steam Age.
+    public static final RegistryObject<SteelBoilerVesselBlock> STEEL_BOILER_VESSEL =
+            BLOCKS.register("steel_boiler_vessel", SteelBoilerVesselBlock::new);
     // Steel entry: three distinct JSON-formed machines, shared thermal backend.
     public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
             BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));

@@ -647,5 +647,8 @@
   "item.magneticraft2.steel_boring_bit": "Steel Boring Bit",
   "message.magneticraft2.bronze_precision_boring_machine.reason.steel_bit_required": "Boiler end plates and pressure couplings require a fitted Steel Boring Bit",
   "block.magneticraft2.boiler_shell_panel": "Boiler Shell Panel",
-  "block.magneticraft2.boiler_end_joint": "Boiler End Joint"
+  "block.magneticraft2.boiler_end_joint": "Boiler End Joint",
+  "block.magneticraft2.steel_boiler_vessel": "Steel Boiler Vessel Controller",
+  "message.magneticraft2.steel_boiler_vessel.formed": "Boiler vessel formed; Steam systems not installed.",
+  "message.magneticraft2.steel_boiler_vessel.incomplete": "Boiler incomplete; follow the Steel IV-C Visualize."
 }

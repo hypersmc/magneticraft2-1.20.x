@@ -112,6 +112,8 @@ public final class MultiblockRenderParts {
             if (machineId.equals("bloomery_furnace")) {
                 modelKey = BloomeryModelParts.key(facing, dx, dy, dz,
                         originalBlocks.get(partPos).isAir());
+            } else if (machineId.equals("steel_boiler_vessel")) {
+                modelKey = SteelBoilerModelParts.key(facing, dx, dy, dz, originalBlocks.get(partPos));
             } else if (machineId.equals("steel_coke_oven")
                     || machineId.equals("steel_blast_furnace")
                     || machineId.equals("steel_refining_furnace")) {

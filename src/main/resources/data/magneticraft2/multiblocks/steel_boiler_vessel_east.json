@@ -1,0 +1,123 @@
+{
+  "name": "steel_boiler_vessel_east",
+  "structure": {
+    "dimensions": [
+      5,
+      4,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "F"
+        ],
+        [
+          "A",
+          "A",
+          "A",
+          "A",
+          "C"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ],
+        [
+          "J",
+          "A",
+          "A",
+          "A",
+          "J"
+        ],
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ]
+      ],
+      "layer4": [
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ],
+        [
+          "P",
+          "S",
+          "S",
+          "S",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "C": "magneticraft2:steel_boiler_vessel",
+      "J": "magneticraft2:boiler_end_joint",
+      "P": "magneticraft2:iron_plate_panel",
+      "S": "magneticraft2:boiler_shell_panel",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/steel_boiler_vessel_east",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [],
+    "voxel_profile": "magneticraft2:steel_boiler_vessel"
+  }
+}

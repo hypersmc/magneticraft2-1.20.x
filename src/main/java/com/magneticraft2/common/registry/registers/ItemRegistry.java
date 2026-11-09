@@ -273,6 +273,7 @@ public class ItemRegistry {
     // Steel IV-C physically placeable products of the existing Assembly Station.
     public static final RegistryObject<Item> ITEM_BOILER_SHELL_PANEL = fromBlock(BOILER_SHELL_PANEL);
     public static final RegistryObject<Item> ITEM_BOILER_END_JOINT = fromBlock(BOILER_END_JOINT);
+    public static final RegistryObject<Item> ITEM_STEEL_BOILER_VESSEL = fromBlock(STEEL_BOILER_VESSEL);
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

@@ -1,0 +1,139 @@
+{
+  "name": "steel_boiler_vessel_north",
+  "structure": {
+    "dimensions": [
+      3,
+      4,
+      5
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "C",
+          "F"
+        ],
+        [
+          "F",
+          "A",
+          "F"
+        ],
+        [
+          "F",
+          "A",
+          "F"
+        ],
+        [
+          "F",
+          "A",
+          "F"
+        ],
+        [
+          "F",
+          "A",
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ],
+      "layer3": [
+        [
+          "P",
+          "J",
+          "P"
+        ],
+        [
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "S",
+          "A",
+          "S"
+        ],
+        [
+          "P",
+          "J",
+          "P"
+        ]
+      ],
+      "layer4": [
+        [
+          "P",
+          "P",
+          "P"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "S",
+          "S",
+          "S"
+        ],
+        [
+          "P",
+          "P",
+          "P"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "C": "magneticraft2:steel_boiler_vessel",
+      "J": "magneticraft2:boiler_end_joint",
+      "P": "magneticraft2:iron_plate_panel",
+      "S": "magneticraft2:boiler_shell_panel",
+      "A": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/steel_boiler_vessel_north",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [],
+    "voxel_profile": "magneticraft2:steel_boiler_vessel"
+  }
+}

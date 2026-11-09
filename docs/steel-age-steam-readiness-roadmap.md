@@ -228,3 +228,8 @@ The player reported successfully producing all three Steel IV-B hardware items i
 ### Steel IV-C structural modules — first source slice (2026-11-09)
 
 The existing Bronze Mechanical Assembly Station now has two additional real four-slot recipes: one Boiler Shell Section + one Steel Rod + four Iron Rivets + one Riveted Iron Frame -> one placeable Boiler Shell Panel; one Boiler End Plate + one Flange + one Coupling + four Iron Rivets -> one placeable Boiler End Joint. The recipe requires 18 RPM, 10 torque, 320 powered ticks. Both blocks have horizontal facings, native-UV baked preliminary models, matching physical selection/collision, loot, pickaxe tags and book text. They contain **no Steam mechanics**. See [the Steel IV-C contract](steel-iv-c-boiler-vessel-assembly-contract.md). Source implementation is **partial**: no finished vessel/controller/JSON multiblock or quality-aware assembled pressure boundary yet, and no Gradle build or Minecraft player verification. Do not claim IV-C is complete.
+
+
+### Steel IV-C formed vessel structure candidate — 2026-11-09
+
+A 3×4×5 **static** horizontal Steel vessel has source implementation with four JSON blueprints, one native-UV baked model palette and Voxel V2 geometry; recipe, controller, Patchouli Visualize, stable IDs, drops and registry entries are included. Exact structure requires 24 Shell Panels, 2 End Joints, 16 Iron Plate Panels, 10 Foundations and 1 Controller. The inner drum remains air. It does not generate, store or transport water/steam/heat/pressure, and assembled quality is not preserved. Detailed constraints and remaining tests are in [Steel IV-C design/implementation](steel-iv-c-boiler-vessel-assembly-contract.md). Forge compilation and in-game verification remain **unverified**.

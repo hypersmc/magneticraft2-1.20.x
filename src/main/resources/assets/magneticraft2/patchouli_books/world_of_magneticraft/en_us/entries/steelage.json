@@ -273,6 +273,60 @@
     {
       "type": "text",
       "text": "$(bold)Steel IV-C is still construction-only$()$(br2)The two pieces can be placed, aimed and mined with a pickaxe. They have different real block shapes but are NOT a working boiler: the final vessel layout, all four multiblock formation definitions, its support cradle and fluid/steam/heat/service ports remain to be implemented after physical-model review. Assembly crafting presently does not transfer source quality NBT to the placed block. No pressurized operation is permitted with that unresolved quality rule."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)14 — Steel IV-C: Physical Boiler Vessel$()$(br2)This structure does not generate Steam. Manufacture 24 Boiler Shell Panels, 2 Boiler End Joints, 16 Iron Plate Panels, 10 Iron Machine Foundations and 1 Steel Boiler Vessel Controller. The 3x4x5 drum rests on two foundation rails. Shell Panels surround three central hollow air cells in each middle course; both end closures sit in the center of reinforced iron-panel rings. Place the controller at the lower FRONT center, build as Visualize shows and right-click to form. No fuel, HEAT, WATER, PRESSURE or STEAM ports exist in Steel Age."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Vessel Controller",
+      "recipe": "magneticraft2:steel_boiler_vessel"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Boiler Vessel",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PPP",
+            "SSS",
+            "SSS",
+            "SSS",
+            "PPP"
+          ],
+          [
+            "PJP",
+            "S_S",
+            "S_S",
+            "S_S",
+            "PJP"
+          ],
+          [
+            "PPP",
+            "SSS",
+            "SSS",
+            "SSS",
+            "PPP"
+          ],
+          [
+            "F0F",
+            "F_F",
+            "F_F",
+            "F_F",
+            "F_F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_boiler_vessel",
+          "F": "magneticraft2:iron_machine_foundation",
+          "S": "magneticraft2:boiler_shell_panel",
+          "P": "magneticraft2:iron_plate_panel",
+          "J": "magneticraft2:boiler_end_joint"
+        },
+        "symmetrical": false
+      }
     }
   ]
 }
