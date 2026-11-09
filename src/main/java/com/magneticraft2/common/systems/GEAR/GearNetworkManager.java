@@ -1079,7 +1079,12 @@ public class GearNetworkManager {
                             (180.0F - current.getTeeth() * currentVisualAngle)
                                     / Math.max(1, neighbor.getTeeth());
 
-                    neighbor.setRotationDegrees(neighborVisualAngle - neighborPhase);
+                    // The mesh equation has many equivalent tooth-aligned solutions.
+                    // Choose the one nearest the angle already integrated this tick;
+                    // otherwise a 16T -> 8T -> 16T train can snap the last gear by
+                    // 180 degrees whenever the intermediate angle wraps at 360.
+                    neighbor.setRotationDegrees(nearestEquivalentMeshedRotation(
+                            neighbor, neighborVisualAngle - neighborPhase));
                 }
 
                 visited.add(neighbor.getPosition());
@@ -1245,6 +1250,24 @@ public class GearNetworkManager {
                 + turnSign * current.getMeshPhaseDegrees();
         float normalized = phase % toothPitch;
         return normalized < 0.0F ? normalized + toothPitch : normalized;
+    }
+
+    /**
+     * The meshing constraint fixes only tooth phase, not the revolution count.
+     * A gear with N teeth has equivalent solutions spaced 360/N degrees apart.
+     *
+     * advanceGearRotations() already integrated each node using its actual
+     * signed RPM for this server tick. Preserve that continuous motion by
+     * selecting the tooth-aligned solution nearest the predicted angle.
+     *
+     * This avoids 180-degree wrapping jumps across 16T/8T/16T trains without
+     * changing gear ratios, torque, topology, NBT, or client interpolation.
+     */
+    private float nearestEquivalentMeshedRotation(GearNode neighbor, float solutionDegrees) {
+        float toothPitch = 360.0F / Math.max(1, neighbor.getTeeth());
+        float predictedDegrees = neighbor.getRotationDegrees();
+        float turns = Math.round((predictedDegrees - solutionDegrees) / toothPitch);
+        return normalizeDegrees(solutionDegrees + turns * toothPitch);
     }
 
     private float calculateMeshedPhaseDegrees(GearNode current, GearNode neighbor) {
