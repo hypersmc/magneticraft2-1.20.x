@@ -270,6 +270,9 @@ public class ItemRegistry {
             ITEMS.register("pressure_pipe_coupling", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_STEEL_BORING_BIT =
             ITEMS.register("steel_boring_bit", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-C physically placeable products of the existing Assembly Station.
+    public static final RegistryObject<Item> ITEM_BOILER_SHELL_PANEL = fromBlock(BOILER_SHELL_PANEL);
+    public static final RegistryObject<Item> ITEM_BOILER_END_JOINT = fromBlock(BOILER_END_JOINT);
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

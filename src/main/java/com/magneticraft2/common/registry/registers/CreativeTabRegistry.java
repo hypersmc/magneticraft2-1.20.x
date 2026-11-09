@@ -189,6 +189,8 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BOILER_REINFORCEMENT_FLANGE.get());
                         entries.accept(ItemRegistry.ITEM_PRESSURE_PIPE_COUPLING.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_BORING_BIT.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_SHELL_PANEL.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_END_JOINT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_SHAFT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_MEDIUM.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_LARGE.get());

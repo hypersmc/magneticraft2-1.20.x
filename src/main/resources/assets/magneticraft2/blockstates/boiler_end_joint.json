@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/boiler_end_joint",
+      "y": 0
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/boiler_end_joint",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/boiler_end_joint",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/boiler_end_joint",
+      "y": 270
+    }
+  }
+}

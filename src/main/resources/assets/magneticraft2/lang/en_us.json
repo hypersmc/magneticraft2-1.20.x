@@ -645,5 +645,7 @@
   "item.magneticraft2.boiler_reinforcement_flange": "Boiler Reinforcement Flange",
   "item.magneticraft2.pressure_pipe_coupling": "Pressure-Rated Pipe Coupling",
   "item.magneticraft2.steel_boring_bit": "Steel Boring Bit",
-  "message.magneticraft2.bronze_precision_boring_machine.reason.steel_bit_required": "Boiler end plates and pressure couplings require a fitted Steel Boring Bit"
+  "message.magneticraft2.bronze_precision_boring_machine.reason.steel_bit_required": "Boiler end plates and pressure couplings require a fitted Steel Boring Bit",
+  "block.magneticraft2.boiler_shell_panel": "Boiler Shell Panel",
+  "block.magneticraft2.boiler_end_joint": "Boiler End Joint"
 }
