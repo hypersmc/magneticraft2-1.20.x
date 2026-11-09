@@ -52,6 +52,11 @@ public final class SteelBoilerVesselBlock extends BaseBlockMagneticraft2 {
             :"message.magneticraft2.steel_boiler_vessel.incomplete"),true);
         return InteractionResult.CONSUME;
     }
+    @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        // Interaction is handled by use(): formation and inert-vessel status only.
+    }
+
     @Override public boolean onDestroyedByPlayer(BlockState s,Level world,BlockPos pos,
             Player player,boolean harvest,FluidState fluid){
         if(!world.isClientSide && world.getBlockEntity(pos) instanceof SteelBoilerVesselBlockEntity vessel)
