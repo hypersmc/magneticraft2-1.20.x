@@ -47,3 +47,15 @@ Do **not** shift gear centres, alter axle placement, apply renderer offsets or s
 - Visually inspect alignment, gears' tooth phase, cog intersections, gearbox and shaft geometry and lighting in all three planes, stationary and moving, from multiple camera angles; record FPS before/after.
 
 **Engineering status:** implemented in source, acceptance pending. Multiplayer-specific tests remain deferred per project milestone, but all logic is server owned.
+
+## Perpendicular Large Gear tooth-phase correction — 2026-11-09
+
+The player screenshot shows crossed Large Gears rotating with tooth-to-tooth interference. The first version assigned `meshPhaseDegrees(0)` for every `PERPENDICULAR_GEAR_MESH` connection. For our 16T models, the driven gear needs **half a tooth pitch (180/16 = 11.25 degrees)** relative to the driver.
+
+`GearNetworkManager.calculatePerpendicularMeshPhaseDegrees()` now calculates `(halfPitch + turnSign * upstreamMeshPhase) mod toothPitch`. This correction is used in powered propagation, server-authoritative rotation locking, and passive alignment. The upstream phase matters when a crossed gear is itself driven through an 8T/16T mesh. No model assets, shaft positions, render offsets, gear ratios, saved NBT or torque graph are changed.
+
+The actual 66-element Large Iron/Steel block model was checked as oriented 3D cuboids, using representative Forge blockstate axes (X-east, Y-down, Z-north) with animation rotation. At 24 axis/direction cases and 8 angular samples per tooth pitch, the **11.25-degree relative offset gave no sampled cuboid overlaps**; the old zero-phase relation produced up to three overlapping tooth cuboid pairs in the original test. A repeatable regression checker using the real model and three inherited input phases is `tools/gear-v2/check-perpendicular-tooth-phase.mjs`.
+
+**Important:** a closed X/Y/Z triangle of *three* crossed Large Gears is kinematically contradictory. No continuously moving tooth alignment is possible across all three connections. The network is expected to stall; test a single perpendicular pair to validate the visual phase, then separately verify that the triangle stalls and recovers when broken. Any remaining static tooth intersections in a contradictory, stopped assembly are not evidence that a valid two-gear mesh is misphased.
+
+**Not verified:** JDK 17 `./gradlew build`, all block-facing variants, game-render visuals, multiplayer behavior, performance or actual player acceptance.
