@@ -54,8 +54,9 @@ public final class GearPlacementValidator {
                 continue;
             }
 
-            // Different spin axes are different gear planes. Bevel/cross-axis gears are not
-            // supported yet, so they are ignored here instead of being treated as side meshes.
+            // Different gear planes have no planar clearance relationship.
+            // Crossed 16T mesh connections are evaluated by the Gear V2
+            // network. Non-meshing placements remain placeable.
             if (newAxis != neighborAxis) {
                 continue;
             }
@@ -76,7 +77,8 @@ public final class GearPlacementValidator {
             //
             // - 8 <-> 8: adjacent straight mesh
             // - 8 <-> 16: one-by-one diagonal mesh
-            // - 16 <-> 16: two-block straight mesh
+            // - 16 <-> 16: crossed perpendicular axes only;
+            //   parallel large pairs remain placeable, but unconnected
             //
             // Other non-overlapping placements are allowed; they simply do not transmit.
             if (newLarge && neighborLarge) {
@@ -287,17 +289,12 @@ public final class GearPlacementValidator {
     }
 
     /**
-     * Grid distance where two gears are allowed to externally mesh.
+     * Legacy approximate gear size/spacing helper, retained for compatibility.
+     * The value alone does not imply that an external mesh is valid.
      *
-     * The early V2.2 rule used {@code sizeA + sizeB - 1}. That made two large
-     * gears require distance 3, which placed them too far apart visually while
-     * still allowing the network to treat that gap as a valid mesh. For the
-     * current wooden models, the larger gear size is a better center distance:
-     *
-     * - 8 teeth  + 8 teeth  -> distance 1
-     * - 8 teeth  + 16 teeth -> distance 2
-     * - 16 teeth + 16 teeth -> no direct parallel-axis connection
-     * - perpendicular large/large -> one-block offsets on both gear axes
+     * Use isValidExternalMeshOffset() for coplanar gear connections, and
+     * isValidPerpendicularLargeMeshOffset() for perpendicular large gears.
+     * Large gears with parallel axes never mesh directly.
      */
     public static int getRequiredMeshDistance(int teethA, int teethB) {
         int sizeA = getGearSizeUnits(teethA);
