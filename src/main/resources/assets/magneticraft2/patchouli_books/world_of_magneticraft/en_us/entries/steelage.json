@@ -227,6 +227,23 @@
     {
       "type": "text",
       "text": "$(bold)Steam-ready Drivetrain$()$(br2)Steel upgrades use the same Gear V2 connections as Wood/Iron. 16T Large + 16T Large mesh ONLY at perpendicular axes with one-block offsets along both axles, turning power 90 degrees. For parallel Large gears, bridge with an 8T Medium gear diagonally; the Large gears do not mesh directly. Medium + Medium connect adjacent (1:1); Medium + Large connect diagonally (2:1). Wrongly closed loops or incompatible sources stall, never create free mechanical power. Final gear visuals remain under MGC2 Studio."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)8 — Steel IV-A: Heavy Plate$()$(br2)No new multiblock is necessary. First roll Steel Ingots into Bars using the existing Rolling Mill with Steel Roller Sleeves. Reheat 4 Steel Bars together in the fueled Iron Forge Hearth (higher Steel HEAT threshold) and move the same 4 hot Bars to the existing powered Forge Hammer fitted with a Steel Forge Die. At 20 RPM and 12 torque, 320 powered ticks forge all 4 Bars into ONE Heavy Steel Plate. The plate contains four ingot-equivalents: a material-conserving forge-welded billet, not four free plates. Cold bars will not work and completed batches wear the die."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)9 — Curving a Boiler Shell$()$(br2)Craft one Steel Press Die by reinforcing the earlier Bronze Press Die with four normal Refined Steel Plates. Install that part in the existing Bronze Mechanical Press. Feed one Heavy Steel Plate through its REAL input port. With 18 RPM and 14 torque, the 240-tick powered forming recipe produces ONE Boiler Shell Section, preserving the Steel plate's quality/provenance. A Bronze Press Die cannot form this component; Copper Panels remain craftable with either die."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Press Die",
+      "recipe": "magneticraft2:steel_press_die"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steam Plant Construction$()$(br2)A Boiler Shell Section is a fabrication component, NOT a functioning boiler. It has no fluid, HEAT, PRESSURE or STEAM capability. Later Steel IV work will define boiler end plates, flanges, valves and actual assembly consumers. Do not create or consume live pressurized steam until the Steam Age vertical slice. Current item models reuse existing Steel stock shapes as temporary MGC2 Studio placeholders."
     }
   ]
 }

@@ -182,6 +182,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_REFINED_STEEL_ROD.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_FORGE_DIE.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_ROLLER_SLEEVES.get());
+                        entries.accept(ItemRegistry.ITEM_HEAVY_STEEL_PLATE.get());
+                        entries.accept(ItemRegistry.ITEM_STEEL_PRESS_DIE.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_SHELL_SECTION.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_SHAFT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_MEDIUM.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_LARGE.get());
