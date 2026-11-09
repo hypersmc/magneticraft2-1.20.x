@@ -3,7 +3,8 @@
   "ambientocclusion": false,
   "textures": {
     "metal": "magneticraft2:block/material/dark_work_iron",
-    "joint": "magneticraft2:block/material/bronze_machined",
+    "rim": "minecraft:block/polished_deepslate",
+    "bolt": "minecraft:block/iron_block",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": [
@@ -11,39 +12,21 @@
       "from": [
         0,
         0,
-        8
+        6
       ],
       "to": [
-        16,
-        16,
-        12
+        14,
+        4,
+        15
       ],
       "faces": {
-        "north": {
-          "texture": "#metal",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#metal",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#metal",
           "uv": [
             0,
             0,
-            4,
-            16
+            9,
+            4
           ]
         },
         "west": {
@@ -51,8 +34,8 @@
           "uv": [
             0,
             0,
-            4,
-            16
+            9,
+            4
           ]
         },
         "up": {
@@ -60,8 +43,8 @@
           "uv": [
             0,
             0,
-            16,
-            4
+            14,
+            9
           ]
         },
         "down": {
@@ -69,8 +52,258 @@
           "uv": [
             0,
             0,
-            16,
+            14,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        0,
+        6
+      ],
+      "to": [
+        16,
+        4,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            9,
             4
+          ]
+        },
+        "west": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            9,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            9
+          ]
+        },
+        "down": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        4,
+        9
+      ],
+      "to": [
+        14,
+        12,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            6,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            6,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        4,
+        9
+      ],
+      "to": [
+        16,
+        12,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            6,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            6,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        6
+      ],
+      "to": [
+        14,
+        16,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            9,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            9
+          ]
+        },
+        "down": {
+          "texture": "#metal",
+          "uv": [
+            0,
+            0,
+            14,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        14,
+        12,
+        6
+      ],
+      "to": [
+        16,
+        16,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            9,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            9,
+            4
+          ]
+        },
+        "up": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            9
+          ]
+        },
+        "down": {
+          "texture": "#rim",
+          "uv": [
+            0,
+            0,
+            2,
+            9
           ]
         }
       }
