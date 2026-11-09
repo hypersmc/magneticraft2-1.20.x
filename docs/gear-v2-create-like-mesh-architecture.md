@@ -59,3 +59,15 @@ The actual 66-element Large Iron/Steel block model was checked as oriented 3D cu
 **Important:** a closed X/Y/Z triangle of *three* crossed Large Gears is kinematically contradictory. No continuously moving tooth alignment is possible across all three connections. The network is expected to stall; test a single perpendicular pair to validate the visual phase, then separately verify that the triangle stalls and recovers when broken. Any remaining static tooth intersections in a contradictory, stopped assembly are not evidence that a valid two-gear mesh is misphased.
 
 **Not verified:** JDK 17 `./gradlew build`, all block-facing variants, game-render visuals, multiplayer behavior, performance or actual player acceptance.
+
+## Wooden gear missing-model and manual-drive cleanup — 2026-11-09
+
+The handle-less Wooden Large Gear had **15 unsupported Blockbench rotations** in its `gear_large_wood.json` resource (including a non-Forge `{x,y,z}` rotation object and values beyond ±45°). The model fails Minecraft 1.20.1's baked-model rotation validation, appearing as missing black/magenta geometry. The Wooden Medium, handle-less Large and handled Large models now reuse the proven **original Magneticraft2 8T/16T metal gear cuboid profiles**, retextured with `minecraft:block/oak_log`, `oak_log_top`, `cobblestone` and the retained handle's `minecraft:item/leather`. All three have proportional face UVs, supported rotation values, a genuine 4×4 stone axle and the original handle-arm/handgrip geometry where applicable.
+
+The inventory Item models now inherit the corresponding validated block geometry, while preserving each item's existing in-hand/GUI transformation, so held models no longer differ mechanically from the placed silhouette. The old invalid Large Gear JSON is not redistributed or referenced.
+
+**Hand drive:** `LargeGearWithHandleBlockEntity_wood` now uses a named **40 RPM** source speed instead of the prior 130 RPM. The existing 8 game-torque output and five-second (100-tick) click duration are unchanged. This balance value is provisional and requires user feedback; downstream 2:1 gear ratios continue to follow Gear V2.
+
+**Perpendicular connectivity:** the handled 16T wooden gear is explicitly recognized as a physical Large Gear together with passive Wooden/Iron/Steel instances. Water Wheel rims remain excluded. The existing crossed half-tooth phase calculation applies to these connections; no special-case wooden direction offset or duplicate renderer path was introduced.
+
+**Verification:** standalone resource/model check `node tools/gear-v2/check-wooden-gear-models.mjs`; check both unpowered world placement and rendered rotation, item GUI, the handle when idle/active, 8T↔8T, 8T↔16T, crossed 16T↔16T with and without the handled gear; check water-wheel and previous machine behavior. Inspect collision, UV clarity, phase throughout rotation, source speed and actual mechanical load. Forge compilation and in-game visual verification remain **unverified**.
