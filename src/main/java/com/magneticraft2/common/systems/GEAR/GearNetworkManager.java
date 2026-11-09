@@ -6,6 +6,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEnti
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
@@ -1287,6 +1288,13 @@ public class GearNetworkManager {
         return normalized;
     }
 
+    /** Passive Wood/Iron/Steel and the handled Wooden 16T gear are all
+     *  physically meshing Large Gears, unlike water-wheel rim nodes. */
+    private static boolean isPhysicalLargeGear(BlockEntity entity) {
+        return entity instanceof LargeGearBlockEntity_wood
+                || entity instanceof LargeGearWithHandleBlockEntity_wood;
+    }
+
     private List<GearConnection> getConnectedGears(BlockPos pos, Level level) {
         Map<BlockPos, List<GearConnection>> cache = getConnectionCache(level);
         List<GearConnection> cached = cache.get(pos);
@@ -1488,8 +1496,8 @@ public class GearNetworkManager {
             if (neighbor.getAxis() != gear.getAxis()) {
                 // Cross-axis pairing belongs only to physical large gears,
                 // not water-wheel rims or other visible machine rotors.
-                if (currentBlockEntity instanceof LargeGearBlockEntity_wood
-                        && neighborGearBlockEntity instanceof LargeGearBlockEntity_wood
+                if (isPhysicalLargeGear(currentBlockEntity)
+                        && isPhysicalLargeGear(neighborGearBlockEntity)
                         && GearPlacementValidator.isValidPerpendicularLargeMeshOffset(
                                 pos, gear.getAxis(), gear.getTeeth(),
                                 scanPos, neighbor.getAxis(), neighbor.getTeeth())) {

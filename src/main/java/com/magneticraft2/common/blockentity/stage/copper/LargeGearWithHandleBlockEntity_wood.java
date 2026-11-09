@@ -22,6 +22,9 @@ import static net.minecraft.world.level.block.DirectionalBlock.FACING;
  * @version 1.0.0
  */
 public class LargeGearWithHandleBlockEntity_wood extends GearBlockEntity {
+    // Manual rotation should be visibly slower than machine-driven shafts.
+    private static final float HANDLE_RPM = 40.0F;
+
     private boolean isMoving = false;
     private int activeTicks = 0;
 
@@ -36,7 +39,7 @@ public class LargeGearWithHandleBlockEntity_wood extends GearBlockEntity {
 
         isMoving = true;
         activeTicks = 100;
-        setSource(true, 130.0F, getDefaultSourceTorque());
+        setSource(true, HANDLE_RPM, getDefaultSourceTorque());
         updateActiveState(true);
     }
 
