@@ -27,6 +27,11 @@ function outerRadius(model) {
 const small = outerRadius(read("wrought_iron_gear_medium"));
 const large = outerRadius(read("wrought_iron_gear_large"));
 const pixel = n => Math.round(n * 1000) / 1000;
+// Large/large gear centres are 32 model pixels apart. A radius below
+// 16 pixels makes some visible gap unavoidable regardless of rotation.
+if (!(large >= 16 && large <= 17)) {
+  throw new Error("Large-gear tooth radial envelope cannot reach two-block mesh: " + large);
+}
 const measurements = {
   medium_outer_corner_radius_px: pixel(small),
   large_outer_corner_radius_px: pixel(large),

@@ -46,3 +46,13 @@ node tools/steel-age/inspect-gear-mesh-geometry.mjs
 The inspector reports raw model extents and idealized pitch mismatches. It is an **early diagnostic only**: its radial estimates do not replace animated tooth-intersection tests or in-game screenshots.
 
 **Status:** unresolved visual issue handed to MGC2 Studio. PR #19 remains draft; no part of this document claims the defect is fixed.
+
+## First actual geometry correction — 2026-11-09
+
+**Implemented in the shared Iron baked model** (also inherited by the Steel Large Gear): the 16 large-gear tooth cuboids have their outer reach extended from radius 15.2 to **16.25 model pixels**, while preserving each existing axle, gear rim, inner tooth root, tooth count, material texture, angular tooth spacing, block placement rule and network rotation phase. Each changed face has a regenerated 1:1 model-pixel/UV mapping. The modification affects the *actual* model resource, unlike the previous diagnosis-only commit.
+
+At the permitted 32-pixel large/large centre distance, the radial tooth envelope now reaches beyond the midpoint, allowing tips to enter opposing tooth spaces. A static phase/cuboid sample of the two large gears found no solid-to-solid collisions under the currently used tooth-phase relationship. This is an **implemented candidate**, not yet a proven moving mesh in Minecraft.
+
+**Known regression risk:** the game also supports medium/large diagonal meshing at 16√2 pixels. The earlier static overlap approximation flags more possible interpenetrations with larger tips. This is **not resolved by a proof**. In particular, visually inspect medium/large links across full rotation; if collisions occur, the next change should be a consistent model tooth/root/phase redesign, not a renderer translation or hidden geometry. MGC2 Studio remains the owner of final model work.
+
+**Verify:** restart/reload resource packs; connect two Steel Large Gears two blocks apart on XZ, XY and YZ planes, from all angles and while moving/paused; inspect Steel+Iron Large pair and diagonal Steel Large/Steel Medium; test stops/restarts, gear ratio and overlays, shaft alignment and texture UVs. Do not label Steel III visuals complete until all configurations pass.

@@ -152,3 +152,7 @@ This pass adds **source-implemented** Refined Steel Plate, Bar, Rod and Steel Ro
 ### Steel III visual mesh blocker — 2026-11-09
 
 The player's screenshot confirms a **visible gap between two Steel Large Gear tooth rings**, despite working rotation. Inspection of the inherited Iron large-gear cuboids confirms outer tooth radius ≈15.2 model pixels versus 32-pixel large/large axle separation; naïve tooth extension risks intersecting the existing diagonal medium/large mesh. This is **not fixed** and Steel III visuals remain **unaccepted**. See [gear-meshing visual regression and MGC2 Studio model contract](steel-age-gear-meshing-visual-regression.md) for the measured gap, constraints and full in-game acceptance checklist. No gear position, power graph, UV or other gameplay rule was changed in this documentation pass.
+
+### 2026-11-09 Steel III visual correction follow-up
+
+The large/large visible tooth gap has received a **real shared baked-model tooth extension** (Iron Large Gear model, inherited by Steel), with per-face proportional UVs and no renderer or Gear V2 code change. This is an unverified candidate; medium/large diagonal meshing is a known possible visual regression. Review [gear mesh visual acceptance](steel-age-gear-meshing-visual-regression.md) and require in-game evidence before acceptance.
