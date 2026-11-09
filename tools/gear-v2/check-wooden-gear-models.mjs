@@ -34,13 +34,17 @@ for(const [name,count,shaftHeight] of specs){
      assert([-45,-22.5,0,22.5,45].includes(e.rotation.angle),
        "unsupported Minecraft 1.20.1 rotation: "+name+" "+i);
    }
+   assert.equal(e.from.length,3,"from must have 3 coordinates: "+name+" "+i);
+   assert.equal(e.to.length,3,"to must have 3 coordinates: "+name+" "+i);
+   assert(e.from.every(Number.isFinite)&&e.to.every(Number.isFinite),
+     "coordinates must be finite: "+name+" "+i);
    const dim=e.to.map((v,j)=>v-e.from[j]);
    assert(dim.every(v=>v>0),"invalid element "+name+" "+i);
    for(const [side,face]of Object.entries(e.faces)){
      assert(model.textures[face.texture.slice(1)],"missing texture "+name+" "+i);
      const size=side==="east"||side==="west"?[dim[2],dim[1]]:
        side==="north"||side==="south"?[dim[0],dim[1]]:[dim[0],dim[2]];
-     assert(face.uv&&size.every((v,j)=>Math.abs(face.uv[j+2]-face.uv[j]-v)<.001),
+     assert(face.uv&&face.uv.length===4&&face.uv.every(Number.isFinite)&&size.every((v,j)=>Number.isFinite(v)&&Math.abs(face.uv[j+2]-face.uv[j]-v)<.001),
        "stretched face "+name+" "+i+" "+side);
      assert(face.uv.every(v=>v>=-0.001&&v<=16.001),"UV exceeds texture "+name+" "+i);
    }

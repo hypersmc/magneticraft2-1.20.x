@@ -2312,7 +2312,8 @@
       ],
       "to": [
         10,
-        16
+        16,
+        10
       ],
       "faces": {
         "north": {
@@ -2336,18 +2337,18 @@
         "east": {
           "texture": "#stone",
           "uv": [
-            null,
             0,
-            null,
+            0,
+            4,
             16
           ]
         },
         "west": {
           "texture": "#stone",
           "uv": [
-            null,
             0,
-            null,
+            0,
+            4,
             16
           ]
         },
@@ -2355,18 +2356,18 @@
           "texture": "#stone",
           "uv": [
             0,
-            null,
+            0,
             4,
-            null
+            4
           ]
         },
         "down": {
           "texture": "#stone",
           "uv": [
             0,
-            null,
+            0,
             4,
-            null
+            4
           ]
         }
       }
