@@ -5,6 +5,7 @@ import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
@@ -198,11 +199,7 @@ public class GearNetworkManager {
                     continue;
                 }
 
-                float ratio = connection.kind() == ConnectionKind.SHAFT
-                        || connection.kind() == ConnectionKind.RIGHT_ANGLE
-                        || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
-                        ? 1.0F
-                        : (float) current.getTeeth() / (float) neighbor.getTeeth();
+                float ratio = getConnectionSpeedRatio(connection, current, neighbor);
                 float newSpeed = current.getSpeed() * ratio;
 
                 // Torque on the network is available capacity, not a load that is being
@@ -235,6 +232,13 @@ public class GearNetworkManager {
                     neighbor.setDirectionMultiplier(
                             current.getDirectionMultiplier() * turnSign
                     );
+                } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                    int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
+                    neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
                             level,
@@ -901,6 +905,12 @@ public class GearNetworkManager {
                     neighbor.setRotationDegrees(
                             current.getRotationDegrees() * turnSign
                     );
+                } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                    int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
                             level,
@@ -990,6 +1000,13 @@ public class GearNetworkManager {
                         neighbor.setDirectionMultiplier(
                                 current.getDirectionMultiplier() * turnSign
                         );
+                    } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                        int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                                current.getPosition(), current.getAxis(), current.getTeeth(),
+                                neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                        neighbor.setMeshPhaseDegrees(0.0F);
+                        neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
+                        neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                     } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                         int customSign = getCustomGearboxDirectionSign(
                                 level,
@@ -1057,6 +1074,14 @@ public class GearNetworkManager {
             return gearBlockEntity.isShaftLike();
         }
         return fallback;
+    }
+
+    private float getConnectionSpeedRatio(GearConnection connection, GearNode current, GearNode neighbor) {
+        return connection.kind() == ConnectionKind.SHAFT
+                || connection.kind() == ConnectionKind.RIGHT_ANGLE
+                || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
+                || connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH
+                ? 1.0F : (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
     }
 
     private float calculateMeshedPhaseDegrees(GearNode current, GearNode neighbor) {
@@ -1288,13 +1313,27 @@ public class GearNetworkManager {
             }
 
             GearNode neighbor = gears.get(scanPos);
-            if (neighbor == null || neighbor.getAxis() != gear.getAxis()) {
+            if (neighbor == null) {
                 continue;
             }
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(scanPos);
             if (!(neighborBlockEntity instanceof GearBlockEntity neighborGearBlockEntity)
                     || !neighborGearBlockEntity.supportsExternalGearMesh()) {
+                continue;
+            }
+
+            if (neighbor.getAxis() != gear.getAxis()) {
+                // Cross-axis pairing belongs only to physical large gears,
+                // not water-wheel rims or other visible machine rotors.
+                if (currentBlockEntity instanceof LargeGearBlockEntity_wood
+                        && neighborGearBlockEntity instanceof LargeGearBlockEntity_wood
+                        && GearPlacementValidator.isValidPerpendicularLargeMeshOffset(
+                                pos, gear.getAxis(), gear.getTeeth(),
+                                scanPos, neighbor.getAxis(), neighbor.getTeeth())) {
+                    connected.add(new GearConnection(
+                            scanPos, ConnectionKind.PERPENDICULAR_GEAR_MESH));
+                }
                 continue;
             }
 
@@ -1708,6 +1747,7 @@ public class GearNetworkManager {
     private enum ConnectionKind {
         SHAFT,
         RIGHT_ANGLE,
+        PERPENDICULAR_GEAR_MESH,
         CUSTOM_GEARBOX,
         GEAR_MESH,
         BELT

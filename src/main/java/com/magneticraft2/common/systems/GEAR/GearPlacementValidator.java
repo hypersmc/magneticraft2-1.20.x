@@ -296,7 +296,8 @@ public final class GearPlacementValidator {
      *
      * - 8 teeth  + 8 teeth  -> distance 1
      * - 8 teeth  + 16 teeth -> distance 2
-     * - 16 teeth + 16 teeth -> distance 2
+     * - 16 teeth + 16 teeth -> no direct parallel-axis connection
+     * - perpendicular large/large -> one-block offsets on both gear axes
      */
     public static int getRequiredMeshDistance(int teethA, int teethB) {
         int sizeA = getGearSizeUnits(teethA);
@@ -334,13 +335,63 @@ public final class GearPlacementValidator {
         }
 
         if (largeA && largeB) {
-            return (a == 2 && b == 0) || (a == 0 && b == 2);
+            // Parallel 16T gears may still be placed, but do not transmit.
+            // They can both be driven indirectly by diagonal medium gears.
+            return false;
         }
 
         // A medium + large pair has a combined pitch radius of roughly 1.5 blocks.
         // Minecraft's one-by-one diagonal is sqrt(2) ~= 1.414 blocks, which matches the
         // current wooden models much better than the old straight two-block workaround.
         return a == 1 && b == 1;
+    }
+
+    /**
+     * Right-angle 16-tooth gear pairing. Each centre changes by one block
+     * along *both* axle axes, and does not move on the remaining axis.
+     * This is true for all X/Y, X/Z and Y/Z orientations, in all quadrants.
+     */
+    public static boolean isValidPerpendicularLargeMeshOffset(
+            BlockPos first, Direction.Axis firstAxis, int firstTeeth,
+            BlockPos second, Direction.Axis secondAxis, int secondTeeth) {
+        if (first == null || second == null || firstAxis == null || secondAxis == null
+                || firstAxis == secondAxis || firstTeeth != 16 || secondTeeth != 16) {
+            return false;
+        }
+        int dx = second.getX() - first.getX();
+        int dy = second.getY() - first.getY();
+        int dz = second.getZ() - first.getZ();
+
+        int firstOffset = firstAxis == Direction.Axis.X ? dx
+                : firstAxis == Direction.Axis.Y ? dy : dz;
+        int secondOffset = secondAxis == Direction.Axis.X ? dx
+                : secondAxis == Direction.Axis.Y ? dy : dz;
+        return Math.abs(firstOffset) == 1 && Math.abs(secondOffset) == 1
+                && (firstAxis == Direction.Axis.X || secondAxis == Direction.Axis.X || dx == 0)
+                && (firstAxis == Direction.Axis.Y || secondAxis == Direction.Axis.Y || dy == 0)
+                && (firstAxis == Direction.Axis.Z || secondAxis == Direction.Axis.Z || dz == 0);
+    }
+
+    /**
+     * Relative angular direction for right-angle large gears. Unlike planar
+     * tooth pairs, the sign depends on which sides of the two axles meet.
+     * Returns zero if the two gears cannot mesh at all.
+     */
+    public static int getPerpendicularLargeMeshDirectionSign(
+            BlockPos first, Direction.Axis firstAxis, int firstTeeth,
+            BlockPos second, Direction.Axis secondAxis, int secondTeeth) {
+        if (!isValidPerpendicularLargeMeshOffset(
+                first, firstAxis, firstTeeth, second, secondAxis, secondTeeth)) {
+            return 0;
+        }
+        int dx = second.getX() - first.getX();
+        int dy = second.getY() - first.getY();
+        int dz = second.getZ() - first.getZ();
+        int firstOffset = firstAxis == Direction.Axis.X ? dx
+                : firstAxis == Direction.Axis.Y ? dy : dz;
+        int secondOffset = secondAxis == Direction.Axis.X ? dx
+                : secondAxis == Direction.Axis.Y ? dy : dz;
+        return (firstOffset > 0) != (secondOffset > 0) ? -1 : 1;
     }
 
     private static int[] getPlanarOffsetComponents(BlockPos first, BlockPos second, Direction.Axis axis) {
