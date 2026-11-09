@@ -246,7 +246,9 @@ public class GearNetworkManager {
                     int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
                             current.getPosition(), current.getAxis(), current.getTeeth(),
                             neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
-                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setMeshPhaseDegrees(
+     calculatePerpendicularMeshPhaseDegrees(
+                            current, neighbor, turnSign));
                     neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                     neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
@@ -1048,7 +1050,9 @@ public class GearNetworkManager {
                     int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
                             current.getPosition(), current.getAxis(), current.getTeeth(),
                             neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
-                    neighbor.setMeshPhaseDegrees(0.0F);
+                    neighbor.setMeshPhaseDegrees(
+     calculatePerpendicularMeshPhaseDegrees(
+                            current, neighbor, turnSign));
                     neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
@@ -1143,7 +1147,9 @@ public class GearNetworkManager {
                         int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
                                 current.getPosition(), current.getAxis(), current.getTeeth(),
                                 neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
-                        neighbor.setMeshPhaseDegrees(0.0F);
+                        neighbor.setMeshPhaseDegrees(
+             calculatePerpendicularMeshPhaseDegrees(
+                            current, neighbor, turnSign));
                         neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                         neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                     } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
@@ -1221,6 +1227,23 @@ public class GearNetworkManager {
                 || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
                 || connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH
                 ? 1.0F : (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
+    }
+
+    /**
+     * Two perpendicular 16-tooth gears must be tooth-to-gap, never tooth-to-tooth.
+     * The 180 / teeth offset is half of one tooth pitch (11.25 degrees for 16T).
+     *
+     * Include the source gear's current visual phase, so a crossed gear driven
+     * through a normal 8T/16T mesh stays aligned across the whole drivetrain.
+     * Rotation direction is handled separately by the crossed-axis contact sign.
+     */
+    private float calculatePerpendicularMeshPhaseDegrees(
+            GearNode current, GearNode neighbor, int turnSign) {
+        float toothPitch = 360.0F / Math.max(1, neighbor.getTeeth());
+        float phase = toothPitch * 0.5F
+                + turnSign * current.getMeshPhaseDegrees();
+        float normalized = phase % toothPitch;
+        return normalized < 0.0F ? normalized + toothPitch : normalized;
     }
 
     private float calculateMeshedPhaseDegrees(GearNode current, GearNode neighbor) {
