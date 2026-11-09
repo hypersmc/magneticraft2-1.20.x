@@ -247,8 +247,8 @@ public class GearNetworkManager {
                             current.getPosition(), current.getAxis(), current.getTeeth(),
                             neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
                     neighbor.setMeshPhaseDegrees(
-     calculatePerpendicularMeshPhaseDegrees(
-                            current, neighbor, turnSign));
+                            calculatePerpendicularMeshPhaseDegrees(
+                                    current, neighbor, turnSign));
                     neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                     neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
@@ -1051,8 +1051,8 @@ public class GearNetworkManager {
                             current.getPosition(), current.getAxis(), current.getTeeth(),
                             neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
                     neighbor.setMeshPhaseDegrees(
-     calculatePerpendicularMeshPhaseDegrees(
-                            current, neighbor, turnSign));
+                            calculatePerpendicularMeshPhaseDegrees(
+                                    current, neighbor, turnSign));
                     neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
@@ -1148,8 +1148,8 @@ public class GearNetworkManager {
                                 current.getPosition(), current.getAxis(), current.getTeeth(),
                                 neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
                         neighbor.setMeshPhaseDegrees(
-             calculatePerpendicularMeshPhaseDegrees(
-                            current, neighbor, turnSign));
+                                calculatePerpendicularMeshPhaseDegrees(
+                                        current, neighbor, turnSign));
                         neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                         neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                     } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
