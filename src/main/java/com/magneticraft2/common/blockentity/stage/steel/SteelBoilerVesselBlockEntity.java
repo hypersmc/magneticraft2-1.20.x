@@ -19,6 +19,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
@@ -26,6 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
@@ -45,6 +48,11 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
         menuProvider=null;
     }
     public boolean isFormed(){return formed;}
+    @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        // Steel IV-C vessel has no GUI or processing. The controller block handles
+        // formation and status feedback; no inventory or capability is exposed.
+    }
     @Override public void setMultiblockVoxelShapes(VoxelShape coll,VoxelShape sel){
         collision=coll;selection=sel;sync();
     }
