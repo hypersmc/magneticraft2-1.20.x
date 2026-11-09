@@ -86,8 +86,8 @@ assert(press.includes("ITEM_BOILER_SHELL_SECTION.get()"));
 assert(press.includes("pressDie.isInstalled(ItemRegistry.ITEM_STEEL_PRESS_DIE.get())"));
 assert(press.includes("outputForRecipe(recipe, inputStack)"));
 assert(press.includes("HotBloomWorkpiece.consolidate(input, recipe.getOutput())"));
-assert(boring.includes('boringBit.load(tag.getCompound("BoringBit"))') &&
-       boring.includes('tag.put("BoringBit", boringBit.save())'),"Boring tool NBT must survive reload");
+assert(boring.includes('boringBit.load(tag.getCompound("BoreBit"))') &&
+       boring.includes('tag.put("BoreBit", boringBit.save())'),"Boring tool NBT must survive reload");
 assert(maintenance.includes("ForgeRegistries.ITEMS.getKey(itemAt(installedVariant))") &&
        maintenance.includes("tag.contains(INSTALLED, Tag.TAG_STRING)"),
        "Tool variants must use stable item ID NBT");
