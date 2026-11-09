@@ -1,7 +1,7 @@
 # Steel / Iron gears: visible tooth-mesh gap
 
-**2026-11-09 · observed in-game in user screenshot · open visual defect**  
-**Scope:** Steel III Steel Large Gear (inherits `wrought_iron_gear_large` geometry) and the shared Iron gearing / Gear V2 placement rules. This is a **diagnosis and MGC2 Studio modeling acceptance contract**, not a gameplay code fix.
+**2026-11-09 · player-reported visual defect · geometry patch pushed, in-game retest pending**  
+**Scope:** Steel III Steel Large Gear (inherits `wrought_iron_gear_large` geometry) and the shared Iron gearing / Gear V2 placement rules. This records the geometry diagnosis, the focused model-resource correction, and the MGC2 Studio acceptance contract. No gameplay/network rule has changed.
 
 ## User evidence and reproduced geometry
 
@@ -15,7 +15,7 @@ Inspected current sources (Steel PR #19):
 - The medium Iron model has an outer radial envelope about **8.3 pixels**. Adjacent medium/medium and diagonal medium/large meshes have different available contact distances and must remain valid too.
 - A single common gear module with pitch radii 8 and 16 pixels would require a medium/large center distance of **24 pixels**. The allowed one-block diagonal is **16√2 ≈ 22.63 pixels** (about 1.37 pixels closer). Thus all three supported pair types cannot be exact equal-module circles on the present block grid; treat this as a design constraint, not an excuse to invent hidden renderer offsets.
 
-## Why an untested "fix" was NOT committed
+## Why the first geometry proposal was withheld
 
 Extending every large tooth from radius ~15.2 to ~16.6 would reach into gaps on the large/large layout, but static 2D cuboid overlap sampling of the currently allowed medium/large diagonal flagged **additional element intersections** compared with the existing model. Narrowing or sliding the teeth alone did not eliminate the incompatibility in the sampled layouts. A patch that merely hides the gap by changing all 16 tooth tips would knowingly trade one visible failure for another.
 
@@ -45,7 +45,7 @@ node tools/steel-age/inspect-gear-mesh-geometry.mjs
 
 The inspector reports raw model extents and idealized pitch mismatches. It is an **early diagnostic only**: its radial estimates do not replace animated tooth-intersection tests or in-game screenshots.
 
-**Status:** unresolved visual issue handed to MGC2 Studio. PR #19 remains draft; no part of this document claims the defect is fixed.
+**Status:** candidate shared baked-model fix committed on 2026-11-09, **not verified in game**. Medium/large diagonal meshing remains a regression risk. PR #19 stays draft until visual acceptance.
 
 ## First actual geometry correction — 2026-11-09
 
