@@ -298,9 +298,9 @@
           ],
           [
             "PJP",
-            "d_e",
-            "d_e",
-            "d_e",
+            "d e",
+            "d e",
+            "d e",
             "PKP"
           ],
           [
@@ -312,10 +312,10 @@
           ],
           [
             "F0F",
-            "F_F",
-            "F_F",
-            "F_F",
-            "F_F"
+            "F F",
+            "F F",
+            "F F",
+            "F F"
           ]
         ],
         "mapping": {
@@ -334,7 +334,8 @@
           "h": "magneticraft2:boiler_shell_panel[facing=south,segment=7]"
         },
         "symmetrical": false
-      }
+      },
+      "text": "Controller first: Shell Panels auto-align to their required curved section. End rings use Iron Plate Panels. The hollow center must remain air."
     }
   ]
 }
