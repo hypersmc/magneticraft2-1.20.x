@@ -272,7 +272,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Steel IV-C is still construction-only$()$(br2)The two pieces can be placed, aimed and mined with a pickaxe. They have different real block shapes but are NOT a working boiler: the final vessel layout, all four multiblock formation definitions, its support cradle and fluid/steam/heat/service ports remain to be implemented after physical-model review. Assembly crafting presently does not transfer source quality NBT to the placed block. No pressurized operation is permitted with that unresolved quality rule."
+      "text": "$(bold)Steel IV-C — Vessel Construction$()$(br2)The two Mechanical Assembly Station outputs are PLACEABLE structural pieces and become useful in the 3x4x5 boiler vessel shown on the following Visualize page. The vessel can be formed from its real world-block materials, but is NOT yet a live boiler: no water, Steam, HEAT, fuel, safety or pressure processing is installed. Assembly crafting currently does not transfer item quality metadata into these placed pieces."
     },
     {
       "type": "text",

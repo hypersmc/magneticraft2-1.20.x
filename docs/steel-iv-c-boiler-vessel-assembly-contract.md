@@ -2,7 +2,7 @@
 
 **Magneticraft2 · Forge 1.20.1 · 2026-11-09**  
 **Branch:** `feature/steel-age-foundations` · PR #19 (draft).  
-**Stage:** design contract, **not** a constructed/registered boiler or an accepted in-game implementation.
+**Stage:** source-implemented inert JSON multiblock vessel; Forge compilation, in-game formation, visuals and conservation are NOT verified.
 
 ## 1. Why IV-C exists and what was accepted
 
