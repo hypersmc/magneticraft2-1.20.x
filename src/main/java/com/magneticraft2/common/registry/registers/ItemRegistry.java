@@ -252,6 +252,14 @@ public class ItemRegistry {
             ITEMS.register("refined_steel_rod", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> ITEM_STEEL_ROLLER_SLEEVES =
             ITEMS.register("steel_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-A: tangible heavy plate and formed boiler stock. These are not
+    // functioning boilers or Steam network machines.
+    public static final RegistryObject<Item> ITEM_HEAVY_STEEL_PLATE =
+            ITEMS.register("heavy_steel_plate", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_STEEL_PRESS_DIE =
+            ITEMS.register("steel_press_die", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BOILER_SHELL_SECTION =
+            ITEMS.register("boiler_shell_section", () -> new Item(new Item.Properties().stacksTo(16)));
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

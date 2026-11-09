@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_mechanical_press",
+  "input": {
+    "item": "magneticraft2:heavy_steel_plate"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:boiler_shell_section",
+    "count": 1
+  },
+  "process_time": 240,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 14
+  }
+}

@@ -52,7 +52,8 @@ public final class HotBloomWorkpiece {
     }
 
     public static boolean requiresSteelDie(MultiblockProcessingRecipe recipe) {
-        return recipe != null && recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_PLATE.get());
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_PLATE.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_HEAVY_STEEL_PLATE.get()));
     }
 
     public static boolean requiresSteelRollers(MultiblockProcessingRecipe recipe) {
