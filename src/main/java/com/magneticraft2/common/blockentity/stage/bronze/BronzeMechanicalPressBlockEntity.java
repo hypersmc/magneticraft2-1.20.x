@@ -79,7 +79,8 @@ public final class BronzeMechanicalPressBlockEntity extends BaseBlockEntityMagne
 
     /** Heavy Steel bending needs the upgraded die, not the Bronze stamp. */
     private static boolean requiresSteelPressDie(@Nullable MultiblockProcessingRecipe recipe) {
-        return recipe != null && recipe.getOutput().is(ItemRegistry.ITEM_BOILER_SHELL_SECTION.get());
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_BOILER_SHELL_SECTION.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_BOILER_REINFORCEMENT_FLANGE.get()));
     }
 
     private boolean toolingSupports(MultiblockProcessingRecipe recipe) {

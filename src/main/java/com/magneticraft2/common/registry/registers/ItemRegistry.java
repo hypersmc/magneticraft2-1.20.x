@@ -260,6 +260,16 @@ public class ItemRegistry {
             ITEMS.register("steel_press_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_BOILER_SHELL_SECTION =
             ITEMS.register("boiler_shell_section", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-B: static boiler and pressure-line fabrication components.
+    // These items do not implement operating boiler or steam capabilities.
+    public static final RegistryObject<Item> ITEM_BOILER_END_PLATE =
+            ITEMS.register("boiler_end_plate", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BOILER_REINFORCEMENT_FLANGE =
+            ITEMS.register("boiler_reinforcement_flange", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_PRESSURE_PIPE_COUPLING =
+            ITEMS.register("pressure_pipe_coupling", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_STEEL_BORING_BIT =
+            ITEMS.register("steel_boring_bit", () -> new Item(new Item.Properties().stacksTo(16)));
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

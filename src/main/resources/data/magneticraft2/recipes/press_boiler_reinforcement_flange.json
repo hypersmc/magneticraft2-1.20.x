@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_mechanical_press",
+  "input": {
+    "item": "magneticraft2:refined_steel_plate"
+  },
+  "input_count": 2,
+  "output": {
+    "item": "magneticraft2:boiler_reinforcement_flange",
+    "count": 1
+  },
+  "process_time": 240,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 14
+  }
+}

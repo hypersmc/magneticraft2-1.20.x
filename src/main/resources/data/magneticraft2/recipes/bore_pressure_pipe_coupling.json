@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_precision_boring_machine",
+  "input": {
+    "item": "magneticraft2:refined_steel_bar"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:pressure_pipe_coupling",
+    "count": 1
+  },
+  "process_time": 260,
+  "mechanical": {
+    "min_speed": 20,
+    "torque": 12
+  }
+}
