@@ -74,3 +74,20 @@ Do not silently treat an inventory item as a block; do not replace the parts wit
 **IV-C complete** additionally requires accepted collision, textures, UVs, instructions and maintainability. **None of these implementation/verification/completion gates is claimed by this design document.**
 
 Steam 0 later separately requires water/fuel/heat conservation, typed steam delivery, thermal/pressure calibration, protection, persistence and mechanical engine load verification. Keep PR #19 draft and unmerged.
+
+## 6. First implementation slice — placeable panel and end joint (2026-11-09)
+
+**Source implemented, NOT built or Minecraft tested.** Rather than retyping the original Steel IV-A/B inventory outputs as BlockItems (which would alter existing item behavior and risk losing quality NBT on placement), two **new** structurally distinct, inert world blocks are assembled in the already existing Bronze Mechanical Assembly Station:
+
+| Result | Four actual Assembly Station input slots | Processing |
+| --- | --- | --- |
+| `boiler_shell_panel` (placeable) | 1 `boiler_shell_section`, 1 `refined_steel_rod`, 4 `iron_rivet`, 1 `riveted_iron_frame` | 18 RPM, 10 torque, 320 powered ticks |
+| `boiler_end_joint` (placeable) | 1 `boiler_end_plate`, 1 `boiler_reinforcement_flange`, 1 `pressure_pipe_coupling`, 4 `iron_rivet` | 18 RPM, 10 torque, 320 powered ticks |
+
+These are **physical subassemblies**, not a shapeless whole-boiler crafting recipe. Their existing sources and Steel process recipes are unchanged; the Assembly Station's existing four-slot ingredient count, mechanical load, blocking and output reservation are reused. The controller remains independent of Steam functionality.
+
+The block states are horizontal-facing and have actual stepped steel shape/selection/collision with proportional UV per face. Native dark worked-iron and bronze-machined material textures are reused with **no stretched faces**. These small baked geometry candidates require MGC2 Studio's in-game model inspection; a recognizable shape is not proof of mechanical realism. Creative entries, translations, pickaxe tag, single-item loot, and Patchouli instructions are added.
+
+**Important quality restriction:** the Assembly Station recipe currently outputs a new untagged BlockItem and does not aggregate Steel input provenance/quality. The placed structural block stores no quality metadata. It is therefore *not authorized as a pressure-bearing functional boiler part* until the quality/pressure interface and actual formed controller are implemented. This is a deliberate bounded limitation, not a claim that quality is preserved across assembly.
+
+**Next structural gate, NOT implemented:** choose exact number/layout of shell panels, end joints and supporting blocks after inspecting actual geometry; design the correct 3D cross-section and all four JSON orientations, real controller/filler lifecycle, material return on breaking/unforming, native V2 collision and final visual model. Do not invent a layout solely to force a full IV-C label onto these first two working-item candidates. Existing Steel I–IV and Assembly Station regression must pass before taking the next step.

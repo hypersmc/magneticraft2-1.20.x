@@ -86,6 +86,8 @@
     "magneticraft2:steel_gear_medium",
     "magneticraft2:steel_gear_large",
     "magneticraft2:steel_shaft",
-    "magneticraft2:steel_gearbox"
+    "magneticraft2:steel_gearbox",
+    "magneticraft2:boiler_shell_panel",
+    "magneticraft2:boiler_end_joint"
   ]
 }

@@ -265,6 +265,14 @@
     {
       "type": "text",
       "text": "$(bold)Steel IV Components — Not Yet a Boiler$()$(br2)You can now fabricate Heavy Steel Plates, curved Boiler Shell Sections, machined Boiler End Plates, Reinforcement Flanges and Pressure-Rated Pipe Couplings using existing machines. None of these items supplies steam, heat, water, or pressure; they do not automatically become a boiler when placed. Functional Steam comes in Steam Age, with server-authoritative pressure, safety, fuel and mechanical torque. All three new component item appearances are temporary MGC2 Studio placeholders."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)13 — Steel IV-C: Physical Boiler Pieces$()$(br2)The Mechanical Assembly Station now makes two placeable construction pieces from real manufactured Steel. For one Boiler Shell Panel, feed in order: 1 curved Boiler Shell Section, 1 Steel Rod, 4 Iron Rivets and 1 Riveted Iron Frame. For one Boiler End Joint, feed: 1 Boiler End Plate, 1 Boiler Reinforcement Flange, 1 Pressure-Rated Pipe Coupling and 4 Iron Rivets. Both use 18 RPM, 10 torque and 320 supplied ticks; look up the exact four-slot Mechanical Assembly recipes in JEI."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steel IV-C is still construction-only$()$(br2)The two pieces can be placed, aimed and mined with a pickaxe. They have different real block shapes but are NOT a working boiler: the final vessel layout, all four multiblock formation definitions, its support cradle and fluid/steam/heat/service ports remain to be implemented after physical-model review. Assembly crafting presently does not transfer source quality NBT to the placed block. No pressurized operation is permitted with that unresolved quality rule."
     }
   ]
 }
