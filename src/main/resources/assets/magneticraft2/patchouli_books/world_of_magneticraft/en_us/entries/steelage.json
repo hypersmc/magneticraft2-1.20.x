@@ -276,7 +276,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)14 — Steel IV-C: Physical Boiler Vessel$()$(br2)This structure does not generate Steam. Manufacture 24 Boiler Shell Panels, 2 Boiler End Joints, 16 Iron Plate Panels, 10 Iron Machine Foundations and 1 Steel Boiler Vessel Controller. The 3x4x5 drum rests on two foundation rails. Shell Panels surround three central hollow air cells in each middle course; both end closures sit in the center of reinforced iron-panel rings. Place the controller at the lower FRONT center, build as Visualize shows and right-click to form. No fuel, HEAT, WATER, PRESSURE or STEAM ports exist in Steel Age."
+      "text": "$(bold)14 — Steel IV-C: Physical Boiler Vessel$()$(br2)This structure does not generate Steam. Manufacture 24 Boiler Shell Panels, 2 Boiler End Joints, 16 Iron Plate Panels, 10 Iron Machine Foundations and 1 Steel Boiler Vessel Controller. The 3x4x5 drum rests on two foundation rails. Shell Panels surround three central hollow air cells in each middle course; both end closures sit in the center of reinforced iron-panel rings. Place the controller at the lower FRONT center, build as Visualize shows and right-click to form. No fuel, HEAT, WATER, PRESSURE or STEAM ports exist in Steel Age.$(br2)Place the Controller first; each Shell Panel and End Joint automatically chooses its position-specific curved shape when placed nearby. The Visualize preview shows those curved parts rather than repeated upright steel sheets."
     },
     {
       "type": "patchouli:crafting",
@@ -291,23 +291,23 @@
         "pattern": [
           [
             "PPP",
-            "SSS",
-            "SSS",
-            "SSS",
+            "fgh",
+            "fgh",
+            "fgh",
             "PPP"
           ],
           [
             "PJP",
-            "S_S",
-            "S_S",
-            "S_S",
-            "PJP"
+            "d_e",
+            "d_e",
+            "d_e",
+            "PKP"
           ],
           [
             "PPP",
-            "SSS",
-            "SSS",
-            "SSS",
+            "abc",
+            "abc",
+            "abc",
             "PPP"
           ],
           [
@@ -321,9 +321,17 @@
         "mapping": {
           "0": "magneticraft2:steel_boiler_vessel",
           "F": "magneticraft2:iron_machine_foundation",
-          "S": "magneticraft2:boiler_shell_panel",
           "P": "magneticraft2:iron_plate_panel",
-          "J": "magneticraft2:boiler_end_joint"
+          "J": "magneticraft2:boiler_end_joint[facing=south,segment=8]",
+          "K": "magneticraft2:boiler_end_joint[facing=south,segment=9]",
+          "a": "magneticraft2:boiler_shell_panel[facing=south,segment=0]",
+          "b": "magneticraft2:boiler_shell_panel[facing=south,segment=1]",
+          "c": "magneticraft2:boiler_shell_panel[facing=south,segment=2]",
+          "d": "magneticraft2:boiler_shell_panel[facing=south,segment=3]",
+          "e": "magneticraft2:boiler_shell_panel[facing=south,segment=4]",
+          "f": "magneticraft2:boiler_shell_panel[facing=south,segment=5]",
+          "g": "magneticraft2:boiler_shell_panel[facing=south,segment=6]",
+          "h": "magneticraft2:boiler_shell_panel[facing=south,segment=7]"
         },
         "symmetrical": false
       }
