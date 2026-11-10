@@ -104,6 +104,22 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         return controller.offset(offset(role,facing));
     }
 
+    public static Direction steamPipeDirection(Direction facing) {
+        return switch (facing) {
+            case SOUTH -> Direction.EAST;
+            case WEST -> Direction.SOUTH;
+            case NORTH -> Direction.WEST;
+            case EAST -> Direction.NORTH;
+            default -> throw new IllegalArgumentException("Horizontal boiler facing required");
+        };
+    }
+
+    /** Exact external pipe cell aligned to the baked Steam takeoff flange. */
+    public static BlockPos steamPipePosition(BlockPos outlet, Direction facing) {
+        return outlet.relative(steamPipeDirection(facing));
+    }
+
+
     @Override public @Nullable BlockState getStateForPlacement(BlockPlaceContext context){
         if (role == Role.CHIMNEY) {
             BlockState stack = BoilerFireboxInstallation.stackPlacement(context, this);
