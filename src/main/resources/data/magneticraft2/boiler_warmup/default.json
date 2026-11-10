@@ -1,7 +1,15 @@
 {
-  "format": 1,
+  "format": 2,
   "water_capacity_mb": 8000,
   "heat_capacity": 36000,
   "heat_per_burn_tick": 36,
-  "passive_heat_loss": 2
+  "passive_heat_loss": 2,
+  "boil_threshold_heat": 24000,
+  "steam_water_per_unit_mb": 250,
+  "steam_heat_per_unit": 1000,
+  "steam_buffer_capacity_units": 16,
+  "max_phase_units_per_tick": 1,
+  "max_output_units_per_tick": 4,
+  "steam_temperature_k": 453.15,
+  "output_cutoff_kpa": 500
 }
