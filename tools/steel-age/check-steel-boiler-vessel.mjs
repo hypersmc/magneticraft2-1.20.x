@@ -43,6 +43,19 @@ for(const b of voxel.collision)assert(b.every((v,i)=>Number.isFinite(v)&&(i<3?b[
 const book=get(A+"patchouli_books/world_of_magneticraft/en_us/entries/steelage.json");
 const page=book.pages.find(p=>p.name==="Steel Boiler Vessel");
 assert(page&&page.enable_visualize&&page.multiblock);
+const display = page.multiblock.pattern;
+assert(display.length===4 && display.every(layer=>layer.length===3 && layer.every(row=>row.length===5)),
+       "Patchouli pattern must be [Y top-down][X west-east][Z north-south]");
+const expected = {
+    S: (x,y)=> y===1?"abc"[x]:y===2?(x===0?"d":"e"):"fgh"[x],
+    J: z=>z===0?"K":"J", P:()=>"P", F:()=>"F", C:()=>"0", A:()=>" "
+};
+for(let y=0;y<4;y++)for(let z=0;z<5;z++)for(let x=0;x<3;x++){
+    const cell=south.structure.layout["layer"+(y+1)][z][x];
+    assert.equal(display[3-y][x][z],expected[cell](x,y,z),
+                 "Patchouli cell order/role wrong at "+[x,y,z]);
+}
+
 assert(book.pages.some(p=>p.recipe==="magneticraft2:steel_boiler_vessel"));
 const cls=load("src/main/java/com/magneticraft2/common/blockentity/stage/steel/SteelBoilerVesselBlockEntity.java");
 assert(!cls.includes("serverTick")&&!cls.includes("SteamNetworkManager"));

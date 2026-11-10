@@ -290,32 +290,24 @@
       "multiblock": {
         "pattern": [
           [
-            "PPP",
-            "fgh",
-            "fgh",
-            "fgh",
-            "PPP"
+            "PfffP",
+            "PgggP",
+            "PhhhP"
           ],
           [
-            "PJP",
-            "d e",
-            "d e",
-            "d e",
-            "PKP"
+            "PdddP",
+            "K   J",
+            "PeeeP"
           ],
           [
-            "PPP",
-            "abc",
-            "abc",
-            "abc",
-            "PPP"
+            "PaaaP",
+            "PbbbP",
+            "PcccP"
           ],
           [
-            "F0F",
-            "F F",
-            "F F",
-            "F F",
-            "F F"
+            "FFFFF",
+            "    0",
+            "FFFFF"
           ]
         ],
         "mapping": {
@@ -335,7 +327,7 @@
         },
         "symmetrical": false
       },
-      "text": "Controller first: Shell Panels auto-align to their required curved section. End rings use Iron Plate Panels. The hollow center must remain air."
+      "text": "Build from the Controller outward; the hollow middle must be air. This preview follows the 3-wide x 5-long physical layout. End rings are Iron Plate Panels and show their unformed appearance."
     }
   ]
 }
