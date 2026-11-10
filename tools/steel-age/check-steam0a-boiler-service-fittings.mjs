@@ -14,7 +14,7 @@ assert(itemImpl.includes("filler.getControllerPos()")&&itemImpl.includes("attach
 assert(itemImpl.includes("target).isAir()"));
 assert(fillerBlock.includes("instanceof BoilerServiceFittingItem"));
 assert(boilerControllerBlock.includes("instanceof BoilerServiceFittingItem"));
-const roles=[{"name":"boiler_water_inlet","enum":"WATER","kind":"water","off":[2,2,-2],"recipe":[["pressure_pipe_coupling",1],["iron_plate_panel",1],["refined_steel_rod",1],["iron_rivet",2]]},{"name":"boiler_steam_outlet","enum":"STEAM","kind":"steam","off":[0,4,-2],"recipe":[["pressure_pipe_coupling",1],["boiler_reinforcement_flange",1],["refined_steel_plate",1],["iron_rivet",2]]},{"name":"boiler_firebox_mount","enum":"FIREBOX","kind":"firebox","off":[0,1,1],"recipe":[["riveted_iron_casing",1],["fired_refractory_ceramic",1],["refined_steel_plate",1],["iron_rivet",4]]},{"name":"boiler_safety_mount","enum":"SAFETY","kind":"safety","off":[0,4,-1],"recipe":[["boiler_reinforcement_flange",1],["pressure_pipe_coupling",1],["refined_steel_rod",1],["iron_rivet",2]]}];
+const roles=[{"name":"boiler_water_inlet","enum":"WATER","kind":"water","off":[2,2,-2],"recipe":[["pressure_pipe_coupling",1],["iron_plate_panel",1],["refined_steel_rod",1],["iron_rivet",2]]},{"name":"boiler_steam_outlet","enum":"STEAM","kind":"steam","off":[0,4,-2],"recipe":[["pressure_pipe_coupling",1],["boiler_reinforcement_flange",1],["refined_steel_plate",1],["iron_rivet",2]]},{"name":"boiler_firebox_mount","enum":"FIREBOX","kind":"firebox","off":[0,1,1],"recipe":[["riveted_iron_casing",1],["fired_refractory_ceramic",1],["refined_steel_plate",1],["iron_rivet",4]]},{"name":"boiler_safety_mount","enum":"SAFETY","kind":"safety","off":[0,4,-1],"recipe":[["boiler_reinforcement_flange",1],["pressure_pipe_coupling",1],["refined_steel_rod",1],["iron_rivet",2]]},{"name":"boiler_flue_chimney","enum":"CHIMNEY","kind":"chimney","off":[0,2,1],"recipe":[["riveted_iron_casing",1],["iron_plate_panel",1],["refined_steel_plate",1],["iron_rivet",4]]}];
 const reg=read(J+"registry/registers/BlockRegistry.java"),
   item=read(J+"registry/registers/ItemRegistry.java"),
   tab=read(J+"registry/registers/CreativeTabRegistry.java"),
@@ -24,6 +24,9 @@ assert(cls.includes("getStateForPlacement(")&&cls.includes("IS_FORMED")&&cls.inc
 for(const direction of ["SOUTH","NORTH","EAST","WEST"])
  assert(cls.includes("case "+direction+" -> Direction."),"Explicit water anchor missing "+direction);
 assert(!cls.includes("getCapability(")&&!cls.includes("SteamNetworkManager.")&&!cls.includes("serverTick("));
+assert(cls.includes("CHIMNEY(0, 2, 1)")&&cls.includes("Role.CHIMNEY"));
+assert(cls.includes("support.getValue(FACING) != facing"));
+assert(!cls.includes("setBlockAndUpdate(")&&!cls.includes("getTicker("));
 const blueprints=Object.fromEntries(["south","north","east","west"].map(f=>[
  f,json(D+"multiblocks/steel_boiler_vessel_"+f+".json").structure
 ]));
@@ -37,12 +40,27 @@ for(const r of roles)for(const f of ["south","north","east","west"]){
    "Fitting inside original block map (would be deleted on teardown): "+r.name+" "+f);
  const water={south:[-1,0],north:[1,0],east:[0,1],west:[0,-1]};
  const fire={south:[0,-1],north:[0,1],east:[-1,0],west:[1,0]};
- const [sx,sy,sz]=r.enum==="WATER"?[x+water[f][0],y,z+water[f][1]]:
-    r.enum==="FIREBOX"?[x+fire[f][0],y,z+fire[f][1]]:[x,y-1,z];
- assert(sx>=0&&sy>=0&&sz>=0&&sx<w&&sy<h&&sz<d,
-    "No bounded support for "+r.name+" "+f);
- const cell=s.layout["layer"+(sy+1)][sz][sx];
- assert(["S","P"].includes(cell),"Mount does not touch a formed filler "+r.name+" "+f+" "+cell);
+
+ if(r.enum==="CHIMNEY"){
+    // A flue is borne by a separate front firebox, OUTSIDE the old vessel
+    // map; allowing it on an old shell filler would create a floating chimney.
+    const [fx,fz]=worldOffset(0,1,f);
+    const [px,py,pz]=[cx+fx,cy+1,cz+fz];
+    assert.equal(x,px);assert.equal(y,py+1);assert.equal(z,pz);
+    assert(px<0||pz<0||px>=w||pz>=d,
+      "Firebox/chimney must remain separate from original multiblock at "+f);
+    assert(cls.includes("fitting.role() != Role.FIREBOX")&&cls.includes("case STEAM, SAFETY, CHIMNEY -> position.below()"),
+      "Chimney must require an actual supporting firebox block");
+ }else{
+    const [sx,sy,sz]=r.enum==="WATER"?[x+water[f][0],y,z+water[f][1]]:
+      r.enum==="FIREBOX"?[x+fire[f][0],y,z+fire[f][1]]:[x,y-1,z];
+    assert(sx>=0&&sy>=0&&sz>=0&&sx<w&&sy<h&&sz<d,
+      "No bounded support for "+r.name+" "+f);
+    const cell=s.layout["layer"+(sy+1)][sz][sx];
+    assert(["S","P"].includes(cell),
+      "Mount does not touch a formed shell/end-ring filler "+r.name+" "+f+" "+cell);
+ }
+
 }
 
 const facing=["south","east","north","west"],turn={south:0,east:3,north:2,west:1};
@@ -84,5 +102,5 @@ for(const r of roles){
  const loot=json(D+"loot_tables/blocks/"+r.name+".json");
  assert.equal(loot.pools[0].entries[0].name,"magneticraft2:"+r.name);
 }
-console.log("PASS Steam 0-A: 4 inert fittings, 4-way models/UV, orientation, assembly, drops and registrations.");
+console.log("PASS Steam 0-A: five inert fittings including supported flue; 4-way models/UV, exact external positions, assembly recipes, drops and registrations.");
 console.log("Static contract only. Gradle, Minecraft runtime, physical support and multiplayer unverified.");
