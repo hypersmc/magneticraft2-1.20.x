@@ -112,13 +112,24 @@ public final class BoilerWarmup implements IFluidHandler {
 
     private boolean steamHardwareReady(ServerLevel level) {
         geometry();
+        for (BlockPos pos : requiredChunks) if (!level.hasChunkAt(pos)) return false;
+        if (BoilerFireboxInstallation.linkedFirebox(level, owner) == null) return false;
         if (!level.hasChunkAt(steamOutlet) || !level.hasChunkAt(safetyMount)) return false;
+        BlockState waterPort = level.getBlockState(inlet);
         BlockState output = level.getBlockState(steamOutlet);
         BlockState safety = level.getBlockState(safetyMount);
-        return output.is(BlockRegistry.BOILER_STEAM_OUTLET.get())
-                && output.getValue(BoilerServiceFittingBlock.FACING) == facing()
-                && safety.is(BlockRegistry.BOILER_SAFETY_MOUNT.get())
-                && safety.getValue(BoilerServiceFittingBlock.FACING) == facing();
+        if (!waterPort.is(BlockRegistry.BOILER_WATER_INLET.get())
+                || waterPort.getValue(BoilerServiceFittingBlock.FACING) != facing()
+                || !output.is(BlockRegistry.BOILER_STEAM_OUTLET.get())
+                || output.getValue(BoilerServiceFittingBlock.FACING) != facing()
+                || !safety.is(BlockRegistry.BOILER_SAFETY_MOUNT.get())
+                || safety.getValue(BoilerServiceFittingBlock.FACING) != facing()) return false;
+        for (BlockPos pos : stack) {
+            BlockState section = level.getBlockState(pos);
+            if (!section.is(BlockRegistry.BOILER_FLUE_CHIMNEY.get())
+                    || section.getValue(BoilerServiceFittingBlock.FACING) != facing()) return false;
+        }
+        return level.getBlockState(outletAbove).isAir();
     }
 
     private boolean pipeConnected(ServerLevel level) {
