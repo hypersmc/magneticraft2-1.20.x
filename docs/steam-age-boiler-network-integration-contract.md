@@ -107,3 +107,8 @@ For each authorized operation, compute on the server:
 - Existing Stone–Steel manufacturing, Gear V2/mechanical behavior, water pump, AIR duct/legacy furnace, and the Steel IV-C vessel model/book remain unchanged unless a demonstrated issue needs a narrowly scoped fix.
 
 **No source modification or operating boiler was made in this design pass. PR #19 remains draft, open and unmerged.**
+
+
+## Implementation status — Steam 0-A first slice (2026-11-10)
+
+The four **inert mounting blocks** specified here are now source-implemented and committed on the draft Steel branch. They are not yet part of an operational boiler and expose no water/heat/STEAM capability; they are gated on correct positioning against the existing formed structure and maintain separate teardown ownership. Four-item mechanical assembly recipes, models and docs are detailed in [Steam 0-A service fittings](steam0a-boiler-service-fittings.md). The complete installation design still needs in-game mechanical fit, visual collision/connection, multi-orientation confirmation, and Forge compilation; real valve/gauge safety and rate/thermal calibration are outstanding. `Steam 0-B` and later remain unimplemented. Do not mark Steam generation or Steam 0-A verified from these source files.
