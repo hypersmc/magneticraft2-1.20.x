@@ -3,7 +3,6 @@
   "ambientocclusion": false,
   "textures": {
     "needle": "minecraft:block/redstone_block",
-    "copper": "minecraft:block/cut_copper",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
   "elements": [
@@ -20,22 +19,58 @@
       ],
       "faces": {
         "north": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ]
         },
         "south": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ]
         },
         "east": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ]
         },
         "west": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ]
         },
         "up": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
         },
         "down": {
-          "texture": "#needle"
+          "texture": "#needle",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ]
         }
       }
     }

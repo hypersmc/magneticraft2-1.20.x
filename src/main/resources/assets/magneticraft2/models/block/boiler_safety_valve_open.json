@@ -2,7 +2,6 @@
   "parent": "minecraft:block/block",
   "ambientocclusion": false,
   "textures": {
-    "needle": "minecraft:block/redstone_block",
     "copper": "minecraft:block/cut_copper",
     "particle": "magneticraft2:block/material/dark_work_iron"
   },
@@ -20,22 +19,58 @@
       ],
       "faces": {
         "north": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
         },
         "south": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
         },
         "east": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
         },
         "west": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            2
+          ]
         },
         "up": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
         },
         "down": {
-          "texture": "#copper"
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            4,
+            4
+          ]
         }
       }
     }

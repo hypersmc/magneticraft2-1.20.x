@@ -153,20 +153,18 @@ public final class BoilerWarmup implements IFluidHandler {
 
         double pressure = pipeConnected(level)
                 ? SteamNetworkManager.gaugePressureKPa(level, steamPipe) : 0.0;
-        int step = Math.max(0, Math.min(5,
-                (int) Math.round((pressure / Math.max(1.0, rules.gaugeMaxKPa())) * 5.0)));
+        int step = BoilerSafetyLogic.gaugeStep(pressure, rules.gaugeMaxKPa());
 
         if (rules.reliefEnabled() && pipeConnected(level)) {
-            if (!reliefOpen && pressure >= rules.reliefOpenKPa()) reliefOpen = true;
-            if (reliefOpen && pressure <= rules.reliefCloseKPa()) reliefOpen = false;
+            reliefOpen = BoilerSafetyLogic.nextReliefOpen(reliefOpen, pressure,
+                    rules.reliefOpenKPa(), rules.reliefCloseKPa());
             if (reliefOpen) {
                 int vented = SteamNetworkManager.ventSteam(
                         level, steamPipe, rules.maxReliefUnitsPerTick());
                 if (vented > 0) {
                     reliefVented += vented;
                     pressure = SteamNetworkManager.gaugePressureKPa(level, steamPipe);
-                    step = Math.max(0, Math.min(5,
-                            (int) Math.round((pressure / Math.max(1.0, rules.gaugeMaxKPa())) * 5.0)));
+                    step = BoilerSafetyLogic.gaugeStep(pressure, rules.gaugeMaxKPa());
                     double x = safetyMount.getX() + 0.5;
                     double y = safetyMount.getY() + 1.02;
                     double z = safetyMount.getZ() + 0.5;
