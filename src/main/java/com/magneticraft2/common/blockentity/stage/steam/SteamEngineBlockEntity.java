@@ -97,7 +97,7 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
         if(nowRunning!=running){running=nowRunning;sync();}else setChanged();
 
         if(useMilli>0 && level.getGameTime()%10L==0L){
-            BlockPos exhaust=localOffset(0,3,-5);
+            BlockPos exhaust=localOffset(0,3,5);
             ((net.minecraft.server.level.ServerLevel)level).sendParticles(ParticleTypes.CLOUD,
                     exhaust.getX()+0.5,exhaust.getY()+0.4,exhaust.getZ()+0.5,
                     2,0.12,0.08,0.12,0.015);
@@ -125,6 +125,12 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
     public float getDriveRotationDegrees(float partialTicks){
         SteamEngineOutputBlockEntity out=getOutput();
         return out==null?0:out.getVisualRotationDegrees(partialTicks);
+    }
+    public boolean isOutputOverloadedForAnimation(){
+        SteamEngineOutputBlockEntity out=getOutput();
+        if(out==null)return false;
+        return level!=null&&level.isClientSide
+                ?out.isClientOverloaded():out.isServerOverloaded();
     }
 
     @Override protected MultiblockController createMultiblockController(){

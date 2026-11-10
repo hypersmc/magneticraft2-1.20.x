@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=north,is_formed=false": {
+      "model": "magneticraft2:block/steam_engine_controller"
+    },
+    "facing=south,is_formed=false": {
+      "model": "magneticraft2:block/steam_engine_controller",
+      "y": 180
+    },
+    "facing=east,is_formed=false": {
+      "model": "magneticraft2:block/steam_engine_controller",
+      "y": 90
+    },
+    "facing=west,is_formed=false": {
+      "model": "magneticraft2:block/steam_engine_controller",
+      "y": 270
+    },
+    "facing=north,is_formed=true": {
+      "model": "magneticraft2:multiblock/steam_engine_north"
+    },
+    "facing=south,is_formed=true": {
+      "model": "magneticraft2:multiblock/steam_engine_south"
+    },
+    "facing=east,is_formed=true": {
+      "model": "magneticraft2:multiblock/steam_engine_east"
+    },
+    "facing=west,is_formed=true": {
+      "model": "magneticraft2:multiblock/steam_engine_west"
+    }
+  }
+}

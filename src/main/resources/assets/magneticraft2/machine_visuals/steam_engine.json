@@ -1,0 +1,8 @@
+{
+  "format": "magneticraft2:machine_visual",
+  "format_version": 1,
+  "animation": "magneticraft2:steam_engine",
+  "angle_channels": {
+    "steam_engine_output": "steam_engine_output"
+  }
+}

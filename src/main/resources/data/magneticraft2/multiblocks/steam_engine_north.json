@@ -1,0 +1,234 @@
+{
+  "name": "steam_engine_north",
+  "structure": {
+    "dimensions": [
+      5,
+      4,
+      7
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "F"
+        ],
+        [
+          "F",
+          "_",
+          "_",
+          "_",
+          "F"
+        ],
+        [
+          "F",
+          "_",
+          "_",
+          "_",
+          "F"
+        ],
+        [
+          "F",
+          "F",
+          "F",
+          "F",
+          "F"
+        ],
+        [
+          "F",
+          "_",
+          "_",
+          "_",
+          "F"
+        ],
+        [
+          "F",
+          "_",
+          "_",
+          "_",
+          "F"
+        ],
+        [
+          "F",
+          "F",
+          "C",
+          "F",
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "I"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "O",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ]
+      ],
+      "layer3": [
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "P",
+          "P",
+          "P",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ]
+      ],
+      "layer4": [
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "B",
+          "_",
+          "_",
+          "_",
+          "B"
+        ],
+        [
+          "B",
+          "B",
+          "B",
+          "B",
+          "B"
+        ],
+        [
+          "_",
+          "_",
+          "_",
+          "_",
+          "_"
+        ],
+        [
+          "_",
+          "_",
+          "_",
+          "_",
+          "_"
+        ],
+        [
+          "_",
+          "_",
+          "_",
+          "_",
+          "_"
+        ],
+        [
+          "_",
+          "_",
+          "_",
+          "_",
+          "_"
+        ]
+      ]
+    },
+    "blocks": {
+      "C": "magneticraft2:steam_engine",
+      "F": "magneticraft2:iron_machine_foundation",
+      "B": "magneticraft2:iron_structural_beam",
+      "P": "magneticraft2:iron_plate_panel",
+      "I": "magneticraft2:steam_engine_inlet",
+      "O": "magneticraft2:steam_engine_output",
+      "_": "minecraft:air"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/steam_engine_north",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": []
+  }
+}

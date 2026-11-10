@@ -33,6 +33,7 @@ import com.magneticraft2.client.render.blocks.stage.copper.MechanicalTransferArm
 import com.magneticraft2.client.render.blocks.stage.copper.CopperFluidTankBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalInputModuleBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.copper.MechanicalSifterBlockEntityRenderer;
+import com.magneticraft2.client.render.blocks.stage.steam.SteamEngineBlockEntityRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMoldTableRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeFoundryRenderer;
 import com.magneticraft2.client.render.blocks.stage.bronze.BronzeMechanicalLatheRenderer;
@@ -164,6 +165,7 @@ public class Clientsetup {
         event.registerBlockEntityRenderer(BlockEntityRegistry.COPPER_FLUID_TANK_BE.get(), CopperFluidTankBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_INPUT_MODULE_BE.get(), MechanicalInputModuleBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.MECHANICAL_SIFTER_BE.get(), MechanicalSifterBlockEntityRenderer::new);
+        event.registerBlockEntityRenderer(BlockEntityRegistry.STEAM_ENGINE_BE.get(), SteamEngineBlockEntityRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MOLD_TABLE_BE.get(), BronzeMoldTableRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_FOUNDRY_BE.get(), BronzeFoundryRenderer::new);
         event.registerBlockEntityRenderer(BlockEntityRegistry.BRONZE_MECHANICAL_LATHE_BE.get(), BronzeMechanicalLatheRenderer::new);

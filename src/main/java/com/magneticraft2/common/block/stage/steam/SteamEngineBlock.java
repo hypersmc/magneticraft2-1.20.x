@@ -32,10 +32,21 @@ import org.jetbrains.annotations.Nullable;
 public final class SteamEngineBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED=BooleanProperty.create("is_formed");
     private static final VoxelShape SOUTH=VoxelShapeUtils.combine(
-            Block.box(-32,0,-96,48,10,16),
-            Block.box(-20,10,-92,36,45,-48),
-            Block.box(-18,10,-48,34,28,-18),
-            Block.box(28,5,-55,48,52,-10)
+            // Two long foundation rails with four cross-ties; the centre stays walkable.
+            Block.box(-32,0,0,-18,10,112),
+            Block.box(34,0,0,48,10,112),
+            Block.box(-18,0,0,34,10,16),
+            Block.box(-18,0,32,34,10,48),
+            Block.box(-18,0,64,34,10,80),
+            Block.box(-18,0,96,34,10,112),
+            // Crank/bearing pedestals and crosshead guides.
+            Block.box(-16,10,30,-8,36,50),
+            Block.box(24,10,30,32,36,50),
+            Block.box(-8,16,49,0,26,73),
+            Block.box(16,16,49,24,26,73),
+            // Cylinder envelope, feet and steam chest.
+            Block.box(-16,10,68,32,49,112),
+            Block.box(-32,20,80,-16,52,103)
     );
     private static final VoxelShape NORTH=VoxelShapeUtils.rotate(SOUTH,Rotation.CLOCKWISE_180);
     private static final VoxelShape EAST=VoxelShapeUtils.rotate(SOUTH,Rotation.COUNTERCLOCKWISE_90);

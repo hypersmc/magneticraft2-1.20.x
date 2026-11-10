@@ -1,0 +1,127 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "engine_crank": {
+      "model": "magneticraft2:multiblock/steam_engine_crank",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_rod": {
+      "model": "magneticraft2:multiblock/steam_engine_connecting_rod",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_crosshead": {
+      "model": "magneticraft2:multiblock/steam_engine_crosshead",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_slider": {
+      "model": "magneticraft2:multiblock/steam_engine_piston",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_flywheel": {
+      "model": "magneticraft2:multiblock/steam_engine_flywheel",
+      "model_offset": [
+        1.45,
+        1.5,
+        2.5
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "steam_engine_output"
+    }
+  },
+  "animations": {
+    "flywheel_rotation": {
+      "type": "driven",
+      "tracks": [
+        {
+          "target": "engine_flywheel",
+          "property": "rotation",
+          "axis": [
+            1,
+            0,
+            0
+          ],
+          "input": "drive_angle",
+          "scale": 1
+        }
+      ]
+    }
+  },
+  "mechanisms": {
+    "engine_drive": {
+      "type": "slider_crank",
+      "input": "drive_angle",
+      "rotation_axis": "x",
+      "slide_axis": "z",
+      "center": [
+        0.5,
+        1.5,
+        2.5
+      ],
+      "radius": 0.38,
+      "rod_length": 1.8,
+      "phase_degrees": 0,
+      "parts": {
+        "crank": "engine_crank",
+        "rod": "engine_rod",
+        "follower": "engine_crosshead",
+        "slider": "engine_slider"
+      }
+    }
+  }
+}

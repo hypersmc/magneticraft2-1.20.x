@@ -96,6 +96,9 @@
     "magneticraft2:boiler_safety_mount",
     "magneticraft2:boiler_flue_chimney",
     "magneticraft2:boiler_firebox_lining",
-    "magneticraft2:boiler_firebox_front"
+    "magneticraft2:boiler_firebox_front",
+    "magneticraft2:steam_engine",
+    "magneticraft2:steam_engine_inlet",
+    "magneticraft2:steam_engine_output"
   ]
 }

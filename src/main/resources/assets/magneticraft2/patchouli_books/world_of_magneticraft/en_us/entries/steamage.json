@@ -169,6 +169,92 @@
       "type": "patchouli:text",
       "title": "Safety layers",
       "text": "Format 4 separates pressure domains. Boiler gauge/relief: local vessel pressure. Steam Pipe gauge/rupture: connected network pressure. Outlet flow equalizes from the higher-pressure boiler toward the lower-pressure network and stops when another discrete unit would overshoot. Relief opens at 550 kPa, closes at 500 kPa, and works even with NO pipe. Existing Steam Pipe rupture remains a separate network-side structural fault above 600 kPa."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Steam I — Stationary Engine",
+      "text": "$(bold)4 — Mechanical Steam Power$()$(br2)The first Steam Engine is intentionally a large stationary plant machine, not a one-block motor. Build the 5-wide x 4-high x 7-long horizontal engine shown next. Its heavy bed carries a large cylinder, rigid piston/crosshead linkage, crankshaft and side flywheel. It converts real network STEAM into Gear V2 mechanical power; it does NOT generate electricity."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Engine Controller",
+      "recipe": "magneticraft2:steam1_assembly_engine_controller"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steam Inlet",
+      "recipe": "magneticraft2:steam1_assembly_engine_inlet"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Crankshaft Output",
+      "recipe": "magneticraft2:steam1_assembly_engine_output"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Stationary Steam Engine",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "_____",
+            "_____",
+            "_____",
+            "_____",
+            "BBBBB",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "B___B",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BPPPB",
+            "BPPPB",
+            "BPPPB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___O",
+            "B___B",
+            "BPPPB",
+            "IPPPB",
+            "BPPPB"
+          ],
+          [
+            "FFCFF",
+            "F___F",
+            "F___F",
+            "FFFFF",
+            "F___F",
+            "F___F",
+            "FFFFF"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steam_engine",
+          "C": "magneticraft2:steam_engine",
+          "F": "magneticraft2:iron_machine_foundation",
+          "B": "magneticraft2:iron_structural_beam",
+          "P": "magneticraft2:iron_plate_panel",
+          "I": "magneticraft2:steam_engine_inlet",
+          "O": "magneticraft2:steam_engine_output"
+        },
+        "symmetrical": false
+      },
+      "text": "Controller is the rear-centre foundation block. The cylinder is at the far end. The Inlet and Crankshaft Output remain real blocks after formation so Steam Pipe and Steel Shaft connections stay physical."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Steam in, shaft power out",
+      "text": "Connect a Steam Pipe to the OUTER face of the Engine Inlet and a Steel Shaft to the OUTER face of the Crankshaft Output. Default prototype balance: minimum 120 kPa inlet, rated at 500 kPa, scaling from 12 RPM up to 32 RPM and up to 32 torque. Gear V2 remains authoritative for ratios, overload and downstream load."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Real consumption",
+      "text": "The engine removes real Steam from the existing network before crediting mechanical operation. Steam use is a small idle flow plus a load-proportional amount based on Gear V2's measured demand at the engine source. A stalled/overloaded engine does not pretend to do useful work. Exhaust is released to atmosphere in Steam I; condensate recovery and compound/beam engines are later Steam technology."
     }
   ]
 }

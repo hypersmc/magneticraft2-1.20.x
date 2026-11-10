@@ -94,6 +94,9 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_WATER_PIPE.get());
                         entries.accept(ItemRegistry.ITEM_BRONZE_AIR_DUCT.get());
                         entries.accept(ItemRegistry.ITEM_STEAM_PIPE.get());
+                        entries.accept(ItemRegistry.ITEM_STEAM_ENGINE.get());
+                        entries.accept(ItemRegistry.ITEM_STEAM_ENGINE_INLET.get());
+                        entries.accept(ItemRegistry.ITEM_STEAM_ENGINE_OUTPUT.get());
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_WATER_PUMP.get());
                         entries.accept(ItemRegistry.ITEM_MECHANICAL_TRANSFER_ARM.get());
                         entries.accept(ItemRegistry.ITEM_COPPER_FLUID_TANK.get());
