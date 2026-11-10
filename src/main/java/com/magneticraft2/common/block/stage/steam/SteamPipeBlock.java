@@ -4,6 +4,7 @@ import com.magneticraft2.common.block.stage.bronze.BronzeAirDuctBlock;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import com.magneticraft2.common.systems.PRESSURE.GasMedium;
 import com.magneticraft2.common.systems.PRESSURE.SteamNetworkManager;
+import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.core.BlockPos;
@@ -36,6 +37,10 @@ public class SteamPipeBlock extends Block {
         if (!level.hasChunkAt(neighbour)) return false;
         BlockState state = level.getBlockState(neighbour);
         if (state.getBlock() instanceof SteamPipeBlock) return true;
+        if (state.is(BlockRegistry.BOILER_STEAM_OUTLET.get())) {
+            Direction facing = state.getValue(BoilerServiceFittingBlock.FACING);
+            return BoilerServiceFittingBlock.steamPipePosition(neighbour, facing).equals(pos);
+        }
         BlockEntity entity = level.getBlockEntity(neighbour);
         if (entity == null) return false;
         var gas = entity.getCapability(
