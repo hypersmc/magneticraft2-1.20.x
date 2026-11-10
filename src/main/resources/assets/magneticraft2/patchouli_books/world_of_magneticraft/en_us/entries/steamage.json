@@ -224,7 +224,7 @@
             "BPPPB"
           ],
           [
-            "FFCFF",
+            "FF0FF",
             "F___F",
             "F___F",
             "FFFFF",
@@ -235,7 +235,6 @@
         ],
         "mapping": {
           "0": "magneticraft2:steam_engine",
-          "C": "magneticraft2:steam_engine",
           "F": "magneticraft2:iron_machine_foundation",
           "B": "magneticraft2:iron_structural_beam",
           "P": "magneticraft2:iron_plate_panel",

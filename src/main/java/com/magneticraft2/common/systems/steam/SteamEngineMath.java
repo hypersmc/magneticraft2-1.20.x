@@ -29,7 +29,7 @@ public final class SteamEngineMath {
             boolean overloaded, int idleMilli, int loadMilliPerTorque) {
         if (idleMilli < 0 || loadMilliPerTorque < 0 || availableTorque < 0)
             throw new IllegalArgumentException("Invalid Steam consumption balance");
-        float usefulDemand = overloaded ? 0.0F
+        float usefulDemand = overloaded ? availableTorque
                 : Math.max(0.0F, Math.min(sourceDemand, availableTorque));
         return idleMilli + Math.round(usefulDemand * loadMilliPerTorque);
     }

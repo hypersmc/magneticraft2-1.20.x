@@ -17,7 +17,7 @@ public final class SteamEngineMathTest {
         check(SteamEngineMath.milliSteamPerTick(0,32,false,4,1)==4,"idle");
         check(SteamEngineMath.milliSteamPerTick(16,32,false,4,1)==20,"half load");
         check(SteamEngineMath.milliSteamPerTick(99,32,false,4,1)==36,"demand clamp");
-        check(SteamEngineMath.milliSteamPerTick(32,32,true,4,1)==4,"overload idle only");
+        check(SteamEngineMath.milliSteamPerTick(32,32,true,4,1)==36,"overload wastes rated admission");
         System.out.println("PASS: "+assertions+" Steam Engine balance assertions.");
         System.out.println("NOT a Forge build, Steam network, Gear V2, multiblock or rendering test.");
     }
