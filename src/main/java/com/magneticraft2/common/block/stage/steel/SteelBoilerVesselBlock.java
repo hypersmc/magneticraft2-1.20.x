@@ -21,6 +21,9 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -31,7 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-/** Physical boiler vessel, with no processing, pressure, Steam or other power source. */
+/** Physical vessel with manual water/fuel warm-up; no Steam or pressure generation. */
 public final class SteelBoilerVesselBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED=BooleanProperty.create("is_formed");
     public SteelBoilerVesselBlock(){
@@ -58,9 +61,9 @@ public final class SteelBoilerVesselBlock extends BaseBlockMagneticraft2 {
             return InteractionResult.PASS;
         if(world.isClientSide)return InteractionResult.SUCCESS;
         if(!vessel.isFormed())vessel.onRightClick();
-        player.displayClientMessage(Component.translatable(vessel.isFormed()
-            ?"message.magneticraft2.steel_boiler_vessel.formed"
-            :"message.magneticraft2.steel_boiler_vessel.incomplete"),true);
+        if (vessel.isFormed()) vessel.warmup().status(player);
+        else player.displayClientMessage(Component.translatable(
+                "message.magneticraft2.steel_boiler_vessel.incomplete"), true);
         return InteractionResult.CONSUME;
     }
     @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
@@ -99,6 +102,13 @@ public final class SteelBoilerVesselBlock extends BaseBlockMagneticraft2 {
         if(s.getValue(IS_FORMED) && world.getBlockEntity(pos) instanceof SteelBoilerVesselBlockEntity v
                 && v.localCollision()!=null)return v.localCollision();
         return super.getCollisionShape(s,world,pos,context);
+    }
+    @Override @Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(
+            Level world, BlockState state, BlockEntityType<T> type) {
+        if (world.isClientSide || type != BlockEntityRegistry.STEEL_BOILER_VESSEL_BE.get()) return null;
+        return (level, pos, current, entity) -> {
+            if (entity instanceof SteelBoilerVesselBlockEntity vessel) vessel.warmup().tick();
+        };
     }
     @Override public @Nullable BlockEntity newBlockEntity(BlockPos pos,BlockState state){
         return new SteelBoilerVesselBlockEntity(pos,state);

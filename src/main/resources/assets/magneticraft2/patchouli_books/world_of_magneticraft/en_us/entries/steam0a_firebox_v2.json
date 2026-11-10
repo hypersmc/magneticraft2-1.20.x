@@ -63,8 +63,8 @@
     },
     {
       "type": "patchouli:text",
-      "title": "Prototype, not a hot boiler",
-      "text": "The stoking door, ash recess and open flue are physical construction only. No fuel burns, no water enters, no steam is produced, and no pressure or gauge reading is simulated. Test the structure and its material recovery before enabling later Steam systems."
+      "title": "Water and heat warm-up",
+      "text": "The formed assembly now supports manual warm-up. Install all three chimney sections, fill through the WATER INLET using water containers, then right-click the FIREBOX with one solid fuel item. See the Boiler Warm-up entry for controls and limits. Steam generation, pressure, automatic pipe intake and a working safety valve remain disabled."
     }
   ]
 }

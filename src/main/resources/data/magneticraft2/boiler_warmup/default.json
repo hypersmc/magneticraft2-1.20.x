@@ -1,0 +1,7 @@
+{
+  "format": 1,
+  "water_capacity_mb": 8000,
+  "heat_capacity": 36000,
+  "heat_per_burn_tick": 36,
+  "passive_heat_loss": 2
+}

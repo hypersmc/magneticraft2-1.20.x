@@ -18,6 +18,7 @@ import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
 import com.magneticraft2.common.systems.steam.BoilerAssemblyHost;
 import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
 import com.magneticraft2.common.systems.steam.BoilerFireboxLayout;
+import com.magneticraft2.common.systems.steam.BoilerFireboxInstallation;
 import com.magneticraft2.common.utils.MultiBlockProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,7 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/** A separate, inert 18-block JSON assembly. The drum never enters this ledger. */
+/** Separate 18-block furnace assembly; warm-up state remains owned by its linked vessel. */
 public final class BoilerFireboxBlockEntity extends BaseBlockEntityMagneticraft2
         implements MultiblockVoxelHost, BoilerAssemblyHost {
     private UUID identity = UUID.randomUUID();
@@ -72,10 +73,13 @@ public final class BoilerFireboxBlockEntity extends BaseBlockEntityMagneticraft2
     @Nullable public VoxelShape localCollision() { return collision; }
     @Nullable public VoxelShape localSelection() { return selection; }
 
-    public void use(Player player) {
-        if (level == null || level.isClientSide) return;
-        if (formed) message(player, "formed");
-        else form(player);
+    public void use(Player player) { use(player, InteractionHand.MAIN_HAND); }
+    public void use(Player player, InteractionHand hand) {
+        if (level == null || level.isClientSide || hand != InteractionHand.MAIN_HAND) return;
+        if (!formed) { form(player); return; }
+        SteelBoilerVesselBlockEntity vessel = BoilerFireboxInstallation.vesselFromClick(level, worldPosition);
+        if (vessel == null) { message(player, "unloaded"); return; }
+        vessel.warmup().useFirebox(this, player, hand);
     }
     private void message(@Nullable Player player, String key, Object... args) {
         if (player != null) player.displayClientMessage(
@@ -197,7 +201,7 @@ public final class BoilerFireboxBlockEntity extends BaseBlockEntityMagneticraft2
         BoilerAssemblyRecovery.markHost(server, vessel);
         BoilerAssemblyRecovery.adoptExistingServiceFittings(server, vessel, direction);
         requestModelDataUpdate(); sync();
-        message(player, "formed");
+        if (player != null) vessel.warmup().status(player);
         return candidate;
     }
 
@@ -205,7 +209,7 @@ public final class BoilerFireboxBlockEntity extends BaseBlockEntityMagneticraft2
         collision = coll; selection = sel; sync();
     }
     @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
-            Player player, InteractionHand hand, BlockHitResult hit) { use(player); }
+            Player player, InteractionHand hand, BlockHitResult hit) { use(player, hand); }
     @Override public void onDestroy(Level world) {
         if (world instanceof ServerLevel server && formed)
             BoilerAssemblyRecovery.request(server, new Link(worldPosition, identity), true, null);

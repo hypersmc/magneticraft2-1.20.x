@@ -4,6 +4,11 @@ import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
 import com.magneticraft2.common.systems.steam.BoilerFireboxInstallation;
+import com.magneticraft2.common.systems.steam.BoilerWarmup;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,8 +33,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Steam 0-A: purely structural, externally installed service fittings.
- * No BlockEntity, capabilities, pressure, thermal conversion or server ticker.
+ * Structural fittings with manual water-container interaction at the inlet.
+ * No fitting BlockEntity/ticker, automatic fluid capability, pressure or Steam flow.
  * Placement only succeeds at the actual external site on a formed boiler.
  * Boiler teardown does not consume or drop these independently owned parts.
  */
@@ -181,6 +186,14 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
             return false;
         }
         return super.onDestroyedByPlayer(state, world, pos, player, harvest, fluid);
+    }
+
+    @Override public InteractionResult use(BlockState state, Level world, BlockPos pos,
+            Player player, InteractionHand hand, BlockHitResult hit) {
+        ItemStack held = player.getItemInHand(hand);
+        if (role == Role.WATER && (held.isEmpty() || FluidUtil.getFluidHandler(held).isPresent()))
+            return BoilerWarmup.useInlet(world, pos, state, player, hand);
+        return super.use(state, world, pos, player, hand, hit);
     }
 
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){

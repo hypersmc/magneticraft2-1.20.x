@@ -3,6 +3,7 @@ import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
 import com.magneticraft2.common.systems.steam.BoilerAssemblyHost;
 import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
+import com.magneticraft2.common.systems.steam.BoilerWarmup;
 import net.minecraft.server.level.ServerLevel;
 import java.util.UUID;
 import java.util.Map;
@@ -42,9 +43,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-/** No BE ticking, reservoir, material duplication, POWER, AIR or STEAM capability. */
+/** Steel vessel plus optional manual warm-up; no pressure, Steam or power capability. */
 public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost, BoilerAssemblyHost {
     // Optional V2 metadata: old vessels remain inert and use their old lifecycle.
+    private final BoilerWarmup warmup = new BoilerWarmup(this);
+    public BoilerWarmup warmup() { return warmup; }
     private UUID boilerIdentity = UUID.randomUUID();
     private boolean boilerV2Tracked;
     @Nullable private BoilerAssemblyHost.Link boilerFirebox;
@@ -82,6 +85,7 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
     public void unlinkBoilerFirebox(UUID identity) {
         if (boilerFirebox != null && boilerFirebox.identity().equals(identity)) {
             boilerFirebox = null;
+            warmup.stopFuel();
             sync();
         }
     }
@@ -89,6 +93,8 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
         MultiblockController controller = getMultiblockController();
         if (!formed || !boilerV2Tracked || controller == null) return Map.of();
         Map<BlockPos, BlockState> original = new LinkedHashMap<>(controller.getBlockMap());
+        // Fluid/heat are explicitly spilled, not also returned in dropped blocks.
+        warmup.discardContents();
         // Clear authoritative ownership before any reentrant world callback.
         formed = false;
         controller.setFormed(false);
@@ -104,8 +110,8 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
 
     @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
-        // Steel IV-C vessel has no GUI or processing. The controller block handles
-        // formation and status feedback; no inventory or capability is exposed.
+        if (!world.isClientSide && hand == InteractionHand.MAIN_HAND && formed)
+            warmup.status(player);
     }
     @Override public void setMultiblockVoxelShapes(VoxelShape coll,VoxelShape sel){
         collision=coll;selection=sel;sync();
@@ -160,6 +166,7 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
             return; // V2 original-state ownership has already moved to recovery.
         }
         if (!world.isClientSide && formed) {
+            warmup.discardContents();
             formed = false; // prevents duplicate attachment drops on reentry
             BlockState controllerState = world.getBlockState(worldPosition);
             if (controllerState.hasProperty(SteelBoilerVesselBlock.FACING)) {
@@ -182,6 +189,7 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
 
     @Override public void load(CompoundTag tag){
         super.load(tag);
+        warmup.load(tag);
         boilerIdentity = tag.hasUUID("BoilerV2Id") ? tag.getUUID("BoilerV2Id") : UUID.randomUUID();
         boilerV2Tracked = tag.getBoolean("BoilerV2Tracked");
         boilerFirebox = tag.hasUUID("BoilerV2ChildId")
@@ -196,6 +204,7 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
     }
     @Override protected void saveAdditional(CompoundTag tag){
         super.saveAdditional(tag);
+        warmup.save(tag);
         tag.putUUID("BoilerV2Id", boilerIdentity);
         tag.putBoolean("BoilerV2Tracked", boilerV2Tracked);
         if (boilerFirebox != null) {
