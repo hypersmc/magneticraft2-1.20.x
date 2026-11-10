@@ -144,6 +144,39 @@ public final class BoilerWarmup implements IFluidHandler {
                 && level.getBlockState(steamPipe).is(BlockRegistry.STEAM_PIPE.get());
     }
 
+    private double boilerPressureKPa(BoilerWarmupParameters.Rules rules) {
+        if (!rules.vesselPressureEnabled()) return 0.0;
+        return BoilerPressureMath.pressureKPa(steam.stored(),
+                rules.steamTemperatureK(), rules.vesselPipeVolumeEquivalents());
+    }
+
+    private int transferSteamToNetwork(ServerLevel level,
+            BoilerWarmupParameters.Rules rules) {
+        if (steam.stored() <= 0 || !pipeConnected(level)) return 0;
+        int offered = Math.min(steam.stored(), rules.maxOutputUnitsPerTick());
+
+        if (!rules.vesselPressureEnabled())
+            return SteamNetworkManager.acceptSteamBelowPressure(level, steamPipe,
+                    offered, rules.steamTemperatureK(), rules.outputCutoffKPa());
+
+        double networkPressure = SteamNetworkManager.gaugePressureKPa(level, steamPipe);
+        double boilerPressure = boilerPressureKPa(rules);
+        if (boilerPressure <= networkPressure + 0.000001) return 0;
+
+        for (int amount = offered; amount > 0; amount--) {
+            double afterBoiler = BoilerPressureMath.pressureKPa(
+                    steam.stored() - amount, rules.steamTemperatureK(),
+                    rules.vesselPipeVolumeEquivalents());
+            if (afterBoiler <= 0.0) continue;
+            int accepted = SteamNetworkManager.simulateAcceptSteamBelowPressure(
+                    level, steamPipe, amount, rules.steamTemperatureK(), afterBoiler);
+            if (accepted == amount)
+                return SteamNetworkManager.acceptSteamBelowPressure(
+                        level, steamPipe, amount, rules.steamTemperatureK(), afterBoiler);
+        }
+        return 0;
+    }
+
     private boolean updateSafety(ServerLevel level, BoilerWarmupParameters.Rules rules) {
         geometry();
         if (!level.hasChunkAt(safetyMount)) return false;
@@ -151,19 +184,26 @@ public final class BoilerWarmup implements IFluidHandler {
         if (!(safety.getBlock() instanceof BoilerSafetyMountBlock)
                 || safety.getValue(BoilerServiceFittingBlock.FACING) != facing()) return false;
 
-        double pressure = pipeConnected(level)
-                ? SteamNetworkManager.gaugePressureKPa(level, steamPipe) : 0.0;
+        boolean vesselDomain = rules.vesselPressureEnabled();
+        double pressure = vesselDomain
+                ? boilerPressureKPa(rules)
+                : (pipeConnected(level)
+                    ? SteamNetworkManager.gaugePressureKPa(level, steamPipe) : 0.0);
         int step = BoilerSafetyLogic.gaugeStep(pressure, rules.gaugeMaxKPa());
 
-        if (rules.reliefEnabled() && pipeConnected(level)) {
+        if (rules.reliefEnabled() && (vesselDomain || pipeConnected(level))) {
             reliefOpen = BoilerSafetyLogic.nextReliefOpen(reliefOpen, pressure,
                     rules.reliefOpenKPa(), rules.reliefCloseKPa());
             if (reliefOpen) {
-                int vented = SteamNetworkManager.ventSteam(
-                        level, steamPipe, rules.maxReliefUnitsPerTick());
+                int vented = vesselDomain
+                        ? steam.vent(rules.maxReliefUnitsPerTick())
+                        : SteamNetworkManager.ventSteam(
+                            level, steamPipe, rules.maxReliefUnitsPerTick());
                 if (vented > 0) {
                     reliefVented += vented;
-                    pressure = SteamNetworkManager.gaugePressureKPa(level, steamPipe);
+                    pressure = vesselDomain
+                            ? boilerPressureKPa(rules)
+                            : SteamNetworkManager.gaugePressureKPa(level, steamPipe);
                     step = BoilerSafetyLogic.gaugeStep(pressure, rules.gaugeMaxKPa());
                     double x = safetyMount.getX() + 0.5;
                     double y = safetyMount.getY() + 1.02;
@@ -224,9 +264,7 @@ public final class BoilerWarmup implements IFluidHandler {
             }
 
             if (steam.stored() > 0 && pipeConnected(level)) {
-                int offered = Math.min(steam.stored(), rules.maxOutputUnitsPerTick());
-                int accepted = SteamNetworkManager.acceptSteamBelowPressure(level, steamPipe,
-                        offered, rules.steamTemperatureK(), rules.outputCutoffKPa());
+                int accepted = transferSteamToNetwork(level, rules);
                 if (accepted > 0) {
                     if (steam.extract(accepted) != accepted)
                         throw new IllegalStateException("Steam export ledger mismatch");
@@ -365,9 +403,12 @@ public final class BoilerWarmup implements IFluidHandler {
         if (level != null && pipeConnected(level))
             network = (Math.round(SteamNetworkManager.gaugePressureKPa(
                     level, steamPipe) * 10.0) / 10.0) + " kPa";
+        String boilerPressure = rules.vesselPressureEnabled()
+                ? (Math.round(boilerPressureKPa(rules) * 10.0) / 10.0) + " kPa"
+                : "legacy";
         tell(player, limits + "; fuel " + state.burnTicks() + " ticks; Steam "
                 + steam.stored() + "/" + rules.steamBufferCapacity()
-                + " units; network " + network
+                + " units; boiler " + boilerPressure + "; network " + network
                 + (reliefOpen ? "; RELIEF OPEN" : "; relief closed"));
     }
 
@@ -430,7 +471,7 @@ public final class BoilerWarmup implements IFluidHandler {
         BoilerWarmupState.Snapshot s = state.snapshot();
         BoilerSteamState.Snapshot gas = steam.snapshot();
         CompoundTag n = new CompoundTag();
-        n.putInt("Version", 3);
+        n.putInt("Version", 4);
         n.putInt("Water", s.water()); n.putInt("Heat", s.heat());
         n.putInt("BurnTicks", s.burnTicks());
         n.putInt("HeatPerBurnTick", s.heatPerBurnTick());
@@ -447,6 +488,7 @@ public final class BoilerWarmup implements IFluidHandler {
         n.putInt("SteamStored", gas.stored());
         n.putLong("SteamProduced", gas.produced());
         n.putLong("SteamExported", gas.exported());
+        n.putLong("SteamVented", gas.vented());
         n.putLong("SteamSpilled", gas.spilled());
         n.putBoolean("ReliefOpen", reliefOpen);
         n.putLong("ReliefVented", reliefVented);
@@ -463,7 +505,7 @@ public final class BoilerWarmup implements IFluidHandler {
         CompoundTag n = root.getCompound(NBT);
         try {
             int version = n.getInt("Version");
-            if (version != 1 && version != 2 && version != 3)
+            if (version != 1 && version != 2 && version != 3 && version != 4)
                 throw new IllegalArgumentException("Unsupported warm-up version");
             BoilerWarmupState.Snapshot water = version == 1
                     ? new BoilerWarmupState.Snapshot(n.getInt("Water"), n.getInt("Heat"),
@@ -483,9 +525,14 @@ public final class BoilerWarmup implements IFluidHandler {
                         n.getLong("HeatToSteam"));
             state.restore(water);
             if (version >= 2)
-                steam.restore(new BoilerSteamState.Snapshot(
-                        n.getInt("SteamStored"), n.getLong("SteamProduced"),
-                        n.getLong("SteamExported"), n.getLong("SteamSpilled")));
+                steam.restore(version >= 4
+                        ? new BoilerSteamState.Snapshot(
+                            n.getInt("SteamStored"), n.getLong("SteamProduced"),
+                            n.getLong("SteamExported"), n.getLong("SteamVented"),
+                            n.getLong("SteamSpilled"))
+                        : new BoilerSteamState.Snapshot(
+                            n.getInt("SteamStored"), n.getLong("SteamProduced"),
+                            n.getLong("SteamExported"), n.getLong("SteamSpilled")));
             if (version >= 3) {
                 reliefOpen = n.getBoolean("ReliefOpen");
                 reliefVented = Math.max(0L, n.getLong("ReliefVented"));

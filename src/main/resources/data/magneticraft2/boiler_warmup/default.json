@@ -1,5 +1,5 @@
 {
-  "format": 3,
+  "format": 4,
   "water_capacity_mb": 8000,
   "heat_capacity": 36000,
   "heat_per_burn_tick": 36,
@@ -15,5 +15,6 @@
   "relief_open_kpa": 550,
   "relief_close_kpa": 500,
   "max_relief_units_per_tick": 4,
-  "gauge_max_kpa": 600
+  "gauge_max_kpa": 600,
+  "boiler_volume_pipe_equivalents": 2.5
 }

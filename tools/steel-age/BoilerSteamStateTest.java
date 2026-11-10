@@ -31,6 +31,8 @@ public final class BoilerSteamStateTest {
         check(steam.produce(1, 16) == 0, "buffer backpressure");
         check(BoilerSteamState.valid(steam.snapshot()), "full buffer valid");
         check(steam.extract(4) == 4, "bounded network export");
+        check(steam.vent(3) == 3, "local relief vent");
+        check(BoilerSteamState.valid(steam.snapshot()), "relief conservation");
         check(BoilerSteamState.valid(steam.snapshot()), "export conservation");
 
         BoilerSteamState restored = new BoilerSteamState();
@@ -50,7 +52,7 @@ public final class BoilerSteamStateTest {
         Random random = new Random(42);
         BoilerSteamState fuzz = new BoilerSteamState();
         for (int i = 0; i < 100000; i++) {
-            switch (random.nextInt(4)) {
+            switch (random.nextInt(5)) {
                 case 0 -> fuzz.produce(random.nextInt(8), 64);
                 case 1 -> fuzz.extract(random.nextInt(8));
                 case 2 -> {
@@ -58,6 +60,7 @@ public final class BoilerSteamStateTest {
                     clone.restore(fuzz.snapshot());
                     fuzz = clone;
                 }
+                case 3 -> fuzz.vent(random.nextInt(8));
                 default -> fuzz.spill();
             }
             check(BoilerSteamState.valid(fuzz.snapshot()), "random Steam conservation");
