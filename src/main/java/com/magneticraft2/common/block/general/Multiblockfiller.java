@@ -2,6 +2,7 @@ package com.magneticraft2.common.block.general;
 
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.general.Multiblockfiller_tile;
+import com.magneticraft2.common.item.stage.steam.BoilerServiceFittingItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,6 +53,11 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        // Let boiler fitting BlockItems handle this click and install their
+        // hardware at the appropriate external cell of the formed vessel.
+        // Other machines retain their normal filler interactions.
+        if (pPlayer.getItemInHand(pHand).getItem() instanceof BoilerServiceFittingItem)
+            return InteractionResult.PASS;
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         }

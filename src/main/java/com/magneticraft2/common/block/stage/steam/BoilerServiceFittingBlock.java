@@ -47,6 +47,8 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
     private static final VoxelShape[][] SHAPES = buildShapes();
     private final Role role;
 
+    public Role role(){return role;}
+
     public BoilerServiceFittingBlock(Role role){
         super(BlockBehaviour.Properties.of().strength(5F,8F).sound(SoundType.METAL)
                 .requiresCorrectToolForDrops().noOcclusion());

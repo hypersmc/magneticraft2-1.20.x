@@ -14,6 +14,7 @@ import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronIngotItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronBarItem;
 import com.magneticraft2.common.item.stage.steel.SteelStockItem;
+import com.magneticraft2.common.item.stage.steam.BoilerServiceFittingItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -274,10 +275,14 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BOILER_SHELL_PANEL = fromBlock(BOILER_SHELL_PANEL);
     public static final RegistryObject<Item> ITEM_BOILER_END_JOINT = fromBlock(BOILER_END_JOINT);
     public static final RegistryObject<Item> ITEM_STEEL_BOILER_VESSEL = fromBlock(STEEL_BOILER_VESSEL);
-    public static final RegistryObject<Item> ITEM_BOILER_WATER_INLET = fromBlock(BOILER_WATER_INLET);
-    public static final RegistryObject<Item> ITEM_BOILER_STEAM_OUTLET = fromBlock(BOILER_STEAM_OUTLET);
-    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_MOUNT = fromBlock(BOILER_FIREBOX_MOUNT);
-    public static final RegistryObject<Item> ITEM_BOILER_SAFETY_MOUNT = fromBlock(BOILER_SAFETY_MOUNT);
+    public static final RegistryObject<Item> ITEM_BOILER_WATER_INLET = ITEMS.register("boiler_water_inlet",
+                    () -> new BoilerServiceFittingItem(BOILER_WATER_INLET.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_STEAM_OUTLET = ITEMS.register("boiler_steam_outlet",
+                    () -> new BoilerServiceFittingItem(BOILER_STEAM_OUTLET.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_MOUNT = ITEMS.register("boiler_firebox_mount",
+                    () -> new BoilerServiceFittingItem(BOILER_FIREBOX_MOUNT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_SAFETY_MOUNT = ITEMS.register("boiler_safety_mount",
+                    () -> new BoilerServiceFittingItem(BOILER_SAFETY_MOUNT.get(), new Item.Properties()));
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

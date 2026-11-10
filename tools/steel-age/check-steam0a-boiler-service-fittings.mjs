@@ -6,6 +6,14 @@ const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"../..");
 const read=p=>fs.readFileSync(path.join(ROOT,p),"utf8"),json=p=>JSON.parse(read(p));
 const R="src/main/resources/",D=R+"data/magneticraft2/",A=R+"assets/magneticraft2/";
 const J="src/main/java/com/magneticraft2/common/";
+const itemImpl=read(J+"item/stage/steam/BoilerServiceFittingItem.java");
+const fillerBlock=read(J+"block/general/Multiblockfiller.java");
+const boilerControllerBlock=read(J+"block/stage/steel/SteelBoilerVesselBlock.java");
+assert(itemImpl.includes("BlockPlaceContext.at(")&&itemImpl.includes("return place(moved)"));
+assert(itemImpl.includes("filler.getControllerPos()")&&itemImpl.includes("attachmentPosition("));
+assert(itemImpl.includes("target).isAir()"));
+assert(fillerBlock.includes("instanceof BoilerServiceFittingItem"));
+assert(boilerControllerBlock.includes("instanceof BoilerServiceFittingItem"));
 const roles=[{"name":"boiler_water_inlet","enum":"WATER","kind":"water","off":[2,2,-2],"recipe":[["pressure_pipe_coupling",1],["iron_plate_panel",1],["refined_steel_rod",1],["iron_rivet",2]]},{"name":"boiler_steam_outlet","enum":"STEAM","kind":"steam","off":[0,4,-2],"recipe":[["pressure_pipe_coupling",1],["boiler_reinforcement_flange",1],["refined_steel_plate",1],["iron_rivet",2]]},{"name":"boiler_firebox_mount","enum":"FIREBOX","kind":"firebox","off":[0,1,1],"recipe":[["riveted_iron_casing",1],["fired_refractory_ceramic",1],["refined_steel_plate",1],["iron_rivet",4]]},{"name":"boiler_safety_mount","enum":"SAFETY","kind":"safety","off":[0,4,-1],"recipe":[["boiler_reinforcement_flange",1],["pressure_pipe_coupling",1],["refined_steel_rod",1],["iron_rivet",2]]}];
 const reg=read(J+"registry/registers/BlockRegistry.java"),
   item=read(J+"registry/registers/ItemRegistry.java"),
@@ -42,7 +50,7 @@ const rotate=(b,n)=>{let [x,y,z,X,Y,Z]=b;for(let k=0;k<n;k++)[x,X,z,Z]=[16-Z,16-
 for(const r of roles){
  const ID=r.name.toUpperCase();
  assert(reg.includes('BLOCKS.register("'+r.name+'"'));
- assert(item.includes("ITEM_"+ID+" = fromBlock("+ID+")"));
+ assert(item.includes('ITEM_'+ID+' = ITEMS.register("'+r.name+'"') && item.includes("new BoilerServiceFittingItem("+ID+".get()"));
  assert(tab.includes("ITEM_"+ID+".get()"));
  assert(lang["block.magneticraft2."+r.name]);
  assert(tag.values.includes("magneticraft2:"+r.name));

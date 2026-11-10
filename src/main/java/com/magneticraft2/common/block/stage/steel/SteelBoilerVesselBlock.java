@@ -1,6 +1,7 @@
 package com.magneticraft2.common.block.stage.steel;
 import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
+import com.magneticraft2.common.item.stage.steam.BoilerServiceFittingItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -42,6 +43,8 @@ public final class SteelBoilerVesselBlock extends BaseBlockMagneticraft2 {
     }
     @Override public InteractionResult use(BlockState state,Level world,BlockPos pos,
             Player player,InteractionHand hand,BlockHitResult hit){
+        if (player.getItemInHand(hand).getItem() instanceof BoilerServiceFittingItem)
+            return InteractionResult.PASS;
         if(hand!=InteractionHand.MAIN_HAND ||
                 !(world.getBlockEntity(pos) instanceof SteelBoilerVesselBlockEntity vessel))
             return InteractionResult.PASS;
