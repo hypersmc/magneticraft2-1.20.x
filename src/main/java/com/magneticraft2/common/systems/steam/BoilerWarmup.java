@@ -268,7 +268,7 @@ public final class BoilerWarmup implements IFluidHandler {
 
     private boolean startNextQueuedFuel(BoilerWarmupParameters.Rules rules) {
         if (state.burning() || fuelQueue.isEmpty()
-                || state.heat() >= rules.heatCapacity()) return false;
+                || state.heat() + rules.heatPerBurnTick() > rules.heatCapacity()) return false;
         ItemStack next = fuelQueue.get(0);
         int ticks = fuelTicks(next);
         if (ticks <= 0 || !state.ignite(ticks, rules.heatPerBurnTick())) return false;
@@ -580,6 +580,31 @@ public final class BoilerWarmup implements IFluidHandler {
         root.put(NBT, n);
     }
 
+    private void loadFuelQueue(CompoundTag n, int version) {
+        fuelQueue.clear();
+        if (version < 5 || !n.contains("FuelQueue", Tag.TAG_LIST)) return;
+        try {
+            ListTag queued = n.getList("FuelQueue", Tag.TAG_COMPOUND);
+            int total = 0;
+            List<ItemStack> restored = new ArrayList<>();
+            for (int i = 0; i < queued.size(); i++) {
+                ItemStack stack = ItemStack.of(queued.getCompound(i));
+                if (stack.isEmpty() || fuelTicks(stack) <= 0)
+                    throw new IllegalArgumentException("Invalid queued fuel item");
+                total += stack.getCount();
+                if (total > FUEL_QUEUE_LIMIT)
+                    throw new IllegalArgumentException("Fuel queue exceeds capacity");
+                restored.add(stack);
+            }
+            fuelQueue.addAll(restored);
+        } catch (RuntimeException invalid) {
+            fuelQueue.clear();
+            LogManager.getLogger("Magneticraft2Boiler").error(
+                    "Rejected invalid boiler fuel queue at {}: {}",
+                    owner.getBlockPos(), invalid.getMessage());
+        }
+    }
+
     public void load(CompoundTag root) {
         state = new BoilerWarmupState();
         steam = new BoilerSteamState();
@@ -588,8 +613,8 @@ public final class BoilerWarmup implements IFluidHandler {
         lastTick = Long.MIN_VALUE;
         if (!root.contains(NBT, Tag.TAG_COMPOUND)) return;
         CompoundTag n = root.getCompound(NBT);
+        int version = n.getInt("Version");
         try {
-            int version = n.getInt("Version");
             if (version != 1 && version != 2 && version != 3 && version != 4 && version != 5)
                 throw new IllegalArgumentException("Unsupported warm-up version");
             BoilerWarmupState.Snapshot water = version == 1
@@ -622,20 +647,7 @@ public final class BoilerWarmup implements IFluidHandler {
                 reliefOpen = n.getBoolean("ReliefOpen");
                 reliefVented = Math.max(0L, n.getLong("ReliefVented"));
             }
-            fuelQueue.clear();
-            if (version >= 5 && n.contains("FuelQueue", Tag.TAG_LIST)) {
-                ListTag queued = n.getList("FuelQueue", Tag.TAG_COMPOUND);
-                int total = 0;
-                for (int i = 0; i < queued.size(); i++) {
-                    ItemStack stack = ItemStack.of(queued.getCompound(i));
-                    if (stack.isEmpty() || fuelTicks(stack) <= 0)
-                        throw new IllegalArgumentException("Invalid queued fuel item");
-                    total += stack.getCount();
-                    if (total > FUEL_QUEUE_LIMIT)
-                        throw new IllegalArgumentException("Fuel queue exceeds capacity");
-                    fuelQueue.add(stack);
-                }
-            }
+
         } catch (IllegalArgumentException invalid) {
             state = new BoilerWarmupState();
             steam = new BoilerSteamState();
@@ -643,6 +655,8 @@ public final class BoilerWarmup implements IFluidHandler {
             LogManager.getLogger("Magneticraft2Boiler").error(
                     "Rejected invalid boiler save at {}: {}",
                     owner.getBlockPos(), invalid.getMessage());
+            return;
         }
+        loadFuelQueue(n, version);
     }
 }
