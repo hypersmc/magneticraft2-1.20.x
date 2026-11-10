@@ -22,7 +22,7 @@
     {
       "type": "patchouli:text",
       "title": "Pressure cutoff",
-      "text": "The boiler source will only admit Steam while the projected connected network remains at or below 500 kPa by default. This is a source cutoff, NOT a relief valve and NOT the pipe rating. Steam pipes still use their separate provisional 600 kPa rupture rule. The Safety Service Mount is required for generation, but its visible valve is not yet a real venting relief mechanism."
+      "text": "The boiler now has its OWN Steam-space pressure, separate from the pipe network. The gauge reads boiler pressure even with no Steam Pipe connected. Steam flows through the takeoff only while the boiler side is at higher pressure than the connected network, using the same provisional pressure scale on both sides. The old 500 kPa network source cutoff remains only for legacy format-2/3 datapacks."
     },
     {
       "type": "patchouli:text",
@@ -32,12 +32,12 @@
     {
       "type": "patchouli:text",
       "title": "Gauge + Relief Valve",
-      "text": "The Safety Service Mount is now operational when a Steam Pipe is connected. Its red needle has six discrete positions driven by the actual connected-network pressure; this uses blockstates rather than a per-frame renderer. Default gauge scale: 0-600 kPa. The relief valve normally stays CLOSED because boiler output stops at 500 kPa. If pressure reaches 550 kPa through another source or topology change, the valve opens and vents REAL conserved Steam until pressure falls to 500 kPa. While open, the valve cap lifts and white Steam/hiss feedback appears."
+      "text": "The Safety Service Mount now protects the BOILER VESSEL itself. Its six-position red needle follows local vessel Steam pressure whether or not a pipe is connected. Default format 4 treats the vessel Steam space as 2.5 pipe-volume equivalents: at 453.15 K, 10 units ~= 400 kPa, 13 ~= 520 kPa, 14 ~= 560 kPa and 16 ~= 640 kPa. The relief opens at 550 kPa and vents real conserved Steam from the boiler buffer until pressure falls to 500 kPa."
     },
     {
       "type": "patchouli:text",
       "title": "Safety layers",
-      "text": "Normal source control: 500 kPa boiler output cutoff. Backup protection: 550 kPa relief-open / 500 kPa relief-close. Structural fault: existing Steam Pipe rupture above 600 kPa. These are separate systems. The relief valve removes actual network Steam; it is not a cosmetic particle and does not refund water or HEAT. Datapacks can tune the thresholds in boiler_warmup/default.json."
+      "text": "Format 4 separates pressure domains. Boiler gauge/relief: local vessel pressure. Steam Pipe gauge/rupture: connected network pressure. Outlet flow equalizes from the higher-pressure boiler toward the lower-pressure network and stops when another discrete unit would overshoot. Relief opens at 550 kPa, closes at 500 kPa, and works even with NO pipe. Existing Steam Pipe rupture remains a separate network-side structural fault above 600 kPa."
     }
   ]
 }
