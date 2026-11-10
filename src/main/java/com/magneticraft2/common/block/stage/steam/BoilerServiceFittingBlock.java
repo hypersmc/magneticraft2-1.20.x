@@ -128,6 +128,27 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         return null; // No unsupported/free-floating service connections.
     }
 
+
+    /**
+     * The flue is an independent supported block: removing its firebox must
+     * not leave an orphan chimney suspended in midair.
+     */
+    @Override public void onRemove(BlockState oldState, Level level, BlockPos pos,
+            BlockState newState, boolean moving) {
+        if (role == Role.FIREBOX && oldState.getBlock() != newState.getBlock()
+                && !level.isClientSide && !moving) {
+            BlockPos above = pos.above();
+            if (level.hasChunkAt(above)) {
+                BlockState upper = level.getBlockState(above);
+                if (upper.getBlock() instanceof BoilerServiceFittingBlock fitting
+                        && fitting.role() == Role.CHIMNEY
+                        && upper.getValue(FACING) == oldState.getValue(FACING))
+                    level.destroyBlock(above, true);
+            }
+        }
+        super.onRemove(oldState, level, pos, newState, moving);
+    }
+
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
         builder.add(FACING);
     }
