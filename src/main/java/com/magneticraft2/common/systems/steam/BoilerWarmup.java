@@ -187,10 +187,26 @@ public final class BoilerWarmup implements IFluidHandler {
         if (changed) owner.setChanged();
         if (wasBurning != state.burning()) owner.sync();
 
-        if (spentFuel && level.getGameTime() % 20L == 0L)
-            level.sendParticles(ParticleTypes.SMOKE, outletAbove.getX() + 0.5,
-                    outletAbove.getY() + 0.05, outletAbove.getZ() + 0.5,
-                    1, 0.05, 0.05, 0.05, 0.01);
+        if (spentFuel) {
+            if (level.getGameTime() % 20L == 0L)
+                level.sendParticles(ParticleTypes.SMOKE, outletAbove.getX() + 0.5,
+                        outletAbove.getY() + 0.05, outletAbove.getZ() + 0.5,
+                        1, 0.05, 0.05, 0.05, 0.01);
+            if (level.getGameTime() % 4L == 0L) {
+                BoilerFireboxBlockEntity front = BoilerFireboxInstallation.linkedFirebox(level, owner);
+                if (front != null) {
+                    Direction outward = front.assemblyFacing();
+                    double x = front.getBlockPos().getX() + 0.5 + outward.getStepX() * 0.58;
+                    double y = front.getBlockPos().getY() + 0.68;
+                    double z = front.getBlockPos().getZ() + 0.5 + outward.getStepZ() * 0.58;
+                    level.sendParticles(ParticleTypes.FLAME, x, y, z,
+                            2, 0.16, 0.12, 0.16, 0.004);
+                    if (level.getGameTime() % 12L == 0L)
+                        level.sendParticles(ParticleTypes.SMALL_FLAME, x, y + 0.04, z,
+                                1, 0.08, 0.08, 0.08, 0.002);
+                }
+            }
+        }
     }
 
     public void useFirebox(BoilerFireboxBlockEntity front, Player player, InteractionHand hand) {
@@ -236,6 +252,24 @@ public final class BoilerWarmup implements IFluidHandler {
         owner.setChanged();
         owner.sync();
         status(player);
+    }
+
+    @Nullable public static IFluidHandler waterHandlerForInlet(
+            Level world, BlockPos inletPos, BlockState inletState, BlockPos connectedPipe) {
+        if (!inletState.is(BlockRegistry.BOILER_WATER_INLET.get())
+                || !inletState.hasProperty(BoilerServiceFittingBlock.FACING)) return null;
+        Direction facing = inletState.getValue(BoilerServiceFittingBlock.FACING);
+        if (!BoilerServiceFittingBlock.waterPipePosition(inletPos, facing).equals(connectedPipe))
+            return null;
+        BlockPos delta = BoilerServiceFittingBlock.attachmentPosition(BlockPos.ZERO,
+                BoilerServiceFittingBlock.Role.WATER, facing);
+        BlockPos vesselPos = inletPos.subtract(delta);
+        if (!world.hasChunkAt(vesselPos)
+                || !(world.getBlockEntity(vesselPos) instanceof SteelBoilerVesselBlockEntity vessel)
+                || !vessel.isFormed()
+                || vessel.getBlockState().getValue(SteelBoilerVesselBlock.FACING) != facing)
+            return null;
+        return vessel.warmup();
     }
 
     public static InteractionResult useInlet(Level world, BlockPos pos, BlockState port,
