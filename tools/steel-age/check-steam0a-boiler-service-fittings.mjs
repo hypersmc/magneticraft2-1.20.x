@@ -13,6 +13,8 @@ const reg=read(J+"registry/registers/BlockRegistry.java"),
   cls=read(J+"block/stage/steam/BoilerServiceFittingBlock.java");
 const lang=json(A+"lang/en_us.json"),tag=json(R+"data/minecraft/tags/blocks/mineable/pickaxe.json");
 assert(cls.includes("getStateForPlacement(")&&cls.includes("IS_FORMED")&&cls.includes("multiblockfiller"));
+for(const direction of ["SOUTH","NORTH","EAST","WEST"])
+ assert(cls.includes("case "+direction+" -> Direction."),"Explicit water anchor missing "+direction);
 assert(!cls.includes("getCapability(")&&!cls.includes("SteamNetworkManager.")&&!cls.includes("serverTick("));
 const facing=["south","east","north","west"],turn={south:0,east:1,north:2,west:3};
 const rotate=(b,n)=>{let [x,y,z,X,Y,Z]=b;for(let k=0;k<n;k++)[x,X,z,Z]=[16-Z,16-z,x,X];return[x,y,z,X,Y,Z]};
@@ -39,6 +41,10 @@ for(const r of roles){
    assert.equal(state.variants["facing="+face].model,"magneticraft2:block/"+r.name+"_"+face);
    assert.deepEqual(m.elements.map(e=>[...e.from,...e.to]),
        base.elements.map(e=>rotate([...e.from,...e.to],turn[face])));
+   const boxes=m.elements.map(e=>[...e.from,...e.to]);
+   for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++)
+     assert(![0,1,2].every(k=>Math.min(boxes[i][k+3],boxes[j][k+3])>Math.max(boxes[i][k],boxes[j][k])),
+         "Overlapping cuboids "+r.name+" "+face+" "+i+" "+j);
    for(const e of m.elements){
      const [dx,dy,dz]=e.to.map((v,i)=>v-e.from[i]);
      assert(e.from.every((v,i)=>Number.isFinite(v)&&v>=0&&e.to[i]<=16&&e.to[i]>v));

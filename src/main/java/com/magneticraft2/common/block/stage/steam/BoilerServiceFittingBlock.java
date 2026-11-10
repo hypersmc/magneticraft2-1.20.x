@@ -41,7 +41,7 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
     private static final int[][][] BOXES = {
         {{0,3,3,2,13,13},{2,6,6,10,10,10},{10,4,4,12,12,12},{12,4,4,16,6,12},{12,10,4,16,12,12},{12,6,4,16,10,6},{12,6,10,16,10,12}},
         {{2,0,2,14,2,14},{6,2,6,10,11,10},{3,11,3,13,13,13},{3,13,3,5,16,13},{11,13,3,13,16,13},{5,13,3,11,16,5},{5,13,11,11,16,13}},
-        {{1,0,1,15,3,15},{3,3,3,13,12,13},{1,12,1,15,16,15},{4,4,0,12,11,3},{5,5,0,11,10,1}},
+        {{1,0,1,15,3,15},{3,3,3,13,12,13},{1,12,1,15,16,15},{4,4,0,5,11,3},{11,4,0,12,11,3},{5,4,0,11,5,3},{5,10,0,11,11,3},{5,5,2,11,10,3}},
         {{2,0,2,14,2,14},{6,2,6,10,9,10},{3,9,3,13,12,13},{3,12,3,5,14,5},{11,12,3,13,14,5},{3,12,11,5,14,13},{11,12,11,13,14,13}}
     };
     private static final VoxelShape[][] SHAPES = buildShapes();
@@ -101,7 +101,13 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
                     || !state.getValue(SteelBoilerVesselBlock.IS_FORMED)
                     || state.getValue(SteelBoilerVesselBlock.FACING)!=facing)continue;
             BlockPos inward=switch(role){
-                case WATER -> position.relative(facing.getClockWise().getOpposite());
+                case WATER -> position.relative(switch(facing){
+                    case SOUTH -> Direction.WEST;
+                    case NORTH -> Direction.EAST;
+                    case EAST -> Direction.NORTH;
+                    case WEST -> Direction.SOUTH;
+                    default -> throw new IllegalArgumentException("Horizontal facing required");
+                });
                 case STEAM, SAFETY -> position.below();
                 case FIREBOX -> position.above();
             };
