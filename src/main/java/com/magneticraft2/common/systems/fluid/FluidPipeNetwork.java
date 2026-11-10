@@ -2,6 +2,8 @@ package com.magneticraft2.common.systems.fluid;
 
 import com.magneticraft2.common.block.stage.copper.DiagonalWaterPipeBlock;
 import com.magneticraft2.common.block.stage.copper.WaterPipeBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.systems.steam.BoilerWarmup;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -175,6 +177,15 @@ public final class FluidPipeNetwork {
 
                 if (!endpointKeys.add(key)) {
                     continue;
+                }
+
+                if (neighbourState.is(BlockRegistry.BOILER_WATER_INLET.get())) {
+                    IFluidHandler boiler = BoilerWarmup.waterHandlerForInlet(
+                            level, neighbour, neighbourState, pipePos);
+                    if (boiler != null) {
+                        endpoints.add(new Endpoint(neighbour.immutable(), endpointSide, boiler));
+                        continue;
+                    }
                 }
 
                 BlockEntity blockEntity =
