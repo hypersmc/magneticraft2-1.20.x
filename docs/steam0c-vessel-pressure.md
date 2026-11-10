@@ -128,3 +128,8 @@ Datapack formats are separate from save versions:
 - dependency-free pressure test registration.
 
 A full Forge build and Minecraft runtime test have not been executed in this environment.
+
+
+## Runtime confirmation — 2026-11-10
+
+Player in-game testing confirmed the implemented behavior works in the current single-player test world. This confirms runtime behavior for the tested manual fuel queue and the corrected boiler-local pressure/gauge/relief path. It does **not** replace the outstanding full Forge build record, dedicated two-client verification, chunk-boundary coverage, or all teardown/save-regression cases documented above.

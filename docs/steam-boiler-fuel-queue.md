@@ -109,3 +109,8 @@ GitHub currently reports no attached CI statuses for this commit. A full Forge b
 10. Dismantle the entire boiler with queued fuel and repeat the exactly-once recovery check.
 11. Re-test disconnected boiler pressure/gauge/relief: pressure must exist with no Steam Pipe attached.
 12. Connect a Steam network and verify local boiler kPa and network kPa remain distinct while pressure-driven transfer occurs.
+
+
+## Runtime confirmation — 2026-11-10
+
+Player in-game testing confirmed the implemented behavior works in the current single-player test world. This confirms runtime behavior for the tested manual fuel queue and the corrected boiler-local pressure/gauge/relief path. It does **not** replace the outstanding full Forge build record, dedicated two-client verification, chunk-boundary coverage, or all teardown/save-regression cases documented above.
