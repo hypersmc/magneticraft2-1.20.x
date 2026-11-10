@@ -48,7 +48,7 @@ assert(display.length===4 && display.every(layer=>layer.length===3 && layer.ever
        "Patchouli pattern must be [Y top-down][X west-east][Z north-south]");
 const expected = {
     S: (x,y)=> y===1?"abc"[x]:y===2?(x===0?"d":"e"):"fgh"[x],
-    J: z=>z===0?"K":"J", P:()=>"P", F:()=>"F", C:()=>"0", A:()=>" "
+    J: (x,y,z)=>z===0?"K":"J", P:()=>"P", F:()=>"F", C:()=>"0", A:()=>" "
 };
 for(let y=0;y<4;y++)for(let z=0;z<5;z++)for(let x=0;x<3;x++){
     const cell=south.structure.layout["layer"+(y+1)][z][x];
