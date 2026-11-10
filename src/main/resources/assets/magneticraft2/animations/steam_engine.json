@@ -52,9 +52,9 @@
     "engine_slider": {
       "model": "magneticraft2:multiblock/steam_engine_piston",
       "model_offset": [
-        0,
-        0,
-        0
+        0.5,
+        1.5,
+        2.5
       ],
       "pivot": [
         0,
