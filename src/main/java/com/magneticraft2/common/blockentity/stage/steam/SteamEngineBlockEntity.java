@@ -5,6 +5,10 @@ import com.magneticraft2.common.block.stage.steam.SteamEngineInletBlock;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockRenderParts;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelHost;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelNbt;
+import com.magneticraft2.common.systems.Multiblocking.core.MultiblockVoxelProfiles;
 import com.magneticraft2.common.systems.Multiblocking.json.Multiblock;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockRegistry;
 import com.magneticraft2.common.systems.Multiblocking.json.MultiblockStructure;
@@ -34,14 +38,18 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.List;
 
-public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
+public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost {
     private static final String PREFIX="steam_engine_";
     private boolean formed,running;
-    private String blueprintName="",replacementModel="";
+    private String blueprintName="",replacementModel="",voxelProfileName="";
+    private List<BlockPos> renderAirAnchors=List.of();
+    @Nullable private VoxelShape collision,selection;
     private Direction matchedFacing=Direction.SOUTH;
     @Nullable private BlockPos inletPos,outputPos;
     private long steamCreditMilli,steamDrawnUnits,steamExhaustedMilli;
@@ -122,6 +130,12 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
         if(level==null||outputPos==null||!level.hasChunkAt(outputPos))return null;
         return level.getBlockEntity(outputPos) instanceof SteamEngineOutputBlockEntity output?output:null;
     }
+    @Override public void setMultiblockVoxelShapes(VoxelShape coll,VoxelShape sel){
+        collision=coll;selection=sel;sync();
+    }
+    public @Nullable VoxelShape localCollision(){return collision;}
+    public @Nullable VoxelShape localSelection(){return selection==null?collision:selection;}
+
     public float getDriveRotationDegrees(float partialTicks){
         SteamEngineOutputBlockEntity out=getOutput();
         return out==null?0:out.getVisualRotationDegrees(partialTicks);
@@ -136,7 +150,7 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
     @Override protected MultiblockController createMultiblockController(){
         if(level==null||level.isClientSide||formed)return null;
         MultiblockStructure structure=identifyMultiblockStructure(level,worldPosition);
-        if(structure==null)return null;
+        if(structure==null||!MultiblockVoxelProfiles.exists(voxelProfileName))return null;
         MultiblockController controller=new MultiblockController(structure);
         if(!controller.identifyAndAddModules(level,worldPosition,structure)
                 || !controller.createStructure(level,worldPosition))return null;
@@ -148,6 +162,8 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
         BlockState state=level.getBlockState(worldPosition);
         level.setBlock(worldPosition,state.setValue(SteamEngineBlock.IS_FORMED,true)
                 .setValue(SteamEngineBlock.FACING,matchedFacing),Block.UPDATE_ALL);
+        MultiblockRenderParts.assign(level,worldPosition,controller,"steam_engine",
+                matchedFacing,renderAirAnchors,voxelProfileName);
         requestModelDataUpdate();sync();return controller;
     }
 
@@ -173,6 +189,8 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
             if(!mb.getName().startsWith(PREFIX))continue;
             if(!matchesStructure(world,pos,mb.getStructure(),mb))continue;
             blueprintName=mb.getName();replacementModel=mb.getSettings().getReplaceWhenFormed();
+            voxelProfileName=mb.getSettings().getVoxelProfile();
+            renderAirAnchors=mb.getSettings().getRenderAirAnchors();
             matchedFacing=facingFromName(blueprintName);return mb.getStructure();
         }
         return null;
@@ -201,6 +219,9 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
         MultiblockPersistentData data=loadMultiblockData(tag);
         blueprintName=data.blueprintName();formed=data.formed();replacementModel=data.replacementModel();
         matchedFacing=facingFromName(blueprintName);
+        voxelProfileName=tag.getString("SteamEngineVoxelProfile");
+        collision=MultiblockVoxelNbt.read(tag,"SteamEngineCollision");
+        selection=MultiblockVoxelNbt.read(tag,"SteamEngineSelection");
         inletPos=tag.contains("SteamEngineInlet")?BlockPos.of(tag.getLong("SteamEngineInlet")):null;
         outputPos=tag.contains("SteamEngineOutput")?BlockPos.of(tag.getLong("SteamEngineOutput")):null;
         steamCreditMilli=Math.max(0,tag.getLong("SteamEngineCreditMilli"));
@@ -210,6 +231,9 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 {
     }
     @Override protected void saveAdditional(CompoundTag tag){
         super.saveAdditional(tag);saveMultiblockData(tag,blueprintName,formed,replacementModel);
+        if(!voxelProfileName.isBlank())tag.putString("SteamEngineVoxelProfile",voxelProfileName);
+        MultiblockVoxelNbt.write(tag,"SteamEngineCollision",collision);
+        MultiblockVoxelNbt.write(tag,"SteamEngineSelection",selection);
         if(inletPos!=null)tag.putLong("SteamEngineInlet",inletPos.asLong());
         if(outputPos!=null)tag.putLong("SteamEngineOutput",outputPos.asLong());
         tag.putLong("SteamEngineCreditMilli",steamCreditMilli);

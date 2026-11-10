@@ -4,7 +4,6 @@ import com.magneticraft2.common.block.general.BaseBlockMagneticraft2;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.stage.steam.SteamEngineBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
-import com.magneticraft2.common.utils.VoxelShapeUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -31,27 +30,6 @@ import org.jetbrains.annotations.Nullable;
 
 public final class SteamEngineBlock extends BaseBlockMagneticraft2 {
     public static final BooleanProperty IS_FORMED=BooleanProperty.create("is_formed");
-    private static final VoxelShape SOUTH=VoxelShapeUtils.combine(
-            // Two long foundation rails with four cross-ties; the centre stays walkable.
-            Block.box(-32,0,0,-18,10,112),
-            Block.box(34,0,0,48,10,112),
-            Block.box(-18,0,0,34,10,16),
-            Block.box(-18,0,32,34,10,48),
-            Block.box(-18,0,64,34,10,80),
-            Block.box(-18,0,96,34,10,112),
-            // Crank/bearing pedestals and crosshead guides.
-            Block.box(-16,10,30,-8,36,50),
-            Block.box(24,10,30,32,36,50),
-            Block.box(-8,16,49,0,26,73),
-            Block.box(16,16,49,24,26,73),
-            // Cylinder envelope, feet and steam chest.
-            Block.box(-16,10,68,32,49,112),
-            Block.box(-32,20,80,-16,52,103)
-    );
-    private static final VoxelShape NORTH=VoxelShapeUtils.rotate(SOUTH,Rotation.CLOCKWISE_180);
-    private static final VoxelShape EAST=VoxelShapeUtils.rotate(SOUTH,Rotation.COUNTERCLOCKWISE_90);
-    private static final VoxelShape WEST=VoxelShapeUtils.rotate(SOUTH,Rotation.CLOCKWISE_90);
-
     public SteamEngineBlock(){
         super(BlockBehaviour.Properties.of().strength(5F,8F).requiresCorrectToolForDrops().noOcclusion());
         registerDefaultState(stateDefinition.any().setValue(FACING,Direction.SOUTH).setValue(IS_FORMED,false));
@@ -86,11 +64,14 @@ public final class SteamEngineBlock extends BaseBlockMagneticraft2 {
         return super.onDestroyedByPlayer(state,level,pos,player,harvest,fluid);
     }
     @Override public VoxelShape getShape(BlockState s,BlockGetter level,BlockPos pos,CollisionContext ctx){
-        if(!s.getValue(IS_FORMED))return super.getShape(s,level,pos,ctx);
-        return switch(s.getValue(FACING)){case NORTH->NORTH;case EAST->EAST;case WEST->WEST;default->SOUTH;};
+        if(s.getValue(IS_FORMED)&&level.getBlockEntity(pos) instanceof SteamEngineBlockEntity engine
+                &&engine.localSelection()!=null)return engine.localSelection();
+        return super.getShape(s,level,pos,ctx);
     }
     @Override public VoxelShape getCollisionShape(BlockState s,BlockGetter level,BlockPos pos,CollisionContext ctx){
-        return getShape(s,level,pos,ctx);
+        if(s.getValue(IS_FORMED)&&level.getBlockEntity(pos) instanceof SteamEngineBlockEntity engine
+                &&engine.localCollision()!=null)return engine.localCollision();
+        return super.getCollisionShape(s,level,pos,ctx);
     }
     @Override public @Nullable BlockEntity newBlockEntity(BlockPos pos,BlockState state){
         return new SteamEngineBlockEntity(pos,state);

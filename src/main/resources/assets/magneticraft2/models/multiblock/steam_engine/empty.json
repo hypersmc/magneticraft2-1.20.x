@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "copper": "minecraft:block/cut_copper",
+    "deep": "minecraft:block/polished_deepslate",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": []
+}

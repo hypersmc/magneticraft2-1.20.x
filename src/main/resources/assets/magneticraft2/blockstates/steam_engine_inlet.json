@@ -3,14 +3,17 @@
     "facing=north": {
       "model": "magneticraft2:block/steam_engine_inlet"
     },
-    "facing=south": {
-      "model": "magneticraft2:block/steam_engine_inlet"
-    },
     "facing=east": {
-      "model": "magneticraft2:block/steam_engine_inlet"
+      "model": "magneticraft2:block/steam_engine_inlet",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/steam_engine_inlet",
+      "y": 180
     },
     "facing=west": {
-      "model": "magneticraft2:block/steam_engine_inlet"
+      "model": "magneticraft2:block/steam_engine_inlet",
+      "y": 270
     }
   }
 }
