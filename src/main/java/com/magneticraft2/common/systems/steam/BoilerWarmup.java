@@ -1,6 +1,7 @@
 package com.magneticraft2.common.systems.steam;
 
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerSafetyMountBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.blockentity.stage.steam.BoilerFireboxBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
@@ -10,6 +11,9 @@ import com.magneticraft2.common.systems.PRESSURE.SteamNetworkManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -46,6 +50,8 @@ public final class BoilerWarmup implements IFluidHandler {
             safetyMount = BlockPos.ZERO, steamPipe = BlockPos.ZERO, outletAbove = BlockPos.ZERO;
     private BlockPos[] stack = new BlockPos[0], requiredChunks = new BlockPos[0];
     private long lastTick = Long.MIN_VALUE;
+    private boolean reliefOpen;
+    private long reliefVented;
 
     public BoilerWarmup(SteelBoilerVesselBlockEntity owner) { this.owner = owner; }
 
@@ -138,9 +144,56 @@ public final class BoilerWarmup implements IFluidHandler {
                 && level.getBlockState(steamPipe).is(BlockRegistry.STEAM_PIPE.get());
     }
 
+    private boolean updateSafety(ServerLevel level, BoilerWarmupParameters.Rules rules) {
+        geometry();
+        if (!level.hasChunkAt(safetyMount)) return false;
+        BlockState safety = level.getBlockState(safetyMount);
+        if (!(safety.getBlock() instanceof BoilerSafetyMountBlock)
+                || safety.getValue(BoilerServiceFittingBlock.FACING) != facing()) return false;
+
+        double pressure = pipeConnected(level)
+                ? SteamNetworkManager.gaugePressureKPa(level, steamPipe) : 0.0;
+        int step = Math.max(0, Math.min(5,
+                (int) Math.round((pressure / Math.max(1.0, rules.gaugeMaxKPa())) * 5.0)));
+
+        if (rules.reliefEnabled() && pipeConnected(level)) {
+            if (!reliefOpen && pressure >= rules.reliefOpenKPa()) reliefOpen = true;
+            if (reliefOpen && pressure <= rules.reliefCloseKPa()) reliefOpen = false;
+            if (reliefOpen) {
+                int vented = SteamNetworkManager.ventSteam(
+                        level, steamPipe, rules.maxReliefUnitsPerTick());
+                if (vented > 0) {
+                    reliefVented += vented;
+                    pressure = SteamNetworkManager.gaugePressureKPa(level, steamPipe);
+                    step = Math.max(0, Math.min(5,
+                            (int) Math.round((pressure / Math.max(1.0, rules.gaugeMaxKPa())) * 5.0)));
+                    double x = safetyMount.getX() + 0.5;
+                    double y = safetyMount.getY() + 1.02;
+                    double z = safetyMount.getZ() + 0.5;
+                    level.sendParticles(ParticleTypes.CLOUD, x, y, z,
+                            5, 0.14, 0.16, 0.14, 0.025);
+                    if (level.getGameTime() % 10L == 0L)
+                        level.playSound(null, safetyMount, SoundEvents.FIRE_EXTINGUISH,
+                                SoundSource.BLOCKS, 0.45F, 1.55F);
+                }
+            }
+        } else {
+            reliefOpen = false;
+        }
+
+        if (safety.getValue(BoilerSafetyMountBlock.PRESSURE_STEP) != step
+                || safety.getValue(BoilerSafetyMountBlock.RELIEVING) != reliefOpen) {
+            level.setBlock(safetyMount, safety
+                    .setValue(BoilerSafetyMountBlock.PRESSURE_STEP, step)
+                    .setValue(BoilerSafetyMountBlock.RELIEVING, reliefOpen),
+                    Block.UPDATE_CLIENTS);
+            return true;
+        }
+        return false;
+    }
+
     /** Server ticker only; no offline catch-up and no unbounded graph scans here. */
     public void tick() {
-        if (!state.burning() && state.heat() == 0 && steam.stored() == 0) return;
         ServerLevel level = server();
         if (level == null || lastTick == level.getGameTime()) return;
         lastTick = level.getGameTime();
@@ -183,6 +236,9 @@ public final class BoilerWarmup implements IFluidHandler {
                 }
             }
         }
+
+        if (rules.reliefEnabled() || pipeConnected(level))
+            changed |= updateSafety(level, rules);
 
         if (changed) owner.setChanged();
         if (wasBurning != state.burning()) owner.sync();
@@ -313,7 +369,8 @@ public final class BoilerWarmup implements IFluidHandler {
                     level, steamPipe) * 10.0) / 10.0) + " kPa";
         tell(player, limits + "; fuel " + state.burnTicks() + " ticks; Steam "
                 + steam.stored() + "/" + rules.steamBufferCapacity()
-                + " units; network " + network);
+                + " units; network " + network
+                + (reliefOpen ? "; RELIEF OPEN" : "; relief closed"));
     }
 
     private static void tell(Player player, String text) {
@@ -375,7 +432,7 @@ public final class BoilerWarmup implements IFluidHandler {
         BoilerWarmupState.Snapshot s = state.snapshot();
         BoilerSteamState.Snapshot gas = steam.snapshot();
         CompoundTag n = new CompoundTag();
-        n.putInt("Version", 2);
+        n.putInt("Version", 3);
         n.putInt("Water", s.water()); n.putInt("Heat", s.heat());
         n.putInt("BurnTicks", s.burnTicks());
         n.putInt("HeatPerBurnTick", s.heatPerBurnTick());
@@ -393,19 +450,22 @@ public final class BoilerWarmup implements IFluidHandler {
         n.putLong("SteamProduced", gas.produced());
         n.putLong("SteamExported", gas.exported());
         n.putLong("SteamSpilled", gas.spilled());
+        n.putBoolean("ReliefOpen", reliefOpen);
+        n.putLong("ReliefVented", reliefVented);
         root.put(NBT, n);
     }
 
     public void load(CompoundTag root) {
         state = new BoilerWarmupState();
         steam = new BoilerSteamState();
+        reliefOpen = false; reliefVented = 0;
         geometryFacing = null;
         lastTick = Long.MIN_VALUE;
         if (!root.contains(NBT, Tag.TAG_COMPOUND)) return;
         CompoundTag n = root.getCompound(NBT);
         try {
             int version = n.getInt("Version");
-            if (version != 1 && version != 2)
+            if (version != 1 && version != 2 && version != 3)
                 throw new IllegalArgumentException("Unsupported warm-up version");
             BoilerWarmupState.Snapshot water = version == 1
                     ? new BoilerWarmupState.Snapshot(n.getInt("Water"), n.getInt("Heat"),
@@ -424,10 +484,14 @@ public final class BoilerWarmup implements IFluidHandler {
                         n.getLong("FuelDiscarded"), n.getLong("WaterToSteam"),
                         n.getLong("HeatToSteam"));
             state.restore(water);
-            if (version == 2)
+            if (version >= 2)
                 steam.restore(new BoilerSteamState.Snapshot(
                         n.getInt("SteamStored"), n.getLong("SteamProduced"),
                         n.getLong("SteamExported"), n.getLong("SteamSpilled")));
+            if (version >= 3) {
+                reliefOpen = n.getBoolean("ReliefOpen");
+                reliefVented = Math.max(0L, n.getLong("ReliefVented"));
+            }
         } catch (IllegalArgumentException invalid) {
             state = new BoilerWarmupState();
             steam = new BoilerSteamState();

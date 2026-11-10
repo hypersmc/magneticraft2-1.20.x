@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * Data-pack boiler balance. Format 1 keeps old warm-up working with Steam
- * disabled; only format 2 explicitly opts into phase conversion/output.
+ * Data-pack boiler balance. Format 1 = warm-up only; format 2 = Steam output;
+ * format 3 adds the real network relief valve and gauge bands.
  */
 @Mod.EventBusSubscriber(modid = magneticraft2.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class BoilerWarmupParameters extends SimpleJsonResourceReloadListener {
@@ -27,7 +27,9 @@ public final class BoilerWarmupParameters extends SimpleJsonResourceReloadListen
             int passiveLoss, boolean steamEnabled, int boilThresholdHeat,
             int steamWaterPerUnit, int steamHeatPerUnit, int steamBufferCapacity,
             int maxPhaseUnitsPerTick, int maxOutputUnitsPerTick,
-            double steamTemperatureK, double outputCutoffKPa) { }
+            double steamTemperatureK, double outputCutoffKPa,
+            boolean reliefEnabled, double reliefOpenKPa, double reliefCloseKPa,
+            int maxReliefUnitsPerTick, double gaugeMaxKPa) { }
 
     public BoilerWarmupParameters() { super(new Gson(), "boiler_warmup"); }
     @Nullable public static Rules rules() { return current; }
@@ -42,14 +44,14 @@ public final class BoilerWarmupParameters extends SimpleJsonResourceReloadListen
             JsonElement entry = entries.get(ID);
             if (entry == null) throw new IllegalArgumentException("Missing magneticraft2:default");
             JsonObject j = entry.getAsJsonObject();
-            int format = integer(j, "format", 1, 2);
+            int format = integer(j, "format", 1, 3);
             int water = integer(j, "water_capacity_mb", 1, BoilerWarmupState.MAX_AMOUNT);
             int heat = integer(j, "heat_capacity", 1, BoilerWarmupState.MAX_AMOUNT);
             int gain = integer(j, "heat_per_burn_tick", 1, BoilerWarmupState.MAX_HEAT_PER_TICK);
             int loss = integer(j, "passive_heat_loss", 0, BoilerWarmupState.MAX_HEAT_PER_TICK);
             if (format == 1) {
-                current = new Rules(water, heat, gain, loss, false,
-                        0, 0, 0, 0, 0, 0, 453.15, 0);
+                current = new Rules(water, heat, gain, loss, false, 0, 0, 0,
+                        0, 0, 0, 453.15, 0, false, 0, 0, 0, 600);
                 return;
             }
             int threshold = integer(j, "boil_threshold_heat", 1, heat);
@@ -60,11 +62,24 @@ public final class BoilerWarmupParameters extends SimpleJsonResourceReloadListen
             int output = integer(j, "max_output_units_per_tick", 1, 64);
             double temperature = number(j, "steam_temperature_k", 373.15, 2000.0);
             double cutoff = number(j, "output_cutoff_kpa", 1.0, 1_000_000.0);
+            if (format == 2) {
+                current = new Rules(water, heat, gain, loss, true, threshold,
+                        waterPer, heatPer, buffer, phase, output, temperature, cutoff,
+                        false, 0, 0, 0, Math.max(600, cutoff));
+                return;
+            }
+            double reliefOpen = number(j, "relief_open_kpa", 1.0, 1_000_000.0);
+            double reliefClose = number(j, "relief_close_kpa", 0.0, reliefOpen);
+            if (reliefClose >= reliefOpen)
+                throw new IllegalArgumentException("relief_close_kpa must be below relief_open_kpa");
+            int reliefRate = integer(j, "max_relief_units_per_tick", 1, 64);
+            double gaugeMax = number(j, "gauge_max_kpa", reliefOpen, 1_000_000.0);
             current = new Rules(water, heat, gain, loss, true, threshold,
-                    waterPer, heatPer, buffer, phase, output, temperature, cutoff);
+                    waterPer, heatPer, buffer, phase, output, temperature, cutoff,
+                    true, reliefOpen, reliefClose, reliefRate, gaugeMax);
         } catch (RuntimeException invalid) {
             LogManager.getLogger("Magneticraft2Boiler").error(
-                    "Boiler warm-up disabled: invalid boiler_warmup/default.json: {}",
+                    "Boiler rules disabled: invalid boiler_warmup/default.json: {}",
                     invalid.getMessage());
         }
     }

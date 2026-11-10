@@ -77,6 +77,7 @@ import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerStructuralBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerSafetyMountBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerFireboxFrontBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
@@ -205,8 +206,8 @@ public class BlockRegistry {
             BLOCKS.register("boiler_steam_outlet", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.STEAM));
     public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FIREBOX_MOUNT =
             BLOCKS.register("boiler_firebox_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.FIREBOX));
-    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_SAFETY_MOUNT =
-            BLOCKS.register("boiler_safety_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.SAFETY));
+    public static final RegistryObject<BoilerSafetyMountBlock> BOILER_SAFETY_MOUNT =
+            BLOCKS.register("boiler_safety_mount", BoilerSafetyMountBlock::new);
     public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FLUE_CHIMNEY =
             BLOCKS.register("boiler_flue_chimney", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.CHIMNEY));
     // Steam 0-A V2: real, separately paid-for furnace extension.

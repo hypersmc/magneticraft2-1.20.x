@@ -262,6 +262,25 @@ public final class SteamNetworkManager {
         return accepted;
     }
 
+    /**
+     * Deliberate safety-valve vent. Removes real network inventory while
+     * preserving the component's average Steam temperature. This is distinct
+     * from a ruptured pipe and never changes pipe blocks.
+     */
+    public static int ventSteam(ServerLevel level, BlockPos pipe, int requested) {
+        if (requested <= 0) return 0;
+        Component component = component(level, pipe);
+        if (component.overflow() || component.positions().isEmpty()) return 0;
+        SteamNetworkSavedData data = SteamNetworkSavedData.get(level);
+        Content before = contents(data, component);
+        int vented = (int) Math.min(Math.min(requested, MAX_PORT_BATCH), before.units());
+        if (vented == 0) return 0;
+        long remaining = before.units() - vented;
+        spread(data, component, remaining,
+                remaining == 0 ? 0 : before.energy() * (remaining / (double) before.units()));
+        return vented;
+    }
+
     /** A consuming machine drains exactly the inventory it receives. */
     public static int takeSteam(ServerLevel level, BlockPos pipe, int requested) {
         if (requested <= 0) return 0;

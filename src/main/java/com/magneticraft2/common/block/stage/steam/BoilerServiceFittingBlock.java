@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * Placement only succeeds at the actual external site on a formed boiler.
  * Boiler teardown does not consume or drop these independently owned parts.
  */
-public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock {
+public class BoilerServiceFittingBlock extends HorizontalDirectionalBlock {
     public enum Role {
         WATER(2, 2, -2),
         STEAM(0, 4, -2),

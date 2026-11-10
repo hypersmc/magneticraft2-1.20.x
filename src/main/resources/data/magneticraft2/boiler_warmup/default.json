@@ -1,5 +1,5 @@
 {
-  "format": 2,
+  "format": 3,
   "water_capacity_mb": 8000,
   "heat_capacity": 36000,
   "heat_per_burn_tick": 36,
@@ -11,5 +11,9 @@
   "max_phase_units_per_tick": 1,
   "max_output_units_per_tick": 4,
   "steam_temperature_k": 453.15,
-  "output_cutoff_kpa": 500
+  "output_cutoff_kpa": 500,
+  "relief_open_kpa": 550,
+  "relief_close_kpa": 500,
+  "max_relief_units_per_tick": 4,
+  "gauge_max_kpa": 600
 }
