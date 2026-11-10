@@ -274,6 +274,10 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_BOILER_SHELL_PANEL = fromBlock(BOILER_SHELL_PANEL);
     public static final RegistryObject<Item> ITEM_BOILER_END_JOINT = fromBlock(BOILER_END_JOINT);
     public static final RegistryObject<Item> ITEM_STEEL_BOILER_VESSEL = fromBlock(STEEL_BOILER_VESSEL);
+    public static final RegistryObject<Item> ITEM_BOILER_WATER_INLET = fromBlock(BOILER_WATER_INLET);
+    public static final RegistryObject<Item> ITEM_BOILER_STEAM_OUTLET = fromBlock(BOILER_STEAM_OUTLET);
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_MOUNT = fromBlock(BOILER_FIREBOX_MOUNT);
+    public static final RegistryObject<Item> ITEM_BOILER_SAFETY_MOUNT = fromBlock(BOILER_SAFETY_MOUNT);
     // First useful Steel product; existing Forge Hammer maintenance handles
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =

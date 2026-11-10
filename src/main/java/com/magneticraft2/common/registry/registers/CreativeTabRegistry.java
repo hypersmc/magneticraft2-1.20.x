@@ -192,6 +192,10 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BOILER_SHELL_PANEL.get());
                         entries.accept(ItemRegistry.ITEM_BOILER_END_JOINT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_BOILER_VESSEL.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_WATER_INLET.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_STEAM_OUTLET.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_FIREBOX_MOUNT.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_SAFETY_MOUNT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_SHAFT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_MEDIUM.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_LARGE.get());

@@ -76,6 +76,7 @@ import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
 import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerStructuralBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -195,6 +196,16 @@ public class BlockRegistry {
     // Steel IV-C physically constructed vessel; entirely inert until Steam Age.
     public static final RegistryObject<SteelBoilerVesselBlock> STEEL_BOILER_VESSEL =
             BLOCKS.register("steel_boiler_vessel", SteelBoilerVesselBlock::new);
+
+    // Steam 0-A: separate inert, physically supported service mounts; no capabilities or ticks.
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_WATER_INLET =
+            BLOCKS.register("boiler_water_inlet", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.WATER));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_STEAM_OUTLET =
+            BLOCKS.register("boiler_steam_outlet", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.STEAM));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FIREBOX_MOUNT =
+            BLOCKS.register("boiler_firebox_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.FIREBOX));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_SAFETY_MOUNT =
+            BLOCKS.register("boiler_safety_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.SAFETY));
     // Steel entry: three distinct JSON-formed machines, shared thermal backend.
     public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
             BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));

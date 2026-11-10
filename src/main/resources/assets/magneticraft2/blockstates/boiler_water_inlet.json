@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magneticraft2:block/boiler_water_inlet_south"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/boiler_water_inlet_east"
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/boiler_water_inlet_north"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/boiler_water_inlet_west"
+    }
+  }
+}

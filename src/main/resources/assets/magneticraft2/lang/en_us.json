@@ -650,5 +650,10 @@
   "block.magneticraft2.boiler_end_joint": "Boiler End Joint",
   "block.magneticraft2.steel_boiler_vessel": "Steel Boiler Vessel Controller",
   "message.magneticraft2.steel_boiler_vessel.formed": "Boiler vessel formed; Steam systems not installed.",
-  "message.magneticraft2.steel_boiler_vessel.incomplete": "Boiler incomplete; follow the Steel IV-C Visualize."
+  "message.magneticraft2.steel_boiler_vessel.incomplete": "Boiler incomplete; follow the Steel IV-C Visualize.",
+  "block.magneticraft2.boiler_water_inlet": "Boiler Water Inlet",
+  "block.magneticraft2.boiler_steam_outlet": "Boiler Steam Outlet",
+  "block.magneticraft2.boiler_firebox_mount": "Boiler Firebox Mount",
+  "block.magneticraft2.boiler_safety_mount": "Boiler Safety Service Mount",
+  "message.magneticraft2.boiler_service_inert": "Service mounts installed; water, heat, Steam and relief controls are not operational."
 }
