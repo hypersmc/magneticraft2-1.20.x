@@ -1,0 +1,36 @@
+{
+  "variants": {
+    "facing=south,is_formed=true": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 0
+    },
+    "facing=south,is_formed=false": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 0
+    },
+    "facing=west,is_formed=true": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 90
+    },
+    "facing=west,is_formed=false": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 90
+    },
+    "facing=north,is_formed=true": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 180
+    },
+    "facing=north,is_formed=false": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 180
+    },
+    "facing=east,is_formed=true": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 270
+    },
+    "facing=east,is_formed=false": {
+      "model": "magneticraft2:block/boiler_firebox_front",
+      "y": 270
+    }
+  }
+}

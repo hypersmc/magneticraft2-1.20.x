@@ -1,0 +1,71 @@
+{
+  "name": "boiler_firebox_east",
+  "structure": {
+    "dimensions": [
+      2,
+      3,
+      3
+    ],
+    "layout": {
+      "layer1": [
+        [
+          "F",
+          "F"
+        ],
+        [
+          "F",
+          "F"
+        ],
+        [
+          "F",
+          "F"
+        ]
+      ],
+      "layer2": [
+        [
+          "L",
+          "L"
+        ],
+        [
+          "I",
+          "D"
+        ],
+        [
+          "L",
+          "L"
+        ]
+      ],
+      "layer3": [
+        [
+          "L",
+          "L"
+        ],
+        [
+          "L",
+          "L"
+        ],
+        [
+          "L",
+          "L"
+        ]
+      ]
+    },
+    "blocks": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "L": "magneticraft2:boiler_firebox_lining",
+      "I": "magneticraft2:boiler_firebox_mount",
+      "D": "magneticraft2:boiler_firebox_front"
+    }
+  },
+  "settings": {
+    "replacewhenformed": "multiblock/boiler_firebox_east",
+    "inventory": false,
+    "power": false,
+    "fuel": false,
+    "fluid": false,
+    "inputs": [],
+    "outputs": [],
+    "render_air_anchors": [],
+    "voxel_profile": "magneticraft2:boiler_firebox_v2"
+  }
+}

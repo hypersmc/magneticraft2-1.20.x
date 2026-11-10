@@ -36,6 +36,7 @@ import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity
 import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.BoilerFireboxBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -85,6 +86,10 @@ public class BlockEntityRegistry {
     public static void init(IEventBus eventBus){
         BLOCK_ENTITIES.register(eventBus);
     }
+
+    public static final RegistryObject<BlockEntityType<BoilerFireboxBlockEntity>> BOILER_FIREBOX_BE =
+            BLOCK_ENTITIES.register("boiler_firebox_front", () -> BlockEntityType.Builder.of(
+                    BoilerFireboxBlockEntity::new, BlockRegistry.BOILER_FIREBOX_FRONT.get()).build(null));
 
     //Block Entities after this line
     //Should sort this for each stage

@@ -2,6 +2,13 @@ package com.magneticraft2.common.block.stage.steam;
 
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.registry.registers.BlockRegistry;
+import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
+import com.magneticraft2.common.systems.steam.BoilerFireboxInstallation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -44,7 +51,7 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         {{2,0,2,14,2,14},{4,2,4,12,8,12},{6,8,6,10,13,10},{10,9,6,14,13,10},{14,8,4,16,14,12},{6,13,6,10,14,10},{3,14,4,13,16,12}},
         {{3,3,0,13,13,3},{2,2,3,14,14,4},{1,1,4,3,15,15},{13,1,4,15,15,15},{3,1,4,13,3,15},{3,13,4,13,15,15},{3,3,4,13,13,5},{3,3,14,5,13,16},{11,3,14,13,13,16},{5,11,14,11,13,16},{5,3,14,11,5,16},{5,5,14,11,11,15},{6,5,15,7,11,16},{9,5,15,10,11,16},{4,1,15,12,3,16},{5,15,5,11,16,11}},
         {{2,0,2,14,2,14},{3,2,8,6,9,11},{1,8,11,9,15,12},{3,10,12,7,13,13},{1,8,12,3,15,14},{7,8,12,9,15,14},{3,8,12,7,10,14},{3,13,12,7,15,14},{4,11,13,6,12,14},{10,2,3,14,9,7},{11,9,4,13,13,6},{10,13,3,14,15,7}},
-        {{3,0,3,13,2,13},{5,2,5,6,14,11},{10,2,5,11,14,11},{6,2,5,10,14,6},{6,2,10,10,14,11},{3,14,3,5,16,13},{11,14,3,13,16,13},{5,14,3,11,16,5},{5,14,11,11,16,13}}
+        {{3,0,3,5,2,13},{11,0,3,13,2,13},{5,0,3,11,2,5},{5,0,11,11,2,13},{4,2,4,5,14,12},{11,2,4,12,14,12},{5,2,4,11,14,5},{5,2,11,11,14,12},{3,14,3,5,16,13},{11,14,3,13,16,13},{5,14,3,11,16,5},{5,14,11,11,16,13}}
     };
     private static final VoxelShape[][] SHAPES = buildShapes();
     private final Role role;
@@ -93,6 +100,10 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
     }
 
     @Override public @Nullable BlockState getStateForPlacement(BlockPlaceContext context){
+        if (role == Role.CHIMNEY) {
+            BlockState stack = BoilerFireboxInstallation.stackPlacement(context, this);
+            if (stack != null) return stack;
+        }
         Level level=context.getLevel();
         BlockPos position=context.getClickedPos();
         for(Direction facing:FACES){
@@ -104,6 +115,9 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
             if(!state.is(BlockRegistry.STEEL_BOILER_VESSEL.get())
                     || !state.getValue(SteelBoilerVesselBlock.IS_FORMED)
                     || state.getValue(SteelBoilerVesselBlock.FACING)!=facing)continue;
+            if (role == Role.CHIMNEY && level.getBlockEntity(controller)
+                    instanceof com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity vessel
+                    && vessel.boilerAssemblyTracked()) continue; // never recreate the old post on a V2 root
             BlockPos inward=switch(role){
                 case WATER -> position.relative(switch(facing){
                     case SOUTH -> Direction.WEST;
@@ -135,6 +149,11 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
      */
     @Override public void onRemove(BlockState oldState, Level level, BlockPos pos,
             BlockState newState, boolean moving) {
+        if (oldState.getBlock() != newState.getBlock()
+                && BoilerAssemblyRecovery.attachmentRemoved(level, pos)) {
+            super.onRemove(oldState, level, pos, newState, moving);
+            return;
+        }
         if (role == Role.FIREBOX && oldState.getBlock() != newState.getBlock()
                 && !level.isClientSide && !moving) {
             BlockPos above = pos.above();
@@ -149,9 +168,28 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         super.onRemove(oldState, level, pos, newState, moving);
     }
 
+    @Override public void setPlacedBy(Level world, BlockPos pos, BlockState state,
+            @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(world, pos, state, placer, stack);
+        BoilerFireboxInstallation.placed(world, pos, state, role);
+    }
+    @Override public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos,
+            Player player, boolean harvest, FluidState fluid) {
+        if (role == Role.CHIMNEY && (BoilerFireboxInstallation.stackOwner(world, pos) != null
+                || (world instanceof ServerLevel server && BoilerAssemblyRecovery.attachment(server, pos) != null))) {
+            BoilerAssemblyRecovery.playerBreakStack(world, pos, player);
+            return false;
+        }
+        return super.onDestroyedByPlayer(state, world, pos, player, harvest, fluid);
+    }
+
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
         builder.add(FACING);
     }
+    @Override public net.minecraft.world.level.material.PushReaction getPistonPushReaction(BlockState state) {
+        return net.minecraft.world.level.material.PushReaction.BLOCK; // bolted structural hardware
+    }
+
     @Override public BlockState rotate(BlockState state,Rotation rotation){
         return state.setValue(FACING,rotation.rotate(state.getValue(FACING)));
     }

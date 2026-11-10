@@ -1,0 +1,38 @@
+{
+  "type": "magneticraft2:mechanical_assembly",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "magneticraft2:riveted_iron_casing"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:fired_refractory_ceramic"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:refined_steel_plate"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:iron_rivet"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:boiler_firebox_lining",
+    "count": 1
+  },
+  "process_time": 320,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 10
+  }
+}

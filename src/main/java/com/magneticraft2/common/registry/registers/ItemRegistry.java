@@ -287,6 +287,8 @@ public class ItemRegistry {
     // stable save IDs and the 384/768/1536 material service tiers.
     public static final RegistryObject<Item> ITEM_BOILER_FLUE_CHIMNEY = ITEMS.register("boiler_flue_chimney",
                     () -> new BoilerServiceFittingItem(BOILER_FLUE_CHIMNEY.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_LINING = fromBlock(BOILER_FIREBOX_LINING);
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_FRONT = fromBlock(BOILER_FIREBOX_FRONT);
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =
             ITEMS.register("steel_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);

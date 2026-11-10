@@ -659,5 +659,22 @@
   "message.magneticraft2.boiler_service_not_formed": "Form the Steel Boiler Vessel before installing its service hardware.",
   "message.magneticraft2.boiler_service_obstructed": "The assigned boiler attachment position is obstructed.",
   "block.magneticraft2.boiler_flue_chimney": "Boiler Flue Chimney",
-  "message.magneticraft2.boiler_chimney_requires_firebox": "Install the Boiler Firebox Mount first."
+  "message.magneticraft2.boiler_chimney_requires_firebox": "Install the Boiler Firebox Mount first.",
+  "block.magneticraft2.boiler_firebox_lining": "Boiler Firebox Lining",
+  "block.magneticraft2.boiler_firebox_front": "Boiler Firebox Front",
+  "message.magneticraft2.firebox_v2.formed": "Firebox assembled. Combustion and Steam systems are not installed.",
+  "message.magneticraft2.firebox_v2.unloaded": "Load the complete boiler, firebox and fittings before changing this assembly.",
+  "message.magneticraft2.firebox_v2.vessel": "The firebox must face the same direction as an already formed Steel Boiler Vessel.",
+  "message.magneticraft2.firebox_v2.already_linked": "This vessel already has a linked firebox. Dismantle it before building another.",
+  "message.magneticraft2.firebox_v2.legacy_chimney": "Remove the old chimney above the Firebox Mount; reuse it on the new roof.",
+  "message.magneticraft2.firebox_v2.access": "Keep the two blocks directly in front of the stoking door clear.",
+  "message.magneticraft2.firebox_v2.resources": "The firebox blueprint or collision profile is missing or incompatible; check the log/data pack.",
+  "message.magneticraft2.firebox_v2.materials": "Incomplete firebox. Follow the Fired Boiler Assembly construction preview.",
+  "message.magneticraft2.firebox_v2.protected": "A protected or non-editable block prevents this whole-assembly operation.",
+  "message.magneticraft2.firebox_v2.pickaxe": "Use a pickaxe to dismantle the formed boiler or chimney.",
+  "message.magneticraft2.firebox_v2.stack_gap": "Remove the obstructing upper section before building this stack bottom-up.",
+  "message.magneticraft2.firebox_v2.obstructed": "The intended fitting position is occupied. No item was consumed.",
+  "message.magneticraft2.firebox_v2.stack_full": "All three chimney sections are installed.",
+  "message.magneticraft2.firebox_v2.reach": "Move closer to the actual attachment position before installing this part.",
+  "message.magneticraft2.firebox_v2.firebox_first": "Form the full-size firebox before installing its three-section chimney."
 }

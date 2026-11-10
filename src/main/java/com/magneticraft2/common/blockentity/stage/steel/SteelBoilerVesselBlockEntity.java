@@ -1,6 +1,12 @@
 package com.magneticraft2.common.blockentity.stage.steel;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.systems.steam.BoilerAssemblyHost;
+import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
+import net.minecraft.server.level.ServerLevel;
+import java.util.UUID;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -37,7 +43,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /** No BE ticking, reservoir, material duplication, POWER, AIR or STEAM capability. */
-public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost {
+public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost, BoilerAssemblyHost {
+    // Optional V2 metadata: old vessels remain inert and use their old lifecycle.
+    private UUID boilerIdentity = UUID.randomUUID();
+    private boolean boilerV2Tracked;
+    @Nullable private BoilerAssemblyHost.Link boilerFirebox;
     private static final String PREFIX="steel_boiler_vessel_";
     private boolean formed;
     private String blueprintName="",replacementModel="",voxelProfileName="";
@@ -49,6 +59,49 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
         menuProvider=null;
     }
     public boolean isFormed(){return formed;}
+
+    @Override public UUID boilerAssemblyId() { return boilerIdentity; }
+    @Override public BlockPos boilerAssemblyPosition() { return worldPosition; }
+    @Override public boolean boilerAssemblyTracked() { return boilerV2Tracked; }
+    @Override public boolean boilerAssemblyFormed() { return formed; }
+    @Override public Map<BlockPos, BlockState> boilerOriginalBlocks() {
+        MultiblockController controller = getMultiblockController();
+        return controller == null ? Map.of() : Map.copyOf(controller.getBlockMap());
+    }
+    @Override public @Nullable BoilerAssemblyHost.Link boilerChild() { return boilerFirebox; }
+    public boolean canLinkBoilerFirebox(BlockPos front) {
+        // An unresolved old link must not be overwritten, including unloaded chunks.
+        return formed && boilerFirebox == null;
+    }
+    public void linkBoilerFirebox(BlockPos front, UUID identity) {
+        if (!canLinkBoilerFirebox(front)) throw new IllegalStateException("Boiler already has a firebox");
+        boilerV2Tracked = true;
+        boilerFirebox = new BoilerAssemblyHost.Link(front.immutable(), identity);
+        sync();
+    }
+    public void unlinkBoilerFirebox(UUID identity) {
+        if (boilerFirebox != null && boilerFirebox.identity().equals(identity)) {
+            boilerFirebox = null;
+            sync();
+        }
+    }
+    @Override public Map<BlockPos, BlockState> claimBoilerOriginalBlocks() {
+        MultiblockController controller = getMultiblockController();
+        if (!formed || !boilerV2Tracked || controller == null) return Map.of();
+        Map<BlockPos, BlockState> original = new LinkedHashMap<>(controller.getBlockMap());
+        // Clear authoritative ownership before any reentrant world callback.
+        formed = false;
+        controller.setFormed(false);
+        controller.getBlockMap().clear();
+        boilerFirebox = null;
+        setChanged();
+        return original;
+    }
+    @Override public void onLoad() {
+        super.onLoad();
+        if (boilerV2Tracked && level instanceof ServerLevel server) BoilerAssemblyRecovery.wake(server);
+    }
+
     @Override protected void interactableNoGui(BlockState state, Level world, BlockPos pos,
             Player player, InteractionHand hand, BlockHitResult hit) {
         // Steel IV-C vessel has no GUI or processing. The controller block handles
@@ -100,6 +153,12 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
      * multiblock filler positions. Drop them before the vessel is dismantled.
      */
     @Override public void onDestroy(Level world) {
+        if (boilerV2Tracked) {
+            if (formed && world instanceof ServerLevel server)
+                BoilerAssemblyRecovery.request(server,
+                        new BoilerAssemblyHost.Link(worldPosition, boilerIdentity), true, null);
+            return; // V2 original-state ownership has already moved to recovery.
+        }
         if (!world.isClientSide && formed) {
             formed = false; // prevents duplicate attachment drops on reentry
             BlockState controllerState = world.getBlockState(worldPosition);
@@ -123,6 +182,11 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
 
     @Override public void load(CompoundTag tag){
         super.load(tag);
+        boilerIdentity = tag.hasUUID("BoilerV2Id") ? tag.getUUID("BoilerV2Id") : UUID.randomUUID();
+        boilerV2Tracked = tag.getBoolean("BoilerV2Tracked");
+        boilerFirebox = tag.hasUUID("BoilerV2ChildId")
+                ? new BoilerAssemblyHost.Link(BlockPos.of(tag.getLong("BoilerV2ChildPos")),
+                        tag.getUUID("BoilerV2ChildId")) : null;
         MultiblockPersistentData saved=loadMultiblockData(tag);
         blueprintName=saved.blueprintName();formed=saved.formed();
         replacementModel=saved.replacementModel();matchedFacing=facingFromName(blueprintName);
@@ -132,6 +196,12 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
     }
     @Override protected void saveAdditional(CompoundTag tag){
         super.saveAdditional(tag);
+        tag.putUUID("BoilerV2Id", boilerIdentity);
+        tag.putBoolean("BoilerV2Tracked", boilerV2Tracked);
+        if (boilerFirebox != null) {
+            tag.putUUID("BoilerV2ChildId", boilerFirebox.identity());
+            tag.putLong("BoilerV2ChildPos", boilerFirebox.position().asLong());
+        }
         saveMultiblockData(tag,blueprintName,formed,replacementModel);
         if(!voxelProfileName.isBlank())tag.putString("BoilerVesselVoxelProfile",voxelProfileName);
         MultiblockVoxelNbt.write(tag,"BoilerVesselCollision",collision);

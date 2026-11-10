@@ -77,6 +77,7 @@ import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerStructuralBlock;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerFireboxFrontBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -208,6 +209,13 @@ public class BlockRegistry {
             BLOCKS.register("boiler_safety_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.SAFETY));
     public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FLUE_CHIMNEY =
             BLOCKS.register("boiler_flue_chimney", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.CHIMNEY));
+    // Steam 0-A V2: real, separately paid-for furnace extension.
+    public static final RegistryObject<Block> BOILER_FIREBOX_LINING =
+            BLOCKS.register("boiler_firebox_lining", () -> new Block(
+                    BlockBehaviour.Properties.of().strength(5F, 8F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final RegistryObject<BoilerFireboxFrontBlock> BOILER_FIREBOX_FRONT =
+            BLOCKS.register("boiler_firebox_front", BoilerFireboxFrontBlock::new);
     // Steel entry: three distinct JSON-formed machines, shared thermal backend.
     public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
             BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));

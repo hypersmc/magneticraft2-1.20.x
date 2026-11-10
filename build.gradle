@@ -242,8 +242,9 @@ dependencies {
     implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.20:4.2')
     implementation fg.deobf("curse.maven:the-one-probe-245211:4613250")
     implementation fg.deobf("curse.maven:mekanism-268560:5395221")
-    implementation fg.deobf("curse.maven:jei-238222:4609866")
+    implementation fg.deobf("curse.maven:jei-238222:8778011")
     implementation fg.deobf("curse.maven:patchouli-306770:4966125")
+
 }
 
 tasks.withType(JavaExec).configureEach {
