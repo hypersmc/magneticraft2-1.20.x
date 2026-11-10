@@ -331,7 +331,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Steam 0-A — Boiler Service Fittings$()$(br2)Form the Steel Boiler Vessel first. Manufacture a Boiler Water Inlet, Boiler Steam Outlet, Boiler Firebox Mount and Boiler Safety Service Mount in the existing Mechanical Assembly Station. Hold a fitting and RIGHT-CLICK any part of the already FORMED boiler: it automatically installs on the correct side at its designated external position. Water Inlet: low side. Steam Outlet: top center. Firebox Mount: lower front end ring. Safety Mount: upper front. The destination must be empty; an obstruction displays a message. All mounts sit outside the original boiler blueprint. Fittings only place when connected to their correct position on a FORMED boiler, automatically aligning to its facing. They remain separate blocks when the vessel is dismantled. For now, ALL service fittings are inert: no water intake, Steam flow, heat, fuel, pressure gauge or working relief valve."
+      "text": "$(bold)Steam 0-A — Fired Boiler Hardware$()$(br2)Form the accepted Steel Boiler Vessel first. Using the existing Mechanical Assembly Station, build the Water Inlet, Steam Outlet, Firebox Mount, Safety Service Mount and Flue Chimney. Hold a fitting and right-click any part of the formed boiler: it installs automatically at its designated exterior point. Install the front Firebox Mount BEFORE the Flue Chimney, which stacks directly above its roof. The front has an unlit stoking door and ash opening; the flue is a real block, not a particle effect. Top fittings include a steam-dome takeoff and gauge/relief housings; the feedwater inlet is flanged onto the low side. The Steel IV-C 3x4x5 drum blueprint is unchanged. All new hardware remains inert until actual water, heat, Steam and protective relief systems are implemented."
     },
     {
       "type": "patchouli:crafting",
@@ -352,6 +352,11 @@
       "type": "patchouli:crafting",
       "title": "Boiler Safety Service Mount",
       "recipe": "magneticraft2:steam0a_assembly_boiler_safety_mount"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Flue Chimney",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_flue_chimney"
     }
   ]
 }

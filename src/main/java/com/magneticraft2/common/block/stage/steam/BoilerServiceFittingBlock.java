@@ -31,7 +31,8 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         WATER(2, 2, -2),
         STEAM(0, 4, -2),
         FIREBOX(0, 1, 1),
-        SAFETY(0, 4, -1);
+        SAFETY(0, 4, -1),
+        CHIMNEY(0, 2, 1);
         final int dx, dy, dz;
         Role(int x,int y,int z){dx=x;dy=y;dz=z;}
     }
@@ -39,10 +40,11 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST
     };
     private static final int[][][] BOXES = {
-        {{0,3,3,2,13,13},{2,6,6,10,10,10},{10,4,4,12,12,12},{12,4,4,16,6,12},{12,10,4,16,12,12},{12,6,4,16,10,6},{12,6,10,16,10,12}},
-        {{2,0,2,14,2,14},{6,2,6,10,11,10},{3,11,3,13,13,13},{3,13,3,5,16,13},{11,13,3,13,16,13},{5,13,3,11,16,5},{5,13,11,11,16,13}},
-        {{2,2,0,14,14,2},{5,5,2,11,11,11},{2,2,11,4,14,13},{12,2,11,14,14,13},{4,2,11,12,4,13},{4,12,11,12,14,13},{4,4,13,5,12,16},{11,4,13,12,12,16},{5,4,13,11,5,16},{5,11,13,11,12,16},{5,5,12,11,11,13}},
-        {{2,0,2,14,2,14},{6,2,6,10,9,10},{3,9,3,13,12,13},{3,12,3,5,14,5},{11,12,3,13,14,5},{3,12,11,5,14,13},{11,12,11,13,14,13}}
+        {{0,3,3,3,13,13},{3,6,6,9,10,10},{9,5,5,14,11,11},{14,4,4,16,12,12},{11,1,6,13,5,10},{9,0,4,15,1,12},{11,11,7,13,14,9},{7,14,6,16,16,10}},
+        {{2,0,2,14,2,14},{4,2,4,12,8,12},{6,8,6,10,13,10},{10,9,6,14,13,10},{14,8,4,16,14,12},{6,13,6,10,14,10},{3,14,4,13,16,12}},
+        {{3,3,0,13,13,3},{2,2,3,14,14,4},{1,1,4,3,15,15},{13,1,4,15,15,15},{3,1,4,13,3,15},{3,13,4,13,15,15},{3,3,4,13,13,5},{3,3,14,5,13,16},{11,3,14,13,13,16},{5,11,14,11,13,16},{5,3,14,11,5,16},{5,5,14,11,11,15},{6,5,15,7,11,16},{9,5,15,10,11,16},{4,1,15,12,3,16},{5,15,5,11,16,11}},
+        {{2,0,2,14,2,14},{3,2,8,6,9,11},{1,8,11,9,15,12},{3,10,12,7,13,13},{1,8,12,3,15,14},{7,8,12,9,15,14},{3,8,12,7,10,14},{3,13,12,7,15,14},{4,11,13,6,12,14},{10,2,3,14,9,7},{11,9,4,13,13,6},{10,13,3,14,15,7}},
+        {{3,0,3,13,2,13},{5,2,5,6,14,11},{10,2,5,11,14,11},{6,2,5,10,14,6},{6,2,10,10,14,11},{3,14,3,5,16,13},{11,14,3,13,16,13},{5,14,3,11,16,5},{5,14,11,11,16,13}}
     };
     private static final VoxelShape[][] SHAPES = buildShapes();
     private final Role role;
@@ -110,12 +112,17 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
                     case WEST -> Direction.NORTH;
                     default -> throw new IllegalArgumentException("Horizontal facing required");
                 });
-                case STEAM, SAFETY -> position.below();
+                case STEAM, SAFETY, CHIMNEY -> position.below();
                 case FIREBOX -> position.relative(facing.getOpposite());
             };
-            if(!level.hasChunkAt(inward)
-                    || !level.getBlockState(inward).is(BlockRegistry.multiblockfiller.get()))
-                continue;
+            if (!level.hasChunkAt(inward)) continue;
+            BlockState support = level.getBlockState(inward);
+            if (role == Role.CHIMNEY) {
+                // A real flue must be borne by its separate firebox housing.
+                if (!(support.getBlock() instanceof BoilerServiceFittingBlock fitting)
+                        || fitting.role() != Role.FIREBOX
+                        || support.getValue(FACING) != facing) continue;
+            } else if (!support.is(BlockRegistry.multiblockfiller.get())) continue;
             return defaultBlockState().setValue(FACING,facing);
         }
         return null; // No unsupported/free-floating service connections.

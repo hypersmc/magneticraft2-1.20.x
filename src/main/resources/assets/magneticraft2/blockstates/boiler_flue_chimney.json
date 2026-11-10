@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magneticraft2:block/boiler_flue_chimney_south"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/boiler_flue_chimney_west"
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/boiler_flue_chimney_north"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/boiler_flue_chimney_east"
+    }
+  }
+}

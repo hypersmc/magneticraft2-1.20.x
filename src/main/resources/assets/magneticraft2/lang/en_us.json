@@ -657,5 +657,7 @@
   "block.magneticraft2.boiler_safety_mount": "Boiler Safety Service Mount",
   "message.magneticraft2.boiler_service_inert": "Service mounts installed; water, heat, Steam and relief controls are not operational.",
   "message.magneticraft2.boiler_service_not_formed": "Form the Steel Boiler Vessel before installing its service hardware.",
-  "message.magneticraft2.boiler_service_obstructed": "The assigned boiler attachment position is obstructed."
+  "message.magneticraft2.boiler_service_obstructed": "The assigned boiler attachment position is obstructed.",
+  "block.magneticraft2.boiler_flue_chimney": "Boiler Flue Chimney",
+  "message.magneticraft2.boiler_chimney_requires_firebox": "Install the Boiler Firebox Mount first."
 }

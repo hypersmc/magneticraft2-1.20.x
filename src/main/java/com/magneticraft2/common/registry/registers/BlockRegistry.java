@@ -206,6 +206,8 @@ public class BlockRegistry {
             BLOCKS.register("boiler_firebox_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.FIREBOX));
     public static final RegistryObject<BoilerServiceFittingBlock> BOILER_SAFETY_MOUNT =
             BLOCKS.register("boiler_safety_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.SAFETY));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FLUE_CHIMNEY =
+            BLOCKS.register("boiler_flue_chimney", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.CHIMNEY));
     // Steel entry: three distinct JSON-formed machines, shared thermal backend.
     public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
             BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));

@@ -196,6 +196,7 @@ public class CreativeTabRegistry {
                         entries.accept(ItemRegistry.ITEM_BOILER_STEAM_OUTLET.get());
                         entries.accept(ItemRegistry.ITEM_BOILER_FIREBOX_MOUNT.get());
                         entries.accept(ItemRegistry.ITEM_BOILER_SAFETY_MOUNT.get());
+                        entries.accept(ItemRegistry.ITEM_BOILER_FLUE_CHIMNEY.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_SHAFT.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_MEDIUM.get());
                         entries.accept(ItemRegistry.ITEM_STEEL_GEAR_LARGE.get());
