@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/steam_engine_output"
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/steam_engine_output"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/steam_engine_output"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/steam_engine_output"
+    },
+    "facing=up": {
+      "model": "magneticraft2:block/steam_engine_output"
+    },
+    "facing=down": {
+      "model": "magneticraft2:block/steam_engine_output"
+    }
+  }
+}

@@ -41,6 +41,9 @@ public class SteamPipeBlock extends Block {
             Direction facing = state.getValue(BoilerServiceFittingBlock.FACING);
             return BoilerServiceFittingBlock.steamPipePosition(neighbour, facing).equals(pos);
         }
+        if (state.is(BlockRegistry.STEAM_ENGINE_INLET.get())) {
+            return SteamEngineInletBlock.externalPipePosition(neighbour, state).equals(pos);
+        }
         BlockEntity entity = level.getBlockEntity(neighbour);
         if (entity == null) return false;
         var gas = entity.getCapability(

@@ -289,6 +289,9 @@ public class ItemRegistry {
                     () -> new BoilerServiceFittingItem(BOILER_FLUE_CHIMNEY.get(), new Item.Properties()));
     public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_LINING = fromBlock(BOILER_FIREBOX_LINING);
     public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_FRONT = fromBlock(BOILER_FIREBOX_FRONT);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE = fromBlock(STEAM_ENGINE);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE_INLET = fromBlock(STEAM_ENGINE_INLET);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE_OUTPUT = fromBlock(STEAM_ENGINE_OUTPUT);
     public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =
             ITEMS.register("steel_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);

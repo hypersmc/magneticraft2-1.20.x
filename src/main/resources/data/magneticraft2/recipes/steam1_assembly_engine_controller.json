@@ -1,0 +1,38 @@
+{
+  "type": "magneticraft2:mechanical_assembly",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "magneticraft2:refined_steel_plate"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:iron_bearing_housing"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:riveted_iron_casing"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:pressure_pipe_coupling"
+      },
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:steam_engine",
+    "count": 1
+  },
+  "process_time": 400,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 12
+  }
+}

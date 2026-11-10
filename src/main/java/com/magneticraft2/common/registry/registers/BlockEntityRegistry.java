@@ -37,6 +37,9 @@ import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntit
 import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
 import com.magneticraft2.common.blockentity.stage.steam.BoilerFireboxBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineInletBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineOutputBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -90,6 +93,15 @@ public class BlockEntityRegistry {
     public static final RegistryObject<BlockEntityType<BoilerFireboxBlockEntity>> BOILER_FIREBOX_BE =
             BLOCK_ENTITIES.register("boiler_firebox_front", () -> BlockEntityType.Builder.of(
                     BoilerFireboxBlockEntity::new, BlockRegistry.BOILER_FIREBOX_FRONT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineBlockEntity>> STEAM_ENGINE_BE =
+            BLOCK_ENTITIES.register("steam_engine", () -> BlockEntityType.Builder.of(
+                    SteamEngineBlockEntity::new, BlockRegistry.STEAM_ENGINE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineInletBlockEntity>> STEAM_ENGINE_INLET_BE =
+            BLOCK_ENTITIES.register("steam_engine_inlet", () -> BlockEntityType.Builder.of(
+                    SteamEngineInletBlockEntity::new, BlockRegistry.STEAM_ENGINE_INLET.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineOutputBlockEntity>> STEAM_ENGINE_OUTPUT_BE =
+            BLOCK_ENTITIES.register("steam_engine_output", () -> BlockEntityType.Builder.of(
+                    SteamEngineOutputBlockEntity::new, BlockRegistry.STEAM_ENGINE_OUTPUT.get()).build(null));
 
     //Block Entities after this line
     //Should sort this for each stage

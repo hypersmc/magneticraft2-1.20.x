@@ -386,6 +386,21 @@ public class GearNetworkManager {
     }
 
     /**
+     * Read-only aggregate demand from the most recent Gear V2 evaluation.
+     * Source machines use this for resource metering; it does not change the
+     * network solve or register an artificial load.
+     */
+    public float getSourceTorqueDemand(Level level, BlockPos sourcePos) {
+        if (level == null || sourcePos == null) return 0.0F;
+        float demand = 0.0F;
+        for (MechanicalLoad load : getLoadMap(level).values()) {
+            if (load.active && sourcePos.equals(load.sourcePos))
+                demand += Math.max(0.0F, load.sourceEquivalentDemand);
+        }
+        return demand;
+    }
+
+    /**
      * Decide which flywheel, if any, is allowed to act as a source before the
      * normal source BFS begins.
      *

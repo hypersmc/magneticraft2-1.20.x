@@ -676,5 +676,11 @@
   "message.magneticraft2.firebox_v2.obstructed": "The intended fitting position is occupied. No item was consumed.",
   "message.magneticraft2.firebox_v2.stack_full": "All three chimney sections are installed.",
   "message.magneticraft2.firebox_v2.reach": "Move closer to the actual attachment position before installing this part.",
-  "message.magneticraft2.firebox_v2.firebox_first": "Form the full-size firebox before installing its three-section chimney."
+  "message.magneticraft2.firebox_v2.firebox_first": "Form the full-size firebox before installing its three-section chimney.",
+  "block.magneticraft2.steam_engine": "Stationary Steam Engine Controller",
+  "item.magneticraft2.steam_engine": "Stationary Steam Engine Controller",
+  "block.magneticraft2.steam_engine_inlet": "Steam Engine Inlet",
+  "item.magneticraft2.steam_engine_inlet": "Steam Engine Inlet",
+  "block.magneticraft2.steam_engine_output": "Steam Engine Crankshaft Output",
+  "item.magneticraft2.steam_engine_output": "Steam Engine Crankshaft Output"
 }

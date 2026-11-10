@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "minimum_pressure_kpa": 120,
+  "rated_pressure_kpa": 500,
+  "minimum_rpm": 12,
+  "rated_rpm": 32,
+  "rated_torque": 32,
+  "idle_millisteam_per_tick": 4,
+  "load_millisteam_per_torque_tick": 1,
+  "max_draw_units_per_tick": 2
+}

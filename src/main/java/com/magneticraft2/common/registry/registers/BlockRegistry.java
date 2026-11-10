@@ -79,6 +79,9 @@ import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerSafetyMountBlock;
 import com.magneticraft2.common.block.stage.steam.BoilerFireboxFrontBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineInletBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineOutputBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -217,6 +220,13 @@ public class BlockRegistry {
                             .sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final RegistryObject<BoilerFireboxFrontBlock> BOILER_FIREBOX_FRONT =
             BLOCKS.register("boiler_firebox_front", BoilerFireboxFrontBlock::new);
+    // Steam I: large stationary engine. Inlet/output modules survive formation.
+    public static final RegistryObject<SteamEngineBlock> STEAM_ENGINE =
+            BLOCKS.register("steam_engine", SteamEngineBlock::new);
+    public static final RegistryObject<SteamEngineInletBlock> STEAM_ENGINE_INLET =
+            BLOCKS.register("steam_engine_inlet", SteamEngineInletBlock::new);
+    public static final RegistryObject<SteamEngineOutputBlock> STEAM_ENGINE_OUTPUT =
+            BLOCKS.register("steam_engine_output", SteamEngineOutputBlock::new);
     // Steel entry: three distinct JSON-formed machines, shared thermal backend.
     public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
             BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));

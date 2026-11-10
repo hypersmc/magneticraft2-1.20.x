@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "magneticraft2:block/steam_engine_inlet"
+    },
+    "facing=south": {
+      "model": "magneticraft2:block/steam_engine_inlet"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/steam_engine_inlet"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/steam_engine_inlet"
+    }
+  }
+}
