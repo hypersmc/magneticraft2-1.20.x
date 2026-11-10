@@ -43,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
-/** Steel vessel plus optional manual warm-up; no pressure, Steam or power capability. */
+/** Steel vessel owner for water/HEAT and finite Steam output; no legacy pressure, power or engine capability. */
 public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticraft2 implements MultiblockVoxelHost, BoilerAssemblyHost {
     // Optional V2 metadata: old vessels remain inert and use their old lifecycle.
     private final BoilerWarmup warmup = new BoilerWarmup(this);
