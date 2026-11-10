@@ -682,5 +682,7 @@
   "block.magneticraft2.steam_engine_inlet": "Steam Engine Inlet",
   "item.magneticraft2.steam_engine_inlet": "Steam Engine Inlet",
   "block.magneticraft2.steam_engine_output": "Steam Engine Crankshaft Output",
-  "item.magneticraft2.steam_engine_output": "Steam Engine Crankshaft Output"
+  "item.magneticraft2.steam_engine_output": "Steam Engine Crankshaft Output",
+  "message.magneticraft2.steam_engine.formed": "Stationary Steam Engine formed.",
+  "message.magneticraft2.steam_engine.incomplete": "Steam Engine structure is incomplete. Check the Steam Age Visualize."
 }

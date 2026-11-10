@@ -128,7 +128,7 @@
     {
       "type": "patchouli:text",
       "title": "Before dismantling",
-      "text": "Drain water through the inlet before dismantling when practical. Dismantling a filled vessel spills remaining water/HEAT and vents any buffered Steam; none returns as free buckets, fuel or Steam items. Save/reload retains active state with no offline catch-up. The next chapter covers the provisional finite Steam-generation/output slice; automatic water intake, a true relief valve and engine power remain later work."
+      "text": "Drain water through the inlet before dismantling when practical. Dismantling a filled boiler spills remaining water/HEAT and vents buffered Steam; none returns as free buckets, burned fuel or Steam items. Unburned queued fuel is returned. Save/reload preserves the active state with no offline catch-up. Pipe-fed water, local vessel pressure and the working relief valve are covered by the current implementation."
     },
     {
       "type": "patchouli:text",
@@ -158,7 +158,7 @@
     {
       "type": "patchouli:text",
       "title": "Read the boiler",
-      "text": "Empty-hand use on the vessel or firebox now reports water, HEAT, fuel ticks, vessel Steam buffer and connected network pressure. Dismantling vents buffered Steam and spills remaining water/HEAT; it never returns free fuel, water containers or Steam items. The first Steam engine is still a later stage."
+      "text": "Empty-hand use on the vessel or firebox reports water, HEAT, current fuel ticks, queued fuel, local boiler Steam/pressure and connected network pressure. Dismantling vents buffered Steam and spills remaining water/HEAT. The Stationary Steam Engine later in this chapter is the first machine that consumes the resulting network Steam."
     },
     {
       "type": "patchouli:text",
@@ -174,6 +174,11 @@
       "type": "patchouli:text",
       "title": "Steam I — Stationary Engine",
       "text": "$(bold)4 — Mechanical Steam Power$()$(br2)The first Steam Engine is intentionally a large stationary plant machine, not a one-block motor. Build the 5-wide x 4-high x 7-long horizontal engine shown next. Its heavy bed carries a large cylinder, rigid piston/crosshead linkage, crankshaft and side flywheel. It converts real network STEAM into Gear V2 mechanical power; it does NOT generate electricity."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Engine Materials",
+      "text": "The 5x4x7 engine uses 84 paid world blocks: 22 Iron Machine Foundations, 41 Iron Structural Beams, 18 Iron Plate Panels, 1 Stationary Steam Engine Controller, 1 Steam Engine Inlet and 1 Crankshaft Output. The hollow spaces shown by Visualize must remain air. The large footprint is intentional: this first engine is factory infrastructure, not a compact motor."
     },
     {
       "type": "patchouli:crafting",

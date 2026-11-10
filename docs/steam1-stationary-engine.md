@@ -13,7 +13,7 @@ It does not generate electricity. Dynamo/generator work follows only after this 
 - controller: rear-centre foundation cell;
 - physical Steam Inlet on cylinder side;
 - physical Crankshaft Output on opposite crankshaft side;
-- heavy foundations, Iron Structural Beams and Iron Plate Panels make up the paid structure;
+- exact paid structure: 22 Iron Machine Foundations + 41 Iron Structural Beams + 18 Iron Plate Panels + controller + Steam Inlet + Crankshaft Output = **84 blocks**;
 - formed visual is a large horizontal single-cylinder engine with bed, cylinder, crosshead guides, crankshaft and large side flywheel.
 
 Four JSON blueprints are generated from the canonical SOUTH layout. Inlet/output modules survive formation as real BlockEntities.
@@ -57,3 +57,33 @@ Exhaust Steam is explicitly accounted and released to atmosphere in this first p
 13. Dedicated two-client synchronization remains required before completion.
 
 A full Forge build and Minecraft runtime test have not been performed by this implementation pass.
+
+
+## Rendering/physics implementation notes — 2026-11-10
+
+The first single-controller 7-block static model draft was deliberately replaced before runtime testing. Standard Minecraft baked block models are not used as one 112-pixel-long object. The current implementation uses the established Multiblock Rendering/Voxel V2 architecture:
+
+- controller and each formed filler own only block-local baked static geometry;
+- shared foundation/beam models are reused instead of duplicated;
+- the 18 cylinder panel cells use a fixed directional baked palette (72 models across four facings);
+- ten blueprint-air cells per facing become explicit non-occluding proxies for the moving crank/rod/flywheel swept area;
+- a 213-box Voxel V2 profile is compiled once on data reload and clipped into block-local collision/selection snapshots on formation;
+- only crank, rigid connecting rod, crosshead/piston and flywheel use the dynamic renderer;
+- every moving model was re-authored within standard baked-model bounds and all checked UVs remain proportional.
+
+Static validation performed on the committed resources:
+- 164 assertions for directional required-air anchors, V2 profile selection and static palette availability;
+- 346 assertions for final moving/module model element bounds and proportional UV mapping;
+- 22 source assertions for V2 ownership/render hooks and Steam/Gear registrations.
+
+These checks are not compilation or Minecraft visual acceptance.
+
+## Current verification state
+
+**Implementation:** source/resources are present on PR #19.
+
+**Static verification:** the structure, render palette, animation definitions, module registration and Voxel V2 resource contracts pass the checks listed above.
+
+**Compilation:** unverified. The available build container could not resolve GitHub while attempting to obtain a checkout, and no CI status is attached to the tested commit.
+
+**Runtime/visual verification:** unverified until the engine is built and tested in Minecraft.

@@ -6,6 +6,7 @@ import com.magneticraft2.common.blockentity.stage.steam.SteamEngineBlockEntity;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -48,7 +49,12 @@ public final class SteamEngineBlock extends BaseBlockMagneticraft2 {
         if(!(level.getBlockEntity(pos) instanceof SteamEngineBlockEntity engine)||hand!=InteractionHand.MAIN_HAND)
             return InteractionResult.PASS;
         if(level.isClientSide)return InteractionResult.SUCCESS;
-        if(!engine.isFormed())engine.onRightClick();else engine.interactable(state,level,pos,player,hand,hit);
+        if(!engine.isFormed()){
+            engine.onRightClick();
+            player.displayClientMessage(Component.translatable(engine.isFormed()
+                    ?"message.magneticraft2.steam_engine.formed"
+                    :"message.magneticraft2.steam_engine.incomplete"),true);
+        }else engine.interactable(state,level,pos,player,hand,hit);
         return InteractionResult.CONSUME;
     }
     @Override protected void interactableNoGui(BlockState state,Level level,BlockPos pos,
