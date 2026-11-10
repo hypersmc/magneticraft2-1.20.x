@@ -9,6 +9,12 @@ const J="src/main/java/com/magneticraft2/common/";
 const itemImpl=read(J+"item/stage/steam/BoilerServiceFittingItem.java");
 const fillerBlock=read(J+"block/general/Multiblockfiller.java");
 const boilerControllerBlock=read(J+"block/stage/steel/SteelBoilerVesselBlock.java");
+const boilerVessel=read(J+"blockentity/stage/steel/SteelBoilerVesselBlockEntity.java");
+assert(boilerVessel.includes("BoilerServiceFittingBlock.Role.values()"));
+assert(boilerVessel.includes("world.destroyBlock(target, true)"));
+assert(boilerVessel.includes("roles.length - 1")&&boilerVessel.includes("formed = false"));
+assert(boilerVessel.includes("super.onDestroy(world)"));
+
 assert(itemImpl.includes("BlockPlaceContext.at(")&&itemImpl.includes("return place(moved)"));
 assert(itemImpl.includes("filler.getControllerPos()")&&itemImpl.includes("attachmentPosition("));
 assert(itemImpl.includes("target).isAir()"));
@@ -27,6 +33,9 @@ assert(!cls.includes("getCapability(")&&!cls.includes("SteamNetworkManager.")&&!
 assert(cls.includes("CHIMNEY(0, 2, 1)")&&cls.includes("Role.CHIMNEY"));
 assert(cls.includes("support.getValue(FACING) != facing"));
 assert(!cls.includes("setBlockAndUpdate(")&&!cls.includes("getTicker("));
+assert(cls.includes("role == Role.FIREBOX")&&cls.includes("fitting.role() == Role.CHIMNEY"));
+assert(cls.includes("level.destroyBlock(above, true)"));
+
 const blueprints=Object.fromEntries(["south","north","east","west"].map(f=>[
  f,json(D+"multiblocks/steel_boiler_vessel_"+f+".json").structure
 ]));

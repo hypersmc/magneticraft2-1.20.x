@@ -2,7 +2,7 @@
 
 **2026-11-10, draft PR #19. Source implemented, build and Minecraft runtime NOT verified.**
 
-Four inert separate placeable parts attach to the **formed** Steel IV-C drum. No existing multiblock JSON, baked shell geometry, original 53-block BOM, controller storage or rendering code is modified. These attachment blocks are NOT original multiblock members; they are independently crafted/mined/returned and must be removed separately when the vessel is dismantled. Their placement requires the correct formed controller in the same loaded area and a real adjacent multiblock-filler support. No free-standing parts. They do not automatically detach when the boiler is broken; that is an explicit limitation to avoid silently destroying items.
+Four inert separate placeable parts attach to the **formed** Steel IV-C drum. No existing multiblock JSON, baked shell geometry, original 53-block BOM, controller storage or rendering code is modified. These attachment blocks are NOT original multiblock members; they are independently crafted, and their matching items are returned separately from the original 53 vessel blocks on teardown. Their placement requires the correct formed controller in the same loaded area and a real adjacent multiblock-filler support. No free-standing parts. Loaded, correctly attached fittings detach and drop when the boiler is dismantled; unloaded chunks are not force-loaded.
 
 | Fitting ID | Canonical SOUTH offset from vessel controller | Contact | Assembly Station recipe |
 | --- | --- | --- | --- |
@@ -23,7 +23,7 @@ Four inert separate placeable parts attach to the **formed** Steel IV-C drum. No
 - [ ] Place at permitted water/steam/firebox/safety locations in SOUTH, NORTH, EAST and WEST; ensure visible bolted support and no floating or clipped interfaces from multiple views.
 - [ ] Attempt arbitrary ground/air placement and placement on unformed boiler; both must be rejected, not place an unsupported block.
 - [ ] Confirm existing water/steam pipes cannot mistakenly transmit water/STEAM through inert mounts. Check no heat, fuel, gauges or pressure simulation occurs.
-- [ ] Mine each mount and recover one matching block item. Break/reform the boiler with mounts installed: its 53 original parts must still return exactly once and the fittings remain distinct owned blocks (remove them independently).
+- [ ] Mine each mount and recover one matching block item. Break/reform the boiler with mounts installed: its 53 original parts must still return exactly once and the fittings return one separate item each, distinct from the original 53 structure parts.
 - [ ] Save/reload and cross-chunk boundary; verify retained facing, shape, mining and no ghost mounts. Test survival and creative, optionally dedicated server with two clients.
 - [ ] Run Steel IV-A/B/C checks and `./gradlew build` on JDK 17. Visually inspect model UV/seams and performance.
 
@@ -53,3 +53,8 @@ The player's actual Steam 0-A screenshot showed an accepted cylindrical pressure
 - No HEAT, Water, STEAM capabilities, combustion, pressure, fire, valve operation, true gauge reading, automatic exhaust animation or idle smoke are introduced. The exhaust pipe must remain non-emitting until actual combustion is modeled. The small front-mounted format is deliberate to avoid changing the accepted boiler body or adding oversized arbitrary geometry across chunks.
 
 **Visual / in-game acceptance:** build on South, North, East, West; install Firebox before Flue; confirm chimney rests flush on the firebox roof and the firebox bolts into the end ring; inspect low water flange, top dome/steam takeoff and gauge/relief assembly from all camera angles, with no floating gaps, UV distortion, hidden faces or misoriented components. Check unobstructed vs obstructed attachment handling, correct one-item consumption, tool drops, reload and dismantling of 53 original vessel parts while fittings remain independent. Run `node tools/steel-age/check-steam0a-boiler-service-fittings.mjs` and `./gradlew build` with JDK17, and an actual dedicated two-client test when available. **No compilation or in-game verification has occurred in this pass.**
+
+
+## Attachment teardown and chimney support fix — 2026-11-10
+
+The Steel IV-C controller's boiler-specific `onDestroy` now detaches and drops every correctly positioned, loaded Steam 0-A fitting **before** calling the unchanged original 53-piece multiblock teardown. Iterating in reverse order removes the chimney before the firebox, and a formed-state guard prevents reentrant duplicate drops. A separately mined front firebox also drops its own supported chimney via an `onRemove` check. This is event-based; no new per-tick scans or entity workarounds. Parts in chunks not loaded are NOT force-loaded; this edge case needs a dedicated in-game chunk-boundary test before Steam 0-A can be called complete. Steam, combustion, gauges and fluid capabilities remain inert. Source implementation is not evidence of successful build or runtime testing.
