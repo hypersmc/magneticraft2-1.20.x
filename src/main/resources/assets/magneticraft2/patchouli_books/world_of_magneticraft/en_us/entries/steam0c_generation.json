@@ -28,6 +28,16 @@
       "type": "patchouli:text",
       "title": "Read the boiler",
       "text": "Empty-hand use on the vessel or firebox now reports water, HEAT, fuel ticks, vessel Steam buffer and connected network pressure. Dismantling vents buffered Steam and spills remaining water/HEAT; it never returns free fuel, water containers or Steam items. The first Steam engine is still a later stage."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Gauge + Relief Valve",
+      "text": "The Safety Service Mount is now operational when a Steam Pipe is connected. Its red needle has six discrete positions driven by the actual connected-network pressure; this uses blockstates rather than a per-frame renderer. Default gauge scale: 0-600 kPa. The relief valve normally stays CLOSED because boiler output stops at 500 kPa. If pressure reaches 550 kPa through another source or topology change, the valve opens and vents REAL conserved Steam until pressure falls to 500 kPa. While open, the valve cap lifts and white Steam/hiss feedback appears."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Safety layers",
+      "text": "Normal source control: 500 kPa boiler output cutoff. Backup protection: 550 kPa relief-open / 500 kPa relief-close. Structural fault: existing Steam Pipe rupture above 600 kPa. These are separate systems. The relief valve removes actual network Steam; it is not a cosmetic particle and does not refund water or HEAT. Datapacks can tune the thresholds in boiler_warmup/default.json."
     }
   ]
 }
