@@ -15,10 +15,12 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,6 +44,7 @@ import java.util.List;
  */
 public final class BoilerWarmup implements IFluidHandler {
     private static final String NBT = "BoilerWarmup";
+    private static final int FUEL_QUEUE_LIMIT = 16;
     private final SteelBoilerVesselBlockEntity owner;
     private BoilerWarmupState state = new BoilerWarmupState();
     private BoilerSteamState steam = new BoilerSteamState();
@@ -52,6 +55,7 @@ public final class BoilerWarmup implements IFluidHandler {
     private long lastTick = Long.MIN_VALUE;
     private boolean reliefOpen;
     private long reliefVented;
+    private final List<ItemStack> fuelQueue = new ArrayList<>();
 
     public BoilerWarmup(SteelBoilerVesselBlockEntity owner) { this.owner = owner; }
 
@@ -230,6 +234,64 @@ public final class BoilerWarmup implements IFluidHandler {
         return false;
     }
 
+    private static int fuelTicks(ItemStack stack) {
+        if (stack.isEmpty() || !stack.getCraftingRemainingItem().isEmpty()) return 0;
+        if (stack.is(ItemRegistry.ITEM_METALLURGICAL_COKE.get())) return 3200;
+        return ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);
+    }
+
+    private int queuedFuelItems() {
+        int count = 0;
+        for (ItemStack stack : fuelQueue) count += stack.getCount();
+        return count;
+    }
+
+    private int enqueueFuel(ItemStack offered) {
+        int room = FUEL_QUEUE_LIMIT - queuedFuelItems();
+        if (room <= 0 || fuelTicks(offered) <= 0) return 0;
+        int accepted = Math.min(room, offered.getCount());
+        if (accepted <= 0) return 0;
+
+        ItemStack queued = offered.copy();
+        queued.setCount(accepted);
+        if (!fuelQueue.isEmpty()) {
+            ItemStack last = fuelQueue.get(fuelQueue.size() - 1);
+            if (ItemStack.isSameItemSameTags(last, queued)
+                    && last.getCount() + accepted <= last.getMaxStackSize()) {
+                last.grow(accepted);
+                return accepted;
+            }
+        }
+        fuelQueue.add(queued);
+        return accepted;
+    }
+
+    private boolean startNextQueuedFuel(BoilerWarmupParameters.Rules rules) {
+        if (state.burning() || fuelQueue.isEmpty()
+                || state.heat() >= rules.heatCapacity()) return false;
+        ItemStack next = fuelQueue.get(0);
+        int ticks = fuelTicks(next);
+        if (ticks <= 0 || !state.ignite(ticks, rules.heatPerBurnTick())) return false;
+        next.shrink(1);
+        if (next.isEmpty()) fuelQueue.remove(0);
+        return true;
+    }
+
+    private int dropQueuedFuel(ServerLevel level) {
+        int returned = 0;
+        for (ItemStack stack : fuelQueue) {
+            if (stack.isEmpty()) continue;
+            returned += stack.getCount();
+            Containers.dropItemStack(level,
+                    owner.getBlockPos().getX() + 0.5,
+                    owner.getBlockPos().getY() + 0.5,
+                    owner.getBlockPos().getZ() + 0.5,
+                    stack.copy());
+        }
+        fuelQueue.clear();
+        return returned;
+    }
+
     /** Server ticker only; no offline catch-up and no unbounded graph scans here. */
     public void tick() {
         ServerLevel level = server();
@@ -244,11 +306,14 @@ public final class BoilerWarmup implements IFluidHandler {
 
         boolean changed = false;
         boolean wasBurning = state.burning();
-        String reason = wasBurning ? interlock(level) : "";
+        String reason = (wasBurning || !fuelQueue.isEmpty()) ? interlock(level) : "";
         if (wasBurning && !reason.isEmpty() && !reason.equals("unloaded")) {
             state.extinguish();
             changed = true;
         }
+        if (!state.burning() && !fuelQueue.isEmpty() && reason.isEmpty()
+                && startNextQueuedFuel(rules)) changed = true;
+
         boolean spentFuel = state.tick(reason.isEmpty(),
                 rules.heatCapacity(), rules.passiveLoss());
         changed |= spentFuel || state.heat() > 0;
@@ -306,43 +371,45 @@ public final class BoilerWarmup implements IFluidHandler {
         if (level == null || hand != InteractionHand.MAIN_HAND) return;
         if (!player.getAbilities().mayBuild || !level.mayInteract(player, front.getBlockPos())
                 || BoilerFireboxInstallation.linkedFirebox(level, owner) != front) return;
+
         ItemStack held = player.getItemInHand(hand);
         if (held.isEmpty()) {
             if (player.isShiftKeyDown() && state.burning()) {
-                state.extinguish(); owner.setChanged(); owner.sync();
+                state.extinguish();
+                owner.setChanged();
+                owner.sync();
             }
             status(player);
             return;
         }
 
         BoilerWarmupParameters.Rules rules = BoilerWarmupParameters.rules();
-        if (rules == null) { tell(player, "Boiler rules are missing or invalid"); return; }
-        String reason = interlock(level);
-        if (!reason.isEmpty()) {
-            tell(player, reason.equals("unloaded")
-                    ? "Load the complete boiler and firebox first" : reason);
+        if (rules == null) {
+            tell(player, "Boiler rules are missing or invalid");
             return;
         }
-        if (state.burning()) {
-            tell(player, "Fuel is already burning; no extra item consumed");
-            status(player);
-            return;
-        }
-        if (state.heat() >= rules.heatCapacity()) {
-            tell(player, "Boiler HEAT buffer is full; no fuel consumed");
-            return;
-        }
-
-        int ticks = held.getCraftingRemainingItem().isEmpty()
-                ? (held.is(ItemRegistry.ITEM_METALLURGICAL_COKE.get()) ? 3200
-                    : ForgeHooks.getBurnTime(held, RecipeType.SMELTING)) : 0;
-        if (!state.ignite(ticks, rules.heatPerBurnTick())) {
+        if (fuelTicks(held) <= 0) {
             tell(player, "Use solid furnace fuel; container fuels are not supported");
             return;
         }
-        if (!player.getAbilities().instabuild) held.shrink(1);
+
+        int accepted = enqueueFuel(held);
+        if (accepted <= 0) {
+            tell(player, "Firebox fuel queue is full ("
+                    + queuedFuelItems() + "/" + FUEL_QUEUE_LIMIT + ")");
+            return;
+        }
+        if (!player.getAbilities().instabuild) held.shrink(accepted);
+
+        String reason = interlock(level);
+        if (!state.burning() && reason.isEmpty() && startNextQueuedFuel(rules))
+            owner.sync();
         owner.setChanged();
-        owner.sync();
+
+        if (!reason.isEmpty() && !reason.equals("unloaded"))
+            tell(player, "Loaded " + accepted + " fuel item(s); ignition waiting: " + reason);
+        else
+            tell(player, "Loaded " + accepted + " fuel item(s)");
         status(player);
     }
 
@@ -406,7 +473,8 @@ public final class BoilerWarmup implements IFluidHandler {
         String boilerPressure = rules.vesselPressureEnabled()
                 ? (Math.round(boilerPressureKPa(rules) * 10.0) / 10.0) + " kPa"
                 : "legacy";
-        tell(player, limits + "; fuel " + state.burnTicks() + " ticks; Steam "
+        tell(player, limits + "; fuel " + state.burnTicks() + " ticks + "
+                + queuedFuelItems() + "/" + FUEL_QUEUE_LIMIT + " queued; Steam "
                 + steam.stored() + "/" + rules.steamBufferCapacity()
                 + " units; boiler " + boilerPressure + "; network " + network
                 + (reliefOpen ? "; RELIEF OPEN" : "; relief closed"));
@@ -449,29 +517,39 @@ public final class BoilerWarmup implements IFluidHandler {
     }
 
     public void discardContents() {
-        if (!(owner.getLevel() instanceof ServerLevel)) return;
+        if (!(owner.getLevel() instanceof ServerLevel level)) return;
         BoilerWarmupState.Snapshot before = state.spill();
         int steamSpilled = steam.spill();
+        int queuedReturned = dropQueuedFuel(level);
         if (before.water() != 0 || before.heat() != 0
-                || before.burnTicks() != 0 || steamSpilled != 0) {
+                || before.burnTicks() != 0 || steamSpilled != 0 || queuedReturned != 0) {
             LogManager.getLogger("Magneticraft2Boiler").info(
-                    "Boiler dismantled at {}: spilled {} mB, dissipated {} HEAT, discarded {} fuel ticks, vented {} Steam units",
+                    "Boiler dismantled at {}: spilled {} mB, dissipated {} HEAT, discarded {} fuel ticks, vented {} Steam units, returned {} queued fuel items",
                     owner.getBlockPos(), before.water(), before.heat(),
-                    before.burnTicks(), steamSpilled);
+                    before.burnTicks(), steamSpilled, queuedReturned);
             owner.setChanged();
         }
     }
 
     public void stopFuel() {
-        if (!(owner.getLevel() instanceof ServerLevel)) return;
-        if (state.burning()) { state.extinguish(); owner.setChanged(); }
+        if (!(owner.getLevel() instanceof ServerLevel level)) return;
+        boolean changed = false;
+        if (state.burning()) {
+            state.extinguish();
+            changed = true;
+        }
+        if (!fuelQueue.isEmpty()) {
+            dropQueuedFuel(level);
+            changed = true;
+        }
+        if (changed) owner.setChanged();
     }
 
     public void save(CompoundTag root) {
         BoilerWarmupState.Snapshot s = state.snapshot();
         BoilerSteamState.Snapshot gas = steam.snapshot();
         CompoundTag n = new CompoundTag();
-        n.putInt("Version", 4);
+        n.putInt("Version", 5);
         n.putInt("Water", s.water()); n.putInt("Heat", s.heat());
         n.putInt("BurnTicks", s.burnTicks());
         n.putInt("HeatPerBurnTick", s.heatPerBurnTick());
@@ -492,6 +570,13 @@ public final class BoilerWarmup implements IFluidHandler {
         n.putLong("SteamSpilled", gas.spilled());
         n.putBoolean("ReliefOpen", reliefOpen);
         n.putLong("ReliefVented", reliefVented);
+        ListTag queued = new ListTag();
+        for (ItemStack stack : fuelQueue) {
+            CompoundTag item = new CompoundTag();
+            stack.save(item);
+            queued.add(item);
+        }
+        n.put("FuelQueue", queued);
         root.put(NBT, n);
     }
 
@@ -505,7 +590,7 @@ public final class BoilerWarmup implements IFluidHandler {
         CompoundTag n = root.getCompound(NBT);
         try {
             int version = n.getInt("Version");
-            if (version != 1 && version != 2 && version != 3 && version != 4)
+            if (version != 1 && version != 2 && version != 3 && version != 4 && version != 5)
                 throw new IllegalArgumentException("Unsupported warm-up version");
             BoilerWarmupState.Snapshot water = version == 1
                     ? new BoilerWarmupState.Snapshot(n.getInt("Water"), n.getInt("Heat"),
@@ -537,9 +622,24 @@ public final class BoilerWarmup implements IFluidHandler {
                 reliefOpen = n.getBoolean("ReliefOpen");
                 reliefVented = Math.max(0L, n.getLong("ReliefVented"));
             }
+            fuelQueue.clear();
+            if (version >= 5 && n.contains("FuelQueue", Tag.TAG_LIST)) {
+                ListTag queued = n.getList("FuelQueue", Tag.TAG_COMPOUND);
+                int total = 0;
+                for (int i = 0; i < queued.size(); i++) {
+                    ItemStack stack = ItemStack.of(queued.getCompound(i));
+                    if (stack.isEmpty() || fuelTicks(stack) <= 0)
+                        throw new IllegalArgumentException("Invalid queued fuel item");
+                    total += stack.getCount();
+                    if (total > FUEL_QUEUE_LIMIT)
+                        throw new IllegalArgumentException("Fuel queue exceeds capacity");
+                    fuelQueue.add(stack);
+                }
+            }
         } catch (IllegalArgumentException invalid) {
             state = new BoilerWarmupState();
             steam = new BoilerSteamState();
+            fuelQueue.clear();
             LogManager.getLogger("Magneticraft2Boiler").error(
                     "Rejected invalid boiler save at {}: {}",
                     owner.getBlockPos(), invalid.getMessage());
