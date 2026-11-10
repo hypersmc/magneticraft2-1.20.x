@@ -1,0 +1,41 @@
+{
+  "schema": "magneticraft2-design-layout-1",
+  "status": "design-only; not a Minecraft datapack resource",
+  "baseline_commit": "e8a6664a568ddb52cd3fd28db40fa9901d06bf3a",
+  "coordinate_frame": "SOUTH, relative to existing vessel controller; +X east, +Y up, +Z outward through front",
+  "vessel_bounds": {"min": [-1, 0, -4], "max_inclusive": [1, 3, 0]},
+  "vessel_required_air": [[0,0,-4],[0,0,-3],[0,0,-2],[0,0,-1],[0,2,-3],[0,2,-2],[0,2,-1]],
+  "vessel_ledger": {"boiler_shell_panel":24,"boiler_end_joint":2,"iron_plate_panel":16,"iron_machine_foundation":10,"steel_boiler_vessel":1},
+  "firebox": {
+    "origin": [-1, 0, 1],
+    "dimensions_xyz": [3, 3, 2],
+    "controller_relative_to_vessel": [0, 1, 2],
+    "layout_order": "layer bottom-up; row rear-to-front (+Z); characters west-to-east (+X); NOT Patchouli order",
+    "layers": [["FFF","FFF"],["LIL","LDL"],["LLL","LLL"]],
+    "symbols": {
+      "F": "magneticraft2:iron_machine_foundation",
+      "L": "magneticraft2:boiler_firebox_lining",
+      "I": "magneticraft2:boiler_firebox_mount",
+      "D": "magneticraft2:boiler_firebox_front"
+    },
+    "expected_ledger": {"iron_machine_foundation":6,"boiler_firebox_lining":10,"boiler_firebox_mount":1,"boiler_firebox_front":1},
+    "new_ids": ["boiler_firebox_lining","boiler_firebox_front"],
+    "heat_interface": [0,1,1],
+    "chimney_base": [-1,2,1]
+  },
+  "chimney": {"block":"magneticraft2:boiler_flue_chimney","cells":[[-1,3,1],[-1,4,1],[-1,5,1]]},
+  "retained_fittings": [
+    {"block":"magneticraft2:boiler_water_inlet","cell":[2,2,-2],"support":[1,2,-2]},
+    {"block":"magneticraft2:boiler_steam_outlet","cell":[0,4,-2],"support":[0,3,-2]},
+    {"block":"magneticraft2:boiler_safety_mount","cell":[0,4,-1],"support":[0,3,-1]}
+  ],
+  "new_recipe_proposals": [
+    {"result":"boiler_firebox_lining","count":1,"inputs":[["riveted_iron_casing",1],["fired_refractory_ceramic",2],["refined_steel_plate",2],["iron_rivet",4]],"machine":"mechanical_assembly","min_rpm":18,"torque":10,"ticks":320},
+    {"result":"boiler_firebox_front","count":1,"inputs":[["iron_service_hatch",1],["iron_plate_panel",1],["refined_steel_rod",1],["iron_rivet",2]],"machine":"mechanical_assembly","min_rpm":18,"torque":10,"ticks":320}
+  ],
+  "totals": {"vessel":53,"firebox":18,"chimney":3,"retained_fittings":3,"complete_installation":77},
+  "overall_envelope_xyz": [4,6,7],
+  "front_access_clear_cells": [[0,1,3],[0,2,3]],
+  "legacy_chimney_cell": [0,2,1],
+  "scope": "construction and visual architecture only; no water, heat, pressure, combustion or working instruments"
+}
