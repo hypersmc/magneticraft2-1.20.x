@@ -1,9 +1,9 @@
 package com.magneticraft2.common.systems.steam;
 
 /**
- * Integer resource ledger for Steam 0-B warm-up. HEAT is the mod's abstract
- * thermal budget, never degrees, pressure or a water-to-steam conversion.
- * No Minecraft dependencies: the same implementation is exercised by tests.
+ * Integer resource ledger for boiler water/HEAT. HEAT is Magneticraft2's
+ * abstract thermal budget, never degrees or pressure. Steam phase conversion
+ * debits this ledger explicitly; the Steam unit ledger is separate.
  */
 public final class BoilerWarmupState {
     public static final int MAX_AMOUNT = 1_000_000;
@@ -11,13 +11,24 @@ public final class BoilerWarmupState {
     public static final int MAX_HEAT_PER_TICK = 100_000;
     private static final long MAX_LEDGER = Long.MAX_VALUE / 4;
     private int water, heat, burnTicks, heatPerBurnTick;
-    private long waterIn, waterOut, waterSpilled;
-    private long fuelEnergy, generatedHeat, heatLost, heatInDrainedWater, heatSpilled, fuelDiscarded;
+    private long waterIn, waterOut, waterSpilled, waterToSteam;
+    private long fuelEnergy, generatedHeat, heatLost, heatInDrainedWater,
+            heatSpilled, fuelDiscarded, heatToSteam;
 
     public record Snapshot(int water, int heat, int burnTicks, int heatPerBurnTick,
             long waterIn, long waterOut, long waterSpilled, long fuelEnergy,
             long generatedHeat, long heatLost, long heatInDrainedWater,
-            long heatSpilled, long fuelDiscarded) { }
+            long heatSpilled, long fuelDiscarded, long waterToSteam, long heatToSteam) {
+        /** Save-format-1/test compatibility: no Steam conversion had occurred. */
+        public Snapshot(int water, int heat, int burnTicks, int heatPerBurnTick,
+                long waterIn, long waterOut, long waterSpilled, long fuelEnergy,
+                long generatedHeat, long heatLost, long heatInDrainedWater,
+                long heatSpilled, long fuelDiscarded) {
+            this(water, heat, burnTicks, heatPerBurnTick, waterIn, waterOut,
+                    waterSpilled, fuelEnergy, generatedHeat, heatLost,
+                    heatInDrainedWater, heatSpilled, fuelDiscarded, 0, 0);
+        }
+    }
 
     public int water() { return water; }
     public int heat() { return heat; }
@@ -30,8 +41,8 @@ public final class BoilerWarmupState {
         int accepted = (int) Math.min(Math.min(offered, Math.max(0, capacity - water)),
                 MAX_LEDGER - waterIn);
         if (!simulate && accepted > 0) {
-            long incoming = add(waterIn, accepted);
-            water += accepted; waterIn = incoming;
+            water += accepted;
+            waterIn = add(waterIn, accepted);
         }
         return accepted;
     }
@@ -40,13 +51,11 @@ public final class BoilerWarmupState {
         if (requested <= 0 || water == 0) return 0;
         int removed = Math.min(requested, water);
         if (!simulate) {
-            // Cold vanilla water is returned. Its share of stored HEAT leaves
-            // this ledger explicitly; it must not remain to heat free refills.
             int carriedHeat = (int) ((long) heat * removed / water);
-            long outgoing = add(waterOut, removed);
-            long outgoingHeat = add(heatInDrainedWater, carriedHeat);
-            water -= removed; heat -= carriedHeat;
-            waterOut = outgoing; heatInDrainedWater = outgoingHeat;
+            water -= removed;
+            heat -= carriedHeat;
+            waterOut = add(waterOut, removed);
+            heatInDrainedWater = add(heatInDrainedWater, carriedHeat);
         }
         return removed;
     }
@@ -56,22 +65,18 @@ public final class BoilerWarmupState {
                 || gain <= 0 || gain > MAX_HEAT_PER_TICK) return false;
         long offeredEnergy = (long) ticks * gain;
         if (fuelEnergy > MAX_LEDGER - offeredEnergy) return false;
-        long budget = fuelEnergy + offeredEnergy;
-        burnTicks = ticks; heatPerBurnTick = gain; fuelEnergy = budget;
+        burnTicks = ticks;
+        heatPerBurnTick = gain;
+        fuelEnergy += offeredEnergy;
         return true;
     }
 
     /** No fuel refund: remaining chemical energy is explicitly discarded. */
     public void extinguish() {
-        long discarded = add(fuelDiscarded, (long) burnTicks * heatPerBurnTick);
-        burnTicks = 0; fuelDiscarded = discarded;
+        fuelDiscarded = add(fuelDiscarded, (long) burnTicks * heatPerBurnTick);
+        burnTicks = 0;
     }
 
-    /**
-     * Paused/unloaded sources do not advance fuel. Cooling is independent.
-     * Once lit, fuel continues to burn at the cap; excess heat exits via flue.
-     * Returns true exactly when a tick of real fuel has been spent.
-     */
     public boolean tick(boolean advanceFuel, int capacity, int passiveLoss) {
         limit(capacity, MAX_AMOUNT);
         if (passiveLoss < 0 || passiveLoss > MAX_HEAT_PER_TICK)
@@ -79,39 +84,60 @@ public final class BoilerWarmupState {
         int produced = advanceFuel && burnTicks > 0 ? heatPerBurnTick : 0;
         int stored = water == 0 ? 0 : Math.min(produced, Math.max(0, capacity - heat));
         int cooled = Math.min(heat + stored, passiveLoss);
-        long generated = add(generatedHeat, produced);
-        long loss = add(heatLost, (long) produced - stored + cooled);
+        generatedHeat = add(generatedHeat, produced);
+        heatLost = add(heatLost, (long) produced - stored + cooled);
         if (produced > 0) burnTicks--;
-        heat += stored - cooled; generatedHeat = generated; heatLost = loss;
+        heat += stored - cooled;
         return produced > 0;
     }
 
-    /** Claim contents once during actual dismantling, not chunk unload. */
+    public boolean canConvertToSteam(int waterCost, int heatCost, int threshold) {
+        if (waterCost <= 0 || heatCost <= 0 || threshold <= 0)
+            throw new IllegalArgumentException("Invalid phase conversion");
+        return water >= waterCost && heat >= heatCost && heat >= threshold;
+    }
+
+    /**
+     * Atomic water + HEAT debit for exactly one authorized Steam unit.
+     * If the last water is boiled, remaining sensible HEAT is explicitly lost
+     * instead of surviving in an impossible dry water buffer.
+     */
+    public boolean convertToSteam(int waterCost, int heatCost, int threshold) {
+        if (!canConvertToSteam(waterCost, heatCost, threshold)) return false;
+        int orphanedHeat = water == waterCost ? heat - heatCost : 0;
+        water -= waterCost;
+        heat -= heatCost + orphanedHeat;
+        waterToSteam = add(waterToSteam, waterCost);
+        heatToSteam = add(heatToSteam, heatCost);
+        if (orphanedHeat > 0) heatLost = add(heatLost, orphanedHeat);
+        return true;
+    }
+
     public Snapshot spill() {
         Snapshot before = snapshot();
-        long spilledWater = add(waterSpilled, water);
-        long spilledHeat = add(heatSpilled, heat);
+        waterSpilled = add(waterSpilled, water);
+        heatSpilled = add(heatSpilled, heat);
         extinguish();
-        waterSpilled = spilledWater; heatSpilled = spilledHeat;
-        water = 0; heat = 0;
+        water = 0;
+        heat = 0;
         return before;
     }
 
     public Snapshot snapshot() {
         return new Snapshot(water, heat, burnTicks, heatPerBurnTick, waterIn,
                 waterOut, waterSpilled, fuelEnergy, generatedHeat, heatLost,
-                heatInDrainedWater, heatSpilled, fuelDiscarded);
+                heatInDrainedWater, heatSpilled, fuelDiscarded, waterToSteam, heatToSteam);
     }
 
-    /** Reject corrupt saves instead of silently creating/clipping resources. */
     public void restore(Snapshot s) {
         if (!valid(s)) throw new IllegalArgumentException("Invalid boiler warm-up ledger");
-        water = s.water(); heat = s.heat(); burnTicks = s.burnTicks();
-        heatPerBurnTick = s.heatPerBurnTick(); waterIn = s.waterIn();
-        waterOut = s.waterOut(); waterSpilled = s.waterSpilled();
-        fuelEnergy = s.fuelEnergy(); generatedHeat = s.generatedHeat();
-        heatLost = s.heatLost(); heatInDrainedWater = s.heatInDrainedWater();
-        heatSpilled = s.heatSpilled(); fuelDiscarded = s.fuelDiscarded();
+        water=s.water(); heat=s.heat(); burnTicks=s.burnTicks();
+        heatPerBurnTick=s.heatPerBurnTick(); waterIn=s.waterIn();
+        waterOut=s.waterOut(); waterSpilled=s.waterSpilled(); fuelEnergy=s.fuelEnergy();
+        generatedHeat=s.generatedHeat(); heatLost=s.heatLost();
+        heatInDrainedWater=s.heatInDrainedWater(); heatSpilled=s.heatSpilled();
+        fuelDiscarded=s.fuelDiscarded(); waterToSteam=s.waterToSteam();
+        heatToSteam=s.heatToSteam();
     }
 
     public static boolean valid(Snapshot s) {
@@ -122,12 +148,13 @@ public final class BoilerWarmupState {
                 || s.heatPerBurnTick() < 0 || s.heatPerBurnTick() > MAX_HEAT_PER_TICK
                 || (s.burnTicks() > 0 && s.heatPerBurnTick() == 0)) return false;
         for (long v : new long[]{s.waterIn(), s.waterOut(), s.waterSpilled(),
-                s.fuelEnergy(), s.generatedHeat(), s.heatLost(),
-                s.heatInDrainedWater(), s.heatSpilled(), s.fuelDiscarded()})
+                s.waterToSteam(), s.fuelEnergy(), s.generatedHeat(), s.heatLost(),
+                s.heatInDrainedWater(), s.heatSpilled(), s.fuelDiscarded(), s.heatToSteam()})
             if (v < 0 || v > MAX_LEDGER) return false;
-        return s.waterIn() == (long) s.water() + s.waterOut() + s.waterSpilled()
+        return s.waterIn() == (long) s.water() + s.waterOut()
+                    + s.waterSpilled() + s.waterToSteam()
                 && s.generatedHeat() == (long) s.heat() + s.heatLost()
-                    + s.heatInDrainedWater() + s.heatSpilled()
+                    + s.heatInDrainedWater() + s.heatSpilled() + s.heatToSteam()
                 && s.fuelEnergy() == (long) s.burnTicks() * s.heatPerBurnTick()
                     + s.generatedHeat() + s.fuelDiscarded();
     }
