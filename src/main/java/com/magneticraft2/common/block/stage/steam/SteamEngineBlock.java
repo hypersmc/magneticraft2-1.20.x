@@ -77,7 +77,12 @@ public final class SteamEngineBlock extends BaseBlockMagneticraft2 {
             Player player,InteractionHand hand,BlockHitResult hit){}
     @Override public boolean onDestroyedByPlayer(BlockState state,Level level,BlockPos pos,
             Player player,boolean harvest,FluidState fluid){
-        if(!level.isClientSide && level.getBlockEntity(pos) instanceof BaseBlockEntityMagneticraft2 be)be.onDestroy(level);
+        if(!level.isClientSide && level.getBlockEntity(pos) instanceof BaseBlockEntityMagneticraft2 be){
+            // destroyStructure owns restoration/drop of every paid engine cell,
+            // including this controller. Returning false prevents a second vanilla drop.
+            be.onDestroy(level);
+            return false;
+        }
         return super.onDestroyedByPlayer(state,level,pos,player,harvest,fluid);
     }
     @Override public VoxelShape getShape(BlockState s,BlockGetter level,BlockPos pos,CollisionContext ctx){
