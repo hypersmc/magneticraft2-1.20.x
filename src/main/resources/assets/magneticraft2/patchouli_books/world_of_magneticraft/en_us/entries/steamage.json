@@ -1,0 +1,174 @@
+{
+  "name": "Steam Age",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:boiler_steam_outlet",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Entering the Steam Age",
+      "text": "$(bold)Steam Age$()$(br2)The Steel Age ends with a complete but inert Boiler Vessel. Steam Age begins when you add the service fittings and fired extension, supply real water and fuel, create pressure-bearing Steam and feed it into the Steam Pipe network. This chapter follows that progression in construction order."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steam 0-A — Fired Boiler Hardware$()$(br2)Form the accepted Steel Boiler Vessel first. Using the existing Mechanical Assembly Station, build the Water Inlet, Steam Outlet, Firebox Mount, Safety Service Mount and Flue Chimney. Hold a fitting and right-click any part of the formed boiler: it installs automatically at its designated exterior point. Install the front Firebox Mount BEFORE the Flue Chimney, which stacks directly above its roof. The front has an unlit stoking door and ash opening; the flue is a real block, not a particle effect. Top fittings include a steam-dome takeoff and gauge/relief housings; the feedwater inlet is flanged onto the low side. The Steel IV-C 3x4x5 drum blueprint is unchanged. All new hardware remains inert until actual water, heat, Steam and protective relief systems are implemented."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Water Inlet",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_water_inlet"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Steam Outlet",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_steam_outlet"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Firebox Mount",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_firebox_mount"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Safety Service Mount",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_safety_mount"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Flue Chimney",
+      "recipe": "magneticraft2:steam0a_assembly_boiler_flue_chimney"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Fired Boiler Assembly",
+      "text": "$(bold)1 — Build the fired boiler$()$(br2)Steel Age gave you the pressure vessel. Steam Age begins by turning that inert vessel into a fired boiler with real feedwater, combustion, Steam takeoff and safety hardware."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "A real furnace extension",
+      "text": "Form your Steel Boiler Vessel first. Keep its 53 original blocks. Remove the old short chimney above the Firebox Mount and reuse it in the new stack. The furnace extension is 3 wide, 3 high and 2 deep, immediately in front of the vessel. The Firebox Front belongs two blocks forward and one block up from the vessel controller. Place its door facing away from the vessel."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Materials",
+      "text": "Add 6 Iron Machine Foundations, 10 Boiler Firebox Linings and 1 Boiler Firebox Front. Reuse 1 Boiler Firebox Mount at the rear center. Craft the Lining and Front in the existing Mechanical Assembly Station; see JEI. Both require 18 RPM, 10 torque and 320 powered ticks."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Lining recipe",
+      "text": "Mechanical Assembly Station, four slots: 1 Riveted Iron Casing + 2 Fired Refractory Ceramics + 2 Refined Steel Plates + 4 Iron Rivets -> 1 Boiler Firebox Lining. Requires 18 RPM, 10 torque and 320 powered ticks. Make ten linings."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Front recipe",
+      "text": "Mechanical Assembly Station, four slots: 1 Iron Service Hatch + 1 Iron Plate Panel + 1 Refined Steel Rod + 2 Iron Rivets -> 1 Boiler Firebox Front. Requires 18 RPM, 10 torque and 320 powered ticks. Reuse your existing Firebox Mount as the rear interface."
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Front firebox",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "LL",
+            "LL",
+            "LL"
+          ],
+          [
+            "LL",
+            "I0",
+            "LL"
+          ],
+          [
+            "FF",
+            "FF",
+            "FF"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:boiler_firebox_front",
+          "F": "magneticraft2:iron_machine_foundation",
+          "L": "magneticraft2:boiler_firebox_lining",
+          "I": "magneticraft2:boiler_firebox_mount"
+        },
+        "symmetrical": false
+      },
+      "text": "The rear interface touches the vessel. The front door faces away from it. Right-click the Front to form this separate 18-block assembly."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Install the stack",
+      "text": "After forming the extension, hold a Boiler Flue Chimney and click the vessel or firebox. Each click installs one section, bottom-up, to a maximum of 3. All sections are real paid-for blocks. The roof collector is at the rear-left corner when viewed in the canonical south-facing layout. An obstructed target never consumes an item."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Water and heat warm-up",
+      "text": "The formed firebox is now the active combustion side of the Steam Age boiler. Install all three chimney sections, fit the Water Inlet, Steam Outlet and Safety Service Mount, then continue with the warm-up pages below. The same vessel now supports pipe-fed water, a 16-item manual fuel queue, visible combustion, HEAT-to-Steam conversion, local boiler pressure, a working gauge/relief valve and pressure-driven Steam output."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Boiler Warm-up",
+      "text": "$(bold)2 — Water and fuel$()$(br2)With the fired assembly complete, supply water and load the firebox. The boiler owns one authoritative water/HEAT/fuel state; queued fuel, pipe-fed water and combustion visuals all use that same state."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Water before fuel",
+      "text": "Form the vessel and its V2 firebox. Install the water inlet and all THREE chimney sections, leaving air above the stack. You can still right-click the WATER INLET with water buckets, but the existing Copper Water Pipe network can now feed the same bounded tank through the inlet's OUTER visible flange. The existing Mechanical Water Pump remains the active source and still requires real source water, RPM and torque. Default capacity: 8,000 mB."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Light the firebox",
+      "text": "Right-click the formed FIREBOX with a solid furnace fuel stack. The firebox can now hold up to 16 queued fuel items; one click loads as many items from the held stack as will fit. The current item burns independently and the next queued item starts automatically when it finishes, but ONLY while water/chimney/firebox interlocks are valid and the HEAT buffer can accept more energy. Mixed solid fuels are allowed; container fuels are refused. Unburned queued items persist across save/reload and are returned if the firebox/boiler is dismantled. Partially burned fuel is never refunded. Flames and chimney smoke appear only while burn ticks are actually being spent."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Read and stop",
+      "text": "Use an empty hand on the firebox, vessel or water inlet to read water, HEAT, current fuel ticks and queued fuel count. Sneak-use the FIREBOX with an empty hand to extinguish the CURRENT item; its unspent burn budget is lost, but queued unburned fuel remains. If an interlock is missing, queued fuel waits without being consumed. HEAT is an abstract energy budget, NOT temperature."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Before dismantling",
+      "text": "Drain water through the inlet before dismantling when practical. Dismantling a filled vessel spills remaining water/HEAT and vents any buffered Steam; none returns as free buckets, fuel or Steam items. Save/reload retains active state with no offline catch-up. The next chapter covers the provisional finite Steam-generation/output slice; automatic water intake, a true relief valve and engine power remain later work."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Steam Generation",
+      "text": "$(bold)3 — Pressure and Steam$()$(br2)Once sufficient HEAT is stored, water is converted into finite Steam inside the vessel. Boiler pressure, the local gauge/relief valve and the connected Steam Pipe network are separate pressure domains."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "From HEAT to Steam",
+      "text": "Steam 0-C uses the SAME vessel water/HEAT state proven in Boiler Warm-up. With the V2 firebox, all 3 chimney sections, Water Inlet, Steam Outlet and Safety Service Mount installed, stored HEAT above the provisional phase threshold can boil finite water into a small vessel Steam buffer. No water or HEAT is created or refunded."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Connect the takeoff",
+      "text": "Attach a Steam Pipe to the OUTER horizontal flange of the Boiler Steam Outlet. The pipe connection is directional: it must line up with the visible takeoff. The outlet feeds the existing STEAM-only network; it never connects to AIR ducts or liquid-water pipes. A missing pipe does not delete Steam: the 16-unit boiler buffer fills and phase conversion stops."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Steam balance",
+      "text": "Default Steam 0-C values are provisional gameplay coefficients, not real thermodynamics: phase threshold 24,000 HEAT; 250 mB water + 1,000 HEAT -> 1 Steam unit; at most 1 unit formed/tick; 16-unit vessel buffer; 453.15 K network Steam; at most 4 units exported/tick. Datapacks may replace these values."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Pressure cutoff",
+      "text": "The boiler now has its OWN Steam-space pressure, separate from the pipe network. The gauge reads boiler pressure even with no Steam Pipe connected. Steam flows through the takeoff only while the boiler side is at higher pressure than the connected network, using the same provisional pressure scale on both sides. The old 500 kPa network source cutoff remains only for legacy format-2/3 datapacks."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Read the boiler",
+      "text": "Empty-hand use on the vessel or firebox now reports water, HEAT, fuel ticks, vessel Steam buffer and connected network pressure. Dismantling vents buffered Steam and spills remaining water/HEAT; it never returns free fuel, water containers or Steam items. The first Steam engine is still a later stage."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Gauge + Relief Valve",
+      "text": "The Safety Service Mount now protects the BOILER VESSEL itself. Its six-position red needle follows local vessel Steam pressure whether or not a pipe is connected. Default format 4 treats the vessel Steam space as 2.5 pipe-volume equivalents: at 453.15 K, 10 units ~= 400 kPa, 13 ~= 520 kPa, 14 ~= 560 kPa and 16 ~= 640 kPa. The relief opens at 550 kPa and vents real conserved Steam from the boiler buffer until pressure falls to 500 kPa."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Safety layers",
+      "text": "Format 4 separates pressure domains. Boiler gauge/relief: local vessel pressure. Steam Pipe gauge/rupture: connected network pressure. Outlet flow equalizes from the higher-pressure boiler toward the lower-pressure network and stops when another discrete unit would overshoot. Relief opens at 550 kPa, closes at 500 kPa, and works even with NO pipe. Existing Steam Pipe rupture remains a separate network-side structural fault above 600 kPa."
+    }
+  ]
+}

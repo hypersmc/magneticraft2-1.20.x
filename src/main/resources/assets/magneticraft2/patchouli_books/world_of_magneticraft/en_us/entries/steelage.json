@@ -328,35 +328,6 @@
         "symmetrical": false
       },
       "text": "Build from the Controller outward; the hollow middle must be air. This preview follows the 3-wide x 5-long physical layout. End rings are Iron Plate Panels and show their unformed appearance."
-    },
-    {
-      "type": "text",
-      "text": "$(bold)Steam 0-A — Fired Boiler Hardware$()$(br2)Form the accepted Steel Boiler Vessel first. Using the existing Mechanical Assembly Station, build the Water Inlet, Steam Outlet, Firebox Mount, Safety Service Mount and Flue Chimney. Hold a fitting and right-click any part of the formed boiler: it installs automatically at its designated exterior point. Install the front Firebox Mount BEFORE the Flue Chimney, which stacks directly above its roof. The front has an unlit stoking door and ash opening; the flue is a real block, not a particle effect. Top fittings include a steam-dome takeoff and gauge/relief housings; the feedwater inlet is flanged onto the low side. The Steel IV-C 3x4x5 drum blueprint is unchanged. All new hardware remains inert until actual water, heat, Steam and protective relief systems are implemented."
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Boiler Water Inlet",
-      "recipe": "magneticraft2:steam0a_assembly_boiler_water_inlet"
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Boiler Steam Outlet",
-      "recipe": "magneticraft2:steam0a_assembly_boiler_steam_outlet"
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Boiler Firebox Mount",
-      "recipe": "magneticraft2:steam0a_assembly_boiler_firebox_mount"
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Boiler Safety Service Mount",
-      "recipe": "magneticraft2:steam0a_assembly_boiler_safety_mount"
-    },
-    {
-      "type": "patchouli:crafting",
-      "title": "Boiler Flue Chimney",
-      "recipe": "magneticraft2:steam0a_assembly_boiler_flue_chimney"
     }
   ]
 }
