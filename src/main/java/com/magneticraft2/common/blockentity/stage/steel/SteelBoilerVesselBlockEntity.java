@@ -1,5 +1,6 @@
 package com.magneticraft2.common.blockentity.stage.steel;
 import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -93,6 +94,33 @@ public final class SteelBoilerVesselBlockEntity extends BaseBlockEntityMagneticr
                 matchedFacing,renderAirAnchors,voxelProfileName);
         requestModelDataUpdate();sync();return c;
     }
+
+    /**
+     * Steam 0-A fittings are independently owned blocks, not the original
+     * multiblock filler positions. Drop them before the vessel is dismantled.
+     */
+    @Override public void onDestroy(Level world) {
+        if (!world.isClientSide && formed) {
+            formed = false; // prevents duplicate attachment drops on reentry
+            BlockState controllerState = world.getBlockState(worldPosition);
+            if (controllerState.hasProperty(SteelBoilerVesselBlock.FACING)) {
+                Direction facing = controllerState.getValue(SteelBoilerVesselBlock.FACING);
+                BoilerServiceFittingBlock.Role[] roles = BoilerServiceFittingBlock.Role.values();
+                for (int i = roles.length - 1; i >= 0; i--) {
+                    BoilerServiceFittingBlock.Role role = roles[i];
+                    BlockPos target = BoilerServiceFittingBlock.attachmentPosition(worldPosition, role, facing);
+                    if (!world.hasChunkAt(target)) continue;
+                    BlockState part = world.getBlockState(target);
+                    if (part.getBlock() instanceof BoilerServiceFittingBlock fitting
+                            && fitting.role() == role
+                            && part.getValue(BoilerServiceFittingBlock.FACING) == facing)
+                        world.destroyBlock(target, true);
+                }
+            }
+        }
+        super.onDestroy(world);
+    }
+
     @Override public void load(CompoundTag tag){
         super.load(tag);
         MultiblockPersistentData saved=loadMultiblockData(tag);
