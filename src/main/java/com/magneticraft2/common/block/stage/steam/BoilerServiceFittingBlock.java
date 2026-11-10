@@ -119,6 +119,17 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         return outlet.relative(steamPipeDirection(facing));
     }
 
+    /** Water and Steam fittings use the same outward horizontal flange axis. */
+    public static Direction waterPipeDirection(Direction facing) {
+        return steamPipeDirection(facing);
+    }
+
+    /** Exact Copper Water Pipe cell aligned to the visible feedwater flange. */
+    public static BlockPos waterPipePosition(BlockPos inlet, Direction facing) {
+        return inlet.relative(waterPipeDirection(facing));
+    }
+
+
 
     @Override public @Nullable BlockState getStateForPlacement(BlockPlaceContext context){
         if (role == Role.CHIMNEY) {
