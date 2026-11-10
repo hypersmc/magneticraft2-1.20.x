@@ -7,12 +7,12 @@
     {
       "type": "patchouli:text",
       "title": "Water before fuel",
-      "text": "This is manual water and HEAT warm-up, not pressurized Steam. Form the vessel and its V2 firebox. Install the water inlet and all THREE chimney sections, leaving air above the stack. Right-click the actual WATER INLET with a water bucket to add 1,000 mB. Default capacity: 8,000 mB. An empty bucket drains water there. Water pipes cannot feed this first manual slice yet."
+      "text": "Form the vessel and its V2 firebox. Install the water inlet and all THREE chimney sections, leaving air above the stack. You can still right-click the WATER INLET with water buckets, but the existing Copper Water Pipe network can now feed the same bounded tank through the inlet's OUTER visible flange. The existing Mechanical Water Pump remains the active source and still requires real source water, RPM and torque. Default capacity: 8,000 mB."
     },
     {
       "type": "patchouli:text",
       "title": "Light the firebox",
-      "text": "Right-click the formed FIREBOX with one solid furnace fuel item. One item is consumed only when there is water, the complete chimney and a clear exhaust. Coal and existing Metallurgical Coke are supported; lava buckets and other container fuels are refused. Further clicks while burning do not queue or consume extra fuel. Smoke comes from the chimney only while real fuel burns."
+      "text": "Right-click the formed FIREBOX with one solid furnace fuel item. One item is consumed only when there is water, the complete chimney and a clear exhaust. Coal and existing Metallurgical Coke are supported; container fuels are refused. While actual burn ticks are being spent, flames flicker behind/in front of the stoking grate and chimney smoke continues. Extinguish or run out of fuel and both active-fire effects stop."
     },
     {
       "type": "patchouli:text",
