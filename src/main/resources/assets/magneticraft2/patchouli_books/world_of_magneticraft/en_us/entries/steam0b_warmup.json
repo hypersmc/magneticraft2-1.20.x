@@ -22,7 +22,7 @@
     {
       "type": "patchouli:text",
       "title": "Before dismantling",
-      "text": "Drain water through the inlet first. Dismantling a filled vessel spills its remaining water and dissipates its heat; neither is returned as a free bucket or fuel item. Save/reload retains active state with no offline catch-up. Steam conversion, pressure, automatic water intake, a working relief valve and engine power are still disabled."
+      "text": "Drain water through the inlet before dismantling when practical. Dismantling a filled vessel spills remaining water/HEAT and vents any buffered Steam; none returns as free buckets, fuel or Steam items. Save/reload retains active state with no offline catch-up. The next chapter covers the provisional finite Steam-generation/output slice; automatic water intake, a true relief valve and engine power remain later work."
     }
   ]
 }
