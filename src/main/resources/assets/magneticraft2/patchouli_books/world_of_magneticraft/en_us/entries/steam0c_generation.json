@@ -1,0 +1,33 @@
+{
+  "name": "Boiler Steam Generation",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:boiler_steam_outlet",
+  "sortnum": 8,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "From HEAT to Steam",
+      "text": "Steam 0-C uses the SAME vessel water/HEAT state proven in Boiler Warm-up. With the V2 firebox, all 3 chimney sections, Water Inlet, Steam Outlet and Safety Service Mount installed, stored HEAT above the provisional phase threshold can boil finite water into a small vessel Steam buffer. No water or HEAT is created or refunded."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Connect the takeoff",
+      "text": "Attach a Steam Pipe to the OUTER horizontal flange of the Boiler Steam Outlet. The pipe connection is directional: it must line up with the visible takeoff. The outlet feeds the existing STEAM-only network; it never connects to AIR ducts or liquid-water pipes. A missing pipe does not delete Steam: the 16-unit boiler buffer fills and phase conversion stops."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Prototype balance",
+      "text": "Default Steam 0-C values are provisional gameplay coefficients, not real thermodynamics: phase threshold 24,000 HEAT; 250 mB water + 1,000 HEAT -> 1 Steam unit; at most 1 unit formed/tick; 16-unit vessel buffer; 453.15 K network Steam; at most 4 units exported/tick. Datapacks may replace these values."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Pressure cutoff",
+      "text": "The boiler source will only admit Steam while the projected connected network remains at or below 500 kPa by default. This is a source cutoff, NOT a relief valve and NOT the pipe rating. Steam pipes still use their separate provisional 600 kPa rupture rule. The Safety Service Mount is required for generation, but its visible valve is not yet a real venting relief mechanism."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Read the boiler",
+      "text": "Empty-hand use on the vessel or firebox now reports water, HEAT, fuel ticks, vessel Steam buffer and connected network pressure. Dismantling vents buffered Steam and spills remaining water/HEAT; it never returns free fuel, water containers or Steam items. The first Steam engine is still a later stage."
+    }
+  ]
+}
