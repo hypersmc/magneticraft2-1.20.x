@@ -331,7 +331,7 @@
     },
     {
       "type": "text",
-      "text": "$(bold)Steam 0-A — Boiler Service Fittings$()$(br2)Form the Steel Boiler Vessel first. Manufacture a Boiler Water Inlet, Boiler Steam Outlet, Boiler Firebox Mount and Boiler Safety Service Mount in the existing Mechanical Assembly Station. Place the Water Inlet at the barrel's low right-hand side, the Steam Outlet at the top center, the Firebox Mount beneath the center of the barrel, and the Safety Mount on top one block toward the front. Fittings only place when connected to their correct position on a FORMED boiler, automatically aligning to its facing. They remain separate blocks when the vessel is dismantled. For now, ALL service fittings are inert: no water intake, Steam flow, heat, fuel, pressure gauge or working relief valve."
+      "text": "$(bold)Steam 0-A — Boiler Service Fittings$()$(br2)Form the Steel Boiler Vessel first. Manufacture a Boiler Water Inlet, Boiler Steam Outlet, Boiler Firebox Mount and Boiler Safety Service Mount in the existing Mechanical Assembly Station. Place the Water Inlet at the barrel's low right-hand side, the Steam Outlet at the top center, the Firebox Mount on the lower FRONT end ring, and the Safety Mount on top one block toward the front. All mounts sit outside the original boiler blueprint. Fittings only place when connected to their correct position on a FORMED boiler, automatically aligning to its facing. They remain separate blocks when the vessel is dismantled. For now, ALL service fittings are inert: no water intake, Steam flow, heat, fuel, pressure gauge or working relief valve."
     },
     {
       "type": "patchouli:crafting",

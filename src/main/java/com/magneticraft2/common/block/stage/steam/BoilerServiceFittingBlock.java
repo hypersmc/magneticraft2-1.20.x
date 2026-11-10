@@ -30,18 +30,18 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
     public enum Role {
         WATER(2, 2, -2),
         STEAM(0, 4, -2),
-        FIREBOX(0, 0, -2),
+        FIREBOX(0, 1, 1),
         SAFETY(0, 4, -1);
         final int dx, dy, dz;
         Role(int x,int y,int z){dx=x;dy=y;dz=z;}
     }
     private static final Direction[] FACES = {
-        Direction.SOUTH, Direction.EAST, Direction.NORTH, Direction.WEST
+        Direction.SOUTH, Direction.WEST, Direction.NORTH, Direction.EAST
     };
     private static final int[][][] BOXES = {
         {{0,3,3,2,13,13},{2,6,6,10,10,10},{10,4,4,12,12,12},{12,4,4,16,6,12},{12,10,4,16,12,12},{12,6,4,16,10,6},{12,6,10,16,10,12}},
         {{2,0,2,14,2,14},{6,2,6,10,11,10},{3,11,3,13,13,13},{3,13,3,5,16,13},{11,13,3,13,16,13},{5,13,3,11,16,5},{5,13,11,11,16,13}},
-        {{1,0,1,15,3,15},{3,3,3,13,12,13},{1,12,1,15,16,15},{4,4,0,5,11,3},{11,4,0,12,11,3},{5,4,0,11,5,3},{5,10,0,11,11,3},{5,5,2,11,10,3}},
+        {{2,2,0,14,14,2},{5,5,2,11,11,11},{2,2,11,4,14,13},{12,2,11,14,14,13},{4,2,11,12,4,13},{4,12,11,12,14,13},{4,4,13,5,12,16},{11,4,13,12,12,16},{5,4,13,11,5,16},{5,11,13,11,12,16},{5,5,12,11,11,13}},
         {{2,0,2,14,2,14},{6,2,6,10,9,10},{3,9,3,13,12,13},{3,12,3,5,14,5},{11,12,3,13,14,5},{3,12,11,5,14,13},{11,12,11,13,14,13}}
     };
     private static final VoxelShape[][] SHAPES = buildShapes();
@@ -71,15 +71,15 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
         return result;
     }
 
-    // Transform canonical SOUTH offsets; this is the same orientation contract as
-    // SteelBoilerModelParts. Positions are relative to the original controller.
+    // Transform SOUTH offsets according to the actual directional JSON layouts;
+    // the inverse mapping in the legacy model helper is not appropriate here.
     private static BlockPos offset(Role role,Direction facing){
         int x=role.dx,z=role.dz;
         return switch(facing){
             case SOUTH -> new BlockPos(x,role.dy,z);
             case NORTH -> new BlockPos(-x,role.dy,-z);
-            case EAST -> new BlockPos(-z,role.dy,x);
-            case WEST -> new BlockPos(z,role.dy,-x);
+            case EAST -> new BlockPos(z,role.dy,-x);
+            case WEST -> new BlockPos(-z,role.dy,x);
             default -> throw new IllegalArgumentException("Horizontal boiler facing required");
         };
     }
@@ -104,12 +104,12 @@ public final class BoilerServiceFittingBlock extends HorizontalDirectionalBlock 
                 case WATER -> position.relative(switch(facing){
                     case SOUTH -> Direction.WEST;
                     case NORTH -> Direction.EAST;
-                    case EAST -> Direction.NORTH;
-                    case WEST -> Direction.SOUTH;
+                    case EAST -> Direction.SOUTH;
+                    case WEST -> Direction.NORTH;
                     default -> throw new IllegalArgumentException("Horizontal facing required");
                 });
                 case STEAM, SAFETY -> position.below();
-                case FIREBOX -> position.above();
+                case FIREBOX -> position.relative(facing.getOpposite());
             };
             if(!level.hasChunkAt(inward)
                     || !level.getBlockState(inward).is(BlockRegistry.multiblockfiller.get()))
