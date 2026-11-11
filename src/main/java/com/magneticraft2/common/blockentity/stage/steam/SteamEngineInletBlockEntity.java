@@ -24,11 +24,19 @@ public final class SteamEngineInletBlockEntity extends BlockEntity implements IM
     @Override public boolean isValid(Level world,BlockPos pos){return world.getBlockEntity(pos)==this;}
     @Override public void onActivate(Level world,BlockPos pos){
         if(world.isClientSide)return;
-        formedModule=true;setChanged();sync();
+        formedModule=true;
+        BlockState state=world.getBlockState(worldPosition);
+        if(state.hasProperty(SteamEngineInletBlock.FORMED))
+            world.setBlock(worldPosition,state.setValue(SteamEngineInletBlock.FORMED,true),Block.UPDATE_ALL);
+        setChanged();sync();
     }
     @Override public void onDeactivate(Level world,BlockPos pos){
         if(world.isClientSide)return;
-        formedModule=false;setChanged();sync();
+        formedModule=false;
+        BlockState state=world.getBlockState(worldPosition);
+        if(state.hasProperty(SteamEngineInletBlock.FORMED))
+            world.setBlock(worldPosition,state.setValue(SteamEngineInletBlock.FORMED,false),Block.UPDATE_ALL);
+        setChanged();sync();
     }
     @Override public String getModuleKey(){return "steam_engine_inlet";}
     @Override public BlockPos getModuleOffset(){return worldPosition;}

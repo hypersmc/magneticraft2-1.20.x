@@ -16,24 +16,28 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
 
 public final class SteamEngineInletBlock extends BaseEntityBlock {
     public static final DirectionProperty FACING =
             net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty FORMED = BooleanProperty.create("formed");
 
     public SteamEngineInletBlock() {
         super(BlockBehaviour.Properties.of().strength(5F,8F)
                 .requiresCorrectToolForDrops().noOcclusion());
-        registerDefaultState(stateDefinition.any().setValue(FACING,Direction.WEST));
+        registerDefaultState(stateDefinition.any()
+                .setValue(FACING,Direction.WEST).setValue(FORMED,false));
     }
 
     @Override public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
-        return defaultBlockState().setValue(FACING,ctx.getHorizontalDirection().getOpposite());
+        return defaultBlockState().setValue(FACING,ctx.getHorizontalDirection().getOpposite())
+                .setValue(FORMED,false);
     }
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> b) {
-        b.add(FACING);
+        b.add(FACING,FORMED);
     }
     @Override public RenderShape getRenderShape(BlockState state) { return RenderShape.MODEL; }
     @Override public @Nullable BlockEntity newBlockEntity(BlockPos pos,BlockState state) {

@@ -1,0 +1,122 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "copper": "minecraft:block/cut_copper",
+    "deep": "minecraft:block/polished_deepslate",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        10,
+        8,
+        0
+      ],
+      "to": [
+        14,
+        16,
+        3
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            8,
+            4,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            8,
+            3,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            13,
+            8,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            4,
+            3
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        12,
+        0
+      ],
+      "to": [
+        7,
+        16,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            12,
+            7,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            12,
+            7,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            12,
+            14,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            12,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#copper",
+          "uv": [
+            0,
+            0,
+            7,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

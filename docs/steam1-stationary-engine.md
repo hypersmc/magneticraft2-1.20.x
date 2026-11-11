@@ -64,16 +64,17 @@ A full Forge build and Minecraft runtime test have not been performed by this im
 The first single-controller 7-block static model draft was deliberately replaced before runtime testing. Standard Minecraft baked block models are not used as one 112-pixel-long object. The current implementation uses the established Multiblock Rendering/Voxel V2 architecture:
 
 - controller and each formed filler own only block-local baked static geometry;
-- shared foundation/beam models are reused instead of duplicated;
-- the 18 cylinder panel cells use a fixed directional baked palette (72 models across four facings);
-- ten blueprint-air cells per facing become explicit non-occluding proxies for the moving crank/rod/flywheel swept area;
+- the original coherent stationary-engine body is clipped into 83 visible local fragments per facing, preserving its continuous bed/frame/cylinder shape instead of repeating one generic beam model for every paid beam;
+- clipped cuboids remain inside normal 0..16 model bounds and their UV ranges are cropped proportionally, never stretched to fit a cell;
+- 29 blueprint-air cells per facing become explicit non-occluding proxies: 27 are occupied by the coherent static body and two additional anchors cover the moving crank/rod/flywheel swept area;
 - a 213-box Voxel V2 profile is compiled once on data reload and clipped into block-local collision/selection snapshots on formation;
 - only crank, rigid connecting rod, crosshead/piston and flywheel use the dynamic renderer;
 - every moving model was re-authored within standard baked-model bounds and all checked UVs remain proportional.
 
 Static validation performed on the committed resources:
-- 164 assertions for directional required-air anchors, V2 profile selection and static palette availability;
-- 346 assertions for final moving/module model element bounds and proportional UV mapping;
+- static split validation preserves 92,652 model-pixel² of original visible surface per facing exactly, with 83 local fragments, no element outside 0..16 and no generated UV outside 0..16;
+- directional required-air anchors, V2 profile selection and static palette availability remain part of runtime verification;
+- moving/module model element bounds and proportional UV mapping remain part of the established static checks;
 - 22 source assertions for V2 ownership/render hooks and Steam/Gear registrations.
 
 These checks are not compilation or Minecraft visual acceptance.

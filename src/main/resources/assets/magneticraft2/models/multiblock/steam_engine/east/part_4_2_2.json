@@ -1,0 +1,63 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "copper": "minecraft:block/cut_copper",
+    "deep": "minecraft:block/polished_deepslate",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        0
+      ],
+      "to": [
+        8,
+        8,
+        3
+      ],
+      "faces": {
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            4,
+            8
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            3,
+            8
+          ]
+        },
+        "west": {
+          "texture": "#iron",
+          "uv": [
+            13,
+            0,
+            16,
+            8
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            13,
+            4,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

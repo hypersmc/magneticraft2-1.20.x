@@ -1,0 +1,113 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "copper": "minecraft:block/cut_copper",
+    "deep": "minecraft:block/polished_deepslate",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        2,
+        14,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            2,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            14,
+            0,
+            16,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            0,
+            8,
+            14
+          ]
+        },
+        "up": {
+          "texture": "#iron",
+          "uv": [
+            14,
+            0,
+            16,
+            8
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        14,
+        0
+      ],
+      "to": [
+        2,
+        16,
+        8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            3,
+            2,
+            5
+          ]
+        },
+        "south": {
+          "texture": "#iron",
+          "uv": [
+            14,
+            3,
+            16,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#iron",
+          "uv": [
+            0,
+            3,
+            8,
+            5
+          ]
+        },
+        "down": {
+          "texture": "#iron",
+          "uv": [
+            14,
+            0,
+            16,
+            8
+          ]
+        }
+      }
+    }
+  ]
+}

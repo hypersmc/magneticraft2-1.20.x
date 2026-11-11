@@ -1,0 +1,181 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "copper": "minecraft:block/cut_copper",
+    "deep": "minecraft:block/polished_deepslate",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        1,
+        4
+      ],
+      "to": [
+        16,
+        7,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            4,
+            0,
+            16,
+            6
+          ]
+        },
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        },
+        "west": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        },
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            12,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        1,
+        4
+      ],
+      "to": [
+        4,
+        7,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ]
+        },
+        "south": {
+          "texture": "#dark",
+          "uv": [
+            12,
+            0,
+            16,
+            6
+          ]
+        },
+        "east": {
+          "texture": "#dark",
+          "uv": [
+            0,
+            0,
+            12,
+            6
+          ]
+        },
+        "up": {
+          "texture": "#dark",
+          "uv": [
+            12,
+            0,
+            16,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#dark",
+          "uv": [
+            12,
+            0,
+            16,
+            12
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        8,
+        8
+      ],
+      "to": [
+        12,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#deep",
+          "uv": [
+            0,
+            4,
+            10,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#deep",
+          "uv": [
+            8,
+            4,
+            16,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#deep",
+          "uv": [
+            0,
+            4,
+            8,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#deep",
+          "uv": [
+            0,
+            8,
+            10,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}
