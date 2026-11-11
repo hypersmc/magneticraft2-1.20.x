@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " S ",
+    "SFS",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "magneticraft2:refined_steel_ingot"
+    },
+    "F": {
+      "item": "magneticraft2:wrought_iron_forge_die"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_forge_die",
+    "count": 1
+  }
+}

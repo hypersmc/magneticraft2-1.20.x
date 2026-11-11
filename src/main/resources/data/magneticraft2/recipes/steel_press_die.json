@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PDP",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:refined_steel_plate"
+    },
+    "D": {
+      "item": "magneticraft2:bronze_press_die"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_press_die",
+    "count": 1
+  }
+}

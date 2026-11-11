@@ -1,0 +1,111 @@
+{
+  "format": "magneticraft2:visual_animation",
+  "format_version": 1,
+  "coordinate_system": {
+    "units": "blocks",
+    "origin": "controller",
+    "reference_facing": "south"
+  },
+  "components": {
+    "engine_fixed": {
+      "model": "magneticraft2:multiblock/steam_engine/prototype_fixed",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_crank": {
+      "model": "magneticraft2:multiblock/steam_engine/prototype_crank",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_rod": {
+      "model": "magneticraft2:multiblock/steam_engine/prototype_rod",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_follower": {
+      "model": "magneticraft2:multiblock/steam_engine/prototype_slider",
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    },
+    "engine_slider_dummy": {
+      "model": null,
+      "model_offset": [
+        0,
+        0,
+        0
+      ],
+      "pivot": [
+        0,
+        0,
+        0
+      ],
+      "render_layer": "solid"
+    }
+  },
+  "inputs": {
+    "drive_angle": {
+      "source": "mechanical.visual_angle_degrees",
+      "module": "steam_engine_output"
+    }
+  },
+  "animations": {},
+  "mechanisms": {
+    "engine_drive": {
+      "type": "slider_crank",
+      "input": "drive_angle",
+      "rotation_axis": "x",
+      "slide_axis": "z",
+      "center": [
+        -0.5,
+        2.125,
+        5.25
+      ],
+      "radius": 0.5,
+      "rod_length": 2.5,
+      "phase_degrees": -90,
+      "follower_side": "negative",
+      "parts": {
+        "crank": "engine_crank",
+        "rod": "engine_rod",
+        "follower": "engine_follower",
+        "slider": "engine_slider_dummy"
+      }
+    }
+  }
+}

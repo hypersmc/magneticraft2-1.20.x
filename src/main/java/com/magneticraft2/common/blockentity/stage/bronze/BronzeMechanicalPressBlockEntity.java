@@ -8,6 +8,7 @@ import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -72,7 +73,31 @@ public final class BronzeMechanicalPressBlockEntity extends BaseBlockEntityMagne
     private int progress;
     private boolean running;
     private final ReplaceableMachinePart pressDie =
-            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_PRESS_DIE::get, 384);
+            new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_PRESS_DIE::get, 384,
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_STEEL_PRESS_DIE::get, 1536));
+
+    /** Heavy Steel bending needs the upgraded die, not the Bronze stamp. */
+    private static boolean requiresSteelPressDie(@Nullable MultiblockProcessingRecipe recipe) {
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_BOILER_SHELL_SECTION.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_BOILER_REINFORCEMENT_FLANGE.get()));
+    }
+
+    private boolean toolingSupports(MultiblockProcessingRecipe recipe) {
+        return !requiresSteelPressDie(recipe)
+                || pressDie.isInstalled(ItemRegistry.ITEM_STEEL_PRESS_DIE.get());
+    }
+
+    /**
+     * Preserve input quality/provenance through one-to-one Steel bending.
+     * The temporary hot-workpiece tag is not a permanent property of formed stock.
+     * Copper stamping retains its unchanged result item behavior.
+     */
+    private static ItemStack outputForRecipe(MultiblockProcessingRecipe recipe, ItemStack input) {
+        return requiresSteelPressDie(recipe)
+                ? HotBloomWorkpiece.consolidate(input, recipe.getOutput())
+                : recipe.getOutput();
+    }
 
     public BronzeMechanicalPressBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_MECHANICAL_PRESS_BE.get(), pos, state);
@@ -162,8 +187,9 @@ public final class BronzeMechanicalPressBlockEntity extends BaseBlockEntityMagne
             setChanged();
         }
         // No load while output is blocked or the press die needs replacement.
-        ItemStack output = recipe.getOutput();
-        if (!pressDie.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
+        ItemStack output = outputForRecipe(recipe, inputStack);
+        if (!pressDie.canOperate() || !toolingSupports(recipe)
+                || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
             return;
@@ -258,7 +284,10 @@ public final class BronzeMechanicalPressBlockEntity extends BaseBlockEntityMagne
             diagnostic = "recipe_unsupported";
         } else if (!pressDie.canOperate()) {
             diagnostic = "die_worn";
-        } else if (!itemHandler.insertItem(1, candidate.getOutput(), true).isEmpty()) {
+        } else if (!toolingSupports(candidate)) {
+            diagnostic = "steel_die_required";
+        } else if (!itemHandler.insertItem(1,
+                outputForRecipe(candidate, inputStack), true).isEmpty()) {
             diagnostic = "output_blocked";
         } else if (node == null) {
             diagnostic = "module_missing";

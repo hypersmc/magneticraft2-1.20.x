@@ -1,0 +1,20 @@
+{
+  "type": "magneticraft2:steel_process",
+  "machine": "magneticraft2:steel_refining_furnace",
+  "inputs": [
+    {
+      "item": "magneticraft2:pig_iron",
+      "count": 2
+    }
+  ],
+  "output": {
+    "item": "magneticraft2:refined_steel_ingot",
+    "count": 2
+  },
+  "slag": {
+    "item": "magneticraft2:slagitem",
+    "count": 1
+  },
+  "process_time": 1000,
+  "requires_air": true
+}

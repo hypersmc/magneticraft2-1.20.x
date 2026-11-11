@@ -28,8 +28,18 @@ import com.magneticraft2.common.blockentity.stage.iron.WroughtIronMediumGearBloc
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronLargeGearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronShaftBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.WroughtIronGearboxBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelMediumGearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelLargeGearBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelShaftBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelGearboxBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronStockShearBlockEntity;
 import com.magneticraft2.common.blockentity.stage.iron.IronForgeHearthBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelBoilerVesselBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.BoilerFireboxBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineInletBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steam.SteamEngineOutputBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ShaftBlockEntity_wood;
@@ -80,6 +90,19 @@ public class BlockEntityRegistry {
         BLOCK_ENTITIES.register(eventBus);
     }
 
+    public static final RegistryObject<BlockEntityType<BoilerFireboxBlockEntity>> BOILER_FIREBOX_BE =
+            BLOCK_ENTITIES.register("boiler_firebox_front", () -> BlockEntityType.Builder.of(
+                    BoilerFireboxBlockEntity::new, BlockRegistry.BOILER_FIREBOX_FRONT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineBlockEntity>> STEAM_ENGINE_BE =
+            BLOCK_ENTITIES.register("steam_engine", () -> BlockEntityType.Builder.of(
+                    SteamEngineBlockEntity::new, BlockRegistry.STEAM_ENGINE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineInletBlockEntity>> STEAM_ENGINE_INLET_BE =
+            BLOCK_ENTITIES.register("steam_engine_inlet", () -> BlockEntityType.Builder.of(
+                    SteamEngineInletBlockEntity::new, BlockRegistry.STEAM_ENGINE_INLET.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteamEngineOutputBlockEntity>> STEAM_ENGINE_OUTPUT_BE =
+            BLOCK_ENTITIES.register("steam_engine_output", () -> BlockEntityType.Builder.of(
+                    SteamEngineOutputBlockEntity::new, BlockRegistry.STEAM_ENGINE_OUTPUT.get()).build(null));
+
     //Block Entities after this line
     //Should sort this for each stage
 
@@ -118,6 +141,22 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("wrought_iron_shaft",
                     () -> BlockEntityType.Builder.of(WroughtIronShaftBlockEntity::new,
                             BlockRegistry.WROUGHT_IRON_SHAFT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelMediumGearBlockEntity>> STEEL_GEAR_MEDIUM_BE =
+            BLOCK_ENTITIES.register("steel_gear_medium",
+                    () -> BlockEntityType.Builder.of(SteelMediumGearBlockEntity::new,
+                            BlockRegistry.STEEL_GEAR_MEDIUM.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelLargeGearBlockEntity>> STEEL_GEAR_LARGE_BE =
+            BLOCK_ENTITIES.register("steel_gear_large",
+                    () -> BlockEntityType.Builder.of(SteelLargeGearBlockEntity::new,
+                            BlockRegistry.STEEL_GEAR_LARGE.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelShaftBlockEntity>> STEEL_SHAFT_BE =
+            BLOCK_ENTITIES.register("steel_shaft",
+                    () -> BlockEntityType.Builder.of(SteelShaftBlockEntity::new,
+                            BlockRegistry.STEEL_SHAFT.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelGearboxBlockEntity>> STEEL_GEARBOX_BE =
+            BLOCK_ENTITIES.register("steel_gearbox",
+                    () -> BlockEntityType.Builder.of(SteelGearboxBlockEntity::new,
+                            BlockRegistry.STEEL_GEARBOX.get()).build(null));
     public static final RegistryObject<BlockEntityType<ClutchBlockEntity_wood>> CLUTCH_BE_WOOD = BLOCK_ENTITIES.register("clutch_wood", () -> BlockEntityType.Builder.of(ClutchBlockEntity_wood::new, BlockRegistry.CLUTCH_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<OverloadDisconnectBlockEntity_wood>> OVERLOAD_DISCONNECT_BE_WOOD = BLOCK_ENTITIES.register("overload_disconnect_wood", () -> BlockEntityType.Builder.of(OverloadDisconnectBlockEntity_wood::new, BlockRegistry.OVERLOAD_DISCONNECT_WOOD.get()).build(null));
     public static final RegistryObject<BlockEntityType<MechanicalBrakeBlockEntity_wood>> MECHANICAL_BRAKE_BE_WOOD = BLOCK_ENTITIES.register("mechanical_brake_wood", () -> BlockEntityType.Builder.of(MechanicalBrakeBlockEntity_wood::new, BlockRegistry.MECHANICAL_BRAKE_WOOD.get()).build(null));
@@ -198,6 +237,15 @@ public class BlockEntityRegistry {
             BLOCK_ENTITIES.register("iron_forge_hearth", () ->
                     BlockEntityType.Builder.of(IronForgeHearthBlockEntity::new,
                             BlockRegistry.IRON_FORGE_HEARTH.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelBoilerVesselBlockEntity>> STEEL_BOILER_VESSEL_BE =
+            BLOCK_ENTITIES.register("steel_boiler_vessel", () -> BlockEntityType.Builder.of(
+                    SteelBoilerVesselBlockEntity::new, BlockRegistry.STEEL_BOILER_VESSEL.get()).build(null));
+    public static final RegistryObject<BlockEntityType<SteelProcessBlockEntity>> STEEL_PROCESS_BE =
+            BLOCK_ENTITIES.register("steel_process", () ->
+                    BlockEntityType.Builder.of(SteelProcessBlockEntity::new,
+                            BlockRegistry.STEEL_COKE_OVEN.get(),
+                            BlockRegistry.STEEL_BLAST_FURNACE.get(),
+                            BlockRegistry.STEEL_REFINING_FURNACE.get()).build(null));
     public static final RegistryObject<BlockEntityType<OreRoastingKilnBlockEntity>> ORE_ROASTING_KILN_BE =
             BLOCK_ENTITIES.register("ore_roasting_kiln", () ->
                     BlockEntityType.Builder.of(OreRoastingKilnBlockEntity::new,

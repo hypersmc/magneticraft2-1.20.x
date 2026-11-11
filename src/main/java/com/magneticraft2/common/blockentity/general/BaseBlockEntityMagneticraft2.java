@@ -154,11 +154,20 @@ public abstract class BaseBlockEntityMagneticraft2 extends BlockEntity implement
         }
     }
     public void onDestroy(Level level) {
+        onDestroy(level, null);
+    }
+
+    /**
+     * Tears down a formed multiblock while optionally leaving the block the
+     * player is currently mining for vanilla to remove and drop normally.
+     * Existing callers pass no break position and retain the original behavior.
+     */
+    public void onDestroy(Level level, BlockPos playerBreakPos) {
         dropInventoryContents(level);
 
         if (this.multiblockController != null) {
             this.multiblockController.setMasterPos(worldPosition);
-            this.multiblockController.destroyStructure(level);
+            this.multiblockController.destroyStructure(level, playerBreakPos);
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("onDestroy triggered");
             }

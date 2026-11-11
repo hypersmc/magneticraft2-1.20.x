@@ -4,6 +4,7 @@ import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
 import com.magneticraft2.common.blockentity.stage.copper.MultiblockItemPortBlockEntity;
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
+import com.magneticraft2.common.registry.registers.ItemRegistry;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
@@ -173,6 +174,8 @@ public final class IronForgeHearthBlockEntity extends BaseBlockEntityMagneticraf
 
     private static int fuelTime(ItemStack stack) {
         if (stack.isEmpty() || !stack.getCraftingRemainingItem().isEmpty()) return 0;
+        // Reuse Metallurgical Coke's established long firebox burn.
+        if (stack.is(ItemRegistry.ITEM_METALLURGICAL_COKE.get())) return 3200;
         return Math.max(0, ForgeHooks.getBurnTime(stack, RecipeType.SMELTING));
     }
 
@@ -212,6 +215,9 @@ public final class IronForgeHearthBlockEntity extends BaseBlockEntityMagneticraf
         heat = cooled;
 
         MultiblockProcessingRecipe recipe = findRecipe();
+        if (HotBloomWorkpiece.isSteelReheatRecipe(recipe))
+            threshold = Math.max(threshold,
+                    Magneticraft2ConfigCommon.GENERAL.HearthSteelHeatingThreshold.get());
         ItemStack candidate = itemHandler.getStackInSlot(0);
         // If a datapack replaces our batch recipe with a material-conversion
         // recipe, do not produce hot wrought stock or skip thermal accounting.

@@ -9,6 +9,10 @@ import com.magneticraft2.common.block.stage.iron.WroughtIronMediumGearBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronLargeGearBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronShaftBlock;
 import com.magneticraft2.common.block.stage.iron.WroughtIronGearboxBlock;
+import com.magneticraft2.common.block.stage.steel.SteelMediumGearBlock;
+import com.magneticraft2.common.block.stage.steel.SteelLargeGearBlock;
+import com.magneticraft2.common.block.stage.steel.SteelShaftBlock;
+import com.magneticraft2.common.block.stage.steel.SteelGearboxBlock;
 import com.magneticraft2.common.block.stage.copper.LargeGearWithHandleBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ClutchBlock_wood;
 import com.magneticraft2.common.block.stage.copper.ConveyorRollerBlock;
@@ -69,6 +73,15 @@ import com.magneticraft2.common.block.stage.iron.IronServiceHatchBlock;
 import net.minecraft.world.level.block.FenceBlock;
 import com.magneticraft2.common.block.stage.iron.IronStockShearBlock;
 import com.magneticraft2.common.block.stage.iron.IronForgeHearthBlock;
+import com.magneticraft2.common.block.stage.steel.SteelProcessBlock;
+import com.magneticraft2.common.block.stage.steel.SteelBoilerStructuralBlock;
+import com.magneticraft2.common.block.stage.steel.SteelBoilerVesselBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerSafetyMountBlock;
+import com.magneticraft2.common.block.stage.steam.BoilerFireboxFrontBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineInletBlock;
+import com.magneticraft2.common.block.stage.steam.SteamEngineOutputBlock;
 import com.magneticraft2.common.block.stage.iron.RivetedIronFrameBlock;
 import com.magneticraft2.common.item.general.foods.RicePlantBlock;
 import com.magneticraft2.common.magneticraft2;
@@ -180,6 +193,47 @@ public class BlockRegistry {
             BLOCKS.register("refractory_kiln", RefractoryKilnBlock::new);
     public static final RegistryObject<IronForgeHearthBlock> IRON_FORGE_HEARTH =
             BLOCKS.register("iron_forge_hearth", IronForgeHearthBlock::new);
+    // Steel IV-C inert assembly pieces: no pressure/steam capabilities or block entities.
+    public static final RegistryObject<SteelBoilerStructuralBlock> BOILER_SHELL_PANEL =
+            BLOCKS.register("boiler_shell_panel", () -> new SteelBoilerStructuralBlock(true));
+    public static final RegistryObject<SteelBoilerStructuralBlock> BOILER_END_JOINT =
+            BLOCKS.register("boiler_end_joint", () -> new SteelBoilerStructuralBlock(false));
+    // Steel IV-C physically constructed vessel; entirely inert until Steam Age.
+    public static final RegistryObject<SteelBoilerVesselBlock> STEEL_BOILER_VESSEL =
+            BLOCKS.register("steel_boiler_vessel", SteelBoilerVesselBlock::new);
+
+    // Steam 0-A: separate inert, physically supported service mounts; no capabilities or ticks.
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_WATER_INLET =
+            BLOCKS.register("boiler_water_inlet", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.WATER));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_STEAM_OUTLET =
+            BLOCKS.register("boiler_steam_outlet", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.STEAM));
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FIREBOX_MOUNT =
+            BLOCKS.register("boiler_firebox_mount", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.FIREBOX));
+    public static final RegistryObject<BoilerSafetyMountBlock> BOILER_SAFETY_MOUNT =
+            BLOCKS.register("boiler_safety_mount", BoilerSafetyMountBlock::new);
+    public static final RegistryObject<BoilerServiceFittingBlock> BOILER_FLUE_CHIMNEY =
+            BLOCKS.register("boiler_flue_chimney", () -> new BoilerServiceFittingBlock(BoilerServiceFittingBlock.Role.CHIMNEY));
+    // Steam 0-A V2: real, separately paid-for furnace extension.
+    public static final RegistryObject<Block> BOILER_FIREBOX_LINING =
+            BLOCKS.register("boiler_firebox_lining", () -> new Block(
+                    BlockBehaviour.Properties.of().strength(5F, 8F)
+                            .sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final RegistryObject<BoilerFireboxFrontBlock> BOILER_FIREBOX_FRONT =
+            BLOCKS.register("boiler_firebox_front", BoilerFireboxFrontBlock::new);
+    // Steam I: large stationary engine. Inlet/output modules survive formation.
+    public static final RegistryObject<SteamEngineBlock> STEAM_ENGINE =
+            BLOCKS.register("steam_engine", SteamEngineBlock::new);
+    public static final RegistryObject<SteamEngineInletBlock> STEAM_ENGINE_INLET =
+            BLOCKS.register("steam_engine_inlet", SteamEngineInletBlock::new);
+    public static final RegistryObject<SteamEngineOutputBlock> STEAM_ENGINE_OUTPUT =
+            BLOCKS.register("steam_engine_output", SteamEngineOutputBlock::new);
+    // Steel entry: three distinct JSON-formed machines, shared thermal backend.
+    public static final RegistryObject<SteelProcessBlock> STEEL_COKE_OVEN =
+            BLOCKS.register("steel_coke_oven", () -> new SteelProcessBlock("steel_coke_oven"));
+    public static final RegistryObject<SteelProcessBlock> STEEL_BLAST_FURNACE =
+            BLOCKS.register("steel_blast_furnace", () -> new SteelProcessBlock("steel_blast_furnace"));
+    public static final RegistryObject<SteelProcessBlock> STEEL_REFINING_FURNACE =
+            BLOCKS.register("steel_refining_furnace", () -> new SteelProcessBlock("steel_refining_furnace"));
     public static final RegistryObject<OreRoastingKilnBlock> ORE_ROASTING_KILN =
             BLOCKS.register("ore_roasting_kiln", OreRoastingKilnBlock::new);
     public static final RegistryObject<BronzeFoundryBlock> BRONZE_FOUNDRY =
@@ -196,6 +250,16 @@ public class BlockRegistry {
             BLOCKS.register("wrought_iron_shaft", WroughtIronShaftBlock::new);
     public static final RegistryObject<WroughtIronGearboxBlock> WROUGHT_IRON_GEARBOX =
             BLOCKS.register("wrought_iron_gearbox", WroughtIronGearboxBlock::new);
+
+    // Steel III: only stronger transmission, never extra source power.
+    public static final RegistryObject<SteelMediumGearBlock> STEEL_GEAR_MEDIUM =
+            BLOCKS.register("steel_gear_medium", SteelMediumGearBlock::new);
+    public static final RegistryObject<SteelLargeGearBlock> STEEL_GEAR_LARGE =
+            BLOCKS.register("steel_gear_large", SteelLargeGearBlock::new);
+    public static final RegistryObject<SteelShaftBlock> STEEL_SHAFT =
+            BLOCKS.register("steel_shaft", SteelShaftBlock::new);
+    public static final RegistryObject<SteelGearboxBlock> STEEL_GEARBOX =
+            BLOCKS.register("steel_gearbox", SteelGearboxBlock::new);
 
     // Iron III-A: heavy stock cutting, with a replaceable blade.
     public static final RegistryObject<IronStockShearBlock> IRON_STOCK_SHEAR =

@@ -13,6 +13,8 @@ import com.magneticraft2.common.item.stage.bronze.BronzePouringLadleItem;
 import com.magneticraft2.common.item.stage.bronze.IronBloomItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronIngotItem;
 import com.magneticraft2.common.item.stage.iron.WroughtIronBarItem;
+import com.magneticraft2.common.item.stage.steel.SteelStockItem;
+import com.magneticraft2.common.item.stage.steam.BoilerServiceFittingItem;
 import com.magneticraft2.common.item.stage.stone.pots.ceramicPot;
 import com.magneticraft2.common.item.stage.stone.pots.clayPot;
 import com.magneticraft2.common.item.stage.stone.slagitem;
@@ -219,6 +221,11 @@ public class ItemRegistry {
             fromBlock(WROUGHT_IRON_GEAR_LARGE);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_SHAFT = fromBlock(WROUGHT_IRON_SHAFT);
     public static final RegistryObject<Item> ITEM_WROUGHT_IRON_GEARBOX = fromBlock(WROUGHT_IRON_GEARBOX);
+    // Steel III mechanical transmission with stable distinct registry IDs.
+    public static final RegistryObject<Item> ITEM_STEEL_GEAR_MEDIUM = fromBlock(STEEL_GEAR_MEDIUM);
+    public static final RegistryObject<Item> ITEM_STEEL_GEAR_LARGE = fromBlock(STEEL_GEAR_LARGE);
+    public static final RegistryObject<Item> ITEM_STEEL_SHAFT = fromBlock(STEEL_SHAFT);
+    public static final RegistryObject<Item> ITEM_STEEL_GEARBOX = fromBlock(STEEL_GEARBOX);
     public static final RegistryObject<Item> ITEM_IRON_STRUCTURAL_BEAM = fromBlock(IRON_STRUCTURAL_BEAM);
     public static final RegistryObject<Item> ITEM_IRON_PLATE_PANEL = fromBlock(IRON_PLATE_PANEL);
     public static final RegistryObject<Item> ITEM_IRON_MACHINE_FOUNDATION = fromBlock(IRON_MACHINE_FOUNDATION);
@@ -227,6 +234,66 @@ public class ItemRegistry {
     public static final RegistryObject<Item> ITEM_IRON_SERVICE_HATCH = fromBlock(IRON_SERVICE_HATCH);
     public static final RegistryObject<Item> ITEM_REFRACTORY_KILN = fromBlock(REFRACTORY_KILN);
     public static final RegistryObject<Item> ITEM_IRON_FORGE_HEARTH = fromBlock(IRON_FORGE_HEARTH);
+    public static final RegistryObject<Item> ITEM_STEEL_COKE_OVEN = fromBlock(STEEL_COKE_OVEN);
+    public static final RegistryObject<Item> ITEM_STEEL_BLAST_FURNACE = fromBlock(STEEL_BLAST_FURNACE);
+    public static final RegistryObject<Item> ITEM_STEEL_REFINING_FURNACE = fromBlock(STEEL_REFINING_FURNACE);
+    public static final RegistryObject<Item> ITEM_METALLURGICAL_COKE =
+            ITEMS.register("metallurgical_coke", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_PIG_IRON =
+            ITEMS.register("pig_iron", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_INGOT =
+            ITEMS.register("refined_steel_ingot", SteelStockItem::new);
+    // Steel II: one ingot-equivalent per plate or bar; four quarter-stock rods
+    // per bar. Existing workshop BEs and hot-stock rules perform processing.
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_PLATE =
+            ITEMS.register("refined_steel_plate", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_BAR =
+            ITEMS.register("refined_steel_bar", SteelStockItem::new);
+    public static final RegistryObject<Item> ITEM_REFINED_STEEL_ROD =
+            ITEMS.register("refined_steel_rod", () -> new Item(new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_STEEL_ROLLER_SLEEVES =
+            ITEMS.register("steel_roller_sleeves", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-A: tangible heavy plate and formed boiler stock. These are not
+    // functioning boilers or Steam network machines.
+    public static final RegistryObject<Item> ITEM_HEAVY_STEEL_PLATE =
+            ITEMS.register("heavy_steel_plate", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_STEEL_PRESS_DIE =
+            ITEMS.register("steel_press_die", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BOILER_SHELL_SECTION =
+            ITEMS.register("boiler_shell_section", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-B: static boiler and pressure-line fabrication components.
+    // These items do not implement operating boiler or steam capabilities.
+    public static final RegistryObject<Item> ITEM_BOILER_END_PLATE =
+            ITEMS.register("boiler_end_plate", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_BOILER_REINFORCEMENT_FLANGE =
+            ITEMS.register("boiler_reinforcement_flange", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_PRESSURE_PIPE_COUPLING =
+            ITEMS.register("pressure_pipe_coupling", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> ITEM_STEEL_BORING_BIT =
+            ITEMS.register("steel_boring_bit", () -> new Item(new Item.Properties().stacksTo(16)));
+    // Steel IV-C physically placeable products of the existing Assembly Station.
+    public static final RegistryObject<Item> ITEM_BOILER_SHELL_PANEL = fromBlock(BOILER_SHELL_PANEL);
+    public static final RegistryObject<Item> ITEM_BOILER_END_JOINT = fromBlock(BOILER_END_JOINT);
+    public static final RegistryObject<Item> ITEM_STEEL_BOILER_VESSEL = fromBlock(STEEL_BOILER_VESSEL);
+    public static final RegistryObject<Item> ITEM_BOILER_WATER_INLET = ITEMS.register("boiler_water_inlet",
+                    () -> new BoilerServiceFittingItem(BOILER_WATER_INLET.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_STEAM_OUTLET = ITEMS.register("boiler_steam_outlet",
+                    () -> new BoilerServiceFittingItem(BOILER_STEAM_OUTLET.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_MOUNT = ITEMS.register("boiler_firebox_mount",
+                    () -> new BoilerServiceFittingItem(BOILER_FIREBOX_MOUNT.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_SAFETY_MOUNT = ITEMS.register("boiler_safety_mount",
+                    () -> new BoilerServiceFittingItem(BOILER_SAFETY_MOUNT.get(), new Item.Properties()));
+    // First useful Steel product; existing Forge Hammer maintenance handles
+    // stable save IDs and the 384/768/1536 material service tiers.
+    public static final RegistryObject<Item> ITEM_BOILER_FLUE_CHIMNEY = ITEMS.register("boiler_flue_chimney",
+                    () -> new BoilerServiceFittingItem(BOILER_FLUE_CHIMNEY.get(), new Item.Properties()));
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_LINING = fromBlock(BOILER_FIREBOX_LINING);
+    public static final RegistryObject<Item> ITEM_BOILER_FIREBOX_FRONT = fromBlock(BOILER_FIREBOX_FRONT);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE = fromBlock(STEAM_ENGINE);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE_INLET = fromBlock(STEAM_ENGINE_INLET);
+    public static final RegistryObject<Item> ITEM_STEAM_ENGINE_OUTPUT = fromBlock(STEAM_ENGINE_OUTPUT);
+    public static final RegistryObject<Item> ITEM_STEEL_FORGE_DIE =
+            ITEMS.register("steel_forge_die", () -> new Item(new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> ITEM_ORE_ROASTING_KILN = fromBlock(ORE_ROASTING_KILN);
     public static final RegistryObject<Item> ITEM_UNFIRED_REFRACTORY_BATCH =
             ITEMS.register("unfired_refractory_batch", () -> new Item(new Item.Properties()));

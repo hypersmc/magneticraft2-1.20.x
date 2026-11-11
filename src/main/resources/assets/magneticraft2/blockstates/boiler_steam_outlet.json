@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magneticraft2:block/boiler_steam_outlet_south"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/boiler_steam_outlet_east"
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/boiler_steam_outlet_north"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/boiler_steam_outlet_west"
+    }
+  }
+}

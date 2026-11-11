@@ -8,6 +8,7 @@ import net.minecraftforge.fluids.FluidStack;
 import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MechanicalAssemblyRecipe;
 import com.magneticraft2.common.recipe.multiblock.BloomeryRecipe;
+import com.magneticraft2.common.recipe.multiblock.SteelProcessRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalOreWasherRecipe;
 import com.magneticraft2.common.recipe.stage.copper.MechanicalSifterRecipe;
 import com.magneticraft2.common.recipe.stage.stone.primitive_furnace_multiblockrecipe;
@@ -97,6 +98,12 @@ public class MagneticraftJeiPlugin implements IModPlugin {
 
         level.getRecipeManager()
                 .getAllRecipesFor(BloomeryRecipe.Type.INSTANCE)
+                .stream()
+                .map(MultiblockJeiRecipe::from)
+                .forEach(recipes::add);
+
+        level.getRecipeManager()
+                .getAllRecipesFor(SteelProcessRecipe.Type.INSTANCE)
                 .stream()
                 .map(MultiblockJeiRecipe::from)
                 .forEach(recipes::add);
@@ -196,6 +203,9 @@ public class MagneticraftJeiPlugin implements IModPlugin {
         );
         registerCatalyst(registration, MultiblockJeiRecipe.ORE_ROASTING_KILN);
         registerCatalyst(registration, MultiblockJeiRecipe.BLOOMERY_FURNACE);
+        registerCatalyst(registration, MultiblockJeiRecipe.STEEL_COKE_OVEN);
+        registerCatalyst(registration, MultiblockJeiRecipe.STEEL_BLAST_FURNACE);
+        registerCatalyst(registration, MultiblockJeiRecipe.STEEL_REFINING_FURNACE);
     }
 
     private static void registerCatalyst(

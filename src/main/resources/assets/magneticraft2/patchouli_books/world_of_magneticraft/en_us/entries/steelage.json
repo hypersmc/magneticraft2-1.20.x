@@ -1,0 +1,333 @@
+{
+  "name": "Steel Age",
+  "category": "magneticraft2:walkthrough",
+  "icon": "magneticraft2:refined_steel_ingot",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "text",
+      "text": "$(bold)Entering the Steel Age$()$(br2)Start with the existing Wrought Iron workshop: make Iron Machine Foundations, Frames, Casings, Plates and Fired Refractory Ceramics. Steel's first complete loop requires a Coke Oven, Blast Furnace and a refining furnace. Each is a distinct JSON multiblock. You cannot craft your first Steel from vanilla Iron and Coal."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)1 — Metallurgical Coke$()$(br2)Form the Coke Oven (3x4x3) using the next Visualize. Supply four ordinary Coal through its REAL Item Input and fuel at the controller. It outputs four Metallurgical Coke from its Item Output after 720 HEAT-supplied ticks. This fuel can then run the higher-temperature Blast and Refining furnaces. Coal carbonization vents volatiles; no fake Wood Tar or Coal Tar is generated."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Coke Oven Controller",
+      "recipe": "magneticraft2:steel_coke_oven"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Coke Oven",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "BBB"
+          ],
+          [
+            "BBB",
+            "B_B",
+            "OBU"
+          ],
+          [
+            "FFF",
+            "FFF",
+            "F0F"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_coke_oven",
+          "B": "minecraft:bricks",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "U": "magneticraft2:multiblock_item_input",
+          "F": "magneticraft2:iron_machine_foundation"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)2 — Blast Reduction$()$(br2)Prepare Magnetite Concentrate in the existing ore workshop. Form the 5x5x5 Blast Furnace with REAL Item Input, Primary Output and Slag Output ports. Supply 4 Concentrate + 2 Metallurgical Coke + 1 Calcite through the input port's THREE recipe slots. Add Metallurgical Coke as firebox fuel at the controller, and connect a Bronze AIR Duct to the LEFT side-wall tuyere. The 1200-tick reduction produces 2 Pig Iron and 2 Slag. No AIR or no Coke means no finished iron."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Blast Furnace Controller",
+      "recipe": "magneticraft2:steel_blast_furnace"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Blast Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
+            "BBBBB",
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
+          ],
+          [
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FU0OY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_blast_furnace",
+          "B": "minecraft:bricks",
+          "F": "magneticraft2:iron_machine_foundation",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)3 — Controlled Steel Refining$()$(br2)A Blast Furnace makes high-carbon Pig Iron; it is NOT finished Steel. Form the distinct 5x5x5 Refining Furnace with its input, primary output, slag output and left wall AIR tuyere. Insert 2 Pig Iron, fuel with Metallurgical Coke and supply sustained AIR from the existing blower. The 1000-tick refining process produces 2 Refined Steel Ingots and separate refining Slag. HEAT and AIR are consumed during powered progress."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Refining Furnace Controller",
+      "recipe": "magneticraft2:steel_refining_furnace"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Refining Furnace",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "_____",
+            "_BBB_",
+            "_B_B_",
+            "_BBB_",
+            "_____"
+          ],
+          [
+            "BBBBB",
+            "BBBBB",
+            "BB_BB",
+            "BBBBB",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BBBBB"
+          ],
+          [
+            "BBBBB",
+            "B___B",
+            "B___B",
+            "B___B",
+            "BB_BB"
+          ],
+          [
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FFFFF",
+            "FU0OY"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_refining_furnace",
+          "B": "minecraft:bricks",
+          "F": "magneticraft2:iron_machine_foundation",
+          "U": "magneticraft2:multiblock_item_input",
+          "O": "magneticraft2:multiblock_item_primary_output",
+          "Y": "magneticraft2:multiblock_item_byproduct_output"
+        },
+        "symmetrical": false
+      }
+    },
+    {
+      "type": "text",
+      "text": "$(bold)4 — First useful Steel$()$(br2)Use four Refined Steel Ingots and your existing Wrought Iron Forging Die to craft a hardened Steel Forge Die. Install it in the SAME Bronze Forge Hammer through the existing replaceable-part interaction. It lasts 1536 successful batches, versus 768 for Wrought Iron and 384 for Bronze. The upgraded die does not increase RPM, torque, output or bypass the timed hot-stock requirement.$(br2)Producing and installing your first Steel Forge Die completes the Iron-to-Steel gameplay handoff."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Forge Die",
+      "recipe": "magneticraft2:steel_forge_die"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)5 — Steel II: Hot Stock$()$(br2)Steel cannot be rolled cold. Queue 4 Refined Steel Ingots in the existing Iron Forge Hearth; fire with a real solid fuel (Metallurgical Coke is supported) until the higher Steel HEAT threshold is reached. It returns the SAME 4 ingots tagged temporarily hot. Fuel is not the material input. Use the Steel Forge Die on the existing powered Forge Hammer to forge 1 hot ingot into 1 Steel Plate (20 RPM, 10 torque)."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)6 — Steel Rolling$()$(br2)Craft Steel Roller Sleeves with 4 forged Steel Plates and existing Wrought Iron Roller Sleeves, then install them on your SAME Bronze Rolling Mill. With 16 RPM and 10 torque, roll 1 hot Steel Ingot into 1 Steel Bar. Reheat 4 Steel Bars in the Iron Forge Hearth and roll 1 hot Steel Bar into 4 Steel Rods. Steel stock quality is preserved, temporary hot NBT is removed from shaped output, and powered batches consume tooling life only on completion."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Roller Sleeves",
+      "recipe": "magneticraft2:steel_roller_sleeves"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)7 — Steel III: Heavy Transmission$()$(br2)Steel Medium Gear (8 teeth) and Steel Gearbox (right-angle 1:1) can transmit 32 game-torque; Steel Large Gear (16 teeth) and Steel Shaft are rated 48. These figures are structural capacity, NOT new generated power. The same gear-ratio, direction, shaft, meshing and overload rules apply. Wooden and Wrought Iron bottlenecks still limit the network; the Water Wheel cannot magically deliver 32 torque."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Shaft",
+      "recipe": "magneticraft2:steel_shaft"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Medium Gear",
+      "recipe": "magneticraft2:steel_gear_medium"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Large Gear",
+      "recipe": "magneticraft2:steel_gear_large"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Gearbox",
+      "recipe": "magneticraft2:steel_gearbox"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steam-ready Drivetrain$()$(br2)Steel upgrades use the same Gear V2 connections as Wood/Iron. 16T Large + 16T Large mesh ONLY at perpendicular axes with one-block offsets along both axles, turning power 90 degrees. For parallel Large gears, bridge with an 8T Medium gear diagonally; the Large gears do not mesh directly. Medium + Medium connect adjacent (1:1); Medium + Large connect diagonally (2:1). Wrongly closed loops or incompatible sources stall, never create free mechanical power. Final gear visuals remain under MGC2 Studio."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)8 — Steel IV-A: Heavy Plate$()$(br2)No new multiblock is necessary. First roll Steel Ingots into Bars using the existing Rolling Mill with Steel Roller Sleeves. Reheat 4 Steel Bars together in the fueled Iron Forge Hearth (higher Steel HEAT threshold) and move the same 4 hot Bars to the existing powered Forge Hammer fitted with a Steel Forge Die. At 20 RPM and 12 torque, 320 powered ticks forge all 4 Bars into ONE Heavy Steel Plate. The plate contains four ingot-equivalents: a material-conserving forge-welded billet, not four free plates. Cold bars will not work and completed batches wear the die."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)9 — Curving a Boiler Shell$()$(br2)Craft one Steel Press Die by reinforcing the earlier Bronze Press Die with four normal Refined Steel Plates. Install that part in the existing Bronze Mechanical Press. Feed one Heavy Steel Plate through its REAL input port. With 18 RPM and 14 torque, the 240-tick powered forming recipe produces ONE Boiler Shell Section, preserving the Steel plate's quality/provenance. A Bronze Press Die cannot form this component; Copper Panels remain craftable with either die."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Press Die",
+      "recipe": "magneticraft2:steel_press_die"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steam Plant Construction$()$(br2)A Boiler Shell Section is a fabrication component, NOT a functioning boiler. It has no fluid, HEAT, PRESSURE or STEAM capability. Later Steel IV work will define boiler end plates, flanges, valves and actual assembly consumers. Do not create or consume live pressurized steam until the Steam Age vertical slice. Current item models reuse existing Steel stock shapes as temporary MGC2 Studio placeholders."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)10 — Steel IV-B: Boiler End Plates$()$(br2)The Boiler Shell Section is the curved wall, not an entire boiler. For a machined closure plate, put ONE Heavy Steel Plate into the existing Precision Boring Machine. Upgrade its replaceable Abrasive Boring Bit to a Steel Boring Bit (reinforced using 3 Refined Steel Plates and one Steel Rod). At 20 RPM and 12 torque, bore the Heavy Plate for 300 powered ticks to produce ONE Boiler End Plate, keeping its steel quality. The early Abrasive Boring Bit cannot machine this stock."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Steel Boring Bit",
+      "recipe": "magneticraft2:steel_boring_bit"
+    },
+    {
+      "type": "text",
+      "text": "$(bold)11 — Boiler Reinforcement Flanges$()$(br2)With the Steel Press Die already fitted to the existing Mechanical Press, feed TWO normal Refined Steel Plates into its real item input. At 18 RPM and 14 torque, 240 supplied ticks produce ONE Boiler Reinforcement Flange. The batch consumes both plates, preserves their quality and wears the installed die once. Bronze pressing still works without a Steel die for Copper Panels, but cannot form a boiler flange."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)12 — Pressure-Rated Pipe Couplings$()$(br2)Use the upgraded Precision Boring Machine with its Steel Boring Bit on ONE Refined Steel Bar. At 20 RPM, 12 torque and 260 supplied ticks, machine ONE Pressure-Rated Pipe Coupling. The source metal quality is preserved; the temporary hot-stock timestamp is removed from the finished fitting. A pipe coupling is stock for future boiler/piping construction, not a working pressurized network connector yet."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steel IV Components — Not Yet a Boiler$()$(br2)You can now fabricate Heavy Steel Plates, curved Boiler Shell Sections, machined Boiler End Plates, Reinforcement Flanges and Pressure-Rated Pipe Couplings using existing machines. None of these items supplies steam, heat, water, or pressure; they do not automatically become a boiler when placed. Functional Steam comes in Steam Age, with server-authoritative pressure, safety, fuel and mechanical torque. All three new component item appearances are temporary MGC2 Studio placeholders."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)13 — Steel IV-C: Physical Boiler Pieces$()$(br2)The Mechanical Assembly Station now makes two placeable construction pieces from real manufactured Steel. For one Boiler Shell Panel, feed in order: 1 curved Boiler Shell Section, 1 Steel Rod, 4 Iron Rivets and 1 Riveted Iron Frame. For one Boiler End Joint, feed: 1 Boiler End Plate, 1 Boiler Reinforcement Flange, 1 Pressure-Rated Pipe Coupling and 4 Iron Rivets. Both use 18 RPM, 10 torque and 320 supplied ticks; look up the exact four-slot Mechanical Assembly recipes in JEI."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Steel IV-C — Vessel Construction$()$(br2)The two Mechanical Assembly Station outputs are PLACEABLE structural pieces and become useful in the 3x4x5 boiler vessel shown on the following Visualize page. The vessel can be formed from its real world-block materials, but is NOT yet a live boiler: no water, Steam, HEAT, fuel, safety or pressure processing is installed. Assembly crafting currently does not transfer item quality metadata into these placed pieces."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)14 — Steel IV-C: Physical Boiler Vessel$()$(br2)This structure does not generate Steam. Manufacture 24 Boiler Shell Panels, 2 Boiler End Joints, 16 Iron Plate Panels, 10 Iron Machine Foundations and 1 Steel Boiler Vessel Controller. The 3x4x5 drum rests on two foundation rails. Shell Panels surround three central hollow air cells in each middle course; both end closures sit in the center of reinforced iron-panel rings. Place the controller at the lower FRONT center, build as Visualize shows and right-click to form. No fuel, HEAT, WATER, PRESSURE or STEAM ports exist in Steel Age.$(br2)Place the Controller first; each Shell Panel and End Joint automatically chooses its position-specific curved shape when placed nearby. The Visualize preview shows those curved parts rather than repeated upright steel sheets."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Boiler Vessel Controller",
+      "recipe": "magneticraft2:steel_boiler_vessel"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "name": "Steel Boiler Vessel",
+      "enable_visualize": true,
+      "multiblock": {
+        "pattern": [
+          [
+            "PfffP",
+            "PgggP",
+            "PhhhP"
+          ],
+          [
+            "PdddP",
+            "K   J",
+            "PeeeP"
+          ],
+          [
+            "PaaaP",
+            "PbbbP",
+            "PcccP"
+          ],
+          [
+            "FFFFF",
+            "    0",
+            "FFFFF"
+          ]
+        ],
+        "mapping": {
+          "0": "magneticraft2:steel_boiler_vessel",
+          "F": "magneticraft2:iron_machine_foundation",
+          "P": "magneticraft2:iron_plate_panel",
+          "J": "magneticraft2:boiler_end_joint[facing=south,segment=8]",
+          "K": "magneticraft2:boiler_end_joint[facing=south,segment=9]",
+          "a": "magneticraft2:boiler_shell_panel[facing=south,segment=0]",
+          "b": "magneticraft2:boiler_shell_panel[facing=south,segment=1]",
+          "c": "magneticraft2:boiler_shell_panel[facing=south,segment=2]",
+          "d": "magneticraft2:boiler_shell_panel[facing=south,segment=3]",
+          "e": "magneticraft2:boiler_shell_panel[facing=south,segment=4]",
+          "f": "magneticraft2:boiler_shell_panel[facing=south,segment=5]",
+          "g": "magneticraft2:boiler_shell_panel[facing=south,segment=6]",
+          "h": "magneticraft2:boiler_shell_panel[facing=south,segment=7]"
+        },
+        "symmetrical": false
+      },
+      "text": "Build from the Controller outward; the hollow middle must be air. This preview follows the 3-wide x 5-long physical layout. End rings are Iron Plate Panels and show their unformed appearance."
+    }
+  ]
+}

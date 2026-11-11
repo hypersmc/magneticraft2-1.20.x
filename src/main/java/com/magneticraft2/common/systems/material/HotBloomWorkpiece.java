@@ -10,8 +10,9 @@ import net.minecraft.world.level.Level;
 
 /**
  * Server-authoritative forging heat for existing Iron Blooms, Wrought
- * Iron Ingots and Iron Bars. All keep their original registry IDs. The Refractory Kiln
- * grants temporary heat only through identified, fueled processing recipes;
+ * Iron Ingots/Bars and small Steel stock. All retain their registered IDs.
+ * The Kiln or Forge Hearth grants temporary heat only through identified,
+ * fueled processing recipes with the appropriate existing HEAT budget;
  * the Forge Hammer and Rolling Mill check expiry at every supplied processing tick.
  * No fake hot item IDs, client clocks or extra item entities.
  *
@@ -30,6 +31,35 @@ public final class HotBloomWorkpiece {
             new ResourceLocation("magneticraft2", "hearth_reheat_wrought_iron_ingots");
     private static final ResourceLocation HEARTH_BARS =
             new ResourceLocation("magneticraft2", "hearth_reheat_wrought_iron_bars");
+    private static final ResourceLocation FORGE_HEARTH_MACHINE =
+            new ResourceLocation("magneticraft2", "iron_forge_hearth");
+    private static final ResourceLocation HEARTH_STEEL_INGOTS =
+            new ResourceLocation("magneticraft2", "hearth_reheat_refined_steel_ingots");
+    private static final ResourceLocation HEARTH_STEEL_BARS =
+            new ResourceLocation("magneticraft2", "hearth_reheat_refined_steel_bars");
+
+    /** Steel requires a higher Hearth HEAT threshold, not an unmodified Kiln. */
+    public static boolean isSteelReheatRecipe(MultiblockProcessingRecipe recipe) {
+        if (recipe == null || !(HEARTH_STEEL_INGOTS.equals(recipe.getId())
+                || HEARTH_STEEL_BARS.equals(recipe.getId()))
+                || !recipe.isForMachine(FORGE_HEARTH_MACHINE)
+                || recipe.getInputCount() != 4 || recipe.getOutput().getCount() != 4)
+            return false;
+        return (HEARTH_STEEL_INGOTS.equals(recipe.getId())
+                && recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_INGOT.get()))
+                || (HEARTH_STEEL_BARS.equals(recipe.getId())
+                && recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_BAR.get()));
+    }
+
+    public static boolean requiresSteelDie(MultiblockProcessingRecipe recipe) {
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_PLATE.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_HEAVY_STEEL_PLATE.get()));
+    }
+
+    public static boolean requiresSteelRollers(MultiblockProcessingRecipe recipe) {
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_BAR.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_REFINED_STEEL_ROD.get()));
+    }
 
     private HotBloomWorkpiece() {}
 
@@ -46,7 +76,8 @@ public final class HotBloomWorkpiece {
                     && recipe.getInputCount() == 4 && recipe.getOutput().getCount() == 4)
                 || (HEARTH_BARS.equals(recipe.getId())
                     && recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get())
-                    && recipe.getInputCount() == 4 && recipe.getOutput().getCount() == 4);
+                    && recipe.getInputCount() == 4 && recipe.getOutput().getCount() == 4)
+                || isSteelReheatRecipe(recipe);
     }
 
     public static boolean requiresHeat(MultiblockProcessingRecipe recipe) {
@@ -54,7 +85,8 @@ public final class HotBloomWorkpiece {
         // plate forging; other shaped materials join only when implemented.
         return recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())
                 || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_PLATE.get())
-                || recipe.getOutput().is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get());
+                || recipe.getOutput().is(ItemRegistry.ITEM_IRON_GEAR_BLANK_MEDIUM.get())
+                || requiresSteelDie(recipe);
     }
 
     /**
@@ -63,7 +95,8 @@ public final class HotBloomWorkpiece {
      */
     public static boolean requiresRollingHeat(MultiblockProcessingRecipe recipe) {
         return recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get())
-                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get());
+                || recipe.getOutput().is(ItemRegistry.ITEM_WROUGHT_IRON_ROD.get())
+                || requiresSteelRollers(recipe);
     }
 
     /**
@@ -79,7 +112,9 @@ public final class HotBloomWorkpiece {
     public static boolean isHot(ItemStack stack, Level world) {
         if (stack.isEmpty() || (!stack.is(ItemRegistry.ITEM_IRON_BLOOM.get())
                 && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_INGOT.get())
-                && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get()))) return false;
+                && !stack.is(ItemRegistry.ITEM_WROUGHT_IRON_BAR.get())
+                && !stack.is(ItemRegistry.ITEM_REFINED_STEEL_INGOT.get())
+                && !stack.is(ItemRegistry.ITEM_REFINED_STEEL_BAR.get()))) return false;
         CompoundTag tag = stack.getTag();
         return tag != null && tag.contains(HOT_UNTIL_TAG, Tag.TAG_LONG)
                 && tag.getLong(HOT_UNTIL_TAG) > world.getGameTime();

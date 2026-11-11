@@ -2,6 +2,7 @@ package com.magneticraft2.common.blockentity.general;
 
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.blockentity.stage.bronze.BloomeryFurnaceBlockEntity;
+import com.magneticraft2.common.blockentity.stage.steel.SteelProcessBlockEntity;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressure;
 import com.magneticraft2.common.systems.PRESSURE.CapabilityPressurizedGas;
 import net.minecraft.core.Direction;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.UUID;
 
 /**
  * Per-block multiblock proxy. V2 parts are chunk-baked static models, not BERs.
@@ -34,6 +36,12 @@ import org.jetbrains.annotations.Nullable;
  * or a full-cube phantom collision.
  */
 public class Multiblockfiller_tile extends BlockEntity {
+    @Nullable private UUID boilerAssemblyIdentity;
+    public @Nullable UUID getBoilerAssemblyIdentity() { return boilerAssemblyIdentity; }
+    public void setBoilerAssemblyIdentity(UUID identity) {
+        boilerAssemblyIdentity = identity;
+        sync();
+    }
     private int Master_X;
     private int Master_Y;
     private int Master_Z;
@@ -173,12 +181,24 @@ public class Multiblockfiller_tile extends BlockEntity {
                 return bloomery.getSideTuyereCapability(cap, side, worldPosition);
             }
         }
+        // Steel reduction/refining shares the actual Bloomery AIR port
+        // contract. The controller independently validates exact world
+        // position, facing and formation before giving out its handler.
+        if (side != null && renderPart.startsWith("steel_")
+                && (cap == CapabilityPressure.PRESSURE || cap == CapabilityPressurizedGas.GAS)
+                && level != null) {
+            BlockPos controllerPos = getControllerPos();
+            if (level.hasChunkAt(controllerPos)
+                    && level.getBlockEntity(controllerPos) instanceof SteelProcessBlockEntity furnace)
+                return furnace.getSideTuyereCapability(cap, side, worldPosition);
+        }
         return super.getCapability(cap, side);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+        boilerAssemblyIdentity = tag.hasUUID("BoilerAssemblyId") ? tag.getUUID("BoilerAssemblyId") : null;
         Master_X = tag.getInt("controller_x");
         Master_Y = tag.getInt("controller_y");
         Master_Z = tag.getInt("controller_z");
@@ -196,6 +216,7 @@ public class Multiblockfiller_tile extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+        if (boilerAssemblyIdentity != null) tag.putUUID("BoilerAssemblyId", boilerAssemblyIdentity);
         tag.putInt("controller_x", Master_X);
         tag.putInt("controller_y", Master_Y);
         tag.putInt("controller_z", Master_Z);

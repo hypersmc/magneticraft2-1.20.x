@@ -1,0 +1,10 @@
+{
+  "loader": "magneticraft2:multiblock",
+  "baseModel": "magneticraft2:models/block/boiler_firebox_front_unformed.json",
+  "namedModels": {
+    "multiblock/boiler_firebox_south": "magneticraft2:models/multiblock/boiler_firebox_south/part_0_0_0.json",
+    "multiblock/boiler_firebox_west": "magneticraft2:models/multiblock/boiler_firebox_west/part_0_0_0.json",
+    "multiblock/boiler_firebox_north": "magneticraft2:models/multiblock/boiler_firebox_north/part_0_0_0.json",
+    "multiblock/boiler_firebox_east": "magneticraft2:models/multiblock/boiler_firebox_east/part_0_0_0.json"
+  }
+}

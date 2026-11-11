@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PBP",
+    "CFC",
+    "PBP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "B": {
+      "item": "magneticraft2:iron_structural_beam"
+    },
+    "C": {
+      "item": "magneticraft2:fired_refractory_ceramic"
+    },
+    "F": {
+      "item": "magneticraft2:riveted_iron_casing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_coke_oven",
+    "count": 1
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "PFP",
+    "RCR",
+    "PFP"
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "F": {
+      "item": "magneticraft2:iron_machine_foundation"
+    },
+    "R": {
+      "item": "magneticraft2:fired_refractory_ceramic"
+    },
+    "C": {
+      "item": "magneticraft2:riveted_iron_casing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_blast_furnace",
+    "count": 1
+  }
+}

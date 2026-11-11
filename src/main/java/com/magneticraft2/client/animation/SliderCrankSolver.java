@@ -53,13 +53,16 @@ public final class SliderCrankSolver {
         double longitudinal = radius * Math.sin(theta);
         double pinY = mechanism.center().y + lateral;
         double pinZ = mechanism.center().z + longitudinal;
-        double rodAngle = Math.toDegrees(Math.asin(lateral / length));
+        double baseRodAngle = Math.toDegrees(Math.asin(lateral / length));
+        double side = mechanism.followerSign();
+        double rodAngle = side > 0.0D ? baseRodAngle : 180.0D - baseRodAngle;
 
-        // The rod end is constrained to the slider rail centerline. Its exact
-        // closure defines the tray stroke, not an approximation or sine wave.
-        double endZ = pinZ + Math.sqrt(length * length - lateral * lateral);
-        double followerZ = endZ;
-        double stroke = endZ - mechanism.center().z - length;
+        // The follower may live on either side of the crankshaft. Positive is
+        // the legacy convention; negative lets the Stationary Steam Engine
+        // keep its cylinder behind the crank while preserving a rigid rod.
+        double closure = Math.sqrt(length * length - lateral * lateral);
+        double followerZ = pinZ + side * closure;
+        double stroke = followerZ - (mechanism.center().z + side * length);
         return new Sample(crankAngle, pinY, pinZ, rodAngle, followerZ, stroke);
     }
 }

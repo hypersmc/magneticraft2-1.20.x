@@ -1,0 +1,32 @@
+{
+  "variants": {
+    "facing=north,vertical_facing_up=false,vertical_facing_down=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large",
+      "x": 90
+    },
+    "facing=south,vertical_facing_up=false,vertical_facing_down=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large",
+      "x": -90
+    },
+    "facing=east,vertical_facing_up=false,vertical_facing_down=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west,vertical_facing_up=false,vertical_facing_down=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large",
+      "x": 90,
+      "y": -90
+    },
+    "facing=north,vertical_facing_up=true,vertical_facing_down=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large",
+      "x": 180
+    },
+    "facing=north,vertical_facing_down=true,vertical_facing_up=false,powered=false": {
+      "model": "magneticraft2:block/steel_gear_large"
+    },
+    "powered=true": {
+      "model": "magneticraft2:block/invis"
+    }
+  }
+}

@@ -1,0 +1,348 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_mount_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_mount_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_mount_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_mount_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "0"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_0"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "1"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "2"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "3"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "4"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_4"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "pressure_step": "5"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_5"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "0"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_0",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "1"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "2"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "3"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "4"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "pressure_step": "5"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "0"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_0",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "1"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "2"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "3"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "4"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "pressure_step": "5"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "0"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_0",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "1"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "2"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "3"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "4"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "pressure_step": "5"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_needle_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "relieving": "false"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_closed"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "relieving": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_open"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "relieving": "false"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_closed",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "relieving": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_open",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "relieving": "false"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_closed",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "relieving": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_open",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "relieving": "false"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_closed",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "relieving": "true"
+      },
+      "apply": {
+        "model": "magneticraft2:block/boiler_safety_valve_open",
+        "y": 270
+      }
+    }
+  ]
+}

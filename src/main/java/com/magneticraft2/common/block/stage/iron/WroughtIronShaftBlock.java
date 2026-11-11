@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /** Existing Gear V2 axial 1:1 shaft connection, forged iron material. */
-public final class WroughtIronShaftBlock extends ShaftBlock_wood {
+public class WroughtIronShaftBlock extends ShaftBlock_wood {
     // Match the existing 2x2 through-axle on the Iron Medium Gear.
     // Never reuse the 6x6 wooden shaft outline for this metal model.
     private static final VoxelShape SHAPE_Y = Block.box(7, 0, 7, 9, 16, 9);

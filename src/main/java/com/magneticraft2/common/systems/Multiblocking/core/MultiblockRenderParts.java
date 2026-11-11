@@ -108,11 +108,32 @@ public final class MultiblockRenderParts {
             // Bloomery gets a small reusable, once-baked palette: its
             // foundation, tiered shaft, side tuyere and open hearth do not
             // require one JSON/model allocation for each occupied cell.
-            String modelKey = machineId.equals("bloomery_furnace")
-                    ? BloomeryModelParts.key(facing, dx, dy, dz,
-                            originalBlocks.get(partPos).isAir())
-                    : machineId + "_" + facing.getName()
+            String modelKey;
+            if (machineId.equals("bloomery_furnace")) {
+                modelKey = BloomeryModelParts.key(facing, dx, dy, dz,
+                        originalBlocks.get(partPos).isAir());
+            } else if (machineId.equals("steel_boiler_vessel")) {
+                modelKey = SteelBoilerModelParts.key(facing, dx, dy, dz, originalBlocks.get(partPos));
+            } else if (machineId.equals("steam_engine")) {
+                modelKey = SteamEngineModelParts.key(facing, dx, dy, dz, originalBlocks.get(partPos));
+            } else if (machineId.equals("steel_coke_oven")
+                    || machineId.equals("steel_blast_furnace")
+                    || machineId.equals("steel_refining_furnace")) {
+                // One baked part assignment on formation. The shared model
+                // palette is keyed in canonical SOUTH coordinates, identical
+                // to the JSON multiblock and Voxel V2 profile conventions.
+                BlockState old = originalBlocks.get(partPos);
+                Direction tuyereSide = facing.getClockWise();
+                BlockPos tuyere = master.relative(tuyereSide, 2)
+                        .relative(facing.getOpposite(), 2).above();
+                modelKey = partPos.equals(tuyere) && !machineId.equals("steel_coke_oven")
+                        ? "steel_process/tuyere_" + tuyereSide.getName()
+                        : SteelProcessModelParts.key(machineId, facing, dx, dy, dz,
+                                old.isAir(), old.is(BlockRegistry.IRON_MACHINE_FOUNDATION.get()));
+            } else {
+                modelKey = machineId + "_" + facing.getName()
                         + "/part_" + dx + "_" + dy + "_" + dz;
+            }
 
             // Preserve at most half a block of actual physical protrusion from
             // explicitly specified AIR anchors. Ordinary filler collision and

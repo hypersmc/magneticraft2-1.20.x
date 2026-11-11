@@ -2,6 +2,8 @@ package com.magneticraft2.common.block.general;
 
 import com.magneticraft2.common.blockentity.general.BaseBlockEntityMagneticraft2;
 import com.magneticraft2.common.blockentity.general.Multiblockfiller_tile;
+import com.magneticraft2.common.systems.steam.BoilerAssemblyRecovery;
+import com.magneticraft2.common.item.stage.steam.BoilerServiceFittingItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,6 +54,11 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        // Let boiler fitting BlockItems handle this click and install their
+        // hardware at the appropriate external cell of the formed vessel.
+        // Other machines retain their normal filler interactions.
+        if (pPlayer.getItemInHand(pHand).getItem() instanceof BoilerServiceFittingItem)
+            return InteractionResult.PASS;
         if (pLevel.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -87,6 +94,10 @@ public class Multiblockfiller extends BaseEntityBlock {
 
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        if (BoilerAssemblyRecovery.handles(level, pos)) {
+            BoilerAssemblyRecovery.playerBreak(level, pos, player);
+            return false;
+        }
         if (!level.isClientSide) {
             BlockEntity blockEntity =
                     level.getBlockEntity(pos);
@@ -113,6 +124,13 @@ public class Multiblockfiller extends BaseEntityBlock {
             }
         }
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+    @Override
+    public void onRemove(BlockState oldState, Level level, BlockPos pos, BlockState newState, boolean moving) {
+        if (oldState.getBlock() != newState.getBlock())
+            BoilerAssemblyRecovery.unexpectedRemoval(level, pos);
+        super.onRemove(oldState, level, pos, newState, moving);
     }
 
     @Override

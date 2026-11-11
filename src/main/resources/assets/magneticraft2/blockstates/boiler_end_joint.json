@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=south,segment=0": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=1": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=2": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=3": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=4": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=5": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=6": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=7": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=south,segment=8": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_front_south"
+    },
+    "facing=south,segment=9": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_back_south"
+    },
+    "facing=west,segment=0": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=1": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=2": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=3": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=4": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=5": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=6": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=7": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=west,segment=8": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_front_west"
+    },
+    "facing=west,segment=9": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_back_west"
+    },
+    "facing=north,segment=0": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=1": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=2": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=3": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=4": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=5": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=6": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=7": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=north,segment=8": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_front_north"
+    },
+    "facing=north,segment=9": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_back_north"
+    },
+    "facing=east,segment=0": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=1": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=2": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=3": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=4": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=5": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=6": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=7": {
+      "model": "magneticraft2:block/boiler_end_joint"
+    },
+    "facing=east,segment=8": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_front_east"
+    },
+    "facing=east,segment=9": {
+      "model": "magneticraft2:multiblock/boiler_vessel/cap_back_east"
+    }
+  }
+}

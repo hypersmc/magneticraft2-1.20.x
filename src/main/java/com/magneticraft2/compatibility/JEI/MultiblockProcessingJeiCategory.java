@@ -235,6 +235,15 @@ public class MultiblockProcessingJeiCategory
             );
         }
 
+        if (MultiblockJeiRecipe.STEEL_COKE_OVEN.equals(recipe.getMachine())) {
+            guiGraphics.drawString(font, Component.translatable(
+                    "jei.magneticraft2.steel_coke_fuel_hint"), 8, 82, 0x404040, false);
+        } else if (MultiblockJeiRecipe.STEEL_BLAST_FURNACE.equals(recipe.getMachine())
+                || MultiblockJeiRecipe.STEEL_REFINING_FURNACE.equals(recipe.getMachine())) {
+            guiGraphics.drawString(font, Component.translatable(
+                    "jei.magneticraft2.steel_air_fuel_hint"), 8, 82, 0x404040, false);
+        }
+
         if (MultiblockJeiRecipe.REFRACTORY_KILN.equals(recipe.getMachine())) {
             // Fuel is an optional furnace supply, not an amount consumed
             // by each recipe result. See the separate JEI liquid-fuel usage.

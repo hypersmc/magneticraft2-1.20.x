@@ -80,7 +80,14 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
     private final ReplaceableMachinePart rollerSleeves =
             new ReplaceableMachinePart(ItemRegistry.ITEM_BRONZE_ROLLER_SLEEVES::get, 512,
                     new ReplaceableMachinePart.Alternative(
-                            ItemRegistry.ITEM_WROUGHT_IRON_ROLLER_SLEEVES::get, 1024));
+                            ItemRegistry.ITEM_WROUGHT_IRON_ROLLER_SLEEVES::get, 1024),
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_STEEL_ROLLER_SLEEVES::get, 2048));
+
+    private boolean toolingSupports(MultiblockProcessingRecipe recipe) {
+        return !HotBloomWorkpiece.requiresSteelRollers(recipe)
+                || rollerSleeves.isInstalled(ItemRegistry.ITEM_STEEL_ROLLER_SLEEVES.get());
+    }
 
     public BronzeRollingMillBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_ROLLING_MILL_BE.get(), pos, state);
@@ -188,7 +195,8 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
         // immutable batch result for reservation and final insertion.
         ItemStack output = activeOutput;
         // No load while output is blocked or the roller sleeves need replacement.
-        if (!rollerSleeves.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
+        if (!rollerSleeves.canOperate() || !toolingSupports(recipe)
+                || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
             return;
@@ -283,9 +291,11 @@ public final class BronzeRollingMillBlockEntity extends BaseBlockEntityMagneticr
             diagnostic = "recipe_unsupported";
         } else if (HotBloomWorkpiece.requiresRollingHeat(candidate)
                 && !HotBloomWorkpiece.isHot(inputStack, world)) {
-            diagnostic = "iron_cold";
+            diagnostic = HotBloomWorkpiece.requiresSteelRollers(candidate) ? "steel_cold" : "iron_cold";
         } else if (!rollerSleeves.canOperate()) {
             diagnostic = "rollers_worn";
+        } else if (!toolingSupports(candidate)) {
+            diagnostic = "steel_rollers_required";
         } else if (!itemHandler.insertItem(1,
                 HotBloomWorkpiece.preservesRollingQuality(candidate)
                         ? HotBloomWorkpiece.consolidate(inputStack, candidate.getOutput())

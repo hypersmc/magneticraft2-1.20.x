@@ -1,0 +1,17 @@
+{
+  "type": "magneticraft2:multiblock_processing",
+  "machine": "magneticraft2:bronze_precision_boring_machine",
+  "input": {
+    "item": "magneticraft2:heavy_steel_plate"
+  },
+  "input_count": 1,
+  "output": {
+    "item": "magneticraft2:boiler_end_plate",
+    "count": 1
+  },
+  "process_time": 300,
+  "mechanical": {
+    "min_speed": 20,
+    "torque": 12
+  }
+}

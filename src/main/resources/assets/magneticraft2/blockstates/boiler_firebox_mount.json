@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "magneticraft2:block/boiler_firebox_mount_south"
+    },
+    "facing=east": {
+      "model": "magneticraft2:block/boiler_firebox_mount_east"
+    },
+    "facing=north": {
+      "model": "magneticraft2:block/boiler_firebox_mount_north"
+    },
+    "facing=west": {
+      "model": "magneticraft2:block/boiler_firebox_mount_west"
+    }
+  }
+}

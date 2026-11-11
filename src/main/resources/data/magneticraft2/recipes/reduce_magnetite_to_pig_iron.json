@@ -1,0 +1,28 @@
+{
+  "type": "magneticraft2:steel_process",
+  "machine": "magneticraft2:steel_blast_furnace",
+  "inputs": [
+    {
+      "item": "magneticraft2:magnetite_concentrate",
+      "count": 4
+    },
+    {
+      "item": "magneticraft2:metallurgical_coke",
+      "count": 2
+    },
+    {
+      "item": "minecraft:calcite",
+      "count": 1
+    }
+  ],
+  "output": {
+    "item": "magneticraft2:pig_iron",
+    "count": 2
+  },
+  "slag": {
+    "item": "magneticraft2:slagitem",
+    "count": 2
+  },
+  "process_time": 1200,
+  "requires_air": true
+}

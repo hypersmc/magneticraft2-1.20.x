@@ -5,6 +5,8 @@ import com.magneticraft2.common.blockentity.stage.copper.ClutchBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.ConveyorRollerBlockEntity;
 import com.magneticraft2.common.blockentity.stage.copper.CustomGearboxBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.GearboxBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.LargeGearBlockEntity_wood;
+import com.magneticraft2.common.blockentity.stage.copper.LargeGearWithHandleBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.FlywheelBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.OverloadDisconnectBlockEntity_wood;
 import com.magneticraft2.common.blockentity.stage.copper.PulleyBlockEntity_wood;
@@ -166,6 +168,11 @@ public class GearNetworkManager {
         // the temporary inertial source for that component.
         prepareFlywheelSources(level, gears);
 
+        // A gear train must have one consistent signed RPM at every node.
+        // Conflicting loops and incompatible parallel sources are not
+        // mechanically driveable; do not arbitrarily choose the first BFS path.
+        Set<BlockPos> incompatibleDrives = findIncompatibleDriveComponents(level, gears);
+
         Queue<GearNode> queue = new ArrayDeque<>();
         Set<BlockPos> visited = new HashSet<>();
         Set<BlockPos> activelyDriven = new HashSet<>();
@@ -179,14 +186,19 @@ public class GearNetworkManager {
                 // counter-clockwise rotation from their physical input. Downstream
                 // shafts/belts preserve it and external gears reverse exactly once.
                 gear.setMeshPhaseDegrees(0.0F);
-                gear.setOverloaded(gear.getTorque() > gear.getMaxTorque() + TORQUE_EPSILON);
+                boolean incompatible = incompatibleDrives.contains(gear.getPosition());
+                gear.setOverloaded(incompatible
+                        || gear.getTorque() > gear.getMaxTorque() + TORQUE_EPSILON);
                 visited.add(gear.getPosition());
-                activelyDriven.add(gear.getPosition());
                 if (!gear.isOverloaded()) {
+                    activelyDriven.add(gear.getPosition());
                     queue.add(gear);
-                } else {
+                } else if (!incompatible) {
+                    // Existing source torque overload behavior is preserved.
                     gear.setSpeed(0.0F);
                 }
+                // Incompatible connections are transient: retain the source's
+                // raw RPM so breaking the bad loop can recover next tick.
             }
         }
 
@@ -198,11 +210,7 @@ public class GearNetworkManager {
                     continue;
                 }
 
-                float ratio = connection.kind() == ConnectionKind.SHAFT
-                        || connection.kind() == ConnectionKind.RIGHT_ANGLE
-                        || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
-                        ? 1.0F
-                        : (float) current.getTeeth() / (float) neighbor.getTeeth();
+                float ratio = getConnectionSpeedRatio(connection, current, neighbor);
                 float newSpeed = current.getSpeed() * ratio;
 
                 // Torque on the network is available capacity, not a load that is being
@@ -235,6 +243,15 @@ public class GearNetworkManager {
                     neighbor.setDirectionMultiplier(
                             current.getDirectionMultiplier() * turnSign
                     );
+                } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                    int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                    neighbor.setMeshPhaseDegrees(
+                            calculatePerpendicularMeshPhaseDegrees(
+                                    current, neighbor, turnSign));
+                    neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
+                    neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
                             level,
@@ -282,9 +299,25 @@ public class GearNetworkManager {
         boolean shouldDecayThisTick = shouldDecayThisTick(level);
         if (shouldDecayThisTick) {
             for (GearNode gear : gears.values()) {
-                if (!activelyDriven.contains(gear.getPosition())) {
+                if (!activelyDriven.contains(gear.getPosition())
+                        && !(gear.isSource() && incompatibleDrives.contains(gear.getPosition()))) {
+                    // Keep the live source RPM intact across a temporary
+                    // kinematic jam so removing the offending gear recovers.
                     gear.decayMotion(DECAY_FACTOR, STOP_EPSILON);
                 }
+            }
+        }
+
+        // Decay clears stale overload flags on detached nodes. Reapply the
+        // kinematic stop after decay, without mutating persisted source RPM.
+        for (BlockPos pos : incompatibleDrives) {
+            GearNode blocked = gears.get(pos);
+            if (blocked == null) {
+                continue;
+            }
+            blocked.setOverloaded(true);
+            if (!blocked.isSource()) {
+                blocked.setSourcePos(null);
             }
         }
 
@@ -350,6 +383,21 @@ public class GearNetworkManager {
 
         MechanicalLoad load = getLoadMap(level).get(loadPos);
         return load == null ? MechanicalLoadState.inactive() : load.snapshot();
+    }
+
+    /**
+     * Read-only aggregate demand from the most recent Gear V2 evaluation.
+     * Source machines use this for resource metering; it does not change the
+     * network solve or register an artificial load.
+     */
+    public float getSourceTorqueDemand(Level level, BlockPos sourcePos) {
+        if (level == null || sourcePos == null) return 0.0F;
+        float demand = 0.0F;
+        for (MechanicalLoad load : getLoadMap(level).values()) {
+            if (load.active && sourcePos.equals(load.sourcePos))
+                demand += Math.max(0.0F, load.sourceEquivalentDemand);
+        }
+        return demand;
     }
 
     /**
@@ -486,6 +534,118 @@ public class GearNetworkManager {
         }
 
         return component;
+    }
+
+
+    /**
+     * Verify all edges of a connected kinetic component, including edges to
+     * nodes already visited by a traversal. A loop may not demand incompatible
+     * signed speeds, and two active sources may not drive incompatible RPM or
+     * rotation directions through the same component.
+     *
+     * This uses the existing cached physical connections. It is O(V+E) once
+     * per server network evaluation and does not allocate or tick cable/block
+     * entities, rebuild placement geometry, or change save data.
+     */
+    private Set<BlockPos> findIncompatibleDriveComponents(
+            Level level, Map<BlockPos, GearNode> gears) {
+        Set<BlockPos> invalid = new HashSet<>();
+        Set<BlockPos> examined = new HashSet<>();
+        Map<BlockPos, Double> relative = new HashMap<>();
+        Queue<BlockPos> queue = new ArrayDeque<>();
+        List<BlockPos> component = new ArrayList<>();
+
+        for (GearNode root : gears.values()) {
+            BlockPos rootPos = root.getPosition();
+            if (!examined.add(rootPos)) {
+                continue;
+            }
+            queue.add(rootPos);
+            relative.put(rootPos, 1.0D);
+            component.clear();
+            boolean conflicting = false;
+
+            while (!queue.isEmpty()) {
+                BlockPos position = queue.poll();
+                GearNode current = gears.get(position);
+                if (current == null) {
+                    continue;
+                }
+                component.add(position);
+                double currentRate = relative.get(position);
+
+                for (GearConnection edge : getConnectedGears(position, level)) {
+                    GearNode neighbor = gears.get(edge.neighborPos());
+                    if (neighbor == null) {
+                        continue;
+                    }
+                    double multiplier = getConnectionSpeedRatio(edge, current, neighbor)
+                            * getConnectionDriveSign(level, edge, current, neighbor);
+                    double predicted = currentRate * multiplier;
+                    Double assigned = relative.get(neighbor.getPosition());
+                    if (!Double.isFinite(predicted) || Math.abs(predicted) > 1.0E9D) {
+                        conflicting = true;
+                    }
+                    if (assigned == null) {
+                        relative.put(neighbor.getPosition(), predicted);
+                        examined.add(neighbor.getPosition());
+                        queue.add(neighbor.getPosition());
+                    } else if (!approximatelySameSignedRPM(predicted, assigned)) {
+                        conflicting = true;
+                    }
+                }
+            }
+
+            // Two sources must agree on the same reference rotation; comparing
+            // *signed* RPM also catches sources that fight in opposite directions.
+            Double rootSourceRPM = null;
+            for (BlockPos position : component) {
+                GearNode gear = gears.get(position);
+                if (gear == null || !gear.isSource() || gear.getSpeed() <= STOP_EPSILON) {
+                    continue;
+                }
+                double ratio = relative.get(position);
+                double sourceRPM = gear.getSpeed() * gear.getDirectionMultiplier();
+                if (!Double.isFinite(ratio) || Math.abs(ratio) < 1.0E-9D) {
+                    conflicting = true;
+                    continue;
+                }
+                double atRoot = sourceRPM / ratio;
+                if (!Double.isFinite(atRoot)
+                        || rootSourceRPM != null
+                        && !approximatelySameSignedRPM(atRoot, rootSourceRPM)) {
+                    conflicting = true;
+                } else if (rootSourceRPM == null) {
+                    rootSourceRPM = atRoot;
+                }
+            }
+
+            if (conflicting) {
+                invalid.addAll(component);
+            }
+        }
+        return invalid;
+    }
+
+    private boolean approximatelySameSignedRPM(double a, double b) {
+        return Double.isFinite(a) && Double.isFinite(b)
+                && Math.abs(a - b) <= 0.001D * Math.max(1.0D, Math.max(Math.abs(a), Math.abs(b)));
+    }
+
+    private int getConnectionDriveSign(Level level, GearConnection edge,
+                                       GearNode current, GearNode neighbor) {
+        return switch (edge.kind()) {
+            case SHAFT, BELT -> 1;
+            case GEAR_MESH -> -1;
+            case RIGHT_ANGLE -> getRightAngleDirectionSign(
+                    level, current.getPosition(), neighbor.getPosition());
+            case CUSTOM_GEARBOX -> getCustomGearboxDirectionSign(
+                    level, current.getPosition(), neighbor.getPosition());
+            case PERPENDICULAR_GEAR_MESH ->
+                    GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+        };
     }
 
     /**
@@ -864,7 +1024,8 @@ public class GearNetworkManager {
         Queue<GearNode> queue = new ArrayDeque<>();
 
         for (GearNode gear : gears.values()) {
-            if (!gear.isSource() || gear.getSpeed() <= STOP_EPSILON) {
+            if (!gear.isSource() || gear.getSpeed() <= STOP_EPSILON
+                    || gear.isOverloaded()) {
                 continue;
             }
 
@@ -901,6 +1062,14 @@ public class GearNetworkManager {
                     neighbor.setRotationDegrees(
                             current.getRotationDegrees() * turnSign
                     );
+                } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                    int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                            current.getPosition(), current.getAxis(), current.getTeeth(),
+                            neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                    neighbor.setMeshPhaseDegrees(
+                            calculatePerpendicularMeshPhaseDegrees(
+                                    current, neighbor, turnSign));
+                    neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
                 } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                     int customSign = getCustomGearboxDirectionSign(
                             level,
@@ -925,7 +1094,12 @@ public class GearNetworkManager {
                             (180.0F - current.getTeeth() * currentVisualAngle)
                                     / Math.max(1, neighbor.getTeeth());
 
-                    neighbor.setRotationDegrees(neighborVisualAngle - neighborPhase);
+                    // The mesh equation has many equivalent tooth-aligned solutions.
+                    // Choose the one nearest the angle already integrated this tick;
+                    // otherwise a 16T -> 8T -> 16T train can snap the last gear by
+                    // 180 degrees whenever the intermediate angle wraps at 360.
+                    neighbor.setRotationDegrees(nearestEquivalentMeshedRotation(
+                            neighbor, neighborVisualAngle - neighborPhase));
                 }
 
                 visited.add(neighbor.getPosition());
@@ -990,6 +1164,15 @@ public class GearNetworkManager {
                         neighbor.setDirectionMultiplier(
                                 current.getDirectionMultiplier() * turnSign
                         );
+                    } else if (connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH) {
+                        int turnSign = GearPlacementValidator.getPerpendicularLargeMeshDirectionSign(
+                                current.getPosition(), current.getAxis(), current.getTeeth(),
+                                neighbor.getPosition(), neighbor.getAxis(), neighbor.getTeeth());
+                        neighbor.setMeshPhaseDegrees(
+                                calculatePerpendicularMeshPhaseDegrees(
+                                        current, neighbor, turnSign));
+                        neighbor.setRotationDegrees(current.getRotationDegrees() * turnSign);
+                        neighbor.setDirectionMultiplier(current.getDirectionMultiplier() * turnSign);
                     } else if (connection.kind() == ConnectionKind.CUSTOM_GEARBOX) {
                         int customSign = getCustomGearboxDirectionSign(
                                 level,
@@ -1059,6 +1242,49 @@ public class GearNetworkManager {
         return fallback;
     }
 
+    private float getConnectionSpeedRatio(GearConnection connection, GearNode current, GearNode neighbor) {
+        return connection.kind() == ConnectionKind.SHAFT
+                || connection.kind() == ConnectionKind.RIGHT_ANGLE
+                || connection.kind() == ConnectionKind.CUSTOM_GEARBOX
+                || connection.kind() == ConnectionKind.PERPENDICULAR_GEAR_MESH
+                ? 1.0F : (float) current.getTeeth() / (float) Math.max(1, neighbor.getTeeth());
+    }
+
+    /**
+     * Two perpendicular 16-tooth gears must be tooth-to-gap, never tooth-to-tooth.
+     * The 180 / teeth offset is half of one tooth pitch (11.25 degrees for 16T).
+     *
+     * Include the source gear's current visual phase, so a crossed gear driven
+     * through a normal 8T/16T mesh stays aligned across the whole drivetrain.
+     * Rotation direction is handled separately by the crossed-axis contact sign.
+     */
+    private float calculatePerpendicularMeshPhaseDegrees(
+            GearNode current, GearNode neighbor, int turnSign) {
+        float toothPitch = 360.0F / Math.max(1, neighbor.getTeeth());
+        float phase = toothPitch * 0.5F
+                + turnSign * current.getMeshPhaseDegrees();
+        float normalized = phase % toothPitch;
+        return normalized < 0.0F ? normalized + toothPitch : normalized;
+    }
+
+    /**
+     * The meshing constraint fixes only tooth phase, not the revolution count.
+     * A gear with N teeth has equivalent solutions spaced 360/N degrees apart.
+     *
+     * advanceGearRotations() already integrated each node using its actual
+     * signed RPM for this server tick. Preserve that continuous motion by
+     * selecting the tooth-aligned solution nearest the predicted angle.
+     *
+     * This avoids 180-degree wrapping jumps across 16T/8T/16T trains without
+     * changing gear ratios, torque, topology, NBT, or client interpolation.
+     */
+    private float nearestEquivalentMeshedRotation(GearNode neighbor, float solutionDegrees) {
+        float toothPitch = 360.0F / Math.max(1, neighbor.getTeeth());
+        float predictedDegrees = neighbor.getRotationDegrees();
+        float turns = Math.round((predictedDegrees - solutionDegrees) / toothPitch);
+        return normalizeDegrees(solutionDegrees + turns * toothPitch);
+    }
+
     private float calculateMeshedPhaseDegrees(GearNode current, GearNode neighbor) {
         // External gear meshing is a tooth-phase constraint, not a cumulative angle offset.
         //
@@ -1098,6 +1324,13 @@ public class GearNetworkManager {
             normalized += 360.0F;
         }
         return normalized;
+    }
+
+    /** Passive Wood/Iron/Steel and the handled Wooden 16T gear are all
+     *  physically meshing Large Gears, unlike water-wheel rim nodes. */
+    private static boolean isPhysicalLargeGear(BlockEntity entity) {
+        return entity instanceof LargeGearBlockEntity_wood
+                || entity instanceof LargeGearWithHandleBlockEntity_wood;
     }
 
     private List<GearConnection> getConnectedGears(BlockPos pos, Level level) {
@@ -1288,13 +1521,27 @@ public class GearNetworkManager {
             }
 
             GearNode neighbor = gears.get(scanPos);
-            if (neighbor == null || neighbor.getAxis() != gear.getAxis()) {
+            if (neighbor == null) {
                 continue;
             }
 
             BlockEntity neighborBlockEntity = level.getBlockEntity(scanPos);
             if (!(neighborBlockEntity instanceof GearBlockEntity neighborGearBlockEntity)
                     || !neighborGearBlockEntity.supportsExternalGearMesh()) {
+                continue;
+            }
+
+            if (neighbor.getAxis() != gear.getAxis()) {
+                // Cross-axis pairing belongs only to physical large gears,
+                // not water-wheel rims or other visible machine rotors.
+                if (isPhysicalLargeGear(currentBlockEntity)
+                        && isPhysicalLargeGear(neighborGearBlockEntity)
+                        && GearPlacementValidator.isValidPerpendicularLargeMeshOffset(
+                                pos, gear.getAxis(), gear.getTeeth(),
+                                scanPos, neighbor.getAxis(), neighbor.getTeeth())) {
+                    connected.add(new GearConnection(
+                            scanPos, ConnectionKind.PERPENDICULAR_GEAR_MESH));
+                }
                 continue;
             }
 
@@ -1708,6 +1955,7 @@ public class GearNetworkManager {
     private enum ConnectionKind {
         SHAFT,
         RIGHT_ANGLE,
+        PERPENDICULAR_GEAR_MESH,
         CUSTOM_GEARBOX,
         GEAR_MESH,
         BELT

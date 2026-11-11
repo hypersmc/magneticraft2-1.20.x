@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RPR",
+    "PFP",
+    "RPR"
+  ],
+  "key": {
+    "R": {
+      "item": "magneticraft2:iron_rivet"
+    },
+    "P": {
+      "item": "magneticraft2:refined_steel_plate"
+    },
+    "F": {
+      "item": "magneticraft2:riveted_iron_casing"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_boiler_vessel",
+    "count": 1
+  }
+}

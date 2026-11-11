@@ -8,6 +8,7 @@ import com.magneticraft2.common.recipe.multiblock.MultiblockProcessingRecipe;
 import com.magneticraft2.common.recipe.multiblock.MultiblockRecipeHandler;
 import com.magneticraft2.common.registry.registers.BlockEntityRegistry;
 import com.magneticraft2.common.registry.registers.ItemRegistry;
+import com.magneticraft2.common.systems.material.HotBloomWorkpiece;
 import com.magneticraft2.common.systems.GEAR.GearNetworkManager;
 import com.magneticraft2.common.systems.GEAR.GearNode;
 import com.magneticraft2.common.systems.Multiblocking.core.MultiblockController;
@@ -73,7 +74,19 @@ public final class BronzePrecisionBoringMachineBlockEntity extends BaseBlockEnti
     private int progress;
     private boolean running;
     private final ReplaceableMachinePart boringBit =
-            new ReplaceableMachinePart(ItemRegistry.ITEM_ABRASIVE_BORING_BIT::get, 384);
+            new ReplaceableMachinePart(ItemRegistry.ITEM_ABRASIVE_BORING_BIT::get, 384,
+                    new ReplaceableMachinePart.Alternative(
+                            ItemRegistry.ITEM_STEEL_BORING_BIT::get, 1536));
+
+    private static boolean requiresSteelBoringBit(@Nullable MultiblockProcessingRecipe recipe) {
+        return recipe != null && (recipe.getOutput().is(ItemRegistry.ITEM_BOILER_END_PLATE.get())
+                || recipe.getOutput().is(ItemRegistry.ITEM_PRESSURE_PIPE_COUPLING.get()));
+    }
+
+    private boolean toolingSupports(MultiblockProcessingRecipe recipe) {
+        return !requiresSteelBoringBit(recipe)
+                || boringBit.isInstalled(ItemRegistry.ITEM_STEEL_BORING_BIT.get());
+    }
 
     public BronzePrecisionBoringMachineBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.BRONZE_PRECISION_BORING_MACHINE_BE.get(), pos, state);
@@ -107,6 +120,10 @@ public final class BronzePrecisionBoringMachineBlockEntity extends BaseBlockEnti
                 itemHandler.getStackInSlot(0));
     }
     private static ItemStack taggedOutput(MultiblockProcessingRecipe recipe, ItemStack input) {
+        // Finished machined Steel parts retain quality, not a stale hot-stock
+        // expiration. Legacy Bronze/Iron boring keeps its original NBT copy.
+        if (requiresSteelBoringBit(recipe))
+            return HotBloomWorkpiece.consolidate(input, recipe.getOutput());
         ItemStack result = recipe.getOutput();
         if (input.hasTag()) result.setTag(input.getTag().copy());
         return result;
@@ -170,7 +187,8 @@ public final class BronzePrecisionBoringMachineBlockEntity extends BaseBlockEnti
         // Reapply source casting tags before BOTH output reservation and
         // actual insertion; slot stacking must compare the finished NBT.
         ItemStack output = activeOutput;
-        if (!boringBit.canOperate() || !itemHandler.insertItem(1, output, true).isEmpty()) {
+        if (!boringBit.canOperate() || !toolingSupports(recipe)
+                || !itemHandler.insertItem(1, output, true).isEmpty()) {
             releaseLoad();
             setRunning(false);
             return;
@@ -265,6 +283,8 @@ public final class BronzePrecisionBoringMachineBlockEntity extends BaseBlockEnti
             diagnostic = "recipe_unsupported";
         } else if (!boringBit.canOperate()) {
             diagnostic = "bit_worn";
+        } else if (!toolingSupports(candidate)) {
+            diagnostic = "steel_bit_required";
         } else if (!itemHandler.insertItem(1, taggedOutput(candidate, inputStack), true).isEmpty()) {
             diagnostic = "output_blocked";
         } else if (node == null) {

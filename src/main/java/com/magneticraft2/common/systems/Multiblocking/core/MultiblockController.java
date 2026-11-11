@@ -308,6 +308,16 @@ public class MultiblockController {
     }
 
     public boolean destroyStructure(Level world) {
+        return destroyStructure(world, null);
+    }
+
+    /**
+     * Destroys the formed structure while optionally preserving the block that
+     * is being removed by the normal player-break path. This prevents a formed
+     * multiblock from dropping that paid block once here and once again through
+     * vanilla Block#playerDestroy.
+     */
+    public boolean destroyStructure(Level world, BlockPos playerBreakPos) {
         if (masterPos == null) {
             if (Magneticraft2ConfigCommon.GENERAL.DevMode.get()) {
                 LOGGER.info("Master pos not found!");
@@ -326,6 +336,12 @@ public class MultiblockController {
             BlockPos offsetPos = entry.getKey();
             Block block = entry.getValue().getBlock();
 //            LOGGER.info("destroying " + offsetPos + " is block: " + block);
+            // The block actively mined by the player is left in-world for the
+            // normal Block#onDestroyedByPlayer/playerDestroy path. Everything
+            // else remains teardown-owned and is returned exactly once here.
+            if (playerBreakPos != null && offsetPos.equals(playerBreakPos)) {
+                continue;
+            }
             // Original blueprint AIR positions may now host V2 render/collision
             // proxies. Restore them to AIR without spawning empty item entities.
             if (block != Blocks.AIR) {

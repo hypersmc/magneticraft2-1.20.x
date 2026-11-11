@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " P ",
+    "PBP",
+    " R "
+  ],
+  "key": {
+    "P": {
+      "item": "magneticraft2:refined_steel_plate"
+    },
+    "B": {
+      "item": "magneticraft2:abrasive_boring_bit"
+    },
+    "R": {
+      "item": "magneticraft2:refined_steel_rod"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_boring_bit",
+    "count": 1
+  }
+}

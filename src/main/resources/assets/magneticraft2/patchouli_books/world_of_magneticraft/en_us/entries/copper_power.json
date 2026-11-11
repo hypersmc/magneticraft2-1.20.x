@@ -132,6 +132,10 @@
     {
       "type": "text",
       "text": "$(bold)What a Flywheel is for$()$(br2)Use Flywheels to bridge short power interruptions, smooth workshop behavior when a source is disconnected, and keep light mechanisms moving while a Water Wheel or hand source briefly drops out.$(br2)A Flywheel is buffering, not a generator: once the stored RPM is gone, the network stops."
+    },
+    {
+      "type": "text",
+      "text": "$(bold)Crossed Large Gears$()$(br2)8T Medium + 8T Medium gears mesh side by side in the same gear plane (1:1, reversing). Medium + 16T Large gears mesh diagonally, one block in both in-plane directions (2:1). Two 16T Large gears mesh when their axes are PERPENDICULAR: their centres step one block along each axle axis, turning power 90 degrees at 1:1. Parallel Large gears two blocks apart do NOT mesh; a Medium gear can drive both diagonally. Shafts still join along their axes. Incompatible closed gear loops stall; disconnect a conflicting path or source to recover.$(br2)Wooden Medium, Large, and handled Large gears use matching 8T/16T profiles. The Handled Wooden Large Gear is a temporary 40 RPM, 8-torque manual source; it can now drive crossed Large Gears, but cannot bypass torque overload or a conflicting closed loop."
     }
   ],
   "extra_recipe_mappings": {

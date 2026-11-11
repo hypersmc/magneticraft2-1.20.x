@@ -1,0 +1,16 @@
+{
+  "type": "magneticraft2:steel_process",
+  "machine": "magneticraft2:steel_coke_oven",
+  "inputs": [
+    {
+      "item": "minecraft:coal",
+      "count": 4
+    }
+  ],
+  "output": {
+    "item": "magneticraft2:metallurgical_coke",
+    "count": 4
+  },
+  "process_time": 720,
+  "requires_air": false
+}

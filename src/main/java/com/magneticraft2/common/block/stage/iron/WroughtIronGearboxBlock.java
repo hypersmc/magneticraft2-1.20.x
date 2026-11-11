@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  * Same reversible two-port right-angle Gear V2 gearbox as the wooden
  * version, with a 16-torque path ceiling rather than 8.
  */
-public final class WroughtIronGearboxBlock extends GearboxBlock_wood {
+public class WroughtIronGearboxBlock extends GearboxBlock_wood {
     public WroughtIronGearboxBlock() {
         super(BlockBehaviour.Properties.of().strength(5.0F, 6.0F)
                 .sound(SoundType.METAL).requiresCorrectToolForDrops().noOcclusion());

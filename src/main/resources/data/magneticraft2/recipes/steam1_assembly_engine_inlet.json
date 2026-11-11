@@ -1,0 +1,38 @@
+{
+  "type": "magneticraft2:mechanical_assembly",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "magneticraft2:pressure_pipe_coupling"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:boiler_reinforcement_flange"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:refined_steel_plate"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:iron_rivet"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:steam_engine_inlet",
+    "count": 1
+  },
+  "process_time": 400,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 12
+  }
+}

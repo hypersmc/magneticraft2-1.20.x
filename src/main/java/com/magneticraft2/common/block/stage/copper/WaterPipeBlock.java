@@ -3,6 +3,7 @@ package com.magneticraft2.common.block.stage.copper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import com.magneticraft2.common.systems.fluid.DiagonalPipeBreakHandler;
+import com.magneticraft2.common.block.stage.steam.BoilerServiceFittingBlock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -154,6 +155,11 @@ public class WaterPipeBlock extends Block {
         // From the pipe's point of view that means the neighbouring tank is DOWN.
         if (block instanceof CopperFluidTankBlock) {
             return direction == Direction.DOWN;
+        }
+
+        if (state.is(com.magneticraft2.common.registry.registers.BlockRegistry.BOILER_WATER_INLET.get())) {
+            Direction facing = state.getValue(BoilerServiceFittingBlock.FACING);
+            return BoilerServiceFittingBlock.waterPipePosition(neighbourPos, facing).equals(pipePos);
         }
 
         // Generic Forge interop: render a real pipe arm toward any neighbouring

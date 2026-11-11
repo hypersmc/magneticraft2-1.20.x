@@ -1,0 +1,124 @@
+{
+  "variants": {
+    "facing=south,segment=0": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_left_south"
+    },
+    "facing=south,segment=1": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_south"
+    },
+    "facing=south,segment=2": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_right_south"
+    },
+    "facing=south,segment=3": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_left_south"
+    },
+    "facing=south,segment=4": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_right_south"
+    },
+    "facing=south,segment=5": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_left_south"
+    },
+    "facing=south,segment=6": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_south"
+    },
+    "facing=south,segment=7": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_right_south"
+    },
+    "facing=south,segment=8": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=south,segment=9": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=west,segment=0": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_left_west"
+    },
+    "facing=west,segment=1": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_west"
+    },
+    "facing=west,segment=2": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_right_west"
+    },
+    "facing=west,segment=3": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_left_west"
+    },
+    "facing=west,segment=4": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_right_west"
+    },
+    "facing=west,segment=5": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_left_west"
+    },
+    "facing=west,segment=6": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_west"
+    },
+    "facing=west,segment=7": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_right_west"
+    },
+    "facing=west,segment=8": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=west,segment=9": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=north,segment=0": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_left_north"
+    },
+    "facing=north,segment=1": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_north"
+    },
+    "facing=north,segment=2": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_right_north"
+    },
+    "facing=north,segment=3": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_left_north"
+    },
+    "facing=north,segment=4": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_right_north"
+    },
+    "facing=north,segment=5": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_left_north"
+    },
+    "facing=north,segment=6": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_north"
+    },
+    "facing=north,segment=7": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_right_north"
+    },
+    "facing=north,segment=8": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=north,segment=9": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=east,segment=0": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_left_east"
+    },
+    "facing=east,segment=1": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_east"
+    },
+    "facing=east,segment=2": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_bottom_right_east"
+    },
+    "facing=east,segment=3": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_left_east"
+    },
+    "facing=east,segment=4": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_right_east"
+    },
+    "facing=east,segment=5": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_left_east"
+    },
+    "facing=east,segment=6": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_east"
+    },
+    "facing=east,segment=7": {
+      "model": "magneticraft2:multiblock/boiler_vessel/preview_shell_top_right_east"
+    },
+    "facing=east,segment=8": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    },
+    "facing=east,segment=9": {
+      "model": "magneticraft2:block/boiler_shell_panel"
+    }
+  }
+}

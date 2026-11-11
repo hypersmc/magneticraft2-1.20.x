@@ -1,0 +1,38 @@
+{
+  "type": "magneticraft2:mechanical_assembly",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "magneticraft2:pressure_pipe_coupling"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:iron_plate_panel"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:refined_steel_rod"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "magneticraft2:iron_rivet"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "magneticraft2:boiler_water_inlet",
+    "count": 1
+  },
+  "process_time": 320,
+  "mechanical": {
+    "min_speed": 18,
+    "torque": 10
+  }
+}

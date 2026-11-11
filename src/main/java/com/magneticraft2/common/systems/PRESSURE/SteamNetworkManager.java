@@ -205,6 +205,48 @@ public final class SteamNetworkManager {
         return (int) Math.min(Math.min(Math.max(0, space), offered), MAX_PORT_BATCH);
     }
 
+    /**
+     * Admission check with a source-specific operating cutoff. This is not the
+     * pipe rupture rating and does not vent anything; it simply refuses enough
+     * source units to keep the projected shared component pressure at/below the
+     * requested cutoff.
+     */
+    public static int simulateAcceptSteamBelowPressure(ServerLevel level, BlockPos pipe,
+            int offered, double temperatureK, double maxGaugeKPa) {
+        if (!Double.isFinite(maxGaugeKPa) || maxGaugeKPa <= 0) return 0;
+        int capacityAccepted = simulateAcceptSteam(level, pipe, offered, temperatureK);
+        if (capacityAccepted <= 0) return 0;
+        Component component = component(level, pipe);
+        if (component.overflow() || component.positions().isEmpty()) return 0;
+        Content previous = contents(SteamNetworkSavedData.get(level), component);
+        double epsilon = Math.max(0.000001, maxGaugeKPa * 1e-9);
+        for (int accepted = capacityAccepted; accepted > 0; accepted--) {
+            Content projected = new Content(previous.units() + accepted,
+                    previous.energy() + accepted * temperatureK);
+            if (pressure(projected, component) <= maxGaugeKPa + epsilon)
+                return accepted;
+        }
+        return 0;
+    }
+
+    /**
+     * Pressure-aware injection used by boiler outputs. The caller removes only
+     * the returned amount from its own conserved buffer.
+     */
+    public static int acceptSteamBelowPressure(ServerLevel level, BlockPos pipe,
+            int offered, double temperatureK, double maxGaugeKPa) {
+        int accepted = simulateAcceptSteamBelowPressure(
+                level, pipe, offered, temperatureK, maxGaugeKPa);
+        if (accepted <= 0) return 0;
+        Component component = component(level, pipe);
+        SteamNetworkSavedData data = SteamNetworkSavedData.get(level);
+        Content previous = contents(data, component);
+        spread(data, component, previous.units() + accepted,
+                previous.energy() + accepted * temperatureK);
+        solve(level, data, component);
+        return accepted;
+    }
+
     /** Injects ONLY steam already produced by an authorized machine. */
     public static int acceptSteam(ServerLevel level, BlockPos pipe,
             int offered, double temperatureK) {
@@ -218,6 +260,25 @@ public final class SteamNetworkManager {
                 previous.energy() + accepted * temperatureK);
         solve(level, data, component);
         return accepted;
+    }
+
+    /**
+     * Deliberate safety-valve vent. Removes real network inventory while
+     * preserving the component's average Steam temperature. This is distinct
+     * from a ruptured pipe and never changes pipe blocks.
+     */
+    public static int ventSteam(ServerLevel level, BlockPos pipe, int requested) {
+        if (requested <= 0) return 0;
+        Component component = component(level, pipe);
+        if (component.overflow() || component.positions().isEmpty()) return 0;
+        SteamNetworkSavedData data = SteamNetworkSavedData.get(level);
+        Content before = contents(data, component);
+        int vented = (int) Math.min(Math.min(requested, MAX_PORT_BATCH), before.units());
+        if (vented == 0) return 0;
+        long remaining = before.units() - vented;
+        spread(data, component, remaining,
+                remaining == 0 ? 0 : before.energy() * (remaining / (double) before.units()));
+        return vented;
     }
 
     /** A consuming machine drains exactly the inventory it receives. */

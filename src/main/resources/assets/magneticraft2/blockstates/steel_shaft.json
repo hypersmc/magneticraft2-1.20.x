@@ -1,0 +1,31 @@
+{
+  "variants": {
+    "facing=up,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft"
+    },
+    "facing=down,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft"
+    },
+    "facing=north,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft",
+      "x": 90
+    },
+    "facing=south,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft",
+      "x": 90
+    },
+    "facing=east,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west,rotating=false": {
+      "model": "magneticraft2:block/steel_shaft",
+      "x": 90,
+      "y": 90
+    },
+    "rotating=true": {
+      "model": "magneticraft2:block/invis"
+    }
+  }
+}

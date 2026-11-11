@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RPR",
+    "FCF",
+    "RPR"
+  ],
+  "key": {
+    "R": {
+      "item": "magneticraft2:fired_refractory_ceramic"
+    },
+    "P": {
+      "item": "magneticraft2:wrought_iron_plate"
+    },
+    "F": {
+      "item": "magneticraft2:iron_machine_foundation"
+    },
+    "C": {
+      "item": "magneticraft2:riveted_iron_frame"
+    }
+  },
+  "result": {
+    "item": "magneticraft2:steel_refining_furnace",
+    "count": 1
+  }
+}
