@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FluidState;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,6 +23,9 @@ public final class SteamEngineOutputBlock extends GearBlock {
     public SteamEngineOutputBlock(){
         super(BlockBehaviour.Properties.of().strength(5F,8F).requiresCorrectToolForDrops().noOcclusion());
         registerDefaultState(stateDefinition.any().setValue(FACING,Direction.EAST));
+    }
+    @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block,BlockState> builder){
+        builder.add(FACING);
     }
     @Override protected BlockEntity createBlockEntity(BlockPos pos,BlockState state){
         return new SteamEngineOutputBlockEntity(pos,state);
