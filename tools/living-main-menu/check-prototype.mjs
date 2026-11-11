@@ -20,6 +20,7 @@ const tests = [
   ['no panorama or fake renderer', !/super\.render\(/.test(title) && /this\.renderables/.test(title)],
   ['integrated server not paused', /boolean isPauseScreen\(\)\s*\{[\s\S]*?return false;/.test(title)],
   ['exit is deferred outside vanilla button dispatch', /if \(requestedNavigation != null\)/.test(controller) && /minecraft\.clearLevel\(new GenericDirtMessageScreen\(/.test(controller)],
+  ['send actual level disconnect BEFORE clearLevel', /if \(minecraft\.level != null\)\s*\{\s*minecraft\.level\.disconnect\(\);\s*\}\s*[\s\S]*?minecraft\.clearLevel\(new GenericDirtMessageScreen\(/.test(controller)],
   ['destination preserved on teardown error', /Waiting for full server and save-lock release/.test(controller) && /tryFinishNavigation\(minecraft\)/.test(controller)],
   ['opening happens immediately when shutdown completes', /tryFinishNavigation\(minecraft\);\s*return;\s*}\s*if \(awaitingWorldRelease != null\)/.test(controller)],
   ['no intermediate clickable title screen', !/minecraft\.clearLevel\(new TitleScreen\(\)\)/.test(controller)],

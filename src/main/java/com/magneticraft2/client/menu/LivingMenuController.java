@@ -82,9 +82,15 @@ public final class LivingMenuController {
             selectedScene = null;
             LOGGER.info("Living Main Menu: {} requested; closing the disposable world", destination);
             try {
-                // Never present clickable vanilla title buttons while the old
-                // integrated server is still closing. The selection screen's
-                // constructor must not enumerate saves until its lock is free.
+                // Match Minecraft 1.20.1's PauseScreen.onDisconnect:
+                // ClientLevel.disconnect() tells the local server to stop.
+                // clearLevel() alone only waits for shutdown and can hang
+                // indefinitely while the integrated server keeps ticking.
+                if (minecraft.level != null) {
+                    minecraft.level.disconnect();
+                }
+                // Only now wait for the real server and release its save lock.
+                // Keep a non-interactive screen during the transition.
                 minecraft.clearLevel(new GenericDirtMessageScreen(
                         Component.literal("Closing Magneticraft2 menu world...")));
             } catch (Exception error) {
