@@ -2,13 +2,13 @@ package com.magneticraft2.client.menu;
 
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
 import com.mojang.logging.LogUtils;
+import com.mojang.realmsclient.RealmsMainScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.ProgressScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
-import com.mojang.realmsclient.gui.screens.RealmsMainScreen;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
