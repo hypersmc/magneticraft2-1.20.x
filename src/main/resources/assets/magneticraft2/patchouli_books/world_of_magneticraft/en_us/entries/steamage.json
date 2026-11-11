@@ -212,20 +212,20 @@
           ],
           [
             "B___B",
-            "B___B",
+            "B___I",
             "B___B",
             "B___B",
             "BPPPB",
-            "BPPPB",
+            "OPPPB",
             "BPPPB"
           ],
           [
             "BBBBB",
             "B___B",
-            "O___B",
+            "B___B",
             "B___B",
             "BPPPB",
-            "BPPPI",
+            "BPPPB",
             "BPPPB"
           ],
           [
@@ -248,7 +248,7 @@
         },
         "symmetrical": false
       },
-      "text": "Controller is the rear-centre foundation block. The cylinder is at the far end. The Inlet and Crankshaft Output remain real blocks after formation so Steam Pipe and Steel Shaft connections stay physical."
+      "text": "Controller is the rear-centre foundation block. For this prototype pass the Steam Inlet sits on the cylinder-side wall and the Crankshaft Output sits at the flywheel/output station. Both remain real blocks after formation so Steam Pipe and Steel Shaft connections stay physical."
     },
     {
       "type": "patchouli:text",
