@@ -15,8 +15,9 @@ The background **must be a real running Minecraft level**. Never replace it with
 - Once connected to that exact world on the real integrated server, display `LiveTitleScreen`. It reuses vanilla title-screen widgets but does **not** draw the panorama. The world is rendered by the actual Minecraft client renderer.
 - `LiveTitleScreen.isPauseScreen()` returns false so server-side machinery keeps ticking.
 - Options/Mods and other non-gameplay screens **keep the demo world alive**; Back returns immediately to `LiveTitleScreen` without reloading.
-- Quit Game is intercepted for mouse and keyboard activation; the demo integrated world is unloaded before the Minecraft client is stopped.
-- Singleplayer/Multiplayer/Realms transitions are now cancelled in the Forge screen-opening event BEFORE the target screen opens. The next client tick closes the demo server and opens the selection screen, preventing an actual world join from racing the demo world.
+- Quit Game is intercepted on mouse and keyboard, and passes through the same world-shutdown/save-lock-release path before closing the client.
+- **2026-11-11 lifecycle correction:** The previous Forge screen-opening interception was insufficient: the vanilla Singleplayer screen constructor can start scanning saves *before* that event is posted, producing `OverlappingFileLockException` on the menu runtime and later hanging real-world joins at 100%. The new `LiveTitleScreen` intercepts the Singleplayer, Multiplayer, Realms and Quit buttons **before the vanilla handlers construct a destination screen**. It requests a deferred unload.
+- On the following client tick, the controller unloads the integrated-server menu world to a plain title screen. It waits for both the Minecraft client-level/server references to be cleared **and** the generated `session.lock` to become available. Only then does it remove the marked disposable save and construct the real world/server selection screen, or stop Minecraft for Quit. The wait has a timeout with a logged error and fail-safe vanilla-title fallback. Options/Mods remain on the still-loaded menu world.
 - After returning from game/server selection, the controller waits for a genuinely disconnected title state before restarting the menu demo on a subsequent tick. Returning via an old `LiveTitleScreen` parent falls back to the vanilla title until a new demo is ready.
 - Loading failures disable further attempts for the current session, without preventing use of the vanilla menu.
 - Only while the live title is visible, Forge client rendering events suppress gameplay HUD, Forge overlays (including The One Probe), first-person hands and block outlines. No global HUD settings are changed.
@@ -38,12 +39,12 @@ A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.js
 - Only the exact reserved runtime and staging folders with a generation-marker file may be removed. An unmarked existing folder is *never* overwritten.
 - Never follow a source symlink. Do not clone `session.lock`.
 - Limit the prototype source to 128 MiB and 10,000 files. The copy executes on the client thread: scene saves should be intentionally tiny.
-- The temporary runtime folder currently appears in the world list; a later iteration should move it out of the visible save list if feasible.
+- The generated runtime folder is removed after a confirmed shutdown and before the normal Singleplayer list is constructed. An unmarked folder is never deleted; if cleanup fails, the warning is logged. The live runtime necessarily exists under `saves/` while the menu world is running.
 
 ## Known limitations
 
 - **Observed:** The user's 2026-11-11 screenshot displays actual Magneticraft2 blocks behind the custom title, and their launch log reports Java 17 `compileJava UP-TO-DATE` with the Forge event subscriber registered. These observations do not prove complete `./gradlew build` or a running machine process.
-- **Unverified:** Full `./gradlew build`, server-side machine processing, new deferred world unload / menu return behavior, frozen panorama, memory/FPS and multiplayer compatibility. The user previously confirmed HUD hiding, view rotation and loading concealment worked.
+- **Unverified:** Full `./gradlew build`, server-side machine processing, newest button-level navigation and file-lock-release logic, memory/FPS and multiplayer compatibility. Earlier navigation patches demonstrably failed; the most recent fix requires an actual regression test. The user previously confirmed HUD hiding, view rotation and loading concealment worked.
 - Custom title-screen render injections from other mods might not be shown, since the title panorama's regular render method is intentionally bypassed.
 - The standard integrated server has nontrivial startup/memory overhead. Measure it before enabling by default.
 - The menu source is local to each client, not a bundled reference scene. A curated demonstrator will be a follow-up only after the architecture is proven.
@@ -59,8 +60,8 @@ A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.js
 - [ ] Watch real machine inventories and power transfer over 20–60 seconds; verify fuel/input consumption, output production, maintenance wear and 20-tick simulation.
 - [ ] Validate graphics after a resource reload and from several camera positions; check for missing textures and geometry issues.
 - [ ] Options and Mods remain responsive, do not unload the menu world, and return instantly to the same live menu.
-- [ ] Singleplayer/Multiplayer/Realms unload the demo **before** the selection menu is opened; actual singleplayer and multiplayer gameplay must connect without a stuck 100% screen.
-- [ ] Quit Game works on the living menu (mouse and keyboard) directly and after visiting Options/Mods.
+- [ ] Singleplayer/Multiplayer/Realms unload the demo **before** the selection menu constructor runs. Confirm no `OverlappingFileLockException` while enumerating saves, and that actual singleplayer and multiplayer gameplay connect without a stuck 100% screen.
+- [ ] Quit Game works on the living menu (mouse and keyboard), directly and after visiting Options/Mods, without a lingering save lock or stuck vanilla main menu.
 - [ ] Repeatedly enter/exit menus at least 10 times; after loading a normal world and quitting, the live menu can start again.
 - [ ] Confirm the vanilla panorama stays visually stationary throughout the hidden load transition; no world-loading text is drawn.
 - [ ] Quit and external modded screen navigation do not leave a stale demo world or change real saves.

@@ -31,35 +31,52 @@ final class LiveTitleScreen extends TitleScreen {
         return false;
     }
 
-    private static boolean isQuitButton(GuiEventListener listener) {
-        // Resolve through the language system, not an English-only string.
-        return listener instanceof AbstractWidget widget
-                && widget.getMessage().getString()
-                        .equals(Component.translatable("menu.quit").getString());
+    private static LivingMenuController.NavigationTarget targetFor(GuiEventListener listener) {
+        if (!(listener instanceof AbstractWidget widget) || !widget.active) {
+            return null;
+        }
+        String message = widget.getMessage().getString();
+        if (message.equals(Component.translatable("menu.singleplayer").getString())) {
+            return LivingMenuController.NavigationTarget.SINGLEPLAYER;
+        }
+        if (message.equals(Component.translatable("menu.multiplayer").getString())) {
+            return LivingMenuController.NavigationTarget.MULTIPLAYER;
+        }
+        if (message.equals(Component.translatable("menu.online").getString())) {
+            return LivingMenuController.NavigationTarget.REALMS;
+        }
+        if (message.equals(Component.translatable("menu.quit").getString())) {
+            return LivingMenuController.NavigationTarget.QUIT;
+        }
+        return null;
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
             for (GuiEventListener listener : this.children()) {
-                if (isQuitButton(listener) && listener instanceof AbstractWidget widget
-                        && widget.isMouseOver(mouseX, mouseY) && widget.active) {
-                    LivingMenuController.requestQuit();
-                    return true;
+                if (listener instanceof AbstractWidget widget
+                        && widget.active && widget.isMouseOver(mouseX, mouseY)) {
+                    LivingMenuController.NavigationTarget target = targetFor(listener);
+                    if (target != null) {
+                        LivingMenuController.requestNavigation(target);
+                        return true;
+                    }
                 }
             }
         }
-        // Gameplay selection is intercepted in ScreenEvent.Opening, before
-        // Minecraft changes screens. Do not manually call clearLevel() here.
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
-                || keyCode == GLFW.GLFW_KEY_SPACE) && isQuitButton(this.getFocused())) {
-            LivingMenuController.requestQuit();
-            return true;
+        if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
+                || keyCode == GLFW.GLFW_KEY_SPACE) {
+            LivingMenuController.NavigationTarget target = targetFor(this.getFocused());
+            if (target != null) {
+                LivingMenuController.requestNavigation(target);
+                return true;
+            }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }

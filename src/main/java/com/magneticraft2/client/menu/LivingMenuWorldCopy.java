@@ -120,6 +120,11 @@ final class LivingMenuWorldCopy {
         return count;
     }
 
+    static void cleanupRuntime(Path savesDirectory) throws IOException {
+        deleteGeneratedDirectoryIfPresent(savesDirectory.resolve(RUNTIME_ID));
+        deleteGeneratedDirectoryIfPresent(savesDirectory.resolve(STAGING_ID));
+    }
+
     private static void deleteGeneratedDirectoryIfPresent(Path directory) throws IOException {
         if (!Files.exists(directory, LinkOption.NOFOLLOW_LINKS)) {
             return;
