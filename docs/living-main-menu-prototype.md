@@ -45,7 +45,7 @@ A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.js
 ## Known limitations
 
 - **Observed:** The user's 2026-11-11 screenshot displays actual Magneticraft2 blocks behind the custom title, and their launch log reports Java 17 `compileJava UP-TO-DATE` with the Forge event subscriber registered. These observations do not prove complete `./gradlew build` or a running machine process.
-- **Unverified:** Full `./gradlew build`, server-side machine processing, newest button-level navigation and file-lock-release logic, memory/FPS and multiplayer compatibility. Earlier navigation patches demonstrably failed; the most recent fix requires an actual regression test. The user previously confirmed HUD hiding, view rotation and loading concealment worked.
+- **Unverified:** Full `./gradlew build`, server-side machine processing, newest button-level navigation and file-lock-release logic, in-memory chunk-radius caps, memory/FPS and multiplayer compatibility. The no-save shutdown and reduced vanilla spawn-ticket preparation are not implemented; a real Forge runtime test remains mandatory. The user previously confirmed HUD hiding, view rotation and loading concealment worked.
 - Custom title-screen render injections from other mods might not be shown, since the title panorama's regular render method is intentionally bypassed.
 - The standard integrated server has nontrivial startup/memory overhead. Measure it before enabling by default.
 - The menu source is local to each client, not a bundled reference scene. A curated demonstrator will be a follow-up only after the architecture is proven.
@@ -71,6 +71,8 @@ A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.js
 - [ ] Check that user saves and the source save are unchanged; generated world resets safely after restarts, crashes and errors.
 - [ ] Validate reserved-name collision, corrupt source save, symlink rejection, maxWorldMiB and Anvil-header maxStoredChunks limits.
 - [ ] Confirm scene camera teleport, time of day and randomTickSpeed apply to the disposable integrated server only, while machinery runs at normal 20 TPS.
+- [ ] Measure scene-specific player view/simulation chunk-distance caps, confirm the Options menu shows and saves the actual user values, and verify original values return before joining a real world.
+- [ ] Compare startup with and without caps; vanilla 1.20.1 still prepares 441 spawn chunks before joining.
 - [ ] Confirm no valid library scene falls back to the original source save with no migration.
 - [ ] Benchmark FPS, CPU, memory, startup time and behavior in modded installations.
 - [ ] Revisit navigation after exiting a normal singleplayer world or multiplayer server.

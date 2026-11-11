@@ -9,6 +9,7 @@ const copy = read('src/main/java/com/magneticraft2/client/menu/LivingMenuWorldCo
 const title = read('src/main/java/com/magneticraft2/client/menu/LiveTitleScreen.java');
 const config = read('src/main/java/com/magneticraft2/common/utils/Magneticraft2ConfigClient.java');
 const scene = read('src/main/java/com/magneticraft2/client/menu/LivingMenuScene.java');
+const chunkLimits = read('src/main/java/com/magneticraft2/client/menu/LivingMenuChunkLimits.java');
 const sceneExample = JSON.parse(read('docs/examples/living-main-menu/scene.json'));
 const tests = [
   ['real integrated-server world loading', /createWorldOpenFlows\(\)\.loadLevel\(/.test(controller)],
@@ -47,6 +48,13 @@ const tests = [
   ['source size and stored chunk limits enforced', /scene\.maxWorldMiB/.test(copy) && /scene\.maxStoredChunks/.test(copy) && /countStoredChunks\(file\)/.test(copy)],
   ['no source enumeration on every tick', /if \(sceneLookupDone\)/.test(controller)],
   ['example manifest valid and enabled', sceneExample.schemaVersion === 1 && sceneExample.enabled === true && sceneExample.camera.rotation.degreesPerSecond === 1.5],
+  ['menu-only player render and simulation caps parsed', /renderDistanceChunks/.test(scene) && /simulationDistanceChunks/.test(scene) && /integer\(limits, "renderDistanceChunks", 2, 8, 4\)/.test(scene) && /integer\(limits, "simulationDistanceChunks", 2, 8, 4\)/.test(scene)],
+  ['chunk caps are applied BEFORE the real integrated server loads', controller.indexOf('LivingMenuChunkLimits.begin(minecraft, scene)') < controller.indexOf('createWorldOpenFlows().loadLevel') && /options\.renderDistance\(\)\.set/.test(chunkLimits)],
+  ['chunk caps are upper bounds, not a forced higher view distance', /Math\.min\(originalRender, maxRender\)/.test(chunkLimits) && /Math\.min\(originalSimulation, maxSimulation\)/.test(chunkLimits)],
+  ['real player options restored on nav and error', /finally\s*\{[\s\S]*?LivingMenuChunkLimits\.restore\(minecraft\)/.test(controller) && /LivingMenuChunkLimits\.restore\(minecraft\)/.test(controller)],
+  ['user settings restored while options or mods screen open', /LivingMenuChunkLimits\.suspend\(Minecraft\.getInstance\(\)\)/.test(controller) && /LivingMenuChunkLimits\.resume\(Minecraft\.getInstance\(\)\)/.test(controller)],
+  ['menu never saves temporary client distance preferences', !/options\.save\(\)/.test(chunkLimits) && !/options\.save\(\)/.test(controller)],
+  ['example has both chunk radius limits', sceneExample.limits.renderDistanceChunks === 4 && sceneExample.limits.simulationDistanceChunks === 4],
   ['actual scene folder automatically created', /Files\.createDirectory\(base\)/.test(scene) && /Files\.createDirectory\(root\)/.test(scene)],
 ];
 let failures = 0;

@@ -99,6 +99,10 @@ public final class LivingMenuController {
                 // the world actually finishes closing despite the exception.
                 LOGGER.error("Living Main Menu: error while closing the scene for {}. "
                         + "Waiting for full server and save-lock release", destination, error);
+            } finally {
+                // Restore the player's real distances BEFORE any normal game
+                // starts, even if the menu world fails to shut down cleanly.
+                LivingMenuChunkLimits.restore(minecraft);
             }
             // Vanilla clearLevel usually waits for the server itself. If it has
             // already completed, open the requested screen on THIS click.
@@ -140,12 +144,14 @@ public final class LivingMenuController {
                         selectedScene.apply(minecraft);
                     }
                     minecraft.setScreen(new LiveTitleScreen());
-                    LOGGER.info("Living Main Menu running genuine scene '{}'",
-                            selectedScene != null ? selectedScene.id : "unknown");
+                    LOGGER.info("Living Main Menu running genuine scene '{}' after {} ms",
+                            selectedScene != null ? selectedScene.id : "unknown",
+                            (System.nanoTime() - loadStartedAt) / 1_000_000L);
                 } else {
                     loading = false;
                     menuDuringLoading = null;
                     selectedScene = null;
+                    LivingMenuChunkLimits.restore(minecraft);
                     failedThisSession = true;
                     LOGGER.warn("Living Main Menu did not join its temporary world; keeping normal gameplay");
                 }
@@ -154,6 +160,7 @@ public final class LivingMenuController {
                 loading = false;
                 menuDuringLoading = null;
                 selectedScene = null;
+                LivingMenuChunkLimits.restore(minecraft);
                 failedThisSession = true;
                 LOGGER.warn("Living Main Menu world was not ready after two minutes; disabled for this session");
             }
@@ -162,6 +169,7 @@ public final class LivingMenuController {
         if (active) {
             if (minecraft.level == null || minecraft.getSingleplayerServer() == null) {
                 active = false;
+                LivingMenuChunkLimits.restore(minecraft);
             } else if (minecraft.screen instanceof LiveTitleScreen && minecraft.player != null) {
                 // Move the real client viewpoint only. Machines still tick on the server.
                 if (selectedScene != null && selectedScene.rotate) {
@@ -198,8 +206,15 @@ public final class LivingMenuController {
             return;
         }
         try {
+            long copyStartedAt = System.nanoTime();
             expectedRuntimePath = LivingMenuWorldCopy.prepare(savesDirectory, scene);
+            LOGGER.info("Living Main Menu copied scene '{}' in {} ms (view radius={}, simulation radius={})",
+                    scene.id, (System.nanoTime() - copyStartedAt) / 1_000_000L,
+                    scene.renderDistanceChunks, scene.simulationDistanceChunks);
             selectedScene = scene;
+            // Set the client options BEFORE the integrated server is started.
+            // IntegratedServer.tickServer mirrors Options distances every tick.
+            LivingMenuChunkLimits.begin(minecraft, scene);
             menuDuringLoading = minecraft.screen;
             loading = true;
             loadStartedAt = System.nanoTime();
@@ -208,6 +223,7 @@ public final class LivingMenuController {
             loading = false;
             selectedScene = null;
             menuDuringLoading = null;
+            LivingMenuChunkLimits.restore(minecraft);
             failedThisSession = true;
             LOGGER.error("Could not open the real Living Main Menu world; leaving the vanilla menu available", error);
         }
@@ -388,12 +404,19 @@ public final class LivingMenuController {
 
         if (next instanceof LiveTitleScreen && !active) {
             event.setNewScreen(new TitleScreen());
-        } else if (next instanceof TitleScreen
-                && !(next instanceof LiveTitleScreen)
-                && active && Minecraft.getInstance().level != null) {
+        } else if (active && next instanceof LiveTitleScreen) {
+            // The user may have edited render/simulation preferences in Options.
+            LivingMenuChunkLimits.resume(Minecraft.getInstance());
+        } else if (active && next instanceof TitleScreen
+                && Minecraft.getInstance().level != null) {
             // Ordinary Options/Mods Back actions reuse the same still-running
             // world, without another integrated server startup.
+            LivingMenuChunkLimits.resume(Minecraft.getInstance());
             event.setNewScreen(new LiveTitleScreen());
+        } else if (active && next != null) {
+            // A settings or mod screen might call Options.save(). Restore the
+            // user's *real* preferences while these screens are open.
+            LivingMenuChunkLimits.suspend(Minecraft.getInstance());
         }
     }
 }

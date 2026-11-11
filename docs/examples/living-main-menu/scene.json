@@ -22,6 +22,8 @@
   },
   "limits": {
     "maxWorldMiB": 64,
-    "maxStoredChunks": 512
+    "maxStoredChunks": 512,
+    "renderDistanceChunks": 4,
+    "simulationDistanceChunks": 4
   }
 }

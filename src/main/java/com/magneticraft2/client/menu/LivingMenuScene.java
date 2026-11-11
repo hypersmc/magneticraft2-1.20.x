@@ -43,11 +43,14 @@ final class LivingMenuScene {
     final Integer randomTickSpeed;
     final int maxWorldMiB;
     final int maxStoredChunks;
+    final int renderDistanceChunks;
+    final int simulationDistanceChunks;
 
     private LivingMenuScene(String id, Path worldDirectory, boolean rotate, float degreesPerSecond,
                             Vec3 cameraPosition, Float yaw, Float pitch,
                             Integer timeOfDay, Boolean daylightCycle, Integer randomTickSpeed,
-                            int maxWorldMiB, int maxStoredChunks) {
+                            int maxWorldMiB, int maxStoredChunks,
+                            int renderDistanceChunks, int simulationDistanceChunks) {
         this.id = id;
         this.worldDirectory = worldDirectory;
         this.rotate = rotate;
@@ -60,6 +63,8 @@ final class LivingMenuScene {
         this.randomTickSpeed = randomTickSpeed;
         this.maxWorldMiB = maxWorldMiB;
         this.maxStoredChunks = maxStoredChunks;
+        this.renderDistanceChunks = renderDistanceChunks;
+        this.simulationDistanceChunks = simulationDistanceChunks;
     }
 
     /**
@@ -113,7 +118,7 @@ final class LivingMenuScene {
         Path legacy = savesDirectory.resolve(LivingMenuWorldCopy.SOURCE_ID);
         if (LivingMenuWorldCopy.sourceExists(legacy)) {
             return new LivingMenuScene("legacy", legacy, true, DEFAULT_DEGREES_PER_SECOND,
-                    null, null, null, null, null, null, 128, 8192);
+                    null, null, null, null, null, null, 128, 8192, 4, 4);
         }
         return null;
     }
@@ -166,12 +171,16 @@ final class LivingMenuScene {
         JsonObject limits = object(root, "limits");
         int worldMiB = integer(limits, "maxWorldMiB", 1, 128, 64);
         int storedChunks = integer(limits, "maxStoredChunks", 1, 8192, 512);
-
-        // v1 admission limits are implemented. Client/server distance caps are
-        // deliberately NOT exposed as active settings until they can be safely
-        // applied/restored without changing the player's own video settings.
+        // Forge/Minecraft 1.20.1 requires a radius of at least two chunks.
+        // These cap the *player* view and simulation radii, not spawn preparation.
+        int renderChunks = integer(limits, "renderDistanceChunks", 2, 8, 4);
+        int simulationChunks = integer(limits, "simulationDistanceChunks", 2, 8, 4);
+        if (simulationChunks > renderChunks) {
+            throw new IOException("simulationDistanceChunks cannot exceed renderDistanceChunks");
+        }
         return new LivingMenuScene(id, world, rotate, speed, cameraPosition,
-                yaw, pitch, time, dayCycle, randomTick, worldMiB, storedChunks);
+                yaw, pitch, time, dayCycle, randomTick, worldMiB, storedChunks,
+                renderChunks, simulationChunks);
     }
 
     /** Apply the scene to the disposable integrated server, never the player's saves. */

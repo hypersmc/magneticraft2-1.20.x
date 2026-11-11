@@ -1,6 +1,6 @@
 # Living Main Menu — scene library contract (proposed)
 
-**Status:** First scene-library slice is now implemented in PR #21 source: scene discovery, validated `scene.json`, actual world copying, max-world-byte / stored-chunk admission limits, real server camera/time/random-block-tick configuration, and legacy fallback. This new code has NOT been compiled or retested in-game. The requested independent server TPS adjustment, actual view/simulation-distance cap, multiple-scene cycling, background copy and first-frame timing remain unimplemented. Keep PR #21 a draft until verified.
+**Status:** The scene library now has per-scene player render/simulation distance caps in source, applied before loading the temporary integrated server. These caps are restored before real gameplay and suspended while settings screens are open. Forge compilation and in-game loading/performance are **unverified**. Vanilla 1.20.1 still prepares 441 spawn chunks irrespective of those caps; a true spawn preparation limit is **not implemented**. A no-save server shutdown is also not implemented because vanilla forces saving even when a level has `noSave` set. Keep PR #21 a draft.
 
 ## Goal
 
@@ -55,7 +55,9 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
   },
   "limits": {
     "maxWorldMiB": 64,
-    "maxStoredChunks": 512
+    "maxStoredChunks": 512,
+    "renderDistanceChunks": 4,
+    "simulationDistanceChunks": 4
   }
 }
 ```
@@ -64,7 +66,9 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
 - **Time**: `timeOfDay` sets real ServerLevel daytime (0..23999) and `daylightCycle` sets the actual gamerule on the disposable server after the menu player connects. The underlying level ticks and machine processing remain real.
 - **Ticks**: `randomTickSpeed` is now applied as Minecraft's actual **random block tick** gamerule and is **not** overall server ticks per second. Real machine simulation remains the standard **20 TPS** in this slice. User-requested adjustable global server TPS remains a separate unimplemented feature requiring mechanical-network and performance compatibility study.
 - **World limits**: `maxWorldMiB` and `maxStoredChunks` are hard source-admission checks. Count stored chunks by reading region headers, not counting region filenames or guessing from compressed save size. Reject oversize/corrupt scenes with an actionable log; never truncate or delete the user's source.
-- **Runtime load radius**: `renderDistanceChunks` and `simulationDistanceChunks` remain *future settings* and must not be added to active `scene.json` files. They need careful isolation/restoration of Minecraft client/server distance settings and measured world generation/startup behavior. A world border alone does not stop all chunk loading or generation.
+- **Runtime player load radius**: `renderDistanceChunks` and `simulationDistanceChunks` are now implemented as **per-scene upper bounds of 2–8 chunks** (defaults 4/4); simulation cannot exceed render. Because IntegratedServer reads client options every tick, the menu temporarily sets those options in memory to the lower of the scene cap and the player's actual value. Before any ordinary settings screen, the real values are restored; when it closes, current values are read again and the cap reapplied. On game exit and load failure the originals are restored. No `Options.save()` call is made by this feature. Other mods writing options while the menu is actively visible could still persist temporary caps; test compatibility.
+- **Not a strict loaded-chunk budget**: Minecraft 1.20.1 still calls `MinecraftServer.prepareLevels()` with a spawn ticket radius of 11 and waits for **441 ticking chunks**. These view/simulation radius caps reduce subsequent per-player chunk requests but **do not change spawn preparation**, and therefore do not guarantee a faster first world frame. Reducing the spawn region needs an isolated, separately verified lifecycle change rather than pretending a view-distance cap removes it.
+- **No-save shutdown**: The source world is never modified, and all disposable runtime changes are deleted only after server shutdown and save-lock release. Vanilla `MinecraftServer.stopServer()` explicitly resets every `ServerLevel.noSave` to false and forces saving; `ServerChunkCache.close()` also saves chunks. Therefore we have **not** added an unsafe fake `noSave` flag, a forced thread kill, or partial save-hook suppression. Fully eliminating runtime writes is still a separate unimplemented, mod-compatibility-sensitive change.
 - Validate numeric ranges, finite coordinates, supported schema versions, safe paths, no symlinks, and malformed JSON. On error skip that scene and retain the vanilla menu without corrupting real worlds.
 
 ## Visual bounds
@@ -98,7 +102,11 @@ A scene's actual source world is never opened as gameplay by the menu. The loade
 - [ ] A missing, invalid, oversized or symlinked scene never overwrites any save.
 - [ ] Scene source remains untouched; disposable runtime can reset/restart safely.
 - [ ] Different camera rotation settings, day/night presets and random tick gamerules work.
-- [ ] Quitting and re-entering normal worlds restores any temporarily adjusted settings.
+- [ ] Quitting and re-entering normal worlds restores any temporarily adjusted settings, even after a failed load/shutdown.
+- [ ] While visiting Options and Mods, real user render/simulation settings are visible and saving them doesn't permanently store the menu-only caps.
+- [ ] Confirm the actual integrated server uses the scene player radius without changes to a normal world's render/simulation options.
+- [ ] Measure 441-chunk vanilla spawn preparation separately; do **not** claim that these caps remove it.
+- [ ] For a future no-save shutdown implementation, verify a graceful Forge shutdown and resource cleanup under Mekanism and other installed mods.
 - [ ] Options/Mods, Singleplayer/Multiplayer/Realms navigation remains responsive.
 - [ ] Actual startup/copy/chunk timings are compared before and after the bounds.
 
