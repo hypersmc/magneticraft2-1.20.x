@@ -14,7 +14,9 @@ The background **must be a real running Minecraft level**. Never replace it with
 - Make a disposable copy in `saves/_magneticraft2_living_menu_runtime`, then invoke Minecraft 1.20.1's normal `WorldOpenFlows.loadLevel`. The original source save is never opened for ticking by the menu.
 - Once connected to that exact world on the real integrated server, display `LiveTitleScreen`. It reuses vanilla title-screen widgets but does **not** draw the panorama. The world is rendered by the actual Minecraft client renderer.
 - `LiveTitleScreen.isPauseScreen()` returns false so server-side machinery keeps ticking.
-- On vanilla menu-button navigation, disconnect the temporary integrated server. A stale `LiveTitleScreen` parent returns to a fresh normal `TitleScreen`.
+- Options/Mods and other non-gameplay screens **keep the demo world alive**; Back returns immediately to `LiveTitleScreen` without reloading.
+- Singleplayer/Multiplayer/Realms still require unloading the demo world first. The unload is queued until the next client tick, outside the title button dispatch, to avoid re-entrant menu/world teardown.
+- After returning from game/server selection, the controller waits for a genuinely disconnected title state before restarting the menu demo on a subsequent tick. Returning via an old `LiveTitleScreen` parent falls back to the vanilla title until a new demo is ready.
 - Loading failures disable further attempts for the current session, without preventing use of the vanilla menu.
 - Only while the live title is visible, Forge client rendering events suppress gameplay HUD, Forge overlays (including The One Probe), first-person hands and block outlines. No global HUD settings are changed.
 - The real client player's view rotates at 1.5 degrees per second at the saved world location. This is a smooth in-place camera *pan*, not a physical orbit around a point.
@@ -40,7 +42,7 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 ## Known limitations
 
 - **Observed:** The user's 2026-11-11 screenshot displays actual Magneticraft2 blocks behind the custom title, and their launch log reports Java 17 `compileJava UP-TO-DATE` with the Forge event subscriber registered. These observations do not prove complete `./gradlew build` or a running machine process.
-- **Unverified:** Full `./gradlew build`, server-side machine processing, smooth rotation, HUD/hand overlay suppression, concealed loading visuals, navigation, memory/FPS and multiplayer compatibility.
+- **Unverified:** Full `./gradlew build`, server-side machine processing, new deferred world unload / menu return behavior, frozen panorama, memory/FPS and multiplayer compatibility. The user previously confirmed HUD hiding, view rotation and loading concealment worked.
 - Custom title-screen render injections from other mods might not be shown, since the title panorama's regular render method is intentionally bypassed.
 - The standard integrated server has nontrivial startup/memory overhead. Measure it before enabling by default.
 - The menu source is local to each client, not a bundled reference scene. A curated demonstrator will be a follow-up only after the architecture is proven.
@@ -55,7 +57,11 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 - [ ] Verify no normal world-loading screen *is drawn* after the title; server loading still happens and genuine errors remain visible.
 - [ ] Watch real machine inventories and power transfer over 20–60 seconds; verify fuel/input consumption, output production, maintenance wear and 20-tick simulation.
 - [ ] Validate graphics after a resource reload and from several camera positions; check for missing textures and geometry issues.
-- [ ] Singleplayer, Multiplayer, Options, Mods and Quit work by mouse and keyboard, with no lingering menu world; returning from these menus must not show a stale blank screen.
+- [ ] Options and Mods remain responsive, do not unload the menu world, and return instantly to the same live menu.
+- [ ] Singleplayer/Multiplayer/Realms unload the demo **after** the menu has opened, without deadlocks, then return to a fresh live menu when backed out.
+- [ ] Repeatedly enter/exit menus at least 10 times; after loading a normal world and quitting, the live menu can start again.
+- [ ] Confirm the vanilla panorama stays visually stationary throughout the hidden load transition; no world-loading text is drawn.
+- [ ] Quit and external modded screen navigation do not leave a stale demo world or change real saves.
 - [ ] Check that user saves and the source save are unchanged; generated world resets safely after restarts, crashes and errors.
 - [ ] Validate reserved-name collision, corrupt source save, symlink rejection and copy-size limits.
 - [ ] Benchmark FPS, CPU, memory, startup time and behavior in modded installations.

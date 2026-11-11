@@ -6,6 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
 import net.minecraft.client.gui.screens.LevelLoadingScreen;
 import net.minecraft.client.gui.screens.ProgressScreen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
+import com.mojang.realmsclient.gui.screens.RealmsMainScreen;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
@@ -38,6 +41,7 @@ public final class LivingMenuController {
     private static boolean active;
     private static boolean failedThisSession;
     private static boolean navigatingAway;
+    private static Screen pendingUnloadDestination;
     private static long loadStartedAt;
     private static Path expectedRuntimePath;
 
@@ -49,6 +53,22 @@ public final class LivingMenuController {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
+        if (pendingUnloadDestination != null) {
+            // A title button has already opened its destination. Finish the current
+            // input dispatch before tearing down the integrated server; doing this
+            // synchronously from TitleScreen.mouseClicked caused navigation lockups.
+            Screen destination = pendingUnloadDestination;
+            pendingUnloadDestination = null;
+            try {
+                if (minecraft.level != null) {
+                    minecraft.clearLevel(destination);
+                }
+            } catch (Exception error) {
+                failedThisSession = true;
+                LOGGER.error("Failed to close the living menu's integrated world", error);
+            }
+            return;
+        }
         if (loading) {
             if (minecraft.player != null && minecraft.level != null && minecraft.getSingleplayerServer() != null) {
                 Path loadedWorld = minecraft.getSingleplayerServer().getWorldPath(LevelResource.ROOT)
@@ -84,7 +104,11 @@ public final class LivingMenuController {
             return;
         }
         if (navigatingAway) {
-            if (minecraft.screen != null && !(minecraft.screen instanceof TitleScreen)) {
+            // Do not attempt another world open while Singleplayer, Multiplayer
+            // or Realms menus are on screen. Once they return to a clean title,
+            // re-arm the demo for the FOLLOWING tick, not this navigation tick.
+            if (minecraft.level == null && minecraft.screen instanceof TitleScreen
+                    && !(minecraft.screen instanceof LiveTitleScreen)) {
                 navigatingAway = false;
             }
             return;
@@ -112,21 +136,33 @@ public final class LivingMenuController {
         }
     }
 
-    /** Called after a vanilla TitleScreen button has opened its destination. */
+    /** Called AFTER a vanilla TitleScreen button has opened its destination. */
     static void leaveMenuFor(Screen destination) {
-        Minecraft minecraft = Minecraft.getInstance();
         if (!active || destination == null) {
             return;
         }
+
+        // Options, Mods and other non-gameplay submenus can reuse the live
+        // integrated server. Their normal Back button returns immediately to
+        // the living menu without another shutdown/copy/world load.
+        if (!(destination instanceof SelectWorldScreen
+                || destination instanceof JoinMultiplayerScreen
+                || destination instanceof RealmsMainScreen)) {
+            return;
+        }
+
+        // The actual world/network selection flows must never run while our
+        // temporary integrated server is still connected. Unload on next tick
+        // instead of re-entering setScreen()/clearLevel() during button dispatch.
         navigatingAway = true;
         active = false;
-        // This stops the actual integrated server before showing a normal menu page.
-        minecraft.clearLevel(destination);
+        pendingUnloadDestination = destination;
     }
 
     private static boolean isLiveMenu() {
         Minecraft minecraft = Minecraft.getInstance();
-        return active && minecraft.level != null && minecraft.screen instanceof LiveTitleScreen;
+        // The same disposable world may remain loaded beneath Options / Mods.
+        return active && minecraft.level != null && minecraft.getSingleplayerServer() != null;
     }
 
     @SubscribeEvent
@@ -173,7 +209,9 @@ public final class LivingMenuController {
         // Keep Minecraft's real loading screen instance and its tick/packet logic.
         // Replace only what is drawn: the existing title stays visible until the
         // integrated-server world has actually connected and loaded.
-        menuDuringLoading.render(event.getGuiGraphics(), -1000, -1000, event.getPartialTick());
+        // TitleScreen's panorama advances with the render delta. Zero keeps
+        // the original panorama still while the REAL demo world starts.
+        menuDuringLoading.render(event.getGuiGraphics(), -1000, -1000, 0.0F);
         event.getGuiGraphics().fill(0, 0, shown.width, shown.height, 0x30000000);
         event.setCanceled(true);
     }
@@ -184,6 +222,12 @@ public final class LivingMenuController {
         // Never display an empty live-background screen after leaving the demo world.
         if (event.getNewScreen() instanceof LiveTitleScreen && !active) {
             event.setNewScreen(new TitleScreen());
+        } else if (event.getNewScreen() instanceof TitleScreen
+                && !(event.getNewScreen() instanceof LiveTitleScreen)
+                && active && Minecraft.getInstance().level != null) {
+            // A submenu might construct a new vanilla title rather than retain
+            // its original parent. Reuse the still-loaded menu world either way.
+            event.setNewScreen(new LiveTitleScreen());
         }
     }
 }

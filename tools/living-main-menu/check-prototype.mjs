@@ -17,12 +17,16 @@ const tests = [
   ['symlinks rejected', /attributes\.isSymbolicLink\(\)/.test(copy)],
   ['no panorama or fake renderer', !/super\.render\(/.test(title) && /this\.renderables/.test(title)],
   ['integrated server not paused', /boolean isPauseScreen\(\)\s*\{[\s\S]*?return false;/.test(title)],
-  ['clear level on menu navigation', /minecraft\.clearLevel\(destination\)/.test(controller)],
+  ['defer world unload until the following client tick', /if \(pendingUnloadDestination != null\)/.test(controller) && /minecraft\.clearLevel\(destination\)/.test(controller) && /pendingUnloadDestination = destination;/.test(controller)],
+  ['keep demo world alive across non-gameplay submenus', /destination instanceof SelectWorldScreen/.test(controller) && /destination instanceof JoinMultiplayerScreen/.test(controller) && /destination instanceof RealmsMainScreen/.test(controller)],
+  ['return-to-title is gated before reopening demo world', /if \(navigatingAway\)/.test(controller) && /minecraft\.level == null && minecraft\.screen instanceof TitleScreen/.test(controller)],
+  ['restore live title when returning from options', /event\.setNewScreen\(new LiveTitleScreen\(\)\)/.test(controller)],
   ['config opt-in default off', /livingMainMenu = builder[\s\S]*?\.define\("Living Main Menu \(experimental\)", false\)/.test(config)],
   ['HUD and Forge overlay suppression scoped to live menu', /onGameplayHud\(RenderGuiEvent\.Pre/.test(controller) && /onGuiOverlay\(RenderGuiOverlayEvent\.Pre/.test(controller) && /isLiveMenu\(\)/.test(controller)],
   ['hand and block selection suppression', /onPlayerHand\(RenderHandEvent/.test(controller) && /onBlockHighlight\(RenderHighlightEvent\.Block/.test(controller)],
   ['real client viewpoint slowly pans', /player\.setYRot\(minecraft\.player\.getYRot\(\) \+ CAMERA_TURN_DEGREES_PER_TICK\)/.test(controller)],
   ['loading screens are visually covered only', /onLoadingScreenRender\(ScreenEvent\.Render\.Pre/.test(controller) && /menuDuringLoading\.render/.test(controller) && /event\.setCanceled\(true\)/.test(controller)],
+  ['loading panorama is frozen without stopping real world load', /menuDuringLoading\.render\(event\.getGuiGraphics\(\), -1000, -1000, 0\.0F\)/.test(controller)],
 ];
 let failures = 0;
 for (const [name, okay] of tests) {
