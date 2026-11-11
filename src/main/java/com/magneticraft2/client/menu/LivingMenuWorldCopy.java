@@ -1,6 +1,7 @@
 package com.magneticraft2.client.menu;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -18,24 +19,23 @@ final class LivingMenuWorldCopy {
     static final String RUNTIME_ID = "_magneticraft2_living_menu_runtime";
     private static final String STAGING_ID = "_magneticraft2_living_menu_staging";
     private static final String MARKER = ".magneticraft2-generated-menu-copy";
-    private static final long MAX_BYTES = 128L * 1024 * 1024;
     private static final long MAX_FILES = 10_000;
 
     private LivingMenuWorldCopy() {}
 
-    static boolean sourceExists(Path savesDirectory) {
-        Path source = savesDirectory.resolve(SOURCE_ID);
+    static boolean sourceExists(Path source) {
         return Files.isDirectory(source, LinkOption.NOFOLLOW_LINKS)
                 && Files.isRegularFile(source.resolve("level.dat"), LinkOption.NOFOLLOW_LINKS);
     }
 
-    static Path prepare(Path savesDirectory) throws IOException {
-        if (!sourceExists(savesDirectory)) {
-            throw new IOException("Missing living-menu source save: " + SOURCE_ID);
+    static Path prepare(Path savesDirectory, LivingMenuScene scene) throws IOException {
+        Path source = scene.worldDirectory;
+        if (!sourceExists(source)) {
+            throw new IOException("Missing or invalid living-menu world: " + source);
         }
-        Path source = savesDirectory.resolve(SOURCE_ID);
         Path runtime = savesDirectory.resolve(RUNTIME_ID);
         Path staging = savesDirectory.resolve(STAGING_ID);
+        long maxBytes = scene.maxWorldMiB * 1024L * 1024L;
 
         // A colliding user save must never be erased, even if it has the reserved name.
         deleteGeneratedDirectoryIfPresent(runtime);
@@ -43,7 +43,8 @@ final class LivingMenuWorldCopy {
         Files.createDirectory(staging);
         // Mark the new directory immediately so a failed copy can be cleaned on retry.
         Files.writeString(staging.resolve(MARKER), "Disposable Magneticraft2 menu world. Do not edit.\n");
-        final long[] totals = {0, 0};
+        // Bytes, files and ACTUAL stored chunks, not a count of region filenames.
+        final long[] totals = {0, 0, 0};
         try {
             Files.walkFileTree(source, new SimpleFileVisitor<>() {
                 @Override
@@ -66,8 +67,17 @@ final class LivingMenuWorldCopy {
                     }
                     totals[0] += attributes.size();
                     totals[1]++;
-                    if (totals[0] > MAX_BYTES || totals[1] > MAX_FILES) {
-                        throw new IOException("Menu source world exceeds the 128 MiB / 10,000 file prototype limits");
+                    if (totals[0] > maxBytes || totals[1] > MAX_FILES) {
+                        throw new IOException("Menu world exceeds " + scene.maxWorldMiB
+                                + " MiB or 10,000 source files: " + scene.id);
+                    }
+                    if (file.getParent().getFileName().toString().equals("region")
+                            && file.getFileName().toString().endsWith(".mca")) {
+                        totals[2] += countStoredChunks(file);
+                        if (totals[2] > scene.maxStoredChunks) {
+                            throw new IOException("Menu world exceeds " + scene.maxStoredChunks
+                                    + " stored chunks: " + scene.id);
+                        }
                     }
                     Files.copy(file, staging.resolve(source.relativize(file)));
                     return FileVisitResult.CONTINUE;
@@ -83,6 +93,31 @@ final class LivingMenuWorldCopy {
             deleteGeneratedDirectoryIfPresent(staging);
             throw error;
         }
+    }
+
+    /**
+     * Each Anvil region header contains 1024 4-byte location entries. A nonzero
+     * entry means there is a saved chunk. Counting .mca filenames is incorrect.
+     */
+    private static int countStoredChunks(Path regionFile) throws IOException {
+        if (Files.size(regionFile) < 8192) {
+            throw new IOException("Invalid Minecraft region file: " + regionFile);
+        }
+        byte[] header;
+        try (InputStream input = Files.newInputStream(regionFile)) {
+            header = input.readNBytes(4096);
+        }
+        if (header.length != 4096) {
+            throw new IOException("Truncated Minecraft region header: " + regionFile);
+        }
+        int count = 0;
+        for (int i = 0; i < 4096; i += 4) {
+            // The first three bytes store the chunk offset in 4-KiB sectors.
+            if (header[i] != 0 || header[i + 1] != 0 || header[i + 2] != 0) {
+                ++count;
+            }
+        }
+        return count;
     }
 
     private static void deleteGeneratedDirectoryIfPresent(Path directory) throws IOException {

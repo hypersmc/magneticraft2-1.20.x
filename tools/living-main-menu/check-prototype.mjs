@@ -8,6 +8,8 @@ const controller = read('src/main/java/com/magneticraft2/client/menu/LivingMenuC
 const copy = read('src/main/java/com/magneticraft2/client/menu/LivingMenuWorldCopy.java');
 const title = read('src/main/java/com/magneticraft2/client/menu/LiveTitleScreen.java');
 const config = read('src/main/java/com/magneticraft2/common/utils/Magneticraft2ConfigClient.java');
+const scene = read('src/main/java/com/magneticraft2/client/menu/LivingMenuScene.java');
+const sceneExample = JSON.parse(read('docs/examples/living-main-menu/scene.json'));
 const tests = [
   ['real integrated-server world loading', /createWorldOpenFlows\(\)\.loadLevel\(/.test(controller)],
   ['exact active server save check', /getSingleplayerServer\(\)/.test(controller) && /getWorldPath\(LevelResource\.ROOT\)/.test(controller)],
@@ -30,6 +32,13 @@ const tests = [
   ['real client viewpoint slowly pans', /player\.setYRot\(minecraft\.player\.getYRot\(\) \+ CAMERA_TURN_DEGREES_PER_TICK\)/.test(controller)],
   ['loading screens are visually covered only', /onLoadingScreenRender\(ScreenEvent\.Render\.Pre/.test(controller) && /menuDuringLoading\.render/.test(controller) && /event\.setCanceled\(true\)/.test(controller)],
   ['loading panorama is frozen without stopping real world load', /menuDuringLoading\.render\(event\.getGuiGraphics\(\), -1000, -1000, 0\.0F\)/.test(controller)],
+  ['real scene lookup with legacy save fallback', /LivingMenuScene\.select\(/.test(controller) && /LivingMenuWorldCopy\.sourceExists\(legacy\)/.test(scene)],
+  ['per-scene camera rotation speed applied', /selectedScene\.degreesPerSecond \/ 20\.0F/.test(controller) && /selectedScene\.rotate/.test(controller)],
+  ['real server world time and gamerules applied', /level\.setDayTime/.test(scene) && /RULE_DAYLIGHT/.test(scene) && /RULE_RANDOMTICKING/.test(scene)],
+  ['source size and stored chunk limits enforced', /scene\.maxWorldMiB/.test(copy) && /scene\.maxStoredChunks/.test(copy) && /countStoredChunks\(file\)/.test(copy)],
+  ['no source enumeration on every tick', /if \(sceneLookupDone\)/.test(controller)],
+  ['example manifest valid and enabled', sceneExample.schemaVersion === 1 && sceneExample.enabled === true && sceneExample.camera.rotation.degreesPerSecond === 1.5],
+  ['actual scene folder automatically created', /Files\.createDirectory\(base\)/.test(scene) && /Files\.createDirectory\(root\)/.test(scene)],
 ];
 let failures = 0;
 for (const [name, okay] of tests) {

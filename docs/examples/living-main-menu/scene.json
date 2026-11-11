@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "Steam Factory",
+  "enabled": true,
+  "camera": {
+    "position": {
+      "x": 16.5,
+      "y": 73.0,
+      "z": 22.5
+    },
+    "yaw": 90.0,
+    "pitch": 12.0,
+    "rotation": {
+      "enabled": true,
+      "degreesPerSecond": 1.5
+    }
+  },
+  "world": {
+    "timeOfDay": 6000,
+    "daylightCycle": false,
+    "randomTickSpeed": 3
+  },
+  "limits": {
+    "maxWorldMiB": 64,
+    "maxStoredChunks": 512
+  }
+}

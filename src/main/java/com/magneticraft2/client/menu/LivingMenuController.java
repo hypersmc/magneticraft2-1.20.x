@@ -34,8 +34,7 @@ import java.nio.file.Path;
 public final class LivingMenuController {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long LOAD_TIMEOUT_NANOS = 120_000_000_000L;
-    // 1.5 degrees/second at 20 client ticks per second: four-minute full turn.
-    private static final float CAMERA_TURN_DEGREES_PER_TICK = 0.075F;
+    // Per-scene camera speed is in degrees/second. Gameplay stays at normal 20 TPS.
     private static Screen menuDuringLoading;
     private static boolean loading;
     private static boolean active;
@@ -45,6 +44,8 @@ public final class LivingMenuController {
     private static boolean quitRequested;
     private static long loadStartedAt;
     private static Path expectedRuntimePath;
+    private static LivingMenuScene selectedScene;
+    private static boolean sceneLookupDone;
 
     private LivingMenuController() {}
 
@@ -58,6 +59,7 @@ public final class LivingMenuController {
             // The vanilla Quit Game button normally stops the client immediately.
             // Our real integrated menu server must first be shut down cleanly.
             quitRequested = false;
+            selectedScene = null;
             active = false;
             loading = false;
             menuDuringLoading = null;
@@ -96,11 +98,16 @@ public final class LivingMenuController {
                     loading = false;
                     menuDuringLoading = null;
                     active = true;
+                    if (selectedScene != null) {
+                        selectedScene.apply(minecraft);
+                    }
                     minecraft.setScreen(new LiveTitleScreen());
-                    LOGGER.info("Living Main Menu is running a real integrated-server world");
+                    LOGGER.info("Living Main Menu running genuine scene '{}'",
+                            selectedScene != null ? selectedScene.id : "unknown");
                 } else {
                     loading = false;
                     menuDuringLoading = null;
+                    selectedScene = null;
                     failedThisSession = true;
                     LOGGER.warn("Living Main Menu did not join its temporary world; keeping normal gameplay");
                 }
@@ -108,6 +115,7 @@ public final class LivingMenuController {
                 // Do not tear down a potentially still-loading world from a timeout.
                 loading = false;
                 menuDuringLoading = null;
+                selectedScene = null;
                 failedThisSession = true;
                 LOGGER.warn("Living Main Menu world was not ready after two minutes; disabled for this session");
             }
@@ -117,8 +125,11 @@ public final class LivingMenuController {
             if (minecraft.level == null || minecraft.getSingleplayerServer() == null) {
                 active = false;
             } else if (minecraft.screen instanceof LiveTitleScreen && minecraft.player != null) {
-                // Turn the real client viewpoint in the disposable demonstration world.
-                minecraft.player.setYRot(minecraft.player.getYRot() + CAMERA_TURN_DEGREES_PER_TICK);
+                // Move the real client viewpoint only. Machines still tick on the server.
+                if (selectedScene != null && selectedScene.rotate) {
+                    minecraft.player.setYRot(minecraft.player.getYRot()
+                            + selectedScene.degreesPerSecond / 20.0F);
+                }
             }
             return;
         }
@@ -129,6 +140,7 @@ public final class LivingMenuController {
             if (minecraft.level == null && minecraft.screen instanceof TitleScreen
                     && !(minecraft.screen instanceof LiveTitleScreen)) {
                 navigatingAway = false;
+                sceneLookupDone = false;
             }
             return;
         }
@@ -137,18 +149,26 @@ public final class LivingMenuController {
                 || minecraft.screen instanceof LiveTitleScreen) {
             return;
         }
+        // Never enumerate scene directories or parse JSON on every client tick.
+        if (sceneLookupDone) {
+            return;
+        }
+        sceneLookupDone = true;
         Path savesDirectory = minecraft.getLevelSource().getBaseDir();
-        if (!LivingMenuWorldCopy.sourceExists(savesDirectory)) {
+        LivingMenuScene scene = LivingMenuScene.select(minecraft.gameDirectory.toPath(), savesDirectory);
+        if (scene == null) {
             return;
         }
         try {
-            expectedRuntimePath = LivingMenuWorldCopy.prepare(savesDirectory);
+            expectedRuntimePath = LivingMenuWorldCopy.prepare(savesDirectory, scene);
+            selectedScene = scene;
             menuDuringLoading = minecraft.screen;
             loading = true;
             loadStartedAt = System.nanoTime();
             minecraft.createWorldOpenFlows().loadLevel(minecraft.screen, LivingMenuWorldCopy.RUNTIME_ID);
         } catch (Exception error) {
             loading = false;
+            selectedScene = null;
             menuDuringLoading = null;
             failedThisSession = true;
             LOGGER.error("Could not open the real Living Main Menu world; leaving the vanilla menu available", error);

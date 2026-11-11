@@ -23,12 +23,12 @@ The background **must be a real running Minecraft level**. Never replace it with
 - The real client player's view rotates at 1.5 degrees per second at the saved world location. This is a smooth in-place camera *pan*, not a physical orbit around a point.
 - While the normal integrated server loads, a render-only interception preserves the existing title-screen image in place of world-loading progress screens. The actual loading screens remain alive internally for normal tick/packet handling. Loading time is not eliminated.
 
-This proof-of-concept uses one user-built real scene. It does not yet bundle a demo save or rotate *between* scenes. There is no new machinery or duplicate mechanical-network implementation.
+A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.json` and `world/level.dat`. The earliest alphabetically enabled valid scene is selected; the original `saves/magneticraft2_menu_source` remains a fallback. No demonstration world is bundled or rotated *between* scenes. There is no new machinery or duplicate mechanical-network implementation.
 
 ## How to stage the scene
 
 1. With the latest Magneticraft2 content, create a **small** singleplayer world whose **save directory** is exactly `magneticraft2_menu_source`.
-2. Build and prove a genuine machine chain works in ordinary gameplay. Position the player at the desired menu camera view and Save & Quit. Its real fuel, inputs, outputs and mechanical wear still apply.
+2. Build and prove a genuine machine chain works in ordinary gameplay. Position the player at the desired menu camera view and Save & Quit. Alternatively create `mgcmainmenu/scenes/<id>/world/` containing that save and a sibling `scene.json` as documented in `living-main-menu-scene-library-contract.md`. Its real fuel, inputs, outputs and mechanical wear still apply.
 3. Set `Living Main Menu (experimental) = true` under the Magneticraft2 client config in `config/magneticraft2-client.toml`, then restart Minecraft.
 4. A new disposable save named `_magneticraft2_living_menu_runtime` is created and loaded. Vanilla menu buttons are displayed on top of actual gameplay.
 5. The runtime is reset from source on subsequent launches. Do not edit it. If you disable the feature or remove the source save, normal title behavior returns.
@@ -65,7 +65,9 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 - [ ] Confirm the vanilla panorama stays visually stationary throughout the hidden load transition; no world-loading text is drawn.
 - [ ] Quit and external modded screen navigation do not leave a stale demo world or change real saves.
 - [ ] Check that user saves and the source save are unchanged; generated world resets safely after restarts, crashes and errors.
-- [ ] Validate reserved-name collision, corrupt source save, symlink rejection and copy-size limits.
+- [ ] Validate reserved-name collision, corrupt source save, symlink rejection, maxWorldMiB and Anvil-header maxStoredChunks limits.
+- [ ] Confirm scene camera teleport, time of day and randomTickSpeed apply to the disposable integrated server only, while machinery runs at normal 20 TPS.
+- [ ] Confirm no valid library scene falls back to the original source save with no migration.
 - [ ] Benchmark FPS, CPU, memory, startup time and behavior in modded installations.
 - [ ] Revisit navigation after exiting a normal singleplayer world or multiplayer server.
 

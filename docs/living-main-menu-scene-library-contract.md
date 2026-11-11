@@ -1,6 +1,6 @@
 # Living Main Menu — scene library contract (proposed)
 
-**Status:** Design contract only. This document does not imply that scene loading, configuration, tick-rate control, or size limiting has been implemented. Keep PR #21 in draft until real in-game acceptance.
+**Status:** First scene-library slice is now implemented in PR #21 source: scene discovery, validated `scene.json`, actual world copying, max-world-byte / stored-chunk admission limits, real server camera/time/random-block-tick configuration, and legacy fallback. This new code has NOT been compiled or retested in-game. The requested independent server TPS adjustment, actual view/simulation-distance cap, multiple-scene cycling, background copy and first-frame timing remain unimplemented. Keep PR #21 a draft until verified.
 
 ## Goal
 
@@ -31,7 +31,7 @@ Use the Minecraft game directory, not the normal saves folder, for the source li
     _magneticraft2_living_menu_runtime/   # disposable, never a source
 ```
 
-Scene IDs are safe directory names such as `copper_workshop`. Sort deterministically. First iteration: use one enabled scene; add scene cycling after stable startup and navigation. Preserve compatibility with the current manually created `saves/magneticraft2_menu_source` until users have a migration path. Never silently move or delete it.
+Scene IDs are safe lowercase directory names such as `copper_workshop`. Sort deterministically; **the first alphabetically named enabled valid scene** is selected in v1. If none exists, the original `saves/magneticraft2_menu_source` is used unchanged. The `mgcmainmenu/scenes` directory is created automatically once the feature is enabled. Scene cycling is not implemented yet. Never silently move or delete the source save.
 
 ## Per-scene settings
 
@@ -55,18 +55,16 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
   },
   "limits": {
     "maxWorldMiB": 64,
-    "maxStoredChunks": 512,
-    "renderDistanceChunks": 4,
-    "simulationDistanceChunks": 4
+    "maxStoredChunks": 512
   }
 }
 ```
 
-- **Camera**: initial position and orientation are applied through the real integrated server's player teleport/synchronization, rather than changing a fake camera. Rotation is client-side viewing only; it must not modify gameplay saves. An optional camera section should use the source world's saved player position.
-- **Time**: `timeOfDay` initializes the disposable world (Minecraft time, 0..23999) and `daylightCycle` controls whether it advances. The underlying level time/ticks and machine processing remain real.
-- **Ticks**: `randomTickSpeed` is Minecraft's **random block tick** gamerule and **not** overall server ticks per second. Real machine simulation stays at ordinary **20 TPS** in the first implementation. Any separately requested global TPS control needs performance and mechanical-network compatibility study; it must not be simulated or misrepresented.
+- **Camera**: position and orientation are applied through a server-authoritative teleport of the actual integrated-server menu player, rather than a fake camera. Rotation changes that client's viewpoint each tick. Omitting `camera.position` keeps the source world's saved player position; omitting `rotation` defaults to 1.5 degrees/second. These changes affect the disposable runtime world only.
+- **Time**: `timeOfDay` sets real ServerLevel daytime (0..23999) and `daylightCycle` sets the actual gamerule on the disposable server after the menu player connects. The underlying level ticks and machine processing remain real.
+- **Ticks**: `randomTickSpeed` is now applied as Minecraft's actual **random block tick** gamerule and is **not** overall server ticks per second. Real machine simulation remains the standard **20 TPS** in this slice. User-requested adjustable global server TPS remains a separate unimplemented feature requiring mechanical-network and performance compatibility study.
 - **World limits**: `maxWorldMiB` and `maxStoredChunks` are hard source-admission checks. Count stored chunks by reading region headers, not counting region filenames or guessing from compressed save size. Reject oversize/corrupt scenes with an actionable log; never truncate or delete the user's source.
-- **Runtime load radius**: `renderDistanceChunks` and `simulationDistanceChunks` are *target caps*, not yet implemented. They need careful isolation/restoration of Minecraft client/server distance settings and a measurement of actual worldgen/startup behavior. A world border alone does not stop all chunk loading or generation.
+- **Runtime load radius**: `renderDistanceChunks` and `simulationDistanceChunks` remain *future settings* and must not be added to active `scene.json` files. They need careful isolation/restoration of Minecraft client/server distance settings and measured world generation/startup behavior. A world border alone does not stop all chunk loading or generation.
 - Validate numeric ranges, finite coordinates, supported schema versions, safe paths, no symlinks, and malformed JSON. On error skip that scene and retain the vanilla menu without corrupting real worlds.
 
 ## Visual bounds
@@ -83,6 +81,15 @@ The current prototype copies its source save **synchronously on the client threa
 4. Time to first real scene frame; CPU, RAM and FPS.
 
 Potential staged improvements: validate/bound source scenes first; move file copy off the render thread safely; keep non-gameplay submenus connected to the same live world; use a small pre-generated chunk set and scoped view/simulation distances; consider a prepared disposable cache if crash recovery and source-change detection are correct. Never tick the server during mod registration/resource initialization.
+
+## Activating a scene now
+
+1. Enable the existing Magneticraft2 client config option `Living Main Menu (experimental)`.
+2. Create or copy a small real Minecraft save at `<game-directory>/mgcmainmenu/scenes/steam_factory/world/` with `level.dat` inside that `world` directory.
+3. Copy `docs/examples/living-main-menu/scene.json` to `<game-directory>/mgcmainmenu/scenes/steam_factory/scene.json`; edit camera position and time to match your world.
+4. Restart the game. If no valid enabled scene exists, the current legacy `run/saves/magneticraft2_menu_source` still works.
+
+A scene's actual source world is never opened as gameplay by the menu. The loader works exclusively with an isolated copy in the existing runtime save folder. The source folder and name must not be symlinks.
 
 ## Acceptance and regression
 
