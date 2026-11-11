@@ -4,6 +4,8 @@ import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
 import com.mojang.logging.LogUtils;
 import com.mojang.realmsclient.RealmsMainScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.AlertScreen;
+import net.minecraft.network.chat.Component;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
@@ -78,52 +80,45 @@ public final class LivingMenuController {
             loading = false;
             menuDuringLoading = null;
             selectedScene = null;
+            LOGGER.info("Living Main Menu: {} requested; closing the disposable world", destination);
             try {
-                // A temporary plain title is intentionally shown while Minecraft
-                // shuts down and SAVES the genuine integrated server.
-                // Do not construct SelectWorldScreen here: its constructor starts
-                // scanning saves immediately, before the demo lock is released.
-                minecraft.clearLevel(new TitleScreen());
+                // Never present clickable vanilla title buttons while the old
+                // integrated server is still closing. The selection screen's
+                // constructor must not enumerate saves until its lock is free.
+                minecraft.clearLevel(new GenericDirtMessageScreen(
+                        Component.literal("Closing Magneticraft2 menu world...")));
             } catch (Exception error) {
-                awaitingWorldRelease = null;
-                failedThisSession = true;
-                LOGGER.error("Living menu could not unload the demo world", error);
-                minecraft.setScreen(new TitleScreen());
+                // Some mods can throw during integrated-server teardown. Keep
+                // the player's requested destination queued; we can proceed if
+                // the world actually finishes closing despite the exception.
+                LOGGER.error("Living Main Menu: error while closing the scene for {}. "
+                        + "Waiting for full server and save-lock release", destination, error);
             }
+            // Vanilla clearLevel usually waits for the server itself. If it has
+            // already completed, open the requested screen on THIS click.
+            tryFinishNavigation(minecraft);
             return;
         }
         if (awaitingWorldRelease != null) {
-            // clearLevel() may complete its client-side work before the server
-            // releases the region/session lock. Wait for both, non-blockingly.
-            if (minecraft.level == null && minecraft.getSingleplayerServer() == null
-                    && isRuntimeSaveUnlocked(minecraft.getLevelSource().getBaseDir())) {
-                NavigationTarget destination = awaitingWorldRelease;
+            if (!tryFinishNavigation(minecraft)
+                    && System.nanoTime() - exitStartedAt > EXIT_TIMEOUT_NANOS) {
+                NavigationTarget blocked = awaitingWorldRelease;
+                boolean clientWorldPresent = minecraft.level != null;
+                boolean serverPresent = minecraft.getSingleplayerServer() != null;
+                boolean saveLocked = !isRuntimeSaveUnlocked(minecraft.getLevelSource().getBaseDir());
+                LOGGER.error("Living Main Menu: {} could not open after shutdown; "
+                                + "clientWorldPresent={}, integratedServerPresent={}, runtimeSaveLocked={}",
+                        blocked, clientWorldPresent, serverPresent, saveLocked);
                 awaitingWorldRelease = null;
-                try {
-                    LivingMenuWorldCopy.cleanupRuntime(minecraft.getLevelSource().getBaseDir());
-                } catch (IOException error) {
-                    LOGGER.warn("Could not remove finished temporary menu world", error);
-                }
-                if (destination == NavigationTarget.QUIT) {
-                    minecraft.stop();
-                } else {
-                    Screen parent = new TitleScreen();
-                    Screen next = switch (destination) {
-                        case SINGLEPLAYER -> new SelectWorldScreen(parent);
-                        case MULTIPLAYER -> new JoinMultiplayerScreen(parent);
-                        case REALMS -> new RealmsMainScreen(parent);
-                        case QUIT -> throw new IllegalStateException("Quit handled above");
-                    };
-                    // Screen creation occurs only AFTER the menu save has closed.
-                    minecraft.setScreen(next);
-                }
-            } else if (System.nanoTime() - exitStartedAt > EXIT_TIMEOUT_NANOS) {
-                LOGGER.error("Timed out waiting for the genuine menu world's save lock to close; "
-                        + "normal gameplay selection blocked to protect existing worlds");
-                awaitingWorldRelease = null;
-                navigatingAway = false;
                 failedThisSession = true;
-                minecraft.setScreen(new TitleScreen());
+                navigatingAway = false;
+                // Do not silently lose the selection and pretend the vanilla
+                // title is its result. Report the blocked handoff explicitly.
+                minecraft.setScreen(new AlertScreen(
+                        minecraft::stop,
+                        Component.literal("Living Main Menu could not close"),
+                        Component.literal("The temporary world did not shut down safely. "
+                                + "Check latest.log, then restart Minecraft before loading another world.")));
             }
             return;
         }
@@ -209,6 +204,65 @@ public final class LivingMenuController {
             menuDuringLoading = null;
             failedThisSession = true;
             LOGGER.error("Could not open the real Living Main Menu world; leaving the vanilla menu available", error);
+        }
+    }
+
+    /**
+     * Completes the original button action only once the genuine server and
+     * its disposable save have fully closed. Returns false while still waiting.
+     */
+    private static boolean tryFinishNavigation(Minecraft minecraft) {
+        NavigationTarget destination = awaitingWorldRelease;
+        if (destination == null || minecraft.level != null
+                || minecraft.getSingleplayerServer() != null
+                || !isRuntimeSaveUnlocked(minecraft.getLevelSource().getBaseDir())) {
+            return false;
+        }
+
+        try {
+            LivingMenuWorldCopy.cleanupRuntime(minecraft.getLevelSource().getBaseDir());
+        } catch (IOException error) {
+            // A marked runtime may fail cleanup because of permissions, but
+            // its lock has been released. Do not delete other saves.
+            LOGGER.warn("Living Main Menu: could not clean up disposable world after shutdown", error);
+        }
+
+        try {
+            if (destination == NavigationTarget.QUIT) {
+                awaitingWorldRelease = null;
+                LOGGER.info("Living Main Menu: stopped the scene, quitting");
+                minecraft.stop();
+                return true;
+            }
+
+            Screen parent = new TitleScreen();
+            Screen next = switch (destination) {
+                case SINGLEPLAYER -> new SelectWorldScreen(parent);
+                case MULTIPLAYER -> new JoinMultiplayerScreen(parent);
+                case REALMS -> new RealmsMainScreen(parent);
+                case QUIT -> throw new IllegalStateException("Quit handled above");
+            };
+            minecraft.setScreen(next);
+            if (minecraft.screen != next) {
+                throw new IllegalStateException("Requested screen " + next.getClass().getSimpleName()
+                        + " was not installed; current screen: "
+                        + (minecraft.screen == null ? "null" : minecraft.screen.getClass().getSimpleName()));
+            }
+            awaitingWorldRelease = null;
+            LOGGER.info("Living Main Menu: opened {} automatically after {} ms",
+                    destination, (System.nanoTime() - exitStartedAt) / 1_000_000L);
+            return true;
+        } catch (RuntimeException error) {
+            awaitingWorldRelease = null;
+            failedThisSession = true;
+            navigatingAway = false;
+            LOGGER.error("Living Main Menu: the scene closed, but {} failed to open", destination, error);
+            minecraft.setScreen(new AlertScreen(
+                    () -> minecraft.setScreen(new TitleScreen()),
+                    Component.literal("Living Main Menu navigation failed"),
+                    Component.literal("Could not open " + destination
+                            + ". Check latest.log for the reason.")));
+            return true;
         }
     }
 
