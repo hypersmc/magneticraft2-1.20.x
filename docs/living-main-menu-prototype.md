@@ -15,7 +15,8 @@ The background **must be a real running Minecraft level**. Never replace it with
 - Once connected to that exact world on the real integrated server, display `LiveTitleScreen`. It reuses vanilla title-screen widgets but does **not** draw the panorama. The world is rendered by the actual Minecraft client renderer.
 - `LiveTitleScreen.isPauseScreen()` returns false so server-side machinery keeps ticking.
 - Options/Mods and other non-gameplay screens **keep the demo world alive**; Back returns immediately to `LiveTitleScreen` without reloading.
-- Singleplayer/Multiplayer/Realms still require unloading the demo world first. The unload is queued until the next client tick, outside the title button dispatch, to avoid re-entrant menu/world teardown.
+- Quit Game is intercepted for mouse and keyboard activation; the demo integrated world is unloaded before the Minecraft client is stopped.
+- Singleplayer/Multiplayer/Realms transitions are now cancelled in the Forge screen-opening event BEFORE the target screen opens. The next client tick closes the demo server and opens the selection screen, preventing an actual world join from racing the demo world.
 - After returning from game/server selection, the controller waits for a genuinely disconnected title state before restarting the menu demo on a subsequent tick. Returning via an old `LiveTitleScreen` parent falls back to the vanilla title until a new demo is ready.
 - Loading failures disable further attempts for the current session, without preventing use of the vanilla menu.
 - Only while the live title is visible, Forge client rendering events suppress gameplay HUD, Forge overlays (including The One Probe), first-person hands and block outlines. No global HUD settings are changed.
@@ -58,7 +59,8 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 - [ ] Watch real machine inventories and power transfer over 20–60 seconds; verify fuel/input consumption, output production, maintenance wear and 20-tick simulation.
 - [ ] Validate graphics after a resource reload and from several camera positions; check for missing textures and geometry issues.
 - [ ] Options and Mods remain responsive, do not unload the menu world, and return instantly to the same live menu.
-- [ ] Singleplayer/Multiplayer/Realms unload the demo **after** the menu has opened, without deadlocks, then return to a fresh live menu when backed out.
+- [ ] Singleplayer/Multiplayer/Realms unload the demo **before** the selection menu is opened; actual singleplayer and multiplayer gameplay must connect without a stuck 100% screen.
+- [ ] Quit Game works on the living menu (mouse and keyboard) directly and after visiting Options/Mods.
 - [ ] Repeatedly enter/exit menus at least 10 times; after loading a normal world and quitting, the live menu can start again.
 - [ ] Confirm the vanilla panorama stays visually stationary throughout the hidden load transition; no world-loading text is drawn.
 - [ ] Quit and external modded screen navigation do not leave a stale demo world or change real saves.

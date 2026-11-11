@@ -42,6 +42,7 @@ public final class LivingMenuController {
     private static boolean failedThisSession;
     private static boolean navigatingAway;
     private static Screen pendingUnloadDestination;
+    private static boolean quitRequested;
     private static long loadStartedAt;
     private static Path expectedRuntimePath;
 
@@ -53,6 +54,24 @@ public final class LivingMenuController {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
+        if (quitRequested) {
+            // The vanilla Quit Game button normally stops the client immediately.
+            // Our real integrated menu server must first be shut down cleanly.
+            quitRequested = false;
+            active = false;
+            loading = false;
+            menuDuringLoading = null;
+            pendingUnloadDestination = null;
+            navigatingAway = false;
+            try {
+                if (minecraft.level != null) {
+                    minecraft.clearLevel();
+                }
+            } finally {
+                minecraft.stop();
+            }
+            return;
+        }
         if (pendingUnloadDestination != null) {
             // A title button has already opened its destination. Finish the current
             // input dispatch before tearing down the integrated server; doing this
@@ -136,24 +155,27 @@ public final class LivingMenuController {
         }
     }
 
-    /** Called AFTER a vanilla TitleScreen button has opened its destination. */
-    static void leaveMenuFor(Screen destination) {
-        if (!active || destination == null) {
-            return;
+    static void requestQuit() {
+        if (active) {
+            quitRequested = true;
         }
+    }
 
-        // Options, Mods and other non-gameplay submenus can reuse the live
-        // integrated server. Their normal Back button returns immediately to
-        // the living menu without another shutdown/copy/world load.
-        if (!(destination instanceof SelectWorldScreen
+    private static boolean requiresRealWorldTransition(Screen destination) {
+        return destination instanceof SelectWorldScreen
                 || destination instanceof JoinMultiplayerScreen
-                || destination instanceof RealmsMainScreen)) {
+                || destination instanceof RealmsMainScreen;
+    }
+
+    /**
+     * Called from ScreenEvent.Opening BEFORE the destination becomes current.
+     * The event is cancelled so the old menu world can be unloaded outside of
+     * Minecraft's input dispatch. Only then is the requested page opened.
+     */
+    private static void beginRealWorldTransition(Screen destination) {
+        if (!active || pendingUnloadDestination != null) {
             return;
         }
-
-        // The actual world/network selection flows must never run while our
-        // temporary integrated server is still connected. Unload on next tick
-        // instead of re-entering setScreen()/clearLevel() during button dispatch.
         navigatingAway = true;
         active = false;
         pendingUnloadDestination = destination;
@@ -218,15 +240,24 @@ public final class LivingMenuController {
 
     @SubscribeEvent
     public static void onScreenOpening(ScreenEvent.Opening event) {
-        // A vanilla menu page can keep its original TitleScreen as its parent.
-        // Never display an empty live-background screen after leaving the demo world.
-        if (event.getNewScreen() instanceof LiveTitleScreen && !active) {
+        Screen next = event.getNewScreen();
+        // The only safe time to intercept selection is BEFORE screen change:
+        // otherwise Minecraft can start a real join while the menu's integrated
+        // server is still alive, leaving its loading screen stuck at 100%.
+        if (active && event.getCurrentScreen() instanceof LiveTitleScreen
+                && requiresRealWorldTransition(next)) {
+            event.setCanceled(true);
+            beginRealWorldTransition(next);
+            return;
+        }
+
+        if (next instanceof LiveTitleScreen && !active) {
             event.setNewScreen(new TitleScreen());
-        } else if (event.getNewScreen() instanceof TitleScreen
-                && !(event.getNewScreen() instanceof LiveTitleScreen)
+        } else if (next instanceof TitleScreen
+                && !(next instanceof LiveTitleScreen)
                 && active && Minecraft.getInstance().level != null) {
-            // A submenu might construct a new vanilla title rather than retain
-            // its original parent. Reuse the still-loaded menu world either way.
+            // Ordinary Options/Mods Back actions reuse the same still-running
+            // world, without another integrated server startup.
             event.setNewScreen(new LiveTitleScreen());
         }
     }

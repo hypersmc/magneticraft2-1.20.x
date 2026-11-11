@@ -3,7 +3,10 @@ package com.magneticraft2.client.menu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Retains vanilla's actual title-menu widgets but renders them over the
@@ -28,28 +31,36 @@ final class LiveTitleScreen extends TitleScreen {
         return false;
     }
 
+    private static boolean isQuitButton(GuiEventListener listener) {
+        // Resolve through the language system, not an English-only string.
+        return listener instanceof AbstractWidget widget
+                && widget.getMessage().getString()
+                        .equals(Component.translatable("menu.quit").getString());
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean handled = super.mouseClicked(mouseX, mouseY, button);
-        leaveIfNavigating();
-        return handled;
+        if (button == 0) {
+            for (GuiEventListener listener : this.children()) {
+                if (isQuitButton(listener) && listener instanceof AbstractWidget widget
+                        && widget.isMouseOver(mouseX, mouseY) && widget.active) {
+                    LivingMenuController.requestQuit();
+                    return true;
+                }
+            }
+        }
+        // Gameplay selection is intercepted in ScreenEvent.Opening, before
+        // Minecraft changes screens. Do not manually call clearLevel() here.
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        boolean handled = super.keyPressed(keyCode, scanCode, modifiers);
-        leaveIfNavigating();
-        return handled;
-    }
-
-    private void leaveIfNavigating() {
-        // The original TitleScreen buttons can navigate to other screens.
-        // Disconnect the private menu world before those screens can be used.
-        if (this.minecraft != null) {
-            Screen destination = this.minecraft.screen;
-            if (destination != this) {
-                LivingMenuController.leaveMenuFor(destination);
-            }
+        if ((keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER
+                || keyCode == GLFW.GLFW_KEY_SPACE) && isQuitButton(this.getFocused())) {
+            LivingMenuController.requestQuit();
+            return true;
         }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }
