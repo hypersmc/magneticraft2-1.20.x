@@ -43,8 +43,9 @@ public final class SteamEngineOutputBlock extends GearBlock {
         if(!level.isClientSide && level.getBlockEntity(pos) instanceof SteamEngineOutputBlockEntity output){
             BlockPos controllerPos=output.getLinkedControllerPosition();
             if(controllerPos!=null && level.getBlockEntity(controllerPos) instanceof BaseBlockEntityMagneticraft2 controller){
-                controller.onDestroy(level);
-                return false; // controller teardown owns this module's single item return
+                // Preserve the output itself for vanilla break/drop; teardown owns
+                // every other paid engine cell.
+                controller.onDestroy(level,pos);
             }
         }
         return super.onDestroyedByPlayer(state,level,pos,player,harvest,fluid);

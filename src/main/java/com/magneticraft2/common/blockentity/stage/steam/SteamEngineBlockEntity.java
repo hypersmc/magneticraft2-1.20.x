@@ -209,9 +209,12 @@ public final class SteamEngineBlockEntity extends BaseBlockEntityMagneticraft2 i
     }
 
     @Override public void onDestroy(Level world){
+        onDestroy(world,null);
+    }
+    @Override public void onDestroy(Level world,BlockPos playerBreakPos){
         SteamEngineOutputBlockEntity out=getOutput();stopOutput(out);
         steamExhaustedMilli+=steamCreditMilli;steamCreditMilli=0;formed=false;
-        super.onDestroy(world);
+        super.onDestroy(world,playerBreakPos);
     }
 
     @Override public void load(CompoundTag tag){

@@ -44,8 +44,9 @@ public final class SteamEngineInletBlock extends BaseEntityBlock {
         if(!level.isClientSide && level.getBlockEntity(pos) instanceof SteamEngineInletBlockEntity inlet) {
             BlockPos controllerPos=inlet.getLinkedControllerPosition();
             if(controllerPos!=null && level.getBlockEntity(controllerPos) instanceof BaseBlockEntityMagneticraft2 controller){
-                controller.onDestroy(level);
-                return false; // controller teardown already returned this module item exactly once
+                // Preserve the inlet itself for vanilla break/drop; teardown owns
+                // every other paid engine cell.
+                controller.onDestroy(level,pos);
             }
         }
         return super.onDestroyedByPlayer(state,level,pos,player,harvest,fluid);
