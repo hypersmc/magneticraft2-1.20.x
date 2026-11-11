@@ -34,42 +34,6 @@
         "model": "magneticraft2:block/steam_engine_inlet",
         "y": 270
       }
-    },
-    {
-      "when": {
-        "formed": "true",
-        "facing": "west"
-      },
-      "apply": {
-        "model": "magneticraft2:multiblock/steam_engine/south/part_-2_1_5"
-      }
-    },
-    {
-      "when": {
-        "formed": "true",
-        "facing": "east"
-      },
-      "apply": {
-        "model": "magneticraft2:multiblock/steam_engine/north/part_2_1_-5"
-      }
-    },
-    {
-      "when": {
-        "formed": "true",
-        "facing": "south"
-      },
-      "apply": {
-        "model": "magneticraft2:multiblock/steam_engine/east/part_5_1_2"
-      }
-    },
-    {
-      "when": {
-        "formed": "true",
-        "facing": "north"
-      },
-      "apply": {
-        "model": "magneticraft2:multiblock/steam_engine/west/part_-5_1_-2"
-      }
     }
   ]
 }

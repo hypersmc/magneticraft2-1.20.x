@@ -62,8 +62,8 @@ public final class AnimationDefinition {
                             ItemVisual itemVisual) {}
     public enum SliderCrankRole { CRANK, ROD, FOLLOWER, SLIDER }
     public record SliderCrank(String input, Vec3 center, double radius, double rodLength,
-                              double phaseDegrees, String crank, String rod,
-                              String follower, String slider) {}
+                              double phaseDegrees, double followerSign,
+                              String crank, String rod, String follower, String slider) {}
     public record MechanismRole(String mechanismId, SliderCrankRole role) {}
     public record Input(String source, String module) {}
 
@@ -695,6 +695,15 @@ public final class AnimationDefinition {
                 if (Math.abs(phase) > 3600.0D) {
                     throw new JsonParseException(name + " phase_degrees exceeds 3600");
                 }
+                double followerSign = 1.0D;
+                if (data.has("follower_side")) {
+                    followerSign = switch (string(data, "follower_side", name)) {
+                        case "positive" -> 1.0D;
+                        case "negative" -> -1.0D;
+                        default -> throw new JsonParseException(
+                                name + " follower_side must be positive or negative");
+                    };
+                }
                 JsonObject partsByRole = asObject(required(data, "parts", name), name + ".parts");
                 String crank = identifier(string(partsByRole, "crank", name), "crank component");
                 String rod = identifier(string(partsByRole, "rod", name), "rod component");
@@ -719,7 +728,7 @@ public final class AnimationDefinition {
                     }
                 }
                 mechanisms.put(name, new SliderCrank(inputName, center, radius, length,
-                        phase, crank, rod, follower, slider));
+                        phase, followerSign, crank, rod, follower, slider));
             }
         }
         // Static-only scenes are valid too: a visual pack may provide

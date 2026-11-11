@@ -1,0 +1,10 @@
+{
+  "loader": "forge:obj",
+  "model": "magneticraft2:models/multiblock/steam_engine/prototype_crank.obj",
+  "flip_v": true,
+  "textures": {
+    "dark": "magneticraft2:block/material/dark_work_iron",
+    "iron": "minecraft:block/iron_block",
+    "particle": "magneticraft2:block/material/dark_work_iron"
+  }
+}
