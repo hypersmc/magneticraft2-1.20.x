@@ -1,7 +1,7 @@
 # Living Main Menu — real-world prototype (Forge 1.20.1)
 
 **Branch:** `feature/living-main-menu` (branched from Steel Age PR #19).
-**Status:** source implementation only; no Forge compilation or in-game verification has been completed.
+**Status:** The user's screenshot verifies a real client world with Magneticraft2 blocks behind the title menu. Java compilation succeeded in the user's Forge launch log; actual machine processing, UI hiding, pan motion and loading transition remain unverified.
 
 ## Requirement
 
@@ -16,8 +16,11 @@ The background **must be a real running Minecraft level**. Never replace it with
 - `LiveTitleScreen.isPauseScreen()` returns false so server-side machinery keeps ticking.
 - On vanilla menu-button navigation, disconnect the temporary integrated server. A stale `LiveTitleScreen` parent returns to a fresh normal `TitleScreen`.
 - Loading failures disable further attempts for the current session, without preventing use of the vanilla menu.
+- Only while the live title is visible, Forge client rendering events suppress gameplay HUD, Forge overlays (including The One Probe), first-person hands and block outlines. No global HUD settings are changed.
+- The real client player's view rotates at 1.5 degrees per second at the saved world location. This is a smooth in-place camera *pan*, not a physical orbit around a point.
+- While the normal integrated server loads, a render-only interception preserves the existing title-screen image in place of world-loading progress screens. The actual loading screens remain alive internally for normal tick/packet handling. Loading time is not eliminated.
 
-This proof-of-concept uses one user-built real scene. It does not yet bundle a demo save or rotate scenes. There is no new machinery or duplicate mechanical-network implementation.
+This proof-of-concept uses one user-built real scene. It does not yet bundle a demo save or rotate *between* scenes. There is no new machinery or duplicate mechanical-network implementation.
 
 ## How to stage the scene
 
@@ -36,7 +39,8 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 
 ## Known limitations
 
-- **Unverified:** Java 17 `./gradlew build`, actual loading, rendering, camera pose, server ticking, memory/FPS, game integration and multiplayer compatibility. Do not mark this PR merge-ready based on static checks.
+- **Observed:** The user's 2026-11-11 screenshot displays actual Magneticraft2 blocks behind the custom title, and their launch log reports Java 17 `compileJava UP-TO-DATE` with the Forge event subscriber registered. These observations do not prove complete `./gradlew build` or a running machine process.
+- **Unverified:** Full `./gradlew build`, server-side machine processing, smooth rotation, HUD/hand overlay suppression, concealed loading visuals, navigation, memory/FPS and multiplayer compatibility.
 - Custom title-screen render injections from other mods might not be shown, since the title panorama's regular render method is intentionally bypassed.
 - The standard integrated server has nontrivial startup/memory overhead. Measure it before enabling by default.
 - The menu source is local to each client, not a bundled reference scene. A curated demonstrator will be a follow-up only after the architecture is proven.
@@ -45,7 +49,10 @@ This proof-of-concept uses one user-built real scene. It does not yet bundle a d
 
 - [ ] Java 17 `./gradlew build` passes.
 - [ ] Without config or without a prepared source, the original title screen operates normally.
-- [ ] With source prepared, confirm the actual integrated server, original saved camera and live ClientLevel rendering.
+- [x] The user screenshot displays the actual saved world and Magneticraft2 blocks behind the title menu (2026-11-11).
+- [ ] Verify the hotbar, first-person hand, TOP HUD and selection outlines disappear while the live title is showing, and reappear normally in gameplay.
+- [ ] Verify 1.5-degree/second smooth camera pan in the disposable scene (stationary viewpoint, not orbit).
+- [ ] Verify no normal world-loading screen *is drawn* after the title; server loading still happens and genuine errors remain visible.
 - [ ] Watch real machine inventories and power transfer over 20–60 seconds; verify fuel/input consumption, output production, maintenance wear and 20-tick simulation.
 - [ ] Validate graphics after a resource reload and from several camera positions; check for missing textures and geometry issues.
 - [ ] Singleplayer, Multiplayer, Options, Mods and Quit work by mouse and keyboard, with no lingering menu world; returning from these menus must not show a stale blank screen.

@@ -3,6 +3,14 @@ package com.magneticraft2.client.menu;
 import com.magneticraft2.common.utils.Magneticraft2ConfigClient;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.GenericDirtMessageScreen;
+import net.minecraft.client.gui.screens.LevelLoadingScreen;
+import net.minecraft.client.gui.screens.ProgressScreen;
+import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+import net.minecraftforge.client.event.RenderGuiEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.event.RenderHighlightEvent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.world.level.storage.LevelResource;
@@ -23,6 +31,9 @@ import java.nio.file.Path;
 public final class LivingMenuController {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long LOAD_TIMEOUT_NANOS = 120_000_000_000L;
+    // 1.5 degrees/second at 20 client ticks per second: four-minute full turn.
+    private static final float CAMERA_TURN_DEGREES_PER_TICK = 0.075F;
+    private static Screen menuDuringLoading;
     private static boolean loading;
     private static boolean active;
     private static boolean failedThisSession;
@@ -44,17 +55,20 @@ public final class LivingMenuController {
                         .toAbsolutePath().normalize();
                 if (expectedRuntimePath.equals(loadedWorld)) {
                     loading = false;
+                    menuDuringLoading = null;
                     active = true;
                     minecraft.setScreen(new LiveTitleScreen());
                     LOGGER.info("Living Main Menu is running a real integrated-server world");
                 } else {
                     loading = false;
+                    menuDuringLoading = null;
                     failedThisSession = true;
                     LOGGER.warn("Living Main Menu did not join its temporary world; keeping normal gameplay");
                 }
             } else if (System.nanoTime() - loadStartedAt > LOAD_TIMEOUT_NANOS) {
                 // Do not tear down a potentially still-loading world from a timeout.
                 loading = false;
+                menuDuringLoading = null;
                 failedThisSession = true;
                 LOGGER.warn("Living Main Menu world was not ready after two minutes; disabled for this session");
             }
@@ -63,6 +77,9 @@ public final class LivingMenuController {
         if (active) {
             if (minecraft.level == null || minecraft.getSingleplayerServer() == null) {
                 active = false;
+            } else if (minecraft.screen instanceof LiveTitleScreen && minecraft.player != null) {
+                // Turn the real client viewpoint in the disposable demonstration world.
+                minecraft.player.setYRot(minecraft.player.getYRot() + CAMERA_TURN_DEGREES_PER_TICK);
             }
             return;
         }
@@ -83,11 +100,13 @@ public final class LivingMenuController {
         }
         try {
             expectedRuntimePath = LivingMenuWorldCopy.prepare(savesDirectory);
+            menuDuringLoading = minecraft.screen;
             loading = true;
             loadStartedAt = System.nanoTime();
             minecraft.createWorldOpenFlows().loadLevel(minecraft.screen, LivingMenuWorldCopy.RUNTIME_ID);
         } catch (Exception error) {
             loading = false;
+            menuDuringLoading = null;
             failedThisSession = true;
             LOGGER.error("Could not open the real Living Main Menu world; leaving the vanilla menu available", error);
         }
@@ -103,6 +122,60 @@ public final class LivingMenuController {
         active = false;
         // This stops the actual integrated server before showing a normal menu page.
         minecraft.clearLevel(destination);
+    }
+
+    private static boolean isLiveMenu() {
+        Minecraft minecraft = Minecraft.getInstance();
+        return active && minecraft.level != null && minecraft.screen instanceof LiveTitleScreen;
+    }
+
+    @SubscribeEvent
+    public static void onGameplayHud(RenderGuiEvent.Pre event) {
+        if (isLiveMenu()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onGuiOverlay(RenderGuiOverlayEvent.Pre event) {
+        if (isLiveMenu()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerHand(RenderHandEvent event) {
+        if (isLiveMenu()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockHighlight(RenderHighlightEvent.Block event) {
+        if (isLiveMenu()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onLoadingScreenRender(ScreenEvent.Render.Pre event) {
+        if (!loading || menuDuringLoading == null) {
+            return;
+        }
+        Screen shown = event.getScreen();
+        if (!(shown instanceof GenericDirtMessageScreen
+                || shown instanceof LevelLoadingScreen
+                || shown instanceof ReceivingLevelScreen
+                || shown instanceof ProgressScreen)) {
+            return;
+        }
+
+        // Keep Minecraft's real loading screen instance and its tick/packet logic.
+        // Replace only what is drawn: the existing title stays visible until the
+        // integrated-server world has actually connected and loaded.
+        menuDuringLoading.render(event.getGuiGraphics(), -1000, -1000, event.getPartialTick());
+        event.getGuiGraphics().fill(0, 0, shown.width, shown.height, 0x30000000);
+        event.setCanceled(true);
     }
 
     @SubscribeEvent

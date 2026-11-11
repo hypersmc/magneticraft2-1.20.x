@@ -19,6 +19,10 @@ const tests = [
   ['integrated server not paused', /boolean isPauseScreen\(\)\s*\{[\s\S]*?return false;/.test(title)],
   ['clear level on menu navigation', /minecraft\.clearLevel\(destination\)/.test(controller)],
   ['config opt-in default off', /livingMainMenu = builder[\s\S]*?\.define\("Living Main Menu \(experimental\)", false\)/.test(config)],
+  ['HUD and Forge overlay suppression scoped to live menu', /onGameplayHud\(RenderGuiEvent\.Pre/.test(controller) && /onGuiOverlay\(RenderGuiOverlayEvent\.Pre/.test(controller) && /isLiveMenu\(\)/.test(controller)],
+  ['hand and block selection suppression', /onPlayerHand\(RenderHandEvent/.test(controller) && /onBlockHighlight\(RenderHighlightEvent\.Block/.test(controller)],
+  ['real client viewpoint slowly pans', /player\.setYRot\(minecraft\.player\.getYRot\(\) \+ CAMERA_TURN_DEGREES_PER_TICK\)/.test(controller)],
+  ['loading screens are visually covered only', /onLoadingScreenRender\(ScreenEvent\.Render\.Pre/.test(controller) && /menuDuringLoading\.render/.test(controller) && /event\.setCanceled\(true\)/.test(controller)],
 ];
 let failures = 0;
 for (const [name, okay] of tests) {
