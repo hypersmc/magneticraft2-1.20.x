@@ -14,6 +14,7 @@ public class Magneticraft2ConfigClient {
     public static class General {
         public final ForgeConfigSpec.ConfigValue<Boolean> DevMode;
         public final ForgeConfigSpec.ConfigValue<Boolean> blueprintmakerrenderer;
+        public final ForgeConfigSpec.ConfigValue<Boolean> livingMainMenu;
         General(ForgeConfigSpec.Builder builder){
             builder.push("Client configuration for Magneticraft2");
             builder.comment("We are mostly going to have settings for rendering of blocks and such.");
@@ -26,6 +27,9 @@ public class Magneticraft2ConfigClient {
                     .comment("Default: true")
                     .translation("magneticraft2.blueprintmaker.config")
                     .define("blueprintmaker", true);
+            livingMainMenu = builder
+                    .comment("Experimental real-world title menu. Requires a deliberately prepared saves/magneticraft2_menu_source world. Off by default while unverified.")
+                    .define("Living Main Menu (experimental)", false);
             builder.pop();
         }
     }
