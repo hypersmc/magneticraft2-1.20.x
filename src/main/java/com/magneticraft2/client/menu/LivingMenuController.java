@@ -171,6 +171,10 @@ public final class LivingMenuController {
                 active = false;
                 LivingMenuChunkLimits.restore(minecraft);
             } else if (minecraft.screen instanceof LiveTitleScreen && minecraft.player != null) {
+                // Forge ScreenEvent.Opening fires BEFORE the old OptionsScreen.removed(),
+                // and OptionsScreen.removed() SAVES the user's settings. Resume only
+                // after setScreen has finished and the previous screen was removed.
+                LivingMenuChunkLimits.resume(minecraft);
                 // Move the real client viewpoint only. Machines still tick on the server.
                 if (selectedScene != null && selectedScene.rotate) {
                     minecraft.player.setYRot(minecraft.player.getYRot()
@@ -404,14 +408,11 @@ public final class LivingMenuController {
 
         if (next instanceof LiveTitleScreen && !active) {
             event.setNewScreen(new TitleScreen());
-        } else if (active && next instanceof LiveTitleScreen) {
-            // The user may have edited render/simulation preferences in Options.
-            LivingMenuChunkLimits.resume(Minecraft.getInstance());
         } else if (active && next instanceof TitleScreen
                 && Minecraft.getInstance().level != null) {
             // Ordinary Options/Mods Back actions reuse the same still-running
-            // world, without another integrated server startup.
-            LivingMenuChunkLimits.resume(Minecraft.getInstance());
+            // world, without another integrated server startup. The actual
+            // distance cap is resumed in onClientTick, after OptionsScreen.removed.
             event.setNewScreen(new LiveTitleScreen());
         } else if (active && next != null) {
             // A settings or mod screen might call Options.save(). Restore the

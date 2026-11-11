@@ -52,8 +52,9 @@ const tests = [
   ['chunk caps are applied BEFORE the real integrated server loads', controller.indexOf('LivingMenuChunkLimits.begin(minecraft, scene)') < controller.indexOf('createWorldOpenFlows().loadLevel') && /options\.renderDistance\(\)\.set/.test(chunkLimits)],
   ['chunk caps are upper bounds, not a forced higher view distance', /Math\.min\(originalRender, maxRender\)/.test(chunkLimits) && /Math\.min\(originalSimulation, maxSimulation\)/.test(chunkLimits)],
   ['real player options restored on nav and error', /finally\s*\{[\s\S]*?LivingMenuChunkLimits\.restore\(minecraft\)/.test(controller) && /LivingMenuChunkLimits\.restore\(minecraft\)/.test(controller)],
-  ['user settings restored while options or mods screen open', /LivingMenuChunkLimits\.suspend\(Minecraft\.getInstance\(\)\)/.test(controller) && /LivingMenuChunkLimits\.resume\(Minecraft\.getInstance\(\)\)/.test(controller)],
+  ['user settings restored while options or mods screen open', /LivingMenuChunkLimits\.suspend\(Minecraft\.getInstance\(\)\)/.test(controller) && /LivingMenuChunkLimits\.resume\(minecraft\)/.test(controller)],
   ['menu never saves temporary client distance preferences', !/options\.save\(\)/.test(chunkLimits) && !/options\.save\(\)/.test(controller)],
+  ['resume only in client tick after OptionsScreen removed and save', controller.indexOf('LivingMenuChunkLimits.resume(minecraft)') < controller.indexOf('public static void onScreenOpening') && !controller.slice(controller.indexOf('public static void onScreenOpening')).includes('LivingMenuChunkLimits.resume(')],
   ['example has both chunk radius limits', sceneExample.limits.renderDistanceChunks === 4 && sceneExample.limits.simulationDistanceChunks === 4],
   ['actual scene folder automatically created', /Files\.createDirectory\(base\)/.test(scene) && /Files\.createDirectory\(root\)/.test(scene)],
 ];
