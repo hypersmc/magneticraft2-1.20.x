@@ -17,7 +17,7 @@ const tests = [
   ['symlinks rejected', /attributes\.isSymbolicLink\(\)/.test(copy)],
   ['no panorama or fake renderer', !/super\.render\(/.test(title) && /this\.renderables/.test(title)],
   ['integrated server not paused', /boolean isPauseScreen\(\)\s*\{[\s\S]*?return false;/.test(title)],
-  ['disconnect on menu navigation', /minecraft\.disconnect\(destination\)/.test(controller)],
+  ['clear level on menu navigation', /minecraft\.clearLevel\(destination\)/.test(controller)],
   ['config opt-in default off', /livingMainMenu = builder[\s\S]*?\.define\("Living Main Menu \(experimental\)", false\)/.test(config)],
 ];
 let failures = 0;

@@ -102,7 +102,7 @@ public final class LivingMenuController {
         navigatingAway = true;
         active = false;
         // This stops the actual integrated server before showing a normal menu page.
-        minecraft.disconnect(destination);
+        minecraft.clearLevel(destination);
     }
 
     @SubscribeEvent
