@@ -13,6 +13,14 @@ plugins {
 
 }
 
+// The menu-world startup optimization is a CLIENT-ONLY Mixin targeting
+// MinecraftServer.prepareLevels in Forge 1.20.1. It is gated by the exact
+// generated runtime save path so every normal world uses vanilla constants.
+mixin {
+    add sourceSets.main, 'magneticraft2.refmap.json'
+    config 'magneticraft2.mixins.json'
+}
+
 version = mod_version
 group = mod_group_id
 
@@ -136,6 +144,9 @@ repositories {
 }
 
 dependencies {
+    // Compile named Mixin targets and generate runtime remapping references.
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
     // Specify the version of Minecraft to use.
     // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
     // The "userdev" classifier will be requested and setup by ForgeGradle.
@@ -186,6 +197,7 @@ processResources {
 jar {
     manifest {
         attributes([
+                "MixinConfigs"            : "magneticraft2.mixins.json",
                 "Specification-Title"     : mod_id,
                 "Specification-Vendor"    : mod_authors,
                 "Specification-Version"   : "1", // We are version 1 of ourselves

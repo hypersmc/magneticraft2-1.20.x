@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.magneticraft2.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "magneticraft2.refmap.json",
+  "client": [
+    "client.LivingMenuSpawnRadiusMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
