@@ -67,7 +67,7 @@ const tests = [
   ['budget gated by marked disposable save', /resolve\(LivingMenuWorldCopy\.RUNTIME_MARKER\)/.test(startupBudget) && /RUNTIME_MARKER = MARKER/.test(copy)],
   ['menu Mixin coupled spawn ticket and wait count', /@ModifyConstant\(method = "prepareLevels", constant = @Constant\(intValue = 11\), require = 1\)/.test(startupMixin) && /@ModifyConstant\(method = "prepareLevels", constant = @Constant\(intValue = 441\), require = 1\)/.test(startupMixin)],
   ['menu Mixin progress listener radius matches new spawn radius', /@ModifyConstant\(method = "loadLevel", constant = @Constant\(intValue = 11\), require = 1\)/.test(startupMixin)],
-  ['vanilla fallback preserved when budget does not match', /budget == null \? vanillaLevel/.test(startupBudget) && /if \(budget == null\) \{\s*return vanillaCount;/.test(startupBudget)],
+  ['vanilla fallback preserved when budget does not match', /budget == null \? vanillaRadius/.test(startupBudget) && /if \(budget == null\) \{\s*return vanillaCount;/.test(startupBudget)],
   ['client-only Mixin registration and refmap', mixinConfig.client.includes('client.LivingMenuSpawnRadiusMixin') && !mixinConfig.mixins && mixinConfig.refmap === 'magneticraft2.refmap.json' && /add sourceSets\.main, 'magneticraft2\.refmap\.json'/.test(gradle)],
   ['mixin loaded in production JAR and annotation processed', /"MixinConfigs"\s*:\s*"magneticraft2\.mixins\.json"/.test(gradle) && /annotationProcessor 'org\.spongepowered:mixin:0\.8\.5:processor'/.test(gradle)],
   ['budget stays armed on load timeout to avoid changing expected chunk count', !controller.slice(controller.indexOf('} else if (System.nanoTime() - loadStartedAt > LOAD_TIMEOUT_NANOS)'), controller.indexOf('if (active)')).includes('LivingMenuSpawnBudget.disarm()')],

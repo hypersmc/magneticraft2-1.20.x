@@ -11,7 +11,7 @@ import java.nio.file.Path;
 /**
  * Bootstrap-only spawn chunk budget for the disposable Living Main Menu world.
  *
- * A Minecraft 1.20.1 server always creates a level-11 START ticket and waits
+ * A Minecraft 1.20.1 server always requests a radius-11 START ticket and waits
  * for 441 ticking chunks before a player can join. The accompanying client-only
  * Mixin replaces BOTH constants for the exact marked runtime save; all other
  * integrated and dedicated worlds retain vanilla startup behavior.
@@ -40,9 +40,9 @@ public final class LivingMenuSpawnBudget {
      * is returned without changes for every world other than our exact marked,
      * currently armed disposable runtime.
      */
-    public static int ticketLevel(MinecraftServer server, int vanillaLevel) {
+    public static int regionRadius(MinecraftServer server, int vanillaRadius) {
         Budget budget = matchingBudget(server);
-        return budget == null ? vanillaLevel : budget.radiusChunks() + 1;
+        return budget == null ? vanillaRadius : budget.radiusChunks() + 1;
     }
 
     public static int expectedTickingChunks(MinecraftServer server, int vanillaCount) {

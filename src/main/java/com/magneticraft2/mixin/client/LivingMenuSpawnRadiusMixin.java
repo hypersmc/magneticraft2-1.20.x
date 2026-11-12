@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 /**
  * Minecraft 1.20.1 hardcodes two mutually dependent values in prepareLevels:
- * START ticket level 11 and the 441 ticking chunks that ticket provides.
+ * START region-ticket radius 11 and the 441 ticking chunks that ticket provides.
  * Change neither without the other. The budget class returns the vanilla
  * values for every world except the marked, currently loading menu runtime.
  *
@@ -20,12 +20,12 @@ public abstract class LivingMenuSpawnRadiusMixin {
     // reduced START ticket. Otherwise the loading progress would be misleading.
     @ModifyConstant(method = "loadLevel", constant = @Constant(intValue = 11), require = 1)
     private int magneticraft2$menuSpawnProgressRadius(int original) {
-        return LivingMenuSpawnBudget.ticketLevel((MinecraftServer) (Object) this, original);
+        return LivingMenuSpawnBudget.regionRadius((MinecraftServer) (Object) this, original);
     }
 
     @ModifyConstant(method = "prepareLevels", constant = @Constant(intValue = 11), require = 1)
     private int magneticraft2$menuStartTicketLevel(int original) {
-        return LivingMenuSpawnBudget.ticketLevel((MinecraftServer) (Object) this, original);
+        return LivingMenuSpawnBudget.regionRadius((MinecraftServer) (Object) this, original);
     }
 
     @ModifyConstant(method = "prepareLevels", constant = @Constant(intValue = 441), require = 1)
