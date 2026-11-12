@@ -3,6 +3,10 @@ package com.magneticraft2.client.menu;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -20,6 +24,7 @@ import java.nio.file.Path;
  * then read by the integrated server thread during prepareLevels.
  */
 public final class LivingMenuSpawnBudget {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private static volatile Budget pending;
 
     private LivingMenuSpawnBudget() {}
@@ -28,7 +33,8 @@ public final class LivingMenuSpawnBudget {
         if (radiusChunks < 2 || radiusChunks > 8) {
             throw new IllegalArgumentException("Menu spawn radius must be 2..8 chunks");
         }
-        pending = new Budget(runtimePath.toAbsolutePath().normalize(), radiusChunks);
+        pending = new Budget(runtimePath.toAbsolutePath().normalize(), radiusChunks,
+                new AtomicBoolean(), new AtomicBoolean());
     }
 
     static void disarm() {
@@ -42,7 +48,15 @@ public final class LivingMenuSpawnBudget {
      */
     public static int regionRadius(MinecraftServer server, int vanillaRadius) {
         Budget budget = matchingBudget(server);
-        return budget == null ? vanillaRadius : budget.radiusChunks() + 1;
+        if (budget == null) {
+            return vanillaRadius;
+        }
+        int effective = budget.radiusChunks() + 1;
+        if (budget.ticketLogged().compareAndSet(false, true)) {
+            LOGGER.info("Living Main Menu: spawn region-ticket Mixin ACTIVE; radius {} -> {}",
+                    vanillaRadius, effective);
+        }
+        return effective;
     }
 
     public static int expectedTickingChunks(MinecraftServer server, int vanillaCount) {
@@ -51,7 +65,12 @@ public final class LivingMenuSpawnBudget {
             return vanillaCount;
         }
         int diameter = 2 * budget.radiusChunks() + 1;
-        return diameter * diameter;
+        int effective = diameter * diameter;
+        if (budget.targetLogged().compareAndSet(false, true)) {
+            LOGGER.info("Living Main Menu: spawn completion-target Mixin ACTIVE; "
+                    + "required ticking chunks {} -> {}", vanillaCount, effective);
+        }
+        return effective;
     }
 
     private static Budget matchingBudget(MinecraftServer server) {
@@ -73,5 +92,6 @@ public final class LivingMenuSpawnBudget {
         return budget;
     }
 
-    private record Budget(Path runtimePath, int radiusChunks) {}
+    private record Budget(Path runtimePath, int radiusChunks,
+                          AtomicBoolean ticketLogged, AtomicBoolean targetLogged) {}
 }

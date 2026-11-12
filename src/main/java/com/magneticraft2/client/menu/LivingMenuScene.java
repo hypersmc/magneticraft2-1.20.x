@@ -121,7 +121,7 @@ final class LivingMenuScene {
         Path legacy = savesDirectory.resolve(LivingMenuWorldCopy.SOURCE_ID);
         if (LivingMenuWorldCopy.sourceExists(legacy)) {
             return new LivingMenuScene("legacy", legacy, true, DEFAULT_DEGREES_PER_SECOND,
-                    null, null, null, null, null, null, 128, 8192, 4, 4, 3);
+                    null, null, null, null, null, null, 128, 8192, 4, 5, 3);
         }
         return null;
     }
@@ -177,10 +177,11 @@ final class LivingMenuScene {
         // Forge/Minecraft 1.20.1 requires a radius of at least two chunks.
         // These cap the *player* view and simulation radii, not spawn preparation.
         int renderChunks = integer(limits, "renderDistanceChunks", 2, 8, 4);
-        int simulationChunks = integer(limits, "simulationDistanceChunks", 2, 8, 4);
-        if (simulationChunks > renderChunks) {
-            throw new IOException("simulationDistanceChunks cannot exceed renderDistanceChunks");
-        }
+        // Older scene manifests may request 2..4. Keep them loadable;
+        // LivingMenuChunkLimits raises the effective value to vanilla's
+        // minimum of 5 instead of passing an invalid OptionInstance value.
+        // Minecraft permits simulation distance to exceed render distance.
+        int simulationChunks = integer(limits, "simulationDistanceChunks", 2, 8, 5);
         // The menu-only START ticket covers (2 * radius + 1)^2 chunks.
         // Default 3 -> 49 initial chunks instead of vanilla's 441.
         int spawnRadius = integer(limits, "initialSpawnRadiusChunks", 2, 8, 3);

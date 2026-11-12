@@ -78,4 +78,19 @@ A scene library is now supported in source via `mgcmainmenu/scenes/<id>/scene.js
 - [ ] Benchmark FPS, CPU, memory, startup time and behavior in modded installations.
 - [ ] Revisit navigation after exiting a normal singleplayer world or multiplayer server.
 
+### Field test: 2026-11-12, Forge runClient (Copper Mill scene)
+
+The user's **complete** `latest.log` confirms a successful scene join but **no startup speedup** from the first chunk startup override: previous `14,109 ms` vs new `15,040 ms` (one run each; not a statistically meaningful comparison). The new controller reports **49 requested startup chunks**, not proof that the Mixin executed. We now log when the START region-ticket and the 441->49 completion threshold are actually modified on the server thread.
+
+Measured timeline in this run:
+- 18:03:31.354 scene copy: 1 ms, spawn budget requested 18:03:31.355
+- 18:03:39.752 integrated server announces startup (**8.397 s** after request; detailed cause not yet instrumented)
+- 18:03:39.898–18:03:44.422 spawn preparation (**4.524 s**, from vanilla progress logs)
+- 18:03:46.396 living scene active (15.040 s from request timer)
+- 18:04:33.160 Quit; 18:04:33.475 all dimensions saved; 18:04:40.546 menu shutdown complete (about **7.071 s** after chunk-saving completion; cannot conclude all of this time is caused by saving)
+
+A confirmed bug in the same run: the sample requested simulation distance `3`, and Minecraft 1.20.1 logged **`Illegal option value 3`**. `IntegratedServer` then chose **render distance 3 / simulation distance 12**, so the menu wasn't simulation-capped as intended. Minecraft `Options.simulationDistance` uses an `IntRange(5, ...)` while render distance allows values as low as 2. The follow-up preserves old manifests requesting 2–4 but enforces effective simulation minimum **5**, changes the default/example to **5**, and removes the unsupported assumption that simulation distance must not exceed render distance.
+
+To verify next: confirm **both** "Mixin ACTIVE" messages appear at startup and that `IntegratedServer` reports simulation distance **5**, not **12**. Measure startup over several identical runs and test normal singleplayer distance restoration. Quit delay is **unresolved**; do not suppress final world saves on the basis of these timestamps alone.
+
 This is a **prototype**, not a verified implementation or complete feature.

@@ -1,6 +1,8 @@
 package com.magneticraft2.client.menu;
 
 import net.minecraft.client.Minecraft;
+import com.mojang.logging.LogUtils;
+import org.slf4j.Logger;
 
 /**
  * Temporary view/simulation distance limits for the disposable menu server.
@@ -15,6 +17,10 @@ import net.minecraft.client.Minecraft;
  * chunks. The latter would require a separate isolated startup patch.
  */
 final class LivingMenuChunkLimits {
+    private static final Logger LOGGER = LogUtils.getLogger();
+    // Minecraft 1.20.1 Options.simulationDistance is IntRange(5, 32|16).
+    // Unlike render distance, values below five are rejected by OptionInstance.
+    private static final int MIN_SIMULATION_DISTANCE = 5;
     private static boolean inEffect;
     private static boolean suspended;
     private static int originalRender;
@@ -29,7 +35,12 @@ final class LivingMenuChunkLimits {
         originalRender = minecraft.options.renderDistance().get();
         originalSimulation = minecraft.options.simulationDistance().get();
         maxRender = scene.renderDistanceChunks;
-        maxSimulation = scene.simulationDistanceChunks;
+        maxSimulation = Math.max(MIN_SIMULATION_DISTANCE, scene.simulationDistanceChunks);
+        if (scene.simulationDistanceChunks < MIN_SIMULATION_DISTANCE) {
+            LOGGER.info("Living Main Menu: scene '{}' requested simulation distance {}; "
+                    + "using Minecraft 1.20.1 minimum {} instead",
+                    scene.id, scene.simulationDistanceChunks, MIN_SIMULATION_DISTANCE);
+        }
         inEffect = true;
         suspended = false;
         try {
