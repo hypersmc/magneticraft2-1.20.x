@@ -18,6 +18,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,6 +33,10 @@ final class LivingMenuScene {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final int SCHEMA_VERSION = 1;
     private static final float DEFAULT_DEGREES_PER_SECOND = 1.5F;
+    private static final String LAST_SCENE_FILE = ".last-successful-scene";
+    // A return from Singleplayer to the title must not advance the rotation.
+    // Choose at most one different scene per Minecraft process.
+    private static String chosenThisProcess;
 
     final String id;
     final Path worldDirectory;
@@ -71,8 +78,12 @@ final class LivingMenuScene {
     }
 
     /**
-     * The first alphabetically enabled valid scene is used for now.
-     * An existing legacy save remains supported without any migration.
+     * Select a different enabled valid scene at each client launch, in stable
+     * alphabetical round-robin order. A title-screen return in the SAME JVM
+     * keeps the original selection. No background world swapping occurs.
+     *
+     * The last SUCCESSFULLY LOADED scene is stored outside both source saves
+     * and the disposable runtime, to avoid retrying an invalid or lost scene.
      */
     static LivingMenuScene select(Path gameDirectory, Path savesDirectory) {
         Path base = gameDirectory.resolve("mgcmainmenu");
@@ -99,6 +110,7 @@ final class LivingMenuScene {
             try (Stream<Path> entries = Files.list(root)) {
                 List<Path> folders = entries.sorted(Comparator.comparing(p -> p.getFileName().toString()))
                         .toList();
+                List<LivingMenuScene> valid = new ArrayList<>();
                 for (Path folder : folders) {
                     String id = folder.getFileName().toString();
                     if (!id.matches("[a-z0-9][a-z0-9_-]{0,63}")
@@ -108,11 +120,37 @@ final class LivingMenuScene {
                     try {
                         LivingMenuScene scene = parse(id, folder);
                         if (scene != null) {
-                            return scene;
+                            valid.add(scene);
                         }
                     } catch (IOException | RuntimeException error) {
                         LOGGER.warn("Skipping invalid living-menu scene '{}': {}", id, error.getMessage());
                     }
+                }
+                if (!valid.isEmpty()) {
+                    // Re-entering the menu in one process must use the SAME
+                    // scene even after Singleplayer/Multiplayer navigation.
+                    if (chosenThisProcess != null) {
+                        for (LivingMenuScene scene : valid) {
+                            if (chosenThisProcess.equals(scene.id)) {
+                                LOGGER.info("Living Main Menu reusing scene '{}' in this client session", scene.id);
+                                return scene;
+                            }
+                        }
+                    }
+                    String previous = readLastSuccessfulScene(base);
+                    int nextIndex = 0;
+                    for (int index = 0; index < valid.size(); index++) {
+                        if (valid.get(index).id.equals(previous)) {
+                            nextIndex = (index + 1) % valid.size();
+                            break;
+                        }
+                    }
+                    LivingMenuScene selected = valid.get(nextIndex);
+                    chosenThisProcess = selected.id;
+                    LOGGER.info("Living Main Menu boot selection: '{}' ({}/{} enabled scenes, previous '{}')",
+                            selected.id, nextIndex + 1, valid.size(),
+                            previous == null ? "none" : previous);
+                    return selected;
                 }
             } catch (IOException error) {
                 LOGGER.warn("Cannot enumerate mgcmainmenu scenes: {}", error.getMessage());
@@ -124,6 +162,65 @@ final class LivingMenuScene {
                     null, null, null, null, null, null, 128, 8192, 4, 5, 3);
         }
         return null;
+    }
+
+    /** Read a short, safe scene ID from the game-directory state file. */
+    private static String readLastSuccessfulScene(Path base) {
+        Path file = base.resolve(LAST_SCENE_FILE);
+        try {
+            if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)
+                    || Files.size(file) > 128) {
+                return null;
+            }
+            String value = Files.readString(file, StandardCharsets.UTF_8).trim();
+            return value.matches("[a-z0-9][a-z0-9_-]{0,63}") ? value : null;
+        } catch (IOException error) {
+            LOGGER.warn("Living Main Menu: could not read last scene selection: {}", error.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Advance round-robin state ONLY once the disposable integrated server
+     * actually joined. Failure or invalid source scenes don't consume a turn.
+     * Never writes into the editable source world or the player's saves.
+     */
+    static void recordSuccessfulStart(Path gameDirectory, LivingMenuScene scene) {
+        if (scene == null || "legacy".equals(scene.id)) {
+            return;
+        }
+        Path base = gameDirectory.resolve("mgcmainmenu");
+        Path file = base.resolve(LAST_SCENE_FILE);
+        Path staging = null;
+        try {
+            if (!Files.isDirectory(base, LinkOption.NOFOLLOW_LINKS)) {
+                return;
+            }
+            if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)
+                    && !Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS)) {
+                LOGGER.warn("Living Main Menu: selection state is not a regular file, refusing to overwrite it");
+                return;
+            }
+            staging = Files.createTempFile(base, ".last-scene-", ".tmp");
+            Files.writeString(staging, scene.id + "\n", StandardCharsets.UTF_8);
+            try {
+                Files.move(staging, file, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(staging, file, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException error) {
+            LOGGER.warn("Living Main Menu: could not persist successful scene '{}': {}",
+                    scene.id, error.getMessage());
+        } finally {
+            if (staging != null) {
+                try {
+                    Files.deleteIfExists(staging);
+                } catch (IOException cleanupError) {
+                    LOGGER.warn("Living Main Menu: could not remove temporary selection file", cleanupError);
+                }
+            }
+        }
     }
 
     private static LivingMenuScene parse(String id, Path folder) throws IOException {

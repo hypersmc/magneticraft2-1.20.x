@@ -148,6 +148,9 @@ public final class LivingMenuController {
                         selectedScene.apply(minecraft);
                     }
                     minecraft.setScreen(new LiveTitleScreen());
+                    // Advance boot-time round-robin only after the actual
+                    // integrated-server world successfully joined.
+                    LivingMenuScene.recordSuccessfulStart(minecraft.gameDirectory.toPath(), selectedScene);
                     LOGGER.info("Living Main Menu running genuine scene '{}' after {} ms",
                             selectedScene != null ? selectedScene.id : "unknown",
                             (System.nanoTime() - loadStartedAt) / 1_000_000L);

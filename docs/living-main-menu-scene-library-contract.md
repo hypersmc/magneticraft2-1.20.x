@@ -31,7 +31,7 @@ Use the Minecraft game directory, not the normal saves folder, for the source li
     _magneticraft2_living_menu_runtime/   # disposable, never a source
 ```
 
-Scene IDs are safe lowercase directory names such as `copper_workshop`. Sort deterministically; **the first alphabetically named enabled valid scene** is selected in v1. If none exists, the original `saves/magneticraft2_menu_source` is used unchanged. The `mgcmainmenu/scenes` directory is created automatically once the feature is enabled. Scene cycling is not implemented yet. Never silently move or delete the source save.
+Scene IDs are safe lowercase directory names such as `copper_workshop`. The loader sorts enabled, valid, non-symlinked scenes alphabetically and selects them in **round-robin order on successive client launches**. It reads `mgcmainmenu/.last-successful-scene` (plain text ID) outside source saves, advances after a previous successful scene, and updates the state file **only after the new integrated menu world has actually joined**. A return from Singleplayer/Multiplayer during the *same JVM* reuses the same scene; no automatic in-menu world cycling or repeated 12-second load stalls. Invalid/disabled scenes are skipped; if none qualify, the existing `saves/magneticraft2_menu_source` legacy fallback remains supported. The directory is created automatically. Never silently move or delete the source save.
 
 ## Per-scene settings
 
@@ -63,6 +63,7 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
 }
 ```
 
+- **Boot-time scene selection**: Round-robin across valid enabled scenes; on a new game launch start after the last *successfully loaded* scene, with deterministic first-scene selection if no state exists. A JVM session keeps its chosen scene on later menu visits, even after closing Singleplayer/Multiplayer screens. Disable all but one scene for fixed selection. The tiny `.last-successful-scene` state file lives in `mgcmainmenu`, not under `scenes/*/world` or `saves/`, and uses atomic replacement when supported. A malformed, unreadable or symlinked state file is ignored or safely refused; scene startup continues. There is no in-menu world switching; a scene change needs a fresh Minecraft launch.
 - **Camera**: position and orientation are applied through a server-authoritative teleport of the actual integrated-server menu player, rather than a fake camera. Rotation changes that client's viewpoint each tick. Omitting `camera.position` keeps the source world's saved player position; omitting `rotation` defaults to 1.5 degrees/second. These changes affect the disposable runtime world only.
 - **Time**: `timeOfDay` sets real ServerLevel daytime (0..23999) and `daylightCycle` sets the actual gamerule on the disposable server after the menu player connects. The underlying level ticks and machine processing remain real.
 - **Ticks**: `randomTickSpeed` is now applied as Minecraft's actual **random block tick** gamerule and is **not** overall server ticks per second. Real machine simulation remains the standard **20 TPS** in this slice. User-requested adjustable global server TPS remains a separate unimplemented feature requiring mechanical-network and performance compatibility study.
@@ -102,6 +103,10 @@ A scene's actual source world is never opened as gameplay by the menu. The loade
 
 - [ ] Existing legacy scene still works when the new library is absent.
 - [ ] Each scene loads a real server world using its own camera/time settings and actual machines tick at normal 20 TPS.
+- [ ] With three scenes installed, three successive **restarts** select copper_workshop, stone_camp and waterworks_quarry in order (wrapping from the previously loaded scene).
+- [ ] Returning to the main menu from Singleplayer during the same client session does not advance the selected scene.
+- [ ] Disabling or removing a scene skips it on the next launch; an all-invalid library retains the legacy fallback.
+- [ ] No selection state is recorded after failed scene loading; a symlinked or invalid state file cannot redirect writes.
 - [ ] A missing, invalid, oversized or symlinked scene never overwrites any save.
 - [ ] Scene source remains untouched; disposable runtime can reset/restart safely.
 - [ ] Different camera rotation settings, day/night presets and random tick gamerules work.
@@ -117,4 +122,4 @@ A scene's actual source world is never opened as gameplay by the menu. The loade
 - [ ] Options/Mods, Singleplayer/Multiplayer/Realms navigation remains responsive.
 - [ ] Actual startup/copy/chunk timings are compared before and after the bounds.
 
-**Implementation order:** first verify PR #21's current menu-navigation fix; then scene folder + validated JSON selection with legacy fallback; then real server camera/time configuration; then map/chunk admission limits and measured startup optimization; finally multiple-scene rotation and polished scene assets.
+**Implementation status:** Real integrated-server startup, per-scene JSON, bounded startup chunk preparation and boot-time round-robin selection exist in PR #21 source. Multiple-scene source saves are distributed as an additional test ZIP; source worlds are never modified by selection. In-menu scene switching, faster teardown and full verification remain future work. Keep the PR draft pending build and in-game regression tests.

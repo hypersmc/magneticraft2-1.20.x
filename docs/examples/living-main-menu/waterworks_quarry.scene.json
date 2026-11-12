@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "Quarry Waterworks",
+  "enabled": true,
+  "camera": {
+    "position": {
+      "x": 0.5,
+      "y": 70,
+      "z": 0.5
+    },
+    "yaw": -32,
+    "pitch": 15,
+    "rotation": {
+      "enabled": true,
+      "degreesPerSecond": 0.5
+    }
+  },
+  "world": {
+    "timeOfDay": 14500,
+    "daylightCycle": false,
+    "randomTickSpeed": 3
+  },
+  "limits": {
+    "maxWorldMiB": 32,
+    "maxStoredChunks": 64,
+    "renderDistanceChunks": 3,
+    "simulationDistanceChunks": 5,
+    "initialSpawnRadiusChunks": 3
+  }
+}

@@ -93,4 +93,15 @@ A confirmed bug in the same run: the sample requested simulation distance `3`, a
 
 To verify next: confirm **both** "Mixin ACTIVE" messages appear at startup and that `IntegratedServer` reports simulation distance **5**, not **12**. Measure startup over several identical runs and test normal singleplayer distance restoration. Quit delay is **unresolved**; do not suppress final world saves on the basis of these timestamps alone.
 
+### Multiple-sample scene selection (2026-11-12)
+
+Boot-time round robin is now implemented in source: alphabetically order only valid `enabled: true` scenes and start **after the last successfully joined scene** (tracked in `mgcmainmenu/.last-successful-scene`). The selected ID is held for the current Minecraft process, so returning to the title does not silently switch/reload. Deliberate in-menu cycling is deferred because each full integrated-server handoff still takes many seconds and must respect save-lock release.
+
+Two additional **real binary world saves** were generated from the previously supplied Copper Mill template, available as `Magneticraft2_LivingMenu_AdditionalScenes.zip` in this task's chat attachments:
+- `stone_camp`: a distinct Stone Age village/campfire scenic scene, 16 pre-generated chunks and one campfire block entity, with no fake Mechanical machinery.
+- `waterworks_quarry`: redesigned quarry/watercourse surroundings while preserving the original 13 real Magneticraft2 machinery block entities and their block states.
+- Original `copper_workshop` stays unchanged as a third scene.
+
+The ZIP is installed under `run/mgcmainmenu/scenes/` (or any client game directory's `mgcmainmenu/scenes/`). Its worlds are outside the source repository; two matching JSON manifest examples and install notes are versioned under `docs/examples/living-main-menu/`. Chunk NBT, palette encoding, region headers, sizes and mod-entity counts were inspected programmatically; **in-game rendering, formation, mechanical motion, visual QA, compilation, and actual boot round robin are unverified**.
+
 This is a **prototype**, not a verified implementation or complete feature.

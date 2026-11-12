@@ -74,6 +74,12 @@ const tests = [
   ['mixin loaded in production JAR and annotation processed', /"MixinConfigs"\s*:\s*"magneticraft2\.mixins\.json"/.test(gradle) && /annotationProcessor 'org\.spongepowered:mixin:0\.8\.5:processor'/.test(gradle)],
   ['budget stays armed on load timeout to avoid changing expected chunk count', !controller.slice(controller.indexOf('} else if (System.nanoTime() - loadStartedAt > LOAD_TIMEOUT_NANOS)'), controller.indexOf('if (active)')).includes('LivingMenuSpawnBudget.disarm()')],
   ['actual scene folder automatically created', /Files\.createDirectory\(base\)/.test(scene) && /Files\.createDirectory\(root\)/.test(scene)],
+  ['boot-time round-robin lists every valid enabled scene', /List<LivingMenuScene> valid = new ArrayList<>\(\)/.test(scene) && /valid\.add\(scene\)/.test(scene) && /\(index \+ 1\) % valid\.size\(\)/.test(scene)],
+  ['single JVM retains same scene across menu returns', /private static String chosenThisProcess;/.test(scene) && /chosenThisProcess\.equals\(scene\.id\)/.test(scene)],
+  ['save selection only after successful real menu connection', /LivingMenuScene\.recordSuccessfulStart\(minecraft\.gameDirectory\.toPath\(\), selectedScene\)/.test(controller) && controller.indexOf('LivingMenuScene.recordSuccessfulStart(') > controller.indexOf('minecraft.setScreen(new LiveTitleScreen())')],
+  ['selection state stored separate from source world and saves', /LAST_SCENE_FILE = "\.last-successful-scene"/.test(scene) && /gameDirectory\.resolve\("mgcmainmenu"\)/.test(scene) && /StandardCopyOption\.ATOMIC_MOVE/.test(scene)],
+  ['last scene state rejects nonregular or huge files', /Files\.isRegularFile\(file, LinkOption\.NOFOLLOW_LINKS\)/.test(scene) && /Files\.size\(file\) > 128/.test(scene)],
+  ['legacy fallback remains reachable after no valid scenes', /LivingMenuWorldCopy\.sourceExists\(legacy\)/.test(scene) && /return new LivingMenuScene\("legacy"/.test(scene)],
 ];
 let failures = 0;
 for (const [name, okay] of tests) {
