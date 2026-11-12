@@ -140,6 +140,10 @@ public final class LivingMenuController {
                     loading = false;
                     menuDuringLoading = null;
                     active = true;
+                    // prepareLevels has finished when the client is connected.
+                    // Never disarm while it might still be checking the reduced
+                    // target chunk count or it could start waiting for 441 again.
+                    LivingMenuSpawnBudget.disarm();
                     if (selectedScene != null) {
                         selectedScene.apply(minecraft);
                     }
@@ -151,6 +155,7 @@ public final class LivingMenuController {
                     loading = false;
                     menuDuringLoading = null;
                     selectedScene = null;
+                    LivingMenuSpawnBudget.disarm();
                     LivingMenuChunkLimits.restore(minecraft);
                     failedThisSession = true;
                     LOGGER.warn("Living Main Menu did not join its temporary world; keeping normal gameplay");
@@ -169,6 +174,7 @@ public final class LivingMenuController {
         if (active) {
             if (minecraft.level == null || minecraft.getSingleplayerServer() == null) {
                 active = false;
+                LivingMenuSpawnBudget.disarm();
                 LivingMenuChunkLimits.restore(minecraft);
             } else if (minecraft.screen instanceof LiveTitleScreen && minecraft.player != null) {
                 // Forge ScreenEvent.Opening fires BEFORE the old OptionsScreen.removed(),
@@ -216,6 +222,13 @@ public final class LivingMenuController {
                     scene.id, (System.nanoTime() - copyStartedAt) / 1_000_000L,
                     scene.renderDistanceChunks, scene.simulationDistanceChunks);
             selectedScene = scene;
+            // Prepare the exact marked runtime's smaller initial spawn tickets
+            // BEFORE Forge constructs the integrated server. Normal worlds keep
+            // vanilla 441-chunk preparation.
+            LivingMenuSpawnBudget.arm(expectedRuntimePath, scene.initialSpawnRadiusChunks);
+            int diameter = 2 * scene.initialSpawnRadiusChunks + 1;
+            LOGGER.info("Living Main Menu initial spawn budget: {}x{} = {} chunks (vanilla 441)",
+                    diameter, diameter, diameter * diameter);
             // Set the client options BEFORE the integrated server is started.
             // IntegratedServer.tickServer mirrors Options distances every tick.
             LivingMenuChunkLimits.begin(minecraft, scene);
@@ -227,6 +240,9 @@ public final class LivingMenuController {
             loading = false;
             selectedScene = null;
             menuDuringLoading = null;
+            // A failed/async load can still have a server preparing chunks.
+            // Keep the *path-guarded* budget armed rather than changing its
+            // wait condition from 49 back to 441 halfway through loading.
             LivingMenuChunkLimits.restore(minecraft);
             failedThisSession = true;
             LOGGER.error("Could not open the real Living Main Menu world; leaving the vanilla menu available", error);

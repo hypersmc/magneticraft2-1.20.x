@@ -45,12 +45,14 @@ final class LivingMenuScene {
     final int maxStoredChunks;
     final int renderDistanceChunks;
     final int simulationDistanceChunks;
+    final int initialSpawnRadiusChunks;
 
     private LivingMenuScene(String id, Path worldDirectory, boolean rotate, float degreesPerSecond,
                             Vec3 cameraPosition, Float yaw, Float pitch,
                             Integer timeOfDay, Boolean daylightCycle, Integer randomTickSpeed,
                             int maxWorldMiB, int maxStoredChunks,
-                            int renderDistanceChunks, int simulationDistanceChunks) {
+                            int renderDistanceChunks, int simulationDistanceChunks,
+                            int initialSpawnRadiusChunks) {
         this.id = id;
         this.worldDirectory = worldDirectory;
         this.rotate = rotate;
@@ -65,6 +67,7 @@ final class LivingMenuScene {
         this.maxStoredChunks = maxStoredChunks;
         this.renderDistanceChunks = renderDistanceChunks;
         this.simulationDistanceChunks = simulationDistanceChunks;
+        this.initialSpawnRadiusChunks = initialSpawnRadiusChunks;
     }
 
     /**
@@ -118,7 +121,7 @@ final class LivingMenuScene {
         Path legacy = savesDirectory.resolve(LivingMenuWorldCopy.SOURCE_ID);
         if (LivingMenuWorldCopy.sourceExists(legacy)) {
             return new LivingMenuScene("legacy", legacy, true, DEFAULT_DEGREES_PER_SECOND,
-                    null, null, null, null, null, null, 128, 8192, 4, 4);
+                    null, null, null, null, null, null, 128, 8192, 4, 4, 3);
         }
         return null;
     }
@@ -178,9 +181,12 @@ final class LivingMenuScene {
         if (simulationChunks > renderChunks) {
             throw new IOException("simulationDistanceChunks cannot exceed renderDistanceChunks");
         }
+        // The menu-only START ticket covers (2 * radius + 1)^2 chunks.
+        // Default 3 -> 49 initial chunks instead of vanilla's 441.
+        int spawnRadius = integer(limits, "initialSpawnRadiusChunks", 2, 8, 3);
         return new LivingMenuScene(id, world, rotate, speed, cameraPosition,
                 yaw, pitch, time, dayCycle, randomTick, worldMiB, storedChunks,
-                renderChunks, simulationChunks);
+                renderChunks, simulationChunks, spawnRadius);
     }
 
     /** Apply the scene to the disposable integrated server, never the player's saves. */

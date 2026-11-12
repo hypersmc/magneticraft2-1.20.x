@@ -19,6 +19,8 @@ final class LivingMenuWorldCopy {
     static final String RUNTIME_ID = "_magneticraft2_living_menu_runtime";
     private static final String STAGING_ID = "_magneticraft2_living_menu_staging";
     private static final String MARKER = ".magneticraft2-generated-menu-copy";
+    // Also used to gate the menu-only spawn preparation override.
+    static final String RUNTIME_MARKER = MARKER;
     private static final long MAX_FILES = 10_000;
 
     private LivingMenuWorldCopy() {}

@@ -10,6 +10,10 @@ const title = read('src/main/java/com/magneticraft2/client/menu/LiveTitleScreen.
 const config = read('src/main/java/com/magneticraft2/common/utils/Magneticraft2ConfigClient.java');
 const scene = read('src/main/java/com/magneticraft2/client/menu/LivingMenuScene.java');
 const chunkLimits = read('src/main/java/com/magneticraft2/client/menu/LivingMenuChunkLimits.java');
+const startupBudget = read('src/main/java/com/magneticraft2/client/menu/LivingMenuSpawnBudget.java');
+const startupMixin = read('src/main/java/com/magneticraft2/mixin/client/LivingMenuSpawnRadiusMixin.java');
+const mixinConfig = JSON.parse(read('src/main/resources/magneticraft2.mixins.json'));
+const gradle = read('build.gradle');
 const sceneExample = JSON.parse(read('docs/examples/living-main-menu/scene.json'));
 const tests = [
   ['real integrated-server world loading', /createWorldOpenFlows\(\)\.loadLevel\(/.test(controller)],
@@ -56,6 +60,17 @@ const tests = [
   ['menu never saves temporary client distance preferences', !/options\.save\(\)/.test(chunkLimits) && !/options\.save\(\)/.test(controller)],
   ['resume only in client tick after OptionsScreen removed and save', controller.indexOf('LivingMenuChunkLimits.resume(minecraft)') < controller.indexOf('public static void onScreenOpening') && !controller.slice(controller.indexOf('public static void onScreenOpening')).includes('LivingMenuChunkLimits.resume(')],
   ['example has both chunk radius limits', sceneExample.limits.renderDistanceChunks === 4 && sceneExample.limits.simulationDistanceChunks === 4],
+  ['initial spawn radius parsed with explicit bounds', /integer\(limits, "initialSpawnRadiusChunks", 2, 8, 3\)/.test(scene) && /final int initialSpawnRadiusChunks/.test(scene)],
+  ['default sample startup prepares 49 chunks instead of 441', sceneExample.limits.initialSpawnRadiusChunks === 3 && /2 \* budget\.radiusChunks\(\) \+ 1/.test(startupBudget)],
+  ['startup budget armed before integrated server load', controller.indexOf('LivingMenuSpawnBudget.arm(expectedRuntimePath, scene.initialSpawnRadiusChunks)') < controller.indexOf('createWorldOpenFlows().loadLevel')],
+  ['budget gated by integrated server and exact runtime path', /server instanceof IntegratedServer/.test(startupBudget) && /budget\.runtimePath\(\)\.equals\(serverWorld\)/.test(startupBudget)],
+  ['budget gated by marked disposable save', /resolve\(LivingMenuWorldCopy\.RUNTIME_MARKER\)/.test(startupBudget) && /RUNTIME_MARKER = MARKER/.test(copy)],
+  ['menu Mixin coupled spawn ticket and wait count', /@ModifyConstant\(method = "prepareLevels", constant = @Constant\(intValue = 11\), require = 1\)/.test(startupMixin) && /@ModifyConstant\(method = "prepareLevels", constant = @Constant\(intValue = 441\), require = 1\)/.test(startupMixin)],
+  ['menu Mixin progress listener radius matches new spawn radius', /@ModifyConstant\(method = "loadLevel", constant = @Constant\(intValue = 11\), require = 1\)/.test(startupMixin)],
+  ['vanilla fallback preserved when budget does not match', /budget == null \? vanillaLevel/.test(startupBudget) && /if \(budget == null\) \{\s*return vanillaCount;/.test(startupBudget)],
+  ['client-only Mixin registration and refmap', mixinConfig.client.includes('client.LivingMenuSpawnRadiusMixin') && !mixinConfig.mixins && mixinConfig.refmap === 'magneticraft2.refmap.json' && /add sourceSets\.main, 'magneticraft2\.refmap\.json'/.test(gradle)],
+  ['mixin loaded in production JAR and annotation processed', /"MixinConfigs"\s*:\s*"magneticraft2\.mixins\.json"/.test(gradle) && /annotationProcessor 'org\.spongepowered:mixin:0\.8\.5:processor'/.test(gradle)],
+  ['budget stays armed on load timeout to avoid changing expected chunk count', !controller.slice(controller.indexOf('} else if (System.nanoTime() - loadStartedAt > LOAD_TIMEOUT_NANOS)'), controller.indexOf('if (active)')).includes('LivingMenuSpawnBudget.disarm()')],
   ['actual scene folder automatically created', /Files\.createDirectory\(base\)/.test(scene) && /Files\.createDirectory\(root\)/.test(scene)],
 ];
 let failures = 0;

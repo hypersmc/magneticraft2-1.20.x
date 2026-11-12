@@ -24,6 +24,7 @@
     "maxWorldMiB": 64,
     "maxStoredChunks": 512,
     "renderDistanceChunks": 4,
-    "simulationDistanceChunks": 4
+    "simulationDistanceChunks": 4,
+    "initialSpawnRadiusChunks": 3
   }
 }

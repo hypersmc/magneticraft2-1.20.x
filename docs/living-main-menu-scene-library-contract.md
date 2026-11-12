@@ -1,6 +1,6 @@
 # Living Main Menu — scene library contract (proposed)
 
-**Status:** The scene library now has per-scene player render/simulation distance caps in source, applied before loading the temporary integrated server. These caps are restored before real gameplay and suspended while settings screens are open. Forge compilation and in-game loading/performance are **unverified**. Vanilla 1.20.1 still prepares 441 spawn chunks irrespective of those caps; a true spawn preparation limit is **not implemented**. A no-save server shutdown is also not implemented because vanilla forces saving even when a level has `noSave` set. Keep PR #21 a draft.
+**Status:** A new *client-only, path-gated* startup override now attempts to reduce the menu integrated server's initial spawn preparation from vanilla 441 chunks to a scene-configured square (default radius 3 = 49 chunks). The override changes both the START ticket and the completion threshold together; every ordinary world retains vanilla values. This implementation is **source-level only** until Forge compilation, Mixin injection and in-game startup are verified. A no-save shutdown is still unimplemented. Keep PR #21 draft.
 
 ## Goal
 
@@ -57,7 +57,8 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
     "maxWorldMiB": 64,
     "maxStoredChunks": 512,
     "renderDistanceChunks": 4,
-    "simulationDistanceChunks": 4
+    "simulationDistanceChunks": 4,
+    "initialSpawnRadiusChunks": 3
   }
 }
 ```
@@ -67,7 +68,9 @@ Example `mgcmainmenu/scenes/steam_factory/scene.json`:
 - **Ticks**: `randomTickSpeed` is now applied as Minecraft's actual **random block tick** gamerule and is **not** overall server ticks per second. Real machine simulation remains the standard **20 TPS** in this slice. User-requested adjustable global server TPS remains a separate unimplemented feature requiring mechanical-network and performance compatibility study.
 - **World limits**: `maxWorldMiB` and `maxStoredChunks` are hard source-admission checks. Count stored chunks by reading region headers, not counting region filenames or guessing from compressed save size. Reject oversize/corrupt scenes with an actionable log; never truncate or delete the user's source.
 - **Runtime player load radius**: `renderDistanceChunks` and `simulationDistanceChunks` are now implemented as **per-scene upper bounds of 2–8 chunks** (defaults 4/4); simulation cannot exceed render. Because IntegratedServer reads client options every tick, the menu temporarily sets those options in memory to the lower of the scene cap and the player's actual value. Before any ordinary settings screen, the real values are restored; when it closes, current values are read again and the cap reapplied **on the next client tick**, after `OptionsScreen.removed()` has called `Options.save()`. On game exit and load failure the originals are restored. No `Options.save()` call is made by this feature. Other mods writing options while the menu is actively visible could still persist temporary caps; test compatibility.
-- **Not a strict loaded-chunk budget**: Minecraft 1.20.1 still calls `MinecraftServer.prepareLevels()` with a spawn ticket radius of 11 and waits for **441 ticking chunks**. These view/simulation radius caps reduce subsequent per-player chunk requests but **do not change spawn preparation**, and therefore do not guarantee a faster first world frame. Reducing the spawn region needs an isolated, separately verified lifecycle change rather than pretending a view-distance cap removes it.
+- **Actual initial spawn preparation (experimental)**: `initialSpawnRadiusChunks` (2–8, default **3**) controls the radius of the initially prepared square for **only** the disposable menu server. Vanilla Minecraft 1.20.1 always creates a START ticket level 11 and waits for **441 chunks** in `MinecraftServer.prepareLevels()`. With radius 3, a client-only Mixin changes the START ticket level to 4 and the completion target to **(2 × 3 + 1)² = 49 chunks**. A third injection changes the startup progress listener's radius in `loadLevel()` to agree. These are *three matching changes*; changing only one can deadlock the loading screen. The Mixin is gated by `IntegratedServer`, an armed expected runtime path, and a real marker file inside the generated disposable save. Ordinary worlds and dedicated servers retain vanilla constants. For nonstandard scenes, pre-generate the area near the **world's spawn** and keep it near the camera to avoid deferred terrain generation when the player teleports. This does **not** impose an absolute cap on chunks requested later by other mods or machine networks.
+- **Why an isolated Mixin rather than a void generator?** A void world makes each chunk cheaper but still prepares 441 chunks unless its ticket count is reduced. This patch changes only the two coupled startup constants, plus the loading progress radius; it does not replace the vanilla chunk engine, forge machine ticking or world generator. A void generator may still be useful for scenery but is not required to test the performance improvement. Actual 14.1-second baseline vs new time remains to be measured.
+- **Mixin registration and acceptance**: The repo already uses `org.spongepowered.mixin` Gradle plugin; this slice registers `magneticraft2.mixins.json`, a generated refmap and jar `MixinConfigs` manifest attribute, and the Mixin annotation processor. **Do not assume this injection works until both runClient and a built production JAR have been tested.** If a mapping or target changes in Forge, `require=1` should expose that mismatch instead of silently changing only half the coupled chunk values.
 - **No-save shutdown**: The source world is never modified, and all disposable runtime changes are deleted only after server shutdown and save-lock release. Vanilla `MinecraftServer.stopServer()` explicitly resets every `ServerLevel.noSave` to false and forces saving; `ServerChunkCache.close()` also saves chunks. Therefore we have **not** added an unsafe fake `noSave` flag, a forced thread kill, or partial save-hook suppression. Fully eliminating runtime writes is still a separate unimplemented, mod-compatibility-sensitive change.
 - Validate numeric ranges, finite coordinates, supported schema versions, safe paths, no symlinks, and malformed JSON. On error skip that scene and retain the vanilla menu without corrupting real worlds.
 
@@ -105,7 +108,11 @@ A scene's actual source world is never opened as gameplay by the menu. The loade
 - [ ] Quitting and re-entering normal worlds restores any temporarily adjusted settings, even after a failed load/shutdown.
 - [ ] While visiting Options and Mods, real user render/simulation settings are visible and saving them doesn't permanently store the menu-only caps.
 - [ ] Confirm the actual integrated server uses the scene player radius without changes to a normal world's render/simulation options.
-- [ ] Measure 441-chunk vanilla spawn preparation separately; do **not** claim that these caps remove it.
+- [ ] Confirm `initialSpawnRadiusChunks:3` genuinely prepares **49** initial chunks and starts faster than the prior measured **14.1 seconds**, with the same scene/mod set.
+- [ ] Confirm dedicated servers and ordinary Singleplayer saves still prepare vanilla spawn chunks (441), without modifying their source worlds.
+- [ ] Test both `runClient` and a built/reobfuscated Forge JAR so the Mixin config and refmap actually resolve.
+- [ ] Check `initialSpawnRadiusChunks:2` and `8` for safe initialization and verify camera/spawn locations outside the small prepared area generate necessary chunks normally.
+- [ ] Check abnormal load timeouts never switch the start-ticket target back to 441 while the menu server is still preparing only 49 chunks.
 - [ ] For a future no-save shutdown implementation, verify a graceful Forge shutdown and resource cleanup under Mekanism and other installed mods.
 - [ ] Options/Mods, Singleplayer/Multiplayer/Realms navigation remains responsive.
 - [ ] Actual startup/copy/chunk timings are compared before and after the bounds.
