@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "name": "Bronze Foundry",
+  "enabled": true,
+  "camera": {
+    "position": {
+      "x": 0.5,
+      "y": 66,
+      "z": -6.5
+    },
+    "yaw": 180,
+    "pitch": 19,
+    "rotation": {
+      "enabled": true,
+      "degreesPerSecond": 0.18
+    }
+  },
+  "world": {
+    "timeOfDay": 5850,
+    "daylightCycle": false,
+    "randomTickSpeed": 3
+  },
+  "limits": {
+    "maxWorldMiB": 32,
+    "maxStoredChunks": 48,
+    "renderDistanceChunks": 3,
+    "simulationDistanceChunks": 5,
+    "initialSpawnRadiusChunks": 3
+  }
+}
